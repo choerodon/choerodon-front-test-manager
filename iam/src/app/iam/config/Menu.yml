@@ -1,0 +1,14 @@
+"devops":
+  icon: build
+  organization:
+    - "template":
+        icon: application_model
+        Routes: /devops/template
+        permission:
+          - 'iam-service.menu.create'
+  project:
+    - "app":
+        icon: widgets
+        Routes: /devops/app
+        permission:
+          - 'iam-service.menu.create'

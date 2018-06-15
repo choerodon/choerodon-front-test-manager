@@ -1,0 +1,18 @@
+{
+  "name": "template",
+  "description": "this is template",
+  "contributors": [
+    "choerodon"
+  ],
+  "license": "ISC",
+  "version": "0.6.0",
+  "keywords": [],
+  "main": "src/app/iam/containers/IAMIndex.js",
+  "scripts": {
+    "start": "choerodon-front-boot start --config ../config.js",
+    "build": "choerodon-front-boot build --config ../config.js"
+  },
+  "dependencies": {
+    "choerodon-front-boot": "^0.6.1"
+  }
+}
