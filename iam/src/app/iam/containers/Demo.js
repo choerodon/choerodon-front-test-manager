@@ -28,3 +28,4 @@ class Demo extends Component {
   }
 }
 export default withRouter(Demo);
+

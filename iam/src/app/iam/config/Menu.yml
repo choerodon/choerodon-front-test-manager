@@ -12,3 +12,4 @@
         Routes: /devops/app
         permission:
           - 'iam-service.menu.create'
+

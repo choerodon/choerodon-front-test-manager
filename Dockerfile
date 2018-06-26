@@ -18,3 +18,4 @@ ENTRYPOINT ["/usr/share/nginx/html/enterpoint.sh"]
 CMD ["nginx", "-g", "daemon off;"]
 
 EXPOSE 80
+

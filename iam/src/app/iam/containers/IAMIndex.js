@@ -26,3 +26,4 @@ class IAMIndex extends React.Component {
 }
 
 export default IAMIndex;
+

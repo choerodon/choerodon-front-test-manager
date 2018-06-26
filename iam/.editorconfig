@@ -19,3 +19,4 @@ charset = utf-8
 [{package.json,.travis.yml}]
 indent_style = space
 indent_size = 2
+
