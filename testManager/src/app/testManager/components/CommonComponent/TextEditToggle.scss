@@ -1,0 +1,20 @@
+.c7n-TextEditToggle-text {
+    position: relative;
+    border-bottom: 1px solid transparent;
+}
+
+.c7n-TextEditToggle-text .c7n-TextEditToggle-text-icon {
+    display: none;
+    cursor: pointer;
+}
+
+.c7n-TextEditToggle-text:hover {
+    border-bottom: 1px solid gray;
+}
+
+.c7n-TextEditToggle-text:hover .c7n-TextEditToggle-text-icon {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: block;
+}

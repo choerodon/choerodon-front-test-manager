@@ -1,8 +1,12 @@
 import React, { Component } from 'react';
-import { Table, Button, Icon, Card } from 'choerodon-ui';
+import { Table, Button, Icon, Card, Select, Spin } from 'choerodon-ui';
 import { Page, Header, Content, stores } from 'choerodon-front-boot';
 import axios from 'axios';
+import { TextEditToggle } from '../../../../components/CommonComponent';
 const { AppState } = stores;
+const Option = Select.Option;
+const Text = TextEditToggle.Text;
+const Edit = TextEditToggle.Edit;
 const styles = {
   cardTitle: {
     fontWeight: 'bold'
@@ -25,53 +29,66 @@ const styles = {
   cardContentItem: {
     display: 'flex',
     marginLeft: 24,
-    marginTop:10,
+    marginTop: 10,
   }
 }
+
 class CycleExecute extends Component {
   state = {
-    assignedTo: null,           //指派给
-    realName: 'realname',        //已指定至
-    ObjectassignedTo: "user1",  //
+    loading: false,
+    statusList: [],             //状态列表
+    realName: '',               //已指定至
+    lastUpdateBy: '',           //执行人
+    lastUpdateDate: '',         //执行时间
     caseAttachment: [],         //
-    comment: "string",          //注释
+    comment: "",                //注释
     cycleId: 1,                 //循环id
     defects: [],                //缺陷
-    executeId: 1,               //执行id
-    executionStatus: "status1", //执行状态
+    // executeId: 1,            //执行id
+    executionStatus: "",     //执行状态
     executionStatusColor: 'GRAY',//状态颜色
-    issueId: 1,                 //
-    lastRank: null,             //
-    nextRank: null,             //
-    objectVersionNumber: 1,     //
-    rank: "0|c00000:",          //
-    testCycleCaseStepES: [],    //
+    // issueId: 1,              //
+    // lastRank: null,          //
+    // nextRank: null,          //
+    // objectVersionNumber: 1,  //
+    // rank: "0|c00000:",       //
+    // testCycleCaseStepES: [], //
   }
   componentDidMount() {
-    this.getTestInfo();
-
+    // this.getTestInfo();
   }
   getTestInfo = () => {
+    this.setState({ loading: true });
     axios.get('/test/v1/cycle/case/query/one/1').then(data => {
       this.setState(data);
       this.getTestStatus();
-      console.log(data);
     })
   }
   getTestStatus = () => {
     axios.post('/test/v1/status/query',
       {
         "statusType": "CYCLE_CASE"
-      }).then(status => {
-        console.log(status)
-        for (let i = 0; i < status.length; i += 1) {
-          if (status.statusName === this.state.executionStatus) {
+      }).then(statusList => {
+        for (let i = 0; i < statusList.length; i += 1) {
+          if (statusList[i].statusName === this.state.executionStatus) {
             this.setState({
-              executionStatusColor: status.statusColor
+              executionStatusColor: statusList[i].statusColor
             })
           }
         }
+        this.setState({
+          loading: false,
+          statusList
+        })
       })
+  }
+  handleStatusChange = (status) => {
+    this.setState({
+      executionStatus: status
+    })
+  }
+  submit = () => {
+    console.log('submit')
   }
   render() {
     const dataSource = [{
@@ -186,105 +203,125 @@ class CycleExecute extends Component {
     //     "testStep": "string"
     //   }
     // ]
-    const { executionStatus, executionStatusColor, assignedTo, ObjectassignedTo, executeId, issueId, comment, caseAttachment, testCycleCaseStepES } = this.state;
+    const { loading, executionStatus, executionStatusColor, statusList, realName, lastUpdateBy, lastUpdateDate, executeId, issueId, comment, caseAttachment, testCycleCaseStepES } = this.state;
+    const options = statusList.map(status => {
+      const { statusName, statusColor } = status;
+      return <Option value={statusName} key={statusName}>
+        <div style={{ background: statusColor, width: 60, textAlign: 'center', borderRadius: '100px', display: 'inline-block', color: 'white' }}>
+          {statusName}
+        </div>
+      </Option>
+    })
     return (
       <div>
         <Header title="版本：1.0" backPath='/testManager/cycle'>
-          <Button funcTyp="flat" onClick={this.getTestInfo}>
+          <Button onClick={this.getTestInfo}>
             <Icon type="autorenew icon" />
             <span>刷新</span>
           </Button>
         </Header>
-        <div style={{ display: 'flex', padding: 24 }}>
-          <Card title={null} style={{ width: 561, height: 236 }} bodyStyle={styles.cardBodyStyle}>
-            <div style={styles.cardTitle}>
-              <Icon type="expand_more" />
-              <span style={styles.cardTitleText}>测试执行</span>
+        <Spin spinning={loading}>
+          <div>
+            <div style={{ display: 'flex', padding: 24 }}>
+              <Card title={null} style={{ width: 561, height: 236 }} bodyStyle={styles.cardBodyStyle}>
+                <div style={styles.cardTitle}>
+                  <Icon type="expand_more" />
+                  <span style={styles.cardTitleText}>测试执行</span>
+                </div>
+                <div style={styles.cardContent}>
+                  <div style={styles.cardContentItem}>
+                    <div style={styles.carsContentItemPrefix}>
+                      执行状态:
+                    </div>
+                    <TextEditToggle onSubmit={this.submit}>
+                      <Text>
+                        <div style={{ background: executionStatusColor, width: 60, textAlign: 'center', borderRadius: '100px', display: 'inline-block', color: 'white' }}>
+                          {executionStatus}
+                        </div>
+                      </Text>
+                      <Edit>
+                        <Select value={executionStatus} style={{ width: 200 }} onSelect={this.handleStatusChange}>
+                          {options}
+                        </Select>
+                      </Edit>
+                    </TextEditToggle>
+                  </div>
+                  <div style={styles.cardContentItem}>
+                    <div style={styles.carsContentItemPrefix}>
+                      已指定至：
+                </div>
+                    <div>
+                      {realName}
+                    </div>
+                  </div>
+                  <div style={styles.cardContentItem}>
+                    <div style={styles.carsContentItemPrefix}>
+                      执行方：
+                </div>
+                    <div>
+                      {lastUpdateBy}
+                    </div>
+                  </div>
+                  <div style={styles.cardContentItem}>
+                    <div style={styles.carsContentItemPrefix}>
+                      执行时间：
+                </div>
+                    <div>
+                      {lastUpdateDate}
+                    </div>
+                  </div>
+                  <div style={styles.cardContentItem}>
+                    <div style={styles.carsContentItemPrefix}>
+                      缺陷：
+                </div>
+                    <div>
+                      {/* {issueId} */}
+                    </div>
+                  </div>
+                  <div style={styles.cardContentItem}>
+                    <div style={styles.carsContentItemPrefix}>
+                      注释：
+                </div>
+                    <div>
+                      {comment}
+                    </div>
+                  </div>
+                </div>
+              </Card>
+              <div style={{ marginLeft: 20 }}>
+                <Card title={null} style={{ width: 561, height: 124 }} bodyStyle={styles.cardBodyStyle}>
+                  <div style={styles.cardTitle}>
+                    <Icon type="expand_more" />
+                    <span style={styles.cardTitleText}>描述</span>
+                  </div>
+                </Card>
+                <Card title={null} style={{ width: 561, height: 92, marginTop: 20 }} bodyStyle={styles.cardBodyStyle}>
+                  <div style={styles.cardTitle}>
+                    <Icon type="expand_more" />
+                    <span style={styles.cardTitleText}>附件</span>
+                  </div>
+                  <div>
+                    {caseAttachment}
+                  </div>
+                </Card>
+              </div>
             </div>
-            <div style={styles.cardContent}>
-              <div style={styles.cardContentItem}>
-                <div style={styles.carsContentItemPrefix}>
-                  执行状态:
-                </div>
-                <div style={{ background: executionStatusColor, width: 60, textAlign: 'center', borderRadius: '100px', color: 'white' }}>
-                  {executionStatus}
-                </div>
-              </div>
-              <div style={styles.cardContentItem}>
-                <div style={styles.carsContentItemPrefix}>
-                  已指定至：
-                </div>
-                <div>
-                  {assignedTo}
-                </div>
-              </div>
-              <div style={styles.cardContentItem}>
-                <div style={styles.carsContentItemPrefix}>
-                  执行方：
-                </div>
-                <div>
-                  {executeId}
-                </div>
-              </div>
-              <div style={styles.cardContentItem}>
-                <div style={styles.carsContentItemPrefix}>
-                  执行时间：
-                </div>
-                <div>
-                  {assignedTo}
-                </div>
-              </div>
-              <div style={styles.cardContentItem}>
-                <div style={styles.carsContentItemPrefix}>
-                  缺陷：
-                </div>
-                <div>
-                  {issueId}
-                </div>
-              </div>
-              <div style={styles.cardContentItem}>
-                <div style={styles.carsContentItemPrefix}>
-                  注释：
-                </div>
-                <div>
-                  {comment}
-                </div>
-              </div>
-            </div>
-          </Card>
-          <div style={{ marginLeft: 20 }}>
-            <Card title={null} style={{ width: 561, height: 124 }} bodyStyle={styles.cardBodyStyle}>
+            <Card title={null} style={{ margin: 24, marginTop: 0 }} bodyStyle={styles.cardBodyStyle}>
               <div style={styles.cardTitle}>
                 <Icon type="expand_more" />
-                <span style={styles.cardTitleText}>描述</span>
+                <span style={styles.cardTitleText}>执行历史记录</span>
               </div>
+              {/* <Table dataSource={dataSource} columns={columns_history} /> */}
             </Card>
-            <Card title={null} style={{ width: 561, height: 92, marginTop: 20 }} bodyStyle={styles.cardBodyStyle}>
+            <Card title={null} style={{ margin: 24 }} bodyStyle={styles.cardBodyStyle}>
               <div style={styles.cardTitle}>
                 <Icon type="expand_more" />
-                <span style={styles.cardTitleText}>附件</span>
+                <span style={styles.cardTitleText}>测试详细信息</span>
               </div>
-              <div>
-                {caseAttachment}
-              </div>
+              {/* <Table dataSource={testCycleCaseStepES} columns={columns} /> */}
             </Card>
           </div>
-        </div>
-        <Card title={null} style={{ margin: 24, marginTop: 0 }} bodyStyle={styles.cardBodyStyle}>
-          <div style={styles.cardTitle}>
-            <Icon type="expand_more" />
-            <span style={styles.cardTitleText}>执行历史记录</span>
-          </div>
-          <Table dataSource={dataSource} columns={columns_history} />
-        </Card>
-        <Card title={null} style={{ margin: 24 }} bodyStyle={styles.cardBodyStyle}>
-          <div style={styles.cardTitle}>
-            <Icon type="expand_more" />
-            <span style={styles.cardTitleText}>测试详细信息</span>
-          </div>
-          <Table dataSource={testCycleCaseStepES} columns={columns} />
-        </Card>
-
+        </Spin>
       </div>
     );
   }
