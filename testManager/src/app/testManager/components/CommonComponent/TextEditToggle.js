@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Icon } from 'choerodon-ui';
+import PropTypes from 'prop-types';
 import './TextEditToggle.scss';
 
 const Text = props => props.children;
@@ -66,4 +67,11 @@ class TextEditToggle extends Component {
 }
 TextEditToggle.Text = Text;
 TextEditToggle.Edit = Edit;
+
+TextEditToggle.propTypes = {
+  onSubmit: PropTypes.func.isRequired,
+  // originData: PropTypes.any.isRequired,
+  onCancel: PropTypes.func.isRequired,
+};
+
 export default TextEditToggle;
