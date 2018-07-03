@@ -3,7 +3,7 @@ import { Table, Button, Icon, Card, Select, Spin, Upload } from 'choerodon-ui';
 import { Page, Header, Content, stores } from 'choerodon-front-boot';
 import axios from 'axios';
 import { TextEditToggle } from '../../../../components/CommonComponent';
-import { getUsers } from '../../../../../api/CommonApi';
+import { getUsers, editCycle } from '../../../../../api/CycleExecuteApi';
 import './CycleExecute.less';
 
 const { AppState } = stores;
@@ -62,24 +62,30 @@ class CycleExecute extends Component {
     loading: false,
     userList: [], // 用户列表
     statusList: [], // 状态列表
-    reporterJobNumber: null,
-    reporterRealName: null, // 已指定至         
-    assignedUserJobNumber: null,
-    assignedUserRealName: null, // 执行人
-    lastUpdateDate: null, // 执行时间
-    caseAttachment: [], //
-    comment: null, // 注释
-    cycleId: 1, // 循环id
-    defects: [], // 缺陷
-    // executeId: 1,            //执行id
-    executionStatus: null, // 执行状态
-    executionStatusColor: null, // 状态颜色
-    // issueId: 1,              //
-    // lastRank: null,          //
-    // nextRank: null,          //
-    // objectVersionNumber: 1,  //
-    // rank: "0|c00000:",       //
-    // testCycleCaseStepES: [], //
+    testData: {
+      executeId: null,
+      cycleId: null, // 循环id
+      // issueId: 1,              //
+      reporterJobNumber: null,
+      reporterRealName: null, // 已指定至         
+      assignedUserJobNumber: null,
+      assignedUserRealName: null, // 执行人
+      lastUpdateDate: null, // 执行时间
+      caseAttachment: [], //
+      comment: null, // 注释
+
+      defects: [], // 缺陷
+      // executeId: 1,            //执行id
+      executionStatus: null, // 执行状态
+      executionStatusColor: null, // 状态颜色
+
+      lastRank: null, //
+      nextRank: null, //
+      objectVersionNumber: 1, //
+      rank: '0|c00000:', //
+      // testCycleCaseStepES: [], //
+    },
+
   }
   componentDidMount() {
     this.getTestInfo();
@@ -94,7 +100,7 @@ class CycleExecute extends Component {
   getTestInfo = () => {
     this.setState({ loading: true });
     axios.get('/test/v1/cycle/case/query/one/1').then((data) => {
-      this.setState(data);
+      this.setState({ testData: data });
       this.getTestStatus();
     });
   }
@@ -103,7 +109,7 @@ class CycleExecute extends Component {
       {
         statusType: 'CYCLE_CASE',
       }).then((statusList) => {
-      this.setStatusAndColor(this.state.executionStatus, statusList);
+      this.setStatusAndColor(this.state.testData.executionStatus, statusList);
       this.setState({
         loading: false,
         statusList,
@@ -115,8 +121,13 @@ class CycleExecute extends Component {
     for (let i = 0; i < statusList.length; i += 1) {
       if (statusList[i].statusName === status) {
         this.setState({
-          executionStatus: status,
-          executionStatusColor: statusList[i].statusColor,
+          testData: {
+            ...this.state.testData,
+            ...{
+              executionStatus: status,
+              executionStatusColor: statusList[i].statusColor,
+            },
+          },
         });
       }
     }
@@ -124,8 +135,28 @@ class CycleExecute extends Component {
   handleStatusChange = (status) => {
     this.setStatusAndColor(status, this.state.statusList);
   }
+  handleReporterChange = (reporter) => {
+    const { userList } = this.state;
+    for (let i = 0; i < userList.length; i += 1) {
+      if (userList[i].realName === reporter) {
+        this.setState({
+          testData: {
+            ...this.state.testData,
+            ...{
+              reporterRealName: reporter,
+              reporterJobNumber: userList[i].loginName,
+            },
+          },
+        });
+      }
+    }
+    window.console.log(reporter);
+  }
   submit = (originData) => {
     window.console.log('submit', originData);
+    editCycle(this.state.testData).then((data) => {
+      window.console.log(data);
+    });
   }
   handleUpload = (e) => {
     if (beforeUpload(e.target.files[0])) {
@@ -143,7 +174,9 @@ class CycleExecute extends Component {
     }
   }
   cancelEdit = (originData) => {
-    this.setState(originData);
+    let { testData } = this.state;
+    testData = { ...testData, ...originData };
+    this.setState({ testData });
   }
 
   render() {
@@ -199,11 +232,11 @@ class CycleExecute extends Component {
     }, {
       title: '原值',
       dataIndex: 'address',
-      key: 'address',
+      key: 'address2',
     }, {
       title: '新值',
       dataIndex: 'address',
-      key: 'address',
+      key: 'address3',
     }];
     const columns = [{
       title: '测试步骤',
@@ -284,10 +317,11 @@ class CycleExecute extends Component {
     //     "testStep": "string"
     //   }
     // ]
-    const { fileList, userList, loading, executionStatus,
-      executionStatusColor, statusList, reporterJobNumber, reporterRealName,
+    const { fileList, userList, loading, testData,
+      statusList } = this.state;
+    const { executionStatus, executionStatusColor, reporterJobNumber, reporterRealName,
       assignedUserRealName, assignedUserJobNumber, lastUpdateDate, executeId,
-      issueId, comment, caseAttachment, testCycleCaseStepES } = this.state;
+      issueId, comment, caseAttachment, testCycleCaseStepES } = testData;
     const options = statusList.map((status) => {
       const { statusName, statusColor } = status;
       return (<Option value={statusName} key={statusName}>
@@ -319,9 +353,9 @@ class CycleExecute extends Component {
         <Spin spinning={loading}>
           <div>
             <div style={{ display: 'flex', padding: 24 }}>
-              <Card 
-                title={null} 
-                style={{ width: 561, height: 236 }} 
+              <Card
+                title={null}
+                style={{ width: 561, height: 236 }}
                 bodyStyle={styles.cardBodyStyle}
               >
                 <div style={styles.cardTitle}>
@@ -333,9 +367,9 @@ class CycleExecute extends Component {
                     <div style={styles.carsContentItemPrefix}>
                       执行状态:
                     </div>
-                    <TextEditToggle 
-                      onSubmit={this.submit} 
-                      originData={{ executionStatus, executionStatusColor }} 
+                    <TextEditToggle
+                      onSubmit={this.submit}
+                      originData={{ executionStatus, executionStatusColor }}
                       onCancel={this.cancelEdit}
                     >
                       <Text>
@@ -344,9 +378,9 @@ class CycleExecute extends Component {
                         </div>
                       </Text>
                       <Edit>
-                        <Select 
-                          value={executionStatus} 
-                          style={{ width: 200 }} 
+                        <Select
+                          value={executionStatus}
+                          style={{ width: 200 }}
                           onSelect={this.handleStatusChange}
                         >
                           {options}
@@ -360,9 +394,9 @@ class CycleExecute extends Component {
                     <div style={styles.carsContentItemPrefix}>
                       已指定至：
                     </div>
-                    <TextEditToggle 
-                      onSubmit={this.submit} 
-                      originData={{ reporterRealName, reporterJobNumber }} 
+                    <TextEditToggle
+                      onSubmit={this.submit}
+                      originData={{ reporterRealName, reporterJobNumber }}
                       onCancel={this.cancelEdit}
                     >
                       <Text>
@@ -385,10 +419,10 @@ class CycleExecute extends Component {
                         ) : '无'}
                       </Text>
                       <Edit>
-                        <Select 
-                          value={reporterRealName} 
-                          style={{ width: 200 }} 
-                          onSelect={this.handleUserChange}
+                        <Select
+                          value={reporterRealName}
+                          style={{ width: 200 }}
+                          onSelect={this.handleReporterChange}
                         >
                           {userOptions}
                         </Select>
@@ -399,40 +433,23 @@ class CycleExecute extends Component {
                     <div style={styles.carsContentItemPrefix}>
                       执行方：
                     </div>
-                    <TextEditToggle 
-                      onSubmit={this.submit} 
-                      originData={{ assignedUserRealName, assignedUserJobNumber }} 
-                      onCancel={this.cancelEdit}
-                    >
-                      <Text>
-                        {assignedUserRealName ? (
-                          <div
-                            style={{
-                              display: 'flex',
-                              alignItems: 'center',
-                            }}
-                          >
-                            <span
-                              className="c7n-avatar"
-                            >
-                              {assignedUserRealName.slice(0, 1)}
-                            </span>
-                            <span>
-                              {`${assignedUserJobNumber} ${assignedUserRealName}`}
-                            </span>
-                          </div>
-                        ) : '无'}
-                      </Text>
-                      <Edit>
-                        <Select 
-                          value={assignedUserRealName} 
-                          style={{ width: 200 }} 
-                          onSelect={this.handleUserChange}
+                    {assignedUserRealName ? (
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                        }}
+                      >
+                        <span
+                          className="c7n-avatar"
                         >
-                          {userOptions}
-                        </Select>
-                      </Edit>
-                    </TextEditToggle>
+                          {assignedUserRealName.slice(0, 1)}
+                        </span>
+                        <span>
+                          {`${assignedUserJobNumber} ${assignedUserRealName}`}
+                        </span>
+                      </div>
+                    ) : '无'}
                   </div>
                   <div style={styles.cardContentItem}>
                     <div style={styles.carsContentItemPrefix}>
@@ -461,9 +478,9 @@ class CycleExecute extends Component {
                 </div>
               </Card>
               <div style={{ marginLeft: 20 }}>
-                <Card 
-                  title={null} 
-                  style={{ width: 561, height: 124 }} 
+                <Card
+                  title={null}
+                  style={{ width: 561, height: 124 }}
                   bodyStyle={styles.cardBodyStyle}
                 >
                   <div style={styles.cardTitle}>
@@ -471,9 +488,9 @@ class CycleExecute extends Component {
                     <span style={styles.cardTitleText}>描述</span>
                   </div>
                 </Card>
-                <Card 
-                  title={null} 
-                  style={{ width: 561, height: 92, marginTop: 20 }} 
+                <Card
+                  title={null}
+                  style={{ width: 561, height: 92, marginTop: 20 }}
                   bodyStyle={styles.cardBodyStyle}
                 >
                   <div style={styles.cardTitle}>
@@ -494,12 +511,8 @@ class CycleExecute extends Component {
                           left: 0,
                           right: 0,
                           bottom: 0,
-                          // width: '100%',
-                          // height: '100%',
                           cursor: 'pointer',
                           opacity: 0,
-                          // zIndex: 100,
-                          // filter: 'alpha(opacity=0)'
                         }}
                       />
                     </Button>
@@ -515,9 +528,9 @@ class CycleExecute extends Component {
                 </Card>
               </div>
             </div>
-            <Card 
-              title={null} 
-              style={{ margin: 24, marginTop: 0 }} 
+            <Card
+              title={null}
+              style={{ margin: 24, marginTop: 0 }}
               bodyStyle={styles.cardBodyStyle}
             >
               <div style={styles.cardTitle}>
