@@ -3,7 +3,7 @@ import { Table, Button, Icon, Card, Select, Spin, Upload } from 'choerodon-ui';
 import { Page, Header, Content, stores } from 'choerodon-front-boot';
 import axios from 'axios';
 import { TextEditToggle } from '../../../../components/CommonComponent';
-import { getUsers, editCycle } from '../../../../../api/CycleExecuteApi';
+import { getCycle, getStatusList, getUsers, editCycle } from '../../../../../api/CycleExecuteApi';
 import './CycleExecute.less';
 
 const { AppState } = stores;
@@ -62,7 +62,7 @@ class CycleExecute extends Component {
     loading: false,
     userList: [], // 用户列表
     statusList: [], // 状态列表
-    testData: {
+    cycleData: {
       executeId: null,
       cycleId: null, // 循环id
       // issueId: 1,              //
@@ -88,41 +88,29 @@ class CycleExecute extends Component {
 
   }
   componentDidMount() {
-    this.getTestInfo();
-    getUsers().then((data) => {
-      const userList = data.content;
-      this.setState({
-        userList,
-      });
-      // console.log(userList);
-    });
+    // this.getTestInfo();
+    // this.getUserList();
+    this.getInfo();
   }
-  getTestInfo = () => {
+  getInfo = () => {
     this.setState({ loading: true });
-    axios.get('/test/v1/cycle/case/query/one/1').then((data) => {
-      this.setState({ testData: data });
-      this.getTestStatus();
-    });
-  }
-  getTestStatus = () => {
-    axios.post('/test/v1/status/query',
-      {
-        statusType: 'CYCLE_CASE',
-      }).then((statusList) => {
-      this.setStatusAndColor(this.state.testData.executionStatus, statusList);
-      this.setState({
-        loading: false,
-        statusList,
+    Promise.all([getCycle(), getUsers(), getStatusList()])
+      .then((cycleData, userData, statusList) => {
+        const userList = userData.content;
+        this.setState({ cycleData, userList, statusList, loading: false });
+        this.setStatusAndColor(this.state.cycleData.executionStatus, statusList);
+      }).catch((error) => {
+        this.setState({
+          loading: false,
+        });
       });
-    });
   }
-
   setStatusAndColor = (status, statusList) => {
     for (let i = 0; i < statusList.length; i += 1) {
       if (statusList[i].statusName === status) {
         this.setState({
-          testData: {
-            ...this.state.testData,
+          cycleData: {
+            ...this.state.cycleData,
             ...{
               executionStatus: status,
               executionStatusColor: statusList[i].statusColor,
@@ -140,8 +128,8 @@ class CycleExecute extends Component {
     for (let i = 0; i < userList.length; i += 1) {
       if (userList[i].realName === reporter) {
         this.setState({
-          testData: {
-            ...this.state.testData,
+          cycleData: {
+            ...this.state.cycleData,
             ...{
               reporterRealName: reporter,
               reporterJobNumber: userList[i].loginName,
@@ -154,7 +142,7 @@ class CycleExecute extends Component {
   }
   submit = (originData) => {
     window.console.log('submit', originData);
-    editCycle(this.state.testData).then((data) => {
+    editCycle(this.state.cycleData).then((data) => {
       window.console.log(data);
     });
   }
@@ -174,34 +162,20 @@ class CycleExecute extends Component {
     }
   }
   cancelEdit = (originData) => {
-    let { testData } = this.state;
-    testData = { ...testData, ...originData };
-    this.setState({ testData });
+    let { cycleData } = this.state;
+    cycleData = { ...cycleData, ...originData };
+    this.setState({ cycleData });
   }
 
   render() {
     const props = {
       onRemove: (file) => {
-        // window.console.log(file);
+        window.console.log(file);
         const fileList = this.state.fileList.slice();
         const index = fileList.indexOf(file);
         const newFileList = fileList.slice();
         if (file.url) {
           // 写服务端删除逻辑
-          // IssueStore.deleteFile(file.uid).then((response) => {
-          //   if (response) {
-          //     newFileList.splice(index, 1);
-          //     IssueStore.setStoreData('fileList', newFileList);
-          //     HAP.prompt('删除成功');
-          //   }
-          // }).catch((error) => {
-          //   if (error.response) {
-          //     HAP.prompt(error.response.data.message);
-          //   } else {
-          //     HAP.prompt(error.message);
-          //   }
-          //   // window.console.log(error);
-          // });
         }
       },
     };
@@ -244,8 +218,8 @@ class CycleExecute extends Component {
       key: 'testStep',
     }, {
       title: '测试数据',
-      dataIndex: 'testData',
-      key: 'testData',
+      dataIndex: 'cycleData',
+      key: 'cycleData',
     }, {
       title: '预期结果',
       dataIndex: 'expectedResult',
@@ -313,15 +287,15 @@ class CycleExecute extends Component {
     //     ],
     //     "stepId": 0,
     //     "testCycleCaseStepRepository": {},
-    //     "testData": "string",
+    //     "cycleData": "string",
     //     "testStep": "string"
     //   }
     // ]
-    const { fileList, userList, loading, testData,
+    const { fileList, userList, loading, cycleData,
       statusList } = this.state;
     const { executionStatus, executionStatusColor, reporterJobNumber, reporterRealName,
       assignedUserRealName, assignedUserJobNumber, lastUpdateDate, executeId,
-      issueId, comment, caseAttachment, testCycleCaseStepES } = testData;
+      issueId, comment, caseAttachment, testCycleCaseStepES } = cycleData;
     const options = statusList.map((status) => {
       const { statusName, statusColor } = status;
       return (<Option value={statusName} key={statusName}>
@@ -345,7 +319,7 @@ class CycleExecute extends Component {
     return (
       <div>
         <Header title="版本：1.0" backPath="/testManager/cycle">
-          <Button onClick={this.getTestInfo}>
+          <Button onClick={this.getInfo}>
             <Icon type="autorenew icon" />
             <span>刷新</span>
           </Button>
