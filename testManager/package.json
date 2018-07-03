@@ -1,17 +1,17 @@
 {
-  "name": "testManager",
-  "version": "1.0.0",
-  "description": "",
-  "main": "src/app/testManager/containers/TestManagerIndex.js",
-  "scripts": {
-    "start": "choerodon-front-boot start --config ../config.js",
-    "build": "choerodon-front-boot build --config ../config.js"
-  },
-  "contributors": [
-    "choerodon"
-  ],
-  "license": "ISC",
-  "dependencies": {
-    "choerodon-front-boot": "0.6.2"
-  }
+    "name": "testManager",
+    "version": "1.0.0",
+    "description": "",
+    "main": "src/app/testManager/containers/TestManagerIndex.js",
+    "scripts": {
+        "start": "choerodon-front-boot start --config ../config.js",
+        "build": "choerodon-front-boot build --config ../config.js"
+    },
+    "contributors": [
+        "choerodon"
+    ],
+    "license": "ISC",
+    "dependencies": {
+        "choerodon-front-boot": "0.6.2"
+    }
 }

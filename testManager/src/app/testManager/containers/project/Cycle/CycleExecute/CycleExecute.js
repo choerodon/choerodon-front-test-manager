@@ -5,6 +5,7 @@ import axios from 'axios';
 import { TextEditToggle } from '../../../../components/CommonComponent';
 import { getUsers } from '../../../../../api/CommonApi';
 import './CycleExecute.less';
+
 const { AppState } = stores;
 const Option = Select.Option;
 const Text = TextEditToggle.Text;
@@ -13,11 +14,11 @@ const Edit = TextEditToggle.Edit;
 const styles = {
   cardTitle: {
     fontWeight: 'bold',
-    display: 'flex'
+    display: 'flex',
   },
   cardTitleText: {
     lineHeight: '20px',
-    marginLeft: '5px'
+    marginLeft: '5px',
   },
   cardBodyStyle: {
     padding: 12,
@@ -40,13 +41,13 @@ const styles = {
     whiteSpace: 'nowrap',
     fontSize: 13,
     lineHeight: '20px',
-    color: 'rgba(0, 0, 0, 0.65)'
-  }
-}
+    color: 'rgba(0, 0, 0, 0.65)',
+  },
+};
 function beforeUpload(file) {
   const isLt2M = file.size / 1024 / 1024 < 30;
   if (!isLt2M) {
-    console.log('不能超过30MB!');
+    // console.log('不能超过30MB!');
   }
   return isLt2M;
 }
@@ -59,20 +60,20 @@ class CycleExecute extends Component {
       url: 'response',
     }],
     loading: false,
-    userList: [],                //用户列表
-    statusList: [],             //状态列表
+    userList: [], // 用户列表
+    statusList: [], // 状态列表
     reporterJobNumber: null,
-    reporterRealName: null,//已指定至         
+    reporterRealName: null, // 已指定至         
     assignedUserJobNumber: null,
-    assignedUserRealName: null,           //执行人
-    lastUpdateDate: null,         //执行时间
-    caseAttachment: [],         //
-    comment: null,                //注释
-    cycleId: 1,                 //循环id
-    defects: [],                //缺陷
+    assignedUserRealName: null, // 执行人
+    lastUpdateDate: null, // 执行时间
+    caseAttachment: [], //
+    comment: null, // 注释
+    cycleId: 1, // 循环id
+    defects: [], // 缺陷
     // executeId: 1,            //执行id
-    executionStatus: null,     //执行状态
-    executionStatusColor: null,//状态颜色
+    executionStatus: null, // 执行状态
+    executionStatusColor: null, // 状态颜色
     // issueId: 1,              //
     // lastRank: null,          //
     // nextRank: null,          //
@@ -82,52 +83,53 @@ class CycleExecute extends Component {
   }
   componentDidMount() {
     this.getTestInfo();
-    getUsers().then(data => {
+    getUsers().then((data) => {
       const userList = data.content;
       this.setState({
-        userList
-      })
-      console.log(userList);
-    })
+        userList,
+      });
+      // console.log(userList);
+    });
   }
   getTestInfo = () => {
     this.setState({ loading: true });
-    axios.get('/test/v1/cycle/case/query/one/1').then(data => {
+    axios.get('/test/v1/cycle/case/query/one/1').then((data) => {
       this.setState(data);
       this.getTestStatus();
-    })
+    });
   }
   getTestStatus = () => {
     axios.post('/test/v1/status/query',
       {
-        "statusType": "CYCLE_CASE"
-      }).then(statusList => {
-        this.setStatusAndColor(this.state.executionStatus, statusList);
-        this.setState({
-          loading: false,
-          statusList
-        })
-      })
+        statusType: 'CYCLE_CASE',
+      }).then((statusList) => {
+      this.setStatusAndColor(this.state.executionStatus, statusList);
+      this.setState({
+        loading: false,
+        statusList,
+      });
+    });
   }
-  handleStatusChange = (status) => {
-    this.setStatusAndColor(status, this.state.statusList);
-  }
+
   setStatusAndColor = (status, statusList) => {
     for (let i = 0; i < statusList.length; i += 1) {
       if (statusList[i].statusName === status) {
         this.setState({
           executionStatus: status,
-          executionStatusColor: statusList[i].statusColor
-        })
+          executionStatusColor: statusList[i].statusColor,
+        });
       }
     }
   }
+  handleStatusChange = (status) => {
+    this.setStatusAndColor(status, this.state.statusList);
+  }
   submit = (originData) => {
-    console.log('submit', originData);
+    window.console.log('submit', originData);
   }
   handleUpload = (e) => {
     if (beforeUpload(e.target.files[0])) {
-      console.log(e.target.files[0]);
+      // console.log(e.target.files[0]);
       const formData = new FormData();
       formData.append('file', e.target.files[0]);
       this.setState({
@@ -136,8 +138,8 @@ class CycleExecute extends Component {
           name: e.target.files[0].name,
           status: 'done',
           url: 'response',
-        }]]
-      })
+        }]],
+      });
     }
   }
   cancelEdit = (originData) => {
@@ -148,27 +150,25 @@ class CycleExecute extends Component {
     const props = {
       onRemove: (file) => {
         // window.console.log(file);
-        const fileList = this.state.fileList.slice()
+        const fileList = this.state.fileList.slice();
         const index = fileList.indexOf(file);
         const newFileList = fileList.slice();
         if (file.url) {
-          //写服务端删除逻辑
-          IssueStore.deleteFile(file.uid).then(response => {
-            if (response) {
-              newFileList.splice(index, 1);
-              IssueStore.setStoreData('fileList', newFileList);
-              HAP.prompt('删除成功');
-            }
-          }).catch(error => {
-            if (error.response) {
-              HAP.prompt(error.response.data.message);
-            } else {
-              HAP.prompt(error.message);
-            }
-            // window.console.log(error);
-          })
-        } else {
-
+          // 写服务端删除逻辑
+          // IssueStore.deleteFile(file.uid).then((response) => {
+          //   if (response) {
+          //     newFileList.splice(index, 1);
+          //     IssueStore.setStoreData('fileList', newFileList);
+          //     HAP.prompt('删除成功');
+          //   }
+          // }).catch((error) => {
+          //   if (error.response) {
+          //     HAP.prompt(error.response.data.message);
+          //   } else {
+          //     HAP.prompt(error.message);
+          //   }
+          //   // window.console.log(error);
+          // });
         }
       },
     };
@@ -176,15 +176,15 @@ class CycleExecute extends Component {
       key: '1',
       name: '胡彦斌',
       age: 32,
-      address: '西湖区湖底公园1号'
+      address: '西湖区湖底公园1号',
     }, {
       key: '2',
       name: '胡彦祖',
       age: 42,
-      address: '西湖区湖底公园1号'
+      address: '西湖区湖底公园1号',
     }];
 
-    const columns_history = [{
+    const columnsHistory = [{
       title: '执行方',
       dataIndex: 'name',
       key: 'name',
@@ -284,30 +284,33 @@ class CycleExecute extends Component {
     //     "testStep": "string"
     //   }
     // ]
-    const { fileList, userList, loading, executionStatus, executionStatusColor, statusList, reporterJobNumber, reporterRealName, assignedUserRealName, assignedUserJobNumber, lastUpdateDate, executeId, issueId, comment, caseAttachment, testCycleCaseStepES } = this.state;
-    const options = statusList.map(status => {
+    const { fileList, userList, loading, executionStatus,
+      executionStatusColor, statusList, reporterJobNumber, reporterRealName,
+      assignedUserRealName, assignedUserJobNumber, lastUpdateDate, executeId,
+      issueId, comment, caseAttachment, testCycleCaseStepES } = this.state;
+    const options = statusList.map((status) => {
       const { statusName, statusColor } = status;
-      return <Option value={statusName} key={statusName}>
+      return (<Option value={statusName} key={statusName}>
         <div style={{ background: statusColor, width: 60, textAlign: 'center', borderRadius: '100px', display: 'inline-block', color: 'white' }}>
           {statusName}
         </div>
-      </Option>
-    })
+      </Option>);
+    });
     const userOptions = userList.map(user =>
-      <Option key={user.id} value={user.realName}>
+      (<Option key={user.id} value={user.realName}>
         <div style={{ display: 'inline-flex', alignItems: 'center', padding: '2px' }}>
           <div
             style={{ background: '#c5cbe8', color: '#6473c3', width: '20px', height: '20px', textAlign: 'center', lineHeight: '20px', borderRadius: '50%', marginRight: '8px' }}
           >
-            {user.imageUrl ? <img src={imageUrl} /> : user.loginName ? user.loginName.slice(0, 1) : ''}
+            {user.imageUrl ? <img src={user.imageUrl} alt="" /> : user.loginName.slice(0, 1)}
           </div>
           <span>{`${user.loginName} ${user.realName}`}</span>
         </div>
-      </Option>
-    )
+      </Option>),
+    );
     return (
       <div>
-        <Header title="版本：1.0" backPath='/testManager/cycle'>
+        <Header title="版本：1.0" backPath="/testManager/cycle">
           <Button onClick={this.getTestInfo}>
             <Icon type="autorenew icon" />
             <span>刷新</span>
@@ -316,7 +319,11 @@ class CycleExecute extends Component {
         <Spin spinning={loading}>
           <div>
             <div style={{ display: 'flex', padding: 24 }}>
-              <Card title={null} style={{ width: 561, height: 236 }} bodyStyle={styles.cardBodyStyle}>
+              <Card 
+                title={null} 
+                style={{ width: 561, height: 236 }} 
+                bodyStyle={styles.cardBodyStyle}
+              >
                 <div style={styles.cardTitle}>
                   <Icon type="expand_more" />
                   <span style={styles.cardTitleText}>测试执行</span>
@@ -326,14 +333,22 @@ class CycleExecute extends Component {
                     <div style={styles.carsContentItemPrefix}>
                       执行状态:
                     </div>
-                    <TextEditToggle onSubmit={this.submit} originData={{ executionStatus, executionStatusColor }} onCancel={this.cancelEdit}>
+                    <TextEditToggle 
+                      onSubmit={this.submit} 
+                      originData={{ executionStatus, executionStatusColor }} 
+                      onCancel={this.cancelEdit}
+                    >
                       <Text>
                         <div style={{ background: executionStatusColor, width: 60, textAlign: 'center', borderRadius: '100px', display: 'inline-block', color: 'white' }}>
                           {executionStatus}
                         </div>
                       </Text>
                       <Edit>
-                        <Select value={executionStatus} style={{ width: 200 }} onSelect={this.handleStatusChange}>
+                        <Select 
+                          value={executionStatus} 
+                          style={{ width: 200 }} 
+                          onSelect={this.handleStatusChange}
+                        >
                           {options}
                         </Select>
                       </Edit>
@@ -344,8 +359,12 @@ class CycleExecute extends Component {
                   <div style={styles.cardContentItem}>
                     <div style={styles.carsContentItemPrefix}>
                       已指定至：
-                </div>
-                    <TextEditToggle onSubmit={this.submit} originData={{ reporterRealName, reporterJobNumber }} onCancel={this.cancelEdit}>
+                    </div>
+                    <TextEditToggle 
+                      onSubmit={this.submit} 
+                      originData={{ reporterRealName, reporterJobNumber }} 
+                      onCancel={this.cancelEdit}
+                    >
                       <Text>
                         {reporterRealName ? (
                           <div
@@ -366,7 +385,11 @@ class CycleExecute extends Component {
                         ) : '无'}
                       </Text>
                       <Edit>
-                        <Select value={reporterRealName} style={{ width: 200 }} onSelect={this.handleUserChange}>
+                        <Select 
+                          value={reporterRealName} 
+                          style={{ width: 200 }} 
+                          onSelect={this.handleUserChange}
+                        >
                           {userOptions}
                         </Select>
                       </Edit>
@@ -375,8 +398,12 @@ class CycleExecute extends Component {
                   <div style={styles.cardContentItem}>
                     <div style={styles.carsContentItemPrefix}>
                       执行方：
-                </div>
-                    <TextEditToggle onSubmit={this.submit} originData={{ assignedUserRealName, assignedUserJobNumber }} onCancel={this.cancelEdit}>
+                    </div>
+                    <TextEditToggle 
+                      onSubmit={this.submit} 
+                      originData={{ assignedUserRealName, assignedUserJobNumber }} 
+                      onCancel={this.cancelEdit}
+                    >
                       <Text>
                         {assignedUserRealName ? (
                           <div
@@ -397,7 +424,11 @@ class CycleExecute extends Component {
                         ) : '无'}
                       </Text>
                       <Edit>
-                        <Select value={assignedUserRealName} style={{ width: 200 }} onSelect={this.handleUserChange}>
+                        <Select 
+                          value={assignedUserRealName} 
+                          style={{ width: 200 }} 
+                          onSelect={this.handleUserChange}
+                        >
                           {userOptions}
                         </Select>
                       </Edit>
@@ -406,7 +437,7 @@ class CycleExecute extends Component {
                   <div style={styles.cardContentItem}>
                     <div style={styles.carsContentItemPrefix}>
                       执行时间：
-                </div>
+                    </div>
                     <div>
                       {lastUpdateDate}
                     </div>
@@ -414,7 +445,7 @@ class CycleExecute extends Component {
                   <div style={styles.cardContentItem}>
                     <div style={styles.carsContentItemPrefix}>
                       缺陷：
-                </div>
+                    </div>
                     <div>
                       {/* {issueId} */}
                     </div>
@@ -422,7 +453,7 @@ class CycleExecute extends Component {
                   <div style={styles.cardContentItem}>
                     <div style={styles.carsContentItemPrefix}>
                       注释：
-                </div>
+                    </div>
                     <div>
                       {comment}
                     </div>
@@ -430,19 +461,27 @@ class CycleExecute extends Component {
                 </div>
               </Card>
               <div style={{ marginLeft: 20 }}>
-                <Card title={null} style={{ width: 561, height: 124 }} bodyStyle={styles.cardBodyStyle}>
+                <Card 
+                  title={null} 
+                  style={{ width: 561, height: 124 }} 
+                  bodyStyle={styles.cardBodyStyle}
+                >
                   <div style={styles.cardTitle}>
                     <Icon type="expand_more" />
                     <span style={styles.cardTitleText}>描述</span>
                   </div>
                 </Card>
-                <Card title={null} style={{ width: 561, height: 92, marginTop: 20 }} bodyStyle={styles.cardBodyStyle}>
+                <Card 
+                  title={null} 
+                  style={{ width: 561, height: 92, marginTop: 20 }} 
+                  bodyStyle={styles.cardBodyStyle}
+                >
                   <div style={styles.cardTitle}>
                     <div>
                       <Icon type="expand_more" />
                       <span style={styles.cardTitleText}>附件</span>
                     </div>
-                    <div style={{ flex: 1, visibility: 'hidden' }}></div>
+                    <div style={{ flex: 1, visibility: 'hidden' }} />
                     <Button className="c7n-upload-button">
                       <Icon type="file_upload" /> 上传附件
                       <input
@@ -471,25 +510,28 @@ class CycleExecute extends Component {
                       {...props}
                       fileList={fileList}
                       className="upload-button"
-                    >
-                    </Upload>
+                    />
                   </div>
                 </Card>
               </div>
             </div>
-            <Card title={null} style={{ margin: 24, marginTop: 0 }} bodyStyle={styles.cardBodyStyle}>
+            <Card 
+              title={null} 
+              style={{ margin: 24, marginTop: 0 }} 
+              bodyStyle={styles.cardBodyStyle}
+            >
               <div style={styles.cardTitle}>
                 <Icon type="expand_more" />
                 <span style={styles.cardTitleText}>执行历史记录</span>
               </div>
-              {/* <Table dataSource={dataSource} columns={columns_history} /> */}
+              <Table dataSource={dataSource} columns={columnsHistory} />
             </Card>
             <Card title={null} style={{ margin: 24 }} bodyStyle={styles.cardBodyStyle}>
               <div style={styles.cardTitle}>
                 <Icon type="expand_more" />
                 <span style={styles.cardTitleText}>测试详细信息</span>
               </div>
-              {/* <Table dataSource={testCycleCaseStepES} columns={columns} /> */}
+              <Table dataSource={testCycleCaseStepES} columns={columns} />
             </Card>
           </div>
         </Spin>
