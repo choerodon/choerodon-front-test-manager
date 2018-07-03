@@ -1,22 +1,27 @@
 import React, { Component } from 'react';
-import { Table, Button, Icon, Card, Select, Spin } from 'choerodon-ui';
+import { Table, Button, Icon, Card, Select, Spin, Upload } from 'choerodon-ui';
 import { Page, Header, Content, stores } from 'choerodon-front-boot';
 import axios from 'axios';
 import { TextEditToggle } from '../../../../components/CommonComponent';
+import { getUsers } from '../../../../../api/CommonApi';
+import './CycleExecute.less';
 const { AppState } = stores;
 const Option = Select.Option;
 const Text = TextEditToggle.Text;
 const Edit = TextEditToggle.Edit;
+
 const styles = {
   cardTitle: {
-    fontWeight: 'bold'
+    fontWeight: 'bold',
+    display: 'flex'
   },
   cardTitleText: {
     lineHeight: '20px',
     marginLeft: '5px'
   },
   cardBodyStyle: {
-    padding: 12
+    padding: 12,
+    overflow: 'hidden',
   },
   cardContent: {
 
@@ -30,23 +35,44 @@ const styles = {
     display: 'flex',
     marginLeft: 24,
     marginTop: 10,
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+    fontSize: 13,
+    lineHeight: '20px',
+    color: 'rgba(0, 0, 0, 0.65)'
   }
 }
-
+function beforeUpload(file) {
+  const isLt2M = file.size / 1024 / 1024 < 30;
+  if (!isLt2M) {
+    console.log('不能超过30MB!');
+  }
+  return isLt2M;
+}
 class CycleExecute extends Component {
   state = {
+    fileList: [{
+      uid: -1,
+      name: 'sss',
+      status: 'done',
+      url: 'response',
+    }],
     loading: false,
+    userList: [],                //用户列表
     statusList: [],             //状态列表
-    realName: '',               //已指定至
-    lastUpdateBy: '',           //执行人
-    lastUpdateDate: '',         //执行时间
+    reporterJobNumber: null,
+    reporterRealName: null,//已指定至         
+    assignedUserJobNumber: null,
+    assignedUserRealName: null,           //执行人
+    lastUpdateDate: null,         //执行时间
     caseAttachment: [],         //
-    comment: "",                //注释
+    comment: null,                //注释
     cycleId: 1,                 //循环id
     defects: [],                //缺陷
     // executeId: 1,            //执行id
-    executionStatus: "",     //执行状态
-    executionStatusColor: 'GRAY',//状态颜色
+    executionStatus: null,     //执行状态
+    executionStatusColor: null,//状态颜色
     // issueId: 1,              //
     // lastRank: null,          //
     // nextRank: null,          //
@@ -55,7 +81,14 @@ class CycleExecute extends Component {
     // testCycleCaseStepES: [], //
   }
   componentDidMount() {
-    // this.getTestInfo();
+    this.getTestInfo();
+    getUsers().then(data => {
+      const userList = data.content;
+      this.setState({
+        userList
+      })
+      console.log(userList);
+    })
   }
   getTestInfo = () => {
     this.setState({ loading: true });
@@ -69,13 +102,7 @@ class CycleExecute extends Component {
       {
         "statusType": "CYCLE_CASE"
       }).then(statusList => {
-        for (let i = 0; i < statusList.length; i += 1) {
-          if (statusList[i].statusName === this.state.executionStatus) {
-            this.setState({
-              executionStatusColor: statusList[i].statusColor
-            })
-          }
-        }
+        this.setStatusAndColor(this.state.executionStatus, statusList);
         this.setState({
           loading: false,
           statusList
@@ -83,14 +110,68 @@ class CycleExecute extends Component {
       })
   }
   handleStatusChange = (status) => {
-    this.setState({
-      executionStatus: status
-    })
+    this.setStatusAndColor(status, this.state.statusList);
   }
-  submit = () => {
-    console.log('submit')
+  setStatusAndColor = (status, statusList) => {
+    for (let i = 0; i < statusList.length; i += 1) {
+      if (statusList[i].statusName === status) {
+        this.setState({
+          executionStatus: status,
+          executionStatusColor: statusList[i].statusColor
+        })
+      }
+    }
   }
+  submit = (originData) => {
+    console.log('submit', originData);
+  }
+  handleUpload = (e) => {
+    if (beforeUpload(e.target.files[0])) {
+      console.log(e.target.files[0]);
+      const formData = new FormData();
+      formData.append('file', e.target.files[0]);
+      this.setState({
+        fileList: [...this.state.fileList, ...[{
+          uid: Math.random(),
+          name: e.target.files[0].name,
+          status: 'done',
+          url: 'response',
+        }]]
+      })
+    }
+  }
+  cancelEdit = (originData) => {
+    this.setState(originData);
+  }
+
   render() {
+    const props = {
+      onRemove: (file) => {
+        // window.console.log(file);
+        const fileList = this.state.fileList.slice()
+        const index = fileList.indexOf(file);
+        const newFileList = fileList.slice();
+        if (file.url) {
+          //写服务端删除逻辑
+          IssueStore.deleteFile(file.uid).then(response => {
+            if (response) {
+              newFileList.splice(index, 1);
+              IssueStore.setStoreData('fileList', newFileList);
+              HAP.prompt('删除成功');
+            }
+          }).catch(error => {
+            if (error.response) {
+              HAP.prompt(error.response.data.message);
+            } else {
+              HAP.prompt(error.message);
+            }
+            // window.console.log(error);
+          })
+        } else {
+
+        }
+      },
+    };
     const dataSource = [{
       key: '1',
       name: '胡彦斌',
@@ -203,7 +284,7 @@ class CycleExecute extends Component {
     //     "testStep": "string"
     //   }
     // ]
-    const { loading, executionStatus, executionStatusColor, statusList, realName, lastUpdateBy, lastUpdateDate, executeId, issueId, comment, caseAttachment, testCycleCaseStepES } = this.state;
+    const { fileList, userList, loading, executionStatus, executionStatusColor, statusList, reporterJobNumber, reporterRealName, assignedUserRealName, assignedUserJobNumber, lastUpdateDate, executeId, issueId, comment, caseAttachment, testCycleCaseStepES } = this.state;
     const options = statusList.map(status => {
       const { statusName, statusColor } = status;
       return <Option value={statusName} key={statusName}>
@@ -212,6 +293,18 @@ class CycleExecute extends Component {
         </div>
       </Option>
     })
+    const userOptions = userList.map(user =>
+      <Option key={user.id} value={user.realName}>
+        <div style={{ display: 'inline-flex', alignItems: 'center', padding: '2px' }}>
+          <div
+            style={{ background: '#c5cbe8', color: '#6473c3', width: '20px', height: '20px', textAlign: 'center', lineHeight: '20px', borderRadius: '50%', marginRight: '8px' }}
+          >
+            {user.imageUrl ? <img src={imageUrl} /> : user.loginName ? user.loginName.slice(0, 1) : ''}
+          </div>
+          <span>{`${user.loginName} ${user.realName}`}</span>
+        </div>
+      </Option>
+    )
     return (
       <div>
         <Header title="版本：1.0" backPath='/testManager/cycle'>
@@ -233,7 +326,7 @@ class CycleExecute extends Component {
                     <div style={styles.carsContentItemPrefix}>
                       执行状态:
                     </div>
-                    <TextEditToggle onSubmit={this.submit}>
+                    <TextEditToggle onSubmit={this.submit} originData={{ executionStatus, executionStatusColor }} onCancel={this.cancelEdit}>
                       <Text>
                         <div style={{ background: executionStatusColor, width: 60, textAlign: 'center', borderRadius: '100px', display: 'inline-block', color: 'white' }}>
                           {executionStatus}
@@ -246,21 +339,69 @@ class CycleExecute extends Component {
                       </Edit>
                     </TextEditToggle>
                   </div>
+
+
                   <div style={styles.cardContentItem}>
                     <div style={styles.carsContentItemPrefix}>
                       已指定至：
                 </div>
-                    <div>
-                      {realName}
-                    </div>
+                    <TextEditToggle onSubmit={this.submit} originData={{ reporterRealName, reporterJobNumber }} onCancel={this.cancelEdit}>
+                      <Text>
+                        {reporterRealName ? (
+                          <div
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                            }}
+                          >
+                            <span
+                              className="c7n-avatar"
+                            >
+                              {reporterRealName.slice(0, 1)}
+                            </span>
+                            <span>
+                              {`${reporterJobNumber} ${reporterRealName}`}
+                            </span>
+                          </div>
+                        ) : '无'}
+                      </Text>
+                      <Edit>
+                        <Select value={reporterRealName} style={{ width: 200 }} onSelect={this.handleUserChange}>
+                          {userOptions}
+                        </Select>
+                      </Edit>
+                    </TextEditToggle>
                   </div>
                   <div style={styles.cardContentItem}>
                     <div style={styles.carsContentItemPrefix}>
                       执行方：
                 </div>
-                    <div>
-                      {lastUpdateBy}
-                    </div>
+                    <TextEditToggle onSubmit={this.submit} originData={{ assignedUserRealName, assignedUserJobNumber }} onCancel={this.cancelEdit}>
+                      <Text>
+                        {assignedUserRealName ? (
+                          <div
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                            }}
+                          >
+                            <span
+                              className="c7n-avatar"
+                            >
+                              {assignedUserRealName.slice(0, 1)}
+                            </span>
+                            <span>
+                              {`${assignedUserJobNumber} ${assignedUserRealName}`}
+                            </span>
+                          </div>
+                        ) : '无'}
+                      </Text>
+                      <Edit>
+                        <Select value={assignedUserRealName} style={{ width: 200 }} onSelect={this.handleUserChange}>
+                          {userOptions}
+                        </Select>
+                      </Edit>
+                    </TextEditToggle>
                   </div>
                   <div style={styles.cardContentItem}>
                     <div style={styles.carsContentItemPrefix}>
@@ -297,11 +438,41 @@ class CycleExecute extends Component {
                 </Card>
                 <Card title={null} style={{ width: 561, height: 92, marginTop: 20 }} bodyStyle={styles.cardBodyStyle}>
                   <div style={styles.cardTitle}>
-                    <Icon type="expand_more" />
-                    <span style={styles.cardTitleText}>附件</span>
+                    <div>
+                      <Icon type="expand_more" />
+                      <span style={styles.cardTitleText}>附件</span>
+                    </div>
+                    <div style={{ flex: 1, visibility: 'hidden' }}></div>
+                    <Button className="c7n-upload-button">
+                      <Icon type="file_upload" /> 上传附件
+                      <input
+                        type="file"
+                        title="更换头像"
+                        onChange={this.handleUpload}
+                        style={{
+                          position: 'absolute',
+                          top: 0,
+                          left: 0,
+                          right: 0,
+                          bottom: 0,
+                          // width: '100%',
+                          // height: '100%',
+                          cursor: 'pointer',
+                          opacity: 0,
+                          // zIndex: 100,
+                          // filter: 'alpha(opacity=0)'
+                        }}
+                      />
+                    </Button>
                   </div>
                   <div>
                     {caseAttachment}
+                    <Upload
+                      {...props}
+                      fileList={fileList}
+                      className="upload-button"
+                    >
+                    </Upload>
                   </div>
                 </Card>
               </div>

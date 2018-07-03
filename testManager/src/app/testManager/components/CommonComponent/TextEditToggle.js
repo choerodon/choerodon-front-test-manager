@@ -1,38 +1,37 @@
 import React, { Component } from 'react';
 import { Icon } from 'choerodon-ui';
 import './TextEditToggle.scss';
-class Text extends Component {
-  render() {
-    return this.props.children
-  }
-}
-class Edit extends Component {
-  render() {
-    return this.props.children
-  }
-}
+const Text = (props) => props.children;
+const Edit = (props) => props.children;
+
 class TextEditToggle extends Component {
   state = {
     editing: false,
+    originData: null,
   }
   componentDidMount() {
 
   }
+  // 进入编辑状态
   enterEditing = () => {
     this.setState({
-      editing: true
+      editing: true,
+      originData: this.props.originData
     })
   }
+  // 取消编辑
   leaveEditing = () => {
     this.setState({
       editing: false
-    })
+    });
+    this.props.onCancel(this.state.originData);
   }
-  onSubmit=()=>{
+  // 提交编辑
+  onSubmit = () => {
     this.setState({
       editing: false
     })
-    this.props.onSubmit();
+    this.props.onSubmit(this.state.originData);
   }
   renderChild = () => {
     const { editing } = this.state;
@@ -49,9 +48,9 @@ class TextEditToggle extends Component {
       </div>
     } else {
       child = children.filter(child => child.type === Text)
-      child = <div className="c7n-TextEditToggle-text">
+      child = <div className="c7n-TextEditToggle-text" onClick={this.enterEditing}>
         {child}
-        <Icon type="mode_edit" className="c7n-TextEditToggle-text-icon" onClick={this.enterEditing} />
+        <Icon type="mode_edit" className="c7n-TextEditToggle-text-icon" />
       </div>
     }
     return child;
