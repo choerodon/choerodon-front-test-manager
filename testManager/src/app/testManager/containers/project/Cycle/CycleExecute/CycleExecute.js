@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
 import { Table, Button, Icon, Card, Select, Spin, Upload } from 'choerodon-ui';
 import { Page, Header, Content, stores } from 'choerodon-front-boot';
-import axios from 'axios';
+import _ from 'lodash';
 import { TextEditToggle } from '../../../../components/CommonComponent';
-import { getCycle, getStatusList, getUsers, editCycle } from '../../../../../api/CycleExecuteApi';
+import FullEditor from '../../../../components/FullEditor';
+import { getCycle, getCycleDetails, getStatusList, getUsers, editCycle } from '../../../../../api/CycleExecuteApi';
 import { uploadFile } from '../../../../../api/CommonApi';
+import { delta2Html } from '../../../../common/utils';
+
 import './CycleExecute.less';
 
 const { AppState } = stores;
@@ -45,19 +48,19 @@ const styles = {
     color: 'rgba(0, 0, 0, 0.65)',
   },
   statusOption: {
-    width: 60, 
-    textAlign: 'center', 
-    borderRadius: '100px', 
-    display: 'inline-block', 
+    width: 60,
+    textAlign: 'center',
+    borderRadius: '100px',
+    display: 'inline-block',
     color: 'white',
   },
   userOption: {
-    background: '#c5cbe8', 
-    color: '#6473c3', 
-    width: '20px', 
+    background: '#c5cbe8',
+    color: '#6473c3',
+    width: '20px',
     height: '20px',
-    textAlign: 'center', 
-    lineHeight: '20px', 
+    textAlign: 'center',
+    lineHeight: '20px',
     borderRadius: '50%',
     marginRight: '8px',
   },
@@ -78,9 +81,12 @@ class CycleExecute extends Component {
       url: 'response',
     }],
     loading: false,
+    edit: false,
     selectLoading: false,
     userList: [], // 用户列表
     statusList: [], // 状态列表
+    stepStatusList: [],
+    detailList: [],
     cycleData: {
       executeId: null,
       cycleId: null, // 循环id
@@ -114,11 +120,16 @@ class CycleExecute extends Component {
   }
   getInfo = () => {
     this.setState({ loading: true });
-    Promise.all([getCycle(), getStatusList()])
-      .then(([cycleData, statusList]) => {
-        // window.console.log(cycleData, userData, statusList);
-
-        this.setState({ cycleData, statusList, loading: false });
+    Promise.all([getCycle(), getStatusList('CYCLE_CASE'), getCycleDetails(1), getStatusList('CASE_STEP')])
+      .then(([cycleData, statusList, detailList, stepStatusList]) => {
+        window.console.log(detailList);
+        this.setState({ 
+          cycleData,
+          statusList, 
+          detailList: detailList.content,
+          stepStatusList,
+          loading: false,
+        });
         this.setStatusAndColor(this.state.cycleData.executionStatus, statusList);
       }).catch((error) => {
         this.setState({
@@ -127,19 +138,15 @@ class CycleExecute extends Component {
       });
   }
   setStatusAndColor = (status, statusList) => {
-    for (let i = 0; i < statusList.length; i += 1) {
-      if (statusList[i].statusName === status) {
-        this.setState({
-          cycleData: {
-            ...this.state.cycleData,
-            ...{
-              executionStatus: status,
-              executionStatusColor: statusList[i].statusColor,
-            },
-          },
-        });
-      }
-    }
+    this.setState({
+      cycleData: {
+        ...this.state.cycleData,
+        ...{
+          executionStatus: status,
+          executionStatusColor: _.find(statusList, { statusName: status }).statusColor,
+        },
+      },
+    });
   }
   handleStatusChange = (status) => {
     this.setStatusAndColor(status, this.state.statusList);
@@ -209,10 +216,12 @@ class CycleExecute extends Component {
   }
 
   render() {
+    const { fileList, userList, stepStatusList, detailList, loading, cycleData,
+      statusList, selectLoading } = this.state;
     const props = {
       onRemove: (file) => {
         window.console.log(file);
-        const fileList = this.state.fileList.slice();
+        // const fileList = this.state.fileList.slice();
         const index = fileList.indexOf(file);
         const newFileList = fileList.slice();
         if (file.url) {
@@ -271,8 +280,14 @@ class CycleExecute extends Component {
       key: 'stepAttachment',
     }, {
       title: '状态',
-      dataIndex: 'address',
-      key: 'address',
+      dataIndex: 'stepStatus',
+      key: 'stepStatus',
+      render(stepStatus) {   
+        const statusColor = _.find(stepStatusList, { statusName: stepStatus }).statusColor;
+        return (<div style={{ ...styles.statusOption, ...{ background: statusColor } }}>
+          {stepStatus}
+        </div>);
+      },
     },
     {
       title: '注释',
@@ -294,9 +309,8 @@ class CycleExecute extends Component {
       title: '缺陷',
       dataIndex: 'defects',
       key: 'defects',
-    }]; 
-    const { fileList, userList, loading, cycleData,
-      statusList, selectLoading } = this.state;
+    }];
+    
     const { executionStatus, executionStatusColor, reporterJobNumber, reporterRealName,
       assignedUserRealName, assignedUserJobNumber, lastUpdateDate, executeId,
       issueId, comment, caseAttachment, testCycleCaseStepES } = cycleData;
@@ -466,28 +480,20 @@ class CycleExecute extends Component {
                 >
                   <div style={styles.cardTitle}>
                     <Icon type="expand_more" />
-                    <span style={styles.cardTitleText}>描述</span>                  
+                    <span style={styles.cardTitleText}>描述</span>
                     <div style={{ flex: 1, visibility: 'hidden' }} />
-                    <Button className="c7n-upload-button">                    
+                    <Button className="c7n-upload-button" onClick={() => { this.setState({ edit: true }); }}>
                       <Icon type="zoom_out_map" /> 全屏编辑
-                      <input
-                        type="file"
-                        title="更换头像"
-                        onChange={this.handleUpload}
-                        style={{
-                          position: 'absolute',
-                          top: 0,
-                          left: 0,
-                          right: 0,
-                          bottom: 0,
-                          cursor: 'pointer',
-                          opacity: 0,
-                        }}
-                      />
                     </Button>
+                    <FullEditor
+                      initValue={comment}
+                      visible={this.state.edit}
+                      onCancel={() => this.setState({ edit: false })}
+                      onOk={(value) => { window.console.log(value); }}
+                    />
                   </div>
                   <div style={{ fontSize: 13, color: 'rgba(0,0,0,0.65)', lineHeight: '20px', padding: '20px 20px 18px' }}>
-                    {comment}
+                    {delta2Html(comment)}
                   </div>
                 </Card>
                 <Card
@@ -546,7 +552,7 @@ class CycleExecute extends Component {
                 <Icon type="expand_more" />
                 <span style={styles.cardTitleText}>测试详细信息</span>
               </div>
-              <Table dataSource={testCycleCaseStepES} columns={columns} />
+              <Table dataSource={detailList} columns={columns} />
             </Card>
           </div>
         </Spin>
