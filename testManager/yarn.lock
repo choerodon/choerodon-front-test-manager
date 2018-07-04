@@ -1563,7 +1563,7 @@ chardet@^0.4.0:
   version "0.4.2"
   resolved "http://registry.npm.taobao.org/chardet/download/chardet-0.4.2.tgz#b5473b33dc97c424e5d98dc87d55d4d8a29c8bf2"
 
-choerodon-front-boot@0.6.2:
+choerodon-front-boot@^0.6.2:
   version "0.6.2"
   resolved "http://registry.npm.taobao.org/choerodon-front-boot/download/choerodon-front-boot-0.6.2.tgz#3135d7e018cc2d1be9f9535bc21c7df4236925c0"
   dependencies:

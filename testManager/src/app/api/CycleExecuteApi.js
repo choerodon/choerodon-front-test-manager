@@ -17,6 +17,11 @@ export function getUsers(param) {
 export function editCycle(cycle) {
   return axios.post('/test/v1/cycle/case/update', cycle);
 }
-export function getCycleDetails(cycleCaseId) {
-  return axios.get(`/test/v1/cycle/case/step/query/${cycleCaseId}?size=5&page=1`);
+export function getCycleDetails(pagination, cycleCaseId) {
+  const { size, page } = pagination;
+  return axios.get(`/test/v1/cycle/case/step/query/${cycleCaseId}?size=${size}&page=${page}`);
+}
+export function getCycleHistiorys(pagination, cycleCaseId) {
+  const { size, page } = pagination;
+  return axios.get(`/test/v1/cycle/case/history/${cycleCaseId}?size=${size}&page=${page}`);
 }

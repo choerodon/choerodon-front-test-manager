@@ -3,8 +3,9 @@ import { Table, Button, Icon, Card, Select, Spin, Upload } from 'choerodon-ui';
 import { Page, Header, Content, stores } from 'choerodon-front-boot';
 import _ from 'lodash';
 import { TextEditToggle } from '../../../../components/CommonComponent';
+import EditTestDetail from '../../../../components/EditTestDetail';
 import FullEditor from '../../../../components/FullEditor';
-import { getCycle, getCycleDetails, getStatusList, getUsers, editCycle } from '../../../../../api/CycleExecuteApi';
+import { getCycle, getCycleDetails, getStatusList, getUsers, editCycle, getCycleHistiorys } from '../../../../../api/CycleExecuteApi';
 import { uploadFile } from '../../../../../api/CommonApi';
 import { delta2Html } from '../../../../common/utils';
 
@@ -83,10 +84,23 @@ class CycleExecute extends Component {
     loading: false,
     edit: false,
     selectLoading: false,
+    editVisible: false,
+    editing: null,
     userList: [], // 用户列表
     statusList: [], // 状态列表
     stepStatusList: [],
     detailList: [],
+    detailPagination: {
+      current: 1,
+      total: 0,
+      pageSize: 5,
+    },
+    historyList: [],
+    historyPagination: {
+      current: 1,
+      total: 0,
+      pageSize: 5,
+    },
     cycleData: {
       executeId: null,
       cycleId: null, // 循环id
@@ -120,14 +134,32 @@ class CycleExecute extends Component {
   }
   getInfo = () => {
     this.setState({ loading: true });
-    Promise.all([getCycle(), getStatusList('CYCLE_CASE'), getCycleDetails(1), getStatusList('CASE_STEP')])
-      .then(([cycleData, statusList, detailList, stepStatusList]) => {
-        window.console.log(detailList);
-        this.setState({ 
+    const { historyPagination, detailPagination } = this.state;
+    Promise.all([getCycle(), getStatusList('CYCLE_CASE'), getCycleDetails({
+      page: detailPagination.current - 1,
+      size: detailPagination.pageSize,
+    }, 1),
+    getStatusList('CASE_STEP'), getCycleHistiorys({
+      page: historyPagination.current - 1,
+      size: historyPagination.pageSize,
+    }, 1)])
+      .then(([cycleData, statusList, detailData, stepStatusList, historyData]) => {
+        this.setState({
           cycleData,
-          statusList, 
-          detailList: detailList.content,
+          statusList,
+          detailList: detailData.content,
+          detailPagination: {
+            current: detailPagination.current,
+            pageSize: detailPagination.pageSize,
+            total: detailData.totalElements,
+          },
           stepStatusList,
+          historyPagination: {
+            current: historyPagination.current,
+            pageSize: historyPagination.pageSize,
+            total: historyData.totalElements,
+          },
+          historyList: historyData.content,
           loading: false,
         });
         this.setStatusAndColor(this.state.cycleData.executionStatus, statusList);
@@ -136,6 +168,36 @@ class CycleExecute extends Component {
           loading: false,
         });
       });
+  }
+  getHistoryList = (pagination) => {
+    getCycleHistiorys({
+      page: pagination.current - 1,
+      size: pagination.pageSize,
+    }, 1).then((history) => {
+      this.setState({
+        historyPagination: {
+          current: pagination.current,
+          pageSize: pagination.pageSize,
+          total: history.totalElements,
+        },
+        historyList: history.content,
+      });
+    });
+  }
+  getDetailList = (pagination) => {
+    getCycleDetails({
+      page: pagination.current - 1,
+      size: pagination.pageSize,
+    }, 1).then((detail) => {
+      this.setState({
+        detailPagination: {
+          current: pagination.current,
+          pageSize: pagination.pageSize,
+          total: detail.totalElements,
+        },
+        detailList: detail.content,
+      });
+    });
   }
   setStatusAndColor = (status, statusList) => {
     this.setState({
@@ -148,26 +210,33 @@ class CycleExecute extends Component {
       },
     });
   }
-  handleStatusChange = (status) => {
-    this.setStatusAndColor(status, this.state.statusList);
-  }
+
   handleAssignedChange = (assigned) => {
     const { userList } = this.state;
-    for (let i = 0; i < userList.length; i += 1) {
-      if (userList[i].realName === assigned) {
-        this.setState({
-          cycleData: {
-            ...this.state.cycleData,
-            ...{
-              assignedTo: userList[i].id,
-              reporterRealName: assigned,
-              reporterJobNumber: userList[i].loginName,
-            },
+    const target = _.find(userList, { realName: assigned });
+    if (target) {
+      this.setState({
+        cycleData: {
+          ...this.state.cycleData,
+          ...{
+            assignedTo: target.id,
+            reporterRealName: assigned,
+            reporterJobNumber: target.loginName,
           },
-        });
-      }
+        },
+      });
+    } else {
+      this.setState({
+        cycleData: {
+          ...this.state.cycleData,
+          ...{
+            assignedTo: null,
+            reporterRealName: null,
+            reporterJobNumber: null,
+          },
+        },
+      });
     }
-    window.console.log(assigned);
   }
   submit = (originData) => {
     window.console.log('submit', originData);
@@ -215,9 +284,20 @@ class CycleExecute extends Component {
     this.setState({ cycleData });
   }
 
+  handleStatusChange = (status) => {
+    this.setStatusAndColor(status, this.state.statusList);
+  }
+  handleHistoryTableChange = (pagination, filters, sorter) => {
+    this.getHistoryList(pagination);
+  }
+  handleDetailTableChange = (pagination, filters, sorter) => {
+    this.getDetailList(pagination);
+  }
   render() {
-    const { fileList, userList, stepStatusList, detailList, loading, cycleData,
-      statusList, selectLoading } = this.state;
+    const { fileList, userList, stepStatusList, detailList, historyList, loading, cycleData,
+      statusList, selectLoading, historyPagination, detailPagination, editVisible, editing }
+      = this.state;
+    const that = this;
     const props = {
       onRemove: (file) => {
         window.console.log(file);
@@ -229,38 +309,75 @@ class CycleExecute extends Component {
         }
       },
     };
-    const dataSource = [{
-      key: '1',
-      name: '胡彦斌',
-      age: 32,
-      address: '西湖区湖底公园1号',
-    }, {
-      key: '2',
-      name: '胡彦祖',
-      age: 42,
-      address: '西湖区湖底公园1号',
-    }];
-
     const columnsHistory = [{
       title: '执行方',
-      dataIndex: 'name',
-      key: 'name',
+      dataIndex: 'user',
+      key: 'user',
+      render(user) {
+        return (<div style={{ width: 100 }}>
+          {user ? (
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+              }}
+            >
+              <span
+                className="c7n-avatar"
+              >
+                {user.realName.slice(0, 1)}
+              </span>
+              <span>
+                {`${user.loginName} ${user.realName}`}
+              </span>
+            </div>
+          ) : '无'}
+        </div>);
+      },
     }, {
       title: '执行日期',
-      dataIndex: 'age',
-      key: 'age',
+      dataIndex: 'lastUpdateDate',
+      key: 'lastUpdateDate',
     }, {
       title: 'Field',
-      dataIndex: 'address',
-      key: 'address',
+      dataIndex: 'field',
+      key: 'field',
     }, {
       title: '原值',
-      dataIndex: 'address',
-      key: 'address2',
+      dataIndex: 'oldValue',
+      key: 'oldValue',
+      // render(oldValue) {
+      //   return (
+      //     <div style={{
+      //       background: _.find(statusList, { statusName: oldValue }).statusColor,
+      //       width: 60,
+      //       textAlign: 'center',
+      //       borderRadius: '100px',
+      //       display: 'inline-block',
+      //       color: 'white',
+      //     }}
+      //     >
+      //       {oldValue}
+      //     </div>);
+      // },
     }, {
       title: '新值',
-      dataIndex: 'address',
-      key: 'address3',
+      dataIndex: 'newValue',
+      key: 'newValue',
+      // render(newValue) {
+      //   return (
+      //     <div style={{
+      //       background: _.find(statusList, { statusName: newValue }).statusColor,
+      //       width: 60,
+      //       textAlign: 'center',
+      //       borderRadius: '100px',
+      //       display: 'inline-block',
+      //       color: 'white',
+      //     }}
+      //     >
+      //       {newValue}
+      //     </div>);
+      // },
     }];
     const columns = [{
       title: '测试步骤',
@@ -282,7 +399,7 @@ class CycleExecute extends Component {
       title: '状态',
       dataIndex: 'stepStatus',
       key: 'stepStatus',
-      render(stepStatus) {   
+      render(stepStatus) {
         const statusColor = _.find(stepStatusList, { statusName: stepStatus }).statusColor;
         return (<div style={{ ...styles.statusOption, ...{ background: statusColor } }}>
           {stepStatus}
@@ -309,8 +426,24 @@ class CycleExecute extends Component {
       title: '缺陷',
       dataIndex: 'defects',
       key: 'defects',
+    }, {
+      title: null,
+      dataIndex: 'executeId',
+      key: 'executeId',
+      render(executeId, recorder) {
+        return (<Icon
+          type="mode_edit"
+          style={{ cursor: 'pointer' }}
+          onClick={() => {
+            that.setState({
+              editVisible: true,
+              editing: recorder,
+            });
+          }}
+        />);
+      },
     }];
-    
+
     const { executionStatus, executionStatusColor, reporterJobNumber, reporterRealName,
       assignedUserRealName, assignedUserJobNumber, lastUpdateDate, executeId,
       issueId, comment, caseAttachment, testCycleCaseStepES } = cycleData;
@@ -340,6 +473,7 @@ class CycleExecute extends Component {
             <span>刷新</span>
           </Button>
         </Header>
+        <EditTestDetail visible={editVisible} onCancel={() => { this.setState({ editVisible: false }); }} onOk={() => { window.console.log('ok'); }} editing={editing} />
         <Spin spinning={loading}>
           <div>
             <div style={{ display: 'flex', padding: 24 }}>
@@ -409,12 +543,16 @@ class CycleExecute extends Component {
                       </Text>
                       <Edit>
                         <Select
+                          filter
                           allowClear
                           autoFocus
+                          filterOption={(input, option) =>
+                            option.props.children.props.children[1].props.children.toLowerCase()
+                              .indexOf(input.toLowerCase()) >= 0}
                           loading={selectLoading}
                           value={reporterRealName}
                           style={{ width: 200 }}
-                          onSelect={this.handleAssignedChange}
+                          onChange={this.handleAssignedChange}
                           onFocus={() => {
                             this.setState({
                               selectLoading: true,
@@ -545,14 +683,24 @@ class CycleExecute extends Component {
                 <Icon type="expand_more" />
                 <span style={styles.cardTitleText}>执行历史记录</span>
               </div>
-              <Table dataSource={dataSource} columns={columnsHistory} />
+              <Table
+                dataSource={historyList}
+                columns={columnsHistory}
+                pagination={historyPagination}
+                onChange={this.handleHistoryTableChange}
+              />
             </Card>
             <Card title={null} style={{ margin: 24 }} bodyStyle={styles.cardBodyStyle}>
               <div style={styles.cardTitle}>
                 <Icon type="expand_more" />
                 <span style={styles.cardTitleText}>测试详细信息</span>
               </div>
-              <Table dataSource={detailList} columns={columns} />
+              <Table
+                dataSource={detailList}
+                columns={columns}
+                pagination={detailPagination}
+                onChange={this.handleDetailTableChange}
+              />
             </Card>
           </div>
         </Spin>
