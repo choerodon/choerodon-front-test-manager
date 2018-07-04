@@ -12,7 +12,7 @@ class TestManagerIndex extends React.Component {
     return (
       <Switch>
         <Route path={`${match.url}/cycle`} component={cycleIndex} />
-        <Route path={`${match.url}/customStatus`} component={CustomStatusIndex} />
+        <Route path={`${match.url}/status`} component={CustomStatusIndex} />
         <Route path={'*'} component={nomatch} />
       </Switch>
     );
