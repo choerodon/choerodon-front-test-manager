@@ -38,7 +38,7 @@ class CreateSprint extends Component {
         onOk={this.handleOk}
       >
         <WYSIWYGEditor
-          defaultValue={this.state.delta}
+          value={this.state.delta}
           style={{ height: 500, width: '100%', marginTop: 20 }}
           onChange={(value) => {          
             this.setState({ delta: value });
