@@ -80,48 +80,17 @@ class EditTestDetail extends Component {
       objectVersionNumber,
       stepAttachment: stepAttachment || [],
       caseAttachment: caseAttachment || [],
-      fileList: stepAttachment ? stepAttachment.map(attachment => {
+      fileList: stepAttachment ? stepAttachment.map((attachment) => {
         const { id, attachmentName, url } = attachment;
         return {
           uid: id,
           name: attachmentName,
           status: 'done',
           url,
-        }
+        };
       }) : [],
       defects: defects || [],
     });
-  }
-  handleChange = (value) => {
-    this.setState({
-      stepStatus: value
-    })
-  }
-  handleFileChange = (info) => {
-    let fileList = info.fileList;
-
-    // 1. Limit the number of uploaded files
-    //    Only to show two recent uploaded files, and old ones will be replaced by the new
-    fileList = fileList.slice(-2);
-
-    // 2. read from response and show file link
-    fileList = fileList.map((file) => {
-      if (file.response) {
-        // Component will show file.url as link
-        file.url = file.response.url;
-      }
-      return file;
-    });
-
-    // 3. filter successfully uploaded files according to response from server
-    // fileList = fileList.filter((file) => {
-    //   if (file.response) {
-    //     return file.response.status === 'success';
-    //   }
-    //   return true;
-    // });
-
-    this.setState({ fileList });
   }
   onOk = () => {
     // editCycleSide
@@ -136,19 +105,7 @@ class EditTestDetail extends Component {
       comment,
       stepAttachment,
       caseAttachment,
-      defects } = this.state;
-    console.log({
-      executeId,
-      stepStatus,
-      stepId,
-      executeStepId,
-      objectVersionNumber,
-      testStep,
-      comment,
-      stepAttachment,
-      caseAttachment,
-      defects
-    });
+      defects } = this.state;    
     const data = {
       executeId,
       stepStatus,
@@ -159,33 +116,44 @@ class EditTestDetail extends Component {
       comment,
       stepAttachment,
       caseAttachment,
-      defects
-    }
-    let formData = new FormData();
-    fileList.forEach(file => {
+      defects,
+    };
+    const formData = new FormData();
+    fileList.forEach((file) => {
       if (!file.url) {
         formData.append('file', file);
       }
-    })
-    Object.keys(data).forEach(key => {
-      formData.append(key, JSON.stringify(data[key]))
-    })
-    this.setState({ loading: true })
+    });
+    Object.keys(data).forEach((key) => {
+      formData.append(key, JSON.stringify(data[key]));
+    });
+    this.setState({ loading: true });
     editCycleSide(formData).then(() => {
       this.setState({
-        loading: false
-      })
+        loading: false,
+      });
       this.props.onOk();
-    }).catch(error => {
+    }).catch((error) => {
       this.setState({
-        loading: false
-      })
-      Choerodon.prompt("网络错误")
-    })
+        loading: false,
+      });
+      Choerodon.prompt('网络错误');
+    });
   }
+  handleChange = (value) => {
+    this.setState({
+      stepStatus: value,
+    });
+  }
+  handleFileChange = (info) => {
+    const fileList = info.fileList;
+    this.setState({ fileList });
+  }
+
   render() {
     const { visible, onOk, onCancel } = this.props;
-    const { fileList, executeId, testStep, comment, stepStatusList, stepStatus, loading } = this.state;
+    const { fileList, executeId, testStep, comment, 
+      stepStatusList, stepStatus, loading } = this.state;
     const delta = text2Delta(comment);
     // console.log(delta)
     const props = {
@@ -193,12 +161,12 @@ class EditTestDetail extends Component {
       onChange: this.handleFileChange,
       multiple: true,
       beforeUpload: (file) => {
-        this.setState(({ fileList }) => ({
-          fileList: [...fileList, file],
+        this.setState(({ List }) => ({
+          fileList: [...List, file],
         }));
         return false;
       },
-    }
+    };
     const options = stepStatusList.map((status) => {
       const { statusName, statusColor } = status;
       return (<Option value={statusName} key={statusName}>
@@ -251,7 +219,7 @@ class EditTestDetail extends Component {
             <Upload {...props} fileList={fileList}>
               <Button className="c7n-EditTestDetail-uploadBtn">
                 <Icon type="file_upload" /> 上传附件
-          </Button>
+              </Button>
             </Upload>
             <div style={styles.editLabel}>注释</div>
             <WYSIWYGEditor
