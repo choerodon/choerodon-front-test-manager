@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
-import { Table, Button, Icon, Card, Select, Spin, Upload } from 'choerodon-ui';
+import { Table, Button, Icon, Card, Select, Spin, Upload, Tooltip } from 'choerodon-ui';
 import { Page, Header, Content, stores } from 'choerodon-front-boot';
 import _ from 'lodash';
-import { TextEditToggle } from '../../../../components/CommonComponent';
+import { TextEditToggle, RichTextShow } from '../../../../components/CommonComponent';
 import EditTestDetail from '../../../../components/EditTestDetail';
 import FullEditor from '../../../../components/FullEditor';
-import { getCycle, getCycleDetails, getStatusList, getUsers, editCycle, getCycleHistiorys } from '../../../../../api/CycleExecuteApi';
+import { getCycle, getCycleDetails, getStatusList, getUsers, editCycle, getCycleHistiorys, deleteAttachment } from '../../../../../api/CycleExecuteApi';
 import { uploadFile } from '../../../../../api/CommonApi';
-import { delta2Html } from '../../../../common/utils';
+import { delta2Html, delta2Text } from '../../../../common/utils';
 
 import './CycleExecute.less';
 
@@ -26,6 +26,7 @@ const styles = {
     marginLeft: '5px',
   },
   cardBodyStyle: {
+    maxHeight: '100%',
     padding: 12,
     overflow: 'hidden',
   },
@@ -75,12 +76,7 @@ function beforeUpload(file) {
 }
 class CycleExecute extends Component {
   state = {
-    fileList: [{
-      uid: -1,
-      name: 'sss',
-      status: 'done',
-      url: 'response',
-    }],
+    fileList: [],
     loading: false,
     edit: false,
     selectLoading: false,
@@ -144,7 +140,18 @@ class CycleExecute extends Component {
       size: historyPagination.pageSize,
     }, 1)])
       .then(([cycleData, statusList, detailData, stepStatusList, historyData]) => {
+        const { caseAttachment } = cycleData;
+        const fileList = caseAttachment.map((attachment) => {
+          const { url, attachmentName, id } = attachment;
+          return {
+            uid: id,
+            name: attachmentName,
+            status: 'done',
+            url,
+          };
+        });
         this.setState({
+          fileList,
           cycleData,
           statusList,
           detailList: detailData.content,
@@ -164,6 +171,7 @@ class CycleExecute extends Component {
         });
         this.setStatusAndColor(this.state.cycleData.executionStatus, statusList);
       }).catch((error) => {
+        Choerodon.prompt("网络异常");
         this.setState({
           loading: false,
         });
@@ -205,7 +213,7 @@ class CycleExecute extends Component {
         ...this.state.cycleData,
         ...{
           executionStatus: status,
-          executionStatusColor: _.find(statusList, { statusName: status }).statusColor,
+          executionStatusColor: _.find(statusList, { statusName: status }) && _.find(statusList, { statusName: status }).statusColor,
         },
       },
     });
@@ -230,7 +238,7 @@ class CycleExecute extends Component {
         cycleData: {
           ...this.state.cycleData,
           ...{
-            assignedTo: null,
+            assignedTo: 0,
             reporterRealName: null,
             reporterJobNumber: null,
           },
@@ -239,7 +247,7 @@ class CycleExecute extends Component {
     }
   }
   submit = (originData) => {
-    window.console.log('submit', originData);
+    // window.console.log('submit', originData);
     const { cycleData } = this.state;
     // 删除一些不必要字段
     delete cycleData.defects;
@@ -247,19 +255,33 @@ class CycleExecute extends Component {
     delete cycleData.testCycleCaseStepES;
     delete cycleData.lastRank;
     delete cycleData.nextRank;
+    this.setState({ loading: true });
     editCycle(this.state.cycleData).then((Data) => {
       this.setState({
         cycleData: Data,
+        edit: false,
       });
       this.setStatusAndColor(Data.executionStatus, this.state.statusList);
-      window.console.log(cycleData);
+      // window.console.log(cycleData);
+      this.getInfo();
+    }).catch((error) => {
+      Choerodon.prompt("网络异常");
+      this.setState({
+        originData,
+      });
+      this.setStatusAndColor(originData.executionStatus, this.state.statusList);
     });
   }
   handleUpload = (e) => {
     if (beforeUpload(e.target.files[0])) {
-      // console.log(e.target.files[0]);
+      console.log(e.target.files);
       const formData = new FormData();
-      formData.append('file', e.target.files[0]);
+      [].forEach.call(e.target.files, (file) => {
+        // file.name = encodeURI(encodeURI(file.name));
+        formData.append('file', file);
+      })
+
+      // formData.append('file', e.target.files[0]);
       // this.setState({
       //   fileList: [...this.state.fileList, ...[{
       //     uid: Math.random(),
@@ -268,14 +290,19 @@ class CycleExecute extends Component {
       //     url: 'response',
       //   }]],
       // });
-      const a = {
+      const config = {
         bucketName: 'test',
-        fileName: e.target.files[0].name,
+        // fileName: e.target.files[0].name,
         comment: '',
         attachmentLinkId: this.state.cycleData.executeId,
         attachmentType: 'CYCLE_CASE',
       };
-      uploadFile(formData, a);
+      // this.setState({ loading: true });
+      uploadFile(formData, config).then(() => {
+        this.getInfo();
+      }).catch(() => {
+        Choerodon.prompt("网络异常");
+      });
     }
   }
   cancelEdit = (originData) => {
@@ -283,7 +310,29 @@ class CycleExecute extends Component {
     cycleData = { ...cycleData, ...originData };
     this.setState({ cycleData });
   }
-
+  handleCommentSubmit = (value) => {
+    const { cycleData } = this.state;
+    // 删除一些不必要字段
+    delete cycleData.defects;
+    delete cycleData.caseAttachment;
+    delete cycleData.testCycleCaseStepES;
+    delete cycleData.lastRank;
+    delete cycleData.nextRank;
+    this.setState({ loading: true });
+    editCycle({ ...this.state.cycleData, ...{ comment: JSON.stringify(value) } }).then((Data) => {
+      this.setState({
+        cycleData: Data,
+        edit: false,
+        loading: false,
+      });
+      this.setStatusAndColor(Data.executionStatus, this.state.statusList);
+      // window.console.log(cycleData);
+      this.getInfo();
+    }).catch((error) => {
+      Choerodon.prompt("网络异常");
+      this.setState({ loading: false });
+    });
+  }
   handleStatusChange = (status) => {
     this.setStatusAndColor(status, this.state.statusList);
   }
@@ -300,11 +349,23 @@ class CycleExecute extends Component {
     const that = this;
     const props = {
       onRemove: (file) => {
-        window.console.log(file);
+        // window.console.log(file);
         // const fileList = this.state.fileList.slice();
-        const index = fileList.indexOf(file);
-        const newFileList = fileList.slice();
+        // const index = fileList.indexOf(file);
+        // const newFileList = fileList.slice();
         if (file.url) {
+          this.setState({
+            loading: true
+          })
+          deleteAttachment(file.uid).then((data) => {
+            // window.console.log(data);
+            this.getInfo();
+          }).then(() => {
+            this.setState({
+              loading: false
+            })
+            Choerodon.prompt("网络异常");
+          });
           // 写服务端删除逻辑
         }
       },
@@ -346,6 +407,39 @@ class CycleExecute extends Component {
       title: '原值',
       dataIndex: 'oldValue',
       key: 'oldValue',
+      render(oldValue, record) {
+        switch (record.field) {
+          case '注释': {
+            return (
+              <Tooltip title={<RichTextShow data={delta2Html(oldValue)} />}>
+                <div
+                  title={delta2Text(oldValue)}
+                  style={{
+                    width: 100,
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {delta2Text(oldValue)}
+                </div>
+              </Tooltip>
+            );
+          }
+          default: {
+            return (<div
+              style={{
+                width: 100,
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {oldValue.trim() === '' ? '空' : oldValue}
+            </div>);
+          }
+        }
+      },
       // render(oldValue) {
       //   return (
       //     <div style={{
@@ -364,6 +458,38 @@ class CycleExecute extends Component {
       title: '新值',
       dataIndex: 'newValue',
       key: 'newValue',
+      render(newValue, record) {
+        switch (record.field) {
+          case '注释': {
+            return (
+              <Tooltip title={<RichTextShow data={delta2Html(newValue)} />}>
+                <div
+                  style={{
+                    width: 100,
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {delta2Text(newValue)}
+                </div>
+              </Tooltip>
+            );
+          }
+          default: {
+            return (<div
+              style={{
+                width: 100,
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {newValue.trim() === '' ? '空' : newValue}
+            </div>);
+          }
+        }
+      },
       // render(newValue) {
       //   return (
       //     <div style={{
@@ -400,7 +526,8 @@ class CycleExecute extends Component {
       dataIndex: 'stepStatus',
       key: 'stepStatus',
       render(stepStatus) {
-        const statusColor = _.find(stepStatusList, { statusName: stepStatus }).statusColor;
+        const statusColor = _.find(stepStatusList, { statusName: stepStatus }) ?
+          _.find(stepStatusList, { statusName: stepStatus }).statusColor : '';
         return (<div style={{ ...styles.statusOption, ...{ background: statusColor } }}>
           {stepStatus}
         </div>);
@@ -410,13 +537,22 @@ class CycleExecute extends Component {
       title: '注释',
       dataIndex: 'comment',
       key: 'comment',
-      render(comment) {
+      render(comment, record) {
         return (
-          <div>
-            {comment || '无'}
-          </div>
+          <Tooltip title={<RichTextShow data={delta2Html(comment) || '空'} />}>
+            <div
+              style={{
+                width: 100,
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {delta2Text(comment) || '空'}
+            </div>
+          </Tooltip>
         );
-      },
+      }
     },
     {
       title: '附件',
@@ -426,6 +562,9 @@ class CycleExecute extends Component {
       title: '缺陷',
       dataIndex: 'defects',
       key: 'defects',
+      render(defects) {
+        return defects.map(defect => <div>{defect.defectName}</div>)
+      }
     }, {
       title: null,
       dataIndex: 'executeId',
@@ -437,7 +576,7 @@ class CycleExecute extends Component {
           onClick={() => {
             that.setState({
               editVisible: true,
-              editing: recorder,
+              editing: { ...recorder, ...{ stepStatusList } },
             });
           }}
         />);
@@ -473,7 +612,12 @@ class CycleExecute extends Component {
             <span>刷新</span>
           </Button>
         </Header>
-        <EditTestDetail visible={editVisible} onCancel={() => { this.setState({ editVisible: false }); }} onOk={() => { window.console.log('ok'); }} editing={editing} />
+        <EditTestDetail
+          visible={editVisible}
+          onCancel={() => { this.setState({ editVisible: false }); }}
+          onOk={(data) => { this.setState({ editVisible: false }) }}
+          editing={editing}
+        />
         <Spin spinning={loading}>
           <div>
             <div style={{ display: 'flex', padding: 24 }}>
@@ -614,7 +758,7 @@ class CycleExecute extends Component {
                 <Card
                   title={null}
                   style={{ width: 561, height: 124 }}
-                  bodyStyle={styles.cardBodyStyle}
+                  bodyStyle={{ ...styles.cardBodyStyle, ...{ display: 'flex', flexDirection: 'column' } }}
                 >
                   <div style={styles.cardTitle}>
                     <Icon type="expand_more" />
@@ -624,14 +768,14 @@ class CycleExecute extends Component {
                       <Icon type="zoom_out_map" /> 全屏编辑
                     </Button>
                     <FullEditor
-                      initValue={comment}
+                      initValue={JSON.parse(comment)}
                       visible={this.state.edit}
                       onCancel={() => this.setState({ edit: false })}
-                      onOk={(value) => { window.console.log(value); }}
+                      onOk={this.handleCommentSubmit}
                     />
                   </div>
-                  <div style={{ fontSize: 13, color: 'rgba(0,0,0,0.65)', lineHeight: '20px', padding: '20px 20px 18px' }}>
-                    {delta2Html(comment)}
+                  <div style={{ fontSize: 13, color: 'rgba(0,0,0,0.65)', lineHeight: '20px', marginTop: 20, padding: '0 20px 18px', flex: 1, overflow: 'auto' }}>
+                    <RichTextShow data={delta2Html(comment)} />
                   </div>
                 </Card>
                 <Card
@@ -649,6 +793,7 @@ class CycleExecute extends Component {
                       <Icon type="file_upload" /> 上传附件
                       <input
                         type="file"
+                        multiple={true}
                         title="更换头像"
                         onChange={this.handleUpload}
                         style={{
@@ -664,7 +809,7 @@ class CycleExecute extends Component {
                     </Button>
                   </div>
                   <div>
-                    {caseAttachment}
+                    {/* {caseAttachment} */}
                     <Upload
                       {...props}
                       fileList={fileList}

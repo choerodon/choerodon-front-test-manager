@@ -17,7 +17,7 @@ export function uploadFile(data, config) {
   };
 
   return axios.post(
-    `/test/v1/project/test/case/attachment?bucket_name=${bucketName}&file_name=${fileName}&comment=${comment}&attachmentLinkId=${attachmentLinkId}&attachmentType="CYCLE_CASE"`,
+    `/test/v1/project/test/case/attachment?bucket_name=${bucketName}&attachmentLinkId=${attachmentLinkId}&attachmentType=CYCLE_CASE`,
     data,
     axiosConfig,
   );

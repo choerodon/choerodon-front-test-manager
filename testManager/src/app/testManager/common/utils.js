@@ -18,13 +18,15 @@ export function delta2Html(description) {
   const delta = text2Delta(description);
   const converter = new QuillDeltaToHtmlConverter(delta, {});
   const text = converter.convert();
-  if (text.substring(0, 3) === '<p>') {
-    return text.substring(3);
-  } else {
-    return text;
-  }
+  // if (text.substring(0, 3) === '<p>') {
+  //   return text.substring(3);
+  // } else {
+  return text;
+  // }
 }
-
+export function delta2Text(delta) {
+  return delta2Html(delta).replace(/<[^>]+>/g, '');
+}
 export function escape(str) {
   return str.replace(/<\/script/g, '<\\/script').replace(/<!--/g, '<\\!--');
 }

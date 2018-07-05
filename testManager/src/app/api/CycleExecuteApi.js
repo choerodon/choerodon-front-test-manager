@@ -17,6 +17,12 @@ export function getUsers(param) {
 export function editCycle(cycle) {
   return axios.post('/test/v1/cycle/case/update', cycle);
 }
+export function editCycleSide(data) {
+  const axiosConfig = {
+    headers: { 'content-type': 'multipart/form-datal' },
+  };
+  return axios.post('/test/v1/cycle/case/step/updateWithAttach', data, axiosConfig);
+}
 export function getCycleDetails(pagination, cycleCaseId) {
   const { size, page } = pagination;
   return axios.get(`/test/v1/cycle/case/step/query/${cycleCaseId}?size=${size}&page=${page}`);
@@ -24,4 +30,7 @@ export function getCycleDetails(pagination, cycleCaseId) {
 export function getCycleHistiorys(pagination, cycleCaseId) {
   const { size, page } = pagination;
   return axios.get(`/test/v1/cycle/case/history/${cycleCaseId}?size=${size}&page=${page}`);
+}
+export function deleteAttachment(id) {
+  return axios.delete(`/test/v1/project/test/case/attachment?bucketName=${'test'}&attachId=${id}`);
 }

@@ -14,15 +14,12 @@ class CreateSprint extends Component {
     edit: false,
   };
 
-  componentDidMount() {
-    this.initValue();
-  }
-
-  initValue() {
+  componentWillReceiveProps(nextProps) {
     this.setState({
-      delta: this.props.initValue,
+      delta: nextProps.initValue,
     });
   }
+
 
   handleOk = () => {
     this.props.onOk(this.state.delta);
@@ -43,7 +40,7 @@ class CreateSprint extends Component {
         <WYSIWYGEditor
           value={this.state.delta}
           style={{ height: 500, width: '100%', marginTop: 20 }}
-          onChange={(value) => {
+          onChange={(value) => {          
             this.setState({ delta: value });
           }}
         />
