@@ -521,6 +521,9 @@ class CycleExecute extends Component {
       title: '步骤附件',
       dataIndex: 'stepAttachment',
       key: 'stepAttachment',
+      render(stepAttachment) {
+        return stepAttachment.map(attachment => <div>{attachment.attachmentName}</div>)
+      }
     }, {
       title: '状态',
       dataIndex: 'stepStatus',
@@ -615,7 +618,7 @@ class CycleExecute extends Component {
         <EditTestDetail
           visible={editVisible}
           onCancel={() => { this.setState({ editVisible: false }); }}
-          onOk={(data) => { this.setState({ editVisible: false }) }}
+          onOk={(data) => { this.setState({ editVisible: false }); this.getInfo() }}
           editing={editing}
         />
         <Spin spinning={loading}>

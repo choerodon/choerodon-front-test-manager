@@ -5,6 +5,7 @@ import { asyncLocaleProvider, asyncRouter, nomatch } from 'choerodon-front-boot'
 
 const cycleIndex = asyncRouter(() => import('./project/Cycle'));
 const CustomStatusIndex = asyncRouter(() => import('./project/CustomStatus'));
+const ReportIndex = asyncRouter(() => import('./project/Report'))
 @inject('AppState')
 class TestManagerIndex extends React.Component {
   render() {
@@ -13,6 +14,7 @@ class TestManagerIndex extends React.Component {
       <Switch>
         <Route path={`${match.url}/cycle`} component={cycleIndex} />
         <Route path={`${match.url}/status`} component={CustomStatusIndex} />
+        <Route path={`${match.url}/report`} component={ReportIndex} />
         <Route path={'*'} component={nomatch} />
       </Switch>
     );

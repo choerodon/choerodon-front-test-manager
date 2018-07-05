@@ -38,6 +38,7 @@ function handleChange(value) {
 
 class EditTestDetail extends Component {
   state = {
+    fileList: [],
     loading: false,
     stepId: null,
     comment: null,
@@ -79,6 +80,15 @@ class EditTestDetail extends Component {
       objectVersionNumber,
       stepAttachment: stepAttachment || [],
       caseAttachment: caseAttachment || [],
+      fileList: stepAttachment ? stepAttachment.map(attachment => {
+        const { id, attachmentName, url } = attachment;
+        return {
+          uid: id,
+          name: attachmentName,
+          status: 'done',
+          url,
+        }
+      }) : [],
       defects: defects || [],
     });
   }
@@ -87,9 +97,37 @@ class EditTestDetail extends Component {
       stepStatus: value
     })
   }
+  handleFileChange = (info) => {
+    let fileList = info.fileList;
+
+    // 1. Limit the number of uploaded files
+    //    Only to show two recent uploaded files, and old ones will be replaced by the new
+    fileList = fileList.slice(-2);
+
+    // 2. read from response and show file link
+    fileList = fileList.map((file) => {
+      if (file.response) {
+        // Component will show file.url as link
+        file.url = file.response.url;
+      }
+      return file;
+    });
+
+    // 3. filter successfully uploaded files according to response from server
+    // fileList = fileList.filter((file) => {
+    //   if (file.response) {
+    //     return file.response.status === 'success';
+    //   }
+    //   return true;
+    // });
+
+    this.setState({ fileList });
+  }
   onOk = () => {
     // editCycleSide
-    const { executeId,
+    const {
+      fileList,
+      executeId,
       stepStatus,
       stepId,
       executeStepId,
@@ -124,6 +162,11 @@ class EditTestDetail extends Component {
       defects
     }
     let formData = new FormData();
+    fileList.forEach(file => {
+      if (!file.url) {
+        formData.append('file', file);
+      }
+    })
     Object.keys(data).forEach(key => {
       formData.append(key, JSON.stringify(data[key]))
     })
@@ -142,26 +185,20 @@ class EditTestDetail extends Component {
   }
   render() {
     const { visible, onOk, onCancel } = this.props;
-    const { executeId, testStep, comment, stepStatusList, stepStatus, loading } = this.state;
+    const { fileList, executeId, testStep, comment, stepStatusList, stepStatus, loading } = this.state;
     const delta = text2Delta(comment);
-    console.log(delta)
+    // console.log(delta)
     const props = {
-      name: 'file',
       action: '//jsonplaceholder.typicode.com/posts/',
-      headers: {
-        authorization: 'authorization-text',
+      onChange: this.handleFileChange,
+      multiple: true,
+      beforeUpload: (file) => {
+        this.setState(({ fileList }) => ({
+          fileList: [...fileList, file],
+        }));
+        return false;
       },
-      onChange(info) {
-        if (info.file.status !== 'uploading') {
-          window.console.log(info.file, info.fileList);
-        }
-        if (info.file.status === 'done') {
-          Choerodon.prompt(`${info.file.name} file uploaded successfully`);
-        } else if (info.file.status === 'error') {
-          Choerodon.prompt(`${info.file.name} file upload failed.`);
-        }
-      },
-    };
+    }
     const options = stepStatusList.map((status) => {
       const { statusName, statusColor } = status;
       return (<Option value={statusName} key={statusName}>
@@ -211,7 +248,7 @@ class EditTestDetail extends Component {
               {children}
             </Select>
             <div style={styles.editLabel}>附件</div>
-            <Upload {...props}>
+            <Upload {...props} fileList={fileList}>
               <Button className="c7n-EditTestDetail-uploadBtn">
                 <Icon type="file_upload" /> 上传附件
           </Button>
