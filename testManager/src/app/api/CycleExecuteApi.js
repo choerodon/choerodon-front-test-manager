@@ -15,7 +15,8 @@ export function getUsers(param) {
   return axios.get(`/test/v1/user/${projectId}/users`);
 }
 export function editCycle(cycle) {
-  return axios.post('/test/v1/cycle/case/update', cycle);
+  const projectId = AppState.currentMenuType.id;
+  return axios.post(`/test/v1/cycle/case/${projectId}/update`, cycle);
 }
 export function editCycleSide(data) {
   const axiosConfig = {

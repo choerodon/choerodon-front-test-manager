@@ -171,7 +171,7 @@ class CycleExecute extends Component {
         });
         this.setStatusAndColor(this.state.cycleData.executionStatus, statusList);
       }).catch((error) => {
-        Choerodon.prompt("网络异常");
+        Choerodon.prompt('网络异常');
         this.setState({
           loading: false,
         });
@@ -213,7 +213,9 @@ class CycleExecute extends Component {
         ...this.state.cycleData,
         ...{
           executionStatus: status,
-          executionStatusColor: _.find(statusList, { statusName: status }) && _.find(statusList, { statusName: status }).statusColor,
+          executionStatusColor:
+           _.find(statusList, { statusName: status }) && 
+           _.find(statusList, { statusName: status }).statusColor,
         },
       },
     });
@@ -265,7 +267,7 @@ class CycleExecute extends Component {
       // window.console.log(cycleData);
       this.getInfo();
     }).catch((error) => {
-      Choerodon.prompt("网络异常");
+      Choerodon.prompt('网络异常');
       this.setState({
         originData,
       });
@@ -274,12 +276,12 @@ class CycleExecute extends Component {
   }
   handleUpload = (e) => {
     if (beforeUpload(e.target.files[0])) {
-      console.log(e.target.files);
+      // console.log(e.target.files);
       const formData = new FormData();
       [].forEach.call(e.target.files, (file) => {
         // file.name = encodeURI(encodeURI(file.name));
         formData.append('file', file);
-      })
+      });
 
       // formData.append('file', e.target.files[0]);
       // this.setState({
@@ -301,7 +303,7 @@ class CycleExecute extends Component {
       uploadFile(formData, config).then(() => {
         this.getInfo();
       }).catch(() => {
-        Choerodon.prompt("网络异常");
+        Choerodon.prompt('网络异常');
       });
     }
   }
@@ -329,7 +331,7 @@ class CycleExecute extends Component {
       // window.console.log(cycleData);
       this.getInfo();
     }).catch((error) => {
-      Choerodon.prompt("网络异常");
+      Choerodon.prompt('网络异常');
       this.setState({ loading: false });
     });
   }
@@ -355,16 +357,16 @@ class CycleExecute extends Component {
         // const newFileList = fileList.slice();
         if (file.url) {
           this.setState({
-            loading: true
-          })
+            loading: true,
+          });
           deleteAttachment(file.uid).then((data) => {
             // window.console.log(data);
             this.getInfo();
           }).then(() => {
             this.setState({
-              loading: false
-            })
-            Choerodon.prompt("网络异常");
+              loading: false,
+            });
+            Choerodon.prompt('网络异常');
           });
           // 写服务端删除逻辑
         }
@@ -522,8 +524,8 @@ class CycleExecute extends Component {
       dataIndex: 'stepAttachment',
       key: 'stepAttachment',
       render(stepAttachment) {
-        return stepAttachment.map(attachment => <div>{attachment.attachmentName}</div>)
-      }
+        return stepAttachment.map(attachment => <div>{attachment.attachmentName}</div>);
+      },
     }, {
       title: '状态',
       dataIndex: 'stepStatus',
@@ -555,7 +557,7 @@ class CycleExecute extends Component {
             </div>
           </Tooltip>
         );
-      }
+      },
     },
     {
       title: '附件',
@@ -566,8 +568,8 @@ class CycleExecute extends Component {
       dataIndex: 'defects',
       key: 'defects',
       render(defects) {
-        return defects.map(defect => <div>{defect.defectName}</div>)
-      }
+        return defects.map(defect => <div>{defect.defectName}</div>);
+      },
     }, {
       title: null,
       dataIndex: 'executeId',
@@ -618,7 +620,7 @@ class CycleExecute extends Component {
         <EditTestDetail
           visible={editVisible}
           onCancel={() => { this.setState({ editVisible: false }); }}
-          onOk={(data) => { this.setState({ editVisible: false }); this.getInfo() }}
+          onOk={(data) => { this.setState({ editVisible: false }); this.getInfo(); }}
           editing={editing}
         />
         <Spin spinning={loading}>
@@ -796,7 +798,7 @@ class CycleExecute extends Component {
                       <Icon type="file_upload" /> 上传附件
                       <input
                         type="file"
-                        multiple={true}
+                        multiple
                         title="更换头像"
                         onChange={this.handleUpload}
                         style={{
