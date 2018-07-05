@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import {observer} from 'mobx-react';
-import {Menu, Dropdown} from 'choerodon-ui';
+import {Menu, Dropdown, Button} from 'choerodon-ui';
+import './TreeTitle.scss';
 
-@observer
 class TreeTitle extends Component {
     constructor(props) {
         super(props);
@@ -10,20 +10,24 @@ class TreeTitle extends Component {
 
     creatProcessBar = (processBar) => {
         let count = 0;
-        for (let a = 0; a < processBar.length; a++) {
-            count = count + processBar[a].value
+        let processBarObject = Object.entries(processBar);
+        for (let a = 0; a < processBarObject.length; a++) {
+            count = count + processBarObject[a][1];
         }
-        let code = '';
-        for (let i = 0; i < processBar.length; i++) {
-            let percentage = processBar[a].value / count;
-            code = code + <span style={{backgroundColor: processBar[i].key, width: percentage}}></span>
-        }
-        return (code);
+        console.log(processBarObject);
+        const s = processBarObject.map((item, i) => {
+            let percentage = (item[1] / count) * 100;
+            return (
+                <span className='c7n-pb-fill' style={{backgroundColor: item[0], width: `${percentage}%`}}></span>
+            )
+        });
+        console.log(s);
+        return s;
     };
 
     render() {
         const getMenu = (record) => (
-            <Menu onClick={this.handleClickMenu.bind(this, record)}>
+            <Menu>
                 {
                     record === 'folder' ? '' : (
                         <Menu.Item key="0">
@@ -54,8 +58,10 @@ class TreeTitle extends Component {
                 <div className='c7n-tt-processBar'>
                     <div className='c7n-process-bar'>
                         <span className='c7n-pb-unfill'>
-                        {this.creatProcessBar(this.props.processBar)}
-                        </span>;
+                            <div className='c7n-pb-fill-parent'>
+                                {this.creatProcessBar(this.props.processBar)}
+                            </div>
+                        </span>
                     </div>
                 </div>
                 <div className='c7n-tt-actionButton'>
@@ -68,4 +74,4 @@ class TreeTitle extends Component {
     }
 }
 
-export default TreeTitle;
+export default observer(TreeTitle);

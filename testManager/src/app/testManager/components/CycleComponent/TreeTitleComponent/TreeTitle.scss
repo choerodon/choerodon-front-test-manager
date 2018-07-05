@@ -1,0 +1,26 @@
+.c7n-pb-unfill {
+  width: 100px;
+  height: 8px;
+  background-color: rgba(0, 0, 0, 0.26);
+  display: inline-block;
+  position: relative;
+}
+
+.c7n-pb-fill {
+  display: inline-block;
+  width: 100px;
+  height: 8px;
+  position: relative;
+}
+
+.c7n-pb-fill-parent {
+  display: flex;
+  position: absolute;
+  width: 100px;
+  height: 8px;
+}
+
+.c7n-tree-title {
+  float: right;
+  display: flex;
+}

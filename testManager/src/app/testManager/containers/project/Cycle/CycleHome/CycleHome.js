@@ -6,7 +6,7 @@ import './CycleHome.scss';
 import {getVersionCode, getProjectVersion} from '../../../../../api/agileApi.js'
 import {getCycleByVersionId, getFolderByCycleId} from '../../../../../api/cycleApi'
 import {Button, Icon, Input, Tree} from 'choerodon-ui';
-import {TreeTitle} from '../CycleComponent/TreeTitleComponent/TreeTitle'
+import TreeTitle from '../../../../components/CycleComponent/TreeTitleComponent/TreeTitle'
 import {Page, Header, Content, stores} from 'choerodon-front-boot';
 
 const {AppState} = stores;
@@ -87,7 +87,8 @@ class CycleHome extends Component {
                             if (res[i].parentCycleId === 0) {
                                 if (res[i].type === 'temp') {
                                     cycles.push({
-                                        title: `${res[i].cycleName}`,
+                                        title: <TreeTitle text={res[i].cycleName} type={res[i].type}
+                                                          processBar={{"#00BFA5": 3, "#D50000": 5,}}/>,
                                         key: `${treeNode.props.eventKey}-${j}`,
                                         label: `${res[i].cycleId}`,
                                         type: `${res[i].type}`,
@@ -97,7 +98,7 @@ class CycleHome extends Component {
                                 } else {
                                     cycles.push({
                                         title: <TreeTitle text={res[i].cycleName} type={res[i].type}
-                                                          processBar={res[i].cycleCaseList}/>,
+                                                          processBar={{"#00BFA5": 3, "#D50000": 5,}}/>,
                                         key: `${treeNode.props.eventKey}-${j}`,
                                         label: `${res[i].cycleId}`,
                                         type: `${res[i].type}`,
@@ -112,18 +113,19 @@ class CycleHome extends Component {
                             treeData: [...this.state.treeData],
                         });
                         let storage = window.localStorage;
-                        storage.setItem('cycleData', res);
+                        storage.removeItem('cycleData');
+                        storage.setItem('cycleData', JSON.stringify(res));
                     });
                     break;
                 case 3:
                     let storage = window.localStorage;
-                    let res = storage.getItem('cycleData');
+                    let res = JSON.parse(storage.getItem('cycleData'));
                     let folders = [];
                     for (let i = 0; i < res.length; i++) {
-                        console.log(`${res[i].parentCycleId} ==== ${treeNode.props.label}`);
-                        if (res[i].parentCycleId === treeNode.props.label) {
+                        if (res[i].parentCycleId == treeNode.props.label) {
                             folders.push({
-                                title: `${res[i].cycleName}`,
+                                title: <TreeTitle text={res[i].cycleName} type={res[i].type}
+                                                          processBar={{"#00BFA5": 3, "#D50000": 5,}}/>,
                                 key: `${treeNode.props.eventKey}-${i}`,
                                 label: `${res[i].cycleId}`,
                                 isLeaf: true,
