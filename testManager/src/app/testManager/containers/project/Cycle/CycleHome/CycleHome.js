@@ -3,8 +3,10 @@ import {observer} from 'mobx-react';
 import {withRouter} from 'react-router-dom';
 import debounce from 'lodash/debounce'
 import './CycleHome.scss';
-import {getVersionCode} from '../../../../../api/agileApi.js'
-import {Button, Table, Spin, Popover, Tooltip, Icon, Input, Tree} from 'choerodon-ui';
+import {getVersionCode, getProjectVersion} from '../../../../../api/agileApi.js'
+import {getCycleByVersionId, getFolderByCycleId} from '../../../../../api/cycleApi'
+import {Button, Icon, Input, Tree} from 'choerodon-ui';
+import {TreeTitle} from '../CycleComponent/TreeTitleComponent/TreeTitle'
 import {Page, Header, Content, stores} from 'choerodon-front-boot';
 
 const {AppState} = stores;
@@ -12,48 +14,128 @@ const TreeNode = Tree.TreeNode;
 
 @observer
 class CycleHome extends Component {
-    // constructor(props) {
-    //     super(props);
-    //     this.state = {
-    //         lookupValues: [],
-    //     };
-    // }
 
     input = debounce(() => {
 
     });
+
+    refresh() {
+
+    }
+
     state = {
         treeData: [
-            {title: 'Expand to load', key: '0'},
-            {title: 'Expand to load', key: '1'},
-            {title: 'Tree Node', key: '2', isLeaf: true},
+            {title: '所有版本', key: '0'},
         ],
+        icon: 'folder',
+        expandedKeys: ['0'],
+        leftVisible: true,
+        sideVisible: false,
     };
-    lookupValues = [];
+    onExpand = (expandedKeys) => {
+        this.setState({
+            expandedKeys,
+        });
+    };
     onLoadData = (treeNode) => {
         return new Promise((resolve) => {
             if (treeNode.props.children) {
                 resolve();
                 return;
             }
-
-            getVersionCode().then((res) => {
-                this.setState({
-                    lookupValues: res.lookupValues,
-                });
-                for (let i = 0; i < this.lookupValues.length; i++) {
-                    this.state.treeData.add(this.lookupValues[i].name, i);
-                    debugger;
-                }
-            });
-
-            treeNode.props.dataRef.children = [
-                {title: 'Child Node', key: `${treeNode.props.eventKey}-0`},
-                {title: 'Child Node', key: `${treeNode.props.eventKey}-1`},
-            ];
-            this.setState({
-                treeData: [...this.state.treeData],
-            });
+            let deep = treeNode.props.eventKey.replace(/[^-]/g, '').length;
+            switch (deep) {
+                case 0:
+                    getVersionCode().then((res) => {
+                        let versionCodes = [];
+                        for (let i = 0; i < res.lookupValues.length; i++) {
+                            let versionName = res.lookupValues[i].name;
+                            versionCodes.push({
+                                title: `${versionName}`,
+                                key: `${treeNode.props.eventKey}-${i}`
+                            });
+                        }
+                        treeNode.props.dataRef.children = versionCodes;
+                        this.setState({
+                            treeData: [...this.state.treeData],
+                        });
+                    });
+                    break;
+                case 1:
+                    getProjectVersion().then((res) => {
+                        let projectVersions = [];
+                        for (let i = 0; i < res.length; i++) {
+                            if (res[i].statusName === treeNode.props.title) {
+                                projectVersions.push({
+                                    title: `${res[i].name}`,
+                                    key: `${treeNode.props.eventKey}-${i}`,
+                                    label: `${res[i].versionId}`,
+                                });
+                            }
+                        }
+                        treeNode.props.dataRef.children = projectVersions;
+                        this.setState({
+                            treeData: [...this.state.treeData],
+                        });
+                    });
+                    break;
+                case 2:
+                    getCycleByVersionId(treeNode.props.label).then((res) => {
+                        let cycles = [];
+                        let j = 0;
+                        for (let i = 0; i < res.length; i++) {
+                            if (res[i].parentCycleId === 0) {
+                                if (res[i].type === 'temp') {
+                                    cycles.push({
+                                        title: `${res[i].cycleName}`,
+                                        key: `${treeNode.props.eventKey}-${j}`,
+                                        label: `${res[i].cycleId}`,
+                                        type: `${res[i].type}`,
+                                        versionId: `${res[i].versionId}`,
+                                        isLeaf: true,
+                                    });
+                                } else {
+                                    cycles.push({
+                                        title: <TreeTitle text={res[i].cycleName} type={res[i].type}
+                                                          processBar={res[i].cycleCaseList}/>,
+                                        key: `${treeNode.props.eventKey}-${j}`,
+                                        label: `${res[i].cycleId}`,
+                                        type: `${res[i].type}`,
+                                        versionId: `${res[i].versionId}`,
+                                    });
+                                }
+                                j++;
+                            }
+                        }
+                        treeNode.props.dataRef.children = cycles;
+                        this.setState({
+                            treeData: [...this.state.treeData],
+                        });
+                        let storage = window.localStorage;
+                        storage.setItem('cycleData', res);
+                    });
+                    break;
+                case 3:
+                    let storage = window.localStorage;
+                    let res = storage.getItem('cycleData');
+                    let folders = [];
+                    for (let i = 0; i < res.length; i++) {
+                        console.log(`${res[i].parentCycleId} ==== ${treeNode.props.label}`);
+                        if (res[i].parentCycleId === treeNode.props.label) {
+                            folders.push({
+                                title: `${res[i].cycleName}`,
+                                key: `${treeNode.props.eventKey}-${i}`,
+                                label: `${res[i].cycleId}`,
+                                isLeaf: true,
+                            });
+                        }
+                    }
+                    treeNode.props.dataRef.children = folders;
+                    this.setState({
+                        treeData: [...this.state.treeData],
+                    });
+                    break;
+            }
             resolve();
         });
     };
@@ -61,12 +143,16 @@ class CycleHome extends Component {
         return data.map((item) => {
             if (item.children) {
                 return (
-                    <TreeNode title={item.title} key={item.key} dataRef={item}>
+                    <TreeNode title={item.title} key={item.key} dataRef={item} showIcon={true}
+                              icon={<Icon
+                                  type={this.state.expandedKeys.includes(item.key) ? 'folder_open' : 'folder'}/>}>
                         {this.renderTreeNodes(item.children)}
                     </TreeNode>
                 );
             }
-            return <TreeNode {...item} dataRef={item}/>;
+            return <TreeNode
+                icon={<Icon type={this.state.expandedKeys.includes(item.key) ? 'folder_open' : 'folder'}/>} {...item}
+                dataRef={item}/>;
         });
     };
 
@@ -75,7 +161,7 @@ class CycleHome extends Component {
         return (
             <Page className="c7n-cycle">
                 <Header title="测试循环">
-                    <Button funcTyp="flat">
+                    <Button funcTyp="flat" onClick={this.refresh.bind(this)}>
                         <Icon type="autorenew icon"/>
                         <span>刷新</span>
                     </Button>
@@ -85,16 +171,43 @@ class CycleHome extends Component {
                     description="循环摘要使用树状图查看本项目中不同版本锁对应的测试情况。"
                 >
                     <div className="c7n-cycleHome">
-                        <div className="c7n-ch-left">
+                        <div className={this.state.sideVisible ? 'c7n-ch-side' : 'c7n-ch-hidden'}>
+                            <div className="c7n-chs-button">
+                                <Button
+                                    icon="navigate_next"
+                                    className="c7n-cycleHome-button"
+                                    onClick={() => {
+                                        this.setState({
+                                            leftVisible: true,
+                                            sideVisible: false,
+                                        });
+                                    }}
+                                />
+                            </div>
+                            <div className="c7n-chs-bar">
+                                {this.state.versionVisible ? '' : (
+                                    <p role="none" onClick={() => {
+                                        this.setState({});
+                                    }}>测试循环</p>
+                                )}
+                            </div>
+                        </div>
+                        <div className={this.state.leftVisible ? 'c7n-ch-left' : 'c7n-ch-hidden'}>
                             <div className="c7n-chl-head">
                                 <div className="c7n-chlh-search">
                                     <Input prefix={prefix} placeholder="&nbsp;过滤"/>
                                 </div>
                                 <div className="c7n-chlh-button">
-                                    <div className="c7n-chlhb-left">
+                                    <div className='c7n-chlhb-left'>
                                         <Button
                                             icon="navigate_before"
                                             className="c7n-cycleHome-button"
+                                            onClick={() => {
+                                                this.setState({
+                                                    leftVisible: false,
+                                                    sideVisible: true,
+                                                });
+                                            }}
                                         />
                                     </div>
                                     <div className="c7n-chlhb-right">
@@ -106,10 +219,11 @@ class CycleHome extends Component {
                                 </div>
                             </div>
                             <div className="c7n-chlh-tree">
-                                <Tree loadData={this.onLoadData}>
-                                    <TreeNode title="所有版本" key="-1">
-                                        {this.renderTreeNodes(this.state.treeData)}
-                                    </TreeNode>
+                                <Tree loadData={this.onLoadData}
+                                      defaultExpandAll={true}
+                                      showIcon={true}
+                                      onExpand={this.onExpand}>
+                                    {this.renderTreeNodes(this.state.treeData)}
                                 </Tree>
                             </div>
                         </div>

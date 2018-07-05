@@ -6,7 +6,24 @@
 
 }
 
+.c7n-chs-bar {
+  width: 22.5px;
+  border-right: 1px solid #d3d3d3;
+  p {
+    cursor: pointer;
+    background: rgba(0, 0, 0, 0.08);
+    text-align: center;
+    color: rgba(0, 0, 0, 0.65);
+  }
+}
+
+.c7n-ch-side {
+  display: inline-block;
+  width: 22.5px;
+}
+
 .c7n-ch-left {
+  margin-left: 10px;
   width: 450px;
   display: inline-block;
   border-right: 1px black;
@@ -54,4 +71,22 @@
   .icon {
     margin-right: 0;
   }
+}
+
+.ant-tree-icon__customize {
+  i.icon {
+    float: left;
+    line-height: 22px;
+    margin-right: 5px;
+  }
+}
+
+.c7n-ch-hidden {
+  display: none
+}
+
+.ant-tree-title {
+  //display:block;
+  float:right;
+  width: 150px;
 }
