@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { Input, Button, Select, Icon, Modal, Upload, Spin } from 'choerodon-ui';
 import { Content } from 'choerodon-front-boot';
+import _ from 'lodash';
 import PropTypes from 'prop-types';
-import { editCycleSide } from '../../../api/CycleExecuteApi';
+import { editCycleSide, deleteAttachment } from '../../../api/CycleExecuteApi';
 import './EditTestDetail.less';
 import WYSIWYGEditor from '../WYSIWYGEditor';
 
@@ -38,6 +39,7 @@ function handleChange(value) {
 
 class EditTestDetail extends Component {
   state = {
+    reset: false,
     fileList: [],
     loading: false,
     stepId: null,
@@ -91,6 +93,16 @@ class EditTestDetail extends Component {
       }) : [],
       defects: defects || [],
     });
+    // 修复默认值不变
+    if (this.props.visible === false && nextProps.visible === true) {
+      this.setState({
+        reset: false,
+      }, () => {
+        this.setState({
+          reset: true,
+        });
+      });
+    }
   }
   onOk = () => {
     // editCycleSide
@@ -105,7 +117,7 @@ class EditTestDetail extends Component {
       comment,
       stepAttachment,
       caseAttachment,
-      defects } = this.state;    
+      defects } = this.state;
     const data = {
       executeId,
       stepStatus,
@@ -152,7 +164,7 @@ class EditTestDetail extends Component {
 
   render() {
     const { visible, onOk, onCancel } = this.props;
-    const { fileList, executeId, testStep, comment, 
+    const { reset, fileList, executeId, testStep, comment,
       stepStatusList, stepStatus, loading } = this.state;
     const delta = text2Delta(comment);
     // console.log(delta)
@@ -160,10 +172,26 @@ class EditTestDetail extends Component {
       action: '//jsonplaceholder.typicode.com/posts/',
       onChange: this.handleFileChange,
       multiple: true,
+      onRemove: (file) => {
+        if (file.url) {
+          this.setState({ loading: true });
+          deleteAttachment(file.uid).then(() => {
+            this.setState({ loading: false });
+          }).catch(() => {
+            Choerodon.prompt('网络异常');
+            this.setState({ loading: false });
+          });
+        } else {
+          const index = _.findIndex(fileList, { uid: file.uid });
+          this.setState({
+            fileList: fileList.splice(index, 1),
+          });
+        }
+      },
       beforeUpload: (file) => {
-        this.setState(({ List }) => ({
-          fileList: [...List, file],
-        }));
+        this.setState({
+          fileList: [...fileList, file],
+        });
         return false;
       },
     };
@@ -222,14 +250,14 @@ class EditTestDetail extends Component {
               </Button>
             </Upload>
             <div style={styles.editLabel}>注释</div>
-            <WYSIWYGEditor
+            {reset && <WYSIWYGEditor
               // value={comment}
               value={delta}
               style={{ height: 200, width: '100%' }}
               onChange={(value) => {
                 this.setState({ comment: value });
               }}
-            />
+            />}
           </Spin>
         </Content>
       </Sidebar>

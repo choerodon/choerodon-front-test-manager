@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import ColorPicker from 'rc-color-picker';
 import 'rc-color-picker/assets/index.css';
 import './EditStatusSide.less';
+
 const FormItem = Form.Item;
 const { Sidebar } = Modal;
 const { TextArea } = Input;
@@ -16,7 +17,7 @@ class EditStatusSide extends Component {
     const { color } = this.state;
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
-        console.log('Received values of form: ', { ...values, ...{ color }});
+        window.console.log('Received values of form: ', { ...values, ...{ color } });
       }
     });
   }
@@ -49,7 +50,7 @@ class EditStatusSide extends Component {
                   required: true, message: '请输入状态!',
                 }],
               })(
-                <Input style={{ width: 500 }} placeholder="状态" maxLength={30}  label="状态" />
+                <Input style={{ width: 500 }} placeholder="状态" maxLength={30} label="状态" />,
               )}
             </FormItem>
             <FormItem
@@ -61,7 +62,7 @@ class EditStatusSide extends Component {
                   required: true, message: '请输入说明!',
                 }],
               })(
-                <Input style={{ width: 500 }} placeholder="说明" maxLength={30}  label="说明" />
+                <Input style={{ width: 500 }} placeholder="说明" maxLength={30} label="说明" />,
                 // <div style={{ width: 500 }}>
                 //   <TextArea maxLength={30} label="说明" placeholder="说明" autosize />
                 // </div>
@@ -72,7 +73,7 @@ class EditStatusSide extends Component {
               颜色：<ColorPicker
                 color={'#36c'}
                 alpha={30}
-                onClose={(color) => { this.setState({ color }) }}
+                onClose={(color) => { this.setState({ color }); }}
                 placement="topLeft"
                 className="c7n-EditStatusSide-color-picker"
               >
