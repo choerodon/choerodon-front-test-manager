@@ -111,7 +111,8 @@ class CycleExecute extends Component {
       comment: null, // 注释
 
       defects: [], // 缺陷
-      // executeId: 1,            //执行id
+      // statusId: null,
+      // executeId: 1, // 执行id
       executionStatus: null, // 执行状态
       executionStatusColor: null, // 状态颜色
 
@@ -121,7 +122,6 @@ class CycleExecute extends Component {
       rank: '0|c00000:', //
       // testCycleCaseStepES: [], //
     },
-
   }
   componentDidMount() {
     // this.getTestInfo();
@@ -214,8 +214,8 @@ class CycleExecute extends Component {
         ...{
           executionStatus: status,
           executionStatusColor:
-           _.find(statusList, { statusName: status }) && 
-           _.find(statusList, { statusName: status }).statusColor,
+           _.find(statusList, { statusId: status }) && 
+           _.find(statusList, { statusId: status }).statusColor,
         },
       },
     });
@@ -437,7 +437,7 @@ class CycleExecute extends Component {
                 whiteSpace: 'nowrap',
               }}
             >
-              {oldValue.trim() === '' ? '空' : oldValue}
+              {oldValue}
             </div>);
           }
         }
@@ -487,7 +487,7 @@ class CycleExecute extends Component {
                 whiteSpace: 'nowrap',
               }}
             >
-              {newValue.trim() === '' ? '空' : newValue}
+              {newValue}
             </div>);
           }
         }
@@ -521,10 +521,10 @@ class CycleExecute extends Component {
       key: 'expectedResult',
     }, {
       title: '步骤附件',
-      dataIndex: 'stepAttachment',
-      key: 'stepAttachment',
-      render(stepAttachment) {
-        return stepAttachment.map(attachment => <div>{attachment.attachmentName}</div>);
+      dataIndex: 'caseAttachment',
+      key: 'caseAttachment',
+      render(caseAttachment) {
+        return caseAttachment.map(attachment => <div>{caseAttachment.attachmentName}</div>);
       },
     }, {
       title: '状态',
@@ -561,8 +561,11 @@ class CycleExecute extends Component {
     },
     {
       title: '附件',
-      dataIndex: 'caseAttachment',
-      key: 'caseAttachment',
+      dataIndex: 'stepAttachment',
+      key: 'stepAttachment',
+      render(stepAttachment) {
+        return stepAttachment.map(attachment => <div>{attachment.attachmentName}</div>);
+      },
     }, {
       title: '缺陷',
       dataIndex: 'defects',
