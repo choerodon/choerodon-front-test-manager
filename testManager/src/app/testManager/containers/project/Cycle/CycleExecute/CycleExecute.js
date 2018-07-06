@@ -115,7 +115,7 @@ class CycleExecute extends Component {
       // executeId: 1, // 执行id
       executionStatus: null, // 执行状态
       executionStatusColor: null, // 状态颜色
-
+      executionStatusName: null,
       lastRank: null, //
       nextRank: null, //
       objectVersionNumber: 1, //
@@ -212,6 +212,8 @@ class CycleExecute extends Component {
       cycleData: {
         ...this.state.cycleData,
         ...{
+          executionStatusName: _.find(statusList, { statusId: status }) &&
+            _.find(statusList, { statusId: status }).statusName,
           executionStatus: status,
           executionStatusColor:
            _.find(statusList, { statusId: status }) && 
@@ -531,10 +533,11 @@ class CycleExecute extends Component {
       dataIndex: 'stepStatus',
       key: 'stepStatus',
       render(stepStatus) {
-        const statusColor = _.find(stepStatusList, { statusName: stepStatus }) ?
-          _.find(stepStatusList, { statusName: stepStatus }).statusColor : '';
+        const statusColor = _.find(stepStatusList, { statusId: stepStatus }) ?
+          _.find(stepStatusList, { statusId: stepStatus }).statusColor : '';
         return (<div style={{ ...styles.statusOption, ...{ background: statusColor } }}>
-          {stepStatus}
+          {_.find(stepStatusList, { statusId: stepStatus }) &&
+          _.find(stepStatusList, { statusId: stepStatus }).statusName}
         </div>);
       },
     },
@@ -553,7 +556,7 @@ class CycleExecute extends Component {
                 whiteSpace: 'nowrap',
               }}
             >
-              {delta2Text(comment) || '空'}
+              {comment ? delta2Text(comment) : ''}
             </div>
           </Tooltip>
         );
@@ -591,12 +594,13 @@ class CycleExecute extends Component {
       },
     }];
 
-    const { executionStatus, executionStatusColor, reporterJobNumber, reporterRealName,
+    const { executionStatus, executionStatusName, 
+      executionStatusColor, reporterJobNumber, reporterRealName,
       assignedUserRealName, assignedUserJobNumber, lastUpdateDate, executeId,
       issueId, comment, caseAttachment, testCycleCaseStepES } = cycleData;
     const options = statusList.map((status) => {
-      const { statusName, statusColor } = status;
-      return (<Option value={statusName} key={statusName}>
+      const { statusName, statusId, statusColor } = status;
+      return (<Option value={statusId} key={statusId}>
         <div style={{ ...styles.statusOption, ...{ background: statusColor } }}>
           {statusName}
         </div>
@@ -650,7 +654,7 @@ class CycleExecute extends Component {
                     >
                       <Text>
                         <div style={{ background: executionStatusColor, width: 60, textAlign: 'center', borderRadius: '100px', display: 'inline-block', color: 'white' }}>
-                          {executionStatus}
+                          {executionStatusName}
                         </div>
                       </Text>
                       <Edit>
@@ -776,7 +780,7 @@ class CycleExecute extends Component {
                       <Icon type="zoom_out_map" /> 全屏编辑
                     </Button>
                     <FullEditor
-                      initValue={JSON.parse(comment)}
+                      initValue={comment}
                       visible={this.state.edit}
                       onCancel={() => this.setState({ edit: false })}
                       onOk={this.handleCommentSubmit}
