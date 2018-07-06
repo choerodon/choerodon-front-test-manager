@@ -149,24 +149,25 @@ class CustomStatusHome extends Component {
       key: 'action',
       render(text, record) {
         return (
-          <div>
-            <Icon
-              type="mode_edit"
-              style={{ cursor: 'pointer' }}
-              onClick={() => {
+          record.projectId !== 0 &&
+            <div>
+              <Icon
+                type="mode_edit"
+                style={{ cursor: 'pointer' }}
+                onClick={() => {
                 // window.console.log(record);
-                that.setState({
-                  editVisible: true,
-                  editing: record,
-                });
-              }}
-            />
-            <Icon 
-              type="delete" 
-              style={{ cursor: 'pointer', marginLeft: 10 }} 
-              onClick={() => { that.deleteStatus(record); }} 
-            />
-          </div>
+                  that.setState({
+                    editVisible: true,
+                    editing: record,
+                  });
+                }}
+              />
+              <Icon 
+                type="delete" 
+                style={{ cursor: 'pointer', marginLeft: 10 }} 
+                onClick={() => { that.deleteStatus(record); }} 
+              />
+            </div>
         );
       },
     }];
