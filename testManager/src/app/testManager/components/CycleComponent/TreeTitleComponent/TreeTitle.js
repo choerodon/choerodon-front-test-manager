@@ -14,15 +14,12 @@ class TreeTitle extends Component {
         for (let a = 0; a < processBarObject.length; a++) {
             count = count + processBarObject[a][1];
         }
-        console.log(processBarObject);
-        const s = processBarObject.map((item, i) => {
+        return processBarObject.map((item, i) => {
             let percentage = (item[1] / count) * 100;
             return (
                 <span className='c7n-pb-fill' style={{backgroundColor: item[0], width: `${percentage}%`}}></span>
             )
         });
-        console.log(s);
-        return s;
     };
 
     render() {
