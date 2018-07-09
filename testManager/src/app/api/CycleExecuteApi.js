@@ -5,7 +5,8 @@ export function getCycle() {
   return axios.get('/test/v1/cycle/case/query/one/1');
 }
 export function getStatusList(statusType) {
-  return axios.post('/test/v1/status/query', { statusType });
+  const projectId = AppState.currentMenuType.id;
+  return axios.post('/test/v1/status/query', { statusType, projectId });
 }
 export function getUsers(param) {
   const projectId = AppState.currentMenuType.id;

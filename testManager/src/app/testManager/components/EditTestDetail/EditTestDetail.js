@@ -196,8 +196,8 @@ class EditTestDetail extends Component {
       },
     };
     const options = stepStatusList.map((status) => {
-      const { statusName, statusColor } = status;
-      return (<Option value={statusName} key={statusName}>
+      const { statusName, statusId, statusColor } = status;
+      return (<Option value={statusId} key={statusId}>
         <div style={{ ...styles.statusOption, ...{ background: statusColor } }}>
           {statusName}
         </div>
