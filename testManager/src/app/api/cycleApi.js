@@ -1,13 +1,25 @@
-import {axios} from 'choerodon-front-boot';
+import { axios, stores } from 'choerodon-front-boot';
 
+const { AppState } = stores;
 export function getCycleByVersionId(versionId) {
-    return axios.get(`test/v1/cycle/query/${versionId}`);
+  const projectId = AppState.currentMenuType.id;
+  return axios.get(`/test/v1/projects/${projectId}/cycle/query/${versionId}`);
 }
 
 export function getFolderByCycleId(cycleId) {
-    return axios.get(`test/v1/cycle/case/query/${cycleId}`);
+  return axios.get(`test/v1/cycle/case/query/${cycleId}`);
 }
 
-export function filterCycleWithBar(parameters) {
-    return axios.get(`test/v1/cycle/filter/${parameters}`);
+export function filterCycleWithBar(parameter) {
+  const projectId = AppState.currentMenuType.id;
+  const parameters = {
+    projectId: 144,
+    parameter,
+  };
+  return axios.post(`/test/v1/projects/${projectId}/cycle/filter`, parameters);
+}
+export function getCycleById(cycleId) {
+  const projectId = AppState.currentMenuType.id;
+  //   return axios.get(`/test/v1/cycle/case/query/${cycleId}`);
+  return axios.get(`/test/v1/projects/${projectId}/cycle/case/query/${cycleId}`);
 }
