@@ -4,7 +4,7 @@ import {withRouter} from 'react-router-dom';
 import debounce from 'lodash/debounce'
 import './CycleHome.scss';
 import {getVersionCode, getProjectVersion} from '../../../../../api/agileApi.js'
-import {getCycleByVersionId, getFolderByCycleId} from '../../../../../api/cycleApi'
+import {getCycleByVersionId, getFolderByCycleId, filterCycleWithBar} from '../../../../../api/cycleApi'
 import {Button, Icon, Input, Tree} from 'choerodon-ui';
 import TreeTitle from '../../../../components/CycleComponent/TreeTitleComponent/TreeTitle'
 import {Page, Header, Content, stores} from 'choerodon-front-boot';
@@ -31,6 +31,21 @@ class CycleHome extends Component {
         expandedKeys: ['0'],
         leftVisible: true,
         sideVisible: false,
+    };
+    filterCycle = (parameter) => {
+        let versionIds = [];
+        getProjectVersion().then((res) => {
+            for (let i = 0; i < res.length; i++) {
+                versionIds.push(res[i].versionId);
+            }
+            let parameters = {
+                parameter: parameter,
+                versionIds: versionIds,
+            };
+            filterCycleWithBar(parameters).then((res) => {
+
+            });
+        });
     };
     onExpand = (expandedKeys) => {
         this.setState({
@@ -125,7 +140,7 @@ class CycleHome extends Component {
                         if (res[i].parentCycleId == treeNode.props.label) {
                             folders.push({
                                 title: <TreeTitle text={res[i].cycleName} type={res[i].type}
-                                                          processBar={{"#00BFA5": 3, "#D50000": 5,}}/>,
+                                                  processBar={{"#00BFA5": 3, "#D50000": 5,}}/>,
                                 key: `${treeNode.props.eventKey}-${i}`,
                                 label: `${res[i].cycleId}`,
                                 isLeaf: true,
