@@ -11,7 +11,7 @@ ENV PRO_HTTP http
 
 RUN echo "Asia/shanghai" > /etc/timezone;
 ADD dist /usr/share/nginx/html
-COPY testManager-structure/enterpoint.sh /usr/share/nginx/html
+COPY testManager-structure/testManager-enterpoint.sh /usr/share/nginx/html
 COPY config.yml /usr/share/nginx/html
 COPY structure/sql.py /usr/share/nginx/html
 RUN chmod 777 /usr/share/nginx/html/testManager-enterpoint.sh
