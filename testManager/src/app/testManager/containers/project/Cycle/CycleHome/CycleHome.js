@@ -7,11 +7,11 @@ import { Table, Button, Icon, Input, Tree, Spin } from 'choerodon-ui';
 import _ from 'lodash';
 import TreeTitle from '../../../../components/CycleComponent/TreeTitleComponent/TreeTitle';
 import './CycleHome.scss';
-import { adjustSort, canDelete, defineLevel, deleteNode, findParent, hasDirChild, isChild, normalizeMenus } from './util';
 import { getVersionCode, getProjectVersion } from '../../../../../api/agileApi.js';
 import { getCycleByVersionId, getFolderByCycleId, filterCycleWithBar, getCycleById } from '../../../../../api/cycleApi';
+import CreateCycleExecute from '../../../../components/CreateCycleExecute';
 
-
+const { AppState } = stores;
 let currentDropOverItem;
 let currentDropSide;
 let dropItem;
@@ -33,7 +33,6 @@ function removeDragClass() {
 }
 
 
-const { AppState } = stores;
 const TreeNode = Tree.TreeNode;
 const styles = {
   rightLabel: {
@@ -48,6 +47,7 @@ const styles = {
 @observer
 class CycleHome extends Component {
   state = {
+    CreateCycleExecuteVisible: false,
     loading: true,
     treeData: [
       { title: '所有版本', key: '0' },
@@ -251,7 +251,7 @@ class CycleHome extends Component {
       // loading: false,
       treeData: [...this.state.treeData],
     });
-  }
+  }  
   refresh = () => {
     this.setState({
       loading: true,
@@ -359,7 +359,9 @@ class CycleHome extends Component {
       data.forEach((item) => {
         if (item.type === 'folder') {
           const index1 = _.findIndex(versions, { title: item.versionStatusName });
-          const index2 = _.findIndex(versions[index1].children, { title: item.versionName });          
+          const index2 = _.findIndex(versions[index1].children, 
+            { title: item.versionName },
+          );          
           const index3 = _.findIndex(versions[index1].children[index2].children, 
             { cycleId: item.parentCycleId });            
           versions[index1].children[index2].children[index3].children.push({
@@ -443,10 +445,23 @@ class CycleHome extends Component {
     // });
     removeDragClass();
     const { dragData, testList } = this.state;
-    const sourceIndex = _.findIndex(testList, { cycleId: record.cycleId });
-    const targetIndex = _.findIndex(testList, { cycleId: dragData.cycleId });
-    const [removed] = testList.splice(sourceIndex, 1);
-    testList.splice(targetIndex, 0, removed);
+    const sourceIndex = _.findIndex(testList, { issueId: dragData.issueId });
+    const targetIndex = _.findIndex(testList, { issueId: record.issueId });
+    if (sourceIndex === targetIndex) {
+      return;
+    }
+    let lastRank = null;
+    let nextRank = null;
+    if (sourceIndex < targetIndex) {
+      lastRank = testList[targetIndex].rank;
+      nextRank = testList[targetIndex + 1] ? testList[targetIndex + 1].rank : null;
+    } else if (sourceIndex > targetIndex) {
+      lastRank = testList[targetIndex - 1] ? testList[targetIndex - 1].rank : null;
+      nextRank = testList[targetIndex].rank;
+    }
+    window.console.log(lastRank, nextRank);
+    const [removed] = testList.splice(targetIndex, 1);
+    testList.splice(sourceIndex, 0, removed);
     this.setState({
       testList,
       dragData: null,
@@ -505,14 +520,15 @@ class CycleHome extends Component {
   });
 
   render() {
-    const { loading, currentCycle, testList, expandedKeys } = this.state;
+    const { CreateCycleExecuteVisible, loading, currentCycle, testList, expandedKeys } = this.state;
     // const testList = [{ cycleId: 1, defects: [] }, { cycleId: 2, defects: [] }];
     const { build, cycleName, description, toDate, environment, fromDate } = currentCycle;
     const prefix = <Icon type="filter_list" />;
+    const that = this;
     const columns = [{
       title: 'ID',
-      dataIndex: 'cycleId',
-      key: 'cycleId',
+      dataIndex: 'issueId',
+      key: 'issueId',
       onCell: this.handleCell,
     }, {
       title: '状态',
@@ -525,7 +541,7 @@ class CycleHome extends Component {
       },
     }, {
       title: '摘要',
-      dataIndex: 'comment',
+      dataIndex: 'rank',
       key: 'comment',
     }, {
       title: '缺陷',
@@ -560,14 +576,12 @@ class CycleHome extends Component {
           record.projectId !== 0 &&
           <div>
             <Icon
-              type="mode_edit"
+              type="explicit"
               style={{ cursor: 'pointer' }}
               onClick={() => {
-                // window.console.log(record);
-                // that.setState({
-                //   editVisible: true,
-                //   editing: record,
-                // });
+                const { history } = that.props;
+                const urlParams = AppState.currentMenuType;
+                history.push(`/testManager/Cycle/execute/${record.executeId}?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`);
               }}
             />
             <Icon
@@ -592,6 +606,11 @@ class CycleHome extends Component {
           description="循环摘要使用树状图查看本项目中不同版本锁对应的测试情况。"
         >
           <Spin spinning={loading}>
+            <CreateCycleExecute
+              visible={CreateCycleExecuteVisible}
+              onCancel={() => { this.setState({ CreateCycleExecuteVisible: false }); }}
+              onOk={() => { this.setState({ CreateCycleExecuteVisible: false }); }}
+            />
             <div className="c7n-cycleHome">
               <div className={this.state.sideVisible ? 'c7n-ch-side' : 'c7n-ch-hidden'}>
                 <div className="c7n-chs-button">
@@ -652,7 +671,7 @@ class CycleHome extends Component {
                   </Tree>
                 </div>
               </div>
-              <div className="c7n-ch-right" >
+              {cycleName && <div className="c7n-ch-right" >
                 <div style={{ display: 'flex' }}>
                   <div>
                     循环名称：{cycleName}
@@ -662,7 +681,7 @@ class CycleHome extends Component {
                     <Button
                       style={{ color: '#3f51b5' }}
                       onClick={() => {
-                        this.setState({ createVisible: true, createType: 'CYCLE_CASE' });
+                        this.setState({ CreateCycleExecuteVisible: true });
                       }}
                     >
                       <Icon type="playlist_add" />
@@ -751,7 +770,7 @@ class CycleHome extends Component {
                   onChange={this.handleStatusTableChange}
                   onRow={this.handleRow}
                 />
-              </div>
+              </div>}
             </div>
           </Spin>
         </Content>

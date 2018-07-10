@@ -616,9 +616,10 @@ class CycleExecute extends Component {
         </div>
       </Option>),
     );
+    const urlParams = AppState.currentMenuType;
     return (
       <div>
-        <Header title="版本：1.0" backPath="/testManager/cycle">
+        <Header title="版本：1.0" backPath={`/testManager/cycle?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}>
           <Button onClick={this.getInfo}>
             <Icon type="autorenew icon" />
             <span>刷新</span>
