@@ -126,25 +126,26 @@ class CycleExecute extends Component {
   componentDidMount() {
     // this.getTestInfo();
     // this.getUserList();
-    this.getInfo();
+    this.getInfo();   
   }
   getInfo = () => {
+    const { id } = this.props.match.params;
     this.setState({ loading: true });
     const { historyPagination, detailPagination } = this.state;
-    Promise.all([getCycle(), getStatusList('CYCLE_CASE'), getCycleDetails({
+    Promise.all([getCycle(id), getStatusList('CYCLE_CASE'), getCycleDetails({
       page: detailPagination.current - 1,
       size: detailPagination.pageSize,
-    }, 1),
+    }, id),
     getStatusList('CASE_STEP'), getCycleHistiorys({
       page: historyPagination.current - 1,
       size: historyPagination.pageSize,
-    }, 1)])
+    }, id)])
       .then(([cycleData, statusList, detailData, stepStatusList, historyData]) => {
         const { caseAttachment } = cycleData;
         const fileList = caseAttachment.map((attachment) => {
-          const { url, attachmentName, id } = attachment;
+          const { url, attachmentName } = attachment;
           return {
-            uid: id,
+            uid: attachment.id,
             name: attachmentName,
             status: 'done',
             url,

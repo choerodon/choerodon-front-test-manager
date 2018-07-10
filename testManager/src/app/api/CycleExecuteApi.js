@@ -1,9 +1,9 @@
 import { stores, axios } from 'choerodon-front-boot';
 
 const { AppState } = stores;
-export function getCycle() {
+export function getCycle(id) {
   const projectId = AppState.currentMenuType.id;
-  return axios.get(`/test/v1/projects/${projectId}/cycle/case/query/one/1`);
+  return axios.get(`/test/v1/projects/${projectId}/cycle/case/query/one/${id}`);
 }
 export function getStatusList(statusType) {
   const projectId = AppState.currentMenuType.id;
@@ -18,7 +18,7 @@ export function getUsers(param) {
 }
 export function editCycle(cycle) {
   const projectId = AppState.currentMenuType.id;
-  return axios.post(`/test/v1/cycle/case/${projectId}/update`, cycle);
+  return axios.post(`/test/v1/projects/${projectId}/cycle/case/update`, cycle);
 }
 export function editCycleSide(data) {
   const axiosConfig = {

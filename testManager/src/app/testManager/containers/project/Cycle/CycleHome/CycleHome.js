@@ -3,15 +3,16 @@ import { observer } from 'mobx-react';
 import { withRouter } from 'react-router-dom';
 import debounce from 'lodash/debounce';
 import { Page, Header, Content, stores } from 'choerodon-front-boot';
-import { Table, Button, Icon, Input, Tree, Spin } from 'choerodon-ui';
+import { Table, Button, Icon, Input, Tree, Spin, Modal } from 'choerodon-ui';
 import _ from 'lodash';
 import TreeTitle from '../../../../components/CycleComponent/TreeTitleComponent/TreeTitle';
 import './CycleHome.scss';
 import { getVersionCode, getProjectVersion } from '../../../../../api/agileApi.js';
-import { getCycles, getCycleByVersionId, getFolderByCycleId, filterCycleWithBar, getCycleById, editCycleExecute } from '../../../../../api/cycleApi';
+import { getCycles, deleteExecute, getCycleById, editCycleExecute } from '../../../../../api/cycleApi';
 import { CreateCycle, CreateCycleExecute } from '../../../../components/CycleComponent';
 
 const { AppState } = stores;
+const { confirm } = Modal;
 let currentDropOverItem;
 let currentDropSide;
 let dropItem;
@@ -91,33 +92,22 @@ class CycleHome extends Component {
     }
     return parentKey;
   }
-  loadCycle = (selectedKeys) => {
-    if (selectedKeys[0]) {
-      // window.console.log(selectedKeys, this.state.treeData);
-      const { treeData } = this.state;
-      const indexs = selectedKeys[0].split('-');
-      let temp = treeData;
-      indexs.forEach((index, i) => {
-        if (i === 0) {
-          temp = temp[index];
-        } else {
-          temp = temp.children[index];
-        }
+  loadCycle = (selectedKeys, { selected, selectedNodes, node, event }) => {
+    window.console.log(selectedNodes, node, event);
+    const { data } = node.props;
+    if (data.cycleId) {
+      this.setState({
+        rightLoading: true,
+        currentCycle: data,
       });
-      if (temp.data && temp.data.cycleId) {
+      window.console.log(data);
+      getCycleById(data.cycleId).then((cycle) => {
         this.setState({
-          rightLoading: true,
-          currentCycle: temp.data,
+          rightLoading: false,
+          testList: cycle.content,
         });
-        window.console.log(temp.data);
-        getCycleById(temp.data.cycleId).then((cycle) => {
-          this.setState({
-            rightLoading: false,
-            testList: cycle.content,
-          });
-          window.console.log(cycle);
-        });
-      }
+        window.console.log(cycle);
+      });
     }
   }
   // 拖拽离开目标
@@ -250,13 +240,47 @@ class CycleHome extends Component {
 
   generateList = (data) => {
     for (let i = 0; i < data.length; i += 1) {
-      const node = data[i];      
+      const node = data[i];
       const { key, title } = node;
       dataList.push({ key, title });
       if (node.children) {
         this.generateList(node.children, node.key);
       }
     }
+  }
+  deleteExecute = (record) => {
+    const that = this;
+    const { executeId, cycleId } = record;
+    confirm({
+      width: 560,
+      title: '删除执行',
+      content: <div style={{ marginBottom: 32 }}>
+        这个执行将会被彻底删除。包括所有附件和评论。
+      </div>,
+      onOk() {
+        that.setState({
+          rightLoading: true,
+        });
+        deleteExecute(executeId)
+          .then((res) => {
+            getCycleById(cycleId).then((cycle) => {
+              that.setState({
+                rightLoading: false,
+                testList: cycle.content,
+              });
+              window.console.log(cycle);
+            });
+          }).catch(() => {
+            Choerodon.prompt('网络异常');
+            that.setState({
+              rightLoading: false,
+            });
+          });
+      },
+      onCancel() { },
+      okText: '删除',
+      okType: 'danger',
+    });
   }
   refresh = () => {
     this.setState({
@@ -272,7 +296,7 @@ class CycleHome extends Component {
       this.generateList([
         { title: '所有版本', key: '0', children: data.versions },
       ]);
-      window.console.log(dataList);
+      // window.console.log(dataList);
     });
   }
   filterCycle = (e) => {
@@ -304,16 +328,15 @@ class CycleHome extends Component {
       ) : <span>{item.title}</span>;
       return (
         <TreeNode
-          title={title}
-          // title={item.cycleId ?
-          //   <TreeTitle
-          //     data={item}
-          //     text={item.title}
-          //     type={item.type}
-          //     processBar={{ '#00BFA5': 3, '#D50000': 5 }}
-          //   /> : item.title}
+          title={item.cycleId ?
+            <TreeTitle
+              key={item.key}
+              data={item}
+              title={title}
+              processBar={{ '#00BFA5': 3, '#D50000': 5 }}
+            /> : title}
           key={item.key}
-          dataRef={item}
+          data={item}
           showIcon
           icon={<Icon
             type={this.state.expandedKeys.includes(item.key) ? 'folder_open' : 'folder'}
@@ -339,9 +362,7 @@ class CycleHome extends Component {
       loading, currentCycle, testList, expandedKeys, rightLoading, searchValue,
       autoExpandParent,
     } = this.state;
-
-    // const testList = [{ cycleId: 1, defects: [] }, { cycleId: 2, defects: [] }];
-    const { build, versionName, cycleName,
+    const { build, cycleId, versionName, title,
       description, toDate, environment, fromDate } = currentCycle;
     const prefix = <Icon type="filter_list" />;
     const that = this;
@@ -407,7 +428,9 @@ class CycleHome extends Component {
             <Icon
               type="delete"
               style={{ cursor: 'pointer', marginLeft: 10 }}
-            // onClick={() => { that.deleteStatus(record); }} 
+              onClick={() => {
+                that.deleteExecute(record);
+              }}
             />
           </div>
         );
@@ -513,10 +536,10 @@ class CycleHome extends Component {
                   </Tree>
                 </div>
               </div>
-              {cycleName && <div className="c7n-ch-right" >
+              {cycleId && <div className="c7n-ch-right" >
                 <div style={{ display: 'flex' }}>
                   <div>
-                    循环名称：{cycleName}
+                    循环名称：{title}
                   </div>
                   <div style={{ flex: 1, visiblity: 'hidden' }} />
                   <div>

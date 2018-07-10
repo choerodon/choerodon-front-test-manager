@@ -6,18 +6,6 @@ export function getCycles() {
   return axios.get(`/test/v1/projects/${projectId}/cycle/query`);
 }
 
-export function getFolderByCycleId(cycleId) {
-  return axios.get(`test/v1/cycle/case/query/${cycleId}`);
-}
-
-export function filterCycleWithBar(parameter) {
-  const projectId = AppState.currentMenuType.id;
-  const parameters = {
-    projectId: 144,
-    parameter,
-  };
-  return axios.post(`/test/v1/projects/${projectId}/cycle/filter`, parameters);
-}
 export function getCycleById(cycleId) {
   const projectId = AppState.currentMenuType.id;
   //   return axios.get(`/test/v1/cycle/case/query/${cycleId}`);
@@ -26,4 +14,8 @@ export function getCycleById(cycleId) {
 export function editCycleExecute(data) {
   const projectId = AppState.currentMenuType.id;
   return axios.post(`/test/v1/projects/${projectId}/cycle/case/update`, data);
+}
+export function deleteExecute(executeId) {
+  const projectId = AppState.currentMenuType.id;
+  return axios.delete(`/test/v1/projects/${projectId}/cycle/case?cycleCaseId=${executeId}`);
 }

@@ -82,25 +82,26 @@ class TreeTitle extends Component {
       </Menu>
     );
     const { editing } = this.state;
+    const { title, processBar, data } = this.props;
     return (
       <div className="c7n-tree-title">
 
         {editing ?
           <Input defaultValue={this.props.text} autoFocus onBlur={this.handleEdit} />
           : <div className="c7n-tt-text">
-            {this.props.text}
+            {title}
           </div>}
         <div className="c7n-tt-processBar">
           <div className="c7n-process-bar">
             <span className="c7n-pb-unfill">
               <div className="c7n-pb-fill-parent">
-                {this.creatProcessBar(this.props.processBar)}
+                {this.creatProcessBar(processBar)}
               </div>
             </span>
           </div>
         </div>
         <div className="c7n-tt-actionButton">
-          <Dropdown overlay={getMenu(this.props.type)} trigger={['click']}>
+          <Dropdown overlay={getMenu(data.type)} trigger={['click']}>
             <Button shape="circle" icon="more_vert" />
           </Dropdown>
         </div>
