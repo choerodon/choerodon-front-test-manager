@@ -842,6 +842,7 @@ class CycleExecute extends Component {
                 <span style={styles.cardTitleText}>执行历史记录</span>
               </div>
               <Table
+                filterBar={false}
                 dataSource={historyList}
                 columns={columnsHistory}
                 pagination={historyPagination}
@@ -854,6 +855,7 @@ class CycleExecute extends Component {
                 <span style={styles.cardTitleText}>测试详细信息</span>
               </div>
               <Table
+                filterBar={false}
                 dataSource={detailList}
                 columns={columns}
                 pagination={detailPagination}

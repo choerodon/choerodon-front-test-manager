@@ -8,13 +8,16 @@ import _ from 'lodash';
 import TreeTitle from '../../../../components/CycleComponent/TreeTitleComponent/TreeTitle';
 import './CycleHome.scss';
 import { getVersionCode, getProjectVersion } from '../../../../../api/agileApi.js';
-import { getCycleByVersionId, getFolderByCycleId, filterCycleWithBar, getCycleById } from '../../../../../api/cycleApi';
-import CreateCycleExecute from '../../../../components/CreateCycleExecute';
+import { getCycles, getCycleByVersionId, getFolderByCycleId, filterCycleWithBar, getCycleById, editCycleExecute } from '../../../../../api/cycleApi';
+import { CreateCycle, CreateCycleExecute } from '../../../../components/CycleComponent';
 
 const { AppState } = stores;
 let currentDropOverItem;
 let currentDropSide;
 let dropItem;
+
+const gData = [];
+const dataList = [];
 function dropSideClassName(side) {
   return `drop-row-${side}`;
 }
@@ -48,6 +51,7 @@ const styles = {
 class CycleHome extends Component {
   state = {
     CreateCycleExecuteVisible: false,
+    CreateCycleVisible: false,
     loading: true,
     treeData: [
       { title: '所有版本', key: '0' },
@@ -60,222 +64,32 @@ class CycleHome extends Component {
     dragData: null,
     testList: [{ cycleId: 1, defects: [] }, { cycleId: 2, defects: [] }],
     currentCycle: {},
+    autoExpandParent: true,
+    searchValue: '',
   };
   componentDidMount() {
     this.refresh();
   }
 
-
-  onLoadData = tree => new Promise((resolve) => {
-    const treeNode = tree;
-    window.console.log(tree);
-    // if (treeNode.props.children) {
-    //   this.setState({
-    //     loading: false,
-    //   });
-    //   resolve();
-    //   return;
-    // }
-    const deep = treeNode.props.eventKey.split('-').length - 1;
-    window.console.log(treeNode.props.eventKey, deep);
-    switch (deep) {
-      case 0: {
-        this.setState({
-          loading: true,
-        });
-        getVersionCode().then((res) => {
-          const versionCodes = [];
-          for (let i = 0; i < res.lookupValues.length; i += 1) {
-            const versionName = res.lookupValues[i].name;
-            versionCodes.push({
-              title: `${versionName}`,
-              key: `${treeNode.props.eventKey}-${i}`,
-            });
-          }
-          treeNode.props.dataRef.children = versionCodes;
-          this.setState({
-            loading: false,
-            treeData: [...this.state.treeData],
-          });
-        });
-        break;
-      }
-      case 1: {
-        this.setState({
-          loading: true,
-        });
-        getProjectVersion().then((res) => {
-          const projectVersions = [];
-          for (let i = 0; i < res.length; i += 1) {
-            if (res[i].statusName === treeNode.props.title) {
-              projectVersions.push({
-                title: `${res[i].name}`,
-                key: `${treeNode.props.eventKey}-${i}`,
-                label: `${res[i].versionId}`,
-                data: res[i],
-              });
-            }
-          }
-          treeNode.props.dataRef.children = projectVersions;
-          this.setState({
-            loading: false,
-            treeData: [...this.state.treeData],
-          });
-        });
-        break;
-      }
-      case 2: {
-        this.setState({
-          loading: true,
-        });
-        getCycleByVersionId(treeNode.props.label).then((res) => {
-          const cycles = [];
-          let j = 0;
-          for (let i = 0; i < res.length; i += 1) {
-            if (res[i].parentCycleId === 0) {
-              if (res[i].type === 'temp') {
-                cycles.push({
-                  title: <TreeTitle
-                    index={`${treeNode.props.eventKey}-${j}`}
-                    refresh={this.setTreeData}
-                    data={res[i]}
-                    text={res[i].cycleName}
-                    type={res[i].type}
-                    processBar={{ '#00BFA5': 3, '#D50000': 5 }}
-                  />,
-                  key: `${treeNode.props.eventKey}-${j}`,
-                  label: `${res[i].cycleId}`,
-                  type: `${res[i].type}`,
-                  versionId: `${res[i].versionId}`,
-                  data: res[i],
-                  isLeaf: true,
-                });
-              } else {
-                cycles.push({
-                  title: <TreeTitle
-                    index={`${treeNode.props.eventKey}-${j}`}
-                    refresh={this.setTreeData}
-                    data={res[i]}
-                    text={res[i].cycleName}
-                    type={res[i].type}
-                    processBar={{ '#00BFA5': 3, '#D50000': 5 }}
-                  />,
-                  key: `${treeNode.props.eventKey}-${j}`,
-                  label: res[i].cycleId,
-                  type: res[i].type,
-                  versionId: res[i].versionId,
-                  data: res[i],
-                });
-              }
-              j += 1;
-            }
-          }
-          treeNode.props.dataRef.children = cycles;
-          this.setState({
-            loading: false,
-            treeData: [...this.state.treeData],
-          });
-          const storage = window.localStorage;
-          storage.removeItem('cycleData');
-          storage.setItem('cycleData', JSON.stringify(res));
-        });
-        break;
-      }
-      case 3:
-      {
-        this.setState({
-          loading: true,
-        });
-        const storage = window.localStorage;
-        const res = JSON.parse(storage.getItem('cycleData'));
-        const folders = [];
-        let j = 0;
-        for (let i = 0; i < res.length; i += 1) {
-          if (res[i].parentCycleId === treeNode.props.label) {
-            folders.push({
-              title: <TreeTitle
-                index={`${treeNode.props.eventKey}-${j}`}
-                refresh={this.setTreeData}
-                data={res[i]}
-                text={res[i].cycleName}
-                type={res[i].type}
-                processBar={{ '#00BFA5': 3, '#D50000': 5 }}
-              />,
-              key: `${treeNode.props.eventKey}-${j}`,
-              label: res[i].cycleId,
-              data: res[i],
-              isLeaf: true,
-            });
-            j += 1;
-          }
-        }
-        treeNode.props.dataRef.children = folders;
-        this.setState({
-          loading: false,
-          treeData: [...this.state.treeData],
-        });
-        break;
-      }
-
-      default:
-        break;
-    }
-    resolve();
-  });
-  onExpand = (expandedKeys, { expanded, node }) => {
-    window.console.log({ expanded, node });
+  onExpand = (expandedKeys) => {
     this.setState({
       expandedKeys,
+      autoExpandParent: false,
     });
-    // if (expanded) {
-    //   this.onLoadData(node);
-    // }
-  };
-  setTreeData = (key) => {
-    window.console.log(key);
-
-    const { treeData } = this.state;
-    const indexs = key.split('-');
-    let temp = treeData;
-    indexs.pop();
-    indexs.forEach((index, i) => {
-      if (i === 0) {
-        temp = temp[index];
-      } else {
-        temp = temp.children[index];
+  }
+  getParentKey = (key, tree) => {
+    let parentKey;
+    for (let i = 0; i < tree.length; i += 1) {
+      const node = tree[i];
+      if (node.children) {
+        if (node.children.some(item => item.key === key)) {
+          parentKey = node.key;
+        } else if (this.getParentKey(key, node.children)) {
+          parentKey = this.getParentKey(key, node.children);
+        }
       }
-    });
-    temp.children = [];
-    // this.state
-    this.setState({
-      // loading: false,
-      treeData: [...this.state.treeData],
-    });
-  }  
-  refresh = () => {
-    this.setState({
-      loading: true,
-    });
-    getVersionCode().then((res) => {
-      const versionCodes = [];
-      for (let i = 0; i < res.lookupValues.length; i += 1) {
-        const versionName = res.lookupValues[i].name;
-        versionCodes.push({
-          title: `${versionName}`,
-          key: `${0}-${i}`,
-          isLeaf: false,
-          children: [{}],
-        });
-      }
-      this.setState({
-        loading: false,
-        expandedKeys: ['0'],
-        treeData: [
-          { title: '所有版本', key: '0', children: versionCodes },
-        ],
-
-      });
-    });
+    }
+    return parentKey;
   }
   loadCycle = (selectedKeys) => {
     if (selectedKeys[0]) {
@@ -290,94 +104,22 @@ class CycleHome extends Component {
           temp = temp.children[index];
         }
       });
-      this.setState({
-        rightLoading: true,
-        currentCycle: temp.data,
-      });
-      window.console.log(temp.data);
-      getCycleById(temp.data.cycleId).then((cycle) => {
+      if (temp.data && temp.data.cycleId) {
         this.setState({
-          rightLoading: false,
-          testList: cycle.content,
+          rightLoading: true,
+          currentCycle: temp.data,
         });
-        window.console.log(cycle);
-      });
+        window.console.log(temp.data);
+        getCycleById(temp.data.cycleId).then((cycle) => {
+          this.setState({
+            rightLoading: false,
+            testList: cycle.content,
+          });
+          window.console.log(cycle);
+        });
+      }
     }
   }
-  filterCycle = (e) => {
-    filterCycleWithBar(e.target.value).then((data) => {
-      window.console.log(data);
-      const versions = [];
-      const expandedKeys = ['0'];
-      data.forEach((item) => {
-        if (item.type === 'cycle') {
-          const index = _.findIndex(versions, { title: item.versionStatusName });
-          window.console.log(index);
-          if (index !== -1) {
-            const index2 = _.findIndex(versions[index].children, { title: item.versionName });
-            if (index2 !== -1) {
-              versions[index].children[index2].children.push({
-                cycleId: item.cycleId,
-                title: item.cycleName,
-                key: `${versions[index].children[index2].key}-${versions[index].children[index2].children.length}`,
-                children: [],
-              });
-              expandedKeys.push(`${versions[index].children[index2].key}-${versions[index].children[index2].children.length - 1}`);
-            } else {
-              versions[index].children.push({
-                title: item.versionName,
-                key: `${versions[index].key}-${versions[index].children.length}`,
-                children: [],
-              });
-              expandedKeys.push(`${versions[index].key}-${versions.length - 1}`);
-            }
-          } else {
-            const len = versions.length;
-            versions.push({
-              title: item.versionStatusName,
-              key: `${0}-${len}`,
-              children: [],
-            });
-            expandedKeys.push(`${0}-${len}`);
-
-            versions[0].children.push({
-              title: item.versionName,
-              key: `${versions[0].key}-${versions[0].children.length}`,
-              children: [],
-            });
-            expandedKeys.push(`${versions[0].key}-${versions[0].children.length - 1}`);
-            versions[0].children[0].children.push({
-              cycleId: item.cycleId,
-              title: item.cycleName,
-              key: `${versions[0].children[0].key}-${versions[0].children[0].children.length}`,
-              children: [],
-            });
-            expandedKeys.push(`${versions[0].children[0].key}-${versions[0].children[0].children.length - 1}`);
-          }
-        } 
-      });
-      data.forEach((item) => {
-        if (item.type === 'folder') {
-          const index1 = _.findIndex(versions, { title: item.versionStatusName });
-          const index2 = _.findIndex(versions[index1].children, 
-            { title: item.versionName },
-          );          
-          const index3 = _.findIndex(versions[index1].children[index2].children, 
-            { cycleId: item.parentCycleId });            
-          versions[index1].children[index2].children[index3].children.push({
-            title: item.cycleName,
-            key: `${versions[index1].children[index2].children[index3].key}-${versions[index1].children[index2].children[index3].children.length}`,
-          });
-          expandedKeys.push(`${versions[index1].children[index2].children[index3].key}-${versions[index1].children[index2].children[index3].children.length - 1}`);
-        }
-      });
-      window.console.log(versions, expandedKeys);
-      this.setState({
-        treeData: [{ title: '所有版本', key: '0', children: versions }],
-        expandedKeys,
-      });
-    });
-  };
   // 拖拽离开目标
   handleDragLeave() {
     removeDragClass();
@@ -422,7 +164,7 @@ class CycleHome extends Component {
     after = before * 2;
     dropSide = 'in';
     dataTransfer.dropEffect = 'copy';
- 
+
     const y = pageY - top;
     if (y < before) {
       dropSide = 'before';
@@ -439,7 +181,7 @@ class CycleHome extends Component {
   // 拖放
   handleDrop(record) {
     // const { dragData, testList } = this.state;
-    
+
     // this.setState({
     //   testList: [record, dragData],
     // });
@@ -465,7 +207,20 @@ class CycleHome extends Component {
     this.setState({
       testList,
       dragData: null,
-    }); 
+    });
+    const temp = { ...dragData };
+    delete temp.defects;
+    delete temp.caseAttachment;
+    delete temp.testCycleCaseStepES;
+    editCycleExecute({
+      ...temp,
+      ...{
+        lastRank,
+        nextRank,
+      },
+    }).then((res) => {
+
+    });
     // window.console.log(record, dragData, currentDropSide);
   }
 
@@ -476,10 +231,10 @@ class CycleHome extends Component {
       onDragLeave: this.handleDragLeave,
       onDragOver: this.handleDragOver.bind(this, record),
       onDrop: this.handleDrop.bind(this, record),
-    }; 
+    };
     return rowProps;
   };
- 
+
   handleCell = (record) => {
     const cellProps = {
       onDragEnd: this.handleDragEnd,
@@ -489,14 +244,74 @@ class CycleHome extends Component {
       onDragStart: this.handleDragtStart.bind(this, record),
       className: 'drag-cell',
     });
-  
+
     return cellProps;
   };
+
+  generateList = (data) => {
+    for (let i = 0; i < data.length; i += 1) {
+      const node = data[i];      
+      const { key, title } = node;
+      dataList.push({ key, title });
+      if (node.children) {
+        this.generateList(node.children, node.key);
+      }
+    }
+  }
+  refresh = () => {
+    this.setState({
+      loading: true,
+    });
+    getCycles().then((data) => {
+      this.setState({
+        treeData: [
+          { title: '所有版本', key: '0', children: data.versions },
+        ],
+        loading: false,
+      });
+      this.generateList([
+        { title: '所有版本', key: '0', children: data.versions },
+      ]);
+      window.console.log(dataList);
+    });
+  }
+  filterCycle = (e) => {
+    const value = e.target.value;
+    const expandedKeys = dataList.map((item) => {
+      if (item.title.indexOf(value) > -1) {
+        return this.getParentKey(item.key, this.state.treeData);
+      }
+      return null;
+    }).filter((item, i, self) => item && self.indexOf(item) === i);
+    this.setState({
+      expandedKeys,
+      searchValue: value,
+      autoExpandParent: true,
+    });
+  }
   renderTreeNodes = data => data.map((item) => {
+    const { searchValue } = this.state;
+    const index = item.title.indexOf(searchValue);
+    const beforeStr = item.title.substr(0, index);
+    const afterStr = item.title.substr(index + searchValue.length);
     if (item.children) {
+      const title = index > -1 ? (
+        <span>
+          {beforeStr}
+          <span style={{ color: '#f50' }}>{searchValue}</span>
+          {afterStr}
+        </span>
+      ) : <span>{item.title}</span>;
       return (
         <TreeNode
-          title={item.title}
+          title={title}
+          // title={item.cycleId ?
+          //   <TreeTitle
+          //     data={item}
+          //     text={item.title}
+          //     type={item.type}
+          //     processBar={{ '#00BFA5': 3, '#D50000': 5 }}
+          //   /> : item.title}
           key={item.key}
           dataRef={item}
           showIcon
@@ -520,9 +335,14 @@ class CycleHome extends Component {
   });
 
   render() {
-    const { CreateCycleExecuteVisible, loading, currentCycle, testList, expandedKeys } = this.state;
+    const { CreateCycleExecuteVisible, CreateCycleVisible,
+      loading, currentCycle, testList, expandedKeys, rightLoading, searchValue,
+      autoExpandParent,
+    } = this.state;
+
     // const testList = [{ cycleId: 1, defects: [] }, { cycleId: 2, defects: [] }];
-    const { build, cycleName, description, toDate, environment, fromDate } = currentCycle;
+    const { build, versionName, cycleName,
+      description, toDate, environment, fromDate } = currentCycle;
     const prefix = <Icon type="filter_list" />;
     const that = this;
     const columns = [{
@@ -611,11 +431,16 @@ class CycleHome extends Component {
               onCancel={() => { this.setState({ CreateCycleExecuteVisible: false }); }}
               onOk={() => { this.setState({ CreateCycleExecuteVisible: false }); }}
             />
+            <CreateCycle
+              visible={CreateCycleVisible}
+              onCancel={() => { this.setState({ CreateCycleVisible: false }); }}
+              onOk={() => { this.setState({ CreateCycleVisible: false }); }}
+            />
             <div className="c7n-cycleHome">
               <div className={this.state.sideVisible ? 'c7n-ch-side' : 'c7n-ch-hidden'}>
                 <div className="c7n-chs-button">
-                  <Button
-                    icon="navigate_next"
+                  <div
+                    role="none"
                     className="c7n-cycleHome-button"
                     onClick={() => {
                       this.setState({
@@ -623,14 +448,19 @@ class CycleHome extends Component {
                         sideVisible: false,
                       });
                     }}
-                  />
+                  >
+                    <Icon type="navigate_next" />
+                  </div>
                 </div>
                 <div className="c7n-chs-bar">
                   {this.state.versionVisible ? '' : (
                     <p
                       role="none"
                       onClick={() => {
-                        this.setState({});
+                        this.setState({
+                          leftVisible: true,
+                          sideVisible: false,
+                        });
                       }}
                     >测试循环</p>
                   )}
@@ -642,8 +472,8 @@ class CycleHome extends Component {
                     <Input prefix={prefix} placeholder="&nbsp;过滤" onChange={this.filterCycle} />
                   </div>
                   <div className="c7n-chlh-button">
-                    <Button
-                      icon="navigate_before"
+                    <div
+                      role="none"
                       className="c7n-cycleHome-button"
                       onClick={() => {
                         this.setState({
@@ -651,21 +481,33 @@ class CycleHome extends Component {
                           sideVisible: true,
                         });
                       }}
-                    />
-                    <Button
-                      icon="add"
+                    >
+                      <Icon type="navigate_before" />
+                    </div>
+                    <div
+                      role="none"
                       className="c7n-cycleHome-button"
-                    />
+                    >
+                      <Icon
+                        type="add"
+                        onClick={() => {
+                          this.setState({
+                            CreateCycleVisible: true,
+                          });
+                        }}
+                      />
+                    </div>
                   </div>
                 </div>
                 <div className="c7n-chlh-tree">
                   <Tree
-                    loadData={this.onLoadData}
-                    // defaultExpandAll
+                    // loadData={this.onLoadData}
+                    defaultExpandAll
                     expandedKeys={expandedKeys}
                     showIcon
                     onExpand={this.onExpand}
                     onSelect={this.loadCycle}
+                    autoExpandParent={autoExpandParent}
                   >
                     {this.renderTreeNodes(this.state.treeData)}
                   </Tree>
@@ -707,7 +549,7 @@ class CycleHome extends Component {
                     </div>
                     <div>
                       <div style={styles.rightText}>
-                        {build}
+                        {versionName}
                       </div>
                       <div style={styles.rightText}>
                         {fromDate}
@@ -765,6 +607,7 @@ class CycleHome extends Component {
                 </div>
                 <Table
                   // pagination={statusPagination}
+                  loading={rightLoading}
                   columns={columns}
                   dataSource={testList}
                   onChange={this.handleStatusTableChange}

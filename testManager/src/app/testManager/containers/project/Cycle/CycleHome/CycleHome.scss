@@ -22,8 +22,8 @@ $drop-gradient: rgba(140, 158, 255, 0.16);
 }
 
 .c7n-chs-bar {
+    margin-top: 10px;
     width: 22.5px;
-    border-right: 1px solid #d3d3d3;
     p {
         cursor: pointer;
         background: rgba(0, 0, 0, 0.08);
@@ -33,8 +33,11 @@ $drop-gradient: rgba(140, 158, 255, 0.16);
 }
 
 .c7n-ch-side {
-    display: inline-block;
-    width: 22.5px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-right: 1px solid #d3d3d3;
+    height: 100%;
 }
 
 .c7n-ch-left {
@@ -54,7 +57,9 @@ $drop-gradient: rgba(140, 158, 255, 0.16);
     display: inline-block;
 }
 
-.c7n-chlh-button {}
+.c7n-chlh-button {
+    display: flex;
+}
 
 .c7n-chlhb-left {
     // width: 400px;
@@ -66,11 +71,14 @@ $drop-gradient: rgba(140, 158, 255, 0.16);
 }
 
 .c7n-cycleHome-button {
+    cursor: pointer;
+    width: 25px;
+    height: 25px;
     background-color: #3F51B5;
     color: white;
-    .icon {
-        margin-right: 0;
-    }
+    text-align: center;
+    line-height: 22px;
+    margin: 0 10px;
 }
 
 .ant-tree-icon__customize {
@@ -82,7 +90,7 @@ $drop-gradient: rgba(140, 158, 255, 0.16);
 }
 
 .c7n-ch-hidden {
-    display: none
+    display: none;
 }
 
 .ant-tree-title {
