@@ -4,14 +4,13 @@
 # IDE
 .idea
 .project
+.lock.json
 
 
 # npm
 node_modules
 npm-debug.log
 yarn-error.log
-package-lock.json
-yarn-lock.json
 
 # folder
 dist
