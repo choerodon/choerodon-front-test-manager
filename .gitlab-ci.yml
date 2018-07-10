@@ -10,11 +10,11 @@ variables:
 node_build:
   stage: node_build
   script:
-    - node_module test-manager
+    - node_module testManager
     - node_build build
     - cp -r dist /cache/${CI_PROJECT_NAME}-${CI_PROJECT_ID}-${CI_COMMIT_REF_NAME}-${CI_COMMIT_SHA}/dist
     - cp -r node_modules/choerodon-front-boot/structure /cache/${CI_PROJECT_NAME}-${CI_PROJECT_ID}-${CI_COMMIT_REF_NAME}-${CI_COMMIT_SHA}/structure
-    - cp -r test-manager-structure /cache/${CI_PROJECT_NAME}-${CI_PROJECT_ID}-${CI_COMMIT_REF_NAME}-${CI_COMMIT_SHA}/test-manager-structure
+    - cp -r testManager-structure /cache/${CI_PROJECT_NAME}-${CI_PROJECT_ID}-${CI_COMMIT_REF_NAME}-${CI_COMMIT_SHA}/testManager-structure
 
   only:
     - /^release-.*$/
@@ -25,7 +25,7 @@ node_build:
 node_build_dev:
   stage: node_build
   script:
-    - node_module test-manager
+    - node_module testManager
     - node_build build
     - rm -rf /cache/${CI_PROJECT_NAME}-${CI_PROJECT_ID}-${CI_COMMIT_REF_NAME}-${CI_COMMIT_SHA}
   only:
