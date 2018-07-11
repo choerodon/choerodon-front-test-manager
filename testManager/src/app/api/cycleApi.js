@@ -5,11 +5,15 @@ export function getCycles() {
   const projectId = AppState.currentMenuType.id;
   return axios.get(`/test/v1/projects/${projectId}/cycle/query`);
 }
-
-export function getCycleById(cycleId) {
+export function getStatusList(statusType) {
   const projectId = AppState.currentMenuType.id;
+  return axios.post(`/test/v1/projects/${projectId}/status/query`, { statusType, projectId });
+}
+export function getCycleById(pagination, cycleId) {
+  const projectId = AppState.currentMenuType.id;
+  const { size, page } = pagination;
   //   return axios.get(`/test/v1/cycle/case/query/${cycleId}`);
-  return axios.get(`/test/v1/projects/${projectId}/cycle/case/query/${cycleId}`);
+  return axios.get(`/test/v1/projects/${projectId}/cycle/case/query/${cycleId}?size=${size}&page=${page}`);
 }
 export function addCycle(data) {
   const projectId = AppState.currentMenuType.id;
@@ -23,9 +27,9 @@ export function deleteExecute(executeId) {
   const projectId = AppState.currentMenuType.id;
   return axios.delete(`/test/v1/projects/${projectId}/cycle/case?cycleCaseId=${executeId}`);
 }
-export function deleteCycleOrFolder(cycleId, type) {
+export function deleteCycleOrFolder(cycleId) {
   const projectId = AppState.currentMenuType.id;
-  return axios.delete(`/test/v1/projects/${projectId}/cycle`, { cycleId, type });
+  return axios.delete(`/test/v1/projects/${projectId}/cycle/delete/${cycleId}`);
 }
 export function clone(cycleId, data, type) {
   const projectId = AppState.currentMenuType.id;

@@ -35,11 +35,13 @@ class TreeTitle extends Component {
           this.setState({
             editing: true,
           });
+        } else {
+          this.props.callback(data, 'EDIT_CYCLE');
         }
         break;
       }
       case 'delete': {
-        deleteCycleOrFolder(cycleId, type).then((res) => {
+        deleteCycleOrFolder(cycleId).then((res) => {
           refresh();
         }).catch((err) => {
 
@@ -59,9 +61,13 @@ class TreeTitle extends Component {
         break;
       }
       case 'export': {
-        this.setState({
-          editing: true,
-        });
+        const a = document.createElement('a');
+        // const url = window.URL.createObjectURL(blob);
+        const filename = `${item.title}.csv`;
+        a.href = 'http://img2.imgtn.bdimg.com/it/u=3588772980,2454248748&fm=27&gp=0.jpg';
+        a.download = filename;
+        a.click();
+        // window.URL.revokeObjectURL(url);
         break;
       }
       default: break;
@@ -80,29 +86,36 @@ class TreeTitle extends Component {
     });
   }
   render() {
-    const getMenu = record => (
-      <Menu onClick={this.handleItemClick}>
-        {
-          record === 'folder' ? '' : (
-            <Menu.Item key="add">
-              增加文件夹
-            </Menu.Item>
-          )
+    const getMenu = (type) => {
+      let items = [];
+      if (type === 'temp') {
+        items.push(<Menu.Item key="export">
+        导出循环
+        </Menu.Item>);
+      } else if (type === 'folder' || type === 'cycle') {
+        if (type === 'cycle') {
+          items.push(<Menu.Item key="add">
+          增加文件夹
+          </Menu.Item>);
         }
-        <Menu.Item key="edit">
-          {record === 'folder' ? '编辑文件夹' : '编辑循环'}
-        </Menu.Item>
-        <Menu.Item key="delete">
-          {record === 'folder' ? '删除文件夹' : '删除循环'}
-        </Menu.Item>
-        <Menu.Item key="clone">
-          {record === 'folder' ? '克隆文件夹' : '克隆循环'}
-        </Menu.Item>
-        <Menu.Item key="export">
-          {record === 'folder' ? '导出文件夹' : '导出循环'}
-        </Menu.Item>
-      </Menu>
-    );
+        items = items.concat([
+          <Menu.Item key="edit">
+            {type === 'folder' ? '编辑文件夹' : '编辑循环'}
+          </Menu.Item>,
+          <Menu.Item key="delete">
+            {type === 'folder' ? '删除文件夹' : '删除循环'}
+          </Menu.Item>,
+          <Menu.Item key="clone">
+            {type === 'folder' ? '克隆文件夹' : '克隆循环'}
+          </Menu.Item>,
+          <Menu.Item key="export">
+            {type === 'folder' ? '导出文件夹' : '导出循环'}
+          </Menu.Item>,
+        ]);
+      } 
+      return <Menu onClick={this.handleItemClick}>{items}</Menu>;
+    };    
+
     const { editing } = this.state;
     const { title, processBar, data } = this.props;
     return (
@@ -116,6 +129,8 @@ class TreeTitle extends Component {
               this.handleEdit({
                 cycleId: data.cycleId,
                 cycleName: e.target.value,
+                type: 'folder',
+                objectVersionNumber: data.objectVersionNumber,
               });
             }}
           />

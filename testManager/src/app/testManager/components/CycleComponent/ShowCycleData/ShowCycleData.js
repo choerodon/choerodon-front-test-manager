@@ -5,9 +5,10 @@ import './ShowCycleData.scss';
 class ShowCycleData extends Component {
   render() {
     const { type, build, cycleId, versionName, title,
-      description, toDate, environment, FromDate, cycleCaseList,
+      description, toDate, environment, fromDate, cycleCaseList, createdName,
       children,
     } = this.props.data;
+    const user = createdName.split(' ');
     // 全局数
     let allExectueNum = 0;    
     // 全局执行过的数
@@ -37,7 +38,7 @@ class ShowCycleData extends Component {
               版本：
               </div>
               <div className="c7n-right-card-item-text">
-                {versionName}
+                {build}
               </div>
             </div>
             <div className="c7n-right-card-item">
@@ -45,7 +46,7 @@ class ShowCycleData extends Component {
             开始时间：
               </div>
               <div className="c7n-right-card-item-text">
-                {FromDate}
+                {fromDate}
               </div>
             </div>
             <div className="c7n-right-card-item">
@@ -88,8 +89,15 @@ class ShowCycleData extends Component {
               <div className="c7n-right-card-item-label">
               创建人：
               </div>
-              <div className="c7n-right-card-item-text">
-              12321李红
+              <div className="c7n-right-card-item-text">           
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <span className="c7n-avatar">
+                    {user[1].slice(0, 1)}
+                  </span>
+                  <span>
+                    {`${user[0]} ${user[1]}`}
+                  </span>
+                </div>
               </div>
             </div>
             <div className="c7n-right-card-item">
@@ -120,12 +128,14 @@ class ShowCycleData extends Component {
                 {allExectueNum}
               </div>
             </div>
+          </div> 
+          <div className="c7n-right-card-column">            
             <div className="c7n-right-card-item">
               <div className="c7n-right-card-item-label">
               已执行数：
               </div>
               <div className="c7n-right-card-item-text">
-                {2}
+                {ExectuedNum}
               </div>
             </div>       
           </div>

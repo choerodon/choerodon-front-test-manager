@@ -71,6 +71,17 @@ $drop-gradient: rgba(140, 158, 255, 0.16);
     padding: 0 20px;
 }
 
+.c7n-avatar {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #c5cbe8;
+    color: #6473c3;
+    margin-right: 5px;
+    text-align: center;
+    line-height: 18px;
+}
+
 .c7n-cycleHome-button {
     cursor: pointer;
     width: 25px;
