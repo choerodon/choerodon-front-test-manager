@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { observer } from 'mobx-react';
 import { Menu, Input, Dropdown, Button } from 'choerodon-ui';
 import './TreeTitle.scss';
+import { editFolder, deleteCycleOrFolder } from '../../../../api/cycleApi';
 
 class TreeTitle extends Component {
   state = {
@@ -16,30 +17,45 @@ class TreeTitle extends Component {
     return processBarObject.map((item, i) => {
       const percentage = (item[1] / count) * 100;
       return (
-        <span className="c7n-pb-fill" style={{ backgroundColor: item[0], width: `${percentage}%` }} />
+        <span key={Math.random()} className="c7n-pb-fill" style={{ backgroundColor: item[0], width: `${percentage}%` }} />
       );
     });
   };
   handleItemClick = ({ item, key, keyPath }) => {
-    window.console.log(this.props.data, { item, key, keyPath });
+    const { data, refresh } = this.props;
+    const { type, cycleId } = data;
+    // window.console.log(this.props.data, { item, key, keyPath });
     switch (key) {
       case 'add': {
+        this.props.callback(data, 'ADD_FOLDER');
         break;
       }
       case 'edit': {
-        this.setState({
-          editing: true,
-        });
+        if (type === 'folder') {
+          this.setState({
+            editing: true,
+          });
+        }
         break;
       }
       case 'delete': {
-        this.setState({
-          editing: true,
+        deleteCycleOrFolder(cycleId, type).then((res) => {
+          refresh();
+        }).catch((err) => {
+
         });
         break;
       }
       case 'clone': {
-        this.props.refresh(this.props.index);
+        if (type === 'folder') {
+          this.props.callback(data, 'CLONE_FOLDER');
+          // cloneFolder(cycleId, data).then((data) => {
+
+          // });
+        } else if (type === 'cycle') {
+          this.props.callback(data, 'CLONE_CYCLE');
+        }
+        // this.props.refresh();
         break;
       }
       case 'export': {
@@ -51,8 +67,14 @@ class TreeTitle extends Component {
       default: break;
     }
   }
-  handleEdit = (e) => {
-    window.console.log(e.target.value);
+  handleEdit = (data) => {
+    editFolder(data).then((res) => {
+      if (data.failed) {
+        Choerodon.prompt('文件夹名字重复');
+      } else {
+        this.props.refresh();
+      }
+    });
     this.setState({
       editing: false,
     });
@@ -87,7 +109,16 @@ class TreeTitle extends Component {
       <div className="c7n-tree-title">
 
         {editing ?
-          <Input defaultValue={this.props.text} autoFocus onBlur={this.handleEdit} />
+          <Input
+            defaultValue={this.props.text}
+            autoFocus
+            onBlur={(e) => {
+              this.handleEdit({
+                cycleId: data.cycleId,
+                cycleName: e.target.value,
+              });
+            }}
+          />
           : <div className="c7n-tt-text">
             {title}
           </div>}
@@ -100,7 +131,7 @@ class TreeTitle extends Component {
             </span>
           </div>
         </div>
-        <div className="c7n-tt-actionButton">
+        <div role="none" className="c7n-tt-actionButton" onClick={e => e.stopPropagation()}>
           <Dropdown overlay={getMenu(data.type)} trigger={['click']}>
             <Button shape="circle" icon="more_vert" />
           </Dropdown>

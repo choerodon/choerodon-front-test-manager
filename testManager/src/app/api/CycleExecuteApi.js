@@ -12,9 +12,9 @@ export function getStatusList(statusType) {
 export function getUsers(param) {
   const projectId = AppState.currentMenuType.id;
   if (param) {
-    return axios.get(`/test/v1/user/${projectId}/users?param=${param}`);
+    return axios.get(`/test/v1/projects/${projectId}/user/users?param=${param}`);
   }
-  return axios.get(`/test/v1/user/${projectId}/users`);
+  return axios.get(`/test/v1/projects/${projectId}/user/users`);
 }
 export function editCycle(cycle) {
   const projectId = AppState.currentMenuType.id;
@@ -38,5 +38,6 @@ export function getCycleHistiorys(pagination, cycleCaseId) {
   return axios.get(`test/v1/projects/${projectId}/cycle/case/history/${cycleCaseId}?size=${size}&page=${page}`);
 }
 export function deleteAttachment(id) {
-  return axios.delete(`/test/v1/project/test/case/attachment?bucketName=${'test'}&attachId=${id}`);
+  const projectId = AppState.currentMenuType.id;
+  return axios.delete(`test/v1/projects/${projectId}/test/case/attachment?bucketName=${'test'}&attachId=${id}`);
 }

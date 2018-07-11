@@ -8,8 +8,8 @@ import _ from 'lodash';
 import TreeTitle from '../../../../components/CycleComponent/TreeTitleComponent/TreeTitle';
 import './CycleHome.scss';
 import { getVersionCode, getProjectVersion } from '../../../../../api/agileApi.js';
-import { getCycles, deleteExecute, getCycleById, editCycleExecute } from '../../../../../api/cycleApi';
-import { CreateCycle, CreateCycleExecute } from '../../../../components/CycleComponent';
+import { getCycles, deleteExecute, getCycleById, editCycleExecute, clone, addFolder } from '../../../../../api/cycleApi';
+import { CreateCycle, CreateCycleExecute, ShowCycleData } from '../../../../components/CycleComponent';
 
 const { AppState } = stores;
 const { confirm } = Modal;
@@ -38,16 +38,7 @@ function removeDragClass() {
 
 
 const TreeNode = Tree.TreeNode;
-const styles = {
-  rightLabel: {
-    fontWeight: 'bold',
-    margin: '10px 0',
-    fontSize: '13px',
-  },
-  rightText: {
-    margin: '10px 0',
-  },
-};
+
 @observer
 class CycleHome extends Component {
   state = {
@@ -67,6 +58,7 @@ class CycleHome extends Component {
     currentCycle: {},
     autoExpandParent: true,
     searchValue: '',
+    addingParent: null,
   };
   componentDidMount() {
     this.refresh();
@@ -78,35 +70,55 @@ class CycleHome extends Component {
       autoExpandParent: false,
     });
   }
-  getParentKey = (key, tree) => {
-    let parentKey;
-    for (let i = 0; i < tree.length; i += 1) {
-      const node = tree[i];
-      if (node.children) {
-        if (node.children.some(item => item.key === key)) {
-          parentKey = node.key;
-        } else if (this.getParentKey(key, node.children)) {
-          parentKey = this.getParentKey(key, node.children);
-        }
+
+  getParentKey = (key, tree) =>
+    // let parentKey;    
+    // for (let i = 0; i < tree.length; i += 1) {
+    //   const node = tree[i];
+    //   if (node.children) {
+    //     if (node.children.some(item => item.key === key)) {
+    //       parentKey = node.key;
+    //     } else if (this.getParentKey(key, node.children)) {
+    //       parentKey = this.getParentKey(key, node.children);
+    //     }
+    //   }
+    // }
+    key.split('-').slice(0, -1).join('-')
+
+  addItemByParentKey = (key, item) => {
+    const arr = key.split('-');
+    let temp = this.state.treeData;
+    arr.forEach((index, i) => {
+      // window.console.log(temp);
+      if (i === 0) {
+        temp = temp[index];
+      } else {
+        temp = temp.children[index];
       }
-    }
-    return parentKey;
+    });
+    // 添加测试
+    temp.children.unshift(item);
+    // window.console.log({ ...item, ...{ key: `${key}-add'`, type: 'add' } });
+    this.setState({
+      treeData: [...this.state.treeData],
+      addingParent: temp,
+    });
   }
   loadCycle = (selectedKeys, { selected, selectedNodes, node, event }) => {
-    window.console.log(selectedNodes, node, event);
+    // window.console.log(selectedNodes, node, event);
     const { data } = node.props;
     if (data.cycleId) {
       this.setState({
         rightLoading: true,
         currentCycle: data,
       });
-      window.console.log(data);
+      // window.console.log(data);
       getCycleById(data.cycleId).then((cycle) => {
         this.setState({
           rightLoading: false,
           testList: cycle.content,
         });
-        window.console.log(cycle);
+        // window.console.log(cycle);
       });
     }
   }
@@ -313,12 +325,143 @@ class CycleHome extends Component {
       autoExpandParent: true,
     });
   }
+  callback = (item, code) => {
+    switch (code) {
+      case 'CLONE_FOLDER': {
+        const parentKey = this.getParentKey(item.key, this.state.treeData);
+        this.addItemByParentKey(parentKey, { ...item, ...{ key: `${parentKey}-CLONE_FOLDER`, type: 'CLONE_FOLDER' } });
+        break;
+      }
+      case 'CLONE_CYCLE': {
+        const parentKey = this.getParentKey(item.key, this.state.treeData);
+        this.addItemByParentKey(parentKey, { ...item, ...{ key: `${parentKey}-CLONE_CYCLE`, type: 'CLONE_CYCLE' } });
+        break;
+      }
+      case 'ADD_FOLDER': {
+        this.addItemByParentKey(item.key, { ...item, ...{ title: '新文件夹', key: `${item.key}-ADD_FOLDER`, type: 'ADD_FOLDER' } });
+        break;
+      }
+      default: break;
+    }
+  }
+  removeAdding = () => {
+    this.state.addingParent.children.shift();
+    this.setState({
+      treeData: [...this.state.treeData],
+    });
+  }
+  Clone = (item, e, type) => {
+    const { value } = e.target;
+    // window.console.log(item, value);
+    // e.target.focus();
+    if (value === item.title) {
+      Choerodon.prompt('请更改名字');
+      this.removeAdding();
+    } else {
+      this.setState({
+        loading: true,
+      });
+      clone(item.cycleId, { cycleName: value }, type).then((data) => {
+        if (data.failed) {
+          Choerodon.prompt('名字重复');
+          this.setState({
+            loading: false,
+          });
+          this.removeAdding();
+        } else {
+          this.setState({
+            loading: false,
+          });
+          this.refresh();
+        }
+
+        // this.removeAdding();
+      }).catch(() => {
+        Choerodon.prompt('网络出错');
+        this.setState({
+          loading: false,
+        });
+        this.removeAdding();
+      });
+    }
+  }
+  addFolder = (item, e, type) => {
+    const { value } = e.target;
+    this.setState({
+      loading: true,
+    });
+    addFolder({
+      type: 'folder',
+      cycleName: value,
+      parentCycleId: item.cycleId,
+      versionId: item.versionId,
+    }).then((data) => {
+      if (data.failed) {
+        Choerodon.prompt('名字重复');
+        this.setState({
+          loading: false,
+        });
+        this.removeAdding();
+      } else {
+        this.setState({
+          loading: false,
+        });
+        this.refresh();
+      }
+      // this.removeAdding();
+    }).catch(() => {
+      Choerodon.prompt('网络出错');
+      this.setState({
+        loading: false,
+      });
+      this.removeAdding();
+    });
+  }
   renderTreeNodes = data => data.map((item) => {
-    const { searchValue } = this.state;
+    const { children, key, cycleCaseList, type } = item;
+    const { searchValue, expandedKeys } = this.state;
     const index = item.title.indexOf(searchValue);
     const beforeStr = item.title.substr(0, index);
     const afterStr = item.title.substr(index + searchValue.length);
-    if (item.children) {
+    const icon = (<Icon
+      style={{ color: '#00A48D' }}
+      type={expandedKeys.includes(item.key) ? 'folder_open' : 'folder'}
+    />);
+    if (type === 'CLONE_FOLDER' || type === 'CLONE_CYCLE') {
+      return (
+        <TreeNode
+          title={
+            <div onClick={e => e.stopPropagation()} role="none">
+              <Input
+                defaultValue={item.title}
+                autoFocus
+                onBlur={(e) => {
+                  this.Clone(item, e, type);
+                }}
+              />
+            </div>
+          }
+          icon={icon}
+          data={item}
+        />);
+    } else if (type === 'ADD_FOLDER') {
+      return (
+        <TreeNode
+          title={
+            <div onClick={e => e.stopPropagation()} role="none">
+              <Input
+                defaultValue={item.title}
+                autoFocus
+                onBlur={(e) => {
+                  this.addFolder(item, e, type);
+                }}
+              />
+            </div>
+          }
+          icon={icon}
+          data={item}
+        />);
+    } else if (children) {
       const title = index > -1 ? (
         <span>
           {beforeStr}
@@ -330,31 +473,29 @@ class CycleHome extends Component {
         <TreeNode
           title={item.cycleId ?
             <TreeTitle
-              key={item.key}
+              refresh={this.refresh}
+              callback={this.callback}
+              text={item.title}
+              key={key}
               data={item}
               title={title}
-              processBar={{ '#00BFA5': 3, '#D50000': 5 }}
+              processBar={cycleCaseList}
             /> : title}
-          key={item.key}
+          key={key}
           data={item}
           showIcon
-          icon={<Icon
-            type={this.state.expandedKeys.includes(item.key) ? 'folder_open' : 'folder'}
-          />}
+          icon={icon}
         >
-          {this.renderTreeNodes(item.children)}
+          {this.renderTreeNodes(children)}
         </TreeNode>
       );
     }
-    return (<TreeNode
-      icon={
-        <Icon type={this.state.expandedKeys.includes(item.key) ?
-          'folder_open' : 'folder'}
-        />
-      }
-      {...item}
-      dataRef={item}
-    />);
+    return (
+      <TreeNode
+        icon={icon}
+        {...item}
+        data={item}
+      />);
   });
 
   render() {
@@ -362,10 +503,10 @@ class CycleHome extends Component {
       loading, currentCycle, testList, expandedKeys, rightLoading, searchValue,
       autoExpandParent,
     } = this.state;
-    const { build, cycleId, versionName, title,
-      description, toDate, environment, fromDate } = currentCycle;
+    const { cycleId, title } = currentCycle;
     const prefix = <Icon type="filter_list" />;
     const that = this;
+
     const columns = [{
       title: 'ID',
       dataIndex: 'issueId',
@@ -382,7 +523,7 @@ class CycleHome extends Component {
       },
     }, {
       title: '摘要',
-      dataIndex: 'rank',
+      dataIndex: 'comment',
       key: 'comment',
     }, {
       title: '缺陷',
@@ -457,7 +598,7 @@ class CycleHome extends Component {
             <CreateCycle
               visible={CreateCycleVisible}
               onCancel={() => { this.setState({ CreateCycleVisible: false }); }}
-              onOk={() => { this.setState({ CreateCycleVisible: false }); }}
+              onOk={() => { this.setState({ CreateCycleVisible: false }); this.refresh(); }}
             />
             <div className="c7n-cycleHome">
               <div className={this.state.sideVisible ? 'c7n-ch-side' : 'c7n-ch-hidden'}>
@@ -554,80 +695,7 @@ class CycleHome extends Component {
                     </Button>
                   </div>
                 </div>
-                <div className="c7n-right-card-container">
-                  <div style={{ flex: 1, display: 'flex' }}>
-                    <div style={{ width: 108 }}>
-                      <div style={styles.rightLabel}>
-                        版本：
-                      </div>
-                      <div style={styles.rightLabel}>
-                        开始时间：
-                      </div>
-                      <div style={styles.rightLabel}>
-                        全层级执行数：
-                      </div>
-                      <div style={styles.rightLabel}>
-                        说明：
-                      </div>
-                    </div>
-                    <div>
-                      <div style={styles.rightText}>
-                        {versionName}
-                      </div>
-                      <div style={styles.rightText}>
-                        {fromDate}
-                      </div>
-                      <div style={styles.rightText}>
-                        1.0
-                      </div>
-                      <div style={styles.rightText}>
-                        {description}
-                      </div>
-                    </div>
-                  </div>
-                  <div style={{ flex: 1, display: 'flex' }}>
-                    <div style={{ width: 108 }}>
-                      <div style={styles.rightLabel}>
-                        环境：
-                      </div>
-                      <div style={styles.rightLabel}>
-                        循环层执行数：
-                      </div>
-                    </div>
-                    <div>
-                      <div style={styles.rightText}>
-                        {environment}
-                      </div>
-                      <div style={styles.rightText}>
-                        2
-                      </div>
-                    </div>
-                  </div>
-                  <div style={{ flex: 1, display: 'flex' }}>
-                    <div style={{ width: 108 }}>
-                      <div style={styles.rightLabel}>
-                        创建人：
-                      </div>
-                      <div style={styles.rightLabel}>
-                        结束时间：
-                      </div>
-                      <div style={styles.rightLabel}>
-                        全层级已执行数：
-                      </div>
-                    </div>
-                    <div>
-                      <div style={styles.rightText}>
-                        12321李红
-                      </div>
-                      <div style={styles.rightText}>
-                        {toDate}
-                      </div>
-                      <div style={styles.rightText}>
-                        3
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <ShowCycleData data={currentCycle} />
                 <Table
                   // pagination={statusPagination}
                   loading={rightLoading}

@@ -2,25 +2,20 @@ import React, { Component } from 'react';
 import { Form, Input, Select, Button, Icon, Modal, Upload, Spin, DatePicker } from 'choerodon-ui';
 import { Content, stores } from 'choerodon-front-boot';
 // import './CreateCycle.less';
-// import { CreateCycle } from '../../../api/TestStatusApi';
+import { getProjectVersion } from '../../../../api/agileApi';
+import { addCycle } from '../../../../api/cycleApi';
+
 const Option = Select.Option;
 const { AppState } = stores;
 const FormItem = Form.Item;
 const { Sidebar } = Modal;
 const { TextArea } = Input;
-const children = [];
-for (let i = 10; i < 36; i += 1) {
-  children.push(<Option key={i.toString(36) + i}>{i.toString(36) + i}</Option>);
-}
 
-function handleChange(value) {
-  window.console.log(`selected ${value}`);
-}
 class CreateCycle extends Component {
   state = {
-    loading: false,
-    pickShow: false,
-    statusColor: 'GRAY',
+    versions: [],
+    selectLoading: false,
+    loading: false,    
   }
   componentWillReceiveProps(nextProps) {
     const { resetFields } = this.props.form;
@@ -30,15 +25,19 @@ class CreateCycle extends Component {
   }
 
   onOk = () => {
-    const { statusColor } = this.state;
-    const { onOk, type } = this.props;
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
         this.setState({ loading: true });
         window.console.log('Received values of form: ', values);
-        CreateCycle({
+        const { fromDate, toDate } = values;
+        
+        addCycle({ 
           ...values,
-          ...{ statusColor, statusType: type },
+          ...{
+            type: 'cycle',
+            fromDate: fromDate.format('YYYY-MM-DD HH:mm:ss'),
+            toDate: toDate.format('YYYY-MM-DD HH:mm:ss'),
+          }, 
         }).then((data) => {
           this.setState({ loading: false });
           this.props.onOk();
@@ -49,10 +48,25 @@ class CreateCycle extends Component {
       }
     });
   }
+  loadVersions=() => {
+    this.setState({
+      selectLoading: true,
+    });
+    getProjectVersion().then((versions) => {
+      this.setState({
+        versions,
+        selectLoading: false,
+      });
+    });
+  }
   render() {
     const { visible, onOk, onCancel, type } = this.props;
     const { getFieldDecorator } = this.props.form;
-    const { pickShow, statusColor, loading } = this.state;
+    const { versions, loading, selectLoading } = this.state;
+    const options = versions.map(version => 
+      (<Option value={version.versionId} key={version.versionId}>     
+        {version.name}     
+      </Option>));
     return (
       <div onClick={() => { this.setState({ pickShow: false }); }} role="none">
         <Spin spinning={loading}>
@@ -81,12 +95,13 @@ class CreateCycle extends Component {
                     }],
                   })(
                     <Select
+                      loading={selectLoading}
+                      onFocus={this.loadVersions}
                       style={{ width: 500, margin: '0 0 10px 0' }}
                       label="版本"
-                      placeholder="版本"
-                      onChange={handleChange}
+                      placeholder="版本"                  
                     >
-                      {children}
+                      {options}
                     </Select>,     
                   )}
                 </FormItem>
@@ -159,7 +174,11 @@ class CreateCycle extends Component {
                       required: true, message: '请选择日期!',
                     }],
                   })(
-                    <DatePicker style={{ width: 500 }} placeholder="开始日期" />,
+                    <DatePicker 
+                      format="YYYY-MM-DD HH:mm:ss"
+                      style={{ width: 500 }} 
+                      placeholder="开始日期" 
+                    />,
                     // <div style={{ width: 500 }}>
                     //   <TextArea maxLength={30} label="说明" placeholder="说明" autosize />
                     // </div>
@@ -174,7 +193,11 @@ class CreateCycle extends Component {
                       required: true, message: '请选择日期!',
                     }],
                   })(
-                    <DatePicker style={{ width: 500 }} placeholder="结束日期" />,
+                    <DatePicker 
+                      format="YYYY-MM-DD HH:mm:ss"
+                      style={{ width: 500 }} 
+                      placeholder="结束日期"
+                    />,
                     // <div style={{ width: 500 }}>
                     //   <TextArea maxLength={30} label="说明" placeholder="说明" autosize />
                     // </div>
