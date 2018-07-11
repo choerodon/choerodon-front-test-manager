@@ -1,28 +1,28 @@
 "test-manager":
   icon: test
-  sort: 1
+  sort: 5
   project:
     - "summary":
         icon: table_chart
         Routes: /testManager/summary
         sort: 1
         permission:
-          - 'test-manager-service.summary'
+          - 'test-manager-service.test-cycle.getTestCycle'
     - "cycle":
         icon: repeat
         Routes: /testManager/Cycle
         sort: 2
         permission:
-          - 'test-manager-service.testCycle'
+          - 'test-manager-service.test-cycle.getTestCycle'
     - "report":
         icon: description
         Routes: /testManager/report
         sort: 3
         permission:
-          - 'test-manager-service.report'
+          - 'test-manager-service.test-cycle.getTestCycle'
     - "status":
         icon: filter_vintage
         Routes: /testManager/status
         sort: 4
         permission:
-          - 'test-manager-service.status'
+          - 'test-manager-service.test-cycle.getTestCycle'
