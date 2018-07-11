@@ -1,5 +1,5 @@
 {
-    "name": "choerodon-front-test-manager",
+    "name": "testManager",
     "version": "1.0.0",
     "description": "",
     "main": "src/app/testManager/containers/TestManagerIndex.js",

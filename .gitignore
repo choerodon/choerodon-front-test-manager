@@ -5,6 +5,7 @@
 .idea
 .project
 .lock.json
+*lock.json
 
 
 # npm
