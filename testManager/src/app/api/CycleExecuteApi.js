@@ -12,9 +12,9 @@ export function getStatusList(statusType) {
 export function getUsers(param) {
   const projectId = AppState.currentMenuType.id;
   if (param) {
-    return axios.get(`/test/v1/projects/${projectId}/user/users?param=${param}`);
+    return axios.get(`/test/v1/projects/${projectId}/users?param=${param}`);
   }
-  return axios.get(`/test/v1/projects/${projectId}/user/users`);
+  return axios.get(`/test/v1/projects/${projectId}/users`);
 }
 export function editCycle(cycle) {
   const projectId = AppState.currentMenuType.id;

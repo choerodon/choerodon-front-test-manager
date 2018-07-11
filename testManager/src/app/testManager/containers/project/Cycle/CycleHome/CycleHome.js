@@ -280,6 +280,7 @@ class CycleHome extends Component {
   deleteExecute = (record) => {
     const that = this;
     const { executeId, cycleId } = record;
+    const { executePagination } = this.state;
     confirm({
       width: 560,
       title: '删除执行',
@@ -292,7 +293,10 @@ class CycleHome extends Component {
         });
         deleteExecute(executeId)
           .then((res) => {
-            getCycleById(cycleId).then((cycle) => {
+            getCycleById({
+              page: executePagination.current - 1,
+              size: executePagination.pageSize,
+            }, cycleId).then((cycle) => {
               that.setState({
                 rightLoading: false,
                 testList: cycle.content,
