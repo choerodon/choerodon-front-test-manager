@@ -368,8 +368,7 @@ class CycleExecute extends Component {
           }).then(() => {
             this.setState({
               loading: false,
-            });
-            Choerodon.prompt('网络异常');
+            });            
           });
           // 写服务端删除逻辑
         }
@@ -393,7 +392,7 @@ class CycleExecute extends Component {
               >
                 {user.realName.slice(0, 1)}
               </span>
-              <span>
+              <span style={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', width: 200 }}>
                 {`${user.loginName} ${user.realName}`}
               </span>
             </div>

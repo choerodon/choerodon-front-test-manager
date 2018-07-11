@@ -49,3 +49,7 @@ export function editFolder(data) {
   const projectId = AppState.currentMenuType.id;
   return axios.put(`/test/v1/projects/${projectId}/cycle`, data);
 }
+export function createCycleExecute(data) {
+  const projectId = AppState.currentMenuType.id;
+  return axios.post(`/test/v1/projects/${projectId}/cycle/case/insert/batch`, data);
+}

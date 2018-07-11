@@ -25,7 +25,7 @@ export function editCycleSide(data) {
     headers: { 'content-type': 'multipart/form-datal' },
   };
   const projectId = AppState.currentMenuType.id;
-  return axios.post(`test/v1/projects/${projectId}/cycle/case/step/updateWithAttach`, data, axiosConfig);
+  return axios.post(`/zuul/test/v1/projects/${projectId}/cycle/case/step/updateWithAttach`, data, axiosConfig);
 }
 export function getCycleDetails(pagination, cycleCaseId) {
   const { size, page } = pagination;

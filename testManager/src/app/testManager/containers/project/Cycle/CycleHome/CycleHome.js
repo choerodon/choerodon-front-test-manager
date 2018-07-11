@@ -580,20 +580,29 @@ class CycleHome extends Component {
       title: '摘要',
       dataIndex: 'comment',
       key: 'comment',
-    }, {
+      render(comment) {
+        return (<span style={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
+          {comment}
+        </span>);
+      },
+    },
+    {
       title: '缺陷',
       dataIndex: 'defects',
       key: 'defects',
       render: defects => <div>{defects.map(defect => defect)}</div>,
-    }, {
-      title: '模块',
-      dataIndex: 'assignedTo',
-      key: 'assignedTo',
-    }, {
-      title: '标签',
-      dataIndex: 'statusName',
-      key: 'statusName',
-    }, {
+    }, 
+    // {
+    //   title: '模块',
+    //   dataIndex: 'assignedTo',
+    //   key: 'assignedTo',
+    // }, 
+    // {
+    //   title: '标签',
+    //   dataIndex: 'statusName',
+    //   key: 'statusName',
+    // }, 
+    {
       title: '执行方',
       dataIndex: 'assignedUserRealName',
       key: 'assignedUserRealName',
@@ -605,7 +614,7 @@ class CycleHome extends Component {
               <span className="c7n-avatar">
                 {assignedUserRealName.slice(0, 1)}
               </span>
-              <span>
+              <span style={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
                 {`${assignedUserJobNumber} ${assignedUserRealName}`}
               </span>
             </div>
@@ -616,6 +625,11 @@ class CycleHome extends Component {
       title: '执行时间',
       dataIndex: 'lastUpdateDate',
       key: 'lastUpdateDate',
+      render(lastUpdateDate) {
+        return (<div style={{ width: 85, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
+          {lastUpdateDate}
+        </div>);
+      },
     }, {
       title: '被指定人',
       dataIndex: 'reporterRealName',
@@ -628,7 +642,7 @@ class CycleHome extends Component {
               <span className="c7n-avatar">
                 {reporterRealName.slice(0, 1)}
               </span>
-              <span>
+              <span style={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
                 {`${reporterJobNumber} ${reporterRealName}`}
               </span>
             </div>
@@ -676,9 +690,27 @@ class CycleHome extends Component {
         >
           <Spin spinning={loading}>
             <CreateCycleExecute
+              data={currentCycle}             
+              rank={testList.slice(-1)[0] && testList.slice(-1)[0].rank}
               visible={CreateCycleExecuteVisible}
               onCancel={() => { this.setState({ CreateCycleExecuteVisible: false }); }}
-              onOk={() => { this.setState({ CreateCycleExecuteVisible: false }); }}
+              onOk={() => {                
+                this.setState({ CreateCycleExecuteVisible: false, rightLoading: true });               
+                // window.console.log(data);
+                getStatusList('CYCLE_CASE').then((statusList) => {
+                  this.setState({ statusList });
+                });
+                getCycleById({
+                  page: executePagination.current - 1,
+                  size: executePagination.pageSize,
+                }, currentCycle.cycleId).then((cycle) => {
+                  this.setState({
+                    rightLoading: false,
+                    testList: cycle.content,
+                  });
+                  // window.console.log(cycle);
+                }); 
+              }}
             />
             <CreateCycle
               visible={CreateCycleVisible}
