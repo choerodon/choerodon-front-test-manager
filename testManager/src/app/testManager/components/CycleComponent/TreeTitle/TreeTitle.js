@@ -61,13 +61,8 @@ class TreeTitle extends Component {
         break;
       }
       case 'export': {
-        const a = document.createElement('a');
-        // const url = window.URL.createObjectURL(blob);
-        const filename = `${item.title}.csv`;
-        a.href = 'http://img2.imgtn.bdimg.com/it/u=3588772980,2454248748&fm=27&gp=0.jpg';
-        a.download = filename;
-        a.click();
-        // window.URL.revokeObjectURL(url);
+        const iframe = document.getElementById('invisible');
+        iframe.src = 'file.doc';
         break;
       }
       default: break;
