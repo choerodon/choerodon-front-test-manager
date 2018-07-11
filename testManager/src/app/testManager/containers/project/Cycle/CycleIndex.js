@@ -8,7 +8,7 @@ const CycleExecute = asyncRouter(() => import('./CycleExecute'));
 const CycleIndex = ({ match }) => (
   <Switch>
     <Route exact path={match.url} component={ComponentHome} />
-    <Route exact path={`${match.url}/execute`} component={CycleExecute} />
+    <Route exact path={`${match.url}/execute/:id?`} component={CycleExecute} />
     <Route path={'*'} component={nomatch} />
   </Switch>
 );

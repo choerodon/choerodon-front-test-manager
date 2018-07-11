@@ -5,19 +5,20 @@ const { AppState } = stores;
 export function getUsers(param) {
   const projectId = AppState.currentMenuType.id;
   if (param) {
-    return axios.get(`/test/v1/user/${projectId}/users?param=${param}`);
+    return axios.get(`/test/v1/projects/${projectId}/user/users?param=${param}`);
   }
-  return axios.get(`/test/v1/user/${projectId}/users`);
+  return axios.get(`/test/v1/projects/${projectId}/user/users`);
 }
 
 export function uploadFile(data, config) {
   const { bucketName, fileName, comment, attachmentLinkId, attachmentType } = config;
+  const projectId = AppState.currentMenuType.id;
   const axiosConfig = {
     headers: { 'content-type': 'multipart/form-datal' },
   };
 
   return axios.post(
-    `/test/v1/project/test/case/attachment?bucket_name=${bucketName}&attachmentLinkId=${attachmentLinkId}&attachmentType=CYCLE_CASE`,
+    `/test/v1/projects/${projectId}/test/case/attachment?bucket_name=${bucketName}&attachmentLinkId=${attachmentLinkId}&attachmentType=CYCLE_CASE`,
     data,
     axiosConfig,
   );

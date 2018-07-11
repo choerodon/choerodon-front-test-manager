@@ -126,25 +126,26 @@ class CycleExecute extends Component {
   componentDidMount() {
     // this.getTestInfo();
     // this.getUserList();
-    this.getInfo();
+    this.getInfo();   
   }
   getInfo = () => {
+    const { id } = this.props.match.params;
     this.setState({ loading: true });
     const { historyPagination, detailPagination } = this.state;
-    Promise.all([getCycle(), getStatusList('CYCLE_CASE'), getCycleDetails({
+    Promise.all([getCycle(id), getStatusList('CYCLE_CASE'), getCycleDetails({
       page: detailPagination.current - 1,
       size: detailPagination.pageSize,
-    }, 1),
+    }, id),
     getStatusList('CASE_STEP'), getCycleHistiorys({
       page: historyPagination.current - 1,
       size: historyPagination.pageSize,
-    }, 1)])
+    }, id)])
       .then(([cycleData, statusList, detailData, stepStatusList, historyData]) => {
         const { caseAttachment } = cycleData;
         const fileList = caseAttachment.map((attachment) => {
-          const { url, attachmentName, id } = attachment;
+          const { url, attachmentName } = attachment;
           return {
-            uid: id,
+            uid: attachment.id,
             name: attachmentName,
             status: 'done',
             url,
@@ -616,9 +617,10 @@ class CycleExecute extends Component {
         </div>
       </Option>),
     );
+    const urlParams = AppState.currentMenuType;
     return (
       <div>
-        <Header title="版本：1.0" backPath="/testManager/cycle">
+        <Header title="版本：1.0" backPath={`/testManager/cycle?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}>
           <Button onClick={this.getInfo}>
             <Icon type="autorenew icon" />
             <span>刷新</span>
@@ -841,6 +843,7 @@ class CycleExecute extends Component {
                 <span style={styles.cardTitleText}>执行历史记录</span>
               </div>
               <Table
+                filterBar={false}
                 dataSource={historyList}
                 columns={columnsHistory}
                 pagination={historyPagination}
@@ -853,6 +856,7 @@ class CycleExecute extends Component {
                 <span style={styles.cardTitleText}>测试详细信息</span>
               </div>
               <Table
+                filterBar={false}
                 dataSource={detailList}
                 columns={columns}
                 pagination={detailPagination}

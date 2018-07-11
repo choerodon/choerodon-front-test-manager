@@ -1,0 +1,40 @@
+.c7n-pb-unfill {
+    width: 100px;
+    height: 8px;
+    background-color: rgba(0, 0, 0, 0.26);
+    display: inline-block;
+    position: relative;
+    border-radius: 100px;
+    overflow: hidden;
+}
+
+.c7n-pb-fill {
+    width: 100px;
+    height: 8px;
+    position: relative;
+}
+
+.c7n-pb-fill-parent {
+    display: flex;
+    position: absolute;
+    width: 100px;
+    height: 8px;
+}
+
+.c7n-tree-title {
+    display: flex;
+}
+
+.c7n-tree-title {
+    width: 230px;
+    display: flex;
+    align-items: center;
+    margin-top: -3px;
+}
+
+.c7n-tt-text {
+    width: 80px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
