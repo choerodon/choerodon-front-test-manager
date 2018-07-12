@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
 import { observer } from 'mobx-react';
 import { Page, Header, Content, stores } from 'choerodon-front-boot';
-import { Table, Button, Icon, Input, Tree, Spin, Modal } from 'choerodon-ui';
+import { Tooltip, Table, Button, Icon, Input, Tree, Spin, Modal } from 'choerodon-ui';
 import _ from 'lodash';
 import './CycleHome.scss';
 import { getCycles, deleteExecute, getCycleById, editCycleExecute, clone, addFolder, getStatusList } from '../../../../../api/cycleApi';
 import { TreeTitle, CreateCycle, EditCycle, CreateCycleExecute, ShowCycleData } from '../../../../components/CycleComponent';
+import { RichTextShow } from '../../../../components/CommonComponent';
+import { delta2Html, delta2Text } from '../../../../common/utils';
 
 const { AppState } = stores;
 const { confirm } = Modal;
@@ -206,8 +208,8 @@ class CycleHome extends Component {
     // });
     removeDragClass();
     const { dragData, testList } = this.state;
-    const sourceIndex = _.findIndex(testList, { issueId: dragData.issueId });
-    const targetIndex = _.findIndex(testList, { issueId: record.issueId });
+    const sourceIndex = _.findIndex(testList, { executeId: dragData.executeId });
+    const targetIndex = _.findIndex(testList, { executeId: record.executeId });
     if (sourceIndex === targetIndex) {
       return;
     }
@@ -221,10 +223,10 @@ class CycleHome extends Component {
       nextRank = testList[targetIndex].rank;
     }
     window.console.log(lastRank, nextRank);
-    const [removed] = testList.splice(targetIndex, 1);
-    testList.splice(sourceIndex, 0, removed);
+    // const [removed] = testList.splice(targetIndex, 1);
+    // testList.splice(sourceIndex, 0, removed);
     this.setState({
-      testList,
+      // testList,
       dragData: null,
     });
     const temp = { ...dragData };
@@ -238,7 +240,17 @@ class CycleHome extends Component {
         nextRank,
       },
     }).then((res) => {
-
+      const { executePagination, currentCycle } = this.state;
+      getCycleById({
+        page: executePagination.current - 1,
+        size: executePagination.pageSize,
+      }, currentCycle.cycleId).then((cycle) => {
+        this.setState({
+          rightLoading: false,
+          testList: cycle.content,
+        });
+        window.console.log(cycle);
+      });
     });
     // window.console.log(record, dragData, currentDropSide);
   }
@@ -581,9 +593,21 @@ class CycleHome extends Component {
       dataIndex: 'comment',
       key: 'comment',
       render(comment) {
-        return (<span style={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
-          {comment}
-        </span>);
+        return (
+          <Tooltip title={<RichTextShow data={delta2Html(comment)} />}>
+            <div
+              title={delta2Text(comment)}
+              style={{
+                width: 100,
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {delta2Text(comment)}
+            </div>
+          </Tooltip>
+        );
       },
     },
     {
@@ -606,21 +630,22 @@ class CycleHome extends Component {
       title: '执行方',
       dataIndex: 'assignedUserRealName',
       key: 'assignedUserRealName',
-      render(assignedUserRealName, record) {
-        const { assignedUserJobNumber } = record;
-        return (<div style={{ width: 100 }}>
-          {assignedUserRealName ? (
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <span className="c7n-avatar">
-                {assignedUserRealName.slice(0, 1)}
-              </span>
-              <span style={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
-                {`${assignedUserJobNumber} ${assignedUserRealName}`}
-              </span>
-            </div>
-          ) : '无'}
-        </div>);
-      },
+      // render(assignedUserRealName, record) {
+      //   const { assignedUserJobNumber } = record;
+      //   return (<div style={{ width: 100 }}>
+      //     {assignedUserRealName ? (
+      //       <div style={{ display: 'flex', alignItems: 'center' }}>
+      //         <span className="c7n-avatar">
+      //           {assignedUserRealName.slice(0, 1)}
+      //         </span>
+      //         <span style={{ overflow: 'hidden', 
+      // whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
+      //           {`${assignedUserJobNumber} ${assignedUserRealName}`}
+      //         </span>
+      //       </div>
+      //     ) : '无'}
+      //   </div>);
+      // },
     }, {
       title: '执行时间',
       dataIndex: 'lastUpdateDate',
@@ -634,21 +659,22 @@ class CycleHome extends Component {
       title: '被指定人',
       dataIndex: 'reporterRealName',
       key: 'reporterRealName',
-      render(reporterRealName, record) {
-        const { reporterJobNumber } = record;
-        return (<div style={{ width: 100 }}>
-          {reporterRealName ? (
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <span className="c7n-avatar">
-                {reporterRealName.slice(0, 1)}
-              </span>
-              <span style={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
-                {`${reporterJobNumber} ${reporterRealName}`}
-              </span>
-            </div>
-          ) : '无'}
-        </div>);
-      },
+      // render(reporterRealName, record) {
+      //   const { reporterJobNumber } = record;
+      //   return (<div style={{ width: 100 }}>
+      //     {reporterRealName ? (
+      //       <div style={{ display: 'flex', alignItems: 'center' }}>
+      //         <span className="c7n-avatar">
+      //           {reporterRealName.slice(0, 1)}
+      //         </span>
+      //         <span style={{ overflow: 'hidden',
+      //  whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
+      //           {`${reporterJobNumber} ${reporterRealName}`}
+      //         </span>
+      //       </div>
+      //     ) : '无'}
+      //   </div>);
+      // },
     }, {
       title: '',
       key: 'action',
@@ -695,10 +721,11 @@ class CycleHome extends Component {
               visible={CreateCycleExecuteVisible}
               onCancel={() => { this.setState({ CreateCycleExecuteVisible: false }); }}
               onOk={() => {                
-                this.setState({ CreateCycleExecuteVisible: false, rightLoading: true });               
+                this.setState({ CreateCycleExecuteVisible: false, 
+                  rightLoading: true });               
                 // window.console.log(data);
-                getStatusList('CYCLE_CASE').then((statusList) => {
-                  this.setState({ statusList });
+                getStatusList('CYCLE_CASE').then((List) => {
+                  this.setState({ statusList: List });
                 });
                 getCycleById({
                   page: executePagination.current - 1,
