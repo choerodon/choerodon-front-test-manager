@@ -16,12 +16,13 @@ export function text2Delta(description) {
  */
 export function delta2Html(description) {
   // 修复普通文本显示
-  let temp = null;
+  let temp = description;
   try {
-    temp = JSON.parse(description);
+    JSON.parse(description);
   } catch (error) {
     temp = JSON.stringify([{ insert: description }]);
   }
+  
   const delta = text2Delta(temp);
   const converter = new QuillDeltaToHtmlConverter(delta, {});
   const text = converter.convert();

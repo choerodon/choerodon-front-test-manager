@@ -68,6 +68,12 @@ class WYSIWYGEditor extends Component {
 
   render() {
     const { placeholder, value } = this.props;
+    let defaultValue = value;
+    try {
+      defaultValue = JSON.parse(value);     
+    } catch (error) {
+      defaultValue = value;
+    }
     const style = { ...this.defaultStyle, ...this.props.style };
     const editHeight = style.height - (this.props.toolbarHeight || 42);
     return (
@@ -79,7 +85,7 @@ class WYSIWYGEditor extends Component {
             formats={this.formats}
             style={{ height: editHeight }}
             placeholder={placeholder || '描述'}
-            defaultValue={value}
+            defaultValue={defaultValue}
             onChange={this.handleChange}
           />
         </div>
