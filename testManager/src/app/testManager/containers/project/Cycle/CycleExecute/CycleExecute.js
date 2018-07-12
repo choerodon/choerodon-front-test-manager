@@ -332,7 +332,7 @@ class CycleExecute extends Component {
       cycleData.assignedTo = 0;
     }
     this.setState({ loading: true });
-    editCycle({ ...this.state.cycleData, ...{ comment: value } }).then((Data) => {
+    editCycle({ ...this.state.cycleData, ...{ comment: JSON.stringify(value) } }).then((Data) => {
       this.setState({
         cycleData: Data,
         edit: false,
