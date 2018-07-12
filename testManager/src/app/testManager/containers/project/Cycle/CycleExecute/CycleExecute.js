@@ -261,6 +261,10 @@ class CycleExecute extends Component {
     delete cycleData.lastRank;
     delete cycleData.nextRank;
     this.setState({ loading: true });
+    const { assignedTo } = cycleData;
+    if (!assignedTo) {
+      cycleData.assignedTo = 0;
+    }
     editCycle(this.state.cycleData).then((Data) => {
       this.setState({
         cycleData: Data,
@@ -323,6 +327,10 @@ class CycleExecute extends Component {
     delete cycleData.testCycleCaseStepES;
     delete cycleData.lastRank;
     delete cycleData.nextRank;
+    const { assignedTo } = cycleData;
+    if (!assignedTo) {
+      cycleData.assignedTo = 0;
+    }
     this.setState({ loading: true });
     editCycle({ ...this.state.cycleData, ...{ comment: JSON.stringify(value) } }).then((Data) => {
       this.setState({
