@@ -15,9 +15,16 @@ class CreateSprint extends Component {
   };
 
   componentWillReceiveProps(nextProps) {
-    this.setState({
-      delta: nextProps.initValue,
-    });
+    try {
+      JSON.parse(nextProps.initValue);
+      this.setState({
+        delta: JSON.parse(nextProps.initValue),
+      });
+    } catch (error) {
+      this.setState({
+        delta: nextProps.initValue,
+      });
+    }
   }
 
 
@@ -40,7 +47,7 @@ class CreateSprint extends Component {
         <WYSIWYGEditor
           value={this.state.delta}
           style={{ height: 500, width: '100%', marginTop: 20 }}
-          onChange={(value) => {          
+          onChange={(value) => {
             this.setState({ delta: value });
           }}
         />
