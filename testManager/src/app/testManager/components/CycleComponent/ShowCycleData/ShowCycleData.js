@@ -8,7 +8,7 @@ class ShowCycleData extends Component {
       description, toDate, environment, fromDate, cycleCaseList, createdName,
       children,
     } = this.props.data;
-    const user = createdName.split(' ');
+    const user = createdName ? createdName.split(' ') : ['', ''];
     // 全局数
     let allExectueNum = 0;    
     // 全局执行过的数
