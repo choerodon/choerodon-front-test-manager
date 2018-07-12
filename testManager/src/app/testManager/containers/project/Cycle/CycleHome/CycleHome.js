@@ -208,8 +208,8 @@ class CycleHome extends Component {
     // });
     removeDragClass();
     const { dragData, testList } = this.state;
-    const sourceIndex = _.findIndex(testList, { issueId: dragData.issueId });
-    const targetIndex = _.findIndex(testList, { issueId: record.issueId });
+    const sourceIndex = _.findIndex(testList, { executeId: dragData.executeId });
+    const targetIndex = _.findIndex(testList, { executeId: record.executeId });
     if (sourceIndex === targetIndex) {
       return;
     }
@@ -223,10 +223,10 @@ class CycleHome extends Component {
       nextRank = testList[targetIndex].rank;
     }
     window.console.log(lastRank, nextRank);
-    const [removed] = testList.splice(targetIndex, 1);
-    testList.splice(sourceIndex, 0, removed);
+    // const [removed] = testList.splice(targetIndex, 1);
+    // testList.splice(sourceIndex, 0, removed);
     this.setState({
-      testList,
+      // testList,
       dragData: null,
     });
     const temp = { ...dragData };
@@ -240,7 +240,17 @@ class CycleHome extends Component {
         nextRank,
       },
     }).then((res) => {
-
+      const { executePagination, currentCycle } = this.state;
+      getCycleById({
+        page: executePagination.current - 1,
+        size: executePagination.pageSize,
+      }, currentCycle.cycleId).then((cycle) => {
+        this.setState({
+          rightLoading: false,
+          testList: cycle.content,
+        });
+        window.console.log(cycle);
+      });
     });
     // window.console.log(record, dragData, currentDropSide);
   }
@@ -628,7 +638,8 @@ class CycleHome extends Component {
       //         <span className="c7n-avatar">
       //           {assignedUserRealName.slice(0, 1)}
       //         </span>
-      //         <span style={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
+      //         <span style={{ overflow: 'hidden', 
+      // whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
       //           {`${assignedUserJobNumber} ${assignedUserRealName}`}
       //         </span>
       //       </div>
@@ -656,7 +667,8 @@ class CycleHome extends Component {
       //         <span className="c7n-avatar">
       //           {reporterRealName.slice(0, 1)}
       //         </span>
-      //         <span style={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
+      //         <span style={{ overflow: 'hidden',
+      //  whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
       //           {`${reporterJobNumber} ${reporterRealName}`}
       //         </span>
       //       </div>
@@ -709,10 +721,11 @@ class CycleHome extends Component {
               visible={CreateCycleExecuteVisible}
               onCancel={() => { this.setState({ CreateCycleExecuteVisible: false }); }}
               onOk={() => {                
-                this.setState({ CreateCycleExecuteVisible: false, rightLoading: true });               
+                this.setState({ CreateCycleExecuteVisible: false, 
+                  rightLoading: true });               
                 // window.console.log(data);
-                getStatusList('CYCLE_CASE').then((statusList) => {
-                  this.setState({ statusList });
+                getStatusList('CYCLE_CASE').then((List) => {
+                  this.setState({ statusList: List });
                 });
                 getCycleById({
                   page: executePagination.current - 1,
