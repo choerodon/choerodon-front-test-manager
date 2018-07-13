@@ -10,6 +10,7 @@ import { uploadFile } from '../../../../../api/CommonApi';
 import { delta2Html, delta2Text } from '../../../../common/utils';
 
 import './CycleExecute.less';
+import { getIssueList } from '../../../../../api/agileApi';
 
 const { AppState } = stores;
 const Option = Select.Option;
@@ -77,6 +78,7 @@ function beforeUpload(file) {
 class CycleExecute extends Component {
   state = {
     fileList: [],
+    issueList: [],
     loading: false,
     edit: false,
     selectLoading: false,
@@ -357,7 +359,8 @@ class CycleExecute extends Component {
   }
   render() {
     const { fileList, userList, stepStatusList, detailList, historyList, loading, cycleData,
-      statusList, selectLoading, historyPagination, detailPagination, editVisible, editing }
+      statusList, selectLoading, historyPagination, detailPagination, 
+      editVisible, editing, issueList }
       = this.state;
     const that = this;
     const props = {
@@ -605,7 +608,7 @@ class CycleExecute extends Component {
     const { executionStatus, executionStatusName, 
       executionStatusColor, reporterJobNumber, reporterRealName,
       assignedUserRealName, assignedUserJobNumber, lastUpdateDate, executeId,
-      issueId, comment, caseAttachment, testCycleCaseStepES } = cycleData;
+      issueId, comment, caseAttachment, testCycleCaseStepES, defects } = cycleData;
     const options = statusList.map((status) => {
       const { statusName, statusId, statusColor } = status;
       return (<Option value={statusId} key={statusId}>
@@ -624,6 +627,10 @@ class CycleExecute extends Component {
         </div>
       </Option>),
     );
+    const defectsOptions =
+    issueList.map(issue => (<Option key={issue.issueId} value={issue.issueId.toString()}>
+      {issue.issueNum} {issue.summary}
+    </Option>));
     const urlParams = AppState.currentMenuType;
     return (
       <div>
@@ -769,9 +776,58 @@ class CycleExecute extends Component {
                     <div style={styles.carsContentItemPrefix}>
                       缺陷：
                     </div>
-                    <div>
-                      {/* {issueId} */}
-                    </div>
+                    
+                    <TextEditToggle
+                      onSubmit={this.submit}
+                      originData={{ defects }}
+                      onCancel={this.cancelEdit}
+                    >
+                      <Text>
+                        {defects.length > 0 ? (
+                          <div
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                            }}
+                          >
+                            {defects.map(defect => (<div>
+                              <div style={{ background: '#FF7043', borderRadius: '50%', color: 'white', width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                <Icon type="test" style={{ fontSize: '14px' }} />
+                              </div>
+                              <span>
+                                {defect.issueNum} {defect.summary}
+                              </span>
+                            </div>))}
+                            
+                          </div>
+                        ) : '无'}
+                      </Text>
+                      <Edit>
+                        <Select
+                          filter
+                          allowClear
+                          autoFocus
+                          mode="tags"
+                          loading={selectLoading}
+                          value={defects}
+                          style={{ width: 200 }}
+                          onChange={(List) => { this.setState({ defects: List }); }}
+                          onFocus={() => {
+                            this.setState({
+                              selectLoading: true,
+                            });
+                            getIssueList().then((issueData) => {
+                              this.setState({
+                                issueList: issueData.content,
+                                selectLoading: false,
+                              });
+                            });
+                          }}
+                        >
+                          {defectsOptions}
+                        </Select>
+                      </Edit>
+                    </TextEditToggle>
                   </div>
                 </div>
               </Card>

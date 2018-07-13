@@ -39,5 +39,5 @@ export function getCycleHistiorys(pagination, cycleCaseId) {
 }
 export function deleteAttachment(id) {
   const projectId = AppState.currentMenuType.id;
-  return axios.delete(`test/v1/projects/${projectId}/test/case/attachment?bucketName=${'test'}&attachId=${id}`);
+  return axios.delete(`test/v1/projects/${projectId}/test/case/attachment/delete/bucket/test/attach/${id}`);
 }

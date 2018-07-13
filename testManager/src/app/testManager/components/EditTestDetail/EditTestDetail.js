@@ -4,6 +4,7 @@ import { Content } from 'choerodon-front-boot';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 import { editCycleSide, deleteAttachment } from '../../../api/CycleExecuteApi';
+import { getIssueList } from '../../../api/agileApi';
 import './EditTestDetail.less';
 import WYSIWYGEditor from '../WYSIWYGEditor';
 
@@ -39,6 +40,7 @@ function handleChange(value) {
 
 class EditTestDetail extends Component {
   state = {
+    selectLoading: false,
     reset: false,
     fileList: [],
     loading: false,
@@ -53,6 +55,7 @@ class EditTestDetail extends Component {
     stepAttachment: [],
     caseAttachment: [],
     defects: [],
+    issueList: [],
   }
   componentWillReceiveProps(nextProps) {
     const { editing } = nextProps;
@@ -165,7 +168,7 @@ class EditTestDetail extends Component {
   render() {
     const { visible, onOk, onCancel } = this.props;
     const { reset, fileList, executeId, testStep, comment,
-      stepStatusList, stepStatus, loading } = this.state;
+      stepStatusList, stepStatus, loading, defects, issueList, selectLoading } = this.state;
     const delta = text2Delta(comment);
     // console.log(delta)
     const props = {
@@ -203,6 +206,11 @@ class EditTestDetail extends Component {
         </div>
       </Option>);
     });
+
+    const defectsOptions =
+    issueList.map(issue => (<Option key={issue.issueId} value={issue.issueId.toString()}>
+      {issue.issueNum} {issue.summary}
+    </Option>));
     return (
       <Sidebar
         title="测试详细信息"
@@ -238,10 +246,39 @@ class EditTestDetail extends Component {
               style={{ width: 500 }}
               label="缺陷"
               placeholder="缺陷"
-              onChange={handleChange}
+              value={defects}
+              onChange={(List) => { this.setState({ defects: List }); }}
               allowClear
+              loading={selectLoading}
+              filter
+              // onFilterChange={(input, option) =>
+              //   option.props.children.props.children[1].props.children.toLowerCase()
+              //     .indexOf(input.toLowerCase()) >= 0}
+              onFilterChange={(value) => {
+                // window.console.log('filter');
+                this.setState({
+                  selectLoading: true,
+                });
+                getIssueList(value).then((issueData) => {
+                  this.setState({
+                    issueList: issueData.content,
+                    selectLoading: false,
+                  });
+                });
+              }}
+              onFocus={() => {
+                this.setState({
+                  selectLoading: true,
+                });
+                getIssueList().then((issueData) => {
+                  this.setState({
+                    issueList: issueData.content,
+                    selectLoading: false,
+                  });
+                });
+              }}
             >
-              {children}
+              {defectsOptions}
             </Select>
             <div style={styles.editLabel}>附件</div>
             <Upload {...props} fileList={fileList}>

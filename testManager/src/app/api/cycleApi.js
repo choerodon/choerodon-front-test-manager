@@ -53,3 +53,16 @@ export function createCycleExecute(data) {
   const projectId = AppState.currentMenuType.id;
   return axios.post(`/test/v1/projects/${projectId}/cycle/case/insert/batch`, data);
 }
+export function createCycleExecuteFromCycle(fromCycleId, toCycleId, assignee, filter) {
+  const projectId = AppState.currentMenuType.id;
+  return axios.post(`/test/v1/projects/${projectId}/cycle/case/insert/case/filter/${fromCycleId}/to/${toCycleId}/assigneeTo/${assignee}`, filter);
+}
+
+export function getCyclesByVersionId(versionId) {
+  const projectId = AppState.currentMenuType.id;
+  return axios.post(`/test/v1/projects/${projectId}/cycle/query/cycle/versionId/${versionId}`);
+}
+export function getFoldersByCycleId(cycleId) {
+  const projectId = AppState.currentMenuType.id;
+  return axios.post(`/test/v1/projects/${projectId}/cycle/query/folder/cycleId/${cycleId}`);
+}

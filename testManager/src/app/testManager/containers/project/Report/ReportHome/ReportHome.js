@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 import { Table, Tabs, Menu, Dropdown, Button, Icon, Card, Select, Spin, Upload } from 'choerodon-ui';
 import { Page, Header, Content, stores } from 'choerodon-front-boot';
 import './ReportHome.less';
@@ -7,6 +8,7 @@ import Pic from './pic.svg';
 import Pic2 from './pic2.svg';
 
 const { Option } = Select;
+const { AppState } = stores;
 const styles = {
   itemContainer: {
     marginRight: 24,
@@ -36,13 +38,14 @@ const styles = {
 };
 class ReportHome extends Component {
   render() {
+    const urlParams = AppState.currentMenuType;
     const menu = (
       <Menu>
         <Menu.Item key="0">
-          <a href="http://www.alipay.com/">1st menu item</a>
+          <Link to={`/testManager/report/story?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`} >故事到测试</Link>
         </Menu.Item>
         <Menu.Item key="1">
-          <a href="http://www.taobao.com/">2nd menu item</a>
+          <Link to={`/testManager/report/test?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}>测试到故事</Link>
         </Menu.Item>      
       </Menu>
     );
