@@ -3,7 +3,7 @@ import { Page, Header, Content, stores } from 'choerodon-front-boot';
 import { Link } from 'react-router-dom';
 import { Table, Menu, Dropdown, Button, Icon, Collapse } from 'choerodon-ui';
 import ReportSelectIssue from '../../../../components/ReportSelectIssue';
-import { getReports } from '../../../../../api/reportApi';
+import { getReportsFromStory } from '../../../../../api/reportApi';
 import { getIssueStatus } from '../../../../../api/agileApi';
 import { getStatusList } from '../../../../../api/cycleApi';
 import './ReportStory.scss';
@@ -49,7 +49,7 @@ class ReportStory extends Component {
       total: 0,
       pageSize: 10,
     },
-    openId: null,
+    openId: [],
     issueIds: [],
   }
   componentDidMount() {
@@ -62,24 +62,26 @@ class ReportStory extends Component {
     Promise.all([
       getIssueStatus(),
       getStatusList('CASE_STEP'),
-      this.getReports(),
+      this.getReportsFromStory(),
     ]).then(([issueStatusList, statusList]) => {
       this.setState({
         issueStatusList,
         statusList,       
         loading: false,
+        openId: [],
       });
     });
   }
-  getReports = (pagination = this.state.pagination, issueIds = this.state.issueIds) => {
+  getReportsFromStory = (pagination = this.state.pagination, issueIds = this.state.issueIds) => {
     this.setState({ loading: true });
-    getReports({
+    getReportsFromStory({
       page: pagination.current - 1,
       size: pagination.pageSize,
     }, issueIds).then((reportData) => {
       this.setState({
         loading: false,
-        reportList: reportData.content,
+        // reportList: reportData.content,
+        reportList: reportData,
         pagination: {
           current: pagination.current,
           pageSize: pagination.pageSize,
@@ -98,13 +100,15 @@ class ReportStory extends Component {
     this.getList(pagination);
   }
   handleOpen=(issueId, open) => {
+    const { openId } = this.state;
     if (open) {
       this.setState({
-        openId: issueId,
+        openId: [...openId, issueId],
       });
     } else {
+      openId.splice(openId.indexOf(issueId), 1);
       this.setState({
-        openId: null,
+        openId: [...openId],
       });
     }
   }
@@ -128,64 +132,78 @@ class ReportStory extends Component {
     );
     const columns = [{
       className: 'c7n-table-white',
-      title: '缺陷',
+      title: '要求',
       dataIndex: 'issueId',
       key: 'issueId',
-      render(issueId) {
-        return (<Collapse 
-          bordered={false} 
-          onChange={(keys) => { that.handleOpen(issueId, keys.length > 0); }}
-        >
-          <Panel
-            header={
-              <div className="c7n-collapse-header-container">
-                <div>640</div>
-                <div className="c7n-collapse-header-icon">                 
-                  <span style={{ }}>
-                  待处理
-                  </span>
+      render(issueId, record) {
+        const { issueStatus, issueColor } = record;
+        return (
+          <Collapse 
+            activeKey={openId.includes(record.issueId) ? ['1'] : []}
+            bordered={false} 
+            onChange={(keys) => { that.handleOpen(issueId, keys.length > 0); }}
+          >
+            <Panel
+              header={
+                <div className="c7n-collapse-header-container">
+                  <div>{record.issueName}</div>
+                  <div className="c7n-collapse-header-icon">                 
+                    <span style={{ color: issueColor, borderColor: issueColor }}>
+                      {issueStatus}
+                    </span>
+                  </div>
                 </div>
-              </div>
-            }
-            key="1"           
-          > sss</Panel>
-        </Collapse>);
-      },
-    }, {
-      className: 'c7n-table-white',
-      title: '执行',
-      dataIndex: 'cycleId',
-      key: 'cycleId',
-      render(cycleId, record) {
-        return (<Collapse 
-          bordered={false} 
-          activeKey={openId === record.issueId ? ['1'] : []}         
-        >
-          <Panel
-            showArrow={false}
-            header={
-              <div className="c7n-collapse-header-container">
-                <div>640</div>
-                <div className="c7n-collapse-header-icon">                 
-                  <span style={{ }}>
-                  待处理
-                  </span>
-                </div>
-              </div>
-            }
-            key="1"           
-          > sss</Panel>
-        </Collapse>);
+              }
+              key="1"           
+            > 
+              {record.summary}
+            </Panel>
+          </Collapse>);
       },
     }, {
       className: 'c7n-table-white',
       title: '测试',
+      dataIndex: 'cycleId',
+      key: 'cycleId',
+      render(cycleId, record) {
+        const { linkedTestIssues } = record;
+        return (
+          openId.includes(record.issueId) ?   
+            <div>
+              <div>总共</div>
+              <div style={{ display: 'flex' }}>
+                <div>
+                  <span>未执行</span>
+                  <span>1</span>
+                </div>              
+                <div>
+                  <span>通过</span>
+                  <span>1</span>
+                </div>
+              </div>          
+            </div> :
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <div>test1 / 发布测试</div>
+                <div>未执行</div>
+                <Link to={`/testManager/Cycle/execute/${record
+                  .executeId}?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}
+                >
+                  <Icon type="explicit" />     
+                </Link>      
+              </div>     
+            </div>
+        );
+      },
+    }, {
+      className: 'c7n-table-white',
+      title: '执行',
       dataIndex: 'test',
       key: 'test',   
       render(test, record) {
         return (<Collapse 
           bordered={false} 
-          activeKey={openId === record.issueId ? ['1'] : []}         
+          activeKey={openId.includes(record.issueId) ? ['1'] : []}         
         >
           <Panel
             showArrow={false}
@@ -205,13 +223,13 @@ class ReportStory extends Component {
       },
     }, {
       className: 'c7n-table-white',
-      title: '要求',
+      title: '缺陷',
       dataIndex: 'demand',
       key: 'demand',
       render(demand, record) {
         return (<Collapse 
           bordered={false} 
-          activeKey={openId === record.issueId ? ['1'] : []}         
+          activeKey={openId.includes(record.issueId) ? ['1'] : []}         
         >
           <Panel
             showArrow={false}
@@ -280,14 +298,14 @@ class ReportStory extends Component {
             onCancel={() => { this.setState({ selectVisible: false }); }}
             onOk={(issueIds) => {
               this.setState({ selectVisible: false, issueIds }); 
-              getReports(issueIds);
+              getReportsFromStory(issueIds);
             }}
           />
           <Table           
             loading={loading}
             pagination={pagination}
             columns={columns}
-            dataSource={temp}
+            dataSource={reportList}
             onChange={this.handleTableChange}
           />
         </Content>

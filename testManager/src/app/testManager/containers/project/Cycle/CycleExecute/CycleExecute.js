@@ -5,7 +5,8 @@ import _ from 'lodash';
 import { TextEditToggle, RichTextShow } from '../../../../components/CommonComponent';
 import EditTestDetail from '../../../../components/EditTestDetail';
 import FullEditor from '../../../../components/FullEditor';
-import { getCycle, getCycleDetails, getStatusList, getUsers, editCycle, getCycleHistiorys, deleteAttachment } from '../../../../../api/CycleExecuteApi';
+import { getCycle, addDefects, getCycleDetails, getStatusList, 
+  getUsers, editCycle, getCycleHistiorys, deleteAttachment, removeDefect } from '../../../../../api/CycleExecuteApi';
 import { uploadFile } from '../../../../../api/CommonApi';
 import { delta2Html, delta2Text } from '../../../../common/utils';
 
@@ -124,11 +125,12 @@ class CycleExecute extends Component {
       rank: '0|c00000:', //
       // testCycleCaseStepES: [], //
     },
+    originDefects: [],
   }
   componentDidMount() {
     // this.getTestInfo();
     // this.getUserList();
-    this.getInfo();   
+    this.getInfo();
   }
   getInfo = () => {
     const { id } = this.props.match.params;
@@ -156,6 +158,7 @@ class CycleExecute extends Component {
         this.setState({
           fileList,
           cycleData,
+          originDefects: cycleData.defects,
           statusList,
           detailList: detailData.content,
           detailPagination: {
@@ -219,8 +222,8 @@ class CycleExecute extends Component {
             _.find(statusList, { statusId: status }).statusName,
           executionStatus: status,
           executionStatusColor:
-           _.find(statusList, { statusId: status }) && 
-           _.find(statusList, { statusId: status }).statusColor,
+            _.find(statusList, { statusId: status }) &&
+            _.find(statusList, { statusId: status }).statusColor,
         },
       },
     });
@@ -281,6 +284,43 @@ class CycleExecute extends Component {
         originData,
       });
       this.setStatusAndColor(originData.executionStatus, this.state.statusList);
+    });
+  }
+  handleDefectsChange = (List) => {
+    const { originDefects, cycleData } = this.state;
+    const oldList = [...cycleData.defects];
+    window.console.log('old', oldList, 'new', List);
+    // 删除元素
+    if (oldList.length > List.length) {
+      const deleteEle = oldList.filter(old => !List.includes(old));
+      if (_.find(originDefects, { issueId: Number(deleteEle) })) {
+        removeDefect(deleteEle);
+      }
+      window.console.log('delete');
+    } else {
+      window.console.log('add', List.filter(item => !oldList.includes(item)));
+    }
+
+    this.setState({
+      cycleData: { ...this.state.cycleData, ...{ defects: List } },
+    });
+  }
+  addDefects = () => {
+    const { cycleData, issueList } = this.state;
+    const { defects, executeId } = cycleData;
+    // addDefects(defects);
+
+
+    const arr = issueList.filter(issue => defects.includes(issue.issueId.toString())).map(item => ({
+      defectType: 'CYCLE_CASE',
+      defectLinkId: executeId,
+      issueId: item.issueId,
+      defectName: item.issueNum,
+    }));
+    window.console.log(defects, issueList, arr);
+    this.setState({ loading: true });
+    addDefects(arr).then((res) => {
+      this.getInfo();
     });
   }
   handleUpload = (e) => {
@@ -359,7 +399,7 @@ class CycleExecute extends Component {
   }
   render() {
     const { fileList, userList, stepStatusList, detailList, historyList, loading, cycleData,
-      statusList, selectLoading, historyPagination, detailPagination, 
+      statusList, selectLoading, historyPagination, detailPagination,
       editVisible, editing, issueList }
       = this.state;
     const that = this;
@@ -379,7 +419,7 @@ class CycleExecute extends Component {
           }).then(() => {
             this.setState({
               loading: false,
-            });            
+            });
           });
           // 写服务端删除逻辑
         }
@@ -548,7 +588,7 @@ class CycleExecute extends Component {
           _.find(stepStatusList, { statusId: stepStatus }).statusColor : '';
         return (<div style={{ ...styles.statusOption, ...{ background: statusColor } }}>
           {_.find(stepStatusList, { statusId: stepStatus }) &&
-          _.find(stepStatusList, { statusId: stepStatus }).statusName}
+            _.find(stepStatusList, { statusId: stepStatus }).statusName}
         </div>);
       },
     },
@@ -605,7 +645,7 @@ class CycleExecute extends Component {
       },
     }];
 
-    const { executionStatus, executionStatusName, 
+    const { executionStatus, executionStatusName,
       executionStatusColor, reporterJobNumber, reporterRealName,
       assignedUserRealName, assignedUserJobNumber, lastUpdateDate, executeId,
       issueId, comment, caseAttachment, testCycleCaseStepES, defects } = cycleData;
@@ -628,9 +668,9 @@ class CycleExecute extends Component {
       </Option>),
     );
     const defectsOptions =
-    issueList.map(issue => (<Option key={issue.issueId} value={issue.issueId.toString()}>
-      {issue.issueNum} {issue.summary}
-    </Option>));
+      issueList.map(issue => (<Option key={issue.issueId} value={issue.issueId.toString()}>
+        {issue.issueNum} {issue.summary}
+      </Option>));
     const urlParams = AppState.currentMenuType;
     return (
       <div>
@@ -776,9 +816,9 @@ class CycleExecute extends Component {
                     <div style={styles.carsContentItemPrefix}>
                       缺陷：
                     </div>
-                    
+
                     <TextEditToggle
-                      onSubmit={this.submit}
+                      onSubmit={this.addDefects}
                       originData={{ defects }}
                       onCancel={this.cancelEdit}
                     >
@@ -791,27 +831,24 @@ class CycleExecute extends Component {
                             }}
                           >
                             {defects.map(defect => (<div>
-                              <div style={{ background: '#FF7043', borderRadius: '50%', color: 'white', width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                <Icon type="test" style={{ fontSize: '14px' }} />
-                              </div>
                               <span>
-                                {defect.issueNum} {defect.summary}
+                                {defect.defectName}
                               </span>
                             </div>))}
-                            
+
                           </div>
                         ) : '无'}
                       </Text>
                       <Edit>
                         <Select
-                          filter
+                          // filter
                           allowClear
                           autoFocus
                           mode="tags"
                           loading={selectLoading}
                           value={defects}
-                          style={{ width: 200 }}
-                          onChange={(List) => { this.setState({ defects: List }); }}
+                          style={{ minWidth: 200 }}
+                          onChange={this.handleDefectsChange}
                           onFocus={() => {
                             this.setState({
                               selectLoading: true,

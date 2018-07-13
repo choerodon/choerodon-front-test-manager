@@ -305,7 +305,7 @@ class CreateCycleExecute extends Component {
       </Option>);
     });
     return (
-      <div onClick={() => { this.setState({ pickShow: false }); }} role="none">
+      <div onClick={() => { this.setState({ pickShow: false }); }} role="none" className="c7n-create-execute">
         <Spin spinning={loading}>
           <Sidebar
             title="添加测试执行"
