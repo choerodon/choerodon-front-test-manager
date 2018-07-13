@@ -20,6 +20,14 @@ export function editCycle(cycle) {
   const projectId = AppState.currentMenuType.id;
   return axios.post(`/test/v1/projects/${projectId}/cycle/case/update`, cycle);
 }
+export function addDefects(defects) {
+  const projectId = AppState.currentMenuType.id;
+  return axios.post(`/test/v1/projects/${projectId}/defect`, defects);
+}
+export function removeDefect(defect) {
+  const projectId = AppState.currentMenuType.id;
+  return axios.post(`/test/v1/projects/${projectId}/defect`, defect);
+}
 export function editCycleSide(data) {
   const axiosConfig = {
     headers: { 'content-type': 'multipart/form-datal' },
@@ -39,5 +47,5 @@ export function getCycleHistiorys(pagination, cycleCaseId) {
 }
 export function deleteAttachment(id) {
   const projectId = AppState.currentMenuType.id;
-  return axios.delete(`test/v1/projects/${projectId}/test/case/attachment?bucketName=${'test'}&attachId=${id}`);
+  return axios.delete(`test/v1/projects/${projectId}/test/case/attachment/delete/bucket/test/attach/${id}`);
 }

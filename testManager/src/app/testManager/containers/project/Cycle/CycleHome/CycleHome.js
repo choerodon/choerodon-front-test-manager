@@ -136,6 +136,11 @@ class CycleHome extends Component {
         this.setState({
           rightLoading: false,
           testList: cycle.content,
+          executePagination: {
+            current: executePagination.current,
+            pageSize: executePagination.pageSize,
+            total: cycle.totalElements,
+          },
         });
         // window.console.log(cycle);
       });
@@ -248,6 +253,11 @@ class CycleHome extends Component {
         this.setState({
           rightLoading: false,
           testList: cycle.content,
+          executePagination: {
+            current: executePagination.current,
+            pageSize: executePagination.pageSize,
+            total: cycle.totalElements,
+          },
         });
         window.console.log(cycle);
       });
@@ -312,6 +322,11 @@ class CycleHome extends Component {
               that.setState({
                 rightLoading: false,
                 testList: cycle.content,
+                executePagination: {
+                  current: executePagination.current,
+                  pageSize: executePagination.pageSize,
+                  total: cycle.totalElements,
+                },
               });
               window.console.log(cycle);
             });
@@ -474,6 +489,11 @@ class CycleHome extends Component {
       this.setState({
         rightLoading: false,
         testList: cycle.content,
+        executePagination: {
+          current: pagination.current,
+          pageSize: pagination.pageSize,
+          total: cycle.totalElements,
+        },
       });
       // window.console.log(cycle);
     });
@@ -734,6 +754,11 @@ class CycleHome extends Component {
                   this.setState({
                     rightLoading: false,
                     testList: cycle.content,
+                    executePagination: {
+                      current: executePagination.current,
+                      pageSize: executePagination.pageSize,
+                      total: cycle.totalElements,
+                    },
                   });
                   // window.console.log(cycle);
                 }); 

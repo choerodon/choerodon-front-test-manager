@@ -1,19 +1,21 @@
 import React, { Component } from 'react';
-import { Form, Input, Tabs, Select, Radio, Button, Icon, Modal, Spin } from 'choerodon-ui';
+import { Form, Input, Tabs, Select, Radio, Collapse, Icon, Modal, Spin } from 'choerodon-ui';
 import { Content, stores } from 'choerodon-front-boot';
-import { createCycleExecute } from '../../../../api/cycleApi';
+import {
+  createCycleExecute, getCyclesByVersionId, getFoldersByCycleId,
+  getStatusList, createCycleExecuteFromCycle,
+} from '../../../../api/cycleApi';
 import { getUsers } from '../../../../api/CommonApi';
-import { getIssueList } from '../../../../api/agileApi';
-// import './CreateCycleExecute.less';
+import { getIssueList, getIssueStatus, getProjectVersion, getModules, getLabels, getPrioritys } from '../../../../api/agileApi';
+import './CreateCycleExecute.scss';
+
 const { AppState } = stores;
 const TabPane = Tabs.TabPane;
+const Panel = Collapse.Panel;
 const Option = Select.Option;
 const FormItem = Form.Item;
 const { Sidebar } = Modal;
 const RadioGroup = Radio.Group;
-function callback(key) {
-  window.console.log(key);
-}
 const styles = {
   userOption: {
     background: '#c5cbe8',
@@ -25,12 +27,20 @@ const styles = {
     borderRadius: '50%',
     marginRight: '8px',
   },
+  statusOption: {
+    width: 60,
+    textAlign: 'center',
+    borderRadius: '100px',
+    display: 'inline-block',
+    color: 'white',
+  },
 };
 function handleChange(value) {
   window.console.log(`selected ${value}`);
 }
 class CreateCycleExecute extends Component {
   state = {
+    tab: '1',
     value: 1,
     loading: false,
     issueList: [],
@@ -38,8 +48,17 @@ class CreateCycleExecute extends Component {
     userList: [],
     selectLoading: false,
     assignedTo: AppState.userInfo.id,
+    versions: [],
+    cycleList: [],
+    folderList: [],
+    priorityList: [],
+    statusList: [],
+    issueStatusList: [],
+    moduleList: [],
+    labelList: [],
+    hasIssue: 1,
   }
-  
+
   componentWillReceiveProps(nextProps) {
     const { resetFields } = this.props.form;
     if (this.props.visible === false && nextProps.visible === true) {
@@ -50,13 +69,124 @@ class CreateCycleExecute extends Component {
       });
     }
   }
+
   onChange = (e) => {
     window.console.log('radio checked', e.target.value);
     this.setState({
       value: e.target.value,
     });
   }
+
   onOk = () => {
+    const { selectIssueList, assignedTo } = this.state;
+    const { onOk, type, data, rank } = this.props;
+    const { cycleId } = data;
+    if (this.state.tab === '1') {
+      this.createFromIssue();
+    } else {
+      this.createFromCycle();
+    }
+  }
+  modeChange = (key) => {
+    this.setState({ tab: key });
+  }
+  createFromCycle = () => {
+    this.props.form.validateFieldsAndScroll((err, values) => {
+      if (!err) {
+        this.setState({ loading: true });
+        window.console.log('Received values of form: ', values);
+        const { assignedTo, cycleId, folderId, priorityCode, 
+          executionStatus, component, lable, statusCode } = values;
+        // const obj = {};
+        // [].forEach((key) => {
+        //   if (values[key]) {
+        //     obj[key] = values.key;
+        //   }
+        // });
+        const filter = {       
+          advancedSearchArgs: {
+            // priorityCode: [
+            //   'high',
+            // ],
+            // statusCode: [
+            //   'todo',
+            // ],
+          }, 
+          otherArgs: {
+            // issueIds: [
+            //   '7023',
+            // ],
+            // component: [
+            //   '',
+            // ],
+            // lable: [
+            //   '',
+            // ],
+          },
+        };
+        if (executionStatus) {
+          filter.executionStatus = executionStatus.map(item => Number(item));
+        }
+        if (priorityCode) {
+          filter.advancedSearchArgs.priorityCode = priorityCode;
+        }
+        if (statusCode) {
+          filter.advancedSearchArgs.statusCode = statusCode;
+        }
+        if (component) {
+          filter.otherArgs.component = component;
+        }
+        if (lable) {
+          filter.otherArgs.lable = lable;
+        }
+        createCycleExecuteFromCycle(folderId || cycleId, this.props.data.cycleId, assignedTo, 
+          filter).then((data) => {
+          this.setState({
+            loading: false,
+          });
+          this.props.onOk();
+          window.console.log(data);
+        });
+        // POST / v1 / projects / { project_id } / issues / test_component / no_sub;
+
+
+        // {
+        //     "advancedSearchArgs": {
+        //         "priorityCode": [
+        //             "high"
+        //         ],
+        //         "statusCode": [
+        //             "todo"
+        //         ]
+        //     }, 
+        //     "otherArgs": {
+        //         "issueIds": [
+        //             "7023"
+        //         ],
+        //         "component": [
+        //             ""
+        //         ],
+        //         "lable": [
+        //             ""
+        //         ]
+        //     }
+        // }
+        // { executionStatus, advancedSearchArgs: { typeCode: ['issue_test'], ...filter } }
+        
+        // CreateCycleExecute({
+        //   ...values,
+        //   ...{ statusColor, statusType: type },
+        // }).then((data) => {
+        //   this.setState({ loading: false });
+        //   this.props.onOk();
+        // }).catch(() => {
+        //   Choerodon.prompt('网络异常');
+        //   this.setState({ loading: false });
+        // });
+      }
+    });
+  }
+  createFromIssue = () => {
     const { selectIssueList, assignedTo } = this.state;
     const { onOk, type, data, rank } = this.props;
     const { cycleId } = data;
@@ -79,38 +209,36 @@ class CreateCycleExecute extends Component {
     createCycleExecute(fin).then((res) => {
       onOk();
     });
-    // this.props.form.validateFieldsAndScroll((err, values) => {
-    //   if (!err) {
-    //     this.setState({ loading: true });
-    //     window.console.log('Received values of form: ', values);
-    //     CreateCycleExecute({
-    //       ...values,
-    //       ...{ statusColor, statusType: type },
-    //     }).then((data) => {
-    //       this.setState({ loading: false });
-    //       this.props.onOk();
-    //     }).catch(() => {
-    //       Choerodon.prompt('网络异常');
-    //       this.setState({ loading: false });
-    //     });
-    //   }
-    // });
   }
-  handleAssignedChange=(assignedTo) => {
+  handleAssignedChange = (assignedTo) => {
     window.console.log(assignedTo);
     this.setState({
       assignedTo,
     });
   }
-  handleIssueChange=(selectIssueList) => {
+  handleIssueChange = (selectIssueList) => {
     this.setState({
       selectIssueList,
     });
   }
+  loadVersions = () => {
+    this.setState({
+      selectLoading: true,
+    });
+    getProjectVersion().then((versions) => {
+      this.setState({
+        versions,
+        selectLoading: false,
+      });
+    });
+  }
   render() {
     const { visible, onOk, onCancel, data } = this.props;
-    const { getFieldDecorator } = this.props.form;
-    const { loading, userList, issueList, assignedTo, selectLoading, selectIssueList } = this.state;
+    const { getFieldDecorator, getFieldValue } = this.props.form;
+    const { loading, userList, issueList, assignedTo,
+      selectLoading, selectIssueList, versions, tab, cycleList,
+      folderList, priorityList, statusList, moduleList, labelList,
+      hasIssue, issueStatusList } = this.state;
     const radioStyle = {
       display: 'block',
       height: '30px',
@@ -126,12 +254,58 @@ class CreateCycleExecute extends Component {
         </div>
       </Option>),
     );
-    const issueOptions = 
-    issueList.map(issue => (<Option key={issue.issueId} value={issue.issueId.toString()}>
-      {issue.issueNum} {issue.summary}
-    </Option>));
+    const issueOptions =
+      issueList.map(issue => (<Option key={issue.issueId} value={issue.issueId.toString()}>
+        {issue.issueNum} {issue.summary}
+      </Option>));
+    const versionOptions = versions.map(version =>
+      (<Option value={version.versionId} key={version.versionId}>
+        {version.name}
+      </Option>));
+    const cycleOptions = cycleList.map(cycle =>
+      (<Option value={cycle.cycleId} key={cycle.cycleId}>
+        {cycle.cycleName}
+      </Option>));
+    const folderOptions = folderList.map(cycle =>
+      (<Option value={cycle.cycleId} key={cycle.cycleId}>
+        {cycle.cycleName}
+      </Option>));
+    const priorityOptions = priorityList.map((priority) => {
+      const { valueCode, name } = priority;
+      return (<Option value={valueCode} key={valueCode}>
+        {/* <div style={{ ...styles.statusOption, ...{ background: statusColor } }}> */}
+        {name}
+        {/* </div> */}
+      </Option>);
+    });
+    const statusOptions = statusList.map((status) => {
+      const { statusName, statusId, statusColor } = status;
+      return (<Option value={statusId.toString()} key={statusId}>
+        {/* <div style={{ ...styles.statusOption, ...{ background: statusColor } }}> */}
+        {statusName}
+        {/* </div> */}
+      </Option>);
+    });
+    const moduleOptions = moduleList.map((module) => {
+      const { componentId, name } = module;
+      return (<Option value={componentId.toString()} key={componentId}>
+        {name}
+      </Option>);
+    });
+    const labelOptions = labelList.map((label) => {
+      const { labelId, labelName } = module;
+      return (<Option value={labelId.toString()} key={labelName}>
+        {name}
+      </Option>);
+    });
+    const issueStatusOptions = issueStatusList.map((status) => {
+      const { categoryCode, name } = status;
+      return (<Option value={categoryCode} key={categoryCode}>
+        {name}
+      </Option>);
+    });
     return (
-      <div onClick={() => { this.setState({ pickShow: false }); }} role="none">
+      <div onClick={() => { this.setState({ pickShow: false }); }} role="none" className="c7n-create-execute">
         <Spin spinning={loading}>
           <Sidebar
             title="添加测试执行"
@@ -147,21 +321,36 @@ class CreateCycleExecute extends Component {
               description="您可以为一个或多个成员分配一个或多个全局层的角色，即给成员授予全局层的权限。"
               link="#"
             >
-              <Tabs defaultActiveKey="1" onChange={callback}>
+              <Tabs activeKey={tab} onChange={this.modeChange}>
                 <TabPane tab="从问题添加" key="1">
                   <Select
                     mode="tags"
                     style={{ width: 500, margin: '0 0 10px 0' }}
                     label="测试问题"
                     placeholder="测试问题"
-                    value={selectIssueList}
                     onChange={this.handleIssueChange}
                     loading={selectLoading}
-                    onFocus={() => {               
+                    filter
+                    // onFilterChange={(input, option) =>
+                    //   option.props.children.props.children[1].props.children.toLowerCase()
+                    //     .indexOf(input.toLowerCase()) >= 0}
+                    onFilterChange={(value) => {
+                      // window.console.log('filter');
                       this.setState({
                         selectLoading: true,
                       });
-                      getIssueList().then((issueData) => {
+                      getIssueList(value, 'issue_test').then((issueData) => {
+                        this.setState({
+                          issueList: issueData.content,
+                          selectLoading: false,
+                        });
+                      });
+                    }}
+                    onFocus={() => {
+                      this.setState({
+                        selectLoading: true,
+                      });
+                      getIssueList(null, 'issue_test').then((issueData) => {
                         this.setState({
                           issueList: issueData.content,
                           selectLoading: false,
@@ -173,15 +362,15 @@ class CreateCycleExecute extends Component {
                   </Select><br />
                   <RadioGroup onChange={this.onChange} value={this.state.value}>
                     <Radio style={radioStyle} value={1}>我</Radio>
-                    <Radio style={radioStyle} value={2}>其他</Radio> 
+                    <Radio style={radioStyle} value={2}>其他</Radio>
                   </RadioGroup><br />
-                  {this.state.value === 2 ? 
+                  {this.state.value === 2 ?
                     <Select
-                      allowClear                 
-                      loading={selectLoading}                      
+                      allowClear
+                      loading={selectLoading}
                       style={{ width: 500, margin: '0 0 10px 0' }}
                       label="选择指派人"
-                      placeholder="选择指派人"                   
+                      placeholder="选择指派人"
                       onChange={this.handleAssignedChange}
                       onFocus={() => {
                         this.setState({
@@ -197,13 +386,13 @@ class CreateCycleExecute extends Component {
                     >
                       {userOptions}
                     </Select>
-                    : 
+                    :
                     null}
                 </TabPane>
                 <TabPane tab="从其他循环添加" key="2">
                   <Form>
                     <FormItem>
-                      {getFieldDecorator('statusName', {
+                      {getFieldDecorator('versionId', {
                         rules: [{
                           required: true, message: '请输入状态!',
                         }],
@@ -212,60 +401,273 @@ class CreateCycleExecute extends Component {
                           style={{ width: 500, margin: '0 0 10px 0' }}
                           label="版本"
                           placeholder="版本"
-                          onChange={handleChange}
+                          loading={selectLoading}
+                          onFocus={this.loadVersions}
                         >
-                          {/* {children} */}
+                          {versionOptions}
                         </Select>,
                       )}
                     </FormItem>
                     <FormItem>
-                      {getFieldDecorator('description', {
+                      {getFieldDecorator('cycleId', {
                         rules: [{
-                          required: true, message: '请输入说明!',
+                          required: true, message: '请选择循环!',
                         }],
                       })(
                         <Select
                           style={{ width: 500, margin: '0 0 10px 0' }}
+                          loading={selectLoading}
                           label="测试循环"
                           placeholder="测试循环"
-                          onChange={handleChange}
+                          onFocus={() => {
+                            if (getFieldValue('versionId')) {
+                              getCyclesByVersionId(getFieldValue('versionId')).then((List) => {
+                                this.setState({
+                                  selectLoading: false,
+                                  cycleList: List,
+                                });
+                              });
+                            }
+                          }}
                         >
-                          {/* {children} */}
+                          {cycleOptions}
                         </Select>,
                       )}
                     </FormItem>
                     <FormItem>
-                      {getFieldDecorator('description', {
-                        rules: [{
-                          required: true, message: '请输入说明!',
-                        }],
+                      {getFieldDecorator('folderId', {
+                        // rules: [{
+                        //   required: true, message: '请输入说明!',
+                        // }],
                       })(
                         <Select
+                          allowClear
                           style={{ width: 500, margin: '0 0 10px 0' }}
                           label="测试文件夹"
                           placeholder="测试文件夹"
-                          onChange={handleChange}
+                          onFocus={() => {
+                            if (getFieldValue('cycleId')) {
+                              getFoldersByCycleId(getFieldValue('cycleId')).then((List) => {
+                                this.setState({
+                                  selectLoading: false,
+                                  folderList: List,
+                                });
+                              });
+                            }
+                          }}
                         >
-                          {/* {children} */}
+                          {folderOptions}
                         </Select>,
                       )}
                     </FormItem>
-                    <FormItem>
-                      {getFieldDecorator('description', {
-                        rules: [{
-                          required: true, message: '请输入说明!',
-                        }],
-                      })(
-                        <Select
-                          style={{ width: 500, margin: '0 0 10px 0' }}
-                          label="测试循环"
-                          placeholder="测试循环"
-                          onChange={handleChange}
+                    <Collapse bordered={false} >
+                      <Panel
+                        header={
+                          <div className="c7n-collapse-header-container">
+                            <div>被制定人</div>
+                            <div className="c7n-collapse-header-icon">
+                              <Icon type="navigate_next" />
+                            </div>
+                          </div>
+                        }
+                        key="1"
+                        showArrow={false}
+                      >
+                        <RadioGroup onChange={this.onChange} value={this.state.value}>
+                          <Radio style={radioStyle} value={1}>我</Radio>
+                          <Radio style={radioStyle} value={2}>其他</Radio>
+                        </RadioGroup>
+                        {this.state.value === 2 ? <FormItem>
+                          {getFieldDecorator('assignedTo', {
+                            // rules: [{
+                            //   required: true, message: '请输入说明!',
+                            // }],
+                          })(
+                            <Select
+                              allowClear
+                              loading={selectLoading}
+                              style={{ width: 500, margin: '0 0 10px 0' }}
+                              label="选择指派人"
+                              placeholder="选择指派人"
+                              onFocus={() => {
+                                this.setState({
+                                  selectLoading: true,
+                                });
+                                getUsers().then((userData) => {
+                                  this.setState({
+                                    userList: userData.content,
+                                    selectLoading: false,
+                                  });
+                                });
+                              }}
+                            >
+                              {userOptions}
+                            </Select>,
+                          )}
+                        </FormItem> : null}
+                      </Panel>
+                    </Collapse>
+                    <Collapse bordered={false} >
+                      <Panel
+                        header={
+                          <div className="c7n-collapse-header-container">
+                            <div>筛选器</div>
+                            <div className="c7n-collapse-header-icon">
+                              <Icon type="navigate_next" />
+                            </div>
+                          </div>
+                        }
+                        key="1"
+                        showArrow={false}
+                      >
+                        <FormItem>
+                          {getFieldDecorator('priorityCode', {
+
+                          })(
+                            <Select
+                              mode="tags"
+                              style={{ width: 500, margin: '0 0 10px 0' }}
+                              loading={selectLoading}
+                              label="优先级"
+                              placeholder="优先级"
+                              onFocus={() => {
+                                this.setState({
+                                  selectLoading: true,
+                                });
+                                getPrioritys().then((priorityData) => {
+                                  this.setState({
+                                    priorityList: priorityData.lookupValues,
+                                    selectLoading: false,
+                                  });
+                                });
+                              }}
+                            >
+                              {priorityOptions}
+                            </Select>,
+                          )}
+                        </FormItem>
+                        <FormItem>
+                          {getFieldDecorator('executionStatus', {
+
+                          })(
+                            <Select
+                              mode="tags"
+                              style={{ width: 500, margin: '0 0 10px 0' }}
+                              label="测试执行状态"
+                              placeholder="测试执行状态"
+                              loading={selectLoading}
+                              onFocus={() => {
+                                this.setState({
+                                  selectLoading: true,
+                                });
+                                getStatusList('CASE_STEP').then((List) => {
+                                  this.setState({
+                                    statusList: List,
+                                    selectLoading: false,
+                                  });
+                                });
+                              }}
+                            >
+                              {statusOptions}
+                            </Select>,
+                          )}
+                        </FormItem>
+                        <FormItem>
+                          {getFieldDecorator('component', {
+
+                          })(
+                            <Select
+                              mode="tags"
+                              style={{ width: 500, margin: '0 0 10px 0' }}
+                              label="模块"
+                              placeholder="模块"
+                              loading={selectLoading}
+                              onFocus={() => {
+                                this.setState({
+                                  selectLoading: true,
+                                });
+                                getModules().then((List) => {
+                                  this.setState({
+                                    moduleList: List,
+                                    selectLoading: false,
+                                  });
+                                });
+                              }}
+                            >
+                              {moduleOptions}
+                            </Select>,
+                          )}
+                        </FormItem>
+                        <FormItem>
+                          {getFieldDecorator('lable', {
+
+                          })(
+                            <Select
+                              mode="tags"
+                              style={{ width: 500, margin: '0 0 10px 0' }}
+                              label="标签"
+                              placeholder="标签"
+                              loading={selectLoading}
+                              onFocus={() => {
+                                this.setState({
+                                  selectLoading: true,
+                                });
+                                getLabels().then((List) => {
+                                  this.setState({
+                                    moduleList: List,
+                                    selectLoading: false,
+                                  });
+                                });
+                              }}
+                            >
+                              {labelOptions}
+                            </Select>,
+                          )}
+                        </FormItem>
+                        是否具有相关缺陷<br />
+                        <RadioGroup
+                          onChange={(e) => {
+                            this.setState({ hasIssue: e.target.value });
+                          }}
+                          value={hasIssue}
                         >
-                          {/* {children} */}
-                        </Select>,
-                      )}
-                    </FormItem>
+                          <Radio style={radioStyle} value={1}>否</Radio>
+                          <Radio style={radioStyle} value={2}>是</Radio>
+                        </RadioGroup>
+                        {hasIssue === 2 ? <FormItem
+                          label="缺陷状态"
+                        >
+                          {getFieldDecorator('statusCode', {
+                            // rules: [{
+                            //   required: true, message: '请输入说明!',
+                            // }],
+                          })(
+                            <Select
+                              mode="tags"
+                              style={{ width: 500, margin: '0 0 10px 0' }}
+                              label="缺陷状态"
+                              placeholder="缺陷状态"
+                              loading={selectLoading}
+                              onFocus={() => {
+                                this.setState({
+                                  selectLoading: true,
+                                });
+                                getIssueStatus().then((List) => {
+                                  this.setState({
+                                    issueStatusList: List,
+                                    selectLoading: false,
+                                  });
+                                });
+                              }}
+                            >
+                              {issueStatusOptions}
+                            </Select>,
+                          )}
+                        </FormItem> : null}
+
+                      </Panel>
+                    </Collapse>
+
                   </Form>
                 </TabPane>
 
