@@ -73,6 +73,9 @@ class ReportStory extends Component {
     });
   }
   getReportsFromStory = (pagination = this.state.pagination, issueIds = this.state.issueIds) => {
+    if (!pagination) {
+      pagination = this.state.pagination;
+    }
     this.setState({ loading: true });
     getReportsFromStory({
       page: pagination.current - 1,
@@ -298,7 +301,7 @@ class ReportStory extends Component {
             onCancel={() => { this.setState({ selectVisible: false }); }}
             onOk={(issueIds) => {
               this.setState({ selectVisible: false, issueIds }); 
-              getReportsFromStory(issueIds);
+              this.getReportsFromStory(null, issueIds);
             }}
           />
           <Table           

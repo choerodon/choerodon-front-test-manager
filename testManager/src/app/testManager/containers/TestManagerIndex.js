@@ -18,7 +18,7 @@ class TestManagerIndex extends React.Component {
         <Route path={`${match.url}/status`} component={CustomStatusIndex} />
         <Route path={`${match.url}/report`} component={ReportIndex} />
         <Route path={`${match.url}/summary`} component={SummaryIndex} />
-        <Route path={`${match.url}/test`} component={TESTINDEX} />
+        <Route path={`${match.url}/manager`} component={TESTINDEX} />
         <Route path={'*'} component={nomatch} />
       </Switch>
     );
