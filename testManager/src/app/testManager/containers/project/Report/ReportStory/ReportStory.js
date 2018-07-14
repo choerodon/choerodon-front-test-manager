@@ -139,39 +139,95 @@ class ReportStory extends Component {
       dataIndex: 'issueId',
       key: 'issueId',
       render(issueId, record) {
-        const { issueStatus, issueColor } = record;
+        const { issueStatus, defectCount, issueName, issueColor } = record;
+        return (
+          <div>
+            <div className="c7n-collapse-header-container">
+              <div>{record.issueName}</div>
+              <div className="c7n-collapse-header-icon">                 
+                <span style={{ color: issueColor, borderColor: issueColor }}>
+                  {issueStatus}
+                </span>
+              </div>
+            
+            </div>
+            <div>
+              缺陷数: {defectCount}
+            </div>
+          </div>
+          // <Collapse 
+          //   bordered={false} 
+          //   activeKey={openId.includes(record.issueId) ? ['1'] : []}         
+          // >
+          //   <Panel
+          //     showArrow={false}
+          //     header={
+          //       <div className="c7n-collapse-header-container">
+          //         <div>{record.issueName}</div>
+          //         <div className="c7n-collapse-header-icon">                 
+          //           <span style={{ color: issueColor, borderColor: issueColor }}>
+          //             {issueStatus}
+          //           </span>
+          //         </div>
+          //       </div>
+          //     }
+          //     key="1"           
+          //   > 
+          //     {record.summary}
+          //   </Panel>
+          // </Collapse>
+        );
+      },
+    }, {
+      className: 'c7n-table-white',
+      title: '测试',
+      dataIndex: 'test',
+      key: 'test',   
+      render(test, record) {
+        const { issueStatus, linkedTestIssues, issueId } = record;
         return (
           <Collapse 
-            activeKey={openId.includes(record.issueId) ? ['1'] : []}
+            // activeKey={openId.includes(record.issueId) ? ['1'] : []}
             bordered={false} 
-            onChange={(keys) => { that.handleOpen(issueId, keys.length > 0); }}
+            onChange={(keys) => { that.handleOpen(issueId, keys.length > 0); }}          
           >
-            <Panel
+            {
+              linkedTestIssues.map((issue, i) => (<Panel
+                // showArrow={false}
+                header={
+                  <div className="c7n-collapse-header-container">
+                    {issue.issueId}
+                  </div>
+                }
+                key={issue.issueId.toString()}
+              > issue.summary</Panel>))
+            }
+            {/* <Panel
+            // showArrow={false}
               header={
                 <div className="c7n-collapse-header-container">
-                  <div>{record.issueName}</div>
+                  <div>640</div>
                   <div className="c7n-collapse-header-icon">                 
-                    <span style={{ color: issueColor, borderColor: issueColor }}>
-                      {issueStatus}
+                    <span style={{ }}>
+                  待处理
                     </span>
                   </div>
                 </div>
               }
               key="1"           
-            > 
-              {record.summary}
-            </Panel>
-          </Collapse>);
+            > sss</Panel> */}
+          </Collapse>
+        );
       },
     }, {
       className: 'c7n-table-white',
-      title: '测试',
+      title: '执行',
       dataIndex: 'cycleId',
       key: 'cycleId',
       render(cycleId, record) {
         const { linkedTestIssues } = record;
         return (
-          openId.includes(record.issueId) ?   
+          !openId.includes(record.issueId) ?   
             <div>
               <div>总共</div>
               <div style={{ display: 'flex' }}>
@@ -197,32 +253,6 @@ class ReportStory extends Component {
               </div>     
             </div>
         );
-      },
-    }, {
-      className: 'c7n-table-white',
-      title: '执行',
-      dataIndex: 'test',
-      key: 'test',   
-      render(test, record) {
-        return (<Collapse 
-          bordered={false} 
-          activeKey={openId.includes(record.issueId) ? ['1'] : []}         
-        >
-          <Panel
-            showArrow={false}
-            header={
-              <div className="c7n-collapse-header-container">
-                <div>640</div>
-                <div className="c7n-collapse-header-icon">                 
-                  <span style={{ }}>
-                  待处理
-                  </span>
-                </div>
-              </div>
-            }
-            key="1"           
-          > sss</Panel>
-        </Collapse>);
       },
     }, {
       className: 'c7n-table-white',

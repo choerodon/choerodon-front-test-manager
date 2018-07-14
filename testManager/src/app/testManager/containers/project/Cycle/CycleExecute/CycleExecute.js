@@ -5,8 +5,10 @@ import _ from 'lodash';
 import { TextEditToggle, RichTextShow } from '../../../../components/CommonComponent';
 import EditTestDetail from '../../../../components/EditTestDetail';
 import FullEditor from '../../../../components/FullEditor';
-import { getCycle, addDefects, getCycleDetails, getStatusList, 
-  getUsers, editCycle, getCycleHistiorys, deleteAttachment, removeDefect } from '../../../../../api/CycleExecuteApi';
+import {
+  getCycle, addDefects, getCycleDetails, getStatusList,
+  getUsers, editCycle, getCycleHistiorys, deleteAttachment, removeDefect,
+} from '../../../../../api/CycleExecuteApi';
 import { uploadFile } from '../../../../../api/CommonApi';
 import { delta2Html, delta2Text } from '../../../../common/utils';
 
@@ -125,6 +127,7 @@ class CycleExecute extends Component {
       rank: '0|c00000:', //
       // testCycleCaseStepES: [], //
     },
+    defectIds: [],
     originDefects: [],
   }
   componentDidMount() {
@@ -155,10 +158,13 @@ class CycleExecute extends Component {
             url,
           };
         });
+        const defectIds = cycleData.defects.map(defect => defect.issueId.toString());
         this.setState({
+          defectIds,
           fileList,
           cycleData,
-          originDefects: cycleData.defects,
+          // 存储初始ids
+          originDefects: defectIds,
           statusList,
           detailList: detailData.content,
           detailPagination: {
@@ -287,14 +293,15 @@ class CycleExecute extends Component {
     });
   }
   handleDefectsChange = (List) => {
-    const { originDefects, cycleData } = this.state;
-    const oldList = [...cycleData.defects];
+    const { originDefects, defectIds } = this.state;
+    const oldList = [...defectIds];
     window.console.log('old', oldList, 'new', List);
     // 删除元素
     if (oldList.length > List.length) {
       const deleteEle = oldList.filter(old => !List.includes(old));
-      if (_.find(originDefects, { issueId: Number(deleteEle) })) {
-        removeDefect(deleteEle);
+      // 如果isse已存在，调用删除接口
+      if (defectIds.includes(deleteEle[0].toString())) {
+        removeDefect(deleteEle[0]);
       }
       window.console.log('delete');
     } else {
@@ -302,26 +309,32 @@ class CycleExecute extends Component {
     }
 
     this.setState({
-      cycleData: { ...this.state.cycleData, ...{ defects: List } },
+      defectIds: List,
     });
   }
   addDefects = () => {
-    const { cycleData, issueList } = this.state;
-    const { defects, executeId } = cycleData;
+    const { cycleData, issueList, defectIds, originDefects } = this.state;
+    const { executeId } = cycleData;
     // addDefects(defects);
 
 
-    const arr = issueList.filter(issue => defects.includes(issue.issueId.toString())).map(item => ({
-      defectType: 'CYCLE_CASE',
-      defectLinkId: executeId,
-      issueId: item.issueId,
-      defectName: item.issueNum,
-    }));
-    window.console.log(defects, issueList, arr);
+    const needAdd = 
+    issueList
+      .filter(issue => defectIds.includes(issue.issueId.toString()))// 取到选中的issueList
+      .filter(issue => !originDefects.includes(issue.issueId.toString()))// 去掉之前已有的
+      .map(item => ({
+        defectType: 'CYCLE_CASE',
+        defectLinkId: executeId,
+        issueId: item.issueId,
+        defectName: item.issueNum,
+      }));
+    window.console.log(defectIds, issueList, needAdd);
     this.setState({ loading: true });
-    addDefects(arr).then((res) => {
-      this.getInfo();
-    });
+    if (needAdd.length > 0) {
+      addDefects(needAdd).then((res) => {
+        this.getInfo();
+      });
+    }
   }
   handleUpload = (e) => {
     if (beforeUpload(e.target.files[0])) {
@@ -400,7 +413,7 @@ class CycleExecute extends Component {
   render() {
     const { fileList, userList, stepStatusList, detailList, historyList, loading, cycleData,
       statusList, selectLoading, historyPagination, detailPagination,
-      editVisible, editing, issueList }
+      editVisible, editing, issueList, defectIds }
       = this.state;
     const that = this;
     const props = {
@@ -846,7 +859,7 @@ class CycleExecute extends Component {
                           autoFocus
                           mode="tags"
                           loading={selectLoading}
-                          value={defects}
+                          value={defectIds}
                           style={{ minWidth: 200 }}
                           onChange={this.handleDefectsChange}
                           onFocus={() => {
