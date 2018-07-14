@@ -634,7 +634,7 @@ class CycleHome extends Component {
       title: '缺陷',
       dataIndex: 'defects',
       key: 'defects',
-      render: defects => <div>{defects.map(defect => defect)}</div>,
+      render: defects => <div>{defects.map(defect => defect.defectName)}</div>,
     }, 
     // {
     //   title: '模块',

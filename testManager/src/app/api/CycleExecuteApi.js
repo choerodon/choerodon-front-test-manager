@@ -26,7 +26,7 @@ export function addDefects(defects) {
 }
 export function removeDefect(defect) {
   const projectId = AppState.currentMenuType.id;
-  return axios.post(`/test/v1/projects/${projectId}/defect`, defect);
+  return axios.delete(`/test/v1/projects/${projectId}/defect`, defect);
 }
 export function editCycleSide(data) {
   const axiosConfig = {
