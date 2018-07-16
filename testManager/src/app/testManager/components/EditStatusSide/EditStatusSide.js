@@ -56,7 +56,7 @@ class EditStatusSide extends Component {
       <div onClick={() => { this.setState({ pickShow: false }); }} role="none">
         <Spin spinning={loading}>
           <Sidebar
-            title={`编辑“${type}”状态`}
+            title={`编辑“${type === 'CYCLE_CASE' ? '执行' : '步骤'}”状态`}
             visible={visible}
             onOk={this.onOk}
             onCancel={onCancel}

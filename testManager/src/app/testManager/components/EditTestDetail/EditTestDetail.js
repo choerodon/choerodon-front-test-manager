@@ -8,13 +8,7 @@ import { getIssueList } from '../../api/agileApi';
 import './EditTestDetail.less';
 import WYSIWYGEditor from '../WYSIWYGEditor';
 
-import {
-  delta2Html,
-  escape,
-  handleFileUpload,
-  text2Delta,
-  beforeTextUpload,
-} from '../../common/utils';
+import { text2Delta } from '../../common/utils';
 
 const { Sidebar } = Modal;
 const { Option } = Select;
