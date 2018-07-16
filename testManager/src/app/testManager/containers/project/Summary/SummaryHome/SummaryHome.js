@@ -5,7 +5,7 @@ import { Page, Header, Content, stores } from 'choerodon-front-boot';
 import { Chart, Axis, Geom, Tooltip } from 'bizcharts';
 import moment from 'moment';
 import _ from 'lodash';
-import { getCaseNotPlain, getCaseNotRun, getCycleRange } from '../../../../api/summaryApi';
+import { getCaseNotPlain, getCaseNotRun, getCycleRange, getCreateRange } from '../../../../api/summaryApi';
 import './SummaryHome.less';
 
 const ButtonGroup = Button.Group;
@@ -17,9 +17,11 @@ class SummaryHome extends Component {
       loading: false,
       range: '7',
       excuteList: [],
+      createList: [],
       notPlan: 0,
       notRun: 0,
       totalExcute: 0,
+      totalCreate: 0,
     };
   }
 
@@ -32,15 +34,16 @@ class SummaryHome extends Component {
     const { date, range } = this.state;
 
     Promise.all([getCaseNotPlain(), getCaseNotRun(),
-      getCycleRange(moment().format('YYYY-MM-DD'), range)]).then(([notPlan, notRun, excuteList]) => {
+      getCycleRange(moment().format('YYYY-MM-DD'), range), getCreateRange(range)]).then(([notPlan, notRun, excuteList, createList]) => {
       this.setState({
         loading: false,
         notPlan,
         notRun,
         excuteList: this.listTransform(excuteList),
         totalExcute: _.sum(excuteList),
+        createList: this.createTransform(createList, range),
+        totalCreate: _.sumBy(createList, 'issueCount'),
       });
-      window.console.log(notPlan, notRun);
     }).catch(() => {
       this.setState({ loading: false });
       Choerodon.prompt('网络异常');
@@ -48,41 +51,42 @@ class SummaryHome extends Component {
   }
   handleRangeChange = (e) => {
     this.setState({ loading: true });
-    getCycleRange(moment().format('YYYY-MM-DD'), e.target.value).then((excuteList) => {
+    Promise.all([
+      getCycleRange(moment().format('YYYY-MM-DD'), e.target.value),
+      getCreateRange(e.target.value)]).then(([excuteList, createList]) => {
       this.setState({
         loading: false,
         range: e.target.value,
         excuteList: this.listTransform(excuteList),
         totalExcute: _.sum(excuteList),
+        createList: this.createTransform(createList, e.target.value),
+        totalCreate: _.sumBy(createList, 'issueCount'),
       });
     });
   }
-  listTransform = (list) => {
-    const { range } = this.state;
-    window.console.log(list.map((item, i) => ({
-      time: moment().subtract(i, 'days').format('YYYY-MM-DD'),
-      value: item,
-    })));
-    return list.reverse().map((item, i) => ({
-      time: moment().subtract(i, 'days').format('YYYY-MM-DD'),
-      value: item,
-    }));
-  }
+  createTransform=(source, range) => Array(Number(range)).fill(0).map((item, i) => {
+    const time = moment().subtract(i, 'days').format('YYYY-MM-DD');
+    if (_.find(source, { creationDay: time })) {
+      const { creationDay, issueCount } = _.find(source, { creationDay: time });      
+      return {
+        creationDay,
+        issueCount,
+      };
+    } else {
+      return {
+        creationDay: time,
+        issueCount: 0,
+      };
+    }
+  }); 
+   
+  listTransform = list => list.reverse().map((item, i) => ({
+    time: moment().subtract(i, 'days').format('YYYY-MM-DD'),
+    value: item,
+  }))
   render() {
-    const { loading, range, excuteList, totalExcute, notPlan, notRun } = this.state;
-    const data = [
-      { time: '1991', value: 3 },
-      { time: '1992', value: 4 },
-      { time: '1993', value: 3.5 },
-      { time: '1994', value: 5 },
-      { time: '1995', value: 4.9 },
-      { time: '1996', value: 6 },
-      { time: '1997', value: 7 },
-      { time: '1998', value: 9 },
-      { time: '1999', value: 13 },
-    ];
-
-
+    const { loading, range, excuteList, createList, totalExcute, 
+      totalCreate, notPlan, notRun } = this.state;
     const columns = [{
       title: '版本',
       dataIndex: 'version',
@@ -149,7 +153,7 @@ class SummaryHome extends Component {
             <div style={{ margin: '30px 20px 18px 20px', display: 'flex', alignItems: 'center' }}>
               <div>查看时段：</div>
               <Radio.Group value={range} onChange={this.handleRangeChange}>
-                <Radio.Button value="1">1天</Radio.Button>
+                {/* <Radio.Button value="1">1天</Radio.Button> */}
                 <Radio.Button value="7">7天</Radio.Button>
                 <Radio.Button value="15">15天</Radio.Button>
                 <Radio.Button value="30">30天</Radio.Button>
@@ -159,13 +163,26 @@ class SummaryHome extends Component {
 
               <div className="c7n-chart-container">
                 <div style={{ fontWeight: 'bold', margin: 12 }}>测试创建</div>
-                <Chart height={240} width={550} data={data} padding="auto">
-                  <Axis name="time" />
-                  <Axis name="value" />
+                <Chart height={240} width={550} data={createList} padding="auto">
+                  <Axis name="creationDay" />
+                  <Axis name="issueCount" />
                   <Tooltip crosshairs={{ type: 'y' }} />
-                  <Geom type="line" position="time*value" size={2} />
-                  <Geom type="point" position="time*value" size={4} shape={'circle'} style={{ stroke: '#fff', lineWidth: 1 }} />
+                  <Geom
+                    type="line"
+                    position="creationDay*issueCount"
+                    size={2} 
+                    tooltip={['creationDay*issueCount', (time, issueCount) => ({
+                    // 自定义 tooltip 上显示的 title 显示内容等。
+                      name: '创建数',                    
+                      value: issueCount,
+                    })]}
+                  />
+                  <Geom type="point" position="creationDay*issueCount" size={4} shape={'circle'} style={{ stroke: '#fff', lineWidth: 1 }} />
                 </Chart>
+                <div style={{ color: 'rgba(0,0,0,0.65)', margin: 10 }}>
+                  创建测试：<span style={{ color: 'black', fontWeight: 'bold' }}>{totalCreate}</span>，
+                过去<span style={{ color: 'black', fontWeight: 'bold' }}> {range} </span>天
+                </div>
               </div>
               <div className="c7n-chart-container">
                 <div style={{ fontWeight: 'bold', margin: 12 }}>测试执行</div>
