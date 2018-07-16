@@ -343,12 +343,7 @@ class ReportStory extends Component {
         //   );
       },
     }];
-    const temp = [{
-      issueId: '155',
-      cycleId: '555',
-      test: 'test',
-      demand: 'demand',
-    }];
+
     return (
       <Page className="c7n-report-story">
         <Header title="要求 -> 测试 -> 执行 -> 缺陷">
@@ -358,7 +353,7 @@ class ReportStory extends Component {
             </a>
           </Dropdown>
           <Button 
-            style={{ marginLeft: 30, marginRight: 30 }}
+            style={{ marginLeft: 30}}
             onClick={() => {
               this.setState({
                 selectVisible: true,
@@ -368,11 +363,11 @@ class ReportStory extends Component {
             <Icon type="open_in_new" />
             <span>选择问题</span>
           </Button>
-          <Dropdown overlay={menu} trigger="click">
+          {/* <Dropdown overlay={menu} trigger="click">
             <a className="ant-dropdown-link" href="#">
           导出 <Icon type="arrow_drop_down" />
             </a>
-          </Dropdown>   
+          </Dropdown>    */}
           <Button onClick={this.getInfo} style={{ marginLeft: 30 }}>
             <Icon type="autorenew icon" />
             <span>刷新</span>

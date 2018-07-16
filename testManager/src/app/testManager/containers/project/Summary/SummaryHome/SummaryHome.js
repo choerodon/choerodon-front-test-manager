@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { Table, Tabs, Menu, Dropdown, Button, Icon, Card, Select, Spin, Upload } from 'choerodon-ui';
 import { Page, Header, Content, stores } from 'choerodon-front-boot';
 import { Chart, Axis, Geom, Tooltip } from 'bizcharts';
+import {} from '../../../../api/summaryApi';
 import './SummaryHome.less';
 
 

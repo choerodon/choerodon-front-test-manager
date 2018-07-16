@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { Table, Menu, Dropdown, Button, Icon, Collapse } from 'choerodon-ui';
 import _ from 'lodash';
 import ReportSelectIssue from '../../../../components/ReportSelectIssue';
-import { getReportsFromStory } from '../../../../api/reportApi';
+import { getReportsFromDefect } from '../../../../api/reportApi';
 import { getIssueStatus } from '../../../../api/agileApi';
 import { getStatusList } from '../../../../api/cycleApi';
 import './ReportTest.scss';
@@ -64,7 +64,7 @@ class ReportTest extends Component {
     Promise.all([
       getIssueStatus(),
       getStatusList('CYCLE_CASE'),
-      this.getReportsFromStory(),
+      this.getReportsFromDefect(),
     ]).then(([issueStatusList, statusList]) => {
       this.setState({
         issueStatusList,
@@ -74,12 +74,12 @@ class ReportTest extends Component {
       });
     });
   }
-  getReportsFromStory = (pagination = this.state.pagination, issueIds = this.state.issueIds) => {
+  getReportsFromDefect = (pagination = this.state.pagination, issueIds = this.state.issueIds) => {
     if (!pagination) {
       pagination = this.state.pagination;
     }
     this.setState({ loading: true });
-    getReportsFromStory({
+    getReportsFromDefect({
       page: pagination.current - 1,
       size: pagination.pageSize,
     }, issueIds).then((reportData) => {
@@ -138,7 +138,7 @@ class ReportTest extends Component {
     );
     const columns = [{
       className: 'c7n-table-white',
-      title: '要求',
+      title: '缺陷',
       dataIndex: 'issueId',
       key: 'issueId',
       width: '25%',
@@ -152,39 +152,17 @@ class ReportTest extends Component {
                 <span style={{ color: issueColor, borderColor: issueColor }}>
                   {issueStatus}
                 </span>
-              </div>
-            
+              </div>            
             </div>
             <div>
               缺陷数: {defectCount}
             </div>
           </div>
-          // <Collapse 
-          //   bordered={false} 
-          //   activeKey={openId.includes(record.issueId) ? ['1'] : []}         
-          // >
-          //   <Panel
-          //     showArrow={false}
-          //     header={
-          //       <div className="c7n-collapse-header-container">
-          //         <div>{record.issueName}</div>
-          //         <div className="c7n-collapse-header-icon">                 
-          //           <span style={{ color: issueColor, borderColor: issueColor }}>
-          //             {issueStatus}
-          //           </span>
-          //         </div>
-          //       </div>
-          //     }
-          //     key="1"           
-          //   > 
-          //     {record.summary}
-          //   </Panel>
-          // </Collapse>
         );
       },
     }, {
       className: 'c7n-table-white',
-      title: '测试',
+      title: '执行',
       dataIndex: 'test',
       key: 'test',   
       width: '25%',
@@ -213,7 +191,7 @@ class ReportTest extends Component {
       },
     }, {
       className: 'c7n-table-white',
-      title: '执行',
+      title: '测试',
       dataIndex: 'cycleId',
       key: 'cycleId',
       width: '25%',
@@ -275,7 +253,7 @@ class ReportTest extends Component {
       },
     }, {
       className: 'c7n-table-white',
-      title: '缺陷',
+      title: '要求',
       dataIndex: 'demand',
       key: 'demand',
       width: '25%',
@@ -343,22 +321,17 @@ class ReportTest extends Component {
         //   );
       },
     }];
-    const temp = [{
-      issueId: '155',
-      cycleId: '555',
-      test: 'test',
-      demand: 'demand',
-    }];
+
     return (
       <Page className="c7n-report-story">
-        <Header title="要求 -> 测试 -> 执行 -> 缺陷">
+        <Header title="缺陷 -> 执行 -> 测试 -> 要求">
           <Dropdown overlay={menu} trigger="click">
             <a className="ant-dropdown-link" href="#">
           切换报表 <Icon type="arrow_drop_down" />
             </a>
           </Dropdown>
           <Button 
-            style={{ marginLeft: 30, marginRight: 30 }}
+            style={{ marginLeft: 30}}
             onClick={() => {
               this.setState({
                 selectVisible: true,
@@ -368,11 +341,11 @@ class ReportTest extends Component {
             <Icon type="open_in_new" />
             <span>选择问题</span>
           </Button>
-          <Dropdown overlay={menu} trigger="click">
+          {/* <Dropdown overlay={menu} trigger="click">
             <a className="ant-dropdown-link" href="#">
           导出 <Icon type="arrow_drop_down" />
             </a>
-          </Dropdown>   
+          </Dropdown>    */}
           <Button onClick={this.getInfo} style={{ marginLeft: 30 }}>
             <Icon type="autorenew icon" />
             <span>刷新</span>
@@ -393,7 +366,7 @@ class ReportTest extends Component {
             onCancel={() => { this.setState({ selectVisible: false }); }}
             onOk={(issueIds) => {
               this.setState({ selectVisible: false, issueIds }); 
-              this.getReportsFromStory(null, issueIds);
+              this.getReportsFromDefect(null, issueIds);
             }}
           />
           <Table           
