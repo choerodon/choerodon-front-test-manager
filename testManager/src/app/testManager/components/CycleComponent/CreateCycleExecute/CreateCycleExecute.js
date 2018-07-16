@@ -59,7 +59,7 @@ class CreateCycleExecute extends Component {
     hasIssue: 1,
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps(nextProps) {   
     const { resetFields } = this.props.form;
     if (this.props.visible === false && nextProps.visible === true) {
       resetFields();
@@ -139,7 +139,8 @@ class CreateCycleExecute extends Component {
         if (lable) {
           filter.otherArgs.lable = lable;
         }
-        createCycleExecuteFromCycle(folderId || cycleId, this.props.data.cycleId, assignedTo, 
+        createCycleExecuteFromCycle(folderId || cycleId, this.props.data.cycleId, 
+          assignedTo || AppState.userInfo.id, 
           filter).then((data) => {
           this.setState({
             loading: false,

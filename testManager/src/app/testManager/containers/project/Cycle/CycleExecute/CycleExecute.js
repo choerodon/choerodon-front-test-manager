@@ -264,7 +264,7 @@ class CycleExecute extends Component {
   }
   submit = (originData) => {
     // window.console.log('submit', originData);
-    const { cycleData } = this.state;
+    const cycleData = { ...this.state.cycleData };
     // 删除一些不必要字段
     delete cycleData.defects;
     delete cycleData.caseAttachment;

@@ -35,8 +35,8 @@ class CreateCycle extends Component {
           ...values,
           ...{
             type: 'cycle',
-            fromDate: fromDate.format('YYYY-MM-DD HH:mm:ss'),
-            toDate: toDate.format('YYYY-MM-DD HH:mm:ss'),
+            fromDate: fromDate ? fromDate.format('YYYY-MM-DD HH:mm:ss') : null,
+            toDate: toDate ? toDate.format('YYYY-MM-DD HH:mm:ss') : null,
           }, 
         }).then((data) => {
           this.setState({ loading: false });
