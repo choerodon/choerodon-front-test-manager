@@ -291,7 +291,16 @@ class ReportStory extends Component {
                 {                
                 testCycleCaseES.map((item) => {
                   const { defects } = item;
-                  return <div>{defects.length > 0 ? defects.map(defect => <div>{defect.defectName}</div>) : '-'}</div>;
+                  return <div>{defects.length > 0 ? defects.map(defect => 
+                  <div className="c7n-collapse-header-container">
+                  <div>{defect.defectName}</div>
+                  <div className="c7n-collapse-header-icon">                 
+                    <span style={{ color: defect.statusColor, borderColor: defect.statusColor }}>
+                      {defect.defectStatus}
+                    </span>
+                  </div>
+                
+                </div>) : '-'}</div>;
                 })
                 // testCycleCaseES.map((item) => {
                 //   const { defects } = item;

@@ -152,7 +152,7 @@ class ReportTest extends Component {
                 <span style={{ color: issueColor, borderColor: issueColor }}>
                   {issueStatus}
                 </span>
-              </div>            
+              </div>
             </div>
             <div>
               缺陷数: {defectCount}
