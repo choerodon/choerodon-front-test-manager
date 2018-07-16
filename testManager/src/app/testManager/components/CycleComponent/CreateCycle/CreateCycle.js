@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import { Form, Input, Select, Button, Icon, Modal, Upload, Spin, DatePicker } from 'choerodon-ui';
 import { Content, stores } from 'choerodon-front-boot';
 // import './CreateCycle.less';
-import { getProjectVersion } from '../../../../api/agileApi';
-import { addCycle } from '../../../../api/cycleApi';
+import { getProjectVersion } from '../../../api/agileApi';
+import { addCycle } from '../../../api/cycleApi';
 
 const Option = Select.Option;
 const { AppState } = stores;

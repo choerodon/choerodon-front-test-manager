@@ -8,12 +8,12 @@ import FullEditor from '../../../../components/FullEditor';
 import {
   getCycle, addDefects, getCycleDetails, getStatusList,
   getUsers, editCycle, getCycleHistiorys, deleteAttachment, removeDefect,
-} from '../../../../../api/CycleExecuteApi';
-import { uploadFile } from '../../../../../api/CommonApi';
+} from '../../../../api/CycleExecuteApi';
+import { uploadFile } from '../../../../api/CommonApi';
 import { delta2Html, delta2Text } from '../../../../common/utils';
 
 import './CycleExecute.less';
-import { getIssueList } from '../../../../../api/agileApi';
+import { getIssueList } from '../../../../api/agileApi';
 
 const { AppState } = stores;
 const Option = Select.Option;

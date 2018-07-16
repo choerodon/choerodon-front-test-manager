@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { Page, Header, Content, stores } from 'choerodon-front-boot';
 import CreateStatus from '../../../../components/CreateStatus';
 import EditStatusSide from '../../../../components/EditStatusSide';
-import { getStatusList, deleteStatus } from '../../../../../api/TestStatusApi';
+import { getStatusList, deleteStatus } from '../../../../api/TestStatusApi';
 
 const TabPane = Tabs.TabPane;
 const { AppState } = stores;
@@ -12,7 +12,6 @@ class CustomStatusHome extends Component {
   state = {
     loading: false,
     statusType: 'CYCLE_CASE',
-    createType: 'CYCLE_CASE',
     createVisible: false,
     editVisible: false,
     statusList: [],
@@ -122,7 +121,7 @@ class CustomStatusHome extends Component {
   }
   render() {
     const { 
-      loading, statusType, createType,
+      loading, statusType, 
       createVisible, editVisible, statusPagination, statusList, 
       editing,
     } = this.state;
@@ -173,8 +172,7 @@ class CustomStatusHome extends Component {
     }];
     return (
       <div>
-        <CreateStatus
-          type={createType}
+        <CreateStatus        
           visible={createVisible}
           onCancel={() => { this.setState({ createVisible: false }); }}
           onOk={() => { this.setState({ createVisible: false }); this.getList(statusType); }}
@@ -188,14 +186,14 @@ class CustomStatusHome extends Component {
         />
 
         <Header title="自定义状态">
-          <Button onClick={() => { this.setState({ createVisible: true, createType: 'CYCLE_CASE' }); }}>
+          <Button onClick={() => { this.setState({ createVisible: true }); }}>
             <Icon type="playlist_add" />
-            <span>创建执行状态</span>
+            <span>创建状态</span>
           </Button>
-          <Button onClick={() => { this.setState({ createVisible: true, createType: 'CASE_STEP' }); }}>
+          {/* <Button onClick={() => { this.setState({ createVisible: true }); }}>
             <Icon type="playlist_add" />
             <span>创建步骤状态</span>
-          </Button>
+          </Button> */}
           <Button onClick={this.refresh}>
             <Icon type="autorenew icon" />
             <span>刷新</span>

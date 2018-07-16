@@ -5,9 +5,9 @@ import { Link } from 'react-router-dom';
 import { Table, Menu, Dropdown, Button, Icon, Collapse } from 'choerodon-ui';
 import _ from 'lodash';
 import ReportSelectIssue from '../../../../components/ReportSelectIssue';
-import { getReportsFromStory } from '../../../../../api/reportApi';
-import { getIssueStatus } from '../../../../../api/agileApi';
-import { getStatusList } from '../../../../../api/cycleApi';
+import { getReportsFromStory } from '../../../../api/reportApi';
+import { getIssueStatus } from '../../../../api/agileApi';
+import { getStatusList } from '../../../../api/cycleApi';
 import './ReportStory.scss';
 
 const { AppState } = stores;
@@ -124,7 +124,7 @@ class ReportStory extends Component {
     const urlParams = AppState.currentMenuType;
     const that = this;
     const menu = (
-      <Menu>
+      <Menu style={{ marginTop: 35 }}>
         <Menu.Item key="0">
           <Link to={`/testManager/report/story?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`} >故事到测试</Link>
         </Menu.Item>
@@ -291,7 +291,16 @@ class ReportStory extends Component {
                 {                
                 testCycleCaseES.map((item) => {
                   const { defects } = item;
-                  return <div>{defects.length > 0 ? defects.map(defect => <div>{defect.defectName}</div>) : '-'}</div>;
+                  return <div>{defects.length > 0 ? defects.map(defect => 
+                  <div className="c7n-collapse-header-container">
+                  <div>{defect.defectName}</div>
+                  <div className="c7n-collapse-header-icon">                 
+                    <span style={{ color: defect.statusColor, borderColor: defect.statusColor }}>
+                      {defect.defectStatus}
+                    </span>
+                  </div>
+                
+                </div>) : '-'}</div>;
                 })
                 // testCycleCaseES.map((item) => {
                 //   const { defects } = item;
@@ -343,12 +352,7 @@ class ReportStory extends Component {
         //   );
       },
     }];
-    const temp = [{
-      issueId: '155',
-      cycleId: '555',
-      test: 'test',
-      demand: 'demand',
-    }];
+
     return (
       <Page className="c7n-report-story">
         <Header title="要求 -> 测试 -> 执行 -> 缺陷">
@@ -358,7 +362,7 @@ class ReportStory extends Component {
             </a>
           </Dropdown>
           <Button 
-            style={{ marginLeft: 30, marginRight: 30 }}
+            style={{ marginLeft: 30}}
             onClick={() => {
               this.setState({
                 selectVisible: true,
@@ -368,11 +372,11 @@ class ReportStory extends Component {
             <Icon type="open_in_new" />
             <span>选择问题</span>
           </Button>
-          <Dropdown overlay={menu} trigger="click">
+          {/* <Dropdown overlay={menu} trigger="click">
             <a className="ant-dropdown-link" href="#">
           导出 <Icon type="arrow_drop_down" />
             </a>
-          </Dropdown>   
+          </Dropdown>    */}
           <Button onClick={this.getInfo} style={{ marginLeft: 30 }}>
             <Icon type="autorenew icon" />
             <span>刷新</span>

@@ -3,18 +3,12 @@ import { Input, Button, Select, Icon, Modal, Upload, Spin } from 'choerodon-ui';
 import { Content } from 'choerodon-front-boot';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
-import { editCycleSide, deleteAttachment, removeDefect, addDefects } from '../../../api/CycleExecuteApi';
-import { getIssueList } from '../../../api/agileApi';
+import { editCycleSide, deleteAttachment, removeDefect, addDefects } from '../../api/CycleExecuteApi';
+import { getIssueList } from '../../api/agileApi';
 import './EditTestDetail.less';
 import WYSIWYGEditor from '../WYSIWYGEditor';
 
-import {
-  delta2Html,
-  escape,
-  handleFileUpload,
-  text2Delta,
-  beforeTextUpload,
-} from '../../common/utils';
+import { text2Delta } from '../../common/utils';
 
 const { Sidebar } = Modal;
 const { Option } = Select;

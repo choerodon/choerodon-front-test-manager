@@ -1,15 +1,15 @@
 import React, { Component } from 'react';
-import { Form, Input, Button, Icon, Modal, Upload, Spin } from 'choerodon-ui';
+import { Form, Input, Select, Icon, Modal, Upload, Spin } from 'choerodon-ui';
 import { Content, stores } from 'choerodon-front-boot';
 import PropTypes from 'prop-types';
 import { SketchPicker } from 'react-color';
 import './CreateStatus.less';
-import { createStatus } from '../../../api/TestStatusApi';
+import { createStatus } from '../../api/TestStatusApi';
 
 const { AppState } = stores;
 const FormItem = Form.Item;
 const { Sidebar } = Modal;
-const { TextArea } = Input;
+const Option = Select.Option;
 class CreateStatus extends Component {
   state = {
     loading: false,
@@ -25,20 +25,20 @@ class CreateStatus extends Component {
 
   onOk = () => {
     const { statusColor } = this.state;
-    const { onOk, type } = this.props;
+    const { onOk } = this.props;
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
         this.setState({ loading: true });
         window.console.log('Received values of form: ', {
           ...values,
-          ...{ statusColor, statusType: type },
+          ...{ statusColor },
         });
         createStatus({
           ...values,
-          ...{ statusColor, statusType: type },
+          ...{ statusColor },
         }).then((data) => {
           this.setState({ loading: false });
-          this.props.onOk();
+          onOk();
         }).catch(() => {
           Choerodon.prompt('网络异常');
           this.setState({ loading: false });
@@ -48,13 +48,13 @@ class CreateStatus extends Component {
   }
   render() {
     const { visible, onOk, onCancel, type } = this.props;
-    const { getFieldDecorator } = this.props.form;
+    const { getFieldDecorator, getFieldValue } = this.props.form;
     const { pickShow, statusColor, loading } = this.state;
     return (
       <div onClick={() => { this.setState({ pickShow: false }); }} role="none">
         <Spin spinning={loading}>
           <Sidebar
-            title={`创建“${type}”状态`}
+            title={`创建“${getFieldValue('statusType') === 'CYCLE_CASE' ? '执行' : '步骤'}”状态`}
             visible={visible}
             onOk={this.onOk}
             onCancel={onCancel}
@@ -72,6 +72,22 @@ class CreateStatus extends Component {
                   // {...formItemLayout}
                   label={null}
                 >
+                  {getFieldDecorator('statusType', {
+                    initialValue: 'CYCLE_CASE',
+                    rules: [{
+                      required: true, message: '请选择类型!',
+                    }],
+                  })(
+                    <Select label="类型" style={{ width: 500 }}>
+                      <Option value="CYCLE_CASE">执行状态</Option>
+                      <Option value="CASE_STEP">步骤状态</Option>
+                    </Select>,
+                  )}
+                </FormItem>
+                <FormItem
+                  // {...formItemLayout}
+                  label={null}
+                >
                   {getFieldDecorator('statusName', {
                     rules: [{
                       required: true, message: '请输入状态!',
@@ -85,9 +101,9 @@ class CreateStatus extends Component {
                   label={null}
                 >
                   {getFieldDecorator('description', {
-                    rules: [{
-                      required: true, message: '请输入说明!',
-                    }],
+                    // rules: [{
+                    //   required: true, message: '请输入说明!',
+                    // }],
                   })(
                     <Input style={{ width: 500 }} placeholder="说明" maxLength={30} label="说明" />,
                     // <div style={{ width: 500 }}>

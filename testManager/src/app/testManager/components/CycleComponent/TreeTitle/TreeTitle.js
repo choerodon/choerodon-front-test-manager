@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { observer } from 'mobx-react';
 import { Menu, Input, Dropdown, Button } from 'choerodon-ui';
 import './TreeTitle.scss';
-import { editFolder, deleteCycleOrFolder } from '../../../../api/cycleApi';
+import { editFolder, deleteCycleOrFolder } from '../../../api/cycleApi';
 
 class TreeTitle extends Component {
   state = {
@@ -103,12 +103,12 @@ class TreeTitle extends Component {
           <Menu.Item key="clone">
             {type === 'folder' ? '克隆文件夹' : '克隆循环'}
           </Menu.Item>,
-          <Menu.Item key="export">
-            {type === 'folder' ? '导出文件夹' : '导出循环'}
-          </Menu.Item>,
+          // <Menu.Item key="export">
+          //   {type === 'folder' ? '导出文件夹' : '导出循环'}
+          // </Menu.Item>,
         ]);
       } 
-      return <Menu onClick={this.handleItemClick}>{items}</Menu>;
+      return <Menu onClick={this.handleItemClick} style={{ margin: '10px 0 0 28px' }}>{items}</Menu>;
     };    
 
     const { editing } = this.state;
@@ -132,7 +132,7 @@ class TreeTitle extends Component {
           : <div className="c7n-tt-text">
             {title}
           </div>}
-        <div className="c7n-tt-processBar">
+        <div className="c7n-tt-processBar" style={{ marginLeft: data.type === 'cycle' || data.type === 'temp' ? '18px' : 0 }}>
           <div className="c7n-process-bar">
             <span className="c7n-pb-unfill">
               <div className="c7n-pb-fill-parent">
@@ -142,9 +142,12 @@ class TreeTitle extends Component {
           </div>
         </div>
         <div role="none" className="c7n-tt-actionButton" onClick={e => e.stopPropagation()}>
-          <Dropdown overlay={getMenu(data.type)} trigger={['click']}>
-            <Button shape="circle" icon="more_vert" />
-          </Dropdown>
+          {data.type === 'temp' 
+            ? null :
+            <Dropdown overlay={getMenu(data.type)} trigger={['click']}>
+              <Button shape="circle" icon="more_vert" />
+            </Dropdown>
+          }
         </div>
       </div>
     );
