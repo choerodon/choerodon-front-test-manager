@@ -3,7 +3,7 @@ import { Input, Button, Select, Icon, Modal, Upload, Spin } from 'choerodon-ui';
 import { Content } from 'choerodon-front-boot';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
-import { editCycleSide, deleteAttachment } from '../../../api/CycleExecuteApi';
+import { editCycleSide, deleteAttachment, removeDefect, addDefects } from '../../../api/CycleExecuteApi';
 import { getIssueList } from '../../../api/agileApi';
 import './EditTestDetail.less';
 import WYSIWYGEditor from '../WYSIWYGEditor';
@@ -56,6 +56,8 @@ class EditTestDetail extends Component {
     caseAttachment: [],
     defects: [],
     issueList: [],
+    defectIds: [],
+    originDefects: [],
   }
   componentWillReceiveProps(nextProps) {
     const { editing } = nextProps;
@@ -95,6 +97,8 @@ class EditTestDetail extends Component {
         };
       }) : [],
       defects: defects || [],
+      defectIds: defects ? defects.map(defect => defect.issueId.toString()) : [],
+      originDefects: defects ? defects.map(defect => defect.issueId.toString()) : [],
     });
     // 修复默认值不变
     if (this.props.visible === false && nextProps.visible === true) {
@@ -120,7 +124,10 @@ class EditTestDetail extends Component {
       comment,
       stepAttachment,
       caseAttachment,
-      defects } = this.state;
+      defects,
+      defectIds,
+      originDefects,
+      issueList } = this.state;
     const data = {
       executeId,
       stepStatus,
@@ -143,6 +150,23 @@ class EditTestDetail extends Component {
       formData.append(key, JSON.stringify(data[key]));
     });
     this.setState({ loading: true });
+    // 
+    const needAdd =
+    issueList
+      .filter(issue => defectIds.includes(issue.issueId.toString()))// 取到选中的issueList
+      .filter(issue => !originDefects.includes(issue.issueId.toString()))// 去掉之前已有的
+      .map(item => ({
+        defectType: 'CASE_STEP',
+        defectLinkId: executeStepId,
+        issueId: item.issueId,
+        defectName: item.issueNum,
+      }));
+    if (needAdd.length > 0) {
+      addDefects(needAdd).then((res) => {
+        
+      });
+    }
+    // 
     editCycleSide(formData).then(() => {
       this.setState({
         loading: false,
@@ -164,11 +188,31 @@ class EditTestDetail extends Component {
     const fileList = info.fileList;
     this.setState({ fileList });
   }
+  handleDefectsChange = (List) => {
+    const { originDefects, defectIds } = this.state;
+    const oldList = [...defectIds];
+    window.console.log('old', oldList, 'new', List);
+    // 删除元素
+    if (oldList.length > List.length) {
+      const deleteEle = oldList.filter(old => !List.includes(old));
+      // 如果isse已存在，调用删除接口
+      if (defectIds.includes(deleteEle[0].toString())) {       
+        removeDefect(deleteEle[0]);
+      }
+      window.console.log('delete');
+    } else {
+      window.console.log('add', List.filter(item => !oldList.includes(item)));
+    }
 
+    this.setState({
+      defectIds: List,
+    });
+  }
   render() {
     const { visible, onOk, onCancel } = this.props;
     const { reset, fileList, executeId, testStep, comment,
-      stepStatusList, stepStatus, loading, defects, issueList, selectLoading } = this.state;
+      stepStatusList, stepStatus, loading, defects, issueList,
+      selectLoading, defectIds } = this.state;
     const delta = text2Delta(comment);
     // console.log(delta)
     const props = {
@@ -246,8 +290,8 @@ class EditTestDetail extends Component {
               style={{ width: 500 }}
               label="缺陷"
               placeholder="缺陷"
-              value={defects}
-              onChange={(List) => { this.setState({ defects: List }); }}
+              value={defectIds}
+              onChange={this.handleDefectsChange}
               allowClear
               loading={selectLoading}
               filter

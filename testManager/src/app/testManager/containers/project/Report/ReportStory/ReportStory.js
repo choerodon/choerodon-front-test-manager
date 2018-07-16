@@ -1,7 +1,9 @@
+/* eslint-disable */
 import React, { Component } from 'react';
 import { Page, Header, Content, stores } from 'choerodon-front-boot';
 import { Link } from 'react-router-dom';
 import { Table, Menu, Dropdown, Button, Icon, Collapse } from 'choerodon-ui';
+import _ from 'lodash';
 import ReportSelectIssue from '../../../../components/ReportSelectIssue';
 import { getReportsFromStory } from '../../../../../api/reportApi';
 import { getIssueStatus } from '../../../../../api/agileApi';
@@ -49,7 +51,7 @@ class ReportStory extends Component {
       total: 0,
       pageSize: 10,
     },
-    openId: [],
+    openId: {},
     issueIds: [],
   }
   componentDidMount() {
@@ -61,14 +63,14 @@ class ReportStory extends Component {
     });
     Promise.all([
       getIssueStatus(),
-      getStatusList('CASE_STEP'),
+      getStatusList('CYCLE_CASE'),
       this.getReportsFromStory(),
     ]).then(([issueStatusList, statusList]) => {
       this.setState({
         issueStatusList,
         statusList,       
         loading: false,
-        openId: [],
+        openId: {},
       });
     });
   }
@@ -102,18 +104,19 @@ class ReportStory extends Component {
   handleTableChange = (pagination, filters, sorter) => {
     this.getList(pagination);
   }
-  handleOpen=(issueId, open) => {
-    const { openId } = this.state;
-    if (open) {
-      this.setState({
-        openId: [...openId, issueId],
-      });
-    } else {
-      openId.splice(openId.indexOf(issueId), 1);
-      this.setState({
-        openId: [...openId],
-      });
-    }
+  handleOpen=(issueId, keys) => {
+    const { openId } = this.state;  
+    openId[issueId] = keys;
+    // if (open) {
+    this.setState({
+      openId: { ...openId },
+    });
+    // } else {
+    //   openId.splice(openId.indexOf(issueId), 1);
+    //   this.setState({
+    //     openId: [...openId],
+    //   });
+    // }
   }
   render() {
     const { selectVisible, reportList, loading, pagination,
@@ -138,6 +141,7 @@ class ReportStory extends Component {
       title: '要求',
       dataIndex: 'issueId',
       key: 'issueId',
+      width: '25%',
       render(issueId, record) {
         const { issueStatus, defectCount, issueName, issueColor } = record;
         return (
@@ -183,39 +187,27 @@ class ReportStory extends Component {
       title: '测试',
       dataIndex: 'test',
       key: 'test',   
+      width: '25%',
       render(test, record) {
         const { issueStatus, linkedTestIssues, issueId } = record;
         return (
           <Collapse 
-            // activeKey={openId.includes(record.issueId) ? ['1'] : []}
+            activeKey={openId[issueId]}
             bordered={false} 
-            onChange={(keys) => { that.handleOpen(issueId, keys.length > 0); }}          
+            onChange={(keys) => { that.handleOpen(issueId, keys); }}
           >
             {
               linkedTestIssues.map((issue, i) => (<Panel
                 // showArrow={false}
                 header={
-                  <div className="c7n-collapse-header-container">
-                    {issue.issueId}
+                  <div>
+                    <div className="c7n-showId">{issue.issueId}</div>
+                    <div style={{ fontSize: '13px' }}>{issue.summary}</div>
                   </div>
                 }
-                key={issue.issueId.toString()}
-              > issue.summary</Panel>))
+                key={issue.issueId}
+              />))
             }
-            {/* <Panel
-            // showArrow={false}
-              header={
-                <div className="c7n-collapse-header-container">
-                  <div>640</div>
-                  <div className="c7n-collapse-header-icon">                 
-                    <span style={{ }}>
-                  待处理
-                    </span>
-                  </div>
-                </div>
-              }
-              key="1"           
-            > sss</Panel> */}
           </Collapse>
         );
       },
@@ -224,61 +216,131 @@ class ReportStory extends Component {
       title: '执行',
       dataIndex: 'cycleId',
       key: 'cycleId',
+      width: '25%',
       render(cycleId, record) {
-        const { linkedTestIssues } = record;
-        return (
-          !openId.includes(record.issueId) ?   
-            <div>
-              <div>总共</div>
-              <div style={{ display: 'flex' }}>
-                <div>
-                  <span>未执行</span>
-                  <span>1</span>
-                </div>              
-                <div>
-                  <span>通过</span>
-                  <span>1</span>
-                </div>
-              </div>          
-            </div> :
-            <div>
-              <div style={{ display: 'flex', alignItems: 'center' }}>
-                <div>test1 / 发布测试</div>
-                <div>未执行</div>
-                <Link to={`/testManager/Cycle/execute/${record
-                  .executeId}?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}
-                >
-                  <Icon type="explicit" />     
-                </Link>      
-              </div>     
-            </div>
-        );
+        const { linkedTestIssues } = record;        
+        return (<div>{linkedTestIssues.map((testIssue) => {
+          const { testCycleCaseES, issueId } = testIssue;
+          // console.log()
+          const totalExecute = testCycleCaseES.length;
+          // const todoExecute = 0;
+          // let doneExecute = 0;
+          const executeStatus = {};
+          const caseShow = testCycleCaseES.map((execute) => {
+            // 执行的颜色
+            const { executionStatus } = execute;
+            const statusColor = _.find(statusList, { statusId: executionStatus }) ?
+              _.find(statusList, { statusId: executionStatus }).statusColor : '';
+            const statusName = _.find(statusList, { statusId: executionStatus }) &&
+                _.find(statusList, { statusId: executionStatus }).statusName;
+              // if (statusColor !== 'gray') {
+              //   doneExecute += 1;
+              // }
+            if (!executeStatus[statusName]) {
+              executeStatus[statusName] = 1;
+            } else {
+              executeStatus[statusName] += 1;
+            }
+              
+            return (<div style={{ display: 'flex', margin: '5px 0' }} >
+              {execute.cycleName}
+              <div
+                className="c7n-collapse-text-icon" 
+                style={{ color: statusColor, borderColor: statusColor }}
+              >
+                {statusName}
+              </div>
+            </div>);
+          });
+          // window.console.log(executeStatus);
+          return openId[record.issueId] && openId[record.issueId]
+            .includes(issueId.toString()) ? 
+              <div style={{ minHeight: 30 }}> { caseShow }   </div> 
+            :
+            (
+              <div>
+                <div>总共：{totalExecute}</div>
+                <div style={{ display: 'flex' }}>
+                  {
+                    Object.keys(executeStatus).map(key => (<div>
+                      <span>{key}：</span>
+                      <span>{executeStatus[key]}</span>
+                    </div>))
+                  }                
+                </div>          
+              </div>
+            );
+        })}
+        </div>);        
       },
     }, {
       className: 'c7n-table-white',
       title: '缺陷',
       dataIndex: 'demand',
       key: 'demand',
+      width: '25%',
       render(demand, record) {
-        return (<Collapse 
-          bordered={false} 
-          activeKey={openId.includes(record.issueId) ? ['1'] : []}         
-        >
-          <Panel
-            showArrow={false}
-            header={
-              <div className="c7n-collapse-header-container">
-                <div>640</div>
-                <div className="c7n-collapse-header-icon">                 
-                  <span style={{ }}>
-                  待处理
-                  </span>
-                </div>
-              </div>
-            }
-            key="1"           
-          > sss</Panel>
-        </Collapse>);
+        const { linkedTestIssues } = record;        
+        return (<div>{ linkedTestIssues.map((testIssue) => {
+          const { testCycleCaseES, issueId } = testIssue;
+          
+          
+          return (openId[record.issueId] && openId[record.issueId]
+            .includes(issueId.toString()) ?    
+            <div>
+                {                
+                testCycleCaseES.map((item) => {
+                  const { defects } = item;
+                  return <div>{defects.length > 0 ? defects.map(defect => <div>{defect.defectName}</div>) : '-'}</div>;
+                })
+                // testCycleCaseES.map((item) => {
+                //   const { defects } = item;
+                //   return (<div className="c7n-collapse-header-container">
+                //     <div>{record.issueName}</div>
+                //     <div className="c7n-collapse-header-icon">                 
+                //       <span style={{ color: issueColor, borderColor: issueColor }}>
+                //         {issueStatus}
+                //       </span>
+                //     </div>            
+                //   </div>);
+                // })
+              } 
+              </div> :            
+              <div>
+              {
+                testCycleCaseES.map((item) => {
+                  const { defects } = item;
+                  return <div>{defects.map((defect, i) => (
+                    <span style={{
+                      fontSize: '13px',
+                      color: '#3F51B5',                 
+                    }}>
+                      {i === 0 ? null :'，'}
+                      <span>
+                        {defect.defectName}
+                      </span>
+                    </span>))}</div>;
+                })}
+            </div>);
+        })}
+        </div>);
+        // return openId[record.issueId] && openId[record.issueId]
+        //   .includes(issueId.toString()) ? 
+        //     <div style={{ minHeight: 30 }}> { caseShow }   </div> 
+        //   :
+        //   (
+        //     <div>
+        //       <div>总共：{totalExecute}</div>
+        //       <div style={{ display: 'flex' }}>
+        //         {
+        //           Object.keys(executeStatus).map(key => (<div>
+        //             <span>{key}：</span>
+        //             <span>{executeStatus[key]}</span>
+        //           </div>))
+        //         }                
+        //       </div>          
+        //     </div>
+        //   );
       },
     }];
     const temp = [{

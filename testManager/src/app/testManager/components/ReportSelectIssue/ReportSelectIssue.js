@@ -133,12 +133,7 @@ class ReportSelectIssue extends Component {
     }, {
       title: '摘要',
       dataIndex: 'summary',
-      key: 'summary',
-      render(statusColor) {
-        return (
-          <div style={{ width: 18, height: 18, background: statusColor }} />
-        );
-      },
+      key: 'summary', 
     }];
     return (
       <div onClick={() => { this.setState({ pickShow: false }); }} role="none">

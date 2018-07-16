@@ -480,8 +480,8 @@ class CycleHome extends Component {
       this.removeAdding();
     });
   }
- 
-  handleExecuteTableChange=(pagination, filters, sorter) => {
+
+  handleExecuteTableChange = (pagination, filters, sorter) => {
     this.setState({
       executePagination: pagination,
     });
@@ -581,7 +581,7 @@ class CycleHome extends Component {
 
   render() {
     const { CreateCycleExecuteVisible, CreateCycleVisible, EditCycleVisible,
-      loading, currentCycle, currentEditValue, testList, expandedKeys, rightLoading, 
+      loading, currentCycle, currentEditValue, testList, expandedKeys, rightLoading,
       searchValue,
       autoExpandParent,
       executePagination,
@@ -605,8 +605,8 @@ class CycleHome extends Component {
           _.find(statusList, { statusId: executionStatus }).statusColor : '';
         return (<div style={{ ...styles.statusOption, ...{ background: statusColor } }}>
           {_.find(statusList, { statusId: executionStatus }) &&
-          _.find(statusList, { statusId: executionStatus }).statusName}
-        </div>); 
+            _.find(statusList, { statusId: executionStatus }).statusName}
+        </div>);
       },
     }, {
       title: '摘要',
@@ -634,8 +634,47 @@ class CycleHome extends Component {
       title: '缺陷',
       dataIndex: 'defects',
       key: 'defects',
-      render: defects => <div>{defects.map(defect => defect.defectName)}</div>,
-    }, 
+      render: defects =>
+        (<Tooltip title={
+          <div>
+            {defects.map((defect, i) => (
+              <div style={{
+                fontSize: '13px',
+                color: 'white',
+              }}
+              >
+                {/* {i === 0 ? null : '，'} */}
+                <span>
+                  {defect.defectName}
+                </span>
+              </div>))}
+          </div>}
+        >
+          <div
+            style={{
+              width: 100,
+              display: 'flex',
+              alignItems: 'center',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}        
+          >
+            {defects.map((defect, i) => (
+              <div style={{
+                fontSize: '13px',
+                color: '#3F51B5',
+
+              }}
+              >
+                {i === 0 ? null : '，'}
+                <span>
+                  {defect.defectName}
+                </span>
+              </div>))}
+          </div>
+        </Tooltip>),
+    },
     // {
     //   title: '模块',
     //   dataIndex: 'assignedTo',
@@ -736,13 +775,15 @@ class CycleHome extends Component {
         >
           <Spin spinning={loading}>
             <CreateCycleExecute
-              data={currentCycle}             
+              data={currentCycle}
               rank={testList.slice(-1)[0] && testList.slice(-1)[0].rank}
               visible={CreateCycleExecuteVisible}
               onCancel={() => { this.setState({ CreateCycleExecuteVisible: false }); }}
-              onOk={() => {                
-                this.setState({ CreateCycleExecuteVisible: false, 
-                  rightLoading: true });               
+              onOk={() => {
+                this.setState({
+                  CreateCycleExecuteVisible: false,
+                  rightLoading: true,
+                });
                 // window.console.log(data);
                 getStatusList('CYCLE_CASE').then((List) => {
                   this.setState({ statusList: List });
@@ -761,7 +802,7 @@ class CycleHome extends Component {
                     },
                   });
                   // window.console.log(cycle);
-                }); 
+                });
               }}
             />
             <CreateCycle
@@ -775,7 +816,7 @@ class CycleHome extends Component {
               onCancel={() => { this.setState({ EditCycleVisible: false }); }}
               onOk={() => { this.setState({ EditCycleVisible: false }); this.refresh(); }}
             />
-            
+
             <div className="c7n-cycleHome">
               <div className={this.state.sideVisible ? 'c7n-ch-side' : 'c7n-ch-hidden'}>
                 <div className="c7n-chs-button">
