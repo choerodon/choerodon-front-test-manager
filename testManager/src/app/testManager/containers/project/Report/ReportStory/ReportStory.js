@@ -295,7 +295,7 @@ class ReportStory extends Component {
                   <div className="c7n-collapse-header-container">
                   <div>{defect.defectName}</div>
                   <div className="c7n-collapse-header-icon">                 
-                    <span style={{ color: defect.statusColor, borderColor: defect.statusColor }}>
+                    <span style={{ color: defect.defectColor, borderColor: defect.defectColor }}>
                       {defect.defectStatus}
                     </span>
                   </div>

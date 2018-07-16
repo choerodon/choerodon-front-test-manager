@@ -46,12 +46,14 @@ class EditCycle extends Component {
         this.setState({ loading: true });
         window.console.log('Received values of form: ', values);
         const { fromDate, toDate } = values;        
+        const { initialValue } = this.props;
         editFolder({ 
           ...values,
           ...{
+            cycleId: initialValue.cycleId,
             type: 'cycle',
-            fromDate: fromDate.format('YYYY-MM-DD HH:mm:ss'),
-            toDate: toDate.format('YYYY-MM-DD HH:mm:ss'),
+            fromDate: fromDate ? fromDate.format('YYYY-MM-DD HH:mm:ss') : null,
+            toDate: toDate ? toDate.format('YYYY-MM-DD HH:mm:ss') : null,
           }, 
         }).then((data) => {
           this.setState({ loading: false });
@@ -141,9 +143,9 @@ class EditCycle extends Component {
                   label={null}
                 >
                   {getFieldDecorator('description', {                 
-                    rules: [{
-                      required: true, message: '请输入说明!',
-                    }],
+                    // rules: [{
+                    //   required: true, message: '请输入说明!',
+                    // }],
                   })(
                     <Input style={{ width: 500 }} placeholder="说明" maxLength={30} label="说明" />,
                     // <div style={{ width: 500 }}>
@@ -156,9 +158,9 @@ class EditCycle extends Component {
                   label={null}
                 >
                   {getFieldDecorator('build', {                   
-                    rules: [{
-                      required: true, message: '请输入构建号!',
-                    }],
+                    // rules: [{
+                    //   required: true, message: '请输入构建号!',
+                    // }],
                   })(
                     <Input style={{ width: 500 }} placeholder="构建号" maxLength={30} label="构建号" />,
                     // <div style={{ width: 500 }}>
@@ -171,9 +173,9 @@ class EditCycle extends Component {
                   label={null}
                 >
                   {getFieldDecorator('environment', {                   
-                    rules: [{
-                      required: true, message: '请输入环境!',
-                    }],
+                    // rules: [{
+                    //   required: true, message: '请输入环境!',
+                    // }],
                   })(
                     <Input style={{ width: 500 }} placeholder="环境" maxLength={30} label="环境" />,
                     // <div style={{ width: 500 }}>
@@ -186,9 +188,9 @@ class EditCycle extends Component {
                   label={null}
                 >
                   {getFieldDecorator('fromDate', {                    
-                    rules: [{
-                      required: true, message: '请选择日期!',
-                    }],
+                    // rules: [{
+                    //   required: true, message: '请选择日期!',
+                    // }],
                   })(
                     <DatePicker 
                       format="YYYY-MM-DD HH:mm:ss"
@@ -205,9 +207,9 @@ class EditCycle extends Component {
                   label={null}
                 >
                   {getFieldDecorator('toDate', {                   
-                    rules: [{
-                      required: true, message: '请选择日期!',
-                    }],
+                    // rules: [{
+                    //   required: true, message: '请选择日期!',
+                    // }],
                   })(
                     <DatePicker 
                       format="YYYY-MM-DD HH:mm:ss"
