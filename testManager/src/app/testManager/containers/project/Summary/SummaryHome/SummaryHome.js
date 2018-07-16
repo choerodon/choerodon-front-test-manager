@@ -5,7 +5,8 @@ import { Page, Header, Content, stores } from 'choerodon-front-boot';
 import { Chart, Axis, Geom, Tooltip } from 'bizcharts';
 import moment from 'moment';
 import _ from 'lodash';
-import { getCaseNotPlain, getCaseNotRun, getCycleRange, getCreateRange } from '../../../../api/summaryApi';
+import { getCaseNotPlain, getCaseNotRun, getCaseNum, getCycleRange, getCreateRange } from '../../../../api/summaryApi';
+import { getProjectVersion, getLabels, getModules, getIssueCount } from '../../../../api/agileApi';
 import './SummaryHome.less';
 
 const ButtonGroup = Button.Group;
@@ -18,10 +19,19 @@ class SummaryHome extends Component {
       range: '7',
       excuteList: [],
       createList: [],
+      totalIssue: 0,
+      totalTest: 0,
       notPlan: 0,
       notRun: 0,
+      caseNum: 0,
       totalExcute: 0,
       totalCreate: 0,
+      versionList: [],
+      componentList: [],
+      labelList: [],
+      versionTable: [],
+      componentTable: [],
+      labelTable: [],
     };
   }
 
@@ -32,23 +42,70 @@ class SummaryHome extends Component {
   getInfo = () => {
     this.setState({ loading: true });
     const { date, range } = this.state;
-
-    Promise.all([getCaseNotPlain(), getCaseNotRun(),
-      getCycleRange(moment().format('YYYY-MM-DD'), range), getCreateRange(range)]).then(([notPlan, notRun, excuteList, createList]) => {
-      this.setState({
-        loading: false,
-        notPlan,
-        notRun,
-        excuteList: this.listTransform(excuteList),
-        totalExcute: _.sum(excuteList),
-        createList: this.createTransform(createList, range),
-        totalCreate: _.sumBy(createList, 'issueCount'),
+    Promise.all([getIssueCount({}), getIssueCount({
+      advancedSearchArgs: {
+        typeCode: [
+          'issue_test',
+        ],
+      },
+      otherArgs: {
+        // version: [version.versionId],
+      },
+    }), getCaseNotPlain(), getCaseNotRun(), getCaseNum(),
+    getCycleRange(moment().format('YYYY-MM-DD'), range),
+    getCreateRange(range), getProjectVersion(), getModules(), getLabels()])
+      .then(([totalIssueData, totalData, notPlan, notRun, caseNum, excuteList,
+        createList, versionList, componentList, labelList]) => {
+        this.setState({
+          loading: false,
+          totalIssue: totalIssueData.totalElements,
+          totalTest: totalData.totalElements,
+          notPlan,
+          notRun,
+          caseNum,
+          excuteList: this.listTransform(excuteList),
+          totalExcute: _.sum(excuteList),
+          createList: this.createTransform(createList, range),
+          totalCreate: _.sumBy(createList, 'issueCount'),
+          versionList,
+          componentList,
+          labelList,
+        });
+        
+        this.getVersionTable(versionList).then((versionTable) => {         
+          versionTable.unshift({
+            versionId: null, 
+            name: '未规划',
+            num: totalIssueData.totalElements - _.sumBy(versionTable, 'num'),
+          });
+          this.setState({
+            versionTable,
+          });
+        });
+      }).catch(() => {
+        this.setState({ loading: false });
+        Choerodon.prompt('网络异常');
       });
-    }).catch(() => {
-      this.setState({ loading: false });
-      Choerodon.prompt('网络异常');
-    });
   }
+  getVersionTable = versionList => Promise.all(
+    versionList.map(version => new Promise((resolve, reject) => {
+      const search = {
+        advancedSearchArgs: {
+
+        },
+        otherArgs: {
+          // version: [version.versionId],
+        },
+      };
+      if (version.versionId) {
+        search.otherArgs.version = [version.versionId];
+      }
+      getIssueCount(search).then((data) => {
+        window.console.log(version.versionId, data.totalElements);
+        resolve({ name: version.name, versionId: version.versionId, num: data.totalElements });
+      });
+    }),
+    ))
   handleRangeChange = (e) => {
     this.setState({ loading: true });
     Promise.all([
@@ -64,10 +121,10 @@ class SummaryHome extends Component {
       });
     });
   }
-  createTransform=(source, range) => Array(Number(range)).fill(0).map((item, i) => {
+  createTransform = (source, range) => Array(Number(range)).fill(0).map((item, i) => {
     const time = moment().subtract(i, 'days').format('YYYY-MM-DD');
     if (_.find(source, { creationDay: time })) {
-      const { creationDay, issueCount } = _.find(source, { creationDay: time });      
+      const { creationDay, issueCount } = _.find(source, { creationDay: time });
       return {
         creationDay,
         issueCount,
@@ -78,23 +135,23 @@ class SummaryHome extends Component {
         issueCount: 0,
       };
     }
-  }); 
-   
+  });
+
   listTransform = list => list.reverse().map((item, i) => ({
     time: moment().subtract(i, 'days').format('YYYY-MM-DD'),
     value: item,
   }))
   render() {
-    const { loading, range, excuteList, createList, totalExcute, 
-      totalCreate, notPlan, notRun } = this.state;
+    const { loading, range, excuteList, createList, totalExcute,
+      totalCreate, totalTest, notPlan, notRun, caseNum, versionTable } = this.state;
     const columns = [{
       title: '版本',
-      dataIndex: 'version',
-      key: 'version',
+      dataIndex: 'name',
+      key: 'name',
     }, {
       title: '数量',
-      dataIndex: 'amount',
-      key: 'amount',
+      dataIndex: 'num',
+      key: 'num',
     }];
     return (
       <Page>
@@ -111,7 +168,7 @@ class SummaryHome extends Component {
                 <div className="c7n-statistic-item-colorBar" />
                 <div>
                   <div className="c7n-statistic-item-title">总测试数量</div>
-                  <div className="c7n-statistic-item-num">20</div>
+                  <div className="c7n-statistic-item-num">{totalTest}</div>
                 </div>
               </div>
               <div className="c7n-statistic-item-container">
@@ -125,7 +182,7 @@ class SummaryHome extends Component {
                 <div className="c7n-statistic-item-colorBar" />
                 <div>
                   <div className="c7n-statistic-item-title">总执行数量</div>
-                  <div className="c7n-statistic-item-num">8</div>
+                  <div className="c7n-statistic-item-num">{caseNum}</div>
                 </div>
               </div>
               <div className="c7n-statistic-item-container">
@@ -139,9 +196,14 @@ class SummaryHome extends Component {
             <div className="c7n-tableArea-container">
               <div className="c7n-table-container">
                 <div className="c7n-table-title">测试统计（按版本）</div>
-                <Table columns={columns} dataSource={[]} filterBar={false} />
+                <Table
+                  columns={columns}
+                  pagination={{ pageSize: 5 }}
+                  dataSource={versionTable}
+                  filterBar={false}
+                />
               </div>
-              <div className="c7n-table-container">
+              <div className="c7n-table-container" style={{ margin: '0 15px' }}>
                 <div className="c7n-table-title">测试统计（按模块）</div>
                 <Table columns={columns} dataSource={[]} filterBar={false} />
               </div>
@@ -170,10 +232,10 @@ class SummaryHome extends Component {
                   <Geom
                     type="line"
                     position="creationDay*issueCount"
-                    size={2} 
+                    size={2}
                     tooltip={['creationDay*issueCount', (time, issueCount) => ({
-                    // 自定义 tooltip 上显示的 title 显示内容等。
-                      name: '创建数',                    
+                      // 自定义 tooltip 上显示的 title 显示内容等。
+                      name: '创建数',
                       value: issueCount,
                     })]}
                   />
@@ -196,12 +258,12 @@ class SummaryHome extends Component {
                     size={2}
                     tooltip={['time*value', (time, value) => ({
                       // 自定义 tooltip 上显示的 title 显示内容等。
-                      name: '执行数',                    
+                      name: '执行数',
                       value,
                     })]}
                   />
                   <Geom
-                    type="point"                    
+                    type="point"
                     position="time*value"
                     size={4}
                     shape={'circle'}

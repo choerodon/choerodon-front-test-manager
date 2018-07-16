@@ -13,6 +13,12 @@ export function getCaseNotRun() {
 
   return axios.get(`/test/v1/projects/${projectId}/cycle/case/countCaseNotRun`);
 }
+export function getCaseNum() {
+  const projectId = AppState.currentMenuType.id;
+
+  return axios.get(`/test/v1/projects/${projectId}/cycle/case/countCaseSum`);
+}
+
 export function getCycleRange(day, range) {
   const projectId = AppState.currentMenuType.id;
 
