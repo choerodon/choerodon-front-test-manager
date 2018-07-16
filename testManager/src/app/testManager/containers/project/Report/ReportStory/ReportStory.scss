@@ -35,4 +35,20 @@
     .c7n-table-white {
         background: white!important;
     }
+    .c7n-collapse-text-icon {
+        width: 60px;
+        height: 20px;
+        line-height: 20px;
+        margin-left: 5px;
+        border: 1px solid;
+        font-size: 13px;
+        border-radius: 2px;
+        user-select: none;
+        text-align: center;
+    }
+    .c7n-showId {
+        user-select: none;
+        font-size: 13px;
+        color: #303F9F;
+    }
 }

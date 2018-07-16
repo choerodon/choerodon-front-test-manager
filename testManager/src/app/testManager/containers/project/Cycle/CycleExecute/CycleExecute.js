@@ -300,7 +300,7 @@ class CycleExecute extends Component {
     if (oldList.length > List.length) {
       const deleteEle = oldList.filter(old => !List.includes(old));
       // 如果isse已存在，调用删除接口
-      if (defectIds.includes(deleteEle[0].toString())) {
+      if (defectIds.includes(deleteEle[0].toString())) {       
         removeDefect(deleteEle[0]);
       }
       window.console.log('delete');
@@ -318,16 +318,16 @@ class CycleExecute extends Component {
     // addDefects(defects);
 
 
-    const needAdd = 
-    issueList
-      .filter(issue => defectIds.includes(issue.issueId.toString()))// 取到选中的issueList
-      .filter(issue => !originDefects.includes(issue.issueId.toString()))// 去掉之前已有的
-      .map(item => ({
-        defectType: 'CYCLE_CASE',
-        defectLinkId: executeId,
-        issueId: item.issueId,
-        defectName: item.issueNum,
-      }));
+    const needAdd =
+      issueList
+        .filter(issue => defectIds.includes(issue.issueId.toString()))// 取到选中的issueList
+        .filter(issue => !originDefects.includes(issue.issueId.toString()))// 去掉之前已有的
+        .map(item => ({
+          defectType: 'CYCLE_CASE',
+          defectLinkId: executeId,
+          issueId: item.issueId,
+          defectName: item.issueNum,
+        }));
     window.console.log(defectIds, issueList, needAdd);
     this.setState({ loading: true });
     if (needAdd.length > 0) {
@@ -637,9 +637,46 @@ class CycleExecute extends Component {
       title: '缺陷',
       dataIndex: 'defects',
       key: 'defects',
-      render(defects) {
-        return defects.map(defect => <div>{defect.defectName}</div>);
-      },
+      render: defects =>
+        (<Tooltip title={
+          <div>
+            {defects.map((defect, i) => (
+              <div style={{
+                fontSize: '13px',
+                color: 'white',
+              }}
+              >
+                {/* {i === 0 ? null : '，'} */}
+                <span>
+                  {defect.defectName}
+                </span>
+              </div>))}
+          </div>}
+        >
+          <div
+            style={{
+              width: 100,
+              display: 'flex',
+              alignItems: 'center',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}        
+          >
+            {defects.map((defect, i) => (
+              <div style={{
+                fontSize: '13px',
+                color: '#3F51B5',
+
+              }}
+              >
+                {i === 0 ? null : '，'}
+                <span>
+                  {defect.defectName}
+                </span>
+              </div>))}
+          </div>
+        </Tooltip>),
     }, {
       title: null,
       dataIndex: 'executeId',
@@ -704,7 +741,7 @@ class CycleExecute extends Component {
             <div style={{ display: 'flex', padding: 24 }}>
               <Card
                 title={null}
-                style={{ width: 561, height: 236 }}
+                style={{ flex: 1, height: 236 }}
                 bodyStyle={styles.cardBodyStyle}
               >
                 <div style={styles.cardTitle}>
@@ -843,11 +880,18 @@ class CycleExecute extends Component {
                               alignItems: 'center',
                             }}
                           >
-                            {defects.map(defect => (<div>
-                              <span>
-                                {defect.defectName}
-                              </span>
-                            </div>))}
+                            {defects.map((defect, i) => (
+                              <div style={{
+                                fontSize: '13px',
+                                color: '#3F51B5',
+                                textAlign: 'left',
+                              }}
+                              >
+                                {i === 0 ? null : '，'}
+                                <span>
+                                  {defect.defectName}
+                                </span>
+                              </div>))}
 
                           </div>
                         ) : '无'}
@@ -881,10 +925,10 @@ class CycleExecute extends Component {
                   </div>
                 </div>
               </Card>
-              <div style={{ marginLeft: 20 }}>
+              <div style={{ marginLeft: 20, flex: 1 }}>
                 <Card
                   title={null}
-                  style={{ width: 561, height: 124 }}
+                  style={{ width: '100%', height: 124 }}
                   bodyStyle={{ ...styles.cardBodyStyle, ...{ display: 'flex', flexDirection: 'column' } }}
                 >
                   <div style={styles.cardTitle}>
@@ -907,7 +951,7 @@ class CycleExecute extends Component {
                 </Card>
                 <Card
                   title={null}
-                  style={{ width: 561, height: 92, marginTop: 20 }}
+                  style={{ width: '100%', height: 92, marginTop: 20 }}
                   bodyStyle={styles.cardBodyStyle}
                 >
                   <div style={styles.cardTitle}>
@@ -948,7 +992,24 @@ class CycleExecute extends Component {
             </div>
             <Card
               title={null}
-              style={{ margin: 24, marginTop: 0 }}
+              style={{ margin: 24, marginTop: 0 }} 
+              bodyStyle={styles.cardBodyStyle}
+            >
+              <div style={styles.cardTitle}>
+                <Icon type="expand_more" />
+                <span style={styles.cardTitleText}>测试详细信息</span>
+              </div>
+              <Table
+                filterBar={false}
+                dataSource={detailList}
+                columns={columns}
+                pagination={detailPagination}
+                onChange={this.handleDetailTableChange}
+              />
+            </Card>
+            <Card
+              title={null}
+              style={{ margin: 24 }}
               bodyStyle={styles.cardBodyStyle}
             >
               <div style={styles.cardTitle}>
@@ -962,20 +1023,7 @@ class CycleExecute extends Component {
                 pagination={historyPagination}
                 onChange={this.handleHistoryTableChange}
               />
-            </Card>
-            <Card title={null} style={{ margin: 24 }} bodyStyle={styles.cardBodyStyle}>
-              <div style={styles.cardTitle}>
-                <Icon type="expand_more" />
-                <span style={styles.cardTitleText}>测试详细信息</span>
-              </div>
-              <Table
-                filterBar={false}
-                dataSource={detailList}
-                columns={columns}
-                pagination={detailPagination}
-                onChange={this.handleDetailTableChange}
-              />
-            </Card>
+            </Card>            
           </div>
         </Spin>
       </div>
