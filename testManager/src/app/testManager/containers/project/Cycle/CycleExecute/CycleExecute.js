@@ -276,7 +276,7 @@ class CycleExecute extends Component {
     if (!assignedTo) {
       cycleData.assignedTo = 0;
     }
-    editCycle(this.state.cycleData).then((Data) => {
+    editCycle(cycleData).then((Data) => {
       this.setState({
         cycleData: Data,
         edit: false,
@@ -375,7 +375,7 @@ class CycleExecute extends Component {
     this.setState({ cycleData });
   }
   handleCommentSubmit = (value) => {
-    const { cycleData } = this.state;
+    const cycleData = { ...this.state.cycleData };
     // 删除一些不必要字段
     delete cycleData.defects;
     delete cycleData.caseAttachment;
@@ -387,7 +387,7 @@ class CycleExecute extends Component {
       cycleData.assignedTo = 0;
     }
     this.setState({ loading: true });
-    editCycle({ ...this.state.cycleData, ...{ comment: JSON.stringify(value) } }).then((Data) => {
+    editCycle({ ...cycleData, ...{ comment: JSON.stringify(value) } }).then((Data) => {
       this.setState({
         cycleData: Data,
         edit: false,

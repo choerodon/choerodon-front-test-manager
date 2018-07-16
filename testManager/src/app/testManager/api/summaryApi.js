@@ -18,3 +18,8 @@ export function getCycleRange(day, range) {
 
   return axios.post(`/test/v1/projects/${projectId}/cycle/case/range/${day}/${range}`);
 }
+export function getCreateRange(range) {
+  const projectId = AppState.currentMenuType.id;
+
+  return axios.get(`/agile/v1/projects/${projectId}/issues/type/issue_test?timeSlot=${range}`);
+}
