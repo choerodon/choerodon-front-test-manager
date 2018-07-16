@@ -293,15 +293,18 @@ class CycleExecute extends Component {
     });
   }
   handleDefectsChange = (List) => {
-    const { originDefects, defectIds } = this.state;
+    const { originDefects, defectIds, cycleData } = this.state;
     const oldList = [...defectIds];
     window.console.log('old', oldList, 'new', List);
     // 删除元素
     if (oldList.length > List.length) {
       const deleteEle = oldList.filter(old => !List.includes(old));
       // 如果isse已存在，调用删除接口
-      if (defectIds.includes(deleteEle[0].toString())) {       
-        removeDefect(deleteEle[0]);
+      if (defectIds.includes(deleteEle[0].toString())) {
+        if (_.find(cycleData.defects, { issueId: Number(deleteEle[0]) })) {
+          const id = _.find(cycleData.defects, { issueId: Number(deleteEle[0]) }).id;
+          removeDefect(id);
+        }
       }
       window.console.log('delete');
     } else {
@@ -661,7 +664,7 @@ class CycleExecute extends Component {
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
-            }}        
+            }}
           >
             {defects.map((defect, i) => (
               <div style={{
@@ -992,7 +995,7 @@ class CycleExecute extends Component {
             </div>
             <Card
               title={null}
-              style={{ margin: 24, marginTop: 0 }} 
+              style={{ margin: 24, marginTop: 0 }}
               bodyStyle={styles.cardBodyStyle}
             >
               <div style={styles.cardTitle}>
@@ -1023,7 +1026,7 @@ class CycleExecute extends Component {
                 pagination={historyPagination}
                 onChange={this.handleHistoryTableChange}
               />
-            </Card>            
+            </Card>
           </div>
         </Spin>
       </div>

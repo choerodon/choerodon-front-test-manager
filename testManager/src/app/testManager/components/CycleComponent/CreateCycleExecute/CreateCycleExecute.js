@@ -207,9 +207,13 @@ class CreateCycleExecute extends Component {
       };
     });
     window.console.log(fin);
-    createCycleExecute(fin).then((res) => {
-      onOk();
-    });
+    if (fin.length > 0) {
+      createCycleExecute(fin).then((res) => {
+        onOk();
+      });
+    } else {
+      Choerodon.prompt('请选择问题');
+    }
   }
   handleAssignedChange = (assignedTo) => {
     window.console.log(assignedTo);
@@ -330,6 +334,7 @@ class CreateCycleExecute extends Component {
                   style={{ width: 500, margin: '0 0 10px 0' }}
                   label="测试问题"
                   placeholder="测试问题"
+                  value={selectIssueList}
                   onChange={this.handleIssueChange}
                   loading={selectLoading}
                   filter

@@ -42,3 +42,8 @@ export function getIssueStatus() {
   const projectId = AppState.currentMenuType.id;
   return axios.get(`agile/v1/projects/${projectId}/issue_status/list`);
 }
+export function getIssueCount(search) {
+  const projectId = AppState.currentMenuType.id;
+ 
+  return axios.post(`agile/v1/projects/${projectId}/issues/test_component/no_sub`, search);
+}
