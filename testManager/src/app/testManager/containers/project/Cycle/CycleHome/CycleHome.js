@@ -897,7 +897,7 @@ class CycleHome extends Component {
               {cycleId && <div className="c7n-ch-right" >
                 <div style={{ display: 'flex' }}>
                   <div>
-                    循环名称：{title}
+                    循环名称：<span style={{ color: '#3F51B5' }}>{title}</span>
                   </div>
                   <div style={{ flex: 1, visiblity: 'hidden' }} />
                   <div>

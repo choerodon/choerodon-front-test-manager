@@ -305,91 +305,93 @@ class CreateCycleExecute extends Component {
       </Option>);
     });
     return (
-      <div onClick={() => { this.setState({ pickShow: false }); }} role="none" className="c7n-create-execute">
-        <Spin spinning={loading}>
-          <Sidebar
-            title="添加测试执行"
-            visible={visible}
-            onOk={this.onOk}
-            onCancel={onCancel}
+      
+      <Spin spinning={loading}>
+        
+        <Sidebar
+          title="添加测试执行"
+          visible={visible}
+          onOk={this.onOk}
+          onCancel={onCancel}
+        >
+          <Content
+            style={{
+              padding: '0 0 10px 0',
+            }}
+            title={`添加测试执行到${data.type === 'cycle' ? '测试循环' : '文件夹'}“${data.title}”`}
+            description="您可以为一个或多个成员分配一个或多个全局层的角色，即给成员授予全局层的权限。"
+            link="#"
           >
-            <Content
-              style={{
-                padding: '0 0 10px 0',
-              }}
-              title={`添加测试执行到${data.type === 'cycle' ? '测试循环' : '文件夹'}“${data.title}”`}
-              description="您可以为一个或多个成员分配一个或多个全局层的角色，即给成员授予全局层的权限。"
-              link="#"
-            >
-              <Tabs activeKey={tab} onChange={this.modeChange}>
-                <TabPane tab="从问题添加" key="1">
-                  <Select
-                    mode="tags"
-                    style={{ width: 500, margin: '0 0 10px 0' }}
-                    label="测试问题"
-                    placeholder="测试问题"
-                    onChange={this.handleIssueChange}
-                    loading={selectLoading}
-                    filter
-                    // onFilterChange={(input, option) =>
-                    //   option.props.children.props.children[1].props.children.toLowerCase()
-                    //     .indexOf(input.toLowerCase()) >= 0}
-                    onFilterChange={(value) => {
-                      // window.console.log('filter');
+            <Tabs activeKey={tab} onChange={this.modeChange}>
+              <TabPane tab="从问题添加" key="1">
+                <Select
+                  mode="tags"
+                  style={{ width: 500, margin: '0 0 10px 0' }}
+                  label="测试问题"
+                  placeholder="测试问题"
+                  onChange={this.handleIssueChange}
+                  loading={selectLoading}
+                  filter
+                  // onFilterChange={(input, option) =>
+                  //   option.props.children.props.children[1].props.children.toLowerCase()
+                  //     .indexOf(input.toLowerCase()) >= 0}
+                  onFilterChange={(value) => {
+                    // window.console.log('filter');
+                    this.setState({
+                      selectLoading: true,
+                    });
+                    getIssueList(value, 'issue_test').then((issueData) => {
                       this.setState({
-                        selectLoading: true,
+                        issueList: issueData.content,
+                        selectLoading: false,
                       });
-                      getIssueList(value, 'issue_test').then((issueData) => {
-                        this.setState({
-                          issueList: issueData.content,
-                          selectLoading: false,
-                        });
+                    });
+                  }}
+                  onFocus={() => {
+                    this.setState({
+                      selectLoading: true,
+                    });
+                    getIssueList(null, 'issue_test').then((issueData) => {
+                      this.setState({
+                        issueList: issueData.content,
+                        selectLoading: false,
                       });
-                    }}
+                    });
+                  }}
+                >
+                  {issueOptions}
+                </Select><br />
+                <RadioGroup onChange={this.onChange} value={this.state.value}>
+                  <Radio style={radioStyle} value={1}>我</Radio>
+                  <Radio style={radioStyle} value={2}>其他</Radio>
+                </RadioGroup><br />
+                {this.state.value === 2 ?
+                  <Select
+                    allowClear
+                    loading={selectLoading}
+                    style={{ width: 500, margin: '0 0 10px 0' }}
+                    label="选择指派人"
+                    placeholder="选择指派人"
+                    onChange={this.handleAssignedChange}
                     onFocus={() => {
                       this.setState({
                         selectLoading: true,
                       });
-                      getIssueList(null, 'issue_test').then((issueData) => {
+                      getUsers().then((userData) => {
                         this.setState({
-                          issueList: issueData.content,
+                          userList: userData.content,
                           selectLoading: false,
                         });
                       });
                     }}
                   >
-                    {issueOptions}
-                  </Select><br />
-                  <RadioGroup onChange={this.onChange} value={this.state.value}>
-                    <Radio style={radioStyle} value={1}>我</Radio>
-                    <Radio style={radioStyle} value={2}>其他</Radio>
-                  </RadioGroup><br />
-                  {this.state.value === 2 ?
-                    <Select
-                      allowClear
-                      loading={selectLoading}
-                      style={{ width: 500, margin: '0 0 10px 0' }}
-                      label="选择指派人"
-                      placeholder="选择指派人"
-                      onChange={this.handleAssignedChange}
-                      onFocus={() => {
-                        this.setState({
-                          selectLoading: true,
-                        });
-                        getUsers().then((userData) => {
-                          this.setState({
-                            userList: userData.content,
-                            selectLoading: false,
-                          });
-                        });
-                      }}
-                    >
-                      {userOptions}
-                    </Select>
-                    :
-                    null}
-                </TabPane>
-                <TabPane tab="从其他循环添加" key="2">
+                    {userOptions}
+                  </Select>
+                  :
+                  null}
+              </TabPane>
+              <TabPane tab="从其他循环添加" key="2">
+                <div className="c7n-create-execute">
                   <Form>
                     <FormItem>
                       {getFieldDecorator('versionId', {
@@ -669,14 +671,16 @@ class CreateCycleExecute extends Component {
                     </Collapse>
 
                   </Form>
-                </TabPane>
+                </div>
+              </TabPane>
 
-              </Tabs>
+            </Tabs>
 
-            </Content>
-          </Sidebar>
-        </Spin>
-      </div>
+          </Content>
+        </Sidebar>
+        
+      </Spin>
+      
     );
   }
 }

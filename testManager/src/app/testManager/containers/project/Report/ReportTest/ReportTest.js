@@ -124,7 +124,7 @@ class ReportTest extends Component {
     const urlParams = AppState.currentMenuType;
     const that = this;
     const menu = (
-      <Menu>
+      <Menu style={{ marginTop: 35 }}>
         <Menu.Item key="0">
           <Link to={`/testManager/report/story?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`} >故事到测试</Link>
         </Menu.Item>

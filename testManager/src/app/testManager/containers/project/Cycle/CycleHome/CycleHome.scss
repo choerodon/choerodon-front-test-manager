@@ -43,8 +43,7 @@ $drop-gradient: rgba(140, 158, 255, 0.16);
 .c7n-ch-left {
     margin-left: 10px;
     width: 400px;
-    border-right: 1px black;
-    border-right-style: solid;
+    border-right: 1px solid rgba(0, 0, 0, 0.36);
     padding-bottom: 100px;
 }
 
@@ -58,6 +57,7 @@ $drop-gradient: rgba(140, 158, 255, 0.16);
 }
 
 .c7n-chlh-button {
+    margin-left: 19px;
     display: flex;
 }
 
