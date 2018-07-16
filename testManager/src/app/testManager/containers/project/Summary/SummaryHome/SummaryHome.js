@@ -9,15 +9,15 @@ import './SummaryHome.less';
 const ButtonGroup = Button.Group;
 
 class SummaryHome extends Component {
-  state={
+  state = {
     loading: false,
     range: '7',
   }
   componentDidMount() {
     this.getInfo();
   }
-  
-  getInfo=() => {
+
+  getInfo = () => {
     this.setState({ loading: true });
     Promise.all([getCaseNotPlain(), getCaseNotRun(), getCycleRange('2018-07-16', 7)]).then(([notPlan, notRun]) => {
       this.setState({ loading: false });
@@ -27,7 +27,7 @@ class SummaryHome extends Component {
       Choerodon.prompt('网络异常');
     });
   }
-  handleRangeChange=(e) => {
+  handleRangeChange = (e) => {
     this.setState({
       range: e.target.value,
     });
@@ -111,7 +111,7 @@ class SummaryHome extends Component {
               <div className="c7n-table-container">
                 <div className="c7n-table-title">测试统计（按标签）</div>
                 <Table columns={columns} dataSource={[]} filterBar={false} />
-              </div>            
+              </div>
             </div>
             <div style={{ margin: '30px 20px 18px 20px', display: 'flex', alignItems: 'center' }}>
               <div>查看时段：</div>
@@ -123,8 +123,10 @@ class SummaryHome extends Component {
               </Radio.Group>
             </div>
             <div className="c7n-chartArea-container">
+              
               <div className="c7n-chart-container">
-                <Chart height={400} data={data} scale={cols} forceFit>
+              测试创建
+                <Chart height={380} data={data} scale={cols} forceFit>
                   <Axis name="year" />
                   <Axis name="value" />
                   <Tooltip crosshairs={{ type: 'y' }} />
@@ -133,7 +135,8 @@ class SummaryHome extends Component {
                 </Chart>
               </div>
               <div className="c7n-chart-container">
-                <Chart height={400} data={data} scale={cols} forceFit>
+              测试执行
+                <Chart height={380} data={data} scale={cols} forceFit>
                   <Axis name="year" />
                   <Axis name="value" />
                   <Tooltip crosshairs={{ type: 'y' }} />
@@ -141,7 +144,7 @@ class SummaryHome extends Component {
                   <Geom type="point" position="year*value" size={4} shape={'circle'} style={{ stroke: '#fff', lineWidth: 1 }} />
                 </Chart>
               </div>
-            </div>          
+            </div>
           </div>
         </Spin>
       </Page>
