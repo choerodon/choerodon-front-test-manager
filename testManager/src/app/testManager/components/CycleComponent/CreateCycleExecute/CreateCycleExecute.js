@@ -4,9 +4,9 @@ import { Content, stores } from 'choerodon-front-boot';
 import {
   createCycleExecute, getCyclesByVersionId, getFoldersByCycleId,
   getStatusList, createCycleExecuteFromCycle,
-} from '../../../../api/cycleApi';
-import { getUsers } from '../../../../api/CommonApi';
-import { getIssueList, getIssueStatus, getProjectVersion, getModules, getLabels, getPrioritys } from '../../../../api/agileApi';
+} from '../../../api/cycleApi';
+import { getUsers } from '../../../api/CommonApi';
+import { getIssueList, getIssueStatus, getProjectVersion, getModules, getLabels, getPrioritys } from '../../../api/agileApi';
 import './CreateCycleExecute.scss';
 
 const { AppState } = stores;

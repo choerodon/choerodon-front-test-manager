@@ -1,11 +1,8 @@
 import React, { Component } from 'react';
 import { Icon, Modal, Upload, Spin, Select, Table } from 'choerodon-ui';
 import { Content, stores } from 'choerodon-front-boot';
-import PropTypes from 'prop-types';
-import { SketchPicker } from 'react-color';
 import './ReportSelectIssue.less';
-import { editStatus } from '../../../api/TestStatusApi';
-import { getIssueListSearch, getIssueStatus, getProjectVersion } from '../../../api/agileApi';
+import { getIssueListSearch, getIssueStatus, getProjectVersion } from '../../api/agileApi';
 
 const { AppState } = stores;
 const { Sidebar } = Modal;

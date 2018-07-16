@@ -4,7 +4,7 @@ import { Page, Header, Content, stores } from 'choerodon-front-boot';
 import { Tooltip, Table, Button, Icon, Input, Tree, Spin, Modal } from 'choerodon-ui';
 import _ from 'lodash';
 import './CycleHome.scss';
-import { getCycles, deleteExecute, getCycleById, editCycleExecute, clone, addFolder, getStatusList } from '../../../../../api/cycleApi';
+import { getCycles, deleteExecute, getCycleById, editCycleExecute, clone, addFolder, getStatusList } from '../../../../api/cycleApi';
 import { TreeTitle, CreateCycle, EditCycle, CreateCycleExecute, ShowCycleData } from '../../../../components/CycleComponent';
 import { RichTextShow } from '../../../../components/CommonComponent';
 import { delta2Html, delta2Text } from '../../../../common/utils';

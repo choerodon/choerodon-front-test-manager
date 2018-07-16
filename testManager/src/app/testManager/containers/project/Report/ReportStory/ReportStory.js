@@ -5,9 +5,9 @@ import { Link } from 'react-router-dom';
 import { Table, Menu, Dropdown, Button, Icon, Collapse } from 'choerodon-ui';
 import _ from 'lodash';
 import ReportSelectIssue from '../../../../components/ReportSelectIssue';
-import { getReportsFromStory } from '../../../../../api/reportApi';
-import { getIssueStatus } from '../../../../../api/agileApi';
-import { getStatusList } from '../../../../../api/cycleApi';
+import { getReportsFromStory } from '../../../../api/reportApi';
+import { getIssueStatus } from '../../../../api/agileApi';
+import { getStatusList } from '../../../../api/cycleApi';
 import './ReportStory.scss';
 
 const { AppState } = stores;

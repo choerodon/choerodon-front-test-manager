@@ -31,6 +31,7 @@ const styles = {
     borderRadius: 2, 
   },
   itemTextBold: { 
+    color: 'black',
     width: '100%', 
     margin: '18px 0', 
     fontWeight: 'bold', 
@@ -72,20 +73,24 @@ class ReportHome extends Component {
           link="#"
         >
           <div style={{ display: 'flex' }}>
-            <div style={styles.itemContainer}>
-              <div style={styles.imgContainer}>
-                <img src={Pic} alt="" />
+            <Link to={`/testManager/report/story?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`} >
+              <div style={styles.itemContainer}>
+                <div style={styles.imgContainer}>
+                  <img src={Pic} alt="" />
+                </div>
+                <div style={styles.itemTextBold}>{'要求 -> 测试 -> 执行 -> 缺陷'}</div>
+                <div style={{ color: 'rgba(0,0,0,0.65)' }}>从类型字段搜索要求或缺陷，然后选择合适版本以缩小范围，最后单击“生成” 创建可跟踪性报告。</div>
               </div>
-              <div style={styles.itemTextBold}>{'要求 -> 测试 -> 执行 -> 缺陷'}</div>
-              <div style={{ color: 'rgba(0,0,0,0.65)' }}>从类型字段搜索要求或缺陷，然后选择合适版本以缩小范围，最后单击“生成” 创建可跟踪性报告。</div>
-            </div>
-            <div style={styles.itemContainer}>
-              <div style={styles.imgContainer}>
-                <img src={Pic2} alt="" />
+            </Link>
+            <Link to={`/testManager/report/test?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}>
+              <div style={styles.itemContainer}>
+                <div style={styles.imgContainer}>
+                  <img src={Pic2} alt="" />
+                </div>
+                <div style={styles.itemTextBold}>{'缺陷 -> 执行 -> 测试 -> 要求'}</div>
+                <div style={{ color: 'rgba(0,0,0,0.65)' }}>从类型字段搜索要求或缺陷，然后选择合适版本以缩小范围，最后单击“生成” 创建可跟踪性报告。</div>
               </div>
-              <div style={styles.itemTextBold}>{'缺陷 -> 执行 -> 测试 -> 要求'}</div>
-              <div style={{ color: 'rgba(0,0,0,0.65)' }}>从类型字段搜索要求或缺陷，然后选择合适版本以缩小范围，最后单击“生成” 创建可跟踪性报告。</div>
-            </div>
+            </Link>
           </div>
         </Content>
       </Page>

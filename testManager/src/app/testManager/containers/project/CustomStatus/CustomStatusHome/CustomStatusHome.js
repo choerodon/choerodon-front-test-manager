@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { Page, Header, Content, stores } from 'choerodon-front-boot';
 import CreateStatus from '../../../../components/CreateStatus';
 import EditStatusSide from '../../../../components/EditStatusSide';
-import { getStatusList, deleteStatus } from '../../../../../api/TestStatusApi';
+import { getStatusList, deleteStatus } from '../../../../api/TestStatusApi';
 
 const TabPane = Tabs.TabPane;
 const { AppState } = stores;

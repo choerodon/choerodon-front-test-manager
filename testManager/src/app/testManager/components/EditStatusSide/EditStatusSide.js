@@ -4,7 +4,7 @@ import { Content, stores } from 'choerodon-front-boot';
 import PropTypes from 'prop-types';
 import { SketchPicker } from 'react-color';
 import './EditStatusSide.less';
-import { editStatus } from '../../../api/TestStatusApi';
+import { editStatus } from '../../api/TestStatusApi';
 
 const { AppState } = stores;
 const FormItem = Form.Item;

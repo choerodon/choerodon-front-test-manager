@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { observer } from 'mobx-react';
 import { Menu, Input, Dropdown, Button } from 'choerodon-ui';
 import './TreeTitle.scss';
-import { editFolder, deleteCycleOrFolder } from '../../../../api/cycleApi';
+import { editFolder, deleteCycleOrFolder } from '../../../api/cycleApi';
 
 class TreeTitle extends Component {
   state = {
