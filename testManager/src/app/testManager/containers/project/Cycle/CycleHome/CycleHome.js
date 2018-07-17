@@ -596,21 +596,22 @@ class CycleHome extends Component {
       dataIndex: 'issueId',
       key: 'issueId',
       onCell: this.handleCell,     
-      width:'10%',
-      render(reporterRealName){
-        return <div style={{ 
+      width: '10%',
+      render(reporterRealName) {
+        return (<div style={{ 
           // width: 85, 
           overflow: 'hidden', 
           whiteSpace: 'nowrap', 
-          textOverflow: 'ellipsis' }}>
+          textOverflow: 'ellipsis' }}
+        >
           {reporterRealName}
-          </div>
-      }
+        </div>);
+      },
     }, {
       title: '状态',
       dataIndex: 'executionStatus',
       key: 'executionStatus',
-      width:'10%',
+      width: '10%',
       render(executionStatus) {
         const statusColor = _.find(statusList, { statusId: executionStatus }) ?
           _.find(statusList, { statusId: executionStatus }).statusColor : '';
@@ -623,7 +624,7 @@ class CycleHome extends Component {
       title: '摘要',
       dataIndex: 'comment',
       key: 'comment',
-      width:'10%',
+      width: '10%',
       render(comment) {
         return (
           <Tooltip title={<RichTextShow data={delta2Html(comment)} />}>
@@ -646,7 +647,7 @@ class CycleHome extends Component {
       title: '缺陷',
       dataIndex: 'defects',
       key: 'defects',
-      width:'10%',
+      width: '10%',
       render: defects =>
         (<Tooltip title={
           <div>
@@ -702,16 +703,17 @@ class CycleHome extends Component {
       title: '执行方',
       dataIndex: 'assignedUserRealName',
       key: 'assignedUserRealName',
-      width:'10%',
-      render(assignedUserRealName){
-        return <div style={{ 
+      width: '10%',
+      render(assignedUserRealName) {
+        return (<div style={{ 
           // width: 85, 
           overflow: 'hidden', 
           whiteSpace: 'nowrap', 
-          textOverflow: 'ellipsis' }}>
+          textOverflow: 'ellipsis' }}
+        >
           {assignedUserRealName}
-          </div>
-      }
+        </div>);
+      },
       // render(assignedUserRealName, record) {
       //   const { assignedUserJobNumber } = record;
       //   return (<div style={{ width: 100 }}>
@@ -732,13 +734,14 @@ class CycleHome extends Component {
       title: '执行时间',
       dataIndex: 'lastUpdateDate',
       key: 'lastUpdateDate',
-      width:'10%',
+      width: '10%',
       render(lastUpdateDate) {
         return (<div style={{ 
           // width: 85, 
           overflow: 'hidden', 
           whiteSpace: 'nowrap', 
-          textOverflow: 'ellipsis' }}>
+          textOverflow: 'ellipsis' }}
+        >
           {lastUpdateDate}
         </div>);
       },
@@ -746,16 +749,17 @@ class CycleHome extends Component {
       title: '被指定人',
       dataIndex: 'reporterRealName',
       key: 'reporterRealName',
-      width:'10%',
-      render(reporterRealName){
-        return <div style={{ 
+      width: '12%',
+      render(reporterRealName) {
+        return (<div style={{ 
           // width: 85, 
           overflow: 'hidden', 
           whiteSpace: 'nowrap', 
-          textOverflow: 'ellipsis' }}>
+          textOverflow: 'ellipsis' }}
+        >
           {reporterRealName}
-          </div>
-      }
+        </div>);
+      },
       // render(reporterRealName, record) {
       //   const { reporterJobNumber } = record;
       //   return (<div style={{ width: 100 }}>
@@ -775,11 +779,11 @@ class CycleHome extends Component {
     }, {
       title: '',
       key: 'action',
-      width:'20%',
+      width: '20%',
       render(text, record) {
         return (
           record.projectId !== 0 &&
-          <div style={{display:'flex'}}>
+          <div style={{ display: 'flex' }}>
             <Icon
               type="explicit"
               style={{ cursor: 'pointer' }}

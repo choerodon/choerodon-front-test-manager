@@ -29,6 +29,7 @@ const styles = {
     // padding: '30px 10px',
     boxShadow: '0 1px 0 0 rgba(0,0,0,0.16), 0 0 0 1px rgba(0,0,0,0.12), 0 2px 1px -1px rgba(0,0,0,0.12)',
     borderRadius: 2, 
+    background: 'white',
   },
   itemTextBold: { 
     color: 'black',
@@ -43,10 +44,10 @@ class ReportHome extends Component {
     const menu = (
       <Menu style={{ marginTop: 35 }}>
         <Menu.Item key="0">
-          <Link to={`/testManager/report/story?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`} >故事到测试</Link>
+          <Link to={`/testManager/report/story?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`} >要求到缺陷</Link>
         </Menu.Item>
         <Menu.Item key="1">
-          <Link to={`/testManager/report/test?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}>测试到故事</Link>
+          <Link to={`/testManager/report/test?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}>缺陷到要求</Link>
         </Menu.Item>      
       </Menu>
     );

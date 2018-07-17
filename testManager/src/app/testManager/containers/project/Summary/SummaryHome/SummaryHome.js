@@ -102,7 +102,6 @@ class SummaryHome extends Component {
             componentTable,
           });
         });
-
       }).catch(() => {
         this.setState({ loading: false });
         Choerodon.prompt('网络异常');
@@ -200,7 +199,8 @@ class SummaryHome extends Component {
   }))
   render() {
     const { loading, range, excuteList, createList, totalExcute,
-      totalCreate, totalTest, notPlan, notRun, caseNum, versionTable,labelTable,componentTable } = this.state;
+      totalCreate, totalTest, notPlan, notRun, caseNum, versionTable,
+      labelTable, componentTable } = this.state;
     const columns = [{
       title: '名称',
       dataIndex: 'name',
@@ -263,17 +263,19 @@ class SummaryHome extends Component {
               <div className="c7n-table-container" style={{ margin: '0 15px' }}>
                 <div className="c7n-table-title">测试统计（按模块）</div>
                 <Table 
-                columns={columns} 
-                pagination={{ pageSize: 5 }} 
-                dataSource={labelTable} 
-                filterBar={false} />
+                  columns={columns} 
+                  pagination={{ pageSize: 5 }} 
+                  dataSource={labelTable} 
+                  filterBar={false}
+                />
               </div>
               <div className="c7n-table-container">
                 <div className="c7n-table-title">测试统计（按标签）</div>
                 <Table 
-                columns={columns} 
-                dataSource={componentTable} 
-                filterBar={false} />
+                  columns={columns} 
+                  dataSource={componentTable} 
+                  filterBar={false}
+                />
               </div>
             </div>
             <div style={{ margin: '30px 20px 18px 20px', display: 'flex', alignItems: 'center' }}>

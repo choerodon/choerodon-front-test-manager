@@ -42,12 +42,13 @@ $drop-gradient: rgba(140, 158, 255, 0.16);
 
 .c7n-ch-left {
     // margin-left: 10px;
-    width: 360px;
+    width: 330px;
     border-right: 1px solid rgba(0, 0, 0, 0.36);
     padding-bottom: 100px;
-    .c7n-chlh-tree{
-      margin-left: -4px;
+    .c7n-chlh-tree {
+        margin-left: -4px;
     }
+    overflow: hidden;
 }
 
 .c7n-chl-head {
@@ -60,12 +61,18 @@ $drop-gradient: rgba(140, 158, 255, 0.16);
 }
 
 .c7n-chlh-button {
-    margin-left: 12px;
+    margin-left: 17px;
     display: flex;
 }
 
 .c7n-chlhb-left {
     // width: 400px;
+}
+
+.c7n-chlh-tree {
+    .ant-tree li .ant-tree-node-content-wrapper.ant-tree-node-selected {
+        background: rgba(0, 0, 0, 0.04);
+    }
 }
 
 .c7n-ch-right {
@@ -87,13 +94,14 @@ $drop-gradient: rgba(140, 158, 255, 0.16);
 
 .c7n-cycleHome-button {
     cursor: pointer;
-    width: 25px;
-    height: 25px;
+    width: 22px;
+    height: 22px;
     background-color: #3F51B5;
     color: white;
     text-align: center;
-    line-height: 22px;
-    margin: 0 10px;
+    // line-height: 22px;
+    margin: 0 7px;
+    border-radius: 3px;
 }
 
 .ant-tree-icon__customize {
@@ -111,5 +119,4 @@ $drop-gradient: rgba(140, 158, 255, 0.16);
 .ant-tree-title {
     display: inline-block;
     float: right;
-    width: 250px;
 }
