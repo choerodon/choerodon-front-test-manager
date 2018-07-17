@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import moment from 'moment';
+import 'moment/locale/zh-cn';
 import './ShowCycleData.scss';
 
 class ShowCycleData extends Component {
@@ -46,7 +47,7 @@ class ShowCycleData extends Component {
             开始时间：
               </div>
               <div className="c7n-right-card-item-text">
-                {fromDate}
+                {fromDate && moment(fromDate).format('D/MMMM/YY')}
               </div>
             </div>
             <div className="c7n-right-card-item">
@@ -105,7 +106,7 @@ class ShowCycleData extends Component {
               结束时间：
               </div>
               <div className="c7n-right-card-item-text">
-                {toDate}
+                {toDate && moment(toDate).format('D/MMMM/YY')} 
               </div>
             </div>
             <div className="c7n-right-card-item">

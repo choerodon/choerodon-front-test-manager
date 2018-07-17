@@ -3,6 +3,8 @@ import { observer } from 'mobx-react';
 import { Page, Header, Content, stores } from 'choerodon-front-boot';
 import { Tooltip, Table, Button, Icon, Input, Tree, Spin, Modal } from 'choerodon-ui';
 import _ from 'lodash';
+import moment from 'moment';
+import 'moment/locale/zh-cn';
 import './CycleHome.scss';
 import { getCycles, deleteExecute, getCycleById, editCycleExecute, clone, addFolder, getStatusList } from '../../../../api/cycleApi';
 import { TreeTitle, CreateCycle, EditCycle, CreateCycleExecute, ShowCycleData } from '../../../../components/CycleComponent';
@@ -743,7 +745,7 @@ class CycleHome extends Component {
           whiteSpace: 'nowrap', 
           textOverflow: 'ellipsis' }}
         >
-          {lastUpdateDate}
+          {lastUpdateDate && moment(lastUpdateDate).format('D/MMMM/YY')}
         </div>);
       },
     }, {

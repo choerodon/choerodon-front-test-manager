@@ -890,8 +890,8 @@ class CycleExecute extends Component {
                             {defects.map((defect, i) => (
                               <div style={{
                                 fontSize: '13px',
-                                color: '#3F51B5',
-                                textAlign: 'left',
+                                // color: '#3F51B5',
+                                // textAlign: 'left',
                               }}
                               >
                                 {i === 0 ? null : '，'}
