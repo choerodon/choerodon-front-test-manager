@@ -51,6 +51,9 @@ class ReportSelectIssue extends Component {
   }
   componentWillReceiveProps(nextProps) {
     if (this.props.visible === false && nextProps.visible === true) {
+      this.setState({
+        issueIds: [],
+      });
       this.getList();
     }
   }
@@ -105,13 +108,14 @@ class ReportSelectIssue extends Component {
     this.getList(pagination);
   }
   selectItems = (selectedRowKeys, selectedRows) => {
-    const issueIds = selectedRows.map(row => row.issueId);
-    this.setState({ issueIds });
+    // const issueIds = selectedRows.map(row => row.issueId);
+    this.setState({ issueIds: selectedRowKeys });
     window.console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
   }
   render() {
     const { visible, onOk, onCancel } = this.props;
-    const { loading, versions, selectLoading, pagination, issueList, version } = this.state;
+    const { loading, versions, selectLoading, pagination, 
+      issueList, version, issueIds } = this.state;
     const versionOptions = versions.map(item =>
       (<Option value={item.versionId} key={item.versionId}>
         {item.name}
@@ -207,7 +211,8 @@ class ReportSelectIssue extends Component {
                 </Select>
               </div>
               <Table
-                rowSelection={{ onChange: this.selectItems }}
+                rowKey="issueId"
+                rowSelection={{ onChange: this.selectItems, selectedRowKeys: issueIds }}
                 loading={loading}
                 pagination={pagination}
                 columns={columns}

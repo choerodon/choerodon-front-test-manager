@@ -25,5 +25,5 @@ export function getReportsFromDefect(pagination, issueIds) {
     return axios.post(`/test/v1/projects/${projectId}/case/get/reporter/from/issue/by/issueId?size=${size}&page=${page}`, issueIds);
   }
 
-  return axios.post(`/test/v1/projects/${projectId}/case/get/reporter/from/defect?size=${size}&page=${page}`);
+  return axios.post(`/test/v1/projects/${projectId}/case/get/reporter/from/defect`);
 }

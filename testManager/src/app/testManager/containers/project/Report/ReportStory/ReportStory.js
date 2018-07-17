@@ -126,10 +126,10 @@ class ReportStory extends Component {
     const menu = (
       <Menu style={{ marginTop: 35 }}>
         <Menu.Item key="0">
-          <Link to={`/testManager/report/story?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`} >故事到测试</Link>
+          <Link to={`/testManager/report/story?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`} >要求到缺陷</Link>
         </Menu.Item>
         <Menu.Item key="1">
-          <Link to={`/testManager/report/test?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}>测试到故事</Link>
+          <Link to={`/testManager/report/test?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}>缺陷到要求</Link>
         </Menu.Item> 
         <Menu.Item key="2">
           <Link to={`/testManager/report?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}>主页</Link>
@@ -143,14 +143,15 @@ class ReportStory extends Component {
       key: 'issueId',
       width: '25%',
       render(issueId, record) {
-        const { issueStatus, defectCount, issueName, issueColor } = record;
+        const { defectInfo, defectCount} = record;
+        const { issueStatusName, issueName, issueColor } = defectInfo;
         return (
           <div>
             <div className="c7n-collapse-header-container">
-              <div>{record.issueName}</div>
+              <div>{issueName}</div>
               <div className="c7n-collapse-header-icon">                 
                 <span style={{ color: issueColor, borderColor: issueColor }}>
-                  {issueStatus}
+                  {issueStatusName}
                 </span>
               </div>
             
@@ -158,28 +159,7 @@ class ReportStory extends Component {
             <div>
               缺陷数: {defectCount}
             </div>
-          </div>
-          // <Collapse 
-          //   bordered={false} 
-          //   activeKey={openId.includes(record.issueId) ? ['1'] : []}         
-          // >
-          //   <Panel
-          //     showArrow={false}
-          //     header={
-          //       <div className="c7n-collapse-header-container">
-          //         <div>{record.issueName}</div>
-          //         <div className="c7n-collapse-header-icon">                 
-          //           <span style={{ color: issueColor, borderColor: issueColor }}>
-          //             {issueStatus}
-          //           </span>
-          //         </div>
-          //       </div>
-          //     }
-          //     key="1"           
-          //   > 
-          //     {record.summary}
-          //   </Panel>
-          // </Collapse>
+          </div>         
         );
       },
     }, {
@@ -201,7 +181,7 @@ class ReportStory extends Component {
                 // showArrow={false}
                 header={
                   <div>
-                    <div className="c7n-showId">{issue.issueId}</div>
+                    <div className="c7n-showId">{issue.issueName}</div>
                     <div style={{ fontSize: '13px' }}>{issue.summary}</div>
                   </div>
                 }
@@ -242,14 +222,22 @@ class ReportStory extends Component {
               executeStatus[statusName] += 1;
             }
               
-            return (<div style={{ display: 'flex', margin: '5px 0' }} >
+            return (
+            <div style={{ display: 'flex', margin: '5px 0',alignItems:'center',marginBottom:execute.defects.length*20 }} >
+            <div style={{width:80}}>
               {execute.cycleName}
+              </div>
               <div
                 className="c7n-collapse-text-icon" 
                 style={{ color: statusColor, borderColor: statusColor }}
               >
                 {statusName}
               </div>
+              <Link 
+              style={{lineHeight:'13px'}}
+              to={`/testManager/Cycle/execute/${execute.executeId}?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}>
+              <Icon type="explicit" style={{marginLeft:10,color:'black'}}/>
+            </Link>
             </div>);
           });
           // window.console.log(executeStatus);
@@ -292,7 +280,7 @@ class ReportStory extends Component {
                 testCycleCaseES.map((item) => {
                   const { defects } = item;
                   return <div>{defects.length > 0 ? defects.map(defect => 
-                  <div className="c7n-collapse-header-container">
+                  <div className="c7n-collapse-show-item">
                   <div>{defect.defectName}</div>
                   <div className="c7n-collapse-header-icon">                 
                     <span style={{ color: defect.defectColor, borderColor: defect.defectColor }}>
@@ -300,7 +288,7 @@ class ReportStory extends Component {
                     </span>
                   </div>
                 
-                </div>) : '-'}</div>;
+                </div>) : <div className="c7n-collapse-show-item">-</div>}</div>;
                 })
                 // testCycleCaseES.map((item) => {
                 //   const { defects } = item;
@@ -400,7 +388,8 @@ class ReportStory extends Component {
               this.getReportsFromStory(null, issueIds);
             }}
           />
-          <Table           
+          <Table     
+            filterBar={false}      
             loading={loading}
             pagination={pagination}
             columns={columns}

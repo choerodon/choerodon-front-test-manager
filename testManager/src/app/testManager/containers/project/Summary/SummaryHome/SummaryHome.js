@@ -82,6 +82,26 @@ class SummaryHome extends Component {
             versionTable,
           });
         });
+        this.getLabelTable(labelList).then((labelTable) => {         
+          labelTable.unshift({
+            id: null, 
+            name: '未规划',
+            num: totalIssueData.totalElements - _.sumBy(labelTable, 'num'),
+          });
+          this.setState({
+            labelTable,
+          });
+        });
+        this.getComponentTable(componentList).then((componentTable) => {         
+          componentTable.unshift({
+            id: null, 
+            name: '未规划',
+            num: totalIssueData.totalElements - _.sumBy(componentTable, 'num'),
+          });
+          this.setState({
+            componentTable,
+          });
+        });
       }).catch(() => {
         this.setState({ loading: false });
         Choerodon.prompt('网络异常');
@@ -106,6 +126,42 @@ class SummaryHome extends Component {
       });
     }),
     ))
+    getLabelTable = labelList => Promise.all(
+      labelList.map(label => new Promise((resolve, reject) => {
+        const search = {
+          advancedSearchArgs: {
+  
+          },
+          otherArgs: {
+            lable: [label.id],
+          },
+        };
+
+
+        getIssueCount(search).then((data) => {
+          window.console.log(label, data.totalElements);
+          resolve({ name: label.name, id: label.id, num: data.totalElements });
+        });
+      }),
+      ))
+      getComponentTable = componentList => Promise.all(
+        componentList.map(component => new Promise((resolve, reject) => {
+          const search = {
+            advancedSearchArgs: {
+    
+            },
+            otherArgs: {
+              component: [component.id],
+            },
+          };
+  
+  
+          getIssueCount(search).then((data) => {
+            window.console.log(component, data.totalElements);
+            resolve({ name: component.name, id: component.id, num: data.totalElements });
+          });
+        }),
+        ))
   handleRangeChange = (e) => {
     this.setState({ loading: true });
     Promise.all([
@@ -143,9 +199,10 @@ class SummaryHome extends Component {
   }))
   render() {
     const { loading, range, excuteList, createList, totalExcute,
-      totalCreate, totalTest, notPlan, notRun, caseNum, versionTable } = this.state;
+      totalCreate, totalTest, notPlan, notRun, caseNum, versionTable,
+      labelTable, componentTable } = this.state;
     const columns = [{
-      title: '版本',
+      title: '名称',
       dataIndex: 'name',
       key: 'name',
     }, {
@@ -172,23 +229,23 @@ class SummaryHome extends Component {
                 </div>
               </div>
               <div className="c7n-statistic-item-container">
-                <div className="c7n-statistic-item-colorBar" />
+                <div className="c7n-statistic-item-colorBar" style={{ borderColor: '#FFB100' }} />
                 <div>
                   <div className="c7n-statistic-item-title">总剩余数量</div>
                   <div className="c7n-statistic-item-num">{notRun}</div>
                 </div>
               </div>
               <div className="c7n-statistic-item-container">
-                <div className="c7n-statistic-item-colorBar" />
+                <div className="c7n-statistic-item-colorBar" style={{ borderColor: '#00BFA5' }} />
                 <div>
                   <div className="c7n-statistic-item-title">总执行数量</div>
                   <div className="c7n-statistic-item-num">{caseNum}</div>
                 </div>
               </div>
               <div className="c7n-statistic-item-container">
-                <div className="c7n-statistic-item-colorBar" />
+                <div className="c7n-statistic-item-colorBar" style={{ borderColor: '#FF7043' }} />
                 <div>
-                  <div className="c7n-statistic-item-title">总为规划数量</div>
+                  <div className="c7n-statistic-item-title">总未规划数量</div>
                   <div className="c7n-statistic-item-num">{notPlan}</div>
                 </div>
               </div>
@@ -198,18 +255,28 @@ class SummaryHome extends Component {
                 <div className="c7n-table-title">测试统计（按版本）</div>
                 <Table
                   columns={columns}
-                  pagination={{ pageSize: 5 }}
+                  pagination={{ pageSize: 5, showSizeChanger: false }}
                   dataSource={versionTable}
                   filterBar={false}
                 />
               </div>
               <div className="c7n-table-container" style={{ margin: '0 15px' }}>
                 <div className="c7n-table-title">测试统计（按模块）</div>
-                <Table columns={columns} dataSource={[]} filterBar={false} />
+                <Table 
+                  columns={columns} 
+                  pagination={{ pageSize: 5, showSizeChanger: false }} 
+                  dataSource={labelTable} 
+                  filterBar={false}
+                />
               </div>
               <div className="c7n-table-container">
                 <div className="c7n-table-title">测试统计（按标签）</div>
-                <Table columns={columns} dataSource={[]} filterBar={false} />
+                <Table 
+                  columns={columns} 
+                  pagination={{ pageSize: 5, showSizeChanger: false }}
+                  dataSource={componentTable} 
+                  filterBar={false}
+                />
               </div>
             </div>
             <div style={{ margin: '30px 20px 18px 20px', display: 'flex', alignItems: 'center' }}>
