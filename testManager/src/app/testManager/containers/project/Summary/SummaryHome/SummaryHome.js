@@ -5,10 +5,13 @@ import { Page, Header, Content, stores } from 'choerodon-front-boot';
 import { Chart, Axis, Geom, Tooltip } from 'bizcharts';
 import moment from 'moment';
 import _ from 'lodash';
+import 'moment/locale/zh-cn';
 import { getCaseNotPlain, getCaseNotRun, getCaseNum, getCycleRange, getCreateRange } from '../../../../api/summaryApi';
 import { getProjectVersion, getLabels, getModules, getIssueCount } from '../../../../api/agileApi';
 import './SummaryHome.less';
 
+
+moment.locale('zh-cn');
 const ButtonGroup = Button.Group;
 
 class SummaryHome extends Component {
@@ -71,10 +74,10 @@ class SummaryHome extends Component {
           componentList,
           labelList,
         });
-        
-        this.getVersionTable(versionList).then((versionTable) => {         
+
+        this.getVersionTable(versionList).then((versionTable) => {
           versionTable.unshift({
-            versionId: null, 
+            versionId: null,
             name: '未规划',
             num: totalIssueData.totalElements - _.sumBy(versionTable, 'num'),
           });
@@ -82,9 +85,9 @@ class SummaryHome extends Component {
             versionTable,
           });
         });
-        this.getLabelTable(labelList).then((labelTable) => {         
+        this.getLabelTable(labelList).then((labelTable) => {
           labelTable.unshift({
-            id: null, 
+            id: null,
             name: '未规划',
             num: totalIssueData.totalElements - _.sumBy(labelTable, 'num'),
           });
@@ -92,9 +95,9 @@ class SummaryHome extends Component {
             labelTable,
           });
         });
-        this.getComponentTable(componentList).then((componentTable) => {         
+        this.getComponentTable(componentList).then((componentTable) => {
           componentTable.unshift({
-            id: null, 
+            id: null,
             name: '未规划',
             num: totalIssueData.totalElements - _.sumBy(componentTable, 'num'),
           });
@@ -126,42 +129,42 @@ class SummaryHome extends Component {
       });
     }),
     ))
-    getLabelTable = labelList => Promise.all(
-      labelList.map(label => new Promise((resolve, reject) => {
-        const search = {
-          advancedSearchArgs: {
-  
-          },
-          otherArgs: {
-            lable: [label.id],
-          },
-        };
+  getLabelTable = labelList => Promise.all(
+    labelList.map(label => new Promise((resolve, reject) => {
+      const search = {
+        advancedSearchArgs: {
+
+        },
+        otherArgs: {
+          label: [label.labelId],
+        },
+      };
 
 
-        getIssueCount(search).then((data) => {
-          window.console.log(label, data.totalElements);
-          resolve({ name: label.name, id: label.id, num: data.totalElements });
-        });
-      }),
-      ))
-      getComponentTable = componentList => Promise.all(
-        componentList.map(component => new Promise((resolve, reject) => {
-          const search = {
-            advancedSearchArgs: {
-    
-            },
-            otherArgs: {
-              component: [component.id],
-            },
-          };
-  
-  
-          getIssueCount(search).then((data) => {
-            window.console.log(component, data.totalElements);
-            resolve({ name: component.name, id: component.id, num: data.totalElements });
-          });
-        }),
-        ))
+      getIssueCount(search).then((data) => {
+        window.console.log(label, data.totalElements);
+        resolve({ name: label.labelName, id: label.labelId, num: data.totalElements });
+      });
+    }),
+    ))
+  getComponentTable = componentList => Promise.all(
+    componentList.map(component => new Promise((resolve, reject) => {
+      const search = {
+        advancedSearchArgs: {
+
+        },
+        otherArgs: {
+          component: [component.componentId],
+        },
+      };
+
+
+      getIssueCount(search).then((data) => {
+        window.console.log(component, data.totalElements);
+        resolve({ name: component.name, id: component.componentId, num: data.totalElements });
+      });
+    }),
+    ))
   handleRangeChange = (e) => {
     this.setState({ loading: true });
     Promise.all([
@@ -182,25 +185,27 @@ class SummaryHome extends Component {
     if (_.find(source, { creationDay: time })) {
       const { creationDay, issueCount } = _.find(source, { creationDay: time });
       return {
-        creationDay,
-        issueCount,
+        time: moment(creationDay).format('D/MMMM'),
+        value: issueCount,
       };
     } else {
       return {
-        creationDay: time,
-        issueCount: 0,
+        time: moment().subtract(i, 'days').format('D/MMMM'),
+        value: 0,
       };
     }
   });
 
   listTransform = list => list.reverse().map((item, i) => ({
-    time: moment().subtract(i, 'days').format('YYYY-MM-DD'),
+    time: moment().subtract(i, 'days').format('D/MMMM'),
     value: item,
   }))
+
   render() {
     const { loading, range, excuteList, createList, totalExcute,
       totalCreate, totalTest, notPlan, notRun, caseNum, versionTable,
       labelTable, componentTable } = this.state;
+    // window.console.log(labelTable);
     const columns = [{
       title: '名称',
       dataIndex: 'name',
@@ -262,19 +267,19 @@ class SummaryHome extends Component {
               </div>
               <div className="c7n-table-container" style={{ margin: '0 15px' }}>
                 <div className="c7n-table-title">测试统计（按模块）</div>
-                <Table 
-                  columns={columns} 
-                  pagination={{ pageSize: 5, showSizeChanger: false }} 
-                  dataSource={labelTable} 
+                <Table
+                  columns={columns}
+                  pagination={{ pageSize: 5, showSizeChanger: false }}
+                  dataSource={componentTable}
                   filterBar={false}
                 />
               </div>
               <div className="c7n-table-container">
                 <div className="c7n-table-title">测试统计（按标签）</div>
-                <Table 
-                  columns={columns} 
+                <Table
+                  columns={columns}
                   pagination={{ pageSize: 5, showSizeChanger: false }}
-                  dataSource={componentTable} 
+                  dataSource={labelTable}
                   filterBar={false}
                 />
               </div>
@@ -298,15 +303,15 @@ class SummaryHome extends Component {
                   <Tooltip crosshairs={{ type: 'y' }} />
                   <Geom
                     type="line"
-                    position="creationDay*issueCount"
+                    position="time*value"
                     size={2}
-                    tooltip={['creationDay*issueCount', (time, issueCount) => ({
+                    tooltip={['time*value', (time, value) => ({
                       // 自定义 tooltip 上显示的 title 显示内容等。
                       name: '创建数',
-                      value: issueCount,
+                      value,
                     })]}
                   />
-                  <Geom type="point" position="creationDay*issueCount" size={4} shape={'circle'} style={{ stroke: '#fff', lineWidth: 1 }} />
+                  <Geom type="point" position="time*value" size={4} shape={'circle'} style={{ stroke: '#fff', lineWidth: 1 }} />
                 </Chart>
                 <div style={{ color: 'rgba(0,0,0,0.65)', margin: 10 }}>
                   创建测试：<span style={{ color: 'black', fontWeight: 'bold' }}>{totalCreate}</span>，

@@ -46,6 +46,7 @@ class ReportStory extends Component {
     reportList: [],
     issueStatusList: [],
     statusList: [],
+    stepStatusList:[],
     pagination: {
       current: 1,
       total: 0,
@@ -64,6 +65,7 @@ class ReportStory extends Component {
     Promise.all([
       getIssueStatus(),
       getStatusList('CYCLE_CASE'),
+      getStatusList('CASE_STEP'),
       this.getReportsFromStory(),
     ]).then(([issueStatusList, statusList]) => {
       this.setState({

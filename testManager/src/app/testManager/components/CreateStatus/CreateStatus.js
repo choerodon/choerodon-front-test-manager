@@ -36,9 +36,13 @@ class CreateStatus extends Component {
         createStatus({
           ...values,
           ...{ statusColor },
-        }).then((data) => {
+        }).then((res) => {
+          if (res.failed) {
+            Choerodon.prompt('状态或颜色不能相同');
+          } else {
+            onOk();
+          }
           this.setState({ loading: false });
-          onOk();
         }).catch(() => {
           Choerodon.prompt('网络异常');
           this.setState({ loading: false });

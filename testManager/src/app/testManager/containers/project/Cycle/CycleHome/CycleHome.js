@@ -3,6 +3,8 @@ import { observer } from 'mobx-react';
 import { Page, Header, Content, stores } from 'choerodon-front-boot';
 import { Tooltip, Table, Button, Icon, Input, Tree, Spin, Modal } from 'choerodon-ui';
 import _ from 'lodash';
+import moment from 'moment';
+import 'moment/locale/zh-cn';
 import './CycleHome.scss';
 import { getCycles, deleteExecute, getCycleById, editCycleExecute, clone, addFolder, getStatusList } from '../../../../api/cycleApi';
 import { TreeTitle, CreateCycle, EditCycle, CreateCycleExecute, ShowCycleData } from '../../../../components/CycleComponent';
@@ -59,7 +61,7 @@ class CycleHome extends Component {
     leftVisible: true,
     sideVisible: false,
     dragData: null,
-    testList: [{ cycleId: 1, defects: [] }, { cycleId: 2, defects: [] }],
+    testList: [],
     currentCycle: {},
     currentEditValue: {},
     autoExpandParent: true,
@@ -598,14 +600,16 @@ class CycleHome extends Component {
       onCell: this.handleCell,     
       filters: [],      
       // width: '6%',
-      render(issueId) {
+      render(issueId, record) {
+        const { issueInfosDTO } = record;
+        const { issueName } = issueInfosDTO;
         return (<div style={{ 
-          width: 30, 
+          // width: 60, 
           overflow: 'hidden', 
           whiteSpace: 'nowrap', 
           textOverflow: 'ellipsis' }}
         >
-          {issueId}
+          {issueName}
         </div>);
       },
     }, {
@@ -743,7 +747,7 @@ class CycleHome extends Component {
           whiteSpace: 'nowrap', 
           textOverflow: 'ellipsis' }}
         >
-          {lastUpdateDate}
+          {lastUpdateDate && moment(lastUpdateDate).format('D/MMMM/YY')}
         </div>);
       },
     }, {

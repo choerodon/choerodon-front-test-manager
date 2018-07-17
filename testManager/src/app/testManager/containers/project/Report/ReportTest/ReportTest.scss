@@ -1,4 +1,4 @@
-.c7n-report-story {
+.c7n-report-test {
     .page-head-title {
         width: 300px;
     }
@@ -22,7 +22,25 @@
         user-select: none;
         .c7n-collapse-header-icon {
             span {
-                margin-left: 5px;
+                margin-left: 10px;
+                border: 1px solid;
+                // color: #4D90FE;
+                font-size: 12px;
+                border-radius: 2px;
+                padding: 2px;
+                user-select: none;
+            }
+        }
+    }
+    .c7n-collapse-show-item {
+        display: flex;
+        align-items: center;
+        user-select: none;
+        height: 20px;
+        margin-top: 5px;
+        .c7n-collapse-header-icon {
+            span {
+                margin-left: 10px;
                 border: 1px solid;
                 // color: #4D90FE;
                 font-size: 12px;
@@ -33,6 +51,7 @@
         }
     }
     .c7n-table-white {
+        // padding-top: 0;
         background: white!important;
     }
     .c7n-collapse-text-icon {
@@ -49,6 +68,9 @@
     .c7n-showId {
         user-select: none;
         font-size: 13px;
-        color: #303F9F;
+        // color: #303F9F;
+    }
+    tr {
+        vertical-align: top;
     }
 }
