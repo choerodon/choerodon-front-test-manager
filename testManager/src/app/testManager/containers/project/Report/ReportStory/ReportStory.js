@@ -236,7 +236,7 @@ class ReportStory extends Component {
               <Link 
               style={{lineHeight:'13px'}}
               to={`/testManager/Cycle/execute/${execute.executeId}?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}>
-              <Icon type="explicit" style={{marginLeft:10,color:'black'}}/>
+              <Icon type="explicit2" style={{marginLeft:10,color:'black'}}/>
             </Link>
             </div>);
           });

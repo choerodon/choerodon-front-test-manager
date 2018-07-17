@@ -292,7 +292,7 @@ class SummaryHome extends Component {
 
               <div className="c7n-chart-container">
                 <div style={{ fontWeight: 'bold', margin: 12 }}>测试创建</div>
-                <Chart height={240} width={550} data={createList} padding="auto">
+                <Chart height={240} width={parseInt((window.innerWidth - 320) / 2, 10)} data={createList} padding="auto" >
                   <Axis name="creationDay" />
                   <Axis name="issueCount" />
                   <Tooltip crosshairs={{ type: 'y' }} />
@@ -313,9 +313,9 @@ class SummaryHome extends Component {
                 过去<span style={{ color: 'black', fontWeight: 'bold' }}> {range} </span>天
                 </div>
               </div>
-              <div className="c7n-chart-container">
+              <div className="c7n-chart-container" style={{ marginLeft: 16 }}>
                 <div style={{ fontWeight: 'bold', margin: 12 }}>测试执行</div>
-                <Chart height={240} width={550} data={excuteList} padding="auto">
+                <Chart height={240} width={parseInt((window.innerWidth - 320) / 2, 10)} data={excuteList} padding="auto" >
                   <Axis name="time" />
                   <Axis name="value" />
                   <Tooltip crosshairs={{ type: 'y' }} />

@@ -596,22 +596,24 @@ class CycleHome extends Component {
       dataIndex: 'issueId',
       key: 'issueId',
       onCell: this.handleCell,     
-      width: '10%',
-      render(reporterRealName) {
+      filters: [],      
+      // width: '6%',
+      render(issueId) {
         return (<div style={{ 
-          // width: 85, 
+          width: 30, 
           overflow: 'hidden', 
           whiteSpace: 'nowrap', 
           textOverflow: 'ellipsis' }}
         >
-          {reporterRealName}
+          {issueId}
         </div>);
       },
     }, {
       title: '状态',
       dataIndex: 'executionStatus',
       key: 'executionStatus',
-      width: '10%',
+      filters: statusList.map(status => ({ text: status.statusName, value: status.statusId })),
+      // width: '10%',
       render(executionStatus) {
         const statusColor = _.find(statusList, { statusId: executionStatus }) ?
           _.find(statusList, { statusId: executionStatus }).statusColor : '';
@@ -624,14 +626,14 @@ class CycleHome extends Component {
       title: '摘要',
       dataIndex: 'comment',
       key: 'comment',
-      width: '10%',
+      // width: '10%',
       render(comment) {
         return (
           <Tooltip title={<RichTextShow data={delta2Html(comment)} />}>
             <div
               title={delta2Text(comment)}
               style={{
-                // width: 100,
+                width: 65,
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
                 whiteSpace: 'nowrap',
@@ -666,7 +668,7 @@ class CycleHome extends Component {
         >
           <div
             style={{
-              // width: 100,
+              width: 65,
               display: 'flex',
               alignItems: 'center',
               overflow: 'hidden',
@@ -677,8 +679,7 @@ class CycleHome extends Component {
             {defects.map((defect, i) => (
               <div style={{
                 fontSize: '13px',
-                color: '#3F51B5',
-
+                // color: '#3F51B5',
               }}
               >
                 {i === 0 ? null : '，'}
@@ -737,7 +738,7 @@ class CycleHome extends Component {
       width: '10%',
       render(lastUpdateDate) {
         return (<div style={{ 
-          // width: 85, 
+          width: 85, 
           overflow: 'hidden', 
           whiteSpace: 'nowrap', 
           textOverflow: 'ellipsis' }}
@@ -749,10 +750,10 @@ class CycleHome extends Component {
       title: '被指定人',
       dataIndex: 'reporterRealName',
       key: 'reporterRealName',
-      width: '12%',
+      width: '10%',
       render(reporterRealName) {
         return (<div style={{ 
-          // width: 85, 
+          width: 60, 
           overflow: 'hidden', 
           whiteSpace: 'nowrap', 
           textOverflow: 'ellipsis' }}
@@ -779,13 +780,13 @@ class CycleHome extends Component {
     }, {
       title: '',
       key: 'action',
-      width: '20%',
+      // width: '20%',
       render(text, record) {
         return (
           record.projectId !== 0 &&
-          <div style={{ display: 'flex' }}>
+          <div style={{ display: 'flex', marginLeft: -20 }}>
             <Icon
-              type="explicit"
+              type="explicit2"
               style={{ cursor: 'pointer' }}
               onClick={() => {
                 const { history } = that.props;
@@ -945,7 +946,7 @@ class CycleHome extends Component {
                   <div style={{ flex: 1, visiblity: 'hidden' }} />
                   <div>
                     <Button
-                      style={{ color: '#3f51b5' }}
+                      style={{ color: '#3f51b5', marginRight: '-15px' }}
                       onClick={() => {
                         this.setState({ CreateCycleExecuteVisible: true });
                       }}
