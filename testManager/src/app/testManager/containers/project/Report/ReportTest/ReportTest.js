@@ -93,13 +93,14 @@ class ReportTest extends Component {
           total: reportData.totalElements,
         },
       });
-    }).catch((error) => {
-      window.console.log(error);
-      this.setState({
-        loading: false,
-      });
-      Choerodon.prompt('网络异常');
-    });
+    })
+    // .catch((error) => {
+    //   window.console.log(error);
+    //   this.setState({
+    //     loading: false,
+    //   });
+    //   Choerodon.prompt('网络异常');
+    // });
   }
   handleTableChange = (pagination, filters, sorter) => {
     this.getList(pagination);
@@ -136,50 +137,26 @@ class ReportTest extends Component {
         </Menu.Item>     
       </Menu>
     );
-    const columns = [{
+    const columns = [ {
       className: 'c7n-table-white',
       title: '缺陷',
-      dataIndex: 'issueId',
-      key: 'issueId',
-      width: '25%',
-      render(issueId, record) {
-        const { issueStatus, defectCount, issueName, issueColor } = record;
-        return (
-          <div>
-            <div className="c7n-collapse-header-container">
-              <div>{record.issueName}</div>
-              <div className="c7n-collapse-header-icon">                 
-                <span style={{ color: issueColor, borderColor: issueColor }}>
-                  {issueStatus}
-                </span>
-              </div>
-            </div>
-            <div>
-              缺陷数: {defectCount}
-            </div>
-          </div>
-        );
-      },
-    }, {
-      className: 'c7n-table-white',
-      title: '执行',
       dataIndex: 'test',
       key: 'test',   
       width: '25%',
       render(test, record) {
-        const { issueStatus, linkedTestIssues, issueId } = record;
+        const { testCycleCaseES, testCycleCaseStepES } = record;
         return (
           <Collapse 
-            activeKey={openId[issueId]}
+            // activeKey={openId[issueId]}
             bordered={false} 
-            onChange={(keys) => { that.handleOpen(issueId, keys); }}
+            // onChange={(keys) => { that.handleOpen(issueId, keys); }}
           >
             {
-              linkedTestIssues.map((issue, i) => (<Panel
+              testCycleCaseStepES.map((issue, i) => (<Panel
                 // showArrow={false}
                 header={
                   <div>
-                    <div className="c7n-showId">{issue.issueId}</div>
+                    <div className="c7n-showId">{'sss'}</div>
                     <div style={{ fontSize: '13px' }}>{issue.summary}</div>
                   </div>
                 }
@@ -189,49 +166,51 @@ class ReportTest extends Component {
           </Collapse>
         );
       },
-    }, {
+    },{
       className: 'c7n-table-white',
-      title: '测试',
-      dataIndex: 'cycleId',
-      key: 'cycleId',
+      title: '执行',
+      dataIndex: 'issueId',
+      key: 'issueId',
       width: '25%',
-      render(cycleId, record) {
-        const { linkedTestIssues } = record;        
-        return (<div>{linkedTestIssues.map((testIssue) => {
-          const { testCycleCaseES, issueId } = testIssue;
-          // console.log()
-          const totalExecute = testCycleCaseES.length;
-          // const todoExecute = 0;
-          // let doneExecute = 0;
-          const executeStatus = {};
-          const caseShow = testCycleCaseES.map((execute) => {
-            // 执行的颜色
-            const { executionStatus } = execute;
-            const statusColor = _.find(statusList, { statusId: executionStatus }) ?
-              _.find(statusList, { statusId: executionStatus }).statusColor : '';
-            const statusName = _.find(statusList, { statusId: executionStatus }) &&
-                _.find(statusList, { statusId: executionStatus }).statusName;
-              // if (statusColor !== 'gray') {
-              //   doneExecute += 1;
-              // }
-            if (!executeStatus[statusName]) {
-              executeStatus[statusName] = 1;
-            } else {
-              executeStatus[statusName] += 1;
-            }
-              
-            return (<div style={{ display: 'flex', margin: '5px 0' }} >
-              {execute.cycleName}
-              <div
-                className="c7n-collapse-text-icon" 
-                style={{ color: statusColor, borderColor: statusColor }}
-              >
-                {statusName}
-              </div>
-            </div>);
-          });
-          // window.console.log(executeStatus);
-          return openId[record.issueId] && openId[record.issueId]
+      render(issueId, record) {
+        const { testCycleCaseES, testCycleCaseStepES} = record;
+        const executeStatus = {};
+        const totalExecute=testCycleCaseES.length+testCycleCaseStepES.length;
+        const caseShow = testCycleCaseES.map((execute) => {
+          // 执行的颜色
+          const { executionStatus } = execute;
+          const statusColor = _.find(statusList, { statusId: executionStatus }) ?
+            _.find(statusList, { statusId: executionStatus }).statusColor : '';
+          const statusName = _.find(statusList, { statusId: executionStatus }) &&
+              _.find(statusList, { statusId: executionStatus }).statusName;
+            // if (statusColor !== 'gray') {
+            //   doneExecute += 1;
+            // }
+          if (!executeStatus[statusName]) {
+            executeStatus[statusName] = 1;
+          } else {
+            executeStatus[statusName] += 1;
+          }
+            
+          return (
+          <div style={{ display: 'flex', margin: '5px 0',alignItems:'center'}} >
+          <div style={{width:80}}>
+            {execute.cycleName}
+            </div>
+            <div
+              className="c7n-collapse-text-icon" 
+              style={{ color: statusColor, borderColor: statusColor }}
+            >
+              {statusName}
+            </div>
+            <Link 
+            style={{lineHeight:'13px'}}
+            to={`/testManager/Cycle/execute/${execute.executeId}?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}>
+            <Icon type="explicit2" style={{marginLeft:10,color:'black'}}/>
+          </Link>
+          </div>);
+        });
+        return openId[record.issueId] && openId[record.issueId]
             .includes(issueId.toString()) ? 
               <div style={{ minHeight: 30 }}> { caseShow }   </div> 
             :
@@ -248,8 +227,68 @@ class ReportTest extends Component {
                 </div>          
               </div>
             );
-        })}
-        </div>);        
+      },
+    }, {
+      className: 'c7n-table-white',
+      title: '测试',
+      dataIndex: 'cycleId',
+      key: 'cycleId',
+      width: '25%',
+      render(cycleId, record) {
+        const { linkedTestIssues } = record;        
+        // return (<div>{linkedTestIssues.map((testIssue) => {
+        //   const { testCycleCaseES, issueId } = testIssue;
+        //   // console.log()
+        //   const totalExecute = testCycleCaseES.length;
+        //   // const todoExecute = 0;
+        //   // let doneExecute = 0;
+        //   const executeStatus = {};
+        //   const caseShow = testCycleCaseES.map((execute) => {
+        //     // 执行的颜色
+        //     const { executionStatus } = execute;
+        //     const statusColor = _.find(statusList, { statusId: executionStatus }) ?
+        //       _.find(statusList, { statusId: executionStatus }).statusColor : '';
+        //     const statusName = _.find(statusList, { statusId: executionStatus }) &&
+        //         _.find(statusList, { statusId: executionStatus }).statusName;
+        //       // if (statusColor !== 'gray') {
+        //       //   doneExecute += 1;
+        //       // }
+        //     if (!executeStatus[statusName]) {
+        //       executeStatus[statusName] = 1;
+        //     } else {
+        //       executeStatus[statusName] += 1;
+        //     }
+              
+        //     return (<div style={{ display: 'flex', margin: '5px 0' }} >
+        //       {execute.cycleName}
+        //       <div
+        //         className="c7n-collapse-text-icon" 
+        //         style={{ color: statusColor, borderColor: statusColor }}
+        //       >
+        //         {statusName}
+        //       </div>
+        //     </div>);
+        //   });
+        //   // window.console.log(executeStatus);
+        //   return openId[record.issueId] && openId[record.issueId]
+        //     .includes(issueId.toString()) ? 
+        //       <div style={{ minHeight: 30 }}> { caseShow }   </div> 
+        //     :
+        //     (
+        //       <div>
+        //         <div>总共：{totalExecute}</div>
+        //         <div style={{ display: 'flex' }}>
+        //           {
+        //             Object.keys(executeStatus).map(key => (<div>
+        //               <span>{key}：</span>
+        //               <span>{executeStatus[key]}</span>
+        //             </div>))
+        //           }                
+        //         </div>          
+        //       </div>
+        //     );
+        // })}
+        // </div>);        
       },
     }, {
       className: 'c7n-table-white',
@@ -259,66 +298,36 @@ class ReportTest extends Component {
       width: '25%',
       render(demand, record) {
         const { linkedTestIssues } = record;        
-        return (<div>{ linkedTestIssues.map((testIssue) => {
-          const { testCycleCaseES, issueId } = testIssue;
-          
-          
-          return (openId[record.issueId] && openId[record.issueId]
-            .includes(issueId.toString()) ?    
-            <div>
-                {                
-                testCycleCaseES.map((item) => {
-                  const { defects } = item;
-                  return <div>{defects.length > 0 ? defects.map(defect => <div>{defect.defectName}</div>) : '-'}</div>;
-                })
-                // testCycleCaseES.map((item) => {
-                //   const { defects } = item;
-                //   return (<div className="c7n-collapse-header-container">
-                //     <div>{record.issueName}</div>
-                //     <div className="c7n-collapse-header-icon">                 
-                //       <span style={{ color: issueColor, borderColor: issueColor }}>
-                //         {issueStatus}
-                //       </span>
-                //     </div>            
-                //   </div>);
-                // })
-              } 
-              </div> :            
-              <div>
-              {
-                testCycleCaseES.map((item) => {
-                  const { defects } = item;
-                  return <div>{defects.map((defect, i) => (
-                    <span style={{
-                      fontSize: '13px',
-                      color: '#3F51B5',                 
-                    }}>
-                      {i === 0 ? null :'，'}
-                      <span>
-                        {defect.defectName}
-                      </span>
-                    </span>))}</div>;
-                })}
-            </div>);
-        })}
-        </div>);
-        // return openId[record.issueId] && openId[record.issueId]
-        //   .includes(issueId.toString()) ? 
-        //     <div style={{ minHeight: 30 }}> { caseShow }   </div> 
-        //   :
-        //   (
+        // return (<div>{ linkedTestIssues.map((testIssue) => {
+        //   const { testCycleCaseES, issueId } = testIssue;
+        //   return (openId[record.issueId] && openId[record.issueId]
+        //     .includes(issueId.toString()) ?    
         //     <div>
-        //       <div>总共：{totalExecute}</div>
-        //       <div style={{ display: 'flex' }}>
-        //         {
-        //           Object.keys(executeStatus).map(key => (<div>
-        //             <span>{key}：</span>
-        //             <span>{executeStatus[key]}</span>
-        //           </div>))
-        //         }                
-        //       </div>          
-        //     </div>
-        //   );
+        //         {                
+        //         testCycleCaseES.map((item) => {
+        //           const { defects } = item;
+        //           return <div>{defects.length > 0 ? defects.map(defect => <div>{defect.defectName}</div>) : '-'}</div>;
+        //         })
+        //       } 
+        //       </div> :            
+        //       <div>
+        //       {
+        //         testCycleCaseES.map((item) => {
+        //           const { defects } = item;
+        //           return <div>{defects.map((defect, i) => (
+        //             <span style={{
+        //               fontSize: '13px',
+        //               color: '#3F51B5',                 
+        //             }}>
+        //               {i === 0 ? null :'，'}
+        //               <span>
+        //                 {defect.defectName}
+        //               </span>
+        //             </span>))}</div>;
+        //         })}
+        //     </div>);
+        // })}
+        // </div>);
       },
     }];
 

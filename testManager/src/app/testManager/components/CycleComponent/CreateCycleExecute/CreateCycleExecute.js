@@ -209,7 +209,11 @@ class CreateCycleExecute extends Component {
     window.console.log(fin);
     if (fin.length > 0) {
       createCycleExecute(fin).then((res) => {
-        onOk();
+        if (res.failed) {
+          Choerodon.prompt('同一循环内不能存在相同测试用例');
+        } else {
+          onOk();
+        }
       });
     } else {
       Choerodon.prompt('请选择问题');

@@ -35,7 +35,7 @@ class ShowCycleData extends Component {
           <div className="c7n-right-card-column">
             <div className="c7n-right-card-item">
               <div className="c7n-right-card-item-label">
-              版本：
+              构建号：
               </div>
               <div className="c7n-right-card-item-text">
                 {build}
