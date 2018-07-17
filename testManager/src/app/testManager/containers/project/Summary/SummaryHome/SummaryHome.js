@@ -229,23 +229,23 @@ class SummaryHome extends Component {
                 </div>
               </div>
               <div className="c7n-statistic-item-container">
-                <div className="c7n-statistic-item-colorBar" />
+                <div className="c7n-statistic-item-colorBar" style={{ borderColor: '#FFB100' }} />
                 <div>
                   <div className="c7n-statistic-item-title">总剩余数量</div>
                   <div className="c7n-statistic-item-num">{notRun}</div>
                 </div>
               </div>
               <div className="c7n-statistic-item-container">
-                <div className="c7n-statistic-item-colorBar" />
+                <div className="c7n-statistic-item-colorBar" style={{ borderColor: '#00BFA5' }} />
                 <div>
                   <div className="c7n-statistic-item-title">总执行数量</div>
                   <div className="c7n-statistic-item-num">{caseNum}</div>
                 </div>
               </div>
               <div className="c7n-statistic-item-container">
-                <div className="c7n-statistic-item-colorBar" />
+                <div className="c7n-statistic-item-colorBar" style={{ borderColor: '#FF7043' }} />
                 <div>
-                  <div className="c7n-statistic-item-title">总为规划数量</div>
+                  <div className="c7n-statistic-item-title">总未规划数量</div>
                   <div className="c7n-statistic-item-num">{notPlan}</div>
                 </div>
               </div>
@@ -255,7 +255,7 @@ class SummaryHome extends Component {
                 <div className="c7n-table-title">测试统计（按版本）</div>
                 <Table
                   columns={columns}
-                  pagination={{ pageSize: 5 }}
+                  pagination={{ pageSize: 5, showSizeChanger: false }}
                   dataSource={versionTable}
                   filterBar={false}
                 />
@@ -264,7 +264,7 @@ class SummaryHome extends Component {
                 <div className="c7n-table-title">测试统计（按模块）</div>
                 <Table 
                   columns={columns} 
-                  pagination={{ pageSize: 5 }} 
+                  pagination={{ pageSize: 5, showSizeChanger: false }} 
                   dataSource={labelTable} 
                   filterBar={false}
                 />
@@ -273,6 +273,7 @@ class SummaryHome extends Component {
                 <div className="c7n-table-title">测试统计（按标签）</div>
                 <Table 
                   columns={columns} 
+                  pagination={{ pageSize: 5, showSizeChanger: false }}
                   dataSource={componentTable} 
                   filterBar={false}
                 />

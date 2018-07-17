@@ -68,6 +68,9 @@
     .c7n-showId {
         user-select: none;
         font-size: 13px;
-        color: #303F9F;
+        // color: #303F9F;
+    }
+    tr {
+        vertical-align: top;
     }
 }

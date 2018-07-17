@@ -143,14 +143,15 @@ class ReportStory extends Component {
       key: 'issueId',
       width: '25%',
       render(issueId, record) {
-        const { issueStatus, defectCount, issueName, issueColor } = record;
+        const { defectInfo, defectCount} = record;
+        const { issueStatusName, issueName, issueColor } = defectInfo;
         return (
           <div>
             <div className="c7n-collapse-header-container">
-              <div>{record.issueName}</div>
+              <div>{issueName}</div>
               <div className="c7n-collapse-header-icon">                 
                 <span style={{ color: issueColor, borderColor: issueColor }}>
-                  {issueStatus}
+                  {issueStatusName}
                 </span>
               </div>
             
@@ -158,28 +159,7 @@ class ReportStory extends Component {
             <div>
               缺陷数: {defectCount}
             </div>
-          </div>
-          // <Collapse 
-          //   bordered={false} 
-          //   activeKey={openId.includes(record.issueId) ? ['1'] : []}         
-          // >
-          //   <Panel
-          //     showArrow={false}
-          //     header={
-          //       <div className="c7n-collapse-header-container">
-          //         <div>{record.issueName}</div>
-          //         <div className="c7n-collapse-header-icon">                 
-          //           <span style={{ color: issueColor, borderColor: issueColor }}>
-          //             {issueStatus}
-          //           </span>
-          //         </div>
-          //       </div>
-          //     }
-          //     key="1"           
-          //   > 
-          //     {record.summary}
-          //   </Panel>
-          // </Collapse>
+          </div>         
         );
       },
     }, {
