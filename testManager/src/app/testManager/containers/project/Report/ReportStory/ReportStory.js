@@ -287,8 +287,15 @@ class ReportStory extends Component {
                       {defect.defectStatus}
                     </span>
                   </div>
-                
-                </div>) : <div className="c7n-collapse-show-item">-</div>}</div>;
+                    {defect.defectType=='CASE_STEP'&&
+                     <div style={{
+                       marginLeft:60,
+                       color:'white',
+                       padding:'0 8px',
+                       background: 'rgba(0,0,0,0.20)',
+                       borderRadius: '100px'
+                      }}>步骤</div>}
+                </div>) : <div className="c7n-collapse-show-item">－</div>}</div>;
                 })
                 // testCycleCaseES.map((item) => {
                 //   const { defects } = item;
