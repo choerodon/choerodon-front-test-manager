@@ -12,6 +12,7 @@ class SprintCommonStore {
     advancedSearchArgs: {},
     searchArgs: {},
   };
+  @observable filteredInfo = {};
   @observable order = {
     orderField: '',
     orderType: '',
@@ -20,6 +21,9 @@ class SprintCommonStore {
   @observable paramType = undefined;
   @observable paramId = undefined;
   @observable paramName = undefined;
+  @observable paramStatus = undefined;
+  @observable paramIssueId = undefined;
+  @observable paramUrl = undefined;
   @observable barFilters = undefined;
 
   init() {
@@ -31,13 +35,14 @@ class SprintCommonStore {
       advancedSearchArgs: {},
       searchArgs: {},
     });
-    this.loadIssues();
+    this.setFilteredInfo({});
+    // this.loadIssues();
   }
 
   loadIssues(page = 0, size = 10) {
     this.setLoading(true);
     const { orderField, orderType } = this.order;
-    loadIssues(page, size, this.getFilter, orderField, orderType)
+    return loadIssues(page, size, this.getFilter, orderField, orderType)
       .then((res) => {
         this.setIssues(res.content);
         this.setPagination({
@@ -46,6 +51,7 @@ class SprintCommonStore {
           total: res.totalElements,
         });
         this.setLoading(false);
+        return Promise.resolve(res);
       });
   }
 
@@ -69,6 +75,10 @@ class SprintCommonStore {
     this.filter = data;
   }
 
+  @action setFilteredInfo(data) {
+    this.filteredInfo = data;
+  }
+
   @action setOrder(data) {
     this.order = data;
   }
@@ -89,28 +99,48 @@ class SprintCommonStore {
     this.paramName = data;
   }
 
+  @action setParamStatus(data) {
+    this.paramStatus = data;
+  }
+
+  @action setParamIssueId(data) {
+    this.paramIssueId = data;
+  }
+
+  @action setParamUrl(data) {
+    this.paramUrl = data;
+  }
+
   @action setBarFilters(data) {
     this.barFilters = data;
   }
 
   @computed get getBackUrl() {
     const urlParams = AppState.currentMenuType;
-    if (!this.paramType) {
+    if (!this.paramUrl) {
       return undefined;
-    } else if (this.paramType === 'sprint') {
-      return `/agile/reporthost/sprintReport?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}&organizationId=${urlParams.organizationId}`;
-    } else if (this.paramType === 'component') {
-      return `/agile/component?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}&organizationId=${urlParams.organizationId}`;
-    } else if (this.paramType === 'version') {
-      return `/agile/release/detail/${this.paramId}?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}&organizationId=${urlParams.organizationId}`;
+    } else {
+      return `/agile/${this.paramUrl}?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}&organizationId=${urlParams.organizationId}`;
     }
+    // if (!this.paramType) {
+    //   return undefined;
+    // } else if (this.paramType === 'sprint') {
+    //   return `/agile/reporthost/sprintReport?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}&organizationId=${urlParams.organizationId}`;
+    // } else if (this.paramType === 'component') {
+    //   return `/agile/component?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}&organizationId=${urlParams.organizationId}`;
+    // } else if (this.paramType === 'version' && this.paramStatus) {
+    //   return `/agile/release?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}&organizationId=${urlParams.organizationId}`;
+    // } else if (this.paramType === 'versionReport') {
+    //   return `/agile/reporthost/versionReport?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}&organizationId=${urlParams.organizationId}`;
+    // }
   }
 
   @computed get getFilter() {
     const filter = this.filter;
     const otherArgs = {
       type: this.paramType,
-      id: [this.paramId],
+      id: this.paramId ? [this.paramId] : undefined,
+      issueIds: this.paramIssueId ? [this.paramIssueId] : undefined,
     };
     return {
       ...filter,

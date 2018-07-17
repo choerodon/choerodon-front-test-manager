@@ -59,7 +59,7 @@ class CreateTest extends Component {
           assignedTo: values.other || this.state.userMine.id,
           cycleId: values.circle,
           issueId: this.props.issueId,
-          lastRank: null,
+          lastRank: this.props.lastRank,
         };
         this.handleSave(testCycleDTO);
       }
@@ -105,27 +105,15 @@ class CreateTest extends Component {
           description="您可以为一个或多个成员分配一个或多个全局层的角色，即给成员授予全局层的权限。"
         >
           <Form layout="vertical">
-            <FormItem label="执行方式" style={{ marginBottom: 0 }}>
-              {getFieldDecorator('type', {
-                rules: [{ required: true, message: '默认经办人策略为必选项' }],
-                initialValue: 'temp',
-              })(
-                <RadioGroup onChange={this.onChangeRadio}>
-                  <Radio style={radioStyle} value={'temp'}>执行临时</Radio>
-                  <Radio style={radioStyle} value={'add'}>添加到现有测试循环和执行</Radio>
-                </RadioGroup>,
-              )}
-            </FormItem>
             <FormItem label="版本">
               {getFieldDecorator('version', {
                 rules: [{
-                  required: this.props.form.getFieldValue('type') === 'add',
-                  message: '当执行方式为添加到现有测试循环和执行时，此项为必选项',
+                  required: true,
+                  message: '此项为必选项',
                 }],
               })(
                 <Select
                   label="版本"
-                  disabled={this.props.form.getFieldValue('type') === 'temp'}
                   loading={this.state.selectLoading}
                   filter
                   filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
@@ -155,13 +143,13 @@ class CreateTest extends Component {
             <FormItem label="测试循环">
               {getFieldDecorator('circle', {
                 rules: [{
-                  required: this.props.form.getFieldValue('type') === 'add',
-                  message: '当执行方式为添加到现有测试循环和执行时，此项为必选项',
+                  required: true,
+                  message: '此项为必选项',
                 }],
               })(
                 <Select
                   label="测试循环"
-                  disabled={this.props.form.getFieldValue('type') === 'temp' || !this.props.form.getFieldValue('version')}
+                  disabled={!this.props.form.getFieldValue('version')}
                   loading={this.state.selectLoading}
                   filter
                   filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}

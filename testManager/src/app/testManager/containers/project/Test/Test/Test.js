@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import _ from 'lodash';
-import { Page, Header, Content, stores } from 'choerodon-front-boot';
+import { Page, Header, Content, stores, axios } from 'choerodon-front-boot';
 import { Table, Button, Select, Popover, Tabs, Tooltip, Input, Dropdown, Menu, Pagination, Spin, Icon } from 'choerodon-ui';
 
 import '../TestComponent/assets/main.scss';
@@ -22,6 +22,8 @@ import DailyLog from '../TestComponent/components/DailyLog';
 import CreateIssue from '../TestComponent/components/CreateIssue';
 import EditIssue from '../TestComponent/components/EditIssueWide';
 
+const FileSaver = require('file-saver');
+
 const Option = Select.Option;
 const TabPane = Tabs.TabPane;
 const { AppState } = stores;
@@ -35,7 +37,7 @@ class Test extends Component {
       create: false,
       selectedIssue: {},
       createIssue: false,
-      selectIssueType: 'task',
+      selectIssueType: 'issue_test',
       createIssueValue: '',
       createLoading: false,
     };
@@ -46,15 +48,44 @@ class Test extends Component {
 
   getInit() {
     const Request = this.GetRequest(this.props.location.search);
-    const { paramType, paramId, paramName } = Request;
+    const { paramType, paramId, paramName, paramStatus, paramIssueId, paramUrl } = Request;
     IssueStore.setParamId(paramId);
     IssueStore.setParamType(paramType);
+    IssueStore.setParamName(paramName);
+    IssueStore.setParamStatus(paramStatus);
+    IssueStore.setParamIssueId(paramIssueId);
+    IssueStore.setParamUrl(paramUrl);
     const arr = [];
     if (paramName) {
       arr.push(paramName);
     }
-    IssueStore.setBarFilters(arr);
-    IssueStore.init();
+    if (paramStatus) {
+      const obj = {
+        advancedSearchArgs: {},
+        searchArgs: {},
+      };
+      const a = [paramStatus];
+      obj.advancedSearchArgs.statusCode = a || [];
+      IssueStore.setBarFilters(arr);
+      IssueStore.setFilter(obj);
+      IssueStore.setFilteredInfo({ statusCode: [paramStatus] });
+      IssueStore.loadIssues();
+    } else if (paramIssueId) {
+      IssueStore.setBarFilters(arr);
+      IssueStore.init();
+      IssueStore.loadIssues()
+        .then((res) => {
+          window.console.log(res);
+          this.setState({
+            selectedIssue: res.content.length ? res.content[0] : {},
+            expand: true,
+          });
+        });
+    } else {
+      IssueStore.setBarFilters(arr);
+      IssueStore.init();
+      IssueStore.loadIssues();
+    }
   }
 
   GetRequest(url) {
@@ -72,6 +103,7 @@ class Test extends Component {
   handleCreateIssue(issueObj) {
     this.setState({ create: false });
     IssueStore.init();
+    IssueStore.loadIssues();
   }
 
   handleChangeIssueId(issueId) {
@@ -118,9 +150,8 @@ class Test extends Component {
         projectId: AppState.currentMenuType.id,
         sprintId: 0,
         summary: this.state.createIssueValue,
-        typeCode: this.state.selectIssueType,
+        typeCode: 'issue_test',
         epicId: 0,
-        epicName: this.state.selectIssueType === 'issue_epic' ? this.state.createIssueValue : undefined,
         parentIssueId: 0,
       };
       this.setState({
@@ -129,6 +160,7 @@ class Test extends Component {
       createIssue(data)
         .then((res) => {
           IssueStore.init();
+          IssueStore.loadIssues();
           this.setState({
             createIssueValue: '',
             createLoading: false,
@@ -173,6 +205,7 @@ class Test extends Component {
   }
 
   handleFilterChange = (pagination, filters, sorter, barFilters) => {
+    IssueStore.setFilteredInfo(filters);
     IssueStore.setBarFilters(barFilters);
     window.console.log(barFilters);
     if (barFilters === undefined || barFilters.length === 0) {
@@ -192,6 +225,17 @@ class Test extends Component {
     IssueStore.setFilter(obj);
     const { current, pageSize } = IssueStore.pagination;
     IssueStore.loadIssues(current - 1, pageSize);
+  }
+
+  exportExcel() {
+    const projectId = AppState.currentMenuType.id;
+    const searchParam = IssueStore.getFilter;
+    axios.post(`/zuul/agile/v1/projects/${projectId}/issues/export`, searchParam, { responseType: 'arraybuffer' })
+      .then((data) => {
+        const blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        const fileName = `${AppState.currentMenuType.name}.xls`;
+        FileSaver.saveAs(blob, fileName);
+      });
   }
 
   renderWideIssue(issue) {
@@ -364,30 +408,6 @@ class Test extends Component {
     ];
     const filterColumns = [
       {
-        title: '类型',
-        dataIndex: 'typeCode',
-        key: 'typeCode',
-        filters: [
-          {
-            text: '故事',
-            value: 'story',
-          },
-          {
-            text: '任务',
-            value: 'task',
-          },
-          {
-            text: '故障',
-            value: 'bug',
-          },
-          {
-            text: '史诗',
-            value: 'issue_epic',
-          },
-        ],
-        filterMultiple: true,
-      },
-      {
         title: '编号',
         dataIndex: 'issueNum',
         key: 'issueNum',
@@ -438,6 +458,7 @@ class Test extends Component {
           },
         ],
         filterMultiple: true,
+        filteredValue: IssueStore.filteredInfo.statusCode || null,
       },
     ];
     const columns = [
@@ -498,7 +519,7 @@ class Test extends Component {
         onClick={this.handleChangeType.bind(this)}
       >
         {
-          ['story', 'task', 'bug', 'issue_epic'].map(type => (
+          ['issue_test'].map(type => (
             <Menu.Item key={type}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <TypeTag
@@ -518,12 +539,16 @@ class Test extends Component {
     return (
       <Page className="c7n-Issue c7n-region">
         <Header
-          title="问题管理"
+          title="测试用例管理"
           backPath={IssueStore.getBackUrl}
         >
           <Button className="leftBtn" funcTyp="flat" onClick={() => this.setState({ create: true })}>
             <Icon type="playlist_add icon" />
-            <span>创建问题</span>
+            <span>创建测试用例</span>
+          </Button>
+          <Button className="leftBtn" funcTyp="flat" onClick={() => this.exportExcel()}>
+            <Icon type="file_upload icon" />
+            <span>导出</span>
           </Button>
           <Button
             funcTyp="flat"
@@ -625,26 +650,20 @@ class Test extends Component {
                   {this.state.createIssue ? (
                     <div className="c7n-add" style={{ display: 'block', width: '100%' }}>
                       <div style={{ display: 'flex' }}>
-                        <Dropdown overlay={typeList} trigger={['click']}>
-                          <div style={{ display: 'flex', alignItem: 'center' }}>
-                            <div
-                              className="c7n-sign"
-                              style={{
-                                backgroundColor: TYPE[this.state.selectIssueType],
-                                marginRight: 2,
-                              }}
-                            >
-                              <Icon
-                                style={{ fontSize: '14px' }}
-                                type={ICON[this.state.selectIssueType]}
-                              />
-                            </div>
+                        <div style={{ display: 'flex', alignItem: 'center' }}>
+                          <div
+                            className="c7n-sign"
+                            style={{
+                              backgroundColor: TYPE[this.state.selectIssueType],
+                              marginRight: 2,
+                            }}
+                          >
                             <Icon
-                              type="arrow_drop_down"
-                              style={{ fontSize: 16 }}
+                              style={{ fontSize: '14px' }}
+                              type={ICON[this.state.selectIssueType]}
                             />
                           </div>
-                        </Dropdown>
+                        </div>
                         <div style={{ marginLeft: 8, flexGrow: 1 }}>
                           <Input
                             autoFocus
@@ -738,8 +757,13 @@ class Test extends Component {
                     selectedIssue: {},
                   });
                   IssueStore.init();
+                  IssueStore.loadIssues();
                 }}
                 onUpdate={this.handleIssueUpdate.bind(this)}
+                onCopyAndTransformToSubIssue={() => {
+                  const { current, pageSize } = IssueStore.pagination;
+                  IssueStore.loadIssues(current - 1, pageSize);
+                }}
               />
             }
           </div>

@@ -140,7 +140,7 @@ class CreateIssue extends Component {
           }
         });
         const extra = {
-          typeCode: values.typeCode,
+          typeCode: 'issue_test',
           summary: values.summary,
           priorityCode: values.priorityCode,
           sprintId: values.sprintId || 0,
@@ -202,7 +202,7 @@ class CreateIssue extends Component {
     return (
       <Sidebar
         className="c7n-createIssue"
-        title="创建问题"
+        title="创建测试用例"
         visible={visible || false}
         onOk={this.handleCreateIssue}
         onCancel={onCancel}
@@ -211,9 +211,9 @@ class CreateIssue extends Component {
         confirmLoading={this.state.createLoading}
       >
         <div className="c7n-region">
-          <h2 className="c7n-space-first">在项目“{AppState.currentMenuType.name}”中创建问题</h2>
+          <h2 className="c7n-space-first">在项目“{AppState.currentMenuType.name}”中创建测试用例</h2>
           <p>
-            请在下面输入问题的详细信息，包含详细描述、人员信息、版本信息、进度预估、优先级等等。您可以通过丰富的任务描述帮助相关人员更快更全面的理解任务，同时更好的把控问题进度。
+            请在下面输入测试用例的详细信息，包含详细描述、人员信息、版本信息、进度预估、优先级等等。您可以通过丰富的任务描述帮助相关人员更快更全面的理解任务，同时更好的把控问题进度。
             <a href="http://v0-7.choerodon.io/zh/docs/user-guide/agile/issue/create-issue/" rel="nofollow me noopener noreferrer" target="_blank" className="c7n-external-link">
               <span className="c7n-external-link-content">
               了解详情
@@ -222,31 +222,6 @@ class CreateIssue extends Component {
             </a>
           </p>
           <Form layout="vertical">
-            <FormItem label="问题类型" style={{ width: 520 }}>
-              {getFieldDecorator('typeCode', {
-                initialValue: 'issue_test',
-                rules: [{ required: true }],
-              })(
-                <Select
-                  label="问题类型"
-                  getPopupContainer={triggerNode => triggerNode.parentNode}
-                >
-                  {['issue_test'].map(type => (
-                    <Option key={type} value={type}>
-                      <div style={{ display: 'inline-flex', alignItems: 'center', padding: '2px' }}>
-                        <TypeTag
-                          type={{
-                            typeCode: type,
-                          }}
-                        />
-                        <span style={{ marginLeft: 8 }}>{NAME[type]}</span>
-                      </div>
-                    </Option>),
-                  )}
-                </Select>,
-              )}
-            </FormItem>
-
             <FormItem label="概要" style={{ width: 520 }}>
               {getFieldDecorator('summary', {
                 rules: [{ required: true, message: '概要为必输项' }],

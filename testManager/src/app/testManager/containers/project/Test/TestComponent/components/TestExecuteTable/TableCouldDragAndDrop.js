@@ -13,16 +13,31 @@ class TableCanDragAndDrop extends Component {
     this.state = {
       data: [],
       expand: [],
+      status: [],
     };
   }
   
   componentDidMount() {
+    this.loadStatus();
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.data !== this.props.data && nextProps.data) {
       this.setState({ data: nextProps.data });
     }
+  }
+
+  loadStatus() {
+    const obj ={
+      projectId: AppState.currentMenuType.id,
+      statusType: 'CYCLE_CASE',
+    };
+    axios.post(`/test/v1/projects/${AppState.currentMenuType.id}/status/query`, obj)
+      .then((res) => {
+        this.setState({
+          status: res,
+        });
+      });
   }
 
   confirm(executeId, e) {
@@ -48,6 +63,19 @@ class TableCanDragAndDrop extends Component {
     arr.splice(fromIndex, 1);
     arr.splice(toIndex, 0, drag);
     this.setState({ data: arr });
+    // arr此时是有序的，取toIndex前后两个的rank
+    const lastRank = toIndex === 0 ? null : arr[toIndex - 1].rank;
+    const nextRank = toIndex === arr.length - 1 ? null : arr[toIndex + 1].rank;
+    const testCaseStepDTO = {
+      ...drag,
+      lastRank,
+      nextRank,
+    };
+    const projectId = AppState.currentMenuType.id;
+    axios.post(`/test/v1/projects/${projectId}/cycle/case/update`, testCaseStepDTO)
+      .then((res) => {
+        // save success
+      });
   }
 
   getMenu = () => (
@@ -101,112 +129,98 @@ class TableCanDragAndDrop extends Component {
   }
 
   renderSprintIssue(data, sprintId) {
+    const urlParams = AppState.currentMenuType;
     const result = [];
     _.forEach(data, (item, index) => {
+      const status = _.find(this.state.status, { statusId: item.executionStatus });
       result.push(
-        <Draggable key={item.id} draggableId={item.id} index={index}>
-          {(provided1, snapshot1) => 
-            (
-              <div
-                ref={provided1.innerRef}
-                {...provided1.draggableProps}
-                {...provided1.dragHandleProps}
-              >
-                <div className={`${item.id}-list`} style={{ width: '100%', display: 'flex', height: 34, borderBottom: '1px solid rgba(0, 0, 0, 0.12)', borderTop: '1px solid rgba(0, 0, 0, 0.12)' }}>
-                  <span style={{ width: 50, display: 'inline-block', lineHeight: '34px', paddingLeft: 10 }}>
-                    {item.version}
-                  </span>
-                  <span style={{ width: 90, display: 'inline-block', lineHeight: '34px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', paddingRight: 15 }}>
-                    {item.circle}
-                  </span>
-                  <span style={{ width: 90, display: 'inline-block', lineHeight: '34px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', paddingRight: 15 }}>
-                    {item.caseAttachment.length}
-                  </span>
-                  <span style={{ width: 90, display: 'inline-block', lineHeight: '34px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', paddingRight: 15 }}>
-                    {item.executionStatusName}
-                  </span>
-                  <span style={{ width: 90, display: 'inline-block', lineHeight: '34px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', paddingRight: 15 }}>
-                    {item.defects.length}
-                  </span>
-                  <span style={{ width: 90, display: 'inline-block', lineHeight: '34px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', paddingRight: 15 }}>
-                    {item.assignedTo}
-                  </span>
-                  <span style={{ width: 90, display: 'inline-block', lineHeight: '34px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', paddingRight: 15 }}>
-                    <TimeAgo
-                      datetime={item.lastUpdateDate}
-                      locale={Choerodon.getMessage('zh_CN', 'en')}
-                    />
-                  </span>
-                  <span style={{ width: 90, display: 'inline-block', lineHeight: '34px' }}>
-                    <Button icon="explicit2" shape="circle" onClick={() => window.console.log('跳转')} />
-                    <Popconfirm
-                      title="确认要删除该测试执行吗?"
-                      placement="left"
-                      onConfirm={this.confirm.bind(this, item.executeId)}
-                      onCancel={this.cancel}
-                      okText="删除"
-                      cancelText="取消"
-                      okType="danger"
-                    >
-                      <Icon type="delete_forever mlr-3 pointer" />
-                    </Popconfirm>
-                  </span>
-                </div>
-              </div>
-            )
-          }
-        </Draggable>,
-      );
+        <div className={`${item.id}-list`} style={{ width: '100%', paddingLeft: 10, height: 34, borderBottom: '1px solid rgba(0, 0, 0, 0.12)', borderTop: '1px solid rgba(0, 0, 0, 0.12)', display: 'flex' }}>
+          <span style={{ flex: 1, lineHeight: '34px' }}>
+            {item.version}
+          </span>
+          <span style={{ flex: 2, lineHeight: '34px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            {item.cycleName}
+          </span>
+          <span style={{ flex: 2, lineHeight: '34px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            {item.folderName || ''}
+          </span>
+          <span style={{ flex: 2, lineHeight: '34px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            <span style={{ width: 60, height: 20, borderRadius: '100px', background: status.statusColor, display: 'inline-block', lineHeight: '20px', textAlign: 'center', color: '#fff' }}>
+              {status && status.statusName}
+            </span>
+          </span>
+          <span style={{ flex: 2, lineHeight: '34px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            {
+              item.defects.length ? (
+                <span>
+                  {_.map(item.defects, 'defectName').join(',')}
+                </span>
+              ) : '-'
+            }
+          </span>
+          <span style={{ flex: 2, lineHeight: '34px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            {item.assignedTo}
+          </span>
+          <span style={{ flex: 2, lineHeight: '34px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            <TimeAgo
+              datetime={item.lastUpdateDate}
+              locale={Choerodon.getMessage('zh_CN', 'en')}
+            />
+          </span>
+          <span style={{ width: 70, lineHeight: '34px' }}>
+            <Button
+              icon="explicit2"
+              shape="circle"
+              onClick={() => {
+                this.props.history.push(`/testManager/Cycle/execute/${item.executeId}?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`);
+              }}
+            />
+            <Popconfirm
+              title="确认要删除该测试执行吗?"
+              placement="left"
+              onConfirm={this.confirm.bind(this, item.executeId)}
+              onCancel={this.cancel}
+              okText="删除"
+              cancelText="取消"
+              okType="danger"
+            >
+              <Icon type="delete_forever mlr-3 pointer" />
+            </Popconfirm>
+          </span>
+        </div>);
     });
     return result;
   }
 
   render() {
     return (
-      <DragDropContext onDragEnd={this.onDragEnd.bind(this)}>
-        <div style={{ width: 680 }}>
-          <div style={{ width: '100%', height: 30, background: 'rgba(0, 0, 0, 0.04)', borderTop: '2px solid rgba(0,0,0,0.12)', borderBottom: '1px solid rgba(0,0,0,0.12)' }}>
-            <span style={{ width: 50, display: 'inline-block', lineHeight: '30px', paddingLeft: 10 }}>
-              版本
-            </span>
-            <span style={{ width: 90, display: 'inline-block', lineHeight: '30px' }}>
-              测试循环
-            </span>
-            <span style={{ width: 90, display: 'inline-block', lineHeight: '30px' }}>
-              文件夹
-            </span>
-            <span style={{ width: 90, display: 'inline-block', lineHeight: '30px' }}>
-              状态
-            </span>
-            <span style={{ width: 90, display: 'inline-block', lineHeight: '30px' }}>
-              缺陷
-            </span>
-            <span style={{ width: 90, display: 'inline-block', lineHeight: '30px' }}>
-              执行方
-            </span>
-            <span style={{ width: 90, display: 'inline-block', lineHeight: '30px' }}>
-              执行时间
-            </span>
-            <span style={{ width: 90, display: 'inline-block' }} />
-          </div>
-          <Droppable droppableId="dropTable">
-            {(provided, snapshot) => (
-              <div
-                ref={provided.innerRef}
-                style={{
-                  background: snapshot.isDraggingOver ? '#e9e9e9' : 'white',
-                  padding: 'grid',
-                  borderBottom: '1px solid rgba(0,0,0,0.12)',
-                  marginBottom: 0,
-                }}
-              >
-                {this.renderIssueOrIntro(this.state.data)}
-                {provided.placeholder}
-              </div>
-            )}
-          </Droppable>
+      <div style={{ width: '100%' }}>
+        <div style={{ width: '100%', paddingLeft: 10, height: 30, background: 'rgba(0, 0, 0, 0.04)', borderTop: '2px solid rgba(0,0,0,0.12)', borderBottom: '1px solid rgba(0,0,0,0.12)', display: 'flex' }}>
+          <span style={{ flex: 1, lineHeight: '30px' }}>
+            版本
+          </span>
+          <span style={{ flex: 2, lineHeight: '30px' }}>
+            测试循环
+          </span>
+          <span style={{ flex: 2, lineHeight: '30px' }}>
+            文件夹
+          </span>
+          <span style={{ flex: 2, lineHeight: '30px' }}>
+            状态
+          </span>
+          <span style={{ flex: 2, lineHeight: '30px' }}>
+            缺陷
+          </span>
+          <span style={{ flex: 2, lineHeight: '30px' }}>
+            执行方
+          </span>
+          <span style={{ flex: 2, lineHeight: '30px' }}>
+            执行时间
+          </span>
+          <span style={{ width: 70 }} />
         </div>
-      </DragDropContext>
+        {this.renderIssueOrIntro(this.state.data)}
+      </div>
     );
   }
 }
