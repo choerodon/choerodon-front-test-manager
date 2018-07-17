@@ -1,4 +1,4 @@
-/* eslint-disable */
+
 import React, { Component } from 'react';
 import { Page, Header, Content, stores } from 'choerodon-front-boot';
 import { Link } from 'react-router-dom';
@@ -46,6 +46,7 @@ class ReportTest extends Component {
     reportList: [],
     issueStatusList: [],
     statusList: [],
+    stepStatusList: [],
     pagination: {
       current: 1,
       total: 0,
@@ -64,11 +65,13 @@ class ReportTest extends Component {
     Promise.all([
       getIssueStatus(),
       getStatusList('CYCLE_CASE'),
+      getStatusList('CASE_STEP'),
       this.getReportsFromDefect(),
-    ]).then(([issueStatusList, statusList]) => {
+    ]).then(([issueStatusList, statusList, stepStatusList]) => {
       this.setState({
         issueStatusList,
-        statusList,       
+        statusList,      
+        stepStatusList, 
         loading: false,
         openId: {},
       });
@@ -93,7 +96,7 @@ class ReportTest extends Component {
           total: reportData.totalElements,
         },
       });
-    })
+    });
     // .catch((error) => {
     //   window.console.log(error);
     //   this.setState({
@@ -106,12 +109,19 @@ class ReportTest extends Component {
     this.getList(pagination);
   }
   handleOpen=(issueId, keys) => {
-    const { openId } = this.state;  
-    openId[issueId] = keys;
+    // const { openId } = this.state;  
+    // openId[issueId] = keys;
     // if (open) {
-    this.setState({
-      openId: { ...openId },
-    });
+    if (keys.length > 0) {
+      this.setState({
+        openId: issueId,
+      });
+    } else {
+      this.setState({
+        openId: null,
+      });
+    }
+    
     // } else {
     //   openId.splice(openId.indexOf(issueId), 1);
     //   this.setState({
@@ -121,7 +131,7 @@ class ReportTest extends Component {
   }
   render() {
     const { selectVisible, reportList, loading, pagination,
-      issueStatusList, statusList, openId } = this.state;
+      issueStatusList, statusList, stepStatusList, openId } = this.state;
     const urlParams = AppState.currentMenuType;
     const that = this;
     const menu = (
@@ -137,55 +147,69 @@ class ReportTest extends Component {
         </Menu.Item>     
       </Menu>
     );
-    const columns = [ {
+    const columns = [{
       className: 'c7n-table-white',
       title: '缺陷',
-      dataIndex: 'test',
-      key: 'test',   
+      dataIndex: 'a',
+      key: 'a',   
       width: '25%',
       render(test, record) {
-        const { testCycleCaseES, testCycleCaseStepES } = record;
+        const { issueInfosDTO } = record;
+        const { issueId, issueColor, issueStatusName, issueName, summary } = issueInfosDTO;
         return (
           <Collapse 
-            // activeKey={openId[issueId]}
+            activeKey={openId ? [openId.toString()] : []}
             bordered={false} 
-            // onChange={(keys) => { that.handleOpen(issueId, keys); }}
+            onChange={(keys) => { that.handleOpen(issueId, keys); }}
           >
-            {
-              testCycleCaseStepES.map((issue, i) => (<Panel
-                // showArrow={false}
-                header={
-                  <div>
-                    <div className="c7n-showId">{'sss'}</div>
-                    <div style={{ fontSize: '13px' }}>{issue.summary}</div>
+            <Panel
+              // showArrow={false}
+              header={
+                <div>
+                  <div className="c7n-collapse-show-item">
+                    <div>{issueName}</div>
+                    <div className="c7n-collapse-header-icon">                 
+                      <span style={{ color: issueColor, borderColor: issueColor }}>
+                        {issueStatusName}
+                      </span>
+                    </div>        
                   </div>
-                }
-                key={issue.issueId}
-              />))
-            }
+                  <div style={{ fontSize: '13px' }}>{summary}</div>
+                </div>
+              }
+              key={issueId}
+            />
           </Collapse>
         );
       },
-    },{
+    }, {
       className: 'c7n-table-white',
       title: '执行',
-      dataIndex: 'issueId',
-      key: 'issueId',
+      dataIndex: 'execute',
+      key: 'execute',
       width: '25%',
-      render(issueId, record) {
-        const { testCycleCaseES, testCycleCaseStepES} = record;
+      render(execute, record) {
+        const { testCycleCaseES, testCycleCaseStepES, issueInfosDTO } = record;
+        const { issueId } = issueInfosDTO;
         const executeStatus = {};
-        const totalExecute=testCycleCaseES.length+testCycleCaseStepES.length;
-        const caseShow = testCycleCaseES.map((execute) => {
+        const totalExecute = testCycleCaseES.length + testCycleCaseStepES.length;
+        const caseShow = testCycleCaseES.concat(testCycleCaseStepES).map((execute, i) => {
           // 执行的颜色
-          const { executionStatus } = execute;
-          const statusColor = _.find(statusList, { statusId: executionStatus }) ?
-            _.find(statusList, { statusId: executionStatus }).statusColor : '';
-          const statusName = _.find(statusList, { statusId: executionStatus }) &&
+          const { executionStatus, stepStatus } = execute;
+          let statusColor = '';
+          let statusName = '';
+          if (executionStatus) {
+            statusColor = _.find(statusList, { statusId: executionStatus }) ?
+              _.find(statusList, { statusId: executionStatus }).statusColor : '';
+            statusName = _.find(statusList, { statusId: executionStatus }) &&
               _.find(statusList, { statusId: executionStatus }).statusName;
-            // if (statusColor !== 'gray') {
-            //   doneExecute += 1;
-            // }
+          } else {
+            statusColor = _.find(stepStatusList, { statusId: stepStatus }) ?
+              _.find(stepStatusList, { statusId: stepStatus }).statusColor : '';
+            statusName = _.find(stepStatusList, { statusId: stepStatus }) ?
+              _.find(stepStatusList, { statusId: stepStatus }).statusName : '';
+          }
+         
           if (!executeStatus[statusName]) {
             executeStatus[statusName] = 1;
           } else {
@@ -193,40 +217,54 @@ class ReportTest extends Component {
           }
             
           return (
-          <div style={{ display: 'flex', margin: '5px 0',alignItems:'center'}} >
-          <div style={{width:80}}>
-            {execute.cycleName}
-            </div>
-            <div
-              className="c7n-collapse-text-icon" 
-              style={{ color: statusColor, borderColor: statusColor }}
-            >
-              {statusName}
-            </div>
-            <Link 
-            style={{lineHeight:'13px'}}
-            to={`/testManager/Cycle/execute/${execute.executeId}?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}>
-            <Icon type="explicit2" style={{marginLeft:10,color:'black'}}/>
-          </Link>
-          </div>);
-        });
-        return openId[record.issueId] && openId[record.issueId]
-            .includes(issueId.toString()) ? 
-              <div style={{ minHeight: 30 }}> { caseShow }   </div> 
-            :
-            (
-              <div>
-                <div>总共：{totalExecute}</div>
-                <div style={{ display: 'flex' }}>
-                  {
-                    Object.keys(executeStatus).map(key => (<div>
-                      <span>{key}：</span>
-                      <span>{executeStatus[key]}</span>
-                    </div>))
-                  }                
-                </div>          
+            <div style={{ display: 'flex', margin: '15px 0', alignItems: 'center' }} >
+              <div style={{ width: 80 }}>
+                {execute.cycleName || execute.testStep}
               </div>
-            );
+              <div
+                className="c7n-collapse-text-icon" 
+                style={{ color: statusColor, borderColor: statusColor }}
+              >
+                {statusName}
+              </div>
+              <Link 
+                style={{ lineHeight: '13px' }}
+                to={`/testManager/Cycle/execute/${execute.executeId}?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}
+              >
+                <Icon type="explicit2" style={{ marginLeft: 10, color: 'black' }} />
+              </Link>
+              {
+                i >= testCycleCaseES.length && 
+                <div style={{
+                  height: 20,
+                  width: 43,
+                  marginLeft: 60,
+                  color: 'white',
+                  padding: '0 8px',
+                  background: 'rgba(0,0,0,0.20)',
+                  borderRadius: '100px',
+                }}
+                >步骤</div>
+              }
+              
+            </div>);
+        });
+        return openId === issueId ? 
+          <div style={{ minHeight: 30 }}> { caseShow }   </div> 
+          :
+          (
+            <div>
+              <div>总共：{totalExecute}</div>
+              <div style={{ display: 'flex' }}>
+                {
+                  Object.keys(executeStatus).map(key => (<div>
+                    <span>{key}：</span>
+                    <span>{executeStatus[key]}</span>
+                  </div>))
+                }                
+              </div>          
+            </div>
+          );
       },
     }, {
       className: 'c7n-table-white',
@@ -235,60 +273,30 @@ class ReportTest extends Component {
       key: 'cycleId',
       width: '25%',
       render(cycleId, record) {
-        const { linkedTestIssues } = record;        
-        // return (<div>{linkedTestIssues.map((testIssue) => {
-        //   const { testCycleCaseES, issueId } = testIssue;
-        //   // console.log()
-        //   const totalExecute = testCycleCaseES.length;
-        //   // const todoExecute = 0;
-        //   // let doneExecute = 0;
-        //   const executeStatus = {};
-        //   const caseShow = testCycleCaseES.map((execute) => {
-        //     // 执行的颜色
-        //     const { executionStatus } = execute;
-        //     const statusColor = _.find(statusList, { statusId: executionStatus }) ?
-        //       _.find(statusList, { statusId: executionStatus }).statusColor : '';
-        //     const statusName = _.find(statusList, { statusId: executionStatus }) &&
-        //         _.find(statusList, { statusId: executionStatus }).statusName;
-        //       // if (statusColor !== 'gray') {
-        //       //   doneExecute += 1;
-        //       // }
-        //     if (!executeStatus[statusName]) {
-        //       executeStatus[statusName] = 1;
-        //     } else {
-        //       executeStatus[statusName] += 1;
-        //     }
-              
-        //     return (<div style={{ display: 'flex', margin: '5px 0' }} >
-        //       {execute.cycleName}
-        //       <div
-        //         className="c7n-collapse-text-icon" 
-        //         style={{ color: statusColor, borderColor: statusColor }}
-        //       >
-        //         {statusName}
-        //       </div>
-        //     </div>);
-        //   });
-        //   // window.console.log(executeStatus);
-        //   return openId[record.issueId] && openId[record.issueId]
-        //     .includes(issueId.toString()) ? 
-        //       <div style={{ minHeight: 30 }}> { caseShow }   </div> 
-        //     :
-        //     (
-        //       <div>
-        //         <div>总共：{totalExecute}</div>
-        //         <div style={{ display: 'flex' }}>
-        //           {
-        //             Object.keys(executeStatus).map(key => (<div>
-        //               <span>{key}：</span>
-        //               <span>{executeStatus[key]}</span>
-        //             </div>))
-        //           }                
-        //         </div>          
-        //       </div>
-        //     );
-        // })}
-        // </div>);        
+        // const { linkedTestIssues } = record; 
+        const { testCycleCaseES, testCycleCaseStepES } = record;
+        const { issueId } = record.issueInfosDTO;
+        const caseShow = testCycleCaseES.concat(testCycleCaseStepES).map((execute) => {
+          const { issueInfosDTO } = execute;
+          const { issueColor, issueName, issueStatusName, summary } = issueInfosDTO;
+          return (<div>
+            <div className="c7n-collapse-show-item">
+              <div>{issueName}</div>
+              <div className="c7n-collapse-header-icon">                 
+                <span style={{ color: issueColor, borderColor: issueColor }}>
+                  {issueStatusName}
+                </span>
+              </div>        
+            </div>
+            <div style={{ fontSize: '13px' }}>{summary}</div>
+          </div>);
+        });
+        return openId === issueId ?  
+          <div style={{ minHeight: 30 }}> { caseShow }   </div> 
+          :
+          (         
+            <div>总共：{testCycleCaseES.concat(testCycleCaseStepES).length}</div>            
+          );
       },
     }, {
       className: 'c7n-table-white',
@@ -297,42 +305,39 @@ class ReportTest extends Component {
       key: 'demand',
       width: '25%',
       render(demand, record) {
-        const { linkedTestIssues } = record;        
-        // return (<div>{ linkedTestIssues.map((testIssue) => {
-        //   const { testCycleCaseES, issueId } = testIssue;
-        //   return (openId[record.issueId] && openId[record.issueId]
-        //     .includes(issueId.toString()) ?    
-        //     <div>
-        //         {                
-        //         testCycleCaseES.map((item) => {
-        //           const { defects } = item;
-        //           return <div>{defects.length > 0 ? defects.map(defect => <div>{defect.defectName}</div>) : '-'}</div>;
-        //         })
-        //       } 
-        //       </div> :            
-        //       <div>
-        //       {
-        //         testCycleCaseES.map((item) => {
-        //           const { defects } = item;
-        //           return <div>{defects.map((defect, i) => (
-        //             <span style={{
-        //               fontSize: '13px',
-        //               color: '#3F51B5',                 
-        //             }}>
-        //               {i === 0 ? null :'，'}
-        //               <span>
-        //                 {defect.defectName}
-        //               </span>
-        //             </span>))}</div>;
-        //         })}
-        //     </div>);
-        // })}
-        // </div>);
+        const { testCycleCaseES, testCycleCaseStepES } = record;
+        
+        const caseShow = testCycleCaseES.concat(testCycleCaseStepES).map((execute) => {
+          const { issueLinkDTOS } = execute;
+          window.console.log(issueLinkDTOS.length);
+          // const { issueColor, issueName, issueStatusName, summary } = issueInfosDTO;
+          return (
+            <div>{issueLinkDTOS.length}</div>
+          // <div>
+          //   <div className="c7n-collapse-show-item">
+          //     <div>{issueName}</div>
+          //     <div className="c7n-collapse-header-icon">                 
+          //       <span style={{ color: issueColor, borderColor: issueColor }}>
+          //         {issueStatusName}
+          //       </span>
+          //     </div>        
+          //   </div>
+          //   <div style={{ fontSize: '13px' }}>{summary}</div>
+          // </div>
+          );
+        });
+        // return openId === issueId ?  
+        //   <div style={{ minHeight: 30 }}> { caseShow }   </div> 
+        //   :
+        //   (         
+        //     <div>总共：{testCycleCaseES.concat(testCycleCaseStepES).length}</div>            
+        //   );
+        return caseShow;
       },
     }];
 
     return (
-      <Page className="c7n-report-story">
+      <Page className="c7n-report-test">
         <Header title="缺陷 -> 执行 -> 测试 -> 要求">
           <Dropdown overlay={menu} trigger="click">
             <a className="ant-dropdown-link" href="#">
@@ -340,7 +345,7 @@ class ReportTest extends Component {
             </a>
           </Dropdown>
           <Button 
-            style={{ marginLeft: 30}}
+            style={{ marginLeft: 30 }}
             onClick={() => {
               this.setState({
                 selectVisible: true,
@@ -381,7 +386,7 @@ class ReportTest extends Component {
           <Table   
             filterBar={false}        
             loading={loading}
-            pagination={pagination}
+            // pagination={pagination}
             columns={columns}
             dataSource={reportList}
             onChange={this.handleTableChange}
