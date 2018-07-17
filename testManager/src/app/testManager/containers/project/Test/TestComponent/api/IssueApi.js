@@ -152,7 +152,7 @@ export function updateIssueType(data, projectId = AppState.currentMenuType.id) {
 
 export function loadIssues(page = 0, size = 10, searchDTO, orderField, orderType) {
   const projectId = AppState.currentMenuType.id;
-  return axios.post(`/agile/v1/projects/${projectId}/issues/no_sub?page=${page}&size=${size}`, searchDTO, {
+  return axios.post(`/agile/v1/projects/${projectId}/issues/test_component/no_sub?page=${page}&size=${size}`, searchDTO, {
     params: {
       sort: `${orderField && orderType ? `${orderField},${orderType}` : ''}`,
     },

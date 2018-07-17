@@ -41,9 +41,13 @@ class TableCanDragAndDrop extends Component {
     arr.splice(fromIndex, 1);
     arr.splice(toIndex, 0, drag);
     this.setState({ data: arr });
+    // arr此时是有序的，取toIndex前后两个的rank
+    const lastRank = toIndex === 0 ? null : arr[toIndex - 1].rank;
+    const nextRank = toIndex === arr.length - 1 ? null : arr[toIndex + 1].rank;
     const testCaseStepDTO = {
       ...drag,
-      lastRank: arr[toIndex].rank,
+      lastRank,
+      nextRank,
     };
     const projectId = AppState.currentMenuType.id;
     axios.put(`/test/v1/projects/${projectId}/case/step/change`, testCaseStepDTO)
@@ -135,20 +139,22 @@ class TableCanDragAndDrop extends Component {
                 {...provided1.draggableProps}
                 {...provided1.dragHandleProps}
               >
-                <div className={`${item.id}-list`} style={{ width: '100%', display: 'flex', height: 34, borderBottom: '1px solid rgba(0, 0, 0, 0.12)', borderTop: '1px solid rgba(0, 0, 0, 0.12)' }}>
-                  <span style={{ width: 50, display: 'inline-block', lineHeight: '34px', paddingLeft: 20 }}>
-                    {item.stepId}
+                <div className={`${item.id}-list`} style={{ width: '100%', display: 'flex', height: 34, borderBottom: '1px solid rgba(0, 0, 0, 0.12)', borderTop: '1px solid rgba(0, 0, 0, 0.12)', display: 'flex' }}>
+                  <span style={{ flex: 1, lineHeight: '34px' }}>
+                    <span style={{ paddingLeft: 20, boxSizing: 'border-box' }}>
+                      {item.stepId}
+                    </span>
                   </span>
-                  <span style={{ width: 115, display: 'inline-block', lineHeight: '34px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', paddingRight: 15 }}>
+                  <span style={{ flex: 2, display: 'inline-block', lineHeight: '34px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {item.testStep}
                   </span>
-                  <span style={{ width: 115, display: 'inline-block', lineHeight: '34px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', paddingRight: 15 }}>
+                  <span style={{ flex: 2, display: 'inline-block', lineHeight: '34px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {item.testData}
                   </span>
-                  <span style={{ width: 115, display: 'inline-block', lineHeight: '34px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', paddingRight: 15 }}>
+                  <span style={{ flex: 2, display: 'inline-block', lineHeight: '34px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {item.expectedResult}
                   </span>
-                  <span style={{ width: 250, display: 'inline-block', overflow: 'hidden', position: 'relative' }} role="none" onClick={this.handleChangeExpand.bind(this, item.id)}>
+                  <span style={{ flex: 5, display: 'inline-block', overflow: 'hidden', position: 'relative' }} role="none" onClick={this.handleChangeExpand.bind(this, item.id)}>
                     <div className={`${item.id}-attachment`} style={{ }}>
                       {
                         item.attachments.map(attachment => (
@@ -163,7 +169,7 @@ class TableCanDragAndDrop extends Component {
                         ? <span style={{ position: 'absolute', top: 10, right: 0 }} className={_.indexOf(this.state.expand, item.id) !== -1 ? 'icon icon-keyboard_arrow_up' : 'icon icon-keyboard_arrow_down'} /> : null
                     }
                   </span>
-                  <span style={{ display: 'inline-block', lineHeight: '34px' }}>
+                  <span style={{ width: 50, lineHeight: '34px' }}>
                     <Dropdown overlay={this.getMenu()} trigger={['click']} onClick={() => this.setState({ currentTestStepId: item.stepId })}>
                       <Button icon="more_vert" shape="circle" />
                     </Dropdown>
@@ -181,16 +187,16 @@ class TableCanDragAndDrop extends Component {
   render() {
     return (
       <DragDropContext onDragEnd={this.onDragEnd.bind(this)}>
-        <div style={{ width: 680 }}>
-          <div style={{ width: '100%', height: 30, background: 'rgba(0, 0, 0, 0.04)', borderTop: '2px solid rgba(0,0,0,0.12)', borderBottom: '1px solid rgba(0,0,0,0.12)' }}>
-            <span style={{ width: 50, display: 'inline-block', lineHeight: '30px' }} />
-            <span style={{ width: 115, display: 'inline-block', lineHeight: '30px' }}>
+        <div style={{ width: '100%' }}>
+          <div style={{ width: '100%', height: 30, background: 'rgba(0, 0, 0, 0.04)', borderTop: '2px solid rgba(0,0,0,0.12)', borderBottom: '1px solid rgba(0,0,0,0.12)', display: 'flex' }}>
+            <span style={{ flex: 1, lineHeight: '30px' }} />
+            <span style={{ flex: 2, lineHeight: '30px' }}>
               测试步骤
             </span>
-            <span style={{ width: 115, display: 'inline-block', lineHeight: '30px' }}>测试数据</span>
-            <span style={{ width: 115, display: 'inline-block', lineHeight: '30px' }}>预期结果</span>
-            <span style={{ width: 250, display: 'inline-block', lineHeight: '30px' }}>分步附件</span>
-            <span />
+            <span style={{ flex: 2, lineHeight: '30px' }}>测试数据</span>
+            <span style={{ flex: 2, lineHeight: '30px' }}>预期结果</span>
+            <span style={{ flex: 5, lineHeight: '30px' }}>分步附件</span>
+            <span style={{ width: 50, lineHeight: '30px' }} />
           </div>
           <Droppable droppableId="dropTable">
             {(provided, snapshot) => (

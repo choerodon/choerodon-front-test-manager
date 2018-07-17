@@ -23,12 +23,12 @@ class CreateTest extends Component {
     this.props.form.validateFields((err, values) => {
       if (!err) {
         const { testStep, testData, expectedResult } = values;
-        const { nextRank, issueId } = this.props;
+        const { lastRank, issueId } = this.props;
         const testCaseStepDTO = {
           attachments: [],
           issueId,
-          lastRank: null,
-          nextRank,
+          lastRank,
+          nextRank: null,
           testStep,
           testData,
           expectedResult,
