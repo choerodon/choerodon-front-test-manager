@@ -32,7 +32,7 @@ const styles = {
   cardBodyStyle: {
     maxHeight: '100%',
     padding: 12,
-    overflow: 'hidden',
+    // overflow: 'hidden',
   },
   cardContent: {
 
@@ -367,7 +367,11 @@ class CycleExecute extends Component {
       // this.setState({ loading: true });
       uploadFile(formData, config).then(() => {
         this.getInfo();
+        // 清空input值，保证触发change
+        this.uploadInput.value = '';
       }).catch(() => {
+        // 清空input值，保证触发change
+        this.uploadInput.value = '';
         Choerodon.prompt('网络异常');
       });
     }
@@ -966,6 +970,9 @@ class CycleExecute extends Component {
                     <Button className="c7n-upload-button">
                       <Icon type="file_upload" /> 上传附件
                       <input
+                        ref={
+                          (uploadInput) => { if (uploadInput) { this.uploadInput = uploadInput; } }
+                        }
                         type="file"
                         multiple
                         title="更换头像"
