@@ -30,9 +30,9 @@ const styles = {
     marginLeft: '5px',
   },
   cardBodyStyle: {
-    maxHeight: '100%',
+    // maxHeight: '100%',
     padding: 12,
-    // overflow: 'hidden',
+    overflow: 'hidden',
   },
   cardContent: {
 

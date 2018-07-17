@@ -136,14 +136,14 @@ class SummaryHome extends Component {
 
         },
         otherArgs: {
-          lable: [label.id],
+          label: [label.labelId],
         },
       };
 
 
       getIssueCount(search).then((data) => {
         window.console.log(label, data.totalElements);
-        resolve({ name: label.name, id: label.id, num: data.totalElements });
+        resolve({ name: label.labelName, id: label.labelId, num: data.totalElements });
       });
     }),
     ))
@@ -154,14 +154,14 @@ class SummaryHome extends Component {
 
         },
         otherArgs: {
-          component: [component.id],
+          component: [component.componentId],
         },
       };
 
 
       getIssueCount(search).then((data) => {
         window.console.log(component, data.totalElements);
-        resolve({ name: component.name, id: component.id, num: data.totalElements });
+        resolve({ name: component.name, id: component.componentId, num: data.totalElements });
       });
     }),
     ))
@@ -205,7 +205,7 @@ class SummaryHome extends Component {
     const { loading, range, excuteList, createList, totalExcute,
       totalCreate, totalTest, notPlan, notRun, caseNum, versionTable,
       labelTable, componentTable } = this.state;
-    window.console.log(excuteList);
+    // window.console.log(labelTable);
     const columns = [{
       title: '名称',
       dataIndex: 'name',
@@ -270,7 +270,7 @@ class SummaryHome extends Component {
                 <Table
                   columns={columns}
                   pagination={{ pageSize: 5, showSizeChanger: false }}
-                  dataSource={labelTable}
+                  dataSource={componentTable}
                   filterBar={false}
                 />
               </div>
@@ -279,7 +279,7 @@ class SummaryHome extends Component {
                 <Table
                   columns={columns}
                   pagination={{ pageSize: 5, showSizeChanger: false }}
-                  dataSource={componentTable}
+                  dataSource={labelTable}
                   filterBar={false}
                 />
               </div>
