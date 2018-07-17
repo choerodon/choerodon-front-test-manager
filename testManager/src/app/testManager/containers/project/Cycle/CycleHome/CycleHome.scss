@@ -41,10 +41,13 @@ $drop-gradient: rgba(140, 158, 255, 0.16);
 }
 
 .c7n-ch-left {
-    margin-left: 10px;
-    width: 400px;
+    // margin-left: 10px;
+    width: 360px;
     border-right: 1px solid rgba(0, 0, 0, 0.36);
     padding-bottom: 100px;
+    .c7n-chlh-tree{
+      margin-left: -4px;
+    }
 }
 
 .c7n-chl-head {
@@ -57,7 +60,7 @@ $drop-gradient: rgba(140, 158, 255, 0.16);
 }
 
 .c7n-chlh-button {
-    margin-left: 19px;
+    margin-left: 12px;
     display: flex;
 }
 

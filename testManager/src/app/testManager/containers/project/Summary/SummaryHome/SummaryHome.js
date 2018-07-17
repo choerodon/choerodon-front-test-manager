@@ -202,7 +202,7 @@ class SummaryHome extends Component {
     const { loading, range, excuteList, createList, totalExcute,
       totalCreate, totalTest, notPlan, notRun, caseNum, versionTable,labelTable,componentTable } = this.state;
     const columns = [{
-      title: '版本',
+      title: '名称',
       dataIndex: 'name',
       key: 'name',
     }, {
