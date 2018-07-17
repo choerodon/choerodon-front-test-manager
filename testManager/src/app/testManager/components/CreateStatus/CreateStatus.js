@@ -38,7 +38,7 @@ class CreateStatus extends Component {
           ...{ statusColor },
         }).then((res) => {
           if (res.failed) {
-            Choerodon.prompt('状态不能重名');
+            Choerodon.prompt('状态或颜色不能相同');
           } else {
             onOk();
           }

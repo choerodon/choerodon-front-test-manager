@@ -107,14 +107,17 @@ class CustomStatusHome extends Component {
     this.setState({
       loading: true,
     });
-    deleteStatus(data.statusId).then(() => {
+    deleteStatus(data.statusId).then((res) => {
+      if (res.failed) {
+        Choerodon.prompt('状态已被使用，不可删除');
+      }
       this.setState({
-        loading: true,
+        loading: false,
       });
       this.getList();
     }).catch(() => {
       this.setState({
-        loading: true,
+        loading: false,
       });
     });
     // window.console.log(data);

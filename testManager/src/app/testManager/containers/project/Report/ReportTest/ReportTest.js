@@ -52,7 +52,7 @@ class ReportTest extends Component {
       total: 0,
       pageSize: 10,
     },
-    openId: {},
+    openId: [],
     issueIds: [],
   }
   componentDidMount() {
@@ -73,7 +73,7 @@ class ReportTest extends Component {
         statusList,      
         stepStatusList, 
         loading: false,
-        openId: {},
+        openId: [],
       });
     });
   }
@@ -96,38 +96,30 @@ class ReportTest extends Component {
           total: reportData.totalElements,
         },
       });
+    }).catch((error) => {
+      window.console.log(error);
+      this.setState({
+        loading: false,
+      });
+      Choerodon.prompt('网络异常');
     });
-    // .catch((error) => {
-    //   window.console.log(error);
-    //   this.setState({
-    //     loading: false,
-    //   });
-    //   Choerodon.prompt('网络异常');
-    // });
   }
   handleTableChange = (pagination, filters, sorter) => {
     this.getList(pagination);
   }
   handleOpen=(issueId, keys) => {
-    // const { openId } = this.state;  
-    // openId[issueId] = keys;
-    // if (open) {
+    const { openId } = this.state;  
+
     if (keys.length > 0) {
       this.setState({
-        openId: issueId,
+        openId: openId.concat(keys),
       });
     } else {
+      openId.splice(openId.indexOf(issueId), 1);
       this.setState({
-        openId: null,
+        openId: [...openId],
       });
     }
-    
-    // } else {
-    //   openId.splice(openId.indexOf(issueId), 1);
-    //   this.setState({
-    //     openId: [...openId],
-    //   });
-    // }
   }
   render() {
     const { selectVisible, reportList, loading, pagination,
@@ -158,7 +150,7 @@ class ReportTest extends Component {
         const { issueId, issueColor, issueStatusName, issueName, summary } = issueInfosDTO;
         return (
           <Collapse 
-            activeKey={openId ? [openId.toString()] : []}
+            activeKey={openId}
             bordered={false} 
             onChange={(keys) => { that.handleOpen(issueId, keys); }}
           >
@@ -167,7 +159,7 @@ class ReportTest extends Component {
               header={
                 <div>
                   <div className="c7n-collapse-show-item">
-                    <div>{issueName}</div>
+                    <div style={{ width: 100, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{issueName}</div>
                     <div className="c7n-collapse-header-icon">                 
                       <span style={{ color: issueColor, borderColor: issueColor }}>
                         {issueStatusName}
@@ -249,7 +241,7 @@ class ReportTest extends Component {
               
             </div>);
         });
-        return openId === issueId ? 
+        return openId.includes(issueId.toString()) ? 
           <div style={{ minHeight: 30 }}> { caseShow }   </div> 
           :
           (
@@ -291,7 +283,7 @@ class ReportTest extends Component {
             <div style={{ fontSize: '13px' }}>{summary}</div>
           </div>);
         });
-        return openId === issueId ?  
+        return openId.includes(issueId.toString()) ?  
           <div style={{ minHeight: 30 }}> { caseShow }   </div> 
           :
           (         
@@ -306,33 +298,28 @@ class ReportTest extends Component {
       width: '25%',
       render(demand, record) {
         const { testCycleCaseES, testCycleCaseStepES } = record;
-        
+        const { issueId } = record.issueInfosDTO;
         const caseShow = testCycleCaseES.concat(testCycleCaseStepES).map((execute) => {
           const { issueLinkDTOS } = execute;
-          window.console.log(issueLinkDTOS.length);
-          // const { issueColor, issueName, issueStatusName, summary } = issueInfosDTO;
-          return (
-            <div>{issueLinkDTOS.length}</div>
-          // <div>
-          //   <div className="c7n-collapse-show-item">
-          //     <div>{issueName}</div>
-          //     <div className="c7n-collapse-header-icon">                 
-          //       <span style={{ color: issueColor, borderColor: issueColor }}>
-          //         {issueStatusName}
-          //       </span>
-          //     </div>        
-          //   </div>
-          //   <div style={{ fontSize: '13px' }}>{summary}</div>
-          // </div>
-          );
+          // window.console.log(issueLinkDTOS.length);
+          const issueLinks = issueLinkDTOS.map((link) => {
+            const { statusColor, statusName, issueNum, summary } = link;
+            return (<div>
+              <div className="c7n-collapse-show-item">
+                <div>{issueNum}</div>
+                <div className="c7n-collapse-header-icon">                 
+                  <span style={{ color: statusColor, borderColor: statusColor }}>
+                    {statusName}
+                  </span>
+                </div>        
+              </div>
+              <div style={{ fontSize: '13px' }}>{summary}</div>
+            </div>);
+          });
+          return <div>{issueLinks}</div>;
         });
-        // return openId === issueId ?  
-        //   <div style={{ minHeight: 30 }}> { caseShow }   </div> 
-        //   :
-        //   (         
-        //     <div>总共：{testCycleCaseES.concat(testCycleCaseStepES).length}</div>            
-        //   );
-        return caseShow;
+
+        return openId.includes(issueId.toString()) ? caseShow : '-';
       },
     }];
 
