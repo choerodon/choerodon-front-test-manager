@@ -595,7 +595,7 @@ class CycleHome extends Component {
       title: 'ID',
       dataIndex: 'issueId',
       key: 'issueId',
-      onCell: this.handleCell,
+      onCell: this.handleCell,     
     }, {
       title: '状态',
       dataIndex: 'executionStatus',

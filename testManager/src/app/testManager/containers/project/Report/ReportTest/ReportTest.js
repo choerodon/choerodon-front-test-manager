@@ -369,7 +369,8 @@ class ReportTest extends Component {
               this.getReportsFromDefect(null, issueIds);
             }}
           />
-          <Table           
+          <Table   
+            filterBar={false}        
             loading={loading}
             pagination={pagination}
             columns={columns}

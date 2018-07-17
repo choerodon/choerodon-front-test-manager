@@ -400,7 +400,8 @@ class ReportStory extends Component {
               this.getReportsFromStory(null, issueIds);
             }}
           />
-          <Table           
+          <Table     
+            filterBar={false}      
             loading={loading}
             pagination={pagination}
             columns={columns}
