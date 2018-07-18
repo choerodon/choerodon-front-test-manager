@@ -68,7 +68,7 @@ class CreateStatus extends Component {
                 padding: '0 0 10px 0',
               }}
               title={`在项目“${AppState.currentMenuType.name}”中创建执行状态`}
-              description="您可以为一个或多个成员分配一个或多个全局层的角色，即给成员授予全局层的权限。"
+              description="您可以创建自定义状态，包括执行状态和步骤状态。"
               link="#"
             >
               <Form>

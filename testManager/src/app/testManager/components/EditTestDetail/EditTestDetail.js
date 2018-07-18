@@ -261,7 +261,7 @@ class EditTestDetail extends Component {
             padding: '0 0 10px 0',
           }}
           title={`修改“${testStep}”的信息`}
-          description="您可以为一个或多个成员分配一个或多个全局层的角色，即给成员授予全局层的权限。"
+          description="您可以修改一个测试步骤的详细信息。"
           link="#"
         >
           <Spin spinning={loading}>
