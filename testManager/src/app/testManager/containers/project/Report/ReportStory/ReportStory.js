@@ -247,8 +247,7 @@ class ReportStory extends Component {
           });
           // window.console.log(executeStatus);
           return openId[record.issueId] && openId[record.issueId]
-            .includes(issueId.toString()) ? 
-            <div style={{ minHeight: 30 }}> { caseShow }   </div> 
+            .includes(issueId.toString()) ? <div style={{ minHeight: 30 }}> { caseShow }   </div> 
             :
             (
               <div>
@@ -279,8 +278,7 @@ class ReportStory extends Component {
           
           
           return (openId[record.issueId] && openId[record.issueId]
-            .includes(issueId.toString()) ?    
-              <div>
+            .includes(issueId.toString()) ? <div>
               {                
                 testCycleCaseES.map((item) => {
                   const { defects } = item;
@@ -288,11 +286,13 @@ class ReportStory extends Component {
                     (<div className="c7n-collapse-show-item">
                       <div>{defect.defectName}</div>
                       <div className="c7n-collapse-header-icon">                 
-                        <span style={{ color: defect.defectColor, borderColor: defect.defectColor }}>
+                        <span style={{ 
+                          color: defect.defectColor, borderColor: defect.defectColor }}
+                        >
                           {defect.defectStatus}
                         </span>
                       </div>
-                      {defect.defectType == 'CASE_STEP' &&
+                      {defect.defectType === 'CASE_STEP' &&
                       <div style={{
                         marginLeft: 60,
                         color: 'white',
@@ -307,7 +307,7 @@ class ReportStory extends Component {
               } 
             </div> :            
             <div>
-                {
+              {
                 testCycleCaseES.map((item) => {
                   const { defects } = item;
                   return (<div>{defects.map((defect, i) => (
@@ -322,7 +322,7 @@ class ReportStory extends Component {
                       </span>
                     </span>))}</div>);
                 })}
-              </div>);
+            </div>);
         })}
         </div>);
       },
