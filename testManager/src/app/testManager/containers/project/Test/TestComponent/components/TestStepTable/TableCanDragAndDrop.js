@@ -17,6 +17,7 @@ class TableCanDragAndDrop extends Component {
       issueId: undefined,
       editTestStepShow: false,
       currentTestStepId: undefined,
+      currentAttments: [],
     };
   }
 
@@ -159,7 +160,7 @@ class TableCanDragAndDrop extends Component {
                       {
                         item.attachments.map(attachment => (
                           <span style={{ padding: '3px 12px', display: 'inline-block', maxWidth: 192, marginTop: 4, lineHeight: '20px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', borderRadius: '100px', background: 'rgba(0, 0, 0, 0.08)', marginRight: 6 }}>
-                            {attachment.name}
+                            {attachment.attachmentName}
                           </span>
                         ))
                       }
@@ -170,7 +171,7 @@ class TableCanDragAndDrop extends Component {
                     }
                   </span>
                   <span style={{ width: 50, lineHeight: '34px' }}>
-                    <Dropdown overlay={this.getMenu()} trigger={['click']} onClick={() => this.setState({ currentTestStepId: item.stepId })}>
+                    <Dropdown overlay={this.getMenu()} trigger={['click']} onClick={() => this.setState({ currentTestStepId: item.stepId, currentAttments: item.attachments })}>
                       <Button icon="more_vert" shape="circle" />
                     </Dropdown>
                   </span>
@@ -218,6 +219,7 @@ class TableCanDragAndDrop extends Component {
         {
           this.state.editTestStepShow ? (
             <EditTest
+              attachments={this.state.currentAttments}
               issueId={this.props.issueId}
               stepId={this.state.currentTestStepId}
               visible={this.state.editTestStepShow}
