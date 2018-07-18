@@ -355,7 +355,7 @@ class ReportTest extends Component {
         // style={{
         //   padding: '0 0 10px 0',
         // }}
-          title={`项目"${'projectzzy'}"的报表`}
+          title={`项目"${AppState.currentMenuType.name}"的报表`}
           description="两种可跟踪性报告可用：要求 -> 测试 -> 执行 -> 缺陷，缺陷 -> 执行 -> 测试 -> 。
         点击您需要查看的报告类型可以查看具体的详细内容。"
           link="#"
