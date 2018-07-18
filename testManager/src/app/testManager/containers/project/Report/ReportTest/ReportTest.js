@@ -48,8 +48,8 @@ class ReportTest extends Component {
     statusList: [],
     stepStatusList: [],
     pagination: {
-      // current: 1,
-      // total: 0,
+      current: 1,
+      total: 0,
       pageSize: 10,
     },
     openId: [],
@@ -77,20 +77,20 @@ class ReportTest extends Component {
       });
     });
   }
-  getReportsFromDefect = ({ pagination, issueIds } = 
-  { pagination: this.state.pagination, issueIds: this.state.issueIds }) => {
+  getReportsFromDefect = (pagination, issueIds = this.state.issueIds) => {
+    const Pagination = pagination || this.state.pagination;
     this.setState({ loading: true });
     getReportsFromDefect({
-      page: pagination.current - 1,
-      size: pagination.pageSize,
+      page: Pagination.current - 1,
+      size: Pagination.pageSize,
     }, issueIds).then((reportData) => {
       this.setState({
         loading: false,
         // reportList: reportData.content,
         reportList: reportData,
         pagination: {
-          current: pagination.current,
-          pageSize: pagination.pageSize,
+          current: Pagination.current,
+          pageSize: Pagination.pageSize,
           total: reportData.totalElements,
         },
       });
@@ -105,15 +105,15 @@ class ReportTest extends Component {
   handleTableChange = (pagination, filters, sorter) => {
     this.getList(pagination);
   }
-  handleOpen=(issueId, keys) => {
+  handleOpen=(issueId) => {
     const { openId } = this.state;  
-
-    if (keys.length > 0) {
+    if (!openId.includes(issueId.toString())) {
       this.setState({
-        openId: openId.concat(keys),
+        openId: openId.concat([issueId.toString()]),
       });
     } else {
-      openId.splice(openId.indexOf(issueId), 1);
+      const index = openId.indexOf(issueId.toString());  
+      openId.splice(index, 1);
       this.setState({
         openId: [...openId],
       });
@@ -366,7 +366,7 @@ class ReportTest extends Component {
             onCancel={() => { this.setState({ selectVisible: false }); }}
             onOk={(issueIds) => {
               this.setState({ selectVisible: false, issueIds }); 
-              this.getReportsFromDefect({ issueIds });
+              this.getReportsFromDefect(null, issueIds);
             }}
           />
           <Table   

@@ -10,7 +10,17 @@ export function deleteFile(id) {
   const projectId = AppState.currentMenuType.id;
   return axios.delete(`/agile/v1/projects/${projectId}/issue_attachment/${id}`);
 }
-
+/**
+ *删除步骤附件
+ *
+ * @export
+ * @param {*} id
+ * @returns
+ */
+export function deleteAttachment(id) {
+  const projectId = AppState.currentMenuType.id;
+  return axios.delete(`test/v1/projects/${projectId}/test/case/attachment/delete/bucket/test/attach/${id}`);
+}
 /**
  * 上传图片
  * @param {any} data

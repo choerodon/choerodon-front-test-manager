@@ -341,30 +341,17 @@ class CycleExecute extends Component {
   }
   handleUpload = (e) => {
     if (beforeUpload(e.target.files[0])) {
-      // console.log(e.target.files);
       const formData = new FormData();
       [].forEach.call(e.target.files, (file) => {
-        // file.name = encodeURI(encodeURI(file.name));
         formData.append('file', file);
       });
-
-      // formData.append('file', e.target.files[0]);
-      // this.setState({
-      //   fileList: [...this.state.fileList, ...[{
-      //     uid: Math.random(),
-      //     name: e.target.files[0].name,
-      //     status: 'done',
-      //     url: 'response',
-      //   }]],
-      // });
       const config = {
-        bucketName: 'test',
-        // fileName: e.target.files[0].name,
+        bucketName: 'test',      
         comment: '',
         attachmentLinkId: this.state.cycleData.executeId,
         attachmentType: 'CYCLE_CASE',
       };
-      // this.setState({ loading: true });
+      this.setState({ loading: true });
       uploadFile(formData, config).then(() => {
         this.getInfo();
         // 清空input值，保证触发change
@@ -592,14 +579,53 @@ class CycleExecute extends Component {
       title: '预期结果',
       dataIndex: 'expectedResult',
       key: 'expectedResult',
-    }, {
+    }, 
+    {
       title: '步骤附件',
-      dataIndex: 'caseAttachment',
-      key: 'caseAttachment',
-      render(caseAttachment) {
-        return caseAttachment.map(attachment => <div>{caseAttachment.attachmentName}</div>);
+      dataIndex: 'stepAttachment',
+      key: 'stepAttachment',      
+      render(stepAttachment) {
+        return (<Tooltip title={
+          <div>
+            {stepAttachment.map((attachment, i) => (
+              <div style={{
+                fontSize: '13px',
+                color: 'white',
+              }}
+              >
+                {/* {i === 0 ? null : '，'} */}
+                <span>
+                  {attachment.attachmentName}
+                </span>
+              </div>))}
+          </div>}
+        >
+          <div
+            style={{
+              width: 100,
+              display: 'flex',
+              alignItems: 'center',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}        
+          >
+            {stepAttachment.map((attachment, i) => (
+              <div style={{
+                fontSize: '13px',
+                // color: '#3F51B5',
+              }}
+              >
+                {i === 0 ? null : '，'}
+                <span>
+                  {attachment.attachmentName}
+                </span>
+              </div>))}
+          </div>
+        </Tooltip>);       
       },
-    }, {
+    }, 
+    {
       title: '状态',
       dataIndex: 'stepStatus',
       key: 'stepStatus',
@@ -632,15 +658,53 @@ class CycleExecute extends Component {
           </Tooltip>
         );
       },
+    }, {
+      title: '附件',
+      dataIndex: 'caseAttachment',
+      key: 'caseAttachment',
+      render(caseAttachment) {
+        return (<Tooltip title={
+          <div>
+            {caseAttachment.map((attachment, i) => (
+              <div style={{
+                fontSize: '13px',
+                color: 'white',
+              }}
+              >
+                {/* {i === 0 ? null : '，'} */}
+                <span>
+                  {attachment.attachmentName}
+                </span>
+              </div>))}
+          </div>}
+        >
+          <div
+            style={{
+              width: 100,
+              display: 'flex',
+              alignItems: 'center',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}        
+          >
+            {caseAttachment.map((attachment, i) => (
+              <div style={{
+                fontSize: '13px',
+                // color: '#3F51B5',
+              }}
+              >
+                {i === 0 ? null : '，'}
+                <span>
+                  {attachment.attachmentName}
+                </span>
+              </div>))}
+          </div>
+        </Tooltip>);       
+      },
+      
     },
     {
-      title: '附件',
-      dataIndex: 'stepAttachment',
-      key: 'stepAttachment',
-      render(stepAttachment) {
-        return stepAttachment.map(attachment => <div>{attachment.attachmentName}</div>);
-      },
-    }, {
       title: '缺陷',
       dataIndex: 'defects',
       key: 'defects',

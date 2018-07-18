@@ -11,7 +11,7 @@ export function getUsers(param) {
 }
 
 export function uploadFile(data, config) {
-  const { bucketName, fileName, comment, attachmentLinkId, attachmentType } = config;
+  const { bucketName, attachmentLinkId } = config;
   const projectId = AppState.currentMenuType.id;
   const axiosConfig = {
     headers: { 'content-type': 'multipart/form-datal' },

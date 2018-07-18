@@ -95,7 +95,7 @@ class CustomStatusHome extends Component {
     this.getList(this.state.statusType);
   }
   handleStatusTableChange = (pagination, filters, sorter) => {
-    this.getList(pagination);
+    // this.getList(pagination);
   }
   handleTabChange = (key) => {
     this.setState({
@@ -133,10 +133,14 @@ class CustomStatusHome extends Component {
       title: '类型',
       dataIndex: 'statusName',
       key: 'statusName',
+      filters: [],
+      onFilter: (value, record) => record.statusName.indexOf(value) === 0,  
     }, {
       title: '说明',
       dataIndex: 'description',
       key: 'description',
+      filters: [],
+      onFilter: (value, record) => record.description && record.description.indexOf(value) === 0,  
     }, {
       title: '颜色',
       dataIndex: 'statusColor',

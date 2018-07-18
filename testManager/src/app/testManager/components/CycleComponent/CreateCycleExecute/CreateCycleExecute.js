@@ -35,9 +35,7 @@ const styles = {
     color: 'white',
   },
 };
-function handleChange(value) {
-  window.console.log(`selected ${value}`);
-}
+
 class CreateCycleExecute extends Component {
   state = {
     tab: '1',
@@ -147,6 +145,11 @@ class CreateCycleExecute extends Component {
           });
           this.props.onOk();
           window.console.log(data);
+        }).catch(() => {
+          this.setState({
+            loading: false,
+          });
+          Choerodon.prompt('网络错误');
         });
         // POST / v1 / projects / { project_id } / issues / test_component / no_sub;
 
@@ -196,13 +199,13 @@ class CreateCycleExecute extends Component {
         return {
           lastRank: rank,
           cycleId,
-          issueId,
+          issueId: Number(issueId),
           assignedTo,
         };
       }
       return {
         cycleId,
-        issueId,
+        issueId: Number(issueId),
         assignedTo,
       };
     });
@@ -476,7 +479,7 @@ class CreateCycleExecute extends Component {
                       <Panel
                         header={
                           <div className="c7n-collapse-header-container">
-                            <div>被制定人</div>
+                            <div>被指定人</div>
                             <div className="c7n-collapse-header-icon">
                               <Icon type="navigate_next" />
                             </div>

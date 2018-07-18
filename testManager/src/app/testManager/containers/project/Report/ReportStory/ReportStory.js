@@ -76,20 +76,21 @@ class ReportStory extends Component {
       });
     });
   }
-  getReportsFromStory = ({ pagination, issueIds } = 
-  { pagination: this.state.pagination, issueIds: this.state.issueIds }) => {
+  getReportsFromStory = (pagination, issueIds = this.state.issueIds) => {
+    const Pagination = pagination || this.state.pagination;
+   
     this.setState({ loading: true });
     getReportsFromStory({
-      page: pagination.current - 1,
-      size: pagination.pageSize,
+      page: Pagination.current - 1,
+      size: Pagination.pageSize,
     }, issueIds).then((reportData) => {
       this.setState({
         loading: false,
         // reportList: reportData.content,
         reportList: reportData,
         pagination: {
-          current: pagination.current,
-          pageSize: pagination.pageSize,
+          current: Pagination.current,
+          pageSize: Pagination.pageSize,
           total: reportData.totalElements,
         },
       });
@@ -372,7 +373,7 @@ class ReportStory extends Component {
             onCancel={() => { this.setState({ selectVisible: false }); }}
             onOk={(issueIds) => {
               this.setState({ selectVisible: false, issueIds }); 
-              this.getReportsFromStory({ issueIds });
+              this.getReportsFromStory(null, issueIds);
             }}
           />
           <Table     
