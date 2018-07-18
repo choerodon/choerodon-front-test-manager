@@ -298,16 +298,16 @@ class CreateCycleExecute extends Component {
         {/* </div> */}
       </Option>);
     });
-    const moduleOptions = moduleList.map((module) => {
-      const { componentId, name } = module;
+    const moduleOptions = moduleList.map((component) => {
+      const { componentId, name } = component;
       return (<Option value={componentId.toString()} key={componentId}>
         {name}
       </Option>);
     });
     const labelOptions = labelList.map((label) => {
-      const { labelId, labelName } = module;
-      return (<Option value={labelId.toString()} key={labelName}>
-        {name}
+      const { labelId, labelName } = label;
+      return (<Option value={labelId.toString()} key={labelId}>
+        {labelName}
       </Option>);
     });
     const issueStatusOptions = issueStatusList.map((status) => {
@@ -629,7 +629,7 @@ class CreateCycleExecute extends Component {
                                 });
                                 getLabels().then((List) => {
                                   this.setState({
-                                    moduleList: List,
+                                    labelList: List,
                                     selectLoading: false,
                                   });
                                 });
