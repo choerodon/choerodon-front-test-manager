@@ -437,7 +437,7 @@ class CycleExecute extends Component {
       dataIndex: 'user',
       key: 'user',
       render(user) {
-        return (<div style={{ width: 100 }}>
+        return (<div style={{ width: 200 }}>
           {user ? (
             <div
               style={{
@@ -450,7 +450,7 @@ class CycleExecute extends Component {
               >
                 {user.realName.slice(0, 1)}
               </span>
-              <span style={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', width: 200 }}>
+              <span style={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
                 {`${user.loginName} ${user.realName}`}
               </span>
             </div>
@@ -794,7 +794,7 @@ class CycleExecute extends Component {
       </Option>));
     const urlParams = AppState.currentMenuType;
     return (
-      <div>
+      <Page>
         <Header title="版本：1.0" backPath={`/testManager/cycle?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}>
           <Button onClick={this.getInfo}>
             <Icon type="autorenew icon" />
@@ -1100,7 +1100,7 @@ class CycleExecute extends Component {
             </Card>
           </div>
         </Spin>
-      </div>
+      </Page>
     );
   }
 }
