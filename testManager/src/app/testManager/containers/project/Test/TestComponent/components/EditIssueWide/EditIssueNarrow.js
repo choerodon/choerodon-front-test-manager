@@ -299,19 +299,15 @@ class CreateSprint extends Component {
   }
 
   getCurrentNav(e) {
-    let eles;
-    if (this.state.typeCode !== 'sub_task') {
-      eles = ['detail', 'des', 'attachment', 'commit', 'log', 'data_log', 'sub_task', 'link_task', 'branch'];
-    } else {
-      eles = ['detail', 'des', 'attachment', 'commit', 'log', 'data_log', 'branch'];
-    }
+    const eles = ['detail', 'des', 'test1', 'test2', 'attachment', 'commit', 'log', 'data_log', 'branch'];
     return _.find(eles, i => this.isInLook(document.getElementById(i)));
   }
 
   isInLook(ele) {
     const a = ele.offsetTop;
     const target = document.getElementById('scroll-area');
-    return a >= target.scrollTop && a < (target.scrollTop + target.offsetHeight);
+    // return a >= target.scrollTop && a < (target.scrollTop + target.offsetHeight);
+    return a + ele.offsetHeight > target.scrollTop;
   }
 
   scrollToAnchor = (anchorName) => {
@@ -443,7 +439,7 @@ class CreateSprint extends Component {
       });
       loadBranchs(issueId).then((res) => {
         this.setState({
-          branchs: res,
+          branchs: res || {},
         });
       });
       axios.get(`/test/v1/projects/${AppState.currentMenuType.id}/case/step/query/${issueId}`)
@@ -489,6 +485,15 @@ class CreateSprint extends Component {
       }
     } else if (pro === 'assigneeId' || pro === 'reporterId') {
       obj[pro] = this.state[pro] ? JSON.parse(this.state[pro]).id || 0 : 0;
+      updateIssue(obj)
+        .then((res) => {
+          this.reloadIssue();
+          if (this.props.onUpdate) {
+            this.props.onUpdate();
+          }
+        });
+    } else if (pro === 'storyPoints' || pro === 'remainingTime') {
+      obj[pro] = this.state[pro] === '' ? null : this.state[pro];
       updateIssue(obj)
         .then((res) => {
           this.reloadIssue();
@@ -687,6 +692,9 @@ class CreateSprint extends Component {
     if (this.props.onUpdate) {
       this.props.onUpdate();
     }
+    if (this.props.onCopyAndTransformToSubIssue) {
+      this.props.onCopyAndTransformToSubIssue();
+    }
   }
 
   handleTransformSubIssue() {
@@ -696,6 +704,9 @@ class CreateSprint extends Component {
     });
     if (this.props.onUpdate) {
       this.props.onUpdate();
+    }
+    if (this.props.onCopyAndTransformToSubIssue) {
+      this.props.onCopyAndTransformToSubIssue();
     }
   }
 
@@ -743,7 +754,10 @@ class CreateSprint extends Component {
       content: <div style={{ marginBottom: 32 }}>
         <p style={{ marginBottom: 10 }}>请确认您要删除这个问题。</p>
         <p style={{ marginBottom: 10 }}>这个问题将会被彻底删除。包括所有附件和评论。</p>
-        <p>如果您完成了这个问题，通常是已解决或者已关闭，而不是删除。</p>
+        <p style={{ marginBottom: 10 }}>如果您完成了这个问题，通常是已解决或者已关闭，而不是删除。</p>
+        {
+          this.state.subIssueDTOList.length ? <p>{`注意：问题的 ${this.state.subIssueDTOList.length} 个子任务将被删除。`}</p> : null
+        }
       </div>,
       onOk() {
         return deleteIssue(issueId)
@@ -974,7 +988,7 @@ class CreateSprint extends Component {
     return (
       <div>
         {
-          this.state.branchs.totalCommit || this.state.branchs.totalMergeRequest ? (
+          this.state.branchs.branchCount ? (
             <div>
               {
                 [].length === 0 ? (
@@ -1072,18 +1086,8 @@ class CreateSprint extends Component {
             删除
           </Menu.Item>
         </Permission>
-        {
-          this.state.typeCode !== 'sub_task' && (
-            <Menu.Item key="2">
-              创建子任务
-            </Menu.Item>
-          )
-        }
         <Menu.Item key="3">
           复制问题
-        </Menu.Item>
-        <Menu.Item key="4">
-          转化为子任务
         </Menu.Item>
       </Menu>
     );
@@ -1145,23 +1149,17 @@ class CreateSprint extends Component {
       <div className="choerodon-modal-editIssue">
         <div className="c7n-nav">
           <div>
-            <Dropdown overlay={typeList} trigger={['click']} disabled={this.state.typeCode === 'sub_task'}>
-              <div style={{ height: 44, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', borderBottom: '1px solid rgba(0,0,0,0.26)' }}>
-                <div
-                  className="radius"
-                  style={{ background: TYPE[this.state.typeCode], color: '#fff', width: '20px', height: '20px', textAlign: 'center', fontSize: '14px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                >
-                  <Icon
-                    style={{ fontSize: '14px' }}
-                    type={ICON[this.state.typeCode]}
-                  />
-                </div>
+            <div style={{ height: 44, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', borderBottom: '1px solid rgba(0,0,0,0.26)' }}>
+              <div
+                className="radius"
+                style={{ background: TYPE[this.state.typeCode], color: '#fff', width: '20px', height: '20px', textAlign: 'center', fontSize: '14px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              >
                 <Icon
-                  type="arrow_drop_down"
-                  style={{ fontSize: 16 }}
+                  style={{ fontSize: '14px' }}
+                  type={ICON[this.state.typeCode]}
                 />
               </div>
-            </Dropdown>
+            </div>
           </div>
           <ul className="c7n-nav-ul">
             <Tooltip placement="right" title="详情">
@@ -1184,6 +1182,30 @@ class CreateSprint extends Component {
                   onClick={() => {
                     this.setState({ nav: 'des' });
                     this.scrollToAnchor('des');
+                  }}
+                />
+              </li>
+            </Tooltip>
+            <Tooltip placement="right" title="测试详细信息">
+              <li id="DESCRIPTION-test1" className={`c7n-li ${this.state.nav === 'test1' ? 'c7n-li-active' : ''}`}>
+                <Icon
+                  type="compass c7n-icon-li"
+                  role="none"
+                  onClick={() => {
+                    this.setState({ nav: 'test1' });
+                    this.scrollToAnchor('test1');
+                  }}
+                />
+              </li>
+            </Tooltip>
+            <Tooltip placement="right" title="测试执行">
+              <li id="DESCRIPTION-test2" className={`c7n-li ${this.state.nav === 'test2' ? 'c7n-li-active' : ''}`}>
+                <Icon
+                  type="explicit2 c7n-icon-li"
+                  role="none"
+                  onClick={() => {
+                    this.setState({ nav: 'test2' });
+                    this.scrollToAnchor('test2');
                   }}
                 />
               </li>
@@ -1236,38 +1258,6 @@ class CreateSprint extends Component {
                 />
               </li>
             </Tooltip>
-            {
-              this.state.typeCode !== 'sub_task' && (
-                <Tooltip placement="right" title="子任务">
-                  <li id="SUB_TASKS-nav" className={`c7n-li ${this.state.nav === 'sub_task' ? 'c7n-li-active' : ''}`}>
-                    <Icon
-                      type="filter_none c7n-icon-li"
-                      role="none"
-                      onClick={() => {
-                        this.setState({ nav: 'sub_task' });
-                        this.scrollToAnchor('sub_task');
-                      }}
-                    />
-                  </li>
-                </Tooltip>
-              )
-            }
-            {
-              this.state.typeCode !== 'sub_task' && (
-                <Tooltip placement="right" title="相关任务">
-                  <li id="LINK_TASKS-nav" className={`c7n-li ${this.state.nav === 'link_task' ? 'c7n-li-active' : ''}`}>
-                    <Icon
-                      type="link c7n-icon-li"
-                      role="none"
-                      onClick={() => {
-                        this.setState({ nav: 'link_task' });
-                        this.scrollToAnchor('link_task');
-                      }}
-                    />
-                  </li>
-                </Tooltip>
-              )
-            }
             <Tooltip placement="right" title="开发">
               <li id="BRANCH-nav" className={`c7n-li ${this.state.nav === 'branch' ? 'c7n-li-active' : ''}`}>
                 <Icon
@@ -1604,7 +1594,7 @@ class CreateSprint extends Component {
                       </div>
                     </div>
                   </div>
-                  <div style={{ display: 'flex', flex: 1.2 }}>
+                  {/* <div style={{ display: 'flex', flex: 1.2 }}>
                     <span
                       style={{ width: 30, height: 30, borderRadius: '50%', background: '#d8d8d8', marginRight: 12, flexShrink: 0, display: 'flex', justifyContent: 'center', alignItems: 'center', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
                     >
@@ -1718,7 +1708,7 @@ class CreateSprint extends Component {
                         }
                       </div>
                     </div>
-                  </div>
+                  </div> */}
                   
                   {
                     this.state.issueId && this.state.typeCode === 'story' ? (
@@ -1743,7 +1733,7 @@ class CreateSprint extends Component {
                               onOk={this.updateIssue.bind(this, 'storyPoints')}
                               onCancel={this.resetStoryPoints.bind(this)}
                               readModeContent={<span>
-                                {this.state.storyPoints ? `${this.state.storyPoints} 点` : '无'}
+                                {this.state.storyPoints === undefined || this.state.storyPoints === null ? '无' : `${this.state.storyPoints} 点`}
                               </span>}
                             >
                               <NumericInput
@@ -1787,7 +1777,7 @@ class CreateSprint extends Component {
                               onOk={this.updateIssue.bind(this, 'remainingTime')}
                               onCancel={this.resetRemainingTime.bind(this)}
                               readModeContent={<span>
-                                {this.state.remainingTime ? `${this.state.remainingTime} 小时` : '无'}
+                                {this.state.remainingTime === undefined || this.state.remainingTime === null ? '无' : `${this.state.remainingTime} 小时`}
                               </span>}
                             >
                               <NumericInput
@@ -1823,7 +1813,7 @@ class CreateSprint extends Component {
               </div>
             </div>
           </div>
-          <div className="c7n-content-bottom" id="scroll-area">
+          <div className="c7n-content-bottom" id="scroll-area" style={{ position: 'relative' }}>
             <section className="c7n-body-editIssue">
               <div className="c7n-content-editIssue">
                 <div className="c7n-details">
@@ -1973,7 +1963,7 @@ class CreateSprint extends Component {
                           </div>
                         </div>
                         {
-                          this.state.typeCode !== 'sub_task' ? (
+                          this.state.typeCode === 'bug' ? (
                             <div className="line-start mt-10">
                               <div className="c7n-property-wrapper">
                                 <span className="c7n-property">
@@ -2549,10 +2539,10 @@ class CreateSprint extends Component {
                   
                 </div>
 
-                <div id="testStep">
+                <div id="test1">
                   <div className="c7n-title-wrapper">
                     <div className="c7n-title-left">
-                      <Icon type="subject c7n-icon-title" />
+                      <Icon type="compass c7n-icon-title" />
                       <span>测试详细信息</span>
                     </div>
                     <div style={{ flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px' }} />
@@ -2574,10 +2564,10 @@ class CreateSprint extends Component {
                   </div>
                 </div>
 
-                <div id="testExecute">
+                <div id="test2">
                   <div className="c7n-title-wrapper">
                     <div className="c7n-title-left">
-                      <Icon type="subject c7n-icon-title" />
+                      <Icon type="explicit2 c7n-icon-title" />
                       <span>测试执行</span>
                     </div>
                     <div style={{ flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px' }} />
@@ -2586,6 +2576,7 @@ class CreateSprint extends Component {
                     <TestExecuteTable
                       issueId={this.state.origin.issueId}
                       data={this.state.testExecuteData}
+                      history={this.props.history}
                       onOk={() => {
                         this.reloadIssue();
                       }}
@@ -2655,48 +2646,6 @@ class CreateSprint extends Component {
                   </div>
                   {this.renderDataLogs()}
                 </div>
-
-                {
-                  this.state.origin.typeCode !== 'sub_task' && (
-                    <div id="sub_task">
-                      <div className="c7n-title-wrapper">
-                        <div className="c7n-title-left">
-                          <Icon type="filter_none c7n-icon-title" />
-                          <span>子任务</span>
-                        </div>
-                        <div style={{ flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px' }} />
-                        <div className="c7n-title-right" style={{ marginLeft: '14px' }}>
-                          <Button className="leftBtn" funcTyp="flat" onClick={() => this.setState({ createSubTaskShow: true })}>
-                            <Icon type="playlist_add icon" />
-                            <span>创建子任务</span>
-                          </Button>
-                        </div>
-                      </div>
-                      {this.renderSubIssues()}
-                    </div>
-                  )
-                }
-
-                {
-                  this.state.origin.typeCode !== 'sub_task' && (
-                    <div id="link_task">
-                      <div className="c7n-title-wrapper">
-                        <div className="c7n-title-left">
-                          <Icon type="link c7n-icon-title" />
-                          <span>相关任务</span>
-                        </div>
-                        <div style={{ flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px' }} />
-                        <div className="c7n-title-right" style={{ marginLeft: '14px' }}>
-                          <Button className="leftBtn" funcTyp="flat" onClick={() => this.setState({ createLinkTaskShow: true })}>
-                            <Icon type="playlist_add icon" />
-                            <span>创建相关任务</span>
-                          </Button>
-                        </div>
-                      </div>
-                      {this.renderLinkIssues()}
-                    </div>
-                  )
-                }
 
                 <div id="branch">
                   <div className="c7n-title-wrapper">
@@ -2775,6 +2724,8 @@ class CreateSprint extends Component {
             <CopyIssue
               issueId={this.state.origin.issueId}
               issueNum={this.state.origin.issueNum}
+              issue={this.state.origin}
+              issueLink={this.state.linkIssues}
               issueSummary={this.state.origin.summary}
               visible={this.state.copyIssueShow}
               onCancel={() => this.setState({ copyIssueShow: false })}
@@ -2837,7 +2788,7 @@ class CreateSprint extends Component {
             <CreateTest
               issueId={this.state.origin.issueId}
               visible={this.state.createTestStepShow}
-              nextRank={this.state.testStepData.length ? this.state.testStepData[0].rank: null}
+              lastRank={this.state.testStepData.length ? this.state.testStepData[this.state.testStepData.length - 1].rank : null}
               onCancel={() => this.setState({ createTestStepShow: false })}
               onOk={() => {
                 this.setState({ createTestStepShow: false });
@@ -2851,6 +2802,7 @@ class CreateSprint extends Component {
             <ExecuteTest
               issueId={this.state.origin.issueId}
               visible={this.state.executeTestShow}
+              lastRank={this.state.testExecuteData.length ? this.state.testExecuteData[this.state.testExecuteData.length - 1].rank : null}
               onCancel={() => this.setState({ executeTestShow: false })}
               onOk={() => {
                 this.setState({ executeTestShow: false });

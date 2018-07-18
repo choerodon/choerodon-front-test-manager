@@ -239,7 +239,7 @@ class CreateBranch extends Component {
         >
           <Form layout="vertical" className="c7n-sidebar-form">
             <div className="branch-formItem-icon">
-              <span className="icon icon-assignment" />
+              <span className="icon icon-widgets" />
             </div>
             <FormItem
               className="branch-formItem"
@@ -382,7 +382,7 @@ class CreateBranch extends Component {
                 <Input
                   label="分支名称"
                   autoFocus
-                  prefix={this.props.form.getFieldValue('type') === 'custom' ? '' : `${this.props.form.getFieldValue('type')}-`}
+                  prefix={this.props.form.getFieldValue('type') === 'custom' || !this.props.form.getFieldValue('type') ? '' : `${this.props.form.getFieldValue('type')}-`}
                   maxLength={30}
                   disabled={!(this.props.form.getFieldValue('app') && this.props.form.getFieldValue('branch'))}
                 />,
