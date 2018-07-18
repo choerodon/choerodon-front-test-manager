@@ -196,13 +196,13 @@ class CreateCycleExecute extends Component {
         return {
           lastRank: rank,
           cycleId,
-          issueId,
+          issueId: Number(issueId),
           assignedTo,
         };
       }
       return {
         cycleId,
-        issueId,
+        issueId: Number(issueId),
         assignedTo,
       };
     });
@@ -476,7 +476,7 @@ class CreateCycleExecute extends Component {
                       <Panel
                         header={
                           <div className="c7n-collapse-header-container">
-                            <div>被制定人</div>
+                            <div>被指定人</div>
                             <div className="c7n-collapse-header-icon">
                               <Icon type="navigate_next" />
                             </div>

@@ -48,7 +48,7 @@ class ReportTest extends Component {
     statusList: [],
     stepStatusList: [],
     pagination: {
-      // current: 1,
+      current: 1,
       // total: 0,
       pageSize: 10,
     },
@@ -81,18 +81,18 @@ class ReportTest extends Component {
   { pagination: this.state.pagination, issueIds: this.state.issueIds }) => {
     this.setState({ loading: true });
     getReportsFromDefect({
-      page: pagination.current - 1,
-      size: pagination.pageSize,
+      // page: pagination.current - 1,
+      // size: pagination.pageSize,
     }, issueIds).then((reportData) => {
       this.setState({
         loading: false,
         // reportList: reportData.content,
         reportList: reportData,
-        pagination: {
-          current: pagination.current,
-          pageSize: pagination.pageSize,
-          total: reportData.totalElements,
-        },
+        // pagination: {
+        //   current: pagination.current,
+        //   pageSize: pagination.pageSize,
+        //   total: reportData.totalElements,
+        // },
       });
     }).catch((error) => {
       window.console.log(error);
