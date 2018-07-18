@@ -88,7 +88,7 @@ class SummaryHome extends Component {
         this.getLabelTable(labelList).then((labelTable) => {
           labelTable.unshift({
             id: null,
-            name: '未规划',
+            name: '无标签',
             num: totalIssueData.totalElements - _.sumBy(labelTable, 'num'),
           });
           this.setState({
@@ -98,7 +98,7 @@ class SummaryHome extends Component {
         this.getComponentTable(componentList).then((componentTable) => {
           componentTable.unshift({
             id: null,
-            name: '未规划',
+            name: '无组件',
             num: totalIssueData.totalElements - _.sumBy(componentTable, 'num'),
           });
           this.setState({
@@ -124,7 +124,7 @@ class SummaryHome extends Component {
         search.otherArgs.version = [version.versionId];
       }
       getIssueCount(search).then((data) => {
-        window.console.log(version.versionId, data.totalElements);
+        // window.console.log(version.versionId, data.totalElements);
         resolve({ name: version.name, versionId: version.versionId, num: data.totalElements });
       });
     }),
@@ -142,7 +142,7 @@ class SummaryHome extends Component {
 
 
       getIssueCount(search).then((data) => {
-        window.console.log(label, data.totalElements);
+        // window.console.log(label, data.totalElements);
         resolve({ name: label.labelName, id: label.labelId, num: data.totalElements });
       });
     }),
@@ -160,7 +160,7 @@ class SummaryHome extends Component {
 
 
       getIssueCount(search).then((data) => {
-        window.console.log(component, data.totalElements);
+        // window.console.log(component, data.totalElements);
         resolve({ name: component.name, id: component.componentId, num: data.totalElements });
       });
     }),
@@ -181,7 +181,7 @@ class SummaryHome extends Component {
     });
   }
   createTransform = (source, range) => Array(Number(range)).fill(0).map((item, i) => {
-    const time = moment().subtract(i, 'days').format('YYYY-MM-DD');
+    const time = moment().subtract(range - i - 1, 'days').format('YYYY-MM-DD');
     if (_.find(source, { creationDay: time })) {
       const { creationDay, issueCount } = _.find(source, { creationDay: time });
       return {
@@ -190,24 +190,24 @@ class SummaryHome extends Component {
       };
     } else {
       return {
-        time: moment().subtract(i, 'days').format('D/MMMM'),
+        time: moment().subtract(range - i - 1, 'days').format('D/MMMM'),
         value: 0,
       };
     }
   });
 
-  listTransform = list => list.reverse().map((item, i) => ({
-    time: moment().subtract(i, 'days').format('D/MMMM'),
+  listTransform = list => list.map((item, i) => ({
+    time: moment().subtract(list.length - i - 1, 'days').format('D/MMMM'),
     value: item,
   }))
-
+  
   render() {
     const { loading, range, excuteList, createList, totalExcute,
       totalCreate, totalTest, notPlan, notRun, caseNum, versionTable,
       labelTable, componentTable } = this.state;
     // window.console.log(labelTable);
-    const columns = [{
-      title: '名称',
+    const versionColumns = [{
+      title: '版本',
       dataIndex: 'name',
       key: 'name',
     }, {
@@ -215,11 +215,34 @@ class SummaryHome extends Component {
       dataIndex: 'num',
       key: 'num',
     }];
-    const scale = {
-      value: { min: 0 },
-      time: { max: 10 },
+    const labelColumns = [{
+      title: '模块',
+      dataIndex: 'name',
+      key: 'name',
+    }, {
+      title: '数量',
+      dataIndex: 'num',
+      key: 'num',
+    }];
+    const componentColumns = [{
+      title: '标签',
+      dataIndex: 'name',
+      key: 'name',
+    }, {
+      title: '数量',
+      dataIndex: 'num',
+      key: 'num',
+    }];
+    const createScale = {
+      value: { alias: '创建数' },
+      time: { alias: '日期', tickCount: 10 },
+    };
+    const executeScale = {
+      value: { alias: '执行数' },
+      time: { alias: '日期', tickCount: 10 },
     };
     const width = parseInt((window.innerWidth - 320) / 2, 10);
+ 
     return (
       <Page>
         <Header title="测试摘要">
@@ -264,7 +287,8 @@ class SummaryHome extends Component {
               <div className="c7n-table-container">
                 <div className="c7n-table-title">测试统计（按版本）</div>
                 <Table
-                  columns={columns}
+                  style={{ height: 180 }}
+                  columns={versionColumns}
                   pagination={{ pageSize: 5, showSizeChanger: false }}
                   dataSource={versionTable}
                   filterBar={false}
@@ -273,7 +297,8 @@ class SummaryHome extends Component {
               <div className="c7n-table-container" style={{ margin: '0 15px' }}>
                 <div className="c7n-table-title">测试统计（按模块）</div>
                 <Table
-                  columns={columns}
+                  style={{ height: 180 }}
+                  columns={componentColumns}
                   pagination={{ pageSize: 5, showSizeChanger: false }}
                   dataSource={componentTable}
                   filterBar={false}
@@ -282,7 +307,8 @@ class SummaryHome extends Component {
               <div className="c7n-table-container">
                 <div className="c7n-table-title">测试统计（按标签）</div>
                 <Table
-                  columns={columns}
+                  style={{ height: 180 }}
+                  columns={labelColumns}
                   pagination={{ pageSize: 5, showSizeChanger: false }}
                   dataSource={labelTable}
                   filterBar={false}
@@ -302,7 +328,7 @@ class SummaryHome extends Component {
 
               <div className="c7n-chart-container">
                 <div style={{ fontWeight: 'bold', margin: 12 }}>测试创建</div>
-                <Chart height={240} scale={scale} width={width} data={createList} padding="auto" >
+                <Chart height={240} scale={createScale} width={width} data={createList} padding="auto" >
                   <Axis name="creationDay" />
                   <Axis name="issueCount" />
                   <Tooltip crosshairs={{ type: 'y' }} />
@@ -310,11 +336,11 @@ class SummaryHome extends Component {
                     type="line"
                     position="time*value"
                     size={2}
-                    tooltip={['time*value', (time, value) => ({
-                      // 自定义 tooltip 上显示的 title 显示内容等。
-                      name: '创建数',
-                      value,
-                    })]}
+                    // tooltip={['time*value', (time, value) => ({
+                    //   // 自定义 tooltip 上显示的 title 显示内容等。
+                    //   name: '创建数',
+                    //   value,
+                    // })]}
                   />
                   <Geom type="point" position="time*value" size={4} shape={'circle'} style={{ stroke: '#fff', lineWidth: 1 }} />
                 </Chart>
@@ -325,7 +351,7 @@ class SummaryHome extends Component {
               </div>
               <div className="c7n-chart-container" style={{ marginLeft: 16 }}>
                 <div style={{ fontWeight: 'bold', margin: 12 }}>测试执行</div>
-                <Chart height={240} width={parseInt((window.innerWidth - 320) / 2, 10)} data={excuteList} padding="auto" >
+                <Chart height={240} scale={executeScale} width={parseInt((window.innerWidth - 320) / 2, 10)} data={excuteList} padding="auto" >
                   <Axis name="time" />
                   <Axis name="value" />
                   <Tooltip crosshairs={{ type: 'y' }} />
@@ -333,11 +359,11 @@ class SummaryHome extends Component {
                     type="line"
                     position="time*value"
                     size={2}
-                    tooltip={['time*value', (time, value) => ({
-                      // 自定义 tooltip 上显示的 title 显示内容等。
-                      name: '执行数',
-                      value,
-                    })]}
+                    // tooltip={['time*value', (time, value) => ({
+                    //   // 自定义 tooltip 上显示的 title 显示内容等。
+                    //   name: '执行数',
+                    //   value,
+                    // })]}
                   />
                   <Geom
                     type="point"

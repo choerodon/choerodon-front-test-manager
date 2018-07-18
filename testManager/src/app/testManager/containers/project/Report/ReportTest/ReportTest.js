@@ -153,10 +153,11 @@ class ReportTest extends Component {
             onChange={(keys) => { that.handleOpen(issueId, keys); }}
           >
             <Panel
-              // showArrow={false}
+              showArrow={false}
               header={
                 <div>
                   <div className="c7n-collapse-show-item">
+                    <Icon type="navigate_next" className="c7n-collapse-icon" />   
                     <div style={{ width: 100, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{issueName}</div>
                     <div className="c7n-collapse-header-icon">                 
                       <span style={{ color: issueColor, borderColor: issueColor }}>

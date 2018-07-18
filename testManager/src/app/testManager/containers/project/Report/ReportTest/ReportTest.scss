@@ -32,6 +32,14 @@
             }
         }
     }
+    .c7n-collapse-icon {
+        transition: all 0.3s ease-in-out;
+    }
+    .ant-collapse-item-active {
+        .c7n-collapse-icon {
+            transform: rotateZ(90deg);
+        }
+    }
     .c7n-collapse-show-item {
         display: flex;
         align-items: center;

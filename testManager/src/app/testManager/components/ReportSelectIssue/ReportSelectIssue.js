@@ -43,7 +43,7 @@ class ReportSelectIssue extends Component {
     pagination: {
       current: 1,
       total: 0,
-      pageSize: 10,
+      pageSize: 4,
     },
     typeCode: 'story',
     version: 'all',
@@ -109,6 +109,7 @@ class ReportSelectIssue extends Component {
   }
   selectItems = (selectedRowKeys, selectedRows) => {
     // const issueIds = selectedRows.map(row => row.issueId);
+
     this.setState({ issueIds: selectedRowKeys });
     window.console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
   }
