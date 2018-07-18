@@ -54,6 +54,11 @@ class TableCanDragAndDrop extends Component {
     axios.put(`/test/v1/projects/${projectId}/case/step/change`, testCaseStepDTO)
       .then((res) => {
         // save success
+        const a = this.state.data.slice();
+        a[toIndex] = res;
+        this.setState({
+          data: a,
+        });
       });
   }
 
@@ -65,23 +70,30 @@ class TableCanDragAndDrop extends Component {
       <Menu.Item key="delete">
         删除
       </Menu.Item>
-      <Menu.Item key="add">
-        添加附件
+      <Menu.Item key="clone">
+        克隆
       </Menu.Item>
     </Menu>
   );
 
   handleClickMenu(e) {
+    const testStepId = this.state.currentTestStepId;
     if (e.key === 'edit') {
       this.setState({
         editTestStepShow: true,
       });
     } else if (e.key === 'delete') {
       this.handleDeleteTestStep();
-    } else if (e.key === 'add') {
-      this.setState({
-        editTestStepShow: true,
-      });
+    } else if (e.key === 'clone') {
+      axios.post(`/test/v1/projects/${AppState.currentMenuType.id}/case/step/clone`, {
+        stepId: testStepId,
+        issueId: this.props.issueId,
+      })
+        .then((res) => {
+          this.props.onOk();
+        })
+        .catch((error) => {
+        });
     }
   }
 
@@ -96,7 +108,7 @@ class TableCanDragAndDrop extends Component {
         <p style={{ marginBottom: 10 }}>这个测试步骤将会被彻底删除。包括所有附件。</p>
       </div>,
       onOk() {
-        return axios.delete('/test/v1/projects/{project_id}/case/step', { data: { stepId: testStepId } })
+        return axios.delete(`/test/v1/projects/${AppState.currentMenuType.id}/case/step`, { data: { stepId: testStepId } })
           .then((res) => {
             that.props.onOk();
           });
@@ -223,7 +235,10 @@ class TableCanDragAndDrop extends Component {
               issueId={this.props.issueId}
               stepId={this.state.currentTestStepId}
               visible={this.state.editTestStepShow}
-              onCancel={() => this.setState({ editTestStepShow: false })}
+              onCancel={() => {
+                this.setState({ editTestStepShow: false });
+                this.props.onOk();
+              }}
               onOk={() => {
                 this.setState({ editTestStepShow: false });
                 this.props.onOk();
