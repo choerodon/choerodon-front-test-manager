@@ -331,7 +331,7 @@ class CreateCycleExecute extends Component {
               padding: '0 0 10px 0',
             }}
             title={`添加测试执行到${data.type === 'cycle' ? '测试循环' : '文件夹'}“${data.title}”`}
-            description="您可以为一个或多个成员分配一个或多个全局层的角色，即给成员授予全局层的权限。"
+            description="您可以在目标版本创建多个测试执行，可以从问题或已有执行创建。"
             link="#"
           >
             <Tabs activeKey={tab} onChange={this.modeChange}>
@@ -575,7 +575,7 @@ class CreateCycleExecute extends Component {
                                 this.setState({
                                   selectLoading: true,
                                 });
-                                getStatusList('CASE_STEP').then((List) => {
+                                getStatusList('CYCLE_CASE').then((List) => {
                                   this.setState({
                                     statusList: List,
                                     selectLoading: false,
