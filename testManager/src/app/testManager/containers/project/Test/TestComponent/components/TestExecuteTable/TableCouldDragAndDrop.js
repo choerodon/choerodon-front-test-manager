@@ -159,7 +159,7 @@ class TableCanDragAndDrop extends Component {
             }
           </span>
           <span style={{ flex: 2, lineHeight: '34px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-            {item.assignedTo}
+            {item.assignedUserRealName}
           </span>
           <span style={{ flex: 2, lineHeight: '34px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
             <TimeAgo

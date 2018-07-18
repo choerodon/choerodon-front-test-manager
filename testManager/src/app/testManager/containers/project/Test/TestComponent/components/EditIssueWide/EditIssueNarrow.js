@@ -299,7 +299,7 @@ class CreateSprint extends Component {
   }
 
   getCurrentNav(e) {
-    const eles = ['detail', 'des', 'test1', 'test2', 'attachment', 'commit', 'log', 'data_log', 'branch'];
+    const eles = ['detail', 'des', 'test1', 'test2', 'attachment', 'commit', 'log', 'data_log', 'link_task'];
     return _.find(eles, i => this.isInLook(document.getElementById(i)));
   }
 
@@ -435,11 +435,6 @@ class CreateSprint extends Component {
       loadDatalogs(issueId).then((res) => {
         this.setState({
           datalogs: res,
-        });
-      });
-      loadBranchs(issueId).then((res) => {
-        this.setState({
-          branchs: res || {},
         });
       });
       axios.get(`/test/v1/projects/${AppState.currentMenuType.id}/case/step/query/${issueId}`)
@@ -984,94 +979,6 @@ class CreateSprint extends Component {
     }
   }
 
-  renderBranchs() {
-    return (
-      <div>
-        {
-          this.state.branchs.branchCount ? (
-            <div>
-              {
-                [].length === 0 ? (
-                  <div style={{ borderBottom: '1px solid rgba(0, 0, 0, 0.08)', display: 'flex', padding: '8px 26px', alignItems: 'center', justifyContent: 'space-between', fontSize: '13px' }}>
-                    <div style={{ display: 'inline-flex', justifyContent: 'space-between', flex: 1 }}>
-                      <span
-                        style={{ color: '#3f51b5', cursor: 'pointer' }}
-                        role="none"
-                        onClick={() => {
-                          this.setState({
-                            commitShow: true,
-                          });
-                        }}
-                      >
-                        {this.state.branchs.totalCommit || '0'}提交
-                      </span>
-                      <span style={{ width: 36, height: 20, borderRadius: '2px', color: '#fff', background: '#4d90fe', textAlign: 'center' }}>开放</span>
-                    </div>
-                    <div style={{ display: 'inline-flex', justifyContent: 'space-between' }}>
-                      <span style={{ marginRight: 12, marginLeft: 63 }}>已更新</span>
-                      <span style={{ width: 60, display: 'inline-block' }}>
-                        <Popover
-                          title="提交修改时间"
-                          content={this.state.branchs.commitUpdateTime}
-                          placement="left"
-                        >
-                          <TimeAgo
-                            datetime={this.state.branchs.commitUpdateTime}
-                            locale={Choerodon.getMessage('zh_CN', 'en')}
-                          />
-                        </Popover> 
-                      </span>
-                    </div>
-                  </div>
-                ) : null
-              }
-              {
-                this.state.branchs.totalMergeRequest ? (
-                  <div style={{ borderBottom: '1px solid rgba(0, 0, 0, 0.08)', display: 'flex', padding: '8px 26px', alignItems: 'center', justifyContent: 'space-between', fontSize: '13px' }}>
-                    <div style={{ display: 'inline-flex', justifyContent: 'space-between', flex: 1 }}>
-                      <span
-                        style={{ color: '#3f51b5', cursor: 'pointer' }}
-                        role="none"
-                        onClick={() => {
-                          this.setState({
-                            mergeRequestShow: true,
-                          });
-                        }}
-                      >
-                        {this.state.branchs.totalMergeRequest}合并请求
-                      </span>
-                      <span style={{ width: 36, height: 20, borderRadius: '2px', color: '#fff', background: '#4d90fe', textAlign: 'center' }}>{this.state.branchs.mergeRequestStatus === 'opened' ? '开放' : ''}</span>
-                    </div>
-                    <div style={{ display: 'inline-flex', justifyContent: 'space-between' }}>
-                      <span style={{ marginRight: 12, marginLeft: 63 }}>已更新</span>
-                      <span style={{ width: 60, display: 'inline-block' }}>
-                        <Popover
-                          title="合并请求修改时间"
-                          content={this.state.branchs.mergeRequestUpdateTime}
-                          placement="left"
-                        >
-                          <TimeAgo
-                            datetime={this.state.branchs.mergeRequestUpdateTime}
-                            locale={Choerodon.getMessage('zh_CN', 'en')}
-                          />
-                        </Popover> 
-                      </span>
-                    </div>
-                  </div>
-                ) : null
-              }
-            </div>
-          ) : (
-            <div style={{ borderBottom: '1px solid rgba(0, 0, 0, 0.08)', display: 'flex', padding: '8px 26px', alignItems: 'center', justifyContent: 'space-between', fontSize: '13px' }}>
-              <span style={{ marginRight: 12 }}>暂无</span>
-            </div>
-          )
-        }
-        
-      </div>
-    );
-  }
-
   render() {
     const menu = AppState.currentMenuType;
     const { type, id: projectId, organizationId: orgId } = menu;
@@ -1258,14 +1165,14 @@ class CreateSprint extends Component {
                 />
               </li>
             </Tooltip>
-            <Tooltip placement="right" title="开发">
-              <li id="BRANCH-nav" className={`c7n-li ${this.state.nav === 'branch' ? 'c7n-li-active' : ''}`}>
+            <Tooltip placement="right" title="相关任务">
+              <li id="LINK_TASKS-nav" className={`c7n-li ${this.state.nav === 'link_task' ? 'c7n-li-active' : ''}`}>
                 <Icon
-                  type="branch c7n-icon-li"
+                  type="link c7n-icon-li"
                   role="none"
                   onClick={() => {
-                    this.setState({ nav: 'branch' });
-                    this.scrollToAnchor('branch');
+                    this.setState({ nav: 'link_task' });
+                    this.scrollToAnchor('link_task');
                   }}
                 />
               </li>
@@ -2647,22 +2554,26 @@ class CreateSprint extends Component {
                   {this.renderDataLogs()}
                 </div>
 
-                <div id="branch">
-                  <div className="c7n-title-wrapper">
-                    <div className="c7n-title-left">
-                      <Icon type="branch c7n-icon-title" />
-                      <span>开发</span>
+                {
+                  this.state.origin.typeCode !== 'sub_task' && (
+                    <div id="link_task">
+                      <div className="c7n-title-wrapper">
+                        <div className="c7n-title-left">
+                          <Icon type="link c7n-icon-title" />
+                          <span>相关任务</span>
+                        </div>
+                        <div style={{ flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px' }} />
+                        <div className="c7n-title-right" style={{ marginLeft: '14px' }}>
+                          <Button className="leftBtn" funcTyp="flat" onClick={() => this.setState({ createLinkTaskShow: true })}>
+                            <Icon type="playlist_add icon" />
+                            <span>创建相关任务</span>
+                          </Button>
+                        </div>
+                      </div>
+                      {this.renderLinkIssues()}
                     </div>
-                    <div style={{ flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px' }} />
-                    <div className="c7n-title-right" style={{ marginLeft: '14px' }}>
-                      <Button className="leftBtn" funcTyp="flat" onClick={() => this.setState({ createBranchShow: true })}>
-                        <Icon type="playlist_add icon" />
-                        <span>创建分支</span>
-                      </Button>
-                    </div>
-                  </div>
-                  {this.renderBranchs()} 
-                </div>
+                  )
+                }
 
               </div>
             </section>
