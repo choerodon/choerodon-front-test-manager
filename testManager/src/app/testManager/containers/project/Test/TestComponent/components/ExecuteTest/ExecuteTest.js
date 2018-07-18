@@ -23,6 +23,7 @@ class CreateTest extends Component {
       createLoading: false,
       versions: [],
       circles: [],
+      folders: [],
       users: [],
       userMine: {},
     };
@@ -57,7 +58,7 @@ class CreateTest extends Component {
         this.setState({ createLoading: true });
         const testCycleDTO = {
           assignedTo: values.other || this.state.userMine.id,
-          cycleId: values.circle,
+          cycleId: values.folder || values.circle,
           issueId: this.props.issueId,
           lastRank: this.props.lastRank,
         };
@@ -171,6 +172,38 @@ class CreateTest extends Component {
                       value={circle.cycleId}
                     >
                       {circle.cycleName}
+                    </Option>),
+                  )}
+                </Select>,
+              )}
+            </FormItem>
+            <FormItem label="测试文件夹">
+              {getFieldDecorator('folder', {
+              })(
+                <Select
+                  label="测试文件夹"
+                  disabled={!this.props.form.getFieldValue('circle')}
+                  loading={this.state.selectLoading}
+                  filter
+                  filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                  onFocus={() => {
+                    this.setState({
+                      selectLoading: true,
+                    });
+                    axios.post(`/test/v1/projects/${AppState.currentMenuType.id}/cycle/query/folder/cycleId/${this.props.form.getFieldValue('circle')}`).then((res) => {
+                      this.setState({
+                        folders: res,
+                        selectLoading: false,
+                      });
+                    });
+                  }}
+                >
+                  {this.state.folders.map(folder =>
+                    (<Option
+                      key={folder.cycleId}
+                      value={folder.cycleId}
+                    >
+                      {folder.cycleName}
                     </Option>),
                   )}
                 </Select>,
