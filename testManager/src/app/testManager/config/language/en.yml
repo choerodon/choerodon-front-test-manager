@@ -1,0 +1,6 @@
+"test-manager": testManager
+'test-manager.summary': summary
+'test-manager.manager': manager
+'test-manager.cycle': cycle
+'test-manager.report':  report
+'test-manager.status':  status

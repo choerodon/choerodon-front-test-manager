@@ -1,0 +1,126 @@
+.c7n-cycle {}
+
+.c7n-cycleHome {
+    display: flex;
+    .ant-table-thead>tr>th,
+    .ant-table-tbody>tr>td {
+        padding: 5px 0 0 10px;
+    }
+}
+
+.drag-cell {
+    cursor: move;
+}
+
+$drop-gradient: rgba(140, 158, 255, 0.16);
+.drop-row {
+    &-before {
+        box-shadow: 0 16px 20px $drop-gradient inset, 0 0 0 $drop-gradient inset;
+    }
+    &-in {
+        box-shadow: 0 12px 20px $drop-gradient inset, 0 -12px 20px $drop-gradient inset;
+    }
+    &-after {
+        box-shadow: 0 0 0 $drop-gradient inset, 0 -16px 20px $drop-gradient inset;
+    }
+}
+
+.c7n-chs-bar {
+    margin-top: 10px;
+    width: 22.5px;
+    p {
+        cursor: pointer;
+        background: rgba(0, 0, 0, 0.08);
+        text-align: center;
+        color: rgba(0, 0, 0, 0.65);
+    }
+}
+
+.c7n-ch-side {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-right: 1px solid #d3d3d3;
+    height: 100%;
+}
+
+.c7n-ch-left {
+    // margin-left: 10px;
+    width: 330px;
+    border-right: 1px solid rgba(0, 0, 0, 0.36);
+    padding-bottom: 100px;
+    .c7n-chlh-tree {
+        margin-left: -4px;
+    }
+    overflow: hidden;
+}
+
+.c7n-chl-head {
+    display: flex;
+}
+
+.c7n-chlh-search {
+    width: 70%;
+    display: inline-block;
+}
+
+.c7n-chlh-button {
+    margin-left: 17px;
+    display: flex;
+}
+
+.c7n-chlhb-left {
+    // width: 400px;
+}
+
+.c7n-chlh-tree {
+    .ant-tree li .ant-tree-node-content-wrapper.ant-tree-node-selected {
+        background: rgba(0, 0, 0, 0.04);
+    }
+}
+
+.c7n-ch-right {
+    flex: 1;
+    overflow: hidden;
+    padding: 0 20px;
+}
+
+.c7n-avatar {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #c5cbe8;
+    color: #6473c3;
+    margin-right: 5px;
+    text-align: center;
+    line-height: 18px;
+}
+
+.c7n-cycleHome-button {
+    cursor: pointer;
+    width: 22px;
+    height: 22px;
+    background-color: #3F51B5;
+    color: white;
+    text-align: center;
+    // line-height: 22px;
+    margin: 0 7px;
+    border-radius: 3px;
+}
+
+.ant-tree-icon__customize {
+    i.icon {
+        float: left;
+        line-height: 22px;
+        margin-right: 5px;
+    }
+}
+
+.c7n-ch-hidden {
+    display: none;
+}
+
+.ant-tree-title {
+    display: inline-block;
+    float: right;
+}
