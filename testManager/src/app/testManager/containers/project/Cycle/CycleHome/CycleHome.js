@@ -455,6 +455,8 @@ class CycleHome extends Component {
     this.setState({
       loading: true,
     });
+    window.console.log(this.state.currentCycle);
+    
     addFolder({
       type: 'folder',
       cycleName: value,
@@ -599,14 +601,16 @@ class CycleHome extends Component {
       key: 'issueId',
       onCell: this.handleCell,     
       filters: [],      
-      // width: '6%',
+      width: '10%',
       render(issueId, record) {
         const { issueInfosDTO } = record;     
-        return (<div style={{ 
-          // width: 60, 
-          overflow: 'hidden', 
-          whiteSpace: 'nowrap', 
-          textOverflow: 'ellipsis' }}
+        return (<div
+          title={issueInfosDTO && issueInfosDTO.issueName}
+          style={{ 
+            width: 80, 
+            overflow: 'hidden', 
+            whiteSpace: 'nowrap', 
+            textOverflow: 'ellipsis' }}
         >
           {issueInfosDTO && issueInfosDTO.issueName}
         </div>);
@@ -616,7 +620,7 @@ class CycleHome extends Component {
       dataIndex: 'executionStatus',
       key: 'executionStatus',
       filters: statusList.map(status => ({ text: status.statusName, value: status.statusId })),
-      // width: '10%',
+      width: '9%',
       render(executionStatus) {
         const statusColor = _.find(statusList, { statusId: executionStatus }) ?
           _.find(statusList, { statusId: executionStatus }).statusColor : '';
@@ -629,7 +633,7 @@ class CycleHome extends Component {
       title: '摘要',
       dataIndex: 'comment',
       key: 'comment',
-      // width: '10%',
+      width: '10%',
       render(comment) {
         return (
           <Tooltip title={<RichTextShow data={delta2Html(comment)} />}>
@@ -693,16 +697,16 @@ class CycleHome extends Component {
           </div>
         </Tooltip>),
     },
-    // {
-    //   title: '模块',
-    //   dataIndex: 'assignedTo',
-    //   key: 'assignedTo',
-    // }, 
-    // {
-    //   title: '标签',
-    //   dataIndex: 'statusName',
-    //   key: 'statusName',
-    // }, 
+    {
+      title: '模块',
+      dataIndex: 'assignedTo',
+      key: 'assignedTo',
+    }, 
+    {
+      title: '标签',
+      dataIndex: 'statusName',
+      key: 'statusName',
+    }, 
     {
       title: '执行方',
       dataIndex: 'assignedUserRealName',
