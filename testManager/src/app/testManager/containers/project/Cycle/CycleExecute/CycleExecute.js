@@ -597,8 +597,46 @@ class CycleExecute extends Component {
       dataIndex: 'caseAttachment',
       key: 'caseAttachment',
       render(caseAttachment) {
-        return caseAttachment.map(attachment => <div>{caseAttachment.attachmentName}</div>);
+        return (<Tooltip title={
+          <div>
+            {caseAttachment.map((attachment, i) => (
+              <div style={{
+                fontSize: '13px',
+                color: 'white',
+              }}
+              >
+                {/* {i === 0 ? null : '，'} */}
+                <span>
+                  {attachment.attachmentName}
+                </span>
+              </div>))}
+          </div>}
+        >
+          <div
+            style={{
+              width: 100,
+              display: 'flex',
+              alignItems: 'center',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}        
+          >
+            {caseAttachment.map((attachment, i) => (
+              <div style={{
+                fontSize: '13px',
+                // color: '#3F51B5',
+              }}
+              >
+                {i === 0 ? null : '，'}
+                <span>
+                  {attachment.attachmentName}
+                </span>
+              </div>))}
+          </div>
+        </Tooltip>);       
       },
+      
     }, {
       title: '状态',
       dataIndex: 'stepStatus',
@@ -636,9 +674,46 @@ class CycleExecute extends Component {
     {
       title: '附件',
       dataIndex: 'stepAttachment',
-      key: 'stepAttachment',
+      key: 'stepAttachment',      
       render(stepAttachment) {
-        return stepAttachment.map(attachment => <div>{attachment.attachmentName}</div>);
+        return (<Tooltip title={
+          <div>
+            {stepAttachment.map((attachment, i) => (
+              <div style={{
+                fontSize: '13px',
+                color: 'white',
+              }}
+              >
+                {/* {i === 0 ? null : '，'} */}
+                <span>
+                  {attachment.attachmentName}
+                </span>
+              </div>))}
+          </div>}
+        >
+          <div
+            style={{
+              width: 100,
+              display: 'flex',
+              alignItems: 'center',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}        
+          >
+            {stepAttachment.map((attachment, i) => (
+              <div style={{
+                fontSize: '13px',
+                // color: '#3F51B5',
+              }}
+              >
+                {i === 0 ? null : '，'}
+                <span>
+                  {attachment.attachmentName}
+                </span>
+              </div>))}
+          </div>
+        </Tooltip>);       
       },
     }, {
       title: '缺陷',

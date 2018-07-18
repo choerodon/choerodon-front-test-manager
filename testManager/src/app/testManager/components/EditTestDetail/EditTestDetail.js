@@ -129,7 +129,7 @@ class EditTestDetail extends Component {
       executeStepId,
       objectVersionNumber,
       testStep,
-      comment,
+      comment: comment || '',
       stepAttachment,
       caseAttachment,
       defects,

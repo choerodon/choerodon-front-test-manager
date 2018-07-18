@@ -35,9 +35,7 @@ const styles = {
     color: 'white',
   },
 };
-function handleChange(value) {
-  window.console.log(`selected ${value}`);
-}
+
 class CreateCycleExecute extends Component {
   state = {
     tab: '1',
@@ -147,6 +145,11 @@ class CreateCycleExecute extends Component {
           });
           this.props.onOk();
           window.console.log(data);
+        }).catch(() => {
+          this.setState({
+            loading: false,
+          });
+          Choerodon.prompt('网络错误');
         });
         // POST / v1 / projects / { project_id } / issues / test_component / no_sub;
 

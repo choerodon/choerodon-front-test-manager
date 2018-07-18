@@ -87,9 +87,9 @@ class EditStatusSide extends Component {
                   label={null}
                 >
                   {getFieldDecorator('description', {
-                    rules: [{
-                      required: true, message: '请输入说明!',
-                    }],
+                    // rules: [{
+                    //   required: true, message: '请输入说明!',
+                    // }],
                   })(
                     <Input style={{ width: 500 }} placeholder="说明" maxLength={30} label="说明" />,
                     // <div style={{ width: 500 }}>
