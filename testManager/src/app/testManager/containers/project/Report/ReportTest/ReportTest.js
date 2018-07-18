@@ -48,8 +48,8 @@ class ReportTest extends Component {
     statusList: [],
     stepStatusList: [],
     pagination: {
-      current: 1,
-      total: 0,
+      // current: 1,
+      // total: 0,
       pageSize: 10,
     },
     openId: [],
@@ -77,10 +77,8 @@ class ReportTest extends Component {
       });
     });
   }
-  getReportsFromDefect = (pagination = this.state.pagination, issueIds = this.state.issueIds) => {
-    if (!pagination) {
-      pagination = this.state.pagination;
-    }
+  getReportsFromDefect = ({ pagination, issueIds } = 
+  { pagination: this.state.pagination, issueIds: this.state.issueIds }) => {
     this.setState({ loading: true });
     getReportsFromDefect({
       page: pagination.current - 1,
@@ -180,7 +178,7 @@ class ReportTest extends Component {
       dataIndex: 'execute',
       key: 'execute',
       width: '25%',
-      render(execute, record) {
+      render(a, record) {
         const { testCycleCaseES, testCycleCaseStepES, issueInfosDTO } = record;
         const { issueId } = issueInfosDTO;
         const executeStatus = {};
@@ -299,7 +297,7 @@ class ReportTest extends Component {
       render(demand, record) {
         const { testCycleCaseES, testCycleCaseStepES } = record;
         const { issueId } = record.issueInfosDTO;
-        const caseShow = testCycleCaseES.concat(testCycleCaseStepES).map((execute) => {
+        const caseShow = testCycleCaseES.concat(testCycleCaseStepES).map((execute, i) => {
           const { issueLinkDTOS } = execute;
           // window.console.log(issueLinkDTOS.length);
           const issueLinks = issueLinkDTOS.map((link) => {
@@ -316,7 +314,7 @@ class ReportTest extends Component {
               <div style={{ fontSize: '13px' }}>{summary}</div>
             </div>);
           });
-          return <div>{issueLinks}</div>;
+          return <div style={{ marginTop: 42 * i }}>{issueLinks}</div>;
         });
 
         return openId.includes(issueId.toString()) ? caseShow : '-';
@@ -367,13 +365,13 @@ class ReportTest extends Component {
             onCancel={() => { this.setState({ selectVisible: false }); }}
             onOk={(issueIds) => {
               this.setState({ selectVisible: false, issueIds }); 
-              this.getReportsFromDefect(null, issueIds);
+              this.getReportsFromDefect({ issueIds });
             }}
           />
           <Table   
             filterBar={false}        
             loading={loading}
-            // pagination={pagination}
+            pagination={pagination}
             columns={columns}
             dataSource={reportList}
             onChange={this.handleTableChange}

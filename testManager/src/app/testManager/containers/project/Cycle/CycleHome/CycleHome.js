@@ -601,15 +601,14 @@ class CycleHome extends Component {
       filters: [],      
       // width: '6%',
       render(issueId, record) {
-        const { issueInfosDTO } = record;
-        const { issueName } = issueInfosDTO;
+        const { issueInfosDTO } = record;     
         return (<div style={{ 
           // width: 60, 
           overflow: 'hidden', 
           whiteSpace: 'nowrap', 
           textOverflow: 'ellipsis' }}
         >
-          {issueName}
+          {issueInfosDTO && issueInfosDTO.issueName}
         </div>);
       },
     }, {

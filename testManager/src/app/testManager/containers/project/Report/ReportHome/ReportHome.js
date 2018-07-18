@@ -51,6 +51,7 @@ class ReportHome extends Component {
         </Menu.Item>      
       </Menu>
     );
+    
     return (
       <Page className="c7n-report-home">
         <Header title="报表">
