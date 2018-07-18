@@ -124,7 +124,7 @@ class SummaryHome extends Component {
         search.otherArgs.version = [version.versionId];
       }
       getIssueCount(search).then((data) => {
-        window.console.log(version.versionId, data.totalElements);
+        // window.console.log(version.versionId, data.totalElements);
         resolve({ name: version.name, versionId: version.versionId, num: data.totalElements });
       });
     }),
@@ -142,7 +142,7 @@ class SummaryHome extends Component {
 
 
       getIssueCount(search).then((data) => {
-        window.console.log(label, data.totalElements);
+        // window.console.log(label, data.totalElements);
         resolve({ name: label.labelName, id: label.labelId, num: data.totalElements });
       });
     }),
@@ -160,7 +160,7 @@ class SummaryHome extends Component {
 
 
       getIssueCount(search).then((data) => {
-        window.console.log(component, data.totalElements);
+        // window.console.log(component, data.totalElements);
         resolve({ name: component.name, id: component.componentId, num: data.totalElements });
       });
     }),

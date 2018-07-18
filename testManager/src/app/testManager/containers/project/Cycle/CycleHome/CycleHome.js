@@ -486,6 +486,7 @@ class CycleHome extends Component {
   }
 
   handleExecuteTableChange = (pagination, filters, sorter) => {
+    window.console.log(pagination, filters, sorter);
     this.setState({
       executePagination: pagination,
     });
@@ -607,7 +608,7 @@ class CycleHome extends Component {
         return (<div
           title={issueInfosDTO && issueInfosDTO.issueName}
           style={{ 
-            width: 80, 
+            width: 100, 
             overflow: 'hidden', 
             whiteSpace: 'nowrap', 
             textOverflow: 'ellipsis' }}
@@ -697,16 +698,16 @@ class CycleHome extends Component {
           </div>
         </Tooltip>),
     },
-    {
-      title: '模块',
-      dataIndex: 'assignedTo',
-      key: 'assignedTo',
-    }, 
-    {
-      title: '标签',
-      dataIndex: 'statusName',
-      key: 'statusName',
-    }, 
+    // {
+    //   title: '模块',
+    //   dataIndex: 'assignedTo',
+    //   key: 'assignedTo',
+    // }, 
+    // {
+    //   title: '标签',
+    //   dataIndex: 'statusName',
+    //   key: 'statusName',
+    // }, 
     {
       title: '执行方',
       dataIndex: 'assignedUserRealName',
