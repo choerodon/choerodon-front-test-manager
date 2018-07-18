@@ -105,15 +105,15 @@ class ReportTest extends Component {
   handleTableChange = (pagination, filters, sorter) => {
     this.getList(pagination);
   }
-  handleOpen=(issueId, keys) => {
+  handleOpen=(issueId) => {
     const { openId } = this.state;  
-
-    if (keys.length > 0) {
+    if (!openId.includes(issueId.toString())) {
       this.setState({
-        openId: openId.concat(keys),
+        openId: openId.concat([issueId.toString()]),
       });
     } else {
-      openId.splice(openId.indexOf(issueId), 1);
+      const index = openId.indexOf(issueId.toString());  
+      openId.splice(index, 1);
       this.setState({
         openId: [...openId],
       });
