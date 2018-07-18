@@ -215,6 +215,11 @@ class SummaryHome extends Component {
       dataIndex: 'num',
       key: 'num',
     }];
+    const scale = {
+      value: { min: 0 },
+      time: { max: 10 },
+    };
+    const width = parseInt((window.innerWidth - 320) / 2, 10);
     return (
       <Page>
         <Header title="测试摘要">
@@ -297,7 +302,7 @@ class SummaryHome extends Component {
 
               <div className="c7n-chart-container">
                 <div style={{ fontWeight: 'bold', margin: 12 }}>测试创建</div>
-                <Chart height={240} width={parseInt((window.innerWidth - 320) / 2, 10)} data={createList} padding="auto" >
+                <Chart height={240} scale={scale} width={width} data={createList} padding="auto" >
                   <Axis name="creationDay" />
                   <Axis name="issueCount" />
                   <Tooltip crosshairs={{ type: 'y' }} />
