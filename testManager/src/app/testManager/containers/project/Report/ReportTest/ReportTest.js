@@ -49,7 +49,7 @@ class ReportTest extends Component {
     stepStatusList: [],
     pagination: {
       current: 1,
-      // total: 0,
+      total: 0,
       pageSize: 10,
     },
     openId: [],
@@ -77,22 +77,22 @@ class ReportTest extends Component {
       });
     });
   }
-  getReportsFromDefect = ({ pagination, issueIds } = 
-  { pagination: this.state.pagination, issueIds: this.state.issueIds }) => {
+  getReportsFromDefect = (pagination, issueIds = this.state.issueIds) => {
+    const Pagination = pagination || this.state.pagination;
     this.setState({ loading: true });
     getReportsFromDefect({
-      // page: pagination.current - 1,
-      // size: pagination.pageSize,
+      page: Pagination.current - 1,
+      size: Pagination.pageSize,
     }, issueIds).then((reportData) => {
       this.setState({
         loading: false,
         // reportList: reportData.content,
         reportList: reportData,
-        // pagination: {
-        //   current: pagination.current,
-        //   pageSize: pagination.pageSize,
-        //   total: reportData.totalElements,
-        // },
+        pagination: {
+          current: Pagination.current,
+          pageSize: Pagination.pageSize,
+          total: reportData.totalElements,
+        },
       });
     }).catch((error) => {
       window.console.log(error);
@@ -366,7 +366,7 @@ class ReportTest extends Component {
             onCancel={() => { this.setState({ selectVisible: false }); }}
             onOk={(issueIds) => {
               this.setState({ selectVisible: false, issueIds }); 
-              this.getReportsFromDefect({ issueIds });
+              this.getReportsFromDefect(null, issueIds);
             }}
           />
           <Table   
