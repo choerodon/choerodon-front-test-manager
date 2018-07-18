@@ -129,7 +129,7 @@ class CreateCycleExecute extends Component {
           filter.advancedSearchArgs.priorityCode = priorityCode;
         }
         if (statusCode) {
-          filter.advancedSearchArgs.statusCode = statusCode;
+          filter.defectStatus = statusCode;
         }
         if (component) {
           filter.otherArgs.component = component;

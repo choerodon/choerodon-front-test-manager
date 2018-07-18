@@ -240,6 +240,7 @@ class CycleHome extends Component {
     delete temp.defects;
     delete temp.caseAttachment;
     delete temp.testCycleCaseStepES;
+    delete temp.issueInfosDTO;
     editCycleExecute({
       ...temp,
       ...{
