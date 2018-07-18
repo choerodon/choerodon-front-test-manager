@@ -575,7 +575,7 @@ class CreateCycleExecute extends Component {
                                 this.setState({
                                   selectLoading: true,
                                 });
-                                getStatusList('CASE_STEP').then((List) => {
+                                getStatusList('CYCLE_CASE').then((List) => {
                                   this.setState({
                                     statusList: List,
                                     selectLoading: false,
