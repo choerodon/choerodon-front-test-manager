@@ -28,7 +28,7 @@ class TableCanDragAndDrop extends Component {
   }
 
   loadStatus() {
-    const obj ={
+    const obj = {
       projectId: AppState.currentMenuType.id,
       statusType: 'CYCLE_CASE',
     };
@@ -136,7 +136,7 @@ class TableCanDragAndDrop extends Component {
       result.push(
         <div className={`${item.id}-list`} style={{ width: '100%', paddingLeft: 10, height: 34, borderBottom: '1px solid rgba(0, 0, 0, 0.12)', borderTop: '1px solid rgba(0, 0, 0, 0.12)', display: 'flex' }}>
           <span style={{ flex: 1, lineHeight: '34px' }}>
-            {item.version}
+            {item.versionName}
           </span>
           <span style={{ flex: 2, lineHeight: '34px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
             {item.cycleName}

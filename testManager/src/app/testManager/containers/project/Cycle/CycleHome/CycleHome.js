@@ -10,6 +10,7 @@ import { getCycles, deleteExecute, getCycleById, editCycleExecute, clone, addFol
 import { TreeTitle, CreateCycle, EditCycle, CreateCycleExecute, ShowCycleData } from '../../../../components/CycleComponent';
 import { RichTextShow } from '../../../../components/CommonComponent';
 import { delta2Html, delta2Text } from '../../../../common/utils';
+import CycleStore from '../../../../store/project/clcle/CycleStore';
 
 const { AppState } = stores;
 const { confirm } = Modal;
@@ -25,7 +26,7 @@ const styles = {
     color: 'white',
   },
 };
-const gData = [];
+
 const dataList = [];
 function dropSideClassName(side) {
   return `drop-row-${side}`;
@@ -54,19 +55,14 @@ class CycleHome extends Component {
     CreateCycleVisible: false,
     EditCycleVisible: false,
     loading: true,
-    treeData: [
-      { title: '所有版本', key: '0' },
-    ],
-    expandedKeys: ['0'],
     leftVisible: true,
     sideVisible: false,
     dragData: null,
     testList: [],
-    currentCycle: {},
+    // currentCycle: {},
     currentEditValue: {},
     autoExpandParent: true,
     searchValue: '',
-    addingParent: null,
     executePagination: {
       current: 1,
       total: 0,
@@ -79,54 +75,26 @@ class CycleHome extends Component {
   }
 
   onExpand = (expandedKeys) => {
+    CycleStore.setExpandedKeys(expandedKeys);
     this.setState({
-      expandedKeys,
       autoExpandParent: false,
     });
   }
 
-  getParentKey = (key, tree) =>
-    // let parentKey;    
-    // for (let i = 0; i < tree.length; i += 1) {
-    //   const node = tree[i];
-    //   if (node.children) {
-    //     if (node.children.some(item => item.key === key)) {
-    //       parentKey = node.key;
-    //     } else if (this.getParentKey(key, node.children)) {
-    //       parentKey = this.getParentKey(key, node.children);
-    //     }
-    //   }
-    // }
-    key.split('-').slice(0, -1).join('-')
+  getParentKey = (key, tree) => key.split('-').slice(0, -1).join('-')
 
-  addItemByParentKey = (key, item) => {
-    const arr = key.split('-');
-    let temp = this.state.treeData;
-    arr.forEach((index, i) => {
-      // window.console.log(temp);
-      if (i === 0) {
-        temp = temp[index];
-      } else {
-        temp = temp.children[index];
-      }
-    });
-    // 添加测试
-    temp.children.unshift(item);
-    // window.console.log({ ...item, ...{ key: `${key}-add'`, type: 'add' } });
-    this.setState({
-      treeData: [...this.state.treeData],
-      addingParent: temp,
-    });
-  }
+
   loadCycle = (selectedKeys, { selected, selectedNodes, node, event }) => {
     // window.console.log(selectedNodes, node, event);
+    CycleStore.setSelectedKeys(selectedKeys);
     const { data } = node.props;
     const { executePagination } = this.state;
     if (data.cycleId) {
       this.setState({
         rightLoading: true,
-        currentCycle: data,
+        // currentCycle: data,
       });
+      CycleStore.setCurrentCycle(data);
       // window.console.log(data);
       getStatusList('CYCLE_CASE').then((statusList) => {
         this.setState({ statusList });
@@ -241,6 +209,7 @@ class CycleHome extends Component {
     delete temp.caseAttachment;
     delete temp.testCycleCaseStepES;
     delete temp.issueInfosDTO;
+    this.setState({ rightLoading: true });
     editCycleExecute({
       ...temp,
       ...{
@@ -248,7 +217,8 @@ class CycleHome extends Component {
         nextRank,
       },
     }).then((res) => {
-      const { executePagination, currentCycle } = this.state;
+      const { executePagination } = this.state;
+      const currentCycle = CycleStore.getCurrentCycle;
       getCycleById({
         page: executePagination.current - 1,
         size: executePagination.pageSize,
@@ -318,21 +288,22 @@ class CycleHome extends Component {
         });
         deleteExecute(executeId)
           .then((res) => {
-            getCycleById({
-              page: executePagination.current - 1,
-              size: executePagination.pageSize,
-            }, cycleId).then((cycle) => {
-              that.setState({
-                rightLoading: false,
-                testList: cycle.content,
-                executePagination: {
-                  current: executePagination.current,
-                  pageSize: executePagination.pageSize,
-                  total: cycle.totalElements,
-                },
-              });
-              window.console.log(cycle);
-            });
+            that.refresh();
+            // getCycleById({
+            //   page: executePagination.current - 1,
+            //   size: executePagination.pageSize,
+            // }, cycleId).then((cycle) => {
+            //   that.setState({
+            //     rightLoading: false,
+            //     testList: cycle.content,
+            //     executePagination: {
+            //       current: executePagination.current,
+            //       pageSize: executePagination.pageSize,
+            //       total: cycle.totalElements,
+            //     },
+            //   });
+            //   window.console.log(cycle);
+            // });
           }).catch(() => {
             Choerodon.prompt('网络异常');
             that.setState({
@@ -350,10 +321,11 @@ class CycleHome extends Component {
       loading: true,
     });
     getCycles().then((data) => {
+      CycleStore.setTreeData([{ title: '所有版本', key: '0', children: data.versions }]);
       this.setState({
-        treeData: [
-          { title: '所有版本', key: '0', children: data.versions },
-        ],
+        // treeData: [
+        //   { title: '所有版本', key: '0', children: data.versions },
+        // ],
         loading: false,
       });
       this.generateList([
@@ -361,17 +333,23 @@ class CycleHome extends Component {
       ]);
       // window.console.log(dataList);
     });
+    // 如果选中了项，就刷新table数据
+    const currentCycle = CycleStore.getCurrentCycle;
+    const selectedKeys = CycleStore.getSelectedKeys;
+    if (currentCycle.cycleId) {
+      this.loadCycle(selectedKeys, { node: { props: { data: currentCycle } } });
+    }
   }
   filterCycle = (e) => {
     const value = e.target.value;
     const expandedKeys = dataList.map((item) => {
       if (item.title.indexOf(value) > -1) {
-        return this.getParentKey(item.key, this.state.treeData);
+        return this.getParentKey(item.key, CycleStore.getTreeData);
       }
       return null;
     }).filter((item, i, self) => item && self.indexOf(item) === i);
+    CycleStore.setExpandedKeys(expandedKeys);
     this.setState({
-      expandedKeys,
       searchValue: value,
       autoExpandParent: true,
     });
@@ -379,25 +357,23 @@ class CycleHome extends Component {
   callback = (item, code) => {
     switch (code) {
       case 'CLONE_FOLDER': {
-        const parentKey = this.getParentKey(item.key, this.state.treeData);
-        this.addItemByParentKey(parentKey, { ...item, ...{ key: `${parentKey}-CLONE_FOLDER`, type: 'CLONE_FOLDER' } });
+        const parentKey = this.getParentKey(item.key, CycleStore.getTreeData);
+        CycleStore.addItemByParentKey(parentKey, { ...item, ...{ key: `${parentKey}-CLONE_FOLDER`, type: 'CLONE_FOLDER' } });
         break;
       }
       case 'CLONE_CYCLE': {
-        const parentKey = this.getParentKey(item.key, this.state.treeData);
-        this.addItemByParentKey(parentKey, { ...item, ...{ key: `${parentKey}-CLONE_CYCLE`, type: 'CLONE_CYCLE' } });
+        const parentKey = this.getParentKey(item.key, CycleStore.getTreeData);
+        CycleStore.addItemByParentKey(parentKey, { ...item, ...{ key: `${parentKey}-CLONE_CYCLE`, type: 'CLONE_CYCLE' } });
         break;
       }
       case 'ADD_FOLDER': {
-        this.addItemByParentKey(item.key, { ...item, ...{ title: '新文件夹', key: `${item.key}-ADD_FOLDER`, type: 'ADD_FOLDER' } });
+        CycleStore.addItemByParentKey(item.key, { ...item, ...{ title: '新文件夹', key: `${item.key}-ADD_FOLDER`, type: 'ADD_FOLDER' } });
         // 自动展开当前项
-        const { expandedKeys } = this.state;
+        const expandedKeys = CycleStore.getExpandedKeys;
         if (expandedKeys.indexOf(item.key) === -1) {
           expandedKeys.push(item.key);
         }
-        this.setState({
-          expandedKeys,
-        });
+        CycleStore.setExpandedKeys(expandedKeys); 
         break;
       }
       case 'EDIT_CYCLE': {
@@ -410,19 +386,14 @@ class CycleHome extends Component {
       default: break;
     }
   }
-  removeAdding = () => {
-    this.state.addingParent.children.shift();
-    this.setState({
-      treeData: [...this.state.treeData],
-    });
-  }
+
   Clone = (item, e, type) => {
     const { value } = e.target;
     // window.console.log(item, value);
     // e.target.focus();
     if (value === item.title) {
       Choerodon.prompt('请更改名字');
-      this.removeAdding();
+      CycleStore.removeAdding();
     } else {
       this.setState({
         loading: true,
@@ -433,21 +404,19 @@ class CycleHome extends Component {
           this.setState({
             loading: false,
           });
-          this.removeAdding();
+          CycleStore.removeAdding();
         } else {
           this.setState({
             loading: false,
           });
           this.refresh();
-        }
-
-        // this.removeAdding();
+        }    
       }).catch(() => {
         Choerodon.prompt('网络出错');
         this.setState({
           loading: false,
         });
-        this.removeAdding();
+        CycleStore.removeAdding();
       });
     }
   }
@@ -456,7 +425,7 @@ class CycleHome extends Component {
     this.setState({
       loading: true,
     });
-    window.console.log(this.state.currentCycle);
+    // window.console.log(this.state.currentCycle);
     
     addFolder({
       type: 'folder',
@@ -469,44 +438,50 @@ class CycleHome extends Component {
         this.setState({
           loading: false,
         });
-        this.removeAdding();
+        CycleStore.removeAdding();
       } else {
         this.setState({
           loading: false,
         });
         this.refresh();
       }
-      // this.removeAdding();
     }).catch(() => {
       Choerodon.prompt('网络出错');
       this.setState({
         loading: false,
       });
-      this.removeAdding();
+      CycleStore.removeAdding();
     });
   }
 
   handleExecuteTableChange = (pagination, filters, sorter) => {
     window.console.log(pagination, filters, sorter);
-    this.setState({
-      executePagination: pagination,
-    });
-    getCycleById(pagination, this.state.currentCycle.cycleId).then((cycle) => {
+    if (pagination.current) {
       this.setState({
-        rightLoading: false,
-        testList: cycle.content,
-        executePagination: {
-          current: pagination.current,
-          pageSize: pagination.pageSize,
-          total: cycle.totalElements,
-        },
+        executePagination: pagination,
       });
-      // window.console.log(cycle);
-    });
+      const currentCycle = CycleStore.getCurrentCycle;
+      getCycleById({
+        size: pagination.pageSize,
+        page: pagination.current - 1,
+      }, currentCycle.cycleId).then((cycle) => {
+        this.setState({
+          rightLoading: false,
+          testList: cycle.content,
+          executePagination: {
+            current: pagination.current,
+            pageSize: pagination.pageSize,
+            total: cycle.totalElements,
+          },
+        });
+        // window.console.log(cycle);
+      });
+    }
   }
   renderTreeNodes = data => data.map((item) => {
     const { children, key, cycleCaseList, type } = item;
-    const { searchValue, expandedKeys } = this.state;
+    const { searchValue } = this.state;
+    const expandedKeys = CycleStore.getExpandedKeys;
     const index = item.title.indexOf(searchValue);
     const beforeStr = item.title.substr(0, index);
     const afterStr = item.title.substr(index + searchValue.length);
@@ -587,12 +562,16 @@ class CycleHome extends Component {
 
   render() {
     const { CreateCycleExecuteVisible, CreateCycleVisible, EditCycleVisible,
-      loading, currentCycle, currentEditValue, testList, expandedKeys, rightLoading,
+      loading, currentEditValue, testList, rightLoading,
       searchValue,
       autoExpandParent,
       executePagination,
       statusList,
     } = this.state;
+    const treeData = CycleStore.getTreeData;
+    const expandedKeys = CycleStore.getExpandedKeys;
+    const selectedKeys = CycleStore.getSelectedKeys;
+    const currentCycle = CycleStore.getCurrentCycle;
     const { cycleId, title } = currentCycle;
     const prefix = <Icon type="filter_list" />;
     const that = this;
@@ -601,9 +580,11 @@ class CycleHome extends Component {
       title: 'ID',
       dataIndex: 'issueId',
       key: 'issueId',
-      onCell: this.handleCell,     
-      filters: [],      
-      width: '10%',
+      onCell: this.handleCell,             
+      width: '10%',     
+      // filters: [],   
+      // onFilter: (value, record) => 
+      //   record.issueInfosDTO && record.issueInfosDTO.issueName.indexOf(value) === 0,  
       render(issueId, record) {
         const { issueInfosDTO } = record;     
         return (<div
@@ -621,7 +602,8 @@ class CycleHome extends Component {
       title: '状态',
       dataIndex: 'executionStatus',
       key: 'executionStatus',
-      filters: statusList.map(status => ({ text: status.statusName, value: status.statusId })),
+      // filters: statusList.map(status => ({ text: status.statusName, value: status.statusId })),
+      // onFilter: (value, record) => record.executionStatus === value,  
       width: '9%',
       render(executionStatus) {
         const statusColor = _.find(statusList, { statusId: executionStatus }) ?
@@ -793,7 +775,7 @@ class CycleHome extends Component {
       render(text, record) {
         return (
           record.projectId !== 0 &&
-          <div style={{ display: 'flex', marginLeft: -20 }}>
+          <div style={{ display: 'flex' }}>
             <Icon
               type="explicit2"
               style={{ cursor: 'pointer' }}
@@ -841,21 +823,22 @@ class CycleHome extends Component {
                 getStatusList('CYCLE_CASE').then((List) => {
                   this.setState({ statusList: List });
                 });
-                getCycleById({
-                  page: executePagination.current - 1,
-                  size: executePagination.pageSize,
-                }, currentCycle.cycleId).then((cycle) => {
-                  this.setState({
-                    rightLoading: false,
-                    testList: cycle.content,
-                    executePagination: {
-                      current: executePagination.current,
-                      pageSize: executePagination.pageSize,
-                      total: cycle.totalElements,
-                    },
-                  });
-                  // window.console.log(cycle);
-                });
+                this.refresh();
+                // getCycleById({
+                //   page: executePagination.current - 1,
+                //   size: executePagination.pageSize,
+                // }, currentCycle.cycleId).then((cycle) => {
+                //   this.setState({
+                //     rightLoading: false,
+                //     testList: cycle.content,
+                //     executePagination: {
+                //       current: executePagination.current,
+                //       pageSize: executePagination.pageSize,
+                //       total: cycle.totalElements,
+                //     },
+                //   });
+                //   // window.console.log(cycle);
+                // });
               }}
             />
             <CreateCycle
@@ -935,15 +918,14 @@ class CycleHome extends Component {
                 </div>
                 <div className="c7n-chlh-tree">
                   <Tree
-                    // loadData={this.onLoadData}
-                    defaultExpandAll
+                    selectedKeys={selectedKeys}
                     expandedKeys={expandedKeys}
                     showIcon
                     onExpand={this.onExpand}
                     onSelect={this.loadCycle}
                     autoExpandParent={autoExpandParent}
                   >
-                    {this.renderTreeNodes(this.state.treeData)}
+                    {this.renderTreeNodes(treeData)}
                   </Tree>
                 </div>
               </div>

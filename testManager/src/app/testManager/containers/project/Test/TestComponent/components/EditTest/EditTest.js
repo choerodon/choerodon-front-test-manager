@@ -18,7 +18,7 @@ function uploadFile(data, config) {
   };
 
   return axios.post(
-    `/zuul/test/v1/projects/${projectId}/test/case/attachment?bucket_name=${bucketName}&attachmentLinkId=${attachmentLinkId}&attachmentType=CASE_STEP`,
+    `/zuul/test/v1/projects/${projectId}/test/case/attachment?bucket_name=test&attachmentLinkId=${attachmentLinkId}&attachmentType=CASE_STEP`,
     data,
     axiosConfig,
   );
@@ -94,20 +94,35 @@ class EditTest extends Component {
               formData.append('file', file);
             }
           });          
+          this.setState({ loading: true });
           uploadFile(formData, config).then(() => {
-            
+            this.setState({
+              loading: false,
+            });
+            const testCaseStepDTO = {
+              ...this.state.origin,
+              attachments: [],
+              testStep,
+              testData,
+              expectedResult,
+            };
+            this.handleSave(testCaseStepDTO);
           }).catch(() => {
-           
+            this.setState({
+              loading: false,
+            });
+            Choerodon.prompt('网络错误');
           });
+        } else {
+          const testCaseStepDTO = {
+            ...this.state.origin,
+            attachments: [],
+            testStep,
+            testData,
+            expectedResult,
+          };
+          this.handleSave(testCaseStepDTO);
         }
-        const testCaseStepDTO = {
-          ...this.state.origin,
-          attachments: [],
-          testStep,
-          testData,
-          expectedResult,
-        };
-        this.handleSave(testCaseStepDTO);
       }
     });
   };
@@ -160,7 +175,7 @@ class EditTest extends Component {
         visible={visible || false}
         onOk={this.handleEditTest}
         onCancel={onCancel}
-        okText="创建"
+        okText="确定"
         cancelText="取消"
         confirmLoading={this.state.createLoading}
       >
@@ -170,8 +185,8 @@ class EditTest extends Component {
             paddingLeft: 0,
             width: 512,
           }}
-          title={`在项目"${AppState.currentMenuType.name}"中创建问题链接`}
-          description="您可以为一个或多个成员分配一个或多个全局层的角色，即给成员授予全局层的权限。"
+          title={`编辑步骤“${this.state.origin.testStep}”的详细信息`}
+          description="您可以编辑测试步骤的详细信息。"
         >
           <Spin spinning={loading}>
             <Form layout="vertical">
