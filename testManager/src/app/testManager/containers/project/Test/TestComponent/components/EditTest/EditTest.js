@@ -185,8 +185,8 @@ class EditTest extends Component {
             paddingLeft: 0,
             width: 512,
           }}
-          title={`在项目"${AppState.currentMenuType.name}"中创建问题链接`}
-          description="您可以为一个或多个成员分配一个或多个全局层的角色，即给成员授予全局层的权限。"
+          title={`编辑步骤“${this.state.origin.testStep}”的详细信息`}
+          description="您可以编辑测试步骤的详细信息。"
         >
           <Spin spinning={loading}>
             <Form layout="vertical">

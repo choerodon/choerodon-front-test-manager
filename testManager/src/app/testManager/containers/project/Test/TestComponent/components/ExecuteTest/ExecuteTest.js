@@ -71,8 +71,12 @@ class CreateTest extends Component {
     this.setState({ createLoading: true });
     axios.post(`/test/v1/projects/${AppState.currentMenuType.id}/cycle/case/insert`, testCycleDTO)
       .then((res) => {
+        if (res.failed) {
+          Choerodon.prompt('');
+        } else {
+          this.props.onOk();
+        }
         this.setState({ createLoading: false });
-        this.props.onOk();
       })
       .catch((error) => {
       });
@@ -80,7 +84,7 @@ class CreateTest extends Component {
 
   render() {
     const { getFieldDecorator } = this.props.form;
-    const { initValue, visible, onCancel, onOk } = this.props;
+    const { issueName, visible, onCancel, onOk } = this.props;
     const radioStyle = {
       display: 'block',
       height: '30px',
@@ -102,8 +106,8 @@ class CreateTest extends Component {
             padding: 0,
             width: 512,
           }}
-          title="在测试“测试1”中执行测试"
-          description="您可以为一个或多个成员分配一个或多个全局层的角色，即给成员授予全局层的权限。"
+          title={`在测试“${issueName}”中执行测试`}
+          description="将测试用例添加到测试循环或文件夹中，构成一次测试执行。"
         >
           <Form layout="vertical">
             <FormItem label="版本">
