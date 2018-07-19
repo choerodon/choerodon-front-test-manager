@@ -59,7 +59,7 @@ class CycleHome extends Component {
     sideVisible: false,
     dragData: null,
     testList: [],
-    currentCycle: {},
+    // currentCycle: {},
     currentEditValue: {},
     autoExpandParent: true,
     searchValue: '',
@@ -92,8 +92,9 @@ class CycleHome extends Component {
     if (data.cycleId) {
       this.setState({
         rightLoading: true,
-        currentCycle: data,
+        // currentCycle: data,
       });
+      CycleStore.setCurrentCycle(data);
       // window.console.log(data);
       getStatusList('CYCLE_CASE').then((statusList) => {
         this.setState({ statusList });
@@ -215,7 +216,8 @@ class CycleHome extends Component {
         nextRank,
       },
     }).then((res) => {
-      const { executePagination, currentCycle } = this.state;
+      const { executePagination } = this.state;
+      const currentCycle = CycleStore.getCurrentCycle;
       getCycleById({
         page: executePagination.current - 1,
         size: executePagination.pageSize,
@@ -329,6 +331,12 @@ class CycleHome extends Component {
       ]);
       // window.console.log(dataList);
     });
+    // 如果选中了项，就刷新table数据
+    const currentCycle = CycleStore.getCurrentCycle;
+    const selectedKeys = CycleStore.getSelectedKeys;
+    if (currentCycle.cycleId) {
+      this.loadCycle(selectedKeys, { node: { props: { data: currentCycle } } });
+    }
   }
   filterCycle = (e) => {
     const value = e.target.value;
@@ -415,7 +423,7 @@ class CycleHome extends Component {
     this.setState({
       loading: true,
     });
-    window.console.log(this.state.currentCycle);
+    // window.console.log(this.state.currentCycle);
     
     addFolder({
       type: 'folder',
@@ -449,7 +457,8 @@ class CycleHome extends Component {
     this.setState({
       executePagination: pagination,
     });
-    getCycleById(pagination, this.state.currentCycle.cycleId).then((cycle) => {
+    const currentCycle = CycleStore.getCurrentCycle;
+    getCycleById(pagination, currentCycle.cycleId).then((cycle) => {
       this.setState({
         rightLoading: false,
         testList: cycle.content,
@@ -546,7 +555,7 @@ class CycleHome extends Component {
 
   render() {
     const { CreateCycleExecuteVisible, CreateCycleVisible, EditCycleVisible,
-      loading, currentCycle, currentEditValue, testList, rightLoading,
+      loading, currentEditValue, testList, rightLoading,
       searchValue,
       autoExpandParent,
       executePagination,
@@ -555,6 +564,7 @@ class CycleHome extends Component {
     const treeData = CycleStore.getTreeData;
     const expandedKeys = CycleStore.getExpandedKeys;
     const selectedKeys = CycleStore.getSelectedKeys;
+    const currentCycle = CycleStore.getCurrentCycle;
     const { cycleId, title } = currentCycle;
     const prefix = <Icon type="filter_list" />;
     const that = this;
