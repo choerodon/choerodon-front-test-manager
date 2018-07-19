@@ -338,6 +338,9 @@ class CycleExecute extends Component {
       addDefects(needAdd).then((res) => {
         this.getInfo();
       });
+    } else {
+      this.getInfo();
+      // this.setState({ loading: false });
     }
   }
   handleUpload = (e) => {
