@@ -70,7 +70,7 @@ class CreateTest extends Component {
             width: 512,
           }}
           title={`在用例“${issueName}”中创建测试步骤`}
-          description="您可以为一个或多个成员分配一个或多个全局层的角色，即给成员授予全局层的权限。"
+          description="您可以创建任意个测试步骤。"
         >
           <Form layout="vertical">
             <FormItem label="测试步骤">

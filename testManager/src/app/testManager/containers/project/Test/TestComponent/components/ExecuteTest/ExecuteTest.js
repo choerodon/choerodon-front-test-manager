@@ -72,7 +72,7 @@ class CreateTest extends Component {
     axios.post(`/test/v1/projects/${AppState.currentMenuType.id}/cycle/case/insert`, testCycleDTO)
       .then((res) => {
         if (res.failed) {
-          Choerodon.prompt('');
+          Choerodon.prompt('同一用例中不能有重复测试');
         } else {
           this.props.onOk();
         }
