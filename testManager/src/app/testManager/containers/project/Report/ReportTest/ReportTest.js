@@ -218,25 +218,25 @@ class ReportTest extends Component {
               >
                 {statusName}
               </div>
-              
+              <Link 
+                style={{ lineHeight: '13px' }}
+                to={`/testManager/Cycle/execute/${execute.executeId}?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}
+              >
+                <Icon type="explicit2" style={{ marginLeft: 10, color: 'black' }} />
+              </Link>
               {
                 i >= testCycleCaseES.length ?
                   <div style={{
                     height: 20,
                     width: 43,
-                    marginLeft: 60,
+                    marginLeft: 30,
                     color: 'white',
                     padding: '0 8px',
                     background: 'rgba(0,0,0,0.20)',
                     borderRadius: '100px',
                   }}
-                  >步骤</div> :
-                  <Link 
-                    style={{ lineHeight: '13px' }}
-                    to={`/testManager/Cycle/execute/${execute.executeId}?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}
-                  >
-                    <Icon type="explicit2" style={{ marginLeft: 10, color: 'black' }} />
-                  </Link>
+                  >步骤</div> : null
+                  
               }
               
             </div>);
@@ -316,7 +316,10 @@ class ReportTest extends Component {
               <div style={{ fontSize: '13px' }}>{summary}</div>
             </div>);
           });
-          return <div style={{ marginTop: 42 * i }}>{issueLinks}</div>;
+          return (<div style={{ 
+            minHeight: 40, 
+          }}
+          >{issueLinks}</div>);
         });
 
         return openId.includes(issueId.toString()) ? caseShow : '-';

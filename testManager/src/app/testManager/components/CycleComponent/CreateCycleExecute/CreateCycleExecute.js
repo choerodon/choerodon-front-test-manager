@@ -139,12 +139,15 @@ class CreateCycleExecute extends Component {
         }
         createCycleExecuteFromCycle(folderId || cycleId, this.props.data.cycleId, 
           assignedTo || AppState.userInfo.id, 
-          filter).then((data) => {
+          filter).then((res) => {
+          if (res.failed) {
+            Choerodon.prompt('当前实例已存在');
+          } else {
+            this.props.onOk();          
+          }
           this.setState({
             loading: false,
           });
-          this.props.onOk();
-          window.console.log(data);
         }).catch(() => {
           this.setState({
             loading: false,

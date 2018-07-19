@@ -913,7 +913,10 @@ class CreateSprint extends Component {
         }}
         i={i}
         onOpen={(issueId, linkedIssueId) => {
-          this.reloadIssue(issueId === this.state.origin.issueId ? linkedIssueId : issueId);
+          const menu = AppState.currentMenuType;
+          const { type, id: projectId,name } = menu;
+          this.props.history.push(`/agile/issue?type=${type}&id=${projectId}&name=${name}&paramIssueId=${linkedIssueId}`)
+          // this.reloadIssue(issueId === this.state.origin.issueId ? linkedIssueId : issueId);
         }}
         onRefresh={() => {
           this.reloadIssue(this.state.origin.issueId);
@@ -981,7 +984,7 @@ class CreateSprint extends Component {
 
   render() {
     const menu = AppState.currentMenuType;
-    const { type, id: projectId, organizationId: orgId } = menu;
+    const { type, id: projectId, organizationId: orgId,name } = menu;
     const { initValue, visible, onCancel, onOk } = this.props;
     const getMenu = () => (
       <Menu onClick={this.handleClickMenu.bind(this)}>
@@ -2698,6 +2701,7 @@ class CreateSprint extends Component {
           this.state.createTestStepShow ? (
             <CreateTest
               issueId={this.state.origin.issueId}
+              issueName={this.state.origin.issueNum}
               visible={this.state.createTestStepShow}
               lastRank={this.state.testStepData.length ? this.state.testStepData[this.state.testStepData.length - 1].rank : null}
               onCancel={() => this.setState({ createTestStepShow: false })}
@@ -2712,6 +2716,7 @@ class CreateSprint extends Component {
           this.state.executeTestShow ? (
             <ExecuteTest
               issueId={this.state.origin.issueId}
+              issueName={this.state.origin.issueNum}
               visible={this.state.executeTestShow}
               lastRank={this.state.testExecuteData.length ? this.state.testExecuteData[this.state.testExecuteData.length - 1].rank : null}
               onCancel={() => this.setState({ executeTestShow: false })}

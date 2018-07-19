@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Table, Button, Icon, Card, Select, Spin, Upload, Tooltip } from 'choerodon-ui';
 import { Page, Header, Content, stores } from 'choerodon-front-boot';
 import _ from 'lodash';
+import { withRouter } from 'react-router-dom';
 import { TextEditToggle, RichTextShow } from '../../../../components/CommonComponent';
 import EditTestDetail from '../../../../components/EditTestDetail';
 import FullEditor from '../../../../components/FullEditor';
@@ -337,6 +338,9 @@ class CycleExecute extends Component {
       addDefects(needAdd).then((res) => {
         this.getInfo();
       });
+    } else {
+      this.getInfo();
+      // this.setState({ loading: false });
     }
   }
   handleUpload = (e) => {
@@ -794,8 +798,25 @@ class CycleExecute extends Component {
       </Option>));
     const urlParams = AppState.currentMenuType;
     return (
-      <Page>
-        <Header title="版本：1.0" backPath={`/testManager/cycle?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}>
+      <Page className="c7n-clcle">
+        <Header title={null}>
+          <div>
+            <Tooltip
+              title={Choerodon.getMessage('返回', 'return')}
+              placement="bottom"
+              // getTooltipContainer={that => that}
+            >
+              <Button
+                type="primary"
+                onClick={() => { this.props.history.goBack(); }}
+                className="back-btn small-tooltip"
+                shape="circle"
+                size="large"
+                icon="arrow_back"
+              />
+            </Tooltip>
+          </div>
+          <span className="c7n-head--clcle-title">执行详情</span>
           <Button onClick={this.getInfo}>
             <Icon type="autorenew icon" />
             <span>刷新</span>
@@ -803,7 +824,7 @@ class CycleExecute extends Component {
         </Header>
         <EditTestDetail
           visible={editVisible}
-          onCancel={() => { this.setState({ editVisible: false }); }}
+          onCancel={() => { this.setState({ editVisible: false }); this.getInfo(); }}
           onOk={(data) => { this.setState({ editVisible: false }); this.getInfo(); }}
           editing={editing}
         />
@@ -1106,4 +1127,4 @@ class CycleExecute extends Component {
 }
 
 
-export default CycleExecute;
+export default withRouter(CycleExecute);

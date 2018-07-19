@@ -272,14 +272,14 @@ class SummaryHome extends Component {
                 <div className="c7n-statistic-item-colorBar" style={{ borderColor: '#00BFA5' }} />
                 <div>
                   <div className="c7n-statistic-item-title">总执行数量</div>
-                  <div className="c7n-statistic-item-num">{caseNum}</div>
+                  <div className="c7n-statistic-item-num">{caseNum - notRun}</div>
                 </div>
               </div>
               <div className="c7n-statistic-item-container">
                 <div className="c7n-statistic-item-colorBar" style={{ borderColor: '#FF7043' }} />
                 <div>
                   <div className="c7n-statistic-item-title">总未规划数量</div>
-                  <div className="c7n-statistic-item-num">{notPlan}</div>
+                  <div className="c7n-statistic-item-num">{totalTest - notPlan}</div>
                 </div>
               </div>
             </div>
