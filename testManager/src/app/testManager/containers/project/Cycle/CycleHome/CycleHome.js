@@ -793,7 +793,7 @@ class CycleHome extends Component {
       render(text, record) {
         return (
           record.projectId !== 0 &&
-          <div style={{ display: 'flex', marginLeft: -20 }}>
+          <div style={{ display: 'flex' }}>
             <Icon
               type="explicit2"
               style={{ cursor: 'pointer' }}
