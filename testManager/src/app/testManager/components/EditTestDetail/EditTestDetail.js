@@ -81,7 +81,7 @@ class EditTestDetail extends Component {
       objectVersionNumber,
       stepAttachment: stepAttachment || [],
       caseAttachment: caseAttachment || [],
-      fileList: stepAttachment ? stepAttachment.map((attachment) => {
+      fileList: caseAttachment ? caseAttachment.map((attachment) => {
         const { id, attachmentName, url } = attachment;
         return {
           uid: id,

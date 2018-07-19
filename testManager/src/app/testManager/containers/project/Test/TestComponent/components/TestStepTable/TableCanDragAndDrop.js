@@ -45,8 +45,10 @@ class TableCanDragAndDrop extends Component {
     // arr此时是有序的，取toIndex前后两个的rank
     const lastRank = toIndex === 0 ? null : arr[toIndex - 1].rank;
     const nextRank = toIndex === arr.length - 1 ? null : arr[toIndex + 1].rank;
+    const dragCopy = { ...drag };
+    delete dragCopy.attachments;
     const testCaseStepDTO = {
-      ...drag,
+      ...dragCopy,
       lastRank,
       nextRank,
     };
