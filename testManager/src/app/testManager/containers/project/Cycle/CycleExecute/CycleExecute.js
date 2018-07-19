@@ -135,7 +135,6 @@ class CycleExecute extends Component {
     // this.getTestInfo();
     // this.getUserList();
     this.getInfo();
-    window.console.log(this.props.history);
   }
   getInfo = () => {
     const { id } = this.props.match.params;
