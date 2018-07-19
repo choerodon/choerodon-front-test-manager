@@ -456,22 +456,27 @@ class CycleHome extends Component {
 
   handleExecuteTableChange = (pagination, filters, sorter) => {
     window.console.log(pagination, filters, sorter);
-    this.setState({
-      executePagination: pagination,
-    });
-    const currentCycle = CycleStore.getCurrentCycle;
-    getCycleById(pagination, currentCycle.cycleId).then((cycle) => {
+    if (pagination.current) {
       this.setState({
-        rightLoading: false,
-        testList: cycle.content,
-        executePagination: {
-          current: pagination.current,
-          pageSize: pagination.pageSize,
-          total: cycle.totalElements,
-        },
+        executePagination: pagination,
       });
-      // window.console.log(cycle);
-    });
+      const currentCycle = CycleStore.getCurrentCycle;
+      getCycleById({
+        size: pagination.pageSize,
+        page: pagination.current - 1,
+      }, currentCycle.cycleId).then((cycle) => {
+        this.setState({
+          rightLoading: false,
+          testList: cycle.content,
+          executePagination: {
+            current: pagination.current,
+            pageSize: pagination.pageSize,
+            total: cycle.totalElements,
+          },
+        });
+        // window.console.log(cycle);
+      });
+    }
   }
   renderTreeNodes = data => data.map((item) => {
     const { children, key, cycleCaseList, type } = item;
@@ -575,9 +580,11 @@ class CycleHome extends Component {
       title: 'ID',
       dataIndex: 'issueId',
       key: 'issueId',
-      onCell: this.handleCell,     
-      filters: [],      
-      width: '10%',
+      onCell: this.handleCell,             
+      width: '10%',     
+      // filters: [],   
+      // onFilter: (value, record) => 
+      //   record.issueInfosDTO && record.issueInfosDTO.issueName.indexOf(value) === 0,  
       render(issueId, record) {
         const { issueInfosDTO } = record;     
         return (<div
@@ -595,7 +602,8 @@ class CycleHome extends Component {
       title: '状态',
       dataIndex: 'executionStatus',
       key: 'executionStatus',
-      filters: statusList.map(status => ({ text: status.statusName, value: status.statusId })),
+      // filters: statusList.map(status => ({ text: status.statusName, value: status.statusId })),
+      // onFilter: (value, record) => record.executionStatus === value,  
       width: '9%',
       render(executionStatus) {
         const statusColor = _.find(statusList, { statusId: executionStatus }) ?

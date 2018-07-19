@@ -226,7 +226,8 @@ class ReportStory extends Component {
             } else {
               executeStatus[statusName] += 1;
             }
-            const marginBottom = Math.max(execute.defects.length + execute.subStepDefects.length - 1, 0) * 20;
+            const marginBottom = 
+            Math.max((execute.defects.length + execute.subStepDefects.length) - 1, 0) * 20;
             return (
               <div style={{ display: 'flex', margin: '5px 0', alignItems: 'center', marginBottom }} >
                 <div style={{ width: 80 }}>
@@ -283,26 +284,27 @@ class ReportStory extends Component {
               {                
                 testCycleCaseES.map((item) => {
                   const { defects, subStepDefects } = item;
-                  return (<div>{defects.concat(subStepDefects).length > 0 ? defects.concat(subStepDefects).map(defect => 
-                    (<div className="c7n-collapse-show-item">
-                      <div>{defect.defectName}</div>
-                      <div className="c7n-collapse-header-icon">                 
-                        <span style={{ 
-                          color: defect.defectColor, borderColor: defect.defectColor }}
-                        >
-                          {defect.defectStatus}
-                        </span>
-                      </div>
-                      {defect.defectType === 'CASE_STEP' &&
-                      <div style={{
-                        marginLeft: 60,
-                        color: 'white',
-                        padding: '0 8px',
-                        background: 'rgba(0,0,0,0.20)',
-                        borderRadius: '100px',
-                      }}
-                      >步骤</div>}
-                    </div>)) : <div className="c7n-collapse-show-item">－</div>}</div>);
+                  return (<div>{defects.concat(subStepDefects).length > 0 ? 
+                    defects.concat(subStepDefects).map(defect => 
+                      (<div className="c7n-collapse-show-item">
+                        <div>{defect.defectName}</div>
+                        <div className="c7n-collapse-header-icon">                 
+                          <span style={{ 
+                            color: defect.defectColor, borderColor: defect.defectColor }}
+                          >
+                            {defect.defectStatus}
+                          </span>
+                        </div>
+                        {defect.defectType === 'CASE_STEP' &&
+                        <div style={{
+                          marginLeft: 60,
+                          color: 'white',
+                          padding: '0 8px',
+                          background: 'rgba(0,0,0,0.20)',
+                          borderRadius: '100px',
+                        }}
+                        >步骤</div>}
+                      </div>)) : <div className="c7n-collapse-show-item">－</div>}</div>);
                 })
          
               } 

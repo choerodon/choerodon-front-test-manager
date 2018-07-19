@@ -316,7 +316,10 @@ class ReportTest extends Component {
               <div style={{ fontSize: '13px' }}>{summary}</div>
             </div>);
           });
-          return <div style={{ marginTop: 42 * i }}>{issueLinks}</div>;
+          return (<div style={{ 
+            minHeight: 40, 
+          }}
+          >{issueLinks}</div>);
         });
 
         return openId.includes(issueId.toString()) ? caseShow : '-';
