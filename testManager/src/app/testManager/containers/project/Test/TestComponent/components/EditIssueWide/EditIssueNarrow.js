@@ -2698,6 +2698,7 @@ class CreateSprint extends Component {
           this.state.createTestStepShow ? (
             <CreateTest
               issueId={this.state.origin.issueId}
+              issueName={this.state.origin.issueNum}
               visible={this.state.createTestStepShow}
               lastRank={this.state.testStepData.length ? this.state.testStepData[this.state.testStepData.length - 1].rank : null}
               onCancel={() => this.setState({ createTestStepShow: false })}
@@ -2712,6 +2713,7 @@ class CreateSprint extends Component {
           this.state.executeTestShow ? (
             <ExecuteTest
               issueId={this.state.origin.issueId}
+              issueName={this.state.origin.issueNum}
               visible={this.state.executeTestShow}
               lastRank={this.state.testExecuteData.length ? this.state.testExecuteData[this.state.testExecuteData.length - 1].rank : null}
               onCancel={() => this.setState({ executeTestShow: false })}
