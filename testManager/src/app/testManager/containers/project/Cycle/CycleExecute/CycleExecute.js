@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Table, Button, Icon, Card, Select, Spin, Upload, Tooltip } from 'choerodon-ui';
 import { Page, Header, Content, stores } from 'choerodon-front-boot';
 import _ from 'lodash';
+import { withRouter } from 'react-router-dom';
 import { TextEditToggle, RichTextShow } from '../../../../components/CommonComponent';
 import EditTestDetail from '../../../../components/EditTestDetail';
 import FullEditor from '../../../../components/FullEditor';
@@ -1106,4 +1107,4 @@ class CycleExecute extends Component {
 }
 
 
-export default CycleExecute;
+export default withRouter(CycleExecute);
