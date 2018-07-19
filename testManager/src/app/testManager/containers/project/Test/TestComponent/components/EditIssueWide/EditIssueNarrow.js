@@ -915,7 +915,7 @@ class CreateSprint extends Component {
         onOpen={(issueId, linkedIssueId) => {
           const menu = AppState.currentMenuType;
           const { type, id: projectId,name } = menu;
-          this.props.history.push(`/agile/issue?type=${type}&id=${projectId}&name=${name}paramIssueId=${linkedIssueId}`)
+          this.props.history.push(`/agile/issue?type=${type}&id=${projectId}&name=${name}&paramIssueId=${linkedIssueId}`)
           // this.reloadIssue(issueId === this.state.origin.issueId ? linkedIssueId : issueId);
         }}
         onRefresh={() => {
