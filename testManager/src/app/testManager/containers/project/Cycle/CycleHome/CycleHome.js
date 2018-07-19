@@ -815,21 +815,22 @@ class CycleHome extends Component {
                 getStatusList('CYCLE_CASE').then((List) => {
                   this.setState({ statusList: List });
                 });
-                getCycleById({
-                  page: executePagination.current - 1,
-                  size: executePagination.pageSize,
-                }, currentCycle.cycleId).then((cycle) => {
-                  this.setState({
-                    rightLoading: false,
-                    testList: cycle.content,
-                    executePagination: {
-                      current: executePagination.current,
-                      pageSize: executePagination.pageSize,
-                      total: cycle.totalElements,
-                    },
-                  });
-                  // window.console.log(cycle);
-                });
+                this.refresh();
+                // getCycleById({
+                //   page: executePagination.current - 1,
+                //   size: executePagination.pageSize,
+                // }, currentCycle.cycleId).then((cycle) => {
+                //   this.setState({
+                //     rightLoading: false,
+                //     testList: cycle.content,
+                //     executePagination: {
+                //       current: executePagination.current,
+                //       pageSize: executePagination.pageSize,
+                //       total: cycle.totalElements,
+                //     },
+                //   });
+                //   // window.console.log(cycle);
+                // });
               }}
             />
             <CreateCycle
