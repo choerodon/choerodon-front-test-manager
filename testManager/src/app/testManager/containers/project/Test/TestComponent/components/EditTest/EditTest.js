@@ -94,7 +94,11 @@ class EditTest extends Component {
               formData.append('file', file);
             }
           });          
+          this.setState({ loading: true });
           uploadFile(formData, config).then(() => {
+            this.setState({
+              loading: false,
+            });
             const testCaseStepDTO = {
               ...this.state.origin,
               attachments: [],
@@ -104,6 +108,9 @@ class EditTest extends Component {
             };
             this.handleSave(testCaseStepDTO);
           }).catch(() => {
+            this.setState({
+              loading: false,
+            });
             Choerodon.prompt('网络错误');
           });
         } else {
