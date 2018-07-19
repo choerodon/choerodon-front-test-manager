@@ -18,7 +18,7 @@ function uploadFile(data, config) {
   };
 
   return axios.post(
-    `/zuul/test/v1/projects/${projectId}/test/case/attachment?bucket_name=${bucketName}&attachmentLinkId=${attachmentLinkId}&attachmentType=CASE_STEP`,
+    `/zuul/test/v1/projects/${projectId}/test/case/attachment?bucket_name=test&attachmentLinkId=${attachmentLinkId}&attachmentType=CASE_STEP`,
     data,
     axiosConfig,
   );
@@ -95,19 +95,27 @@ class EditTest extends Component {
             }
           });          
           uploadFile(formData, config).then(() => {
-            
+            const testCaseStepDTO = {
+              ...this.state.origin,
+              attachments: [],
+              testStep,
+              testData,
+              expectedResult,
+            };
+            this.handleSave(testCaseStepDTO);
           }).catch(() => {
-           
+            Choerodon.prompt('网络错误');
           });
+        } else {
+          const testCaseStepDTO = {
+            ...this.state.origin,
+            attachments: [],
+            testStep,
+            testData,
+            expectedResult,
+          };
+          this.handleSave(testCaseStepDTO);
         }
-        const testCaseStepDTO = {
-          ...this.state.origin,
-          attachments: [],
-          testStep,
-          testData,
-          expectedResult,
-        };
-        this.handleSave(testCaseStepDTO);
       }
     });
   };
