@@ -118,6 +118,7 @@ class TreeTitle extends Component {
 
         {editing ?
           <Input
+            style={{ width: 78 }}
             defaultValue={this.props.text}
             autoFocus
             onBlur={(e) => {

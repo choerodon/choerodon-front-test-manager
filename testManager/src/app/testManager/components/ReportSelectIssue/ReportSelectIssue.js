@@ -130,8 +130,8 @@ class ReportSelectIssue extends Component {
       },
     }, {
       title: '测试问题ID',
-      dataIndex: 'issueId',
-      key: 'issueId',
+      dataIndex: 'issueNum',
+      key: 'issueNum',
     }, {
       title: '摘要',
       dataIndex: 'summary',
