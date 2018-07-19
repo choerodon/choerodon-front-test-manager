@@ -821,7 +821,7 @@ class CycleExecute extends Component {
         </Header>
         <EditTestDetail
           visible={editVisible}
-          onCancel={() => { this.setState({ editVisible: false }); }}
+          onCancel={() => { this.setState({ editVisible: false }); this.getInfo(); }}
           onOk={(data) => { this.setState({ editVisible: false }); this.getInfo(); }}
           editing={editing}
         />

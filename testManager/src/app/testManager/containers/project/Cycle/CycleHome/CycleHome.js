@@ -209,6 +209,7 @@ class CycleHome extends Component {
     delete temp.caseAttachment;
     delete temp.testCycleCaseStepES;
     delete temp.issueInfosDTO;
+    this.setState({ rightLoading: true });
     editCycleExecute({
       ...temp,
       ...{
@@ -287,21 +288,22 @@ class CycleHome extends Component {
         });
         deleteExecute(executeId)
           .then((res) => {
-            getCycleById({
-              page: executePagination.current - 1,
-              size: executePagination.pageSize,
-            }, cycleId).then((cycle) => {
-              that.setState({
-                rightLoading: false,
-                testList: cycle.content,
-                executePagination: {
-                  current: executePagination.current,
-                  pageSize: executePagination.pageSize,
-                  total: cycle.totalElements,
-                },
-              });
-              window.console.log(cycle);
-            });
+            that.refresh();
+            // getCycleById({
+            //   page: executePagination.current - 1,
+            //   size: executePagination.pageSize,
+            // }, cycleId).then((cycle) => {
+            //   that.setState({
+            //     rightLoading: false,
+            //     testList: cycle.content,
+            //     executePagination: {
+            //       current: executePagination.current,
+            //       pageSize: executePagination.pageSize,
+            //       total: cycle.totalElements,
+            //     },
+            //   });
+            //   window.console.log(cycle);
+            // });
           }).catch(() => {
             Choerodon.prompt('网络异常');
             that.setState({

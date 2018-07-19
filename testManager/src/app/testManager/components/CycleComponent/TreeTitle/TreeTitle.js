@@ -3,6 +3,7 @@ import { observer } from 'mobx-react';
 import { Menu, Input, Dropdown, Button } from 'choerodon-ui';
 import './TreeTitle.scss';
 import { editFolder, deleteCycleOrFolder } from '../../../api/cycleApi';
+import CycleStore from '../../../store/project/clcle/CycleStore';
 
 class TreeTitle extends Component {
   state = {
@@ -42,7 +43,12 @@ class TreeTitle extends Component {
       }
       case 'delete': {
         deleteCycleOrFolder(cycleId).then((res) => {
-          refresh();
+          if (res.failed) {
+            Choerodon.prompt('删除失败');
+          } else {
+            CycleStore.setCurrentCycle({});
+            refresh();
+          }
         }).catch((err) => {
 
         });
@@ -85,12 +91,12 @@ class TreeTitle extends Component {
       let items = [];
       if (type === 'temp') {
         items.push(<Menu.Item key="export">
-        导出循环
+          导出循环
         </Menu.Item>);
       } else if (type === 'folder' || type === 'cycle') {
         if (type === 'cycle') {
           items.push(<Menu.Item key="add">
-          增加文件夹
+            增加文件夹
           </Menu.Item>);
         }
         items = items.concat([
@@ -107,9 +113,9 @@ class TreeTitle extends Component {
           //   {type === 'folder' ? '导出文件夹' : '导出循环'}
           // </Menu.Item>,
         ]);
-      } 
+      }
       return <Menu onClick={this.handleItemClick} style={{ margin: '10px 0 0 28px' }}>{items}</Menu>;
-    };    
+    };
 
     const { editing } = this.state;
     const { title, processBar, data } = this.props;
@@ -143,7 +149,7 @@ class TreeTitle extends Component {
           </div>
         </div>
         <div role="none" className="c7n-tt-actionButton" onClick={e => e.stopPropagation()}>
-          {data.type === 'temp' 
+          {data.type === 'temp'
             ? null :
             <Dropdown overlay={getMenu(data.type)} trigger={['click']}>
               <Button shape="circle" icon="more_vert" />

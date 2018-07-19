@@ -146,18 +146,18 @@ class EditTestDetail extends Component {
     this.setState({ loading: true });
     // 
     const needAdd =
-    issueList
-      .filter(issue => defectIds.includes(issue.issueId.toString()))// 取到选中的issueList
-      .filter(issue => !originDefects.includes(issue.issueId.toString()))// 去掉之前已有的
-      .map(item => ({
-        defectType: 'CASE_STEP',
-        defectLinkId: executeStepId,
-        issueId: item.issueId,
-        defectName: item.issueNum,
-      }));
+      issueList
+        .filter(issue => defectIds.includes(issue.issueId.toString()))// 取到选中的issueList
+        .filter(issue => !originDefects.includes(issue.issueId.toString()))// 去掉之前已有的
+        .map(item => ({
+          defectType: 'CASE_STEP',
+          defectLinkId: executeStepId,
+          issueId: item.issueId,
+          defectName: item.issueNum,
+        }));
     if (needAdd.length > 0) {
       addDefects(needAdd).then((res) => {
-        
+
       });
     }
     // 
@@ -183,15 +183,17 @@ class EditTestDetail extends Component {
     this.setState({ fileList });
   }
   handleDefectsChange = (List) => {
-    const { originDefects, defectIds } = this.state;
+    const { originDefects, defects, defectIds } = this.state;
     const oldList = [...defectIds];
-    window.console.log('old', oldList, 'new', List);
+    // window.console.log('old', oldList, 'new', List);
     // 删除元素
     if (oldList.length > List.length) {
       const deleteEle = oldList.filter(old => !List.includes(old));
       // 如果isse已存在，调用删除接口
-      if (defectIds.includes(deleteEle[0].toString())) {       
-        removeDefect(deleteEle[0]);
+      if (defectIds.includes(deleteEle[0])
+        && _.find(defects, { issueId: Number(deleteEle[0]) })) {
+        window.console.log(defects);
+        removeDefect(_.find(defects, { issueId: Number(deleteEle[0]) }).id);
       }
       window.console.log('delete');
     } else {
@@ -246,9 +248,9 @@ class EditTestDetail extends Component {
     });
 
     const defectsOptions =
-    issueList.map(issue => (<Option key={issue.issueId} value={issue.issueId.toString()}>
-      {issue.issueNum} {issue.summary}
-    </Option>));
+      issueList.map(issue => (<Option key={issue.issueId} value={issue.issueId.toString()}>
+        {issue.issueNum} {issue.summary}
+      </Option>));
     return (
       <Sidebar
         title="测试详细信息"
