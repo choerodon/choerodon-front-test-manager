@@ -226,9 +226,9 @@ class ReportStory extends Component {
             } else {
               executeStatus[statusName] += 1;
             }
-              
+            const marginBottom = Math.max(execute.defects.length + execute.subStepDefects.length - 1, 0) * 20;
             return (
-              <div style={{ display: 'flex', margin: '5px 0', alignItems: 'center', marginBottom: execute.defects.length * 20 }} >
+              <div style={{ display: 'flex', margin: '5px 0', alignItems: 'center', marginBottom }} >
                 <div style={{ width: 80 }}>
                   {execute.cycleName}
                 </div>
@@ -282,8 +282,8 @@ class ReportStory extends Component {
             .includes(issueId.toString()) ? <div>
               {                
                 testCycleCaseES.map((item) => {
-                  const { defects } = item;
-                  return (<div>{defects.length > 0 ? defects.map(defect => 
+                  const { defects, subStepDefects } = item;
+                  return (<div>{defects.concat(subStepDefects).length > 0 ? defects.concat(subStepDefects).map(defect => 
                     (<div className="c7n-collapse-show-item">
                       <div>{defect.defectName}</div>
                       <div className="c7n-collapse-header-icon">                 
@@ -310,8 +310,8 @@ class ReportStory extends Component {
             <div>
               {
                 testCycleCaseES.map((item) => {
-                  const { defects } = item;
-                  return (<div>{defects.map((defect, i) => (
+                  const { defects, subStepDefects } = item;
+                  return (<div>{defects.concat(subStepDefects).map((defect, i) => (
                     <span style={{
                       fontSize: '13px',
                       color: '#3F51B5',                 
