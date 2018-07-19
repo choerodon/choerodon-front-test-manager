@@ -70,7 +70,7 @@ class TreeTitle extends Component {
   }
   handleEdit = (data) => {
     editFolder(data).then((res) => {
-      if (data.failed) {
+      if (res.failed) {
         Choerodon.prompt('文件夹名字重复');
       } else {
         this.props.refresh();

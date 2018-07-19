@@ -160,7 +160,7 @@ class EditTest extends Component {
         visible={visible || false}
         onOk={this.handleEditTest}
         onCancel={onCancel}
-        okText="创建"
+        okText="确定"
         cancelText="取消"
         confirmLoading={this.state.createLoading}
       >

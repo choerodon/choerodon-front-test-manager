@@ -135,6 +135,7 @@ class CycleExecute extends Component {
     // this.getTestInfo();
     // this.getUserList();
     this.getInfo();
+    window.console.log(this.props.history);
   }
   getInfo = () => {
     const { id } = this.props.match.params;
@@ -795,8 +796,25 @@ class CycleExecute extends Component {
       </Option>));
     const urlParams = AppState.currentMenuType;
     return (
-      <Page>
-        <Header title="执行详情" backPath={`/testManager/cycle?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}>
+      <Page className="c7n-clcle">
+        <Header title={null}>
+          <div>
+            <Tooltip
+              title={Choerodon.getMessage('返回', 'return')}
+              placement="bottom"
+              // getTooltipContainer={that => that}
+            >
+              <Button
+                type="primary"
+                onClick={() => { this.props.history.goBack(); }}
+                className="back-btn small-tooltip"
+                shape="circle"
+                size="large"
+                icon="arrow_back"
+              />
+            </Tooltip>
+          </div>
+          <span className="c7n-head--clcle-title">执行详情</span>
           <Button onClick={this.getInfo}>
             <Icon type="autorenew icon" />
             <span>刷新</span>
