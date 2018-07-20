@@ -1,4 +1,21 @@
-.c7n-cycle {}
+.c7n-cycle {
+    .ant-tree-switcher {
+        margin-top: 3px;
+    }
+    .icon-folder_open,
+    .icon-folder_open2 {
+        margin-top: -3px;
+    }
+    .ant-tree-child-tree li {
+        // display: flex;
+        // align-items: center;
+    }
+    .ant-tree li .ant-tree-node-content-wrapper {
+        display: inline-flex;
+        align-items: center;
+        height: 30px;
+    }
+}
 
 .c7n-cycleHome {
     display: flex;

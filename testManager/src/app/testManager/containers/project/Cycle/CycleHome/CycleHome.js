@@ -490,7 +490,7 @@ class CycleHome extends Component {
     const afterStr = item.title.substr(index + searchValue.length);
     const icon = (<Icon
       style={{ color: '#00A48D' }}
-      type={expandedKeys.includes(item.key) ? 'folder_open' : 'folder'}
+      type={expandedKeys.includes(item.key) ? 'folder_open2' : 'folder_open'}
     />);
     if (type === 'CLONE_FOLDER' || type === 'CLONE_CYCLE') {
       return (
