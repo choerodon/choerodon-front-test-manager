@@ -264,7 +264,7 @@ class EditTestDetail extends Component {
           }}
           title={`修改“${testStep}”的信息`}
           description="您可以修改一个测试步骤的详细信息。"
-          link="#"
+          link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management/case-management/update-list/"
         >
           <Spin spinning={loading}>
             <Select

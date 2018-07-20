@@ -71,6 +71,7 @@ class CreateTest extends Component {
           }}
           title={`在用例“${issueName}”中创建测试步骤`}
           description="您可以创建任意个测试步骤。"
+          link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management/case-management/update-list/"
         >
           <Form layout="vertical">
             <FormItem label="测试步骤">
