@@ -335,7 +335,7 @@ class CreateCycleExecute extends Component {
             }}
             title={`添加测试执行到${data.type === 'cycle' ? '测试循环' : '文件夹'}“${data.title}”`}
             description="您可以在目标版本创建多个测试执行，可以从问题或已有执行创建。"
-            link="#"
+            link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management/test-cycle/add-execution/"
           >
             <Tabs activeKey={tab} onChange={this.modeChange}>
               <TabPane tab="从问题添加" key="1">

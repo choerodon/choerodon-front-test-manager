@@ -82,7 +82,7 @@ class CreateCycle extends Component {
               }}
               title={`在项目“${AppState.currentMenuType.name}”中创建测试循环`}
               description="您可以在一个版本中创建一个测试循环。"
-              link="#"
+              link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management/test-cycle/create-cycle/"
             >
               <Form>
                 <FormItem
