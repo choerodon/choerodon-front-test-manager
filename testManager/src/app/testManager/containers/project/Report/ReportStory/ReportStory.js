@@ -230,7 +230,10 @@ class ReportStory extends Component {
             Math.max((execute.defects.length + execute.subStepDefects.length) - 1, 0) * 20;
             return (
               <div style={{ display: 'flex', margin: '5px 0', alignItems: 'center', marginBottom }} >
-                <div style={{ width: 80 }}>
+                <div
+                  title={execute.cycleName}
+                  style={{ width: 80, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}
+                >
                   {execute.cycleName}
                 </div>
                 <div

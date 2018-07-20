@@ -209,7 +209,10 @@ class ReportTest extends Component {
             
           return (
             <div style={{ display: 'flex', margin: '15px 0', alignItems: 'center' }} >
-              <div style={{ width: 80 }}>
+              <div
+                title={execute.cycleName || execute.testStep}
+                style={{ width: 80, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}
+              >
                 {execute.cycleName || execute.testStep}
               </div>
               <div
