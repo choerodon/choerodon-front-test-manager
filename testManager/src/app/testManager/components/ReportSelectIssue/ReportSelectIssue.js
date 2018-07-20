@@ -159,8 +159,7 @@ class ReportSelectIssue extends Component {
                 <Select
                   defaultValue={version}
                   style={{ flex: 1, maxWidth: 300, margin: '0 0 10px 0' }}
-                  label="版本"
-                  placeholder="版本"
+                  label="版本"               
                   loading={selectLoading}
                   onFocus={this.loadVersions}
                   onSelect={(value) => {
@@ -179,7 +178,6 @@ class ReportSelectIssue extends Component {
                   defaultValue="story"
                   style={{ flex: 1, maxWidth: 300, margin: '0 0 10px 30px' }}
                   label="类型"
-                  placeholder="类型"
                   onSelect={(code) => {
                     this.setState({
                       typeCode: code,

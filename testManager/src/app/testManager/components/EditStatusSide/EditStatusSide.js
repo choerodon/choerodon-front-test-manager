@@ -79,7 +79,7 @@ class EditStatusSide extends Component {
                       required: true, message: '请输入状态!',
                     }],
                   })(
-                    <Input style={{ width: 500 }} placeholder="状态" maxLength={30} label="状态" />,
+                    <Input style={{ width: 500 }} maxLength={30} label="状态" />,
                   )}
                 </FormItem>
                 <FormItem
@@ -91,7 +91,7 @@ class EditStatusSide extends Component {
                     //   required: true, message: '请输入说明!',
                     // }],
                   })(
-                    <Input style={{ width: 500 }} placeholder="说明" maxLength={30} label="说明" />,
+                    <Input style={{ width: 500 }} maxLength={30} label="说明" />,
                     // <div style={{ width: 500 }}>
                     //   <TextArea maxLength={30} label="说明" placeholder="说明" autosize />
                     // </div>

@@ -268,8 +268,7 @@ class EditTestDetail extends Component {
         >
           <Spin spinning={loading}>
             <Select
-              label="状态"
-              placeholder="状态"
+              label="状态"             
               value={stepStatus}
               style={{ width: 500 }}
               onChange={(value) => {
@@ -284,8 +283,7 @@ class EditTestDetail extends Component {
             <Select
               mode="tags"
               style={{ width: 500 }}
-              label="缺陷"
-              placeholder="缺陷"
+              label="缺陷"        
               value={defectIds}
               onChange={this.handleDefectsChange}
               allowClear

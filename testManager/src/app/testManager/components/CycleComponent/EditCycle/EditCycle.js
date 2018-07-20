@@ -117,7 +117,7 @@ class EditCycle extends Component {
                       onFocus={this.loadVersions}
                       style={{ width: 500, margin: '0 0 10px 0' }}
                       label="版本"
-                      placeholder="版本"                  
+                                
                     >
                       {options}
                     </Select>,     
@@ -132,7 +132,7 @@ class EditCycle extends Component {
                       required: true, message: '请输入名称!',
                     }],
                   })(
-                    <Input style={{ width: 500 }} placeholder="名称" maxLength={30} label="名称" />,
+                    <Input style={{ width: 500 }} maxLength={30} label="名称" />,
                     // <div style={{ width: 500 }}>
                     //   <TextArea maxLength={30} label="说明" placeholder="说明" autosize />
                     // </div>
@@ -147,7 +147,7 @@ class EditCycle extends Component {
                     //   required: true, message: '请输入说明!',
                     // }],
                   })(
-                    <Input style={{ width: 500 }} placeholder="说明" maxLength={30} label="说明" />,
+                    <Input style={{ width: 500 }} maxLength={30} label="说明" />,
                     // <div style={{ width: 500 }}>
                     //   <TextArea maxLength={30} label="说明" placeholder="说明" autosize />
                     // </div>
@@ -162,7 +162,7 @@ class EditCycle extends Component {
                     //   required: true, message: '请输入构建号!',
                     // }],
                   })(
-                    <Input style={{ width: 500 }} placeholder="构建号" maxLength={30} label="构建号" />,
+                    <Input style={{ width: 500 }} maxLength={30} label="构建号" />,
                     // <div style={{ width: 500 }}>
                     //   <TextArea maxLength={30} label="说明" placeholder="说明" autosize />
                     // </div>
@@ -177,44 +177,38 @@ class EditCycle extends Component {
                     //   required: true, message: '请输入环境!',
                     // }],
                   })(
-                    <Input style={{ width: 500 }} placeholder="环境" maxLength={30} label="环境" />,
+                    <Input style={{ width: 500 }} maxLength={30} label="环境" />,
                     // <div style={{ width: 500 }}>
                     //   <TextArea maxLength={30} label="说明" placeholder="说明" autosize />
                     // </div>
                   )}
                 </FormItem>
-                <FormItem
-                  // {...formItemLayout}
-                  label={null}
-                >
+                <FormItem >
                   {getFieldDecorator('fromDate', {                    
                     // rules: [{
                     //   required: true, message: '请选择日期!',
                     // }],
                   })(
                     <DatePicker 
-                      format="YYYY-MM-DD HH:mm:ss"
+                      format="YYYY-MM-DD"
                       style={{ width: 500 }} 
-                      placeholder="开始日期" 
+                      label="开始日期"
                     />,
                     // <div style={{ width: 500 }}>
                     //   <TextArea maxLength={30} label="说明" placeholder="说明" autosize />
                     // </div>
                   )}
                 </FormItem>
-                <FormItem
-                  // {...formItemLayout}
-                  label={null}
-                >
+                <FormItem >
                   {getFieldDecorator('toDate', {                   
                     // rules: [{
                     //   required: true, message: '请选择日期!',
                     // }],
                   })(
                     <DatePicker 
-                      format="YYYY-MM-DD HH:mm:ss"
+                      format="YYYY-MM-DD"
                       style={{ width: 500 }} 
-                      placeholder="结束日期"
+                      label="结束日期"
                     />,
                     // <div style={{ width: 500 }}>
                     //   <TextArea maxLength={30} label="说明" placeholder="说明" autosize />
