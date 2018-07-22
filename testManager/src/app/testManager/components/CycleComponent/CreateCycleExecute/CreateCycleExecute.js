@@ -335,7 +335,7 @@ class CreateCycleExecute extends Component {
             }}
             title={`添加测试执行到${data.type === 'cycle' ? '测试循环' : '文件夹'}“${data.title}”`}
             description="您可以在目标版本创建多个测试执行，可以从问题或已有执行创建。"
-            link="#"
+            link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management/test-cycle/add-execution/"
           >
             <Tabs activeKey={tab} onChange={this.modeChange}>
               <TabPane tab="从问题添加" key="1">
@@ -343,7 +343,7 @@ class CreateCycleExecute extends Component {
                   mode="tags"
                   style={{ width: 500, margin: '0 0 10px 0' }}
                   label="测试问题"
-                  placeholder="测试问题"
+            
                   value={selectIssueList}
                   onChange={this.handleIssueChange}
                   loading={selectLoading}
@@ -387,7 +387,7 @@ class CreateCycleExecute extends Component {
                     loading={selectLoading}
                     style={{ width: 500, margin: '0 0 10px 0' }}
                     label="选择指派人"
-                    placeholder="选择指派人"
+                  
                     onChange={this.handleAssignedChange}
                     onFocus={() => {
                       this.setState({
@@ -418,7 +418,7 @@ class CreateCycleExecute extends Component {
                         <Select
                           style={{ width: 500, margin: '0 0 10px 0' }}
                           label="版本"
-                          placeholder="版本"
+                    
                           loading={selectLoading}
                           onFocus={this.loadVersions}
                         >
@@ -436,7 +436,7 @@ class CreateCycleExecute extends Component {
                           style={{ width: 500, margin: '0 0 10px 0' }}
                           loading={selectLoading}
                           label="测试循环"
-                          placeholder="测试循环"
+                      
                           onFocus={() => {
                             if (getFieldValue('versionId')) {
                               getCyclesByVersionId(getFieldValue('versionId')).then((List) => {
@@ -462,7 +462,7 @@ class CreateCycleExecute extends Component {
                           allowClear
                           style={{ width: 500, margin: '0 0 10px 0' }}
                           label="测试文件夹"
-                          placeholder="测试文件夹"
+                        
                           onFocus={() => {
                             if (getFieldValue('cycleId')) {
                               getFoldersByCycleId(getFieldValue('cycleId')).then((List) => {
@@ -506,7 +506,7 @@ class CreateCycleExecute extends Component {
                               loading={selectLoading}
                               style={{ width: 500, margin: '0 0 10px 0' }}
                               label="选择指派人"
-                              placeholder="选择指派人"
+                             
                               onFocus={() => {
                                 this.setState({
                                   selectLoading: true,
@@ -547,7 +547,7 @@ class CreateCycleExecute extends Component {
                               style={{ width: 500, margin: '0 0 10px 0' }}
                               loading={selectLoading}
                               label="优先级"
-                              placeholder="优先级"
+                           
                               onFocus={() => {
                                 this.setState({
                                   selectLoading: true,
@@ -572,7 +572,7 @@ class CreateCycleExecute extends Component {
                               mode="tags"
                               style={{ width: 500, margin: '0 0 10px 0' }}
                               label="测试执行状态"
-                              placeholder="测试执行状态"
+                           
                               loading={selectLoading}
                               onFocus={() => {
                                 this.setState({
@@ -598,7 +598,7 @@ class CreateCycleExecute extends Component {
                               mode="tags"
                               style={{ width: 500, margin: '0 0 10px 0' }}
                               label="模块"
-                              placeholder="模块"
+                            
                               loading={selectLoading}
                               onFocus={() => {
                                 this.setState({
@@ -624,7 +624,7 @@ class CreateCycleExecute extends Component {
                               mode="tags"
                               style={{ width: 500, margin: '0 0 10px 0' }}
                               label="标签"
-                              placeholder="标签"
+                             
                               loading={selectLoading}
                               onFocus={() => {
                                 this.setState({
@@ -664,7 +664,7 @@ class CreateCycleExecute extends Component {
                               mode="tags"
                               style={{ width: 500, margin: '0 0 10px 0' }}
                               label="缺陷状态"
-                              placeholder="缺陷状态"
+                             
                               loading={selectLoading}
                               onFocus={() => {
                                 this.setState({

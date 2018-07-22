@@ -1606,8 +1606,8 @@ chardet@^0.4.0:
   resolved "http://registry.npm.taobao.org/chardet/download/chardet-0.4.2.tgz#b5473b33dc97c424e5d98dc87d55d4d8a29c8bf2"
 
 choerodon-front-boot@^0.6.4:
-  version "0.6.3"
-  resolved "http://registry.npm.taobao.org/choerodon-front-boot/download/choerodon-front-boot-0.6.3.tgz#b5e9db16d408e94413b7c3a882bdd47c801ba082"
+  version "0.6.4"
+  resolved "http://registry.npm.taobao.org/choerodon-front-boot/download/choerodon-front-boot-0.6.4.tgz#cfffe4b25dcf492c113771061197c003167fbcb1"
   dependencies:
     add-asset-html-webpack-plugin "^2.1.2"
     autoprefixer "^6.7.7"
@@ -1635,7 +1635,7 @@ choerodon-front-boot@^0.6.4:
     case-sensitive-paths-webpack-plugin "^2.1.2"
     chalk "^2.4.1"
     change-case "^3.0.1"
-    choerodon-ui "0.3.3"
+    choerodon-ui "0.3.4"
     classnames "^2.2.5"
     commander "^2.9.0"
     css-loader "^0.25.0"
@@ -1692,9 +1692,9 @@ choerodon-front-boot@^0.6.4:
     webpack "^3.12.0"
     webpack-dev-server "^2.9.1"
 
-choerodon-ui@0.3.3:
-  version "0.3.3"
-  resolved "http://registry.npm.taobao.org/choerodon-ui/download/choerodon-ui-0.3.3.tgz#c3c57e9b736cb0f1c6793d93eff01d8ee6279ed0"
+choerodon-ui@0.3.4:
+  version "0.3.4"
+  resolved "http://registry.npm.taobao.org/choerodon-ui/download/choerodon-ui-0.3.4.tgz#37f87df5d09454a0df6f738954a34727e01576a8"
   dependencies:
     add-dom-event-listener "1.x"
     array-tree-filter "^2.0.0"

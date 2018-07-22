@@ -72,7 +72,7 @@ class ReportHome extends Component {
           title={`项目"${'projectzzy'}"的报表`}
           description="两种可跟踪性报告可用：要求 -> 测试 -> 执行 -> 缺陷，缺陷 -> 执行 -> 测试 -> 。
           点击您需要查看的报告类型可以查看具体的详细内容。"
-          link="#"
+          link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management/test-report/report/"
         >
           <div style={{ display: 'flex' }}>
             <Link to={`/testManager/report/story?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`} >
