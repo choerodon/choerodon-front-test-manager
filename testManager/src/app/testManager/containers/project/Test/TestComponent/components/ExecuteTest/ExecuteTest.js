@@ -108,6 +108,7 @@ class CreateTest extends Component {
           }}
           title={`在测试“${issueName}”中执行测试`}
           description="将测试用例添加到测试循环或文件夹中，构成一次测试执行。"
+          link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management/execution-test/"
         >
           <Form layout="vertical">
             <FormItem label="版本">

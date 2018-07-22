@@ -1407,7 +1407,7 @@ class CreateSprint extends Component {
                     <span
                       style={{ width: 30, height: 30, borderRadius: '50%', background: 'rgba(77, 144, 254, 0.2)', marginRight: 12, flexShrink: 0, display: 'flex', justifyContent: 'center', alignItems: 'center' }}
                     >
-                      <Icon type="flag" style={{ fontSize: '24px', color: '#3575df' }} />
+                      <Icon type="flag" style={{ fontSize: '24px', color: COLOR[this.state.priorityCode]?COLOR[this.state.priorityCode].color:'#3575df' }} />
                     </span>
                     <div>
                       <div style={{ fontSize: '12px', color: 'rgba(0, 0, 0, 0.54)', marginBottom: 4 }}>
@@ -2458,7 +2458,7 @@ class CreateSprint extends Component {
                     <div style={{ flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px' }} />
                     <div className="c7n-title-right" style={{ marginLeft: '14px', position: 'relative' }}>
                       <Button className="leftBtn" funcTyp="flat" onClick={() => this.setState({ createTestStepShow: true })}>
-                        <Icon type="zoom_out_map icon" style={{ marginRight: 2 }} />
+                        <Icon type="playlist_add icon" style={{ marginRight: 2 }} />
                         <span>添加测试信息</span>
                       </Button>
                     </div>

@@ -264,12 +264,11 @@ class EditTestDetail extends Component {
           }}
           title={`修改“${testStep}”的信息`}
           description="您可以修改一个测试步骤的详细信息。"
-          link="#"
+          link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management/case-management/update-list/"
         >
           <Spin spinning={loading}>
             <Select
-              label="状态"
-              placeholder="状态"
+              label="状态"             
               value={stepStatus}
               style={{ width: 500 }}
               onChange={(value) => {
@@ -284,8 +283,7 @@ class EditTestDetail extends Component {
             <Select
               mode="tags"
               style={{ width: 500 }}
-              label="缺陷"
-              placeholder="缺陷"
+              label="缺陷"        
               value={defectIds}
               onChange={this.handleDefectsChange}
               allowClear

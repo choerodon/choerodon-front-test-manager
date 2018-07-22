@@ -84,16 +84,19 @@ class CycleHome extends Component {
   getParentKey = (key, tree) => key.split('-').slice(0, -1).join('-')
 
 
-  loadCycle = (selectedKeys, { selected, selectedNodes, node, event }) => {
+  loadCycle = (selectedKeys, { selected, selectedNodes, node, event }, flag) => {
     // window.console.log(selectedNodes, node, event);
     CycleStore.setSelectedKeys(selectedKeys);
     const { data } = node.props;
     const { executePagination } = this.state;
     if (data.cycleId) {
-      this.setState({
-        rightLoading: true,
-        // currentCycle: data,
-      });
+      if (!flag) {
+        this.setState({
+          rightLoading: true,
+          // currentCycle: data,
+        });
+      }  
+      
       CycleStore.setCurrentCycle(data);
       // window.console.log(data);
       getStatusList('CYCLE_CASE').then((statusList) => {
@@ -337,7 +340,7 @@ class CycleHome extends Component {
     const currentCycle = CycleStore.getCurrentCycle;
     const selectedKeys = CycleStore.getSelectedKeys;
     if (currentCycle.cycleId) {
-      this.loadCycle(selectedKeys, { node: { props: { data: currentCycle } } });
+      this.loadCycle(selectedKeys, { node: { props: { data: currentCycle } } }, true);
     }
   }
   filterCycle = (e) => {
@@ -487,7 +490,7 @@ class CycleHome extends Component {
     const afterStr = item.title.substr(index + searchValue.length);
     const icon = (<Icon
       style={{ color: '#00A48D' }}
-      type={expandedKeys.includes(item.key) ? 'folder_open' : 'folder'}
+      type={expandedKeys.includes(item.key) ? 'folder_open2' : 'folder_open'}
     />);
     if (type === 'CLONE_FOLDER' || type === 'CLONE_CYCLE') {
       return (
