@@ -35,6 +35,7 @@ const zhCN = {
   attachment: '附件',
   upload_attachment: '上传附件',
   status: '状态',
+  day: '天',
   // 执行详情
   execute_detail: '执行详情',
   execute_cycle_execute: '测试执行',
@@ -53,14 +54,33 @@ const zhCN = {
   execute_stepAttachment: '步骤附件',
   execute_stepStatus: '状态',
   execute_comment: '注释',
-
   // 执行历史记录表格
   execute_history_oldValue: '原值',
   execute_history_newValue: '新值',
-
   // 编辑步骤详情侧边栏
   execute_stepDetail: '测试详细信息',
   execute_stepEditTitle: '修改步骤“{testStep}”的信息',
+
+
+  // 测试摘要
+  summary_title: '测试摘要',
+  summary_totalTest: '总测试数量',
+  summary_totalRest: '总剩余数量',
+  summary_totalExexute: '总执行数量',
+  summary_totalNotPlan: '总未规划数量',
+  summary_testSummary: '测试统计',
+  summary_summaryByVersion: '按版本',
+  summary_summaryByComponent: '按模块',  
+  summary_summaryByLabel: '按标签',
+  summary_noVersion: '未规划',
+  summary_noComponent: '无组件',
+  summary_noLabel: '无标签',
+  summary_summaryTimeLeap: '查看时段',
+  summary_testCreate: '测试创建',
+  summary_testExecute: '测试执行',
+  summary_testCreated: '创建测试',
+  summary_testExecuted: '执行测试',
+  summary_testLast: '过去',
 };
 
 export default zhCN;

@@ -34,6 +34,7 @@ const enUS = {
   attachment: 'Attachment',
   upload_attachment: 'Upload attachment',
   status: 'Status',
+  day: 'days',
   // 测试执行
   execute_detail: 'Execution details',
   execute_cycle_execute: 'Test execution',
@@ -51,14 +52,32 @@ const enUS = {
   execute_expectedOutcome: 'Expected outcome',
   execute_stepAttachment: 'Step attachment', 
   execute_stepStatus: 'Status',
-  execute_comment: 'Comment',
-    
+  execute_comment: 'Comment',    
   // 执行历史记录表格
   execute_history_oldValue: 'Old value',
-  execute_history_newValue: 'New value',
-  
+  execute_history_newValue: 'New value',  
   // 编辑步骤详情侧边栏
   execute_stepDetail: 'Step detail',
   execute_stepEditTitle: 'Edit the info of test step“{testStep}”',
+
+  // 测试摘要
+  summary_title: 'Test Summary',
+  summary_totalTest: 'Total Tests',
+  summary_totalRest: 'Total Rests',
+  summary_totalExexute: 'Total Execute',
+  summary_totalNotPlan: 'Not Plan',
+  summary_testSummary: 'Test Summary',
+  summary_summaryByVersion: 'By Version',
+  summary_summaryByComponent: 'By Component',  
+  summary_summaryByLabel: 'By Label',
+  summary_noVersion: 'Not Plan',
+  summary_noComponent: 'No Component',
+  summary_noLabel: 'No Label',
+  summary_summaryTimeLeap: 'View Period',
+  summary_testCreate: 'Test Create',
+  summary_testExecute: 'Test Execute',
+  summary_testCreated: 'Test Created',
+  summary_testExecuted: 'Test Executed',
+  summary_testLast: 'Last',
 };
 export default enUS;
