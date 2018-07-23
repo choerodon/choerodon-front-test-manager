@@ -11,6 +11,10 @@ const pageDetail = {
   // 报表
   report_content_title: `Reports of project "${projectName}"`,
   report_content_description: 'There are two kinks of report：demand -> test -> execute -> defect，defect -> execute -> test -> demand 。  Click to choose whick kind of report you want to see。',
+
+  // 测试循环
+  cycle_title: `Cycle of project "${projectName}"`,
+  cycle_description: 'The cycle summary uses the tree view to view the test cases corresponding to different version in this project.',
 };
 const enUS = {
   ...pageDetail,
@@ -34,6 +38,8 @@ const enUS = {
   attachment: 'Attachment',
   upload_attachment: 'Upload attachment',
   status: 'Status',
+  version: 'version',
+  type: 'type',
   day: 'days',
   // 测试执行
   execute_detail: 'Execution details',
@@ -108,5 +114,29 @@ const enUS = {
   report_chooseQuestion: 'choose question',
   report_defectCount: 'Defect count',
   report_total: 'Total',
+  // 选择问题侧边栏
+  report_select_title: 'Choose questions',
+  report_select_content_title: `Choose questions from project “${projectName}”`,
+  report_select_content_description: 'You can choose any questions to generate report',
+  report_select_allVersion: 'All versions',
+  report_select_questionId: 'test question ID',
+  report_select_summary: 'summary',
+
+  // 测试循环
+  cycle_name: 'Test cycle',
+  cycle_cycleName: 'Cycle name',
+  cycle_addCycle: 'create execute',
+  cycle_build: 'Build',
+  cycle_environment: 'Environment',
+  cycle_createBy: 'Created by',
+  cycle_startTime: 'Started on',
+  cycle_cycleExecute: 'Cycle Execute',
+  cycle_endTime: 'Ended on',
+  cycle_totalExecute: 'Total Execute',
+  cycle_totalExecuted: 'Total Executed',
+  cycle_comment: 'Description',
+  cycle_executeBy: 'Execute by',
+  cycle_executeTime: 'Execute time',
+  cycle_assignedTo: 'Assigned to',
 };
 export default enUS;

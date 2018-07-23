@@ -15,6 +15,9 @@ const pageDetail = {
   report_content_title: `项目"${projectName}"的报表`,
   report_content_description: '两种可跟踪性报告可用：要求 -> 测试 -> 执行 -> 缺陷，缺陷 -> 执行 -> 测试 -> 。  点击您需要查看的报告类型可以查看具体的详细内容。',
 
+  // 测试循环
+  cycle_title: `项目"${projectName}"的循环摘要`,
+  cycle_description: '循环摘要使用树状图查看本项目中不同版本所对应的测试情况。',
 };
 
 const zhCN = {
@@ -38,6 +41,8 @@ const zhCN = {
   attachment: '附件',
   upload_attachment: '上传附件',
   status: '状态',
+  version: '版本',
+  type: '类型',
   day: '天',
   // 执行详情
   execute_detail: '执行详情',
@@ -113,6 +118,30 @@ const zhCN = {
   report_chooseQuestion: '选择问题',
   report_defectCount: '缺陷数',
   report_total: '总共',
+  // 选择问题侧边栏
+  report_select_title: '选择问题',
+  report_select_content_title: `项目“${projectName}”的报表选择问题`,
+  report_select_content_description: '您可以选择任意问题生成报表',
+  report_select_allVersion: '所有版本',
+  report_select_questionId: '测试问题ID',
+  report_select_summary: '摘要',
+
+  // 测试循环
+  cycle_name: '测试循环',
+  cycle_cycleName: '循环名称',
+  cycle_addCycle: '添加执行',
+  cycle_build: '构建号',
+  cycle_environment: '环境',
+  cycle_createBy: '创建人',
+  cycle_startTime: '开始时间',
+  cycle_cycleExecute: '循环层执行数',
+  cycle_endTime: '结束时间',
+  cycle_totalExecute: '全层级执行数',
+  cycle_totalExecuted: '全层级已执行数',
+  cycle_comment: '说明',
+  cycle_executeBy: '执行方',
+  cycle_executeTime: '执行时间',
+  cycle_assignedTo: '被指定人',
 };
 
 export default zhCN;

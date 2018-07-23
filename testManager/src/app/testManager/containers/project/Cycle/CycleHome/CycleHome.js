@@ -3,8 +3,8 @@ import { observer } from 'mobx-react';
 import { Page, Header, Content, stores } from 'choerodon-front-boot';
 import { Tooltip, Table, Button, Icon, Input, Tree, Spin, Modal } from 'choerodon-ui';
 import _ from 'lodash';
+import { FormattedMessage } from 'react-intl';
 import moment from 'moment';
-import 'moment/locale/zh-cn';
 import './CycleHome.scss';
 import { getCycles, deleteExecute, getCycleById, editCycleExecute, clone, addFolder, getStatusList } from '../../../../api/cycleApi';
 import { TreeTitle, CreateCycle, EditCycle, CreateCycleExecute, ShowCycleData } from '../../../../components/CycleComponent';
@@ -602,7 +602,7 @@ class CycleHome extends Component {
         </div>);
       },
     }, {
-      title: '状态',
+      title: <FormattedMessage id="status" />,
       dataIndex: 'executionStatus',
       key: 'executionStatus',
       // filters: statusList.map(status => ({ text: status.statusName, value: status.statusId })),
@@ -617,7 +617,7 @@ class CycleHome extends Component {
         </div>);
       },
     }, {
-      title: '摘要',
+      title: <FormattedMessage id="cycle_comment" />,
       dataIndex: 'comment',
       key: 'comment',
       width: '10%',
@@ -640,7 +640,7 @@ class CycleHome extends Component {
       },
     },
     {
-      title: '缺陷',
+      title: <FormattedMessage id="bug" />,
       dataIndex: 'defects',
       key: 'defects',
       width: '10%',
@@ -683,7 +683,7 @@ class CycleHome extends Component {
     //   key: 'statusName',
     // }, 
     {
-      title: '执行方',
+      title: <FormattedMessage id="cycle_executeBy" />,
       dataIndex: 'assignedUserRealName',
       key: 'assignedUserRealName',
       width: '10%',
@@ -714,7 +714,7 @@ class CycleHome extends Component {
       //   </div>);
       // },
     }, {
-      title: '执行时间',
+      title: <FormattedMessage id="cycle_executeTime" />,
       dataIndex: 'lastUpdateDate',
       key: 'lastUpdateDate',
       width: '10%',
@@ -729,7 +729,7 @@ class CycleHome extends Component {
         </div>);
       },
     }, {
-      title: '被指定人',
+      title: <FormattedMessage id="cycle_assignedTo" />,
       dataIndex: 'reporterRealName',
       key: 'reporterRealName',
       width: '10%',
@@ -789,15 +789,17 @@ class CycleHome extends Component {
     }];
     return (
       <Page className="c7n-cycle">
-        <Header title="测试循环">
+        <Header title={<FormattedMessage id="cycle_name" />}>
           <Button onClick={this.refresh}>
             <Icon type="autorenew icon" />
-            <span>刷新</span>
+            <span>
+              <FormattedMessage id="refresh" />
+            </span>
           </Button>
         </Header>
         <Content
-          title={`项目"${AppState.currentMenuType.name}"的循环摘要`}
-          description="循环摘要使用树状图查看本项目中不同版本锁对应的测试情况。"
+          title={<FormattedMessage id="cycle_title" />}
+          description={<FormattedMessage id="cycle_description" />}
         >
           <Spin spinning={loading}>
             <CreateCycleExecute
@@ -870,7 +872,8 @@ class CycleHome extends Component {
                           sideVisible: false,
                         });
                       }}
-                    >测试循环</p>
+                    ><FormattedMessage id="cycle_name" />
+                    </p>
                   )}
                 </div>
               </div>
@@ -923,7 +926,8 @@ class CycleHome extends Component {
               {cycleId && <div className="c7n-ch-right" >
                 <div style={{ display: 'flex' }}>
                   <div>
-                    循环名称：<span style={{ color: '#3F51B5' }}>{title}</span>
+                    <FormattedMessage id="cycle_cycleName" />
+                    ：<span style={{ color: '#3F51B5' }}>{title}</span>
                   </div>
                   <div style={{ flex: 1, visiblity: 'hidden' }} />
                   <div>
@@ -934,7 +938,9 @@ class CycleHome extends Component {
                       }}
                     >
                       <Icon type="playlist_add" />
-                      <span>添加执行</span>
+                      <span>
+                        <FormattedMessage id="cycle_addCycle" />                      
+                      </span>
                     </Button>
                   </div>
                 </div>
