@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
-import { Input, Button, Select, Icon, Modal, Upload, Spin } from 'choerodon-ui';
+import { Button, Select, Icon, Modal, Upload, Spin } from 'choerodon-ui';
 import { Content } from 'choerodon-front-boot';
 import _ from 'lodash';
-import PropTypes from 'prop-types';
 import { editCycleSide, deleteAttachment, removeDefect, addDefects } from '../../api/CycleExecuteApi';
 import { getIssueList } from '../../api/agileApi';
 import './EditTestDetail.less';
@@ -12,10 +11,7 @@ import { text2Delta } from '../../common/utils';
 
 const { Sidebar } = Modal;
 const { Option } = Select;
-const children = [];
-for (let i = 10; i < 36; i += 1) {
-  children.push(<Option key={i.toString(36) + i}>{i.toString(36) + i}</Option>);
-}
+
 const styles = {
   editLabel: {
     margin: '15px 0',
@@ -28,9 +24,6 @@ const styles = {
     color: 'white',
   },
 };
-function handleChange(value) {
-  window.console.log(`selected ${value}`);
-}
 
 class EditTestDetail extends Component {
   state = {

@@ -12,15 +12,19 @@ const TESTINDEX = asyncRouter(() => import('./project/Test'));
 class TestManagerIndex extends React.Component {
   render() {
     const { match, AppState } = this.props;
+    const langauge = AppState.currentLanguage;
+    const IntlProviderAsync = asyncLocaleProvider(langauge, () => import(`../locale/${langauge}`));
     return (
-      <Switch>
-        <Route path={`${match.url}/cycle`} component={cycleIndex} />
-        <Route path={`${match.url}/status`} component={CustomStatusIndex} />
-        <Route path={`${match.url}/report`} component={ReportIndex} />
-        <Route path={`${match.url}/summary`} component={SummaryIndex} />
-        <Route path={`${match.url}/manager`} component={TESTINDEX} />
-        <Route path={'*'} component={nomatch} />
-      </Switch>
+      <IntlProviderAsync>
+        <Switch>
+          <Route path={`${match.url}/cycle`} component={cycleIndex} />
+          <Route path={`${match.url}/status`} component={CustomStatusIndex} />
+          <Route path={`${match.url}/report`} component={ReportIndex} />
+          <Route path={`${match.url}/summary`} component={SummaryIndex} />
+          <Route path={`${match.url}/manager`} component={TESTINDEX} />
+          <Route path={'*'} component={nomatch} />
+        </Switch>
+      </IntlProviderAsync>
     );
   }
 }
