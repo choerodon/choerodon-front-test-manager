@@ -10,7 +10,7 @@ import { getCycles, deleteExecute, getCycleById, editCycleExecute, clone, addFol
 import { TreeTitle, CreateCycle, EditCycle, CreateCycleExecute, ShowCycleData } from '../../../../components/CycleComponent';
 import { RichTextShow } from '../../../../components/CommonComponent';
 import { delta2Html, delta2Text } from '../../../../common/utils';
-import CycleStore from '../../../../store/project/clcle/CycleStore';
+import CycleStore from '../../../../store/project/cycle/CycleStore';
 
 const { AppState } = stores;
 const { confirm } = Modal;
@@ -281,9 +281,9 @@ class CycleHome extends Component {
     const { executePagination } = this.state;
     confirm({
       width: 560,
-      title: '删除执行',
-      content: <div style={{ marginBottom: 32 }}>
-        这个执行将会被彻底删除。包括所有附件和评论。
+      title: Choerodon.getMessage('确认删除吗?', 'Confirm delete'),
+      content: <div style={{ marginBottom: 32 }}>      
+        {Choerodon.getMessage('当你点击删除后，该条数据将被永久删除，不可恢复!', 'When you click delete, after which the data will be permanently deleted and irreversible!')}   
       </div>,
       onOk() {
         that.setState({
@@ -370,7 +370,7 @@ class CycleHome extends Component {
         break;
       }
       case 'ADD_FOLDER': {
-        CycleStore.addItemByParentKey(item.key, { ...item, ...{ title: '新文件夹', key: `${item.key}-ADD_FOLDER`, type: 'ADD_FOLDER' } });
+        CycleStore.addItemByParentKey(item.key, { ...item, ...{ title: Choerodon.getMessage('新文件夹', 'New folder'), key: `${item.key}-ADD_FOLDER`, type: 'ADD_FOLDER' } });
         // 自动展开当前项
         const expandedKeys = CycleStore.getExpandedKeys;
         if (expandedKeys.indexOf(item.key) === -1) {

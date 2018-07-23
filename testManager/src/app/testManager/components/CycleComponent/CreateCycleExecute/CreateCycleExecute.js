@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Form, Input, Tabs, Select, Radio, Collapse, Icon, Modal, Spin } from 'choerodon-ui';
+import { Form, Tabs, Select, Radio, Collapse, Icon, Modal, Spin } from 'choerodon-ui';
+import { FormattedMessage } from 'react-intl';
 import { Content, stores } from 'choerodon-front-boot';
 import {
   createCycleExecute, getCyclesByVersionId, getFoldersByCycleId,
@@ -324,7 +325,7 @@ class CreateCycleExecute extends Component {
       <Spin spinning={loading}>
         
         <Sidebar
-          title="添加测试执行"
+          title={<FormattedMessage id="cycle_createExecute_title" />}
           visible={visible}
           onOk={this.onOk}
           onCancel={onCancel}
@@ -333,15 +334,22 @@ class CreateCycleExecute extends Component {
             style={{
               padding: '0 0 10px 0',
             }}
-            title={`添加测试执行到${data.type === 'cycle' ? '测试循环' : '文件夹'}“${data.title}”`}
-            description="您可以在目标版本创建多个测试执行，可以从问题或已有执行创建。"
+            title={
+              <FormattedMessage
+                id="cycle_createExecute_content_title" 
+                values={{ type: data.type === 'cycle' ? Choerodon.getMessage('测试循环', 'Cycle')
+                  : Choerodon.getMessage('文件夹', 'Folder'),
+                title: data.title }} 
+              />}
+            description={<FormattedMessage id="cycle_createExecute_content_description" />}
             link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management/test-cycle/add-execution/"
           >
             <Tabs activeKey={tab} onChange={this.modeChange}>
-              <TabPane tab="从问题添加" key="1">
+              <TabPane tab={<FormattedMessage id="cycle_createExecute_createFromQuestion" />} key="1">
                 <Select                 
                   style={{ width: 500, margin: '0 0 10px 0' }}
-                  label="测试问题"            
+                  label={<FormattedMessage id="cycle_createExecute_testQuestion" />}
+            
                   value={selectIssueList}
                   onChange={this.handleIssueChange}
                   loading={selectLoading}     
@@ -378,15 +386,15 @@ class CreateCycleExecute extends Component {
                   {issueOptions}
                 </Select><br />
                 <RadioGroup onChange={this.onChange} value={this.state.value}>
-                  <Radio style={radioStyle} value={1}>我</Radio>
-                  <Radio style={radioStyle} value={2}>其他</Radio>
+                  <Radio style={radioStyle} value={1}><FormattedMessage id="cycle_createExecute_me" /></Radio>
+                  <Radio style={radioStyle} value={2}><FormattedMessage id="cycle_createExecute_others" /></Radio>
                 </RadioGroup><br />
                 {this.state.value === 2 ?
                   <Select
                     allowClear
                     loading={selectLoading}
                     style={{ width: 500, margin: '0 0 10px 0' }}
-                    label="选择指派人"
+                    label={<FormattedMessage id="cycle_createExecute_selectAssign" />}
                   
                     onChange={this.handleAssignedChange}
                     onFocus={() => {
@@ -406,7 +414,7 @@ class CreateCycleExecute extends Component {
                   :
                   null}
               </TabPane>
-              <TabPane tab="从其他循环添加" key="2">
+              <TabPane tab={<FormattedMessage id="cycle_createExecute_createFromCycle" />} key="2">
                 <div className="c7n-create-execute">
                   <Form>
                     <FormItem>
@@ -417,7 +425,7 @@ class CreateCycleExecute extends Component {
                       })(
                         <Select
                           style={{ width: 500, margin: '0 0 10px 0' }}
-                          label="版本"
+                          label={<FormattedMessage id="version" />}
                     
                           loading={selectLoading}
                           onFocus={this.loadVersions}
@@ -435,7 +443,7 @@ class CreateCycleExecute extends Component {
                         <Select
                           style={{ width: 500, margin: '0 0 10px 0' }}
                           loading={selectLoading}
-                          label="测试循环"
+                          label={<FormattedMessage id="cycle" />}
                       
                           onFocus={() => {
                             if (getFieldValue('versionId')) {
@@ -461,7 +469,7 @@ class CreateCycleExecute extends Component {
                         <Select
                           allowClear
                           style={{ width: 500, margin: '0 0 10px 0' }}
-                          label="测试文件夹"
+                          label={<FormattedMessage id="cycle_createExecute_folder" />}
                         
                           onFocus={() => {
                             if (getFieldValue('cycleId')) {

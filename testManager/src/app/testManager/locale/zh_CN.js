@@ -31,8 +31,8 @@ const zhCN = {
   edit: '修改',
   cancel: '取消',
   delete: '删除',
-  'confirm.delete': '确认删除吗？',
-  'confirm.delete.tip': '当你点击删除后，该条数据将被永久删除，不可恢复!',
+  confirm_delete: '确认删除吗？',
+  confirm_deleteTip: '当你点击删除后，该条数据将被永久删除，不可恢复!',
   demand: '要求',
   test: '测试',
   step: '步骤',
@@ -42,7 +42,10 @@ const zhCN = {
   upload_attachment: '上传附件',
   status: '状态',
   version: '版本',
+  cycle: '测试循环',
   type: '类型',
+  comment: '说明',
+  name: '名称',
   day: '天',
   // 执行详情
   execute_detail: '执行详情',
@@ -142,6 +145,31 @@ const zhCN = {
   cycle_executeBy: '执行方',
   cycle_executeTime: '执行时间',
   cycle_assignedTo: '被指定人',
+  // 循环树
+  cycle_addFolder: '增加文件夹', 
+  cycle_editCycle: '编辑循环',
+  cycle_deleteCycle: '删除循环',
+  cycle_cloneCycle: '克隆循环',
+  cycle_editFolder: '编辑文件夹',
+  cycle_deleteFolder: '删除文件夹',
+  cycle_cloneFolder: '克隆文件夹',
+  cycle_newFolder: '新文件夹',
+
+  // 创建测试循环侧边
+  cycle_create_title: '创建测试循环',
+  cycle_create_content_title: `在项目“${projectName}”中创建测试循环`,
+  cycle_create_content_description: '您可以在一个版本中创建一个测试循环。',
+  // 创建执行侧边
+  cycle_createExecute_title: '添加测试执行',
+  cycle_createExecute_content_title: '添加测试执行到{type}“{title}”',
+  cycle_createExecute_content_description: '您可以在目标版本创建多个测试执行，可以从问题或已有执行创建。',
+  cycle_createExecute_createFromQuestion: '从问题添加',
+  cycle_createExecute_createFromCycle: '从循环添加',
+  cycle_createExecute_testQuestion: '测试问题',
+  cycle_createExecute_me: '我',
+  cycle_createExecute_others: '其他人',
+  cycle_createExecute_selectAssign: '选择指派人',
+  cycle_createExecute_folder: '文件夹',
 };
 
 export default zhCN;
