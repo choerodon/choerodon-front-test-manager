@@ -4,6 +4,7 @@ import { Page, Header, Content, stores } from 'choerodon-front-boot';
 import { Link } from 'react-router-dom';
 import { Table, Menu, Dropdown, Button, Icon, Collapse } from 'choerodon-ui';
 import _ from 'lodash';
+import { FormattedMessage } from 'react-intl';
 import ReportSelectIssue from '../../../../components/ReportSelectIssue';
 import { getReportsFromDefect } from '../../../../api/reportApi';
 import { getIssueStatus } from '../../../../api/agileApi';
@@ -127,19 +128,25 @@ class ReportTest extends Component {
     const menu = (
       <Menu style={{ marginTop: 35 }}>
         <Menu.Item key="0">
-          <Link to={`/testManager/report/story?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`} >要求到缺陷</Link>
+          <Link to={`/testManager/report/story?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`} >
+            <FormattedMessage id="report_dropDown_demand" />
+          </Link>
         </Menu.Item>
         <Menu.Item key="1">
-          <Link to={`/testManager/report/test?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}>缺陷到要求</Link>
+          <Link to={`/testManager/report/test?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}>
+            <FormattedMessage id="report_dropDown_defect" /> 
+          </Link>
         </Menu.Item> 
         <Menu.Item key="2">
-          <Link to={`/testManager/report?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}>主页</Link>
+          <Link to={`/testManager/report?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}>
+            <FormattedMessage id="report_dropDown_home" /> 
+          </Link>
         </Menu.Item>     
       </Menu>
     );
     const columns = [{
       className: 'c7n-table-white',
-      title: '缺陷',
+      title: <FormattedMessage id="bug" />,
       dataIndex: 'a',
       key: 'a',   
       width: '25%',
@@ -175,7 +182,7 @@ class ReportTest extends Component {
       },
     }, {
       className: 'c7n-table-white',
-      title: '执行',
+      title: <FormattedMessage id="execute" />,
       dataIndex: 'execute',
       key: 'execute',
       width: '25%',
@@ -238,7 +245,7 @@ class ReportTest extends Component {
                     background: 'rgba(0,0,0,0.20)',
                     borderRadius: '100px',
                   }}
-                  >步骤</div> : null
+                  ><FormattedMessage id="step" /></div> : null
                   
               }
               
@@ -249,7 +256,7 @@ class ReportTest extends Component {
           :
           (
             <div>
-              <div>总共：{totalExecute}</div>
+              <div><FormattedMessage id="report_total" />：{totalExecute}</div>
               <div style={{ display: 'flex' }}>
                 {
                   Object.keys(executeStatus).map(key => (<div>
@@ -263,7 +270,7 @@ class ReportTest extends Component {
       },
     }, {
       className: 'c7n-table-white',
-      title: '测试',
+      title: <FormattedMessage id="test" />,
       dataIndex: 'cycleId',
       key: 'cycleId',
       width: '25%',
@@ -290,12 +297,12 @@ class ReportTest extends Component {
           <div style={{ minHeight: 30 }}> { caseShow }   </div> 
           :
           (         
-            <div>总共：{testCycleCaseES.concat(testCycleCaseStepES).length}</div>            
+            <div> <FormattedMessage id="report_total" />：{testCycleCaseES.concat(testCycleCaseStepES).length}</div>            
           );
       },
     }, {
       className: 'c7n-table-white',
-      title: '要求',
+      title: <FormattedMessage id="demand" />,
       dataIndex: 'demand',
       key: 'demand',
       width: '25%',
@@ -331,10 +338,11 @@ class ReportTest extends Component {
 
     return (
       <Page className="c7n-report-test">
-        <Header title="缺陷 -> 执行 -> 测试 -> 要求">
-          <Dropdown overlay={menu} trigger="click">
+        <Header title={<FormattedMessage id="report_defectToDemand" />}>
+          <Dropdown overlay={menu} trigger={['click']}>
             <a className="ant-dropdown-link" href="#">
-          切换报表 <Icon type="arrow_drop_down" />
+              <FormattedMessage id="report_switch" />
+              <Icon type="arrow_drop_down" />
             </a>
           </Dropdown>
           <Button 
@@ -346,7 +354,9 @@ class ReportTest extends Component {
             }}
           >
             <Icon type="open_in_new" />
-            <span>选择问题</span>
+            <span>
+              <FormattedMessage id="report_chooseQuestion" />
+            </span>
           </Button>
           {/* <Dropdown overlay={menu} trigger="click">
             <a className="ant-dropdown-link" href="#">
@@ -355,16 +365,17 @@ class ReportTest extends Component {
           </Dropdown>    */}
           <Button onClick={this.getInfo} style={{ marginLeft: 30 }}>
             <Icon type="autorenew icon" />
-            <span>刷新</span>
+            <span>
+              <FormattedMessage id="refresh" />
+            </span>
           </Button>
         </Header>
         <Content
         // style={{
         //   padding: '0 0 10px 0',
         // }}
-          title={`项目"${AppState.currentMenuType.name}"的报表`}
-          description="两种可跟踪性报告可用：要求 -> 测试 -> 执行 -> 缺陷，缺陷 -> 执行 -> 测试 -> 。
-        点击您需要查看的报告类型可以查看具体的详细内容。"
+          title={<FormattedMessage id="report_content_title" />}
+          description={<FormattedMessage id="report_content_description" />}
           link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management/test-report/report/"
         >
           <div style={{ display: 'flex' }} />

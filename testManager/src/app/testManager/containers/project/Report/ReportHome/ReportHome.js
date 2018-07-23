@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { Table, Tabs, Menu, Dropdown, Button, Icon, Card, Select, Spin, Upload } from 'choerodon-ui';
+import { Menu, Dropdown, Button, Icon, Select } from 'choerodon-ui';
 import { Page, Header, Content, stores } from 'choerodon-front-boot';
+import { FormattedMessage } from 'react-intl';
 import './ReportHome.less';
 import Pic from './pic.svg';
 import Pic2 from './pic2.svg';
@@ -44,34 +44,38 @@ class ReportHome extends Component {
     const menu = (
       <Menu style={{ marginTop: 35 }}>
         <Menu.Item key="0">
-          <Link to={`/testManager/report/story?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`} >要求到缺陷</Link>
+          <Link to={`/testManager/report/story?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`} >
+            <FormattedMessage id="report_dropDown_demand" /> 
+          </Link>
         </Menu.Item>
         <Menu.Item key="1">
-          <Link to={`/testManager/report/test?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}>缺陷到要求</Link>
+          <Link to={`/testManager/report/test?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}>
+            <FormattedMessage id="report_dropDown_defect" /> 
+          </Link>
         </Menu.Item>      
       </Menu>
     );
     
     return (
       <Page className="c7n-report-home">
-        <Header title="报表">
-          <Dropdown overlay={menu} trigger="click">
+        <Header title={<FormattedMessage id="report_title" />}>
+          <Dropdown overlay={menu} trigger={['click']}>
             <a className="ant-dropdown-link" href="#">
-            切换报表 <Icon type="arrow_drop_down" />
+              <FormattedMessage id="report_switch" /> 
+              <Icon type="arrow_drop_down" />
             </a>
           </Dropdown>          
-          <Button onClick={this.getInfo}>
+          {/* <Button onClick={this.getInfo}>
             <Icon type="autorenew icon" />
-            <span>刷新</span>
-          </Button>
+            <span><FormattedMessage id="refresh" /></span>
+          </Button> */}
         </Header>
         <Content
           // style={{
           //   padding: '0 0 10px 0',
           // }}
-          title={`项目"${AppState.currentMenuType.name}"的报表`}
-          description="两种可跟踪性报告可用：要求 -> 测试 -> 执行 -> 缺陷，缺陷 -> 执行 -> 测试 -> 。
-          点击您需要查看的报告类型可以查看具体的详细内容。"
+          title={<FormattedMessage id="report_content_title" />}
+          description={<FormattedMessage id="report_content_description" />}
           link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management/test-report/report/"
         >
           <div style={{ display: 'flex' }}>
@@ -80,8 +84,8 @@ class ReportHome extends Component {
                 <div style={styles.imgContainer}>
                   <img src={Pic} alt="" />
                 </div>
-                <div style={styles.itemTextBold}>{'要求 -> 测试 -> 执行 -> 缺陷'}</div>
-                <div style={{ color: 'rgba(0,0,0,0.65)' }}>从类型字段搜索要求或缺陷，然后选择合适版本以缩小范围，最后单击“生成” 创建可跟踪性报告。</div>
+                <div style={styles.itemTextBold}><FormattedMessage id="report_demandToDefect" /></div>
+                <div style={{ color: 'rgba(0,0,0,0.65)' }}><FormattedMessage id="report_demandToDefect_description" /></div>
               </div>
             </Link>
             <Link to={`/testManager/report/test?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}>
@@ -89,8 +93,8 @@ class ReportHome extends Component {
                 <div style={styles.imgContainer}>
                   <img src={Pic2} alt="" />
                 </div>
-                <div style={styles.itemTextBold}>{'缺陷 -> 执行 -> 测试 -> 要求'}</div>
-                <div style={{ color: 'rgba(0,0,0,0.65)' }}>从类型字段搜索要求或缺陷，然后选择合适版本以缩小范围，最后单击“生成” 创建可跟踪性报告。</div>
+                <div style={styles.itemTextBold}><FormattedMessage id="report_defectToDemand" /></div>
+                <div style={{ color: 'rgba(0,0,0,0.65)' }}><FormattedMessage id="report_defectToDemand_description" /></div>
               </div>
             </Link>
           </div>

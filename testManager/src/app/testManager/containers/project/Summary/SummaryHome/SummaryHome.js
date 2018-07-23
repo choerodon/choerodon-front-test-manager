@@ -12,8 +12,6 @@ import { getProjectVersion, getLabels, getModules, getIssueCount } from '../../.
 import './SummaryHome.less';
 
 
-const ButtonGroup = Button.Group;
-
 class SummaryHome extends Component {
   constructor() {
     super();
@@ -291,6 +289,7 @@ class SummaryHome extends Component {
                 （<FormattedMessage id="summary_summaryByVersion" />）
                 </div>
                 <Table
+                  // rowKey="name"
                   style={{ height: 180 }}
                   columns={versionColumns}
                   pagination={{ pageSize: 5, showSizeChanger: false }}
@@ -304,6 +303,7 @@ class SummaryHome extends Component {
                 （<FormattedMessage id="summary_summaryByComponent" />）
                 </div>
                 <Table
+                  // rowKey="name"
                   style={{ height: 180 }}
                   columns={componentColumns}
                   pagination={{ pageSize: 5, showSizeChanger: false }}
@@ -317,6 +317,7 @@ class SummaryHome extends Component {
                 （<FormattedMessage id="summary_summaryByLabel" />）
                 </div>
                 <Table
+                  // rowKey="name"
                   style={{ height: 180 }}
                   columns={labelColumns}
                   pagination={{ pageSize: 5, showSizeChanger: false }}

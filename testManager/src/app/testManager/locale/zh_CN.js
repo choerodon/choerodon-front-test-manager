@@ -1,20 +1,19 @@
 // zh_CN.js
+import { stores } from 'choerodon-front-boot';
+
+const { AppState } = stores;
+const projectName = AppState.currentMenuType.name;
 // 文档地址前缀
 const docServer = 'http://v0-7.choerodon.io/zh/docs';
 // 界面标题描述统一管理
 const pageDetail = {
 
-  // network
-  'network.title': '项目"{name}"的网络配置',
-  'network.description': '网络管理是定义了一种访问网络的策略，是指内部的负载均衡以及网络转发，会将网络流量定向转发到指定的单个或者多个实例容器组。',
-  'network.link': `${docServer}/user-guide/deployment-pipeline/service/`,
-  'network.create.title': '项目"{name}"中创建网络',
-  'network.create.description': '请选择环境及实例，配置网络转发策略。目前支持内部和外部两种网络转发方式。\n' +
-  '        转发内部网络，则只需定义端口即可，系统会自动为您分配集群内部IP；转发外部网络，则需要定义外部IP及端口。',
-  'network.create.link': `${docServer}/user-guide/deployment-pipeline/service/`,
-  'network.update.title': '对网络"{name}"进行修改',
-  'network.update.description': '您可在此修改网络配置信息。',
-  'network.update.link': `${docServer}/user-guide/deployment-pipeline/service/`,
+  status_custom_home_title: `项目"${projectName}"的自定义状态`,
+  status_custom_home_description: '下表显示可用测试执行状态，测试步骤状态。',
+
+  // 报表
+  report_content_title: `项目"${projectName}"的报表`,
+  report_content_description: '两种可跟踪性报告可用：要求 -> 测试 -> 执行 -> 缺陷，缺陷 -> 执行 -> 测试 -> 。  点击您需要查看的报告类型可以查看具体的详细内容。',
 
 };
 
@@ -31,6 +30,10 @@ const zhCN = {
   delete: '删除',
   'confirm.delete': '确认删除吗？',
   'confirm.delete.tip': '当你点击删除后，该条数据将被永久删除，不可恢复!',
+  demand: '要求',
+  test: '测试',
+  step: '步骤',
+  execute: '执行',
   bug: '缺陷',
   attachment: '附件',
   upload_attachment: '上传附件',
@@ -87,6 +90,29 @@ const zhCN = {
   summary_testCreated: '创建测试',
   summary_testExecuted: '执行测试',
   summary_testLast: '过去',
+
+  // 自定义状态
+  status_title: '自定义状态',
+  status_create: '创建状态',
+  status_executeStatus: '测试执行状态',
+  status_steptatus: '测试步骤状态',
+  status_type: '类型',
+  status_comment: '说明',
+  status_color: '颜色',
+
+  // 报表
+  report_title: '报表',
+  report_switch: '切换报表',
+  report_dropDown_demand: '要求到缺陷',
+  report_dropDown_defect: '缺陷到要求',
+  report_dropDown_home: '主页',
+  report_demandToDefect: '要求 -> 测试 -> 执行 -> 缺陷', 
+  report_defectToDemand: '缺陷 -> 执行 -> 测试 -> 要求',
+  report_demandToDefect_description: '从类型字段搜索要求或缺陷，然后选择合适版本以缩小范围，最后单击“生成” 创建可跟踪性报告。',
+  report_defectToDemand_description: '从类型字段搜索要求或缺陷，然后选择合适版本以缩小范围，最后单击“生成” 创建可跟踪性报告。',
+  report_chooseQuestion: '选择问题',
+  report_defectCount: '缺陷数',
+  report_total: '总共',
 };
 
 export default zhCN;

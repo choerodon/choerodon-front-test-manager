@@ -1,20 +1,16 @@
 // 文档地址前缀
+import { stores } from 'choerodon-front-boot';
+
+const { AppState } = stores;
+const projectName = AppState.currentMenuType.name;
 const docServer = 'http://v0-7.choerodon.io/zh/docs';
 // 界面标题描述统一管理
 const pageDetail = {
-
-  // network
-  'network.title': '项目"{name}"的网络配置',
-  'network.description': '网络管理是定义了一种访问网络的策略，是指内部的负载均衡以及网络转发，会将网络流量定向转发到指定的单个或者多个实例容器组。',
-  'network.link': `${docServer}/user-guide/deployment-pipeline/service/`,
-  'network.create.title': '项目"{name}"中创建网络',
-  'network.create.description': '请选择环境及实例，配置网络转发策略。目前支持内部和外部两种网络转发方式。\n' +
-  '        转发内部网络，则只需定义端口即可，系统会自动为您分配集群内部IP；转发外部网络，则需要定义外部IP及端口。',
-  'network.create.link': `${docServer}/user-guide/deployment-pipeline/service/`,
-  'network.update.title': '对网络"{name}"进行修改',
-  'network.update.description': '您可在此修改网络配置信息。',
-  'network.update.link': `${docServer}/user-guide/deployment-pipeline/service/`,
-
+  status_custom_home_title: `Custom status of project "${projectName}"`,
+  status_custom_home_description: 'The table below shows the available test execution status, test step status.',
+  // 报表
+  report_content_title: `Reports of project "${projectName}"`,
+  report_content_description: 'There are two kinks of report：demand -> test -> execute -> defect，defect -> execute -> test -> demand 。  Click to choose whick kind of report you want to see。',
 };
 const enUS = {
   ...pageDetail,
@@ -30,6 +26,10 @@ const enUS = {
   delete: 'Delete',
   'confirm.delete': 'Confirm delete',
   'confirm.delete.tip': 'When you click delete, after which the data will be permanently deleted and irreversible!',
+  demand: 'Demand',
+  test: 'Test',
+  step: 'Test Step',
+  execute: 'Exexute',
   bug: 'Defects',
   attachment: 'Attachment',
   upload_attachment: 'Upload attachment',
@@ -85,5 +85,28 @@ const enUS = {
   summary_testCreated: 'Test Created',
   summary_testExecuted: 'Test Executed',
   summary_testLast: 'Last',
+
+  // 自定义状态
+  status_title: 'Custom Status',
+  status_create: 'Create Status',
+  status_executeStatus: 'Execute Status',
+  status_steptatus: 'Step Status',
+  status_type: 'Type',
+  status_comment: 'Comment',
+  status_color: 'Color',
+
+  // 报表
+  report_title: 'All reports',
+  report_switch: 'Switch report',
+  report_dropDown_demand: 'demand to defect',
+  report_dropDown_defect: 'defect to demand',
+  report_dropDown_home: 'home',
+  report_demandToDefect: 'demand -> test -> execute -> defect', 
+  report_defectToDemand: 'defect -> execute -> test -> demand',
+  report_demandToDefect_description: 'Search for requirements or defects from the Type field, then select the appropriate version to narrow the scope, and finally click Generate to create a traceability report.',
+  report_defectToDemand_description: 'Search for requirements or defects from the Type field, then select the appropriate version to narrow the scope, and finally click Generate to create a traceability report.',
+  report_chooseQuestion: 'choose question',
+  report_defectCount: 'Defect count',
+  report_total: 'Total',
 };
 export default enUS;
