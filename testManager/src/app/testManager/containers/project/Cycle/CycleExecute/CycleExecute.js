@@ -3,6 +3,7 @@ import { Table, Button, Icon, Card, Select, Spin, Upload, Tooltip } from 'choero
 import { Page, Header, Content, stores } from 'choerodon-front-boot';
 import _ from 'lodash';
 import { withRouter } from 'react-router-dom';
+import { injectIntl, FormattedMessage } from 'react-intl';
 import { TextEditToggle, RichTextShow } from '../../../../components/CommonComponent';
 import EditTestDetail from '../../../../components/EditTestDetail';
 import FullEditor from '../../../../components/FullEditor';
@@ -816,10 +817,10 @@ class CycleExecute extends Component {
               />
             </Tooltip>
           </div>
-          <span className="c7n-head--clcle-title">执行详情</span>
+          <span className="c7n-head--clcle-title"><FormattedMessage id="execute_detail" /></span>
           <Button onClick={this.getInfo}>
             <Icon type="autorenew icon" />
-            <span>刷新</span>
+            <span><FormattedMessage id="refresh" /></span>
           </Button>
         </Header>
         <EditTestDetail
