@@ -19,6 +19,7 @@ const pageDetail = {
 };
 
 const zhCN = {
+  ...pageDetail,
   // public
   refresh: '刷新',
   detail: '详情',
@@ -30,13 +31,36 @@ const zhCN = {
   delete: '删除',
   'confirm.delete': '确认删除吗？',
   'confirm.delete.tip': '当你点击删除后，该条数据将被永久删除，不可恢复!',
-  language: 'zh_CN',
-
+  bug: '缺陷',
+  attachment: '附件',
+  upload_attachment: '上传附件',
+  status: '状态',
   // 执行详情
   execute_detail: '执行详情',
-  cycle_execute: '测试执行',
-  
-  ...pageDetail,
+  execute_cycle_execute: '测试执行',
+  execute_description: '描述',
+  execute_edit_fullScreen: '全屏编辑',
+  execute_status: '执行状态',
+  execute_assignedTo: '已指定至',
+  execute_executive: '执行方',
+  execute_executeTime: '执行时间',
+  execute_testDetail: '测试详细信息',
+  execute_executeHistory: '执行历史记录',
+  // 测试步骤表格
+  execute_testStep: '测试步骤',
+  execute_testData: '测试数据',
+  execute_expectedOutcome: '预期结果',
+  execute_stepAttachment: '步骤附件',
+  execute_stepStatus: '状态',
+  execute_comment: '注释',
+
+  // 执行历史记录表格
+  execute_history_oldValue: '原值',
+  execute_history_newValue: '新值',
+
+  // 编辑步骤详情侧边栏
+  execute_stepDetail: '测试详细信息',
+  execute_stepEditTitle: '修改步骤“{testStep}”的信息',
 };
 
 export default zhCN;

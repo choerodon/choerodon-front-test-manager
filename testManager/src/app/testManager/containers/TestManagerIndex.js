@@ -13,6 +13,7 @@ class TestManagerIndex extends React.Component {
   render() {
     const { match, AppState } = this.props;
     const langauge = AppState.currentLanguage;
+    // const langauge = 'en_US';
     const IntlProviderAsync = asyncLocaleProvider(langauge, () => import(`../locale/${langauge}`));
     return (
       <IntlProviderAsync>

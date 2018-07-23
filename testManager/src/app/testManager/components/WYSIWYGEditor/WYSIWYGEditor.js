@@ -84,7 +84,7 @@ class WYSIWYGEditor extends Component {
             modules={this.modules}
             formats={this.formats}
             style={{ height: editHeight }}
-            placeholder={placeholder || '描述'}
+            placeholder={placeholder || Choerodon.getMessage('描述', 'Description')}
             defaultValue={defaultValue}
             onChange={this.handleChange}
           />
@@ -96,13 +96,13 @@ class WYSIWYGEditor extends Component {
                 type="primary"
                 onClick={() => this.props.handleDelete()}
               >
-                取消
+                {Choerodon.getMessage('取消', 'Cancle')}
               </Button>
               <Button
                 type="primary"
                 onClick={() => this.props.handleSave()}
               >
-                保存
+                {Choerodon.getMessage('保存', 'Save')}             
               </Button>
             </div>
           )

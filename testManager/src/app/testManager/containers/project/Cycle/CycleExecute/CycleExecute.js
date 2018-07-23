@@ -3,7 +3,7 @@ import { Table, Button, Icon, Card, Select, Spin, Upload, Tooltip } from 'choero
 import { Page, Header, Content, stores } from 'choerodon-front-boot';
 import _ from 'lodash';
 import { withRouter } from 'react-router-dom';
-import { injectIntl, FormattedMessage } from 'react-intl';
+import { FormattedMessage } from 'react-intl';
 import { TextEditToggle, RichTextShow } from '../../../../components/CommonComponent';
 import EditTestDetail from '../../../../components/EditTestDetail';
 import FullEditor from '../../../../components/FullEditor';
@@ -438,7 +438,7 @@ class CycleExecute extends Component {
       },
     };
     const columnsHistory = [{
-      title: '执行方',
+      title: <FormattedMessage id="execute_executive" />,
       dataIndex: 'user',
       key: 'user',
       render(user) {
@@ -463,7 +463,7 @@ class CycleExecute extends Component {
         </div>);
       },
     }, {
-      title: '执行日期',
+      title: <FormattedMessage id="execute_executeTime" />,
       dataIndex: 'lastUpdateDate',
       key: 'lastUpdateDate',
     }, {
@@ -471,7 +471,7 @@ class CycleExecute extends Component {
       dataIndex: 'field',
       key: 'field',
     }, {
-      title: '原值',
+      title: <FormattedMessage id="execute_history_oldValue" />,
       dataIndex: 'oldValue',
       key: 'oldValue',
       render(oldValue, record) {
@@ -522,7 +522,7 @@ class CycleExecute extends Component {
       //     </div>);
       // },
     }, {
-      title: '新值',
+      title: <FormattedMessage id="execute_history_newValue" />,
       dataIndex: 'newValue',
       key: 'newValue',
       render(newValue, record) {
@@ -573,20 +573,20 @@ class CycleExecute extends Component {
       // },
     }];
     const columns = [{
-      title: '测试步骤',
+      title: <FormattedMessage id="execute_testStep" />,
       dataIndex: 'testStep',
       key: 'testStep',
     }, {
-      title: '测试数据',
+      title: <FormattedMessage id="execute_testData" />,
       dataIndex: 'testData',
       key: 'testData',
     }, {
-      title: '预期结果',
+      title: <FormattedMessage id="execute_expectedOutcome" />,
       dataIndex: 'expectedResult',
       key: 'expectedResult',
     },
     {
-      title: '步骤附件',
+      title: <FormattedMessage id="execute_stepAttachment" />,
       dataIndex: 'stepAttachment',
       key: 'stepAttachment',
       render(stepAttachment) {
@@ -631,7 +631,7 @@ class CycleExecute extends Component {
       },
     },
     {
-      title: '状态',
+      title: <FormattedMessage id="execute_stepStatus" />,
       dataIndex: 'stepStatus',
       key: 'stepStatus',
       render(stepStatus) {
@@ -644,7 +644,7 @@ class CycleExecute extends Component {
       },
     },
     {
-      title: '注释',
+      title: <FormattedMessage id="execute_comment" />,
       dataIndex: 'comment',
       key: 'comment',
       render(comment, record) {
@@ -664,7 +664,7 @@ class CycleExecute extends Component {
         );
       },
     }, {
-      title: '附件',
+      title: <FormattedMessage id="attachment" />,
       dataIndex: 'caseAttachment',
       key: 'caseAttachment',
       render(caseAttachment) {
@@ -709,7 +709,7 @@ class CycleExecute extends Component {
       },
     },
     {
-      title: '缺陷',
+      title: <FormattedMessage id="bug" />,
       dataIndex: 'defects',
       key: 'defects',
       render: defects =>
@@ -825,12 +825,12 @@ class CycleExecute extends Component {
               >
                 <div style={styles.cardTitle}>
                   <Icon type="expand_more" />
-                  <span style={styles.cardTitleText}>测试执行</span>
+                  <span style={styles.cardTitleText}><FormattedMessage id="execute_cycle_execute" /></span>
                 </div>
                 <div style={styles.cardContent}>
                   <div style={styles.cardContentItem}>
                     <div style={styles.carsContentItemPrefix}>
-                      执行状态:
+                      <FormattedMessage id="execute_status" />:
                     </div>
                     <TextEditToggle
                       onSubmit={this.submit}
@@ -856,7 +856,7 @@ class CycleExecute extends Component {
                   </div>
                   <div style={styles.cardContentItem}>
                     <div style={styles.carsContentItemPrefix}>
-                      已指定至：
+                      <FormattedMessage id="execute_assignedTo" />：
                     </div>
                     <TextEditToggle
                       onSubmit={this.submit}
@@ -913,7 +913,7 @@ class CycleExecute extends Component {
                   </div>
                   <div style={styles.cardContentItem}>
                     <div style={styles.carsContentItemPrefix}>
-                      执行方：
+                      <FormattedMessage id="execute_executive" />：
                     </div>
                     {assignedUserRealName ? (
                       <div
@@ -935,7 +935,7 @@ class CycleExecute extends Component {
                   </div>
                   <div style={styles.cardContentItem}>
                     <div style={styles.carsContentItemPrefix}>
-                      执行时间：
+                      <FormattedMessage id="execute_executeTime" />：
                     </div>
                     <div>
                       {lastUpdateDate}
@@ -943,7 +943,7 @@ class CycleExecute extends Component {
                   </div>
                   <div style={styles.cardContentItem}>
                     <div style={styles.carsContentItemPrefix}>
-                      缺陷：
+                      <FormattedMessage id="bug" />：
                     </div>
 
                     <TextEditToggle
@@ -1016,10 +1016,10 @@ class CycleExecute extends Component {
                 >
                   <div style={styles.cardTitle}>
                     <Icon type="expand_more" />
-                    <span style={styles.cardTitleText}>描述</span>
+                    <span style={styles.cardTitleText}><FormattedMessage id="execute_description" /></span>
                     <div style={{ flex: 1, visibility: 'hidden' }} />
                     <Button className="c7n-upload-button" onClick={() => { this.setState({ edit: true }); }}>
-                      <Icon type="zoom_out_map" /> 全屏编辑
+                      <Icon type="zoom_out_map" /> <FormattedMessage id="execute_edit_fullScreen" />
                     </Button>
                     <FullEditor
                       initValue={comment}
@@ -1040,18 +1040,17 @@ class CycleExecute extends Component {
                   <div style={styles.cardTitle}>
                     <div>
                       <Icon type="expand_more" />
-                      <span style={styles.cardTitleText}>附件</span>
+                      <span style={styles.cardTitleText}><FormattedMessage id="attachment" /></span>
                     </div>
                     <div style={{ flex: 1, visibility: 'hidden' }} />
                     <Button className="c7n-upload-button">
-                      <Icon type="file_upload" /> 上传附件
+                      <Icon type="file_upload" /> <FormattedMessage id="upload_attachment" />
                       <input
                         ref={
                           (uploadInput) => { if (uploadInput) { this.uploadInput = uploadInput; } }
                         }
                         type="file"
-                        multiple
-                        title="更换头像"
+                        multiple                        
                         onChange={this.handleUpload}
                         style={{
                           position: 'absolute',
@@ -1083,7 +1082,7 @@ class CycleExecute extends Component {
             >
               <div style={styles.cardTitle}>
                 <Icon type="expand_more" />
-                <span style={styles.cardTitleText}>测试详细信息</span>
+                <span style={styles.cardTitleText}><FormattedMessage id="execute_testDetail" /></span>
               </div>
               <Table
                 filterBar={false}
@@ -1100,7 +1099,7 @@ class CycleExecute extends Component {
             >
               <div style={styles.cardTitle}>
                 <Icon type="expand_more" />
-                <span style={styles.cardTitleText}>执行历史记录</span>
+                <span style={styles.cardTitleText}><FormattedMessage id="execute_executeHistory" /></span>
               </div>
               <Table
                 filterBar={false}
