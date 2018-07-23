@@ -207,38 +207,39 @@ class SummaryHome extends Component {
       labelTable, componentTable } = this.state;
     // window.console.log(labelTable);
     const versionColumns = [{
-      title: '版本',
+      title: <FormattedMessage id="summary_version" />,
       dataIndex: 'name',
       key: 'name',
     }, {
-      title: '数量',
+      title: <FormattedMessage id="summary_num" />,
       dataIndex: 'num',
       key: 'num',
     }];
     const labelColumns = [{
-      title: '模块',
+      title: <FormattedMessage id="summary_component" />,
       dataIndex: 'name',
       key: 'name',
     }, {
-      title: '数量',
+      title: <FormattedMessage id="summary_num" />,
       dataIndex: 'num',
       key: 'num',
     }];
     const componentColumns = [{
-      title: '标签',
+      title: <FormattedMessage id="summary_label" />,
       dataIndex: 'name',
       key: 'name',
     }, {
-      title: '数量',
+      title: <FormattedMessage id="summary_num" />,
       dataIndex: 'num',
       key: 'num',
     }];
     const createScale = {
-      value: { alias: '创建数' },
+      
+      value: { alias: Choerodon.getMessage('创建数', 'Created') },
       time: { alias: '日期', tickCount: 10 },
     };
     const executeScale = {
-      value: { alias: '执行数' },
+      value: { alias: Choerodon.getMessage('执行数', 'Executed') },
       time: { alias: '日期', tickCount: 10 },
     };
     const width = parseInt((window.innerWidth - 320) / 2, 10);
