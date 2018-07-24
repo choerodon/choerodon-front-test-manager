@@ -542,16 +542,16 @@ class Test extends Component {
           title="测试用例管理"
           backPath={IssueStore.getBackUrl}
         >
-          <Button className="leftBtn" funcTyp="flat" onClick={() => this.setState({ create: true })}>
+          <Button className="leftBtn" funcType="flat" onClick={() => this.setState({ create: true })}>
             <Icon type="playlist_add icon" />
             <span>创建测试用例</span>
           </Button>
-          <Button className="leftBtn" funcTyp="flat" onClick={() => this.exportExcel()}>
+          <Button className="leftBtn" funcType="flat" onClick={() => this.exportExcel()}>
             <Icon type="file_upload icon" />
             <span>导出</span>
           </Button>
           <Button
-            funcTyp="flat"
+            funcType="flat"
             onClick={() => {
               const { current, pageSize } = IssueStore.pagination;
               IssueStore.loadIssues(current - 1, pageSize);
@@ -567,7 +567,7 @@ class Test extends Component {
             style={{
               width: this.state.expand ? '28%' : '100%',
               display: 'block',
-              overflowY: 'scroll',
+              overflowY: 'auto',
               overflowX: 'hidden',
             }}
           >
@@ -581,6 +581,7 @@ class Test extends Component {
                 onChange={this.handleFilterChange}
                 pagination={false}
                 filters={IssueStore.barFilters || []}
+                filterBarPlaceholder="过滤表"
               />
             </section>
             <section className="c7n-count">
@@ -611,7 +612,7 @@ class Test extends Component {
                   />
                 ) : (
                   <Table
-                    rowKey={record => record.id}
+                    rowKey={record => record.issueId}
                     columns={columns}
                     dataSource={_.slice(IssueStore.issues)}
                     filterBar={false}
@@ -699,7 +700,7 @@ class Test extends Component {
                     <Button
                       className="leftBtn"
                       style={{ color: '#3f51b5' }}
-                      funcTyp="flat"
+                      funcType="flat"
                       onClick={() => {
                         this.setState({ 
                           createIssue: true,
@@ -742,29 +743,30 @@ class Test extends Component {
             }}
           >
             {
-              this.state.expand && <EditIssue
-                issueId={this.state.selectedIssue.issueId}
-                changeIssueId={this.handleChangeIssueId.bind(this)}
-                onCancel={() => {
-                  this.setState({
-                    expand: false,
-                    selectedIssue: {},
-                  });
-                }}
-                onDeleteIssue={() => {
-                  this.setState({
-                    expand: false,
-                    selectedIssue: {},
-                  });
-                  IssueStore.init();
-                  IssueStore.loadIssues();
-                }}
-                onUpdate={this.handleIssueUpdate.bind(this)}
-                onCopyAndTransformToSubIssue={() => {
-                  const { current, pageSize } = IssueStore.pagination;
-                  IssueStore.loadIssues(current - 1, pageSize);
-                }}
-              />
+              this.state.expand ? (
+                <EditIssue
+                  issueId={this.state.selectedIssue.issueId}
+                  onCancel={() => {
+                    this.setState({
+                      expand: false,
+                      selectedIssue: {},
+                    });
+                  }}
+                  onDeleteIssue={() => {
+                    this.setState({
+                      expand: false,
+                      selectedIssue: {},
+                    });
+                    IssueStore.init();
+                    IssueStore.loadIssues();
+                  }}
+                  onUpdate={this.handleIssueUpdate.bind(this)}
+                  onCopyAndTransformToSubIssue={() => {
+                    const { current, pageSize } = IssueStore.pagination;
+                    IssueStore.loadIssues(current - 1, pageSize);
+                  }}
+                />
+              ) : null
             }
           </div>
           {

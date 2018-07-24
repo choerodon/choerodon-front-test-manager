@@ -103,7 +103,7 @@ class ReportTest extends Component {
     });
   }
   handleTableChange = (pagination, filters, sorter) => {
-    this.getList(pagination);
+    this.getReportsFromDefect(pagination);
   }
   handleOpen=(issueId) => {
     const { openId } = this.state;  

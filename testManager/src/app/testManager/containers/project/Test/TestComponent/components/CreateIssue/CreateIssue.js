@@ -28,6 +28,7 @@ const NAME = {
   issue_epic: '史诗',
   issue_test: '测试',
 };
+let sign = false;
 
 class CreateIssue extends Component {
   constructor(props) {
@@ -64,6 +65,35 @@ class CreateIssue extends Component {
         });
       });
   }
+
+  onFilterChange(input) {
+    if (!sign) {
+      this.setState({
+        selectLoading: true,
+      });
+      getUsers(input).then((res) => {
+        this.setState({
+          originUsers: res.content,
+          selectLoading: false,
+        });
+      });
+      sign = true;
+    } else {
+      this.debounceFilterIssues(input);
+    }
+  }
+
+  debounceFilterIssues = _.debounce((input) => {
+    this.setState({
+      selectLoading: true,
+    });
+    getUsers(input).then((res) => {
+      this.setState({
+        originUsers: res.content,
+        selectLoading: false,
+      });
+    });
+  }, 500);
 
   setFileList = (data) => {
     this.setState({ fileList: data });
@@ -214,7 +244,7 @@ class CreateIssue extends Component {
           <h2 className="c7n-space-first">在项目“{AppState.currentMenuType.name}”中创建测试用例</h2>
           <p>
             请在下面输入测试用例的详细信息，包含详细描述、人员信息、版本信息、进度预估、优先级等等。您可以通过丰富的任务描述帮助相关人员更快更全面的理解任务，同时更好的把控问题进度。
-            <a href="http://v0-7.choerodon.io/zh/docs/user-guide/agile/issue/create-issue/" rel="nofollow me noopener noreferrer" target="_blank" className="c7n-external-link">
+            <a href="http://v0-8.choerodon.io/zh/docs/user-guide/agile/issue/create-issue/" rel="nofollow me noopener noreferrer" target="_blank" className="c7n-external-link">
               <span className="c7n-external-link-content">
               了解详情
               </span>
@@ -274,7 +304,7 @@ class CreateIssue extends Component {
               <div style={{ display: 'flex', marginBottom: 13, alignItems: 'center' }}>
                 <div style={{ fontWeight: 'bold' }}>描述</div>
                 <div style={{ marginLeft: 80 }}>
-                  <Button className="leftBtn" funcTyp="flat" onClick={() => this.setState({ edit: true })} style={{ display: 'flex', alignItems: 'center' }}>
+                  <Button className="leftBtn" funcType="flat" onClick={() => this.setState({ edit: true })} style={{ display: 'flex', alignItems: 'center' }}>
                     <Icon type="zoom_out_map" style={{ color: '#3f51b5', fontSize: '18px', marginRight: 12 }} />
                     <span style={{ color: '#3f51b5' }}>全屏编辑</span>
                   </Button>
@@ -304,17 +334,7 @@ class CreateIssue extends Component {
                   filter
                   filterOption={false}
                   allowClear
-                  onFilterChange={(input) => {
-                    this.setState({
-                      selectLoading: true,
-                    });
-                    getUsers(input).then((res) => {
-                      this.setState({
-                        originUsers: res.content,
-                        selectLoading: false,
-                      });
-                    });
-                  }}
+                  onFilterChange={this.onFilterChange.bind(this)}
                 >
                   {this.state.originUsers.map(user =>
                     (<Option key={user.id} value={user.id}>
@@ -419,7 +439,7 @@ class CreateIssue extends Component {
                     this.setState({
                       selectLoading: true,
                     });
-                    loadVersions(['version_planning']).then((res) => {
+                    loadVersions(['version_planning', 'released']).then((res) => {
                       this.setState({
                         originFixVersions: res,
                         selectLoading: false,

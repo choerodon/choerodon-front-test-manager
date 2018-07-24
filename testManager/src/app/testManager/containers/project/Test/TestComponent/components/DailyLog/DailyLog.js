@@ -128,7 +128,7 @@ class CreateSprint extends Component {
   }
 
   handleTimeChange = (e) => {
-    this.setState({ time: e.target.value });
+    this.setState({ time: e });
   }
 
   handleTimeUnitChange = (value) => {
@@ -136,7 +136,7 @@ class CreateSprint extends Component {
   }
 
   handleReduceChange = (e) => {
-    this.setState({ reduce: e.target.value });
+    this.setState({ reduce: e });
   }
 
   handleReduceUnitChange = (value) => {
@@ -204,12 +204,6 @@ class CreateSprint extends Component {
           <h2 className="c7n-space-first">{`登记"${this.props.issueNum}"的工作日志`}</h2>
           <p>
             您可以在这里记录您的工作，花费的时间会在关联问题中预估时间进行扣减，以便更精确地计算问题进度和提升工作效率。
-            {/* <a href="#" rel="nofollow me noopener noreferrer" target="_blank" className="c7n-external-link">
-              <span className="c7n-external-link-content">
-              了解详情
-              </span>
-              <Icon type="open_in_new" />
-            </a> */}
           </p>
           <section className="info">
             <div className="line-info">
@@ -247,9 +241,15 @@ class CreateSprint extends Component {
               <RadioGroup label="剩余的估计" onChange={this.onRadioChange} value={this.state.radio}>
                 <Radio style={radioStyle} value={1}>自动调整</Radio>
                 <Radio style={radioStyle} value={2}>不设置预估时间</Radio>
-                <Radio style={radioStyle} value={3}>
+                <Radio
+                  style={{
+                    ...radioStyle,
+                    marginBottom: 20,
+                  }}
+                  value={3}
+                >
                   <span style={{ display: 'inline-block', width: 52 }}>设置为</span>
-                  <Input
+                  <NumericInput
                     style={tempAlignStyle}
                     disabled={this.state.radio !== 3}
                     value={this.state.time}
@@ -270,7 +270,7 @@ class CreateSprint extends Component {
                 </Radio>
                 <Radio style={radioStyle} value={4}>
                   <span style={{ display: 'inline-block', width: 52 }}>缩减</span>
-                  <Input
+                  <NumericInput
                     style={tempAlignStyle}
                     disabled={this.state.radio !== 4}
                     value={this.state.reduce}
@@ -297,7 +297,7 @@ class CreateSprint extends Component {
                 <div style={{ display: 'flex', marginBottom: '13px', alignItems: 'center' }}>
                   <div style={{ fontWeight: 'bold' }}>工作说明</div>
                   <div style={{ marginLeft: '80px' }}>
-                    <Button className="leftBtn" funcTyp="flat" onClick={() => this.setState({ edit: true })} style={{ display: 'flex', alignItems: 'center' }}>
+                    <Button className="leftBtn" funcType="flat" onClick={() => this.setState({ edit: true })} style={{ display: 'flex', alignItems: 'center' }}>
                       <Icon type="zoom_out_map" style={{ color: '#3f51b5', fontSize: '18px', marginRight: '12px' }} />
                       <span style={{ color: '#3f51b5' }}>全屏编辑</span>
                     </Button>

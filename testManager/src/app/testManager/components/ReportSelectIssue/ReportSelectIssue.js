@@ -151,8 +151,8 @@ class ReportSelectIssue extends Component {
                 padding: '0 0 10px 0',
               }}
               title={`项目“${AppState.currentMenuType.name}”的报表选择问题`}
-              description="您可以为一个或多个成员分配一个或多个全局层的角色，即给成员授予全局层的权限。"
-              link="#"
+              description="您可以根据选择的问题来生成报表"
+              link="http://choerodon.io/zh/docs/user-guide/test-management/test-report/report/"
             >
 
               <div style={{ display: 'flex' }}>

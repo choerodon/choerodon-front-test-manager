@@ -3,6 +3,7 @@ import { Table, Button, Icon, Card, Select, Spin, Upload, Tooltip } from 'choero
 import { Page, Header, Content, stores } from 'choerodon-front-boot';
 import _ from 'lodash';
 import { withRouter } from 'react-router-dom';
+import { injectIntl, FormattedMessage } from 'react-intl';
 import { TextEditToggle, RichTextShow } from '../../../../components/CommonComponent';
 import EditTestDetail from '../../../../components/EditTestDetail';
 import FullEditor from '../../../../components/FullEditor';
@@ -350,7 +351,7 @@ class CycleExecute extends Component {
         formData.append('file', file);
       });
       const config = {
-        bucketName: 'test',      
+        bucketName: 'test',
         comment: '',
         attachmentLinkId: this.state.cycleData.executeId,
         attachmentType: 'CYCLE_CASE',
@@ -583,11 +584,11 @@ class CycleExecute extends Component {
       title: '预期结果',
       dataIndex: 'expectedResult',
       key: 'expectedResult',
-    }, 
+    },
     {
       title: '步骤附件',
       dataIndex: 'stepAttachment',
-      key: 'stepAttachment',      
+      key: 'stepAttachment',
       render(stepAttachment) {
         return (<Tooltip title={
           <div>
@@ -612,7 +613,7 @@ class CycleExecute extends Component {
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
-            }}        
+            }}
           >
             {stepAttachment.map((attachment, i) => (
               <div style={{
@@ -626,9 +627,9 @@ class CycleExecute extends Component {
                 </span>
               </div>))}
           </div>
-        </Tooltip>);       
+        </Tooltip>);
       },
-    }, 
+    },
     {
       title: '状态',
       dataIndex: 'stepStatus',
@@ -690,7 +691,7 @@ class CycleExecute extends Component {
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
-            }}        
+            }}
           >
             {caseAttachment.map((attachment, i) => (
               <div style={{
@@ -704,9 +705,9 @@ class CycleExecute extends Component {
                 </span>
               </div>))}
           </div>
-        </Tooltip>);       
+        </Tooltip>);
       },
-      
+
     },
     {
       title: '缺陷',
@@ -731,25 +732,12 @@ class CycleExecute extends Component {
           <div
             style={{
               width: 100,
-              display: 'flex',
-              alignItems: 'center',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
             }}
           >
-            {defects.map((defect, i) => (
-              <div style={{
-                fontSize: '13px',
-                color: '#3F51B5',
-
-              }}
-              >
-                {i === 0 ? null : '，'}
-                <span>
-                  {defect.defectName}
-                </span>
-              </div>))}
+            {defects.map((defect, i) => (defect.defectName)).join('，')}
           </div>
         </Tooltip>),
     }, {
@@ -804,7 +792,7 @@ class CycleExecute extends Component {
             <Tooltip
               title={Choerodon.getMessage('返回', 'return')}
               placement="bottom"
-              // getTooltipContainer={that => that}
+            // getTooltipContainer={that => that}
             >
               <Button
                 type="primary"
@@ -816,10 +804,10 @@ class CycleExecute extends Component {
               />
             </Tooltip>
           </div>
-          <span className="c7n-head--clcle-title">执行详情</span>
+          <span className="c7n-head--clcle-title"><FormattedMessage id="execute_detail" /></span>
           <Button onClick={this.getInfo}>
             <Icon type="autorenew icon" />
-            <span>刷新</span>
+            <span><FormattedMessage id="refresh" /></span>
           </Button>
         </Header>
         <EditTestDetail
@@ -968,22 +956,12 @@ class CycleExecute extends Component {
                         {defects.length > 0 ? (
                           <div
                             style={{
-                              display: 'flex',
-                              alignItems: 'center',
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                              whiteSpace: 'nowrap',
                             }}
                           >
-                            {defects.map((defect, i) => (
-                              <div style={{
-                                fontSize: '13px',
-                                // color: '#3F51B5',
-                                // textAlign: 'left',
-                              }}
-                              >
-                                {i === 0 ? null : '，'}
-                                <span>
-                                  {defect.defectName}
-                                </span>
-                              </div>))}
+                            {defects.map((defect, i) => (defect.defectName)).join('，')}
 
                           </div>
                         ) : '无'}

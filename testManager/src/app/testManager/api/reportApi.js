@@ -10,7 +10,7 @@ export function getReportsFromStory(pagination, issueIds) {
 
   return axios.post(`/test/v1/projects/${projectId}/case/get/reporter/from/issue?size=${size}&page=${page}`, {
     advancedSearchArgs: {
-      typeCode: ['story'],
+      // typeCode: ['story'],
     },
     otherArgs: {
 
