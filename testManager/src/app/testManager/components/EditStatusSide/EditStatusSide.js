@@ -65,7 +65,7 @@ class EditStatusSide extends Component {
               style={{
                 padding: '0 0 10px 0',
               }}
-              title={`在项目“${AppState.currentMenuType.name}”中创建执行状态`}
+              title={`更改项目“${AppState.currentMenuType.name}”中的状态`}
               description="您可以自定义状态，包括执行状态和步骤状态。"
               link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management/setting/status/"
             >
