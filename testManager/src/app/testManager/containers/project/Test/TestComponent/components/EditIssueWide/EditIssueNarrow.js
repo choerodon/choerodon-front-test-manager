@@ -250,7 +250,7 @@ class CreateSprint extends Component {
     const fixVersionsFixed = _.filter(fixVersionsTotal, { statusCode: 'archived' }) || [];
     const fixVersions = _.filter(fixVersionsTotal, v => v.statusCode !== 'archived') || [];
     const influenceVersionsTotal = _.filter(versionIssueRelDTOList, { relationType: 'influence' }) || [];
-    const influenceVersionsFixed = _.filter(influenceVersionsTotal, { statusCode: 'archived' }) || [];
+    const influenceVersionsFixed =  _.filter(influenceVersionsTotal, { statusCode: 'archived' }) || [];
     const influenceVersions = _.filter(influenceVersionsTotal, v => v.statusCode !== 'archived') || [];
     this.setState({
       origin: issue,
@@ -483,8 +483,8 @@ class CreateSprint extends Component {
         .then((res) => {
           this.setState({ testExecuteData: res }, () => {
             this.setState({ testExecuteData: res });
-          });
         });
+      });
       this.setState({
         editDesShow: false,
       });
@@ -1106,17 +1106,17 @@ class CreateSprint extends Component {
         }
         <div className="c7n-nav">
           <div>
-            <div style={{ height: 44, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', borderBottom: '1px solid rgba(0,0,0,0.26)' }}>
-              <div
-                className="radius"
-                style={{ background: TYPE[this.state.typeCode], color: '#fff', width: '20px', height: '20px', textAlign: 'center', fontSize: '14px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-              >
-                <Icon
-                  style={{ fontSize: '14px' }}
-                  type={ICON[this.state.typeCode]}
-                />
+              <div style={{ height: 44, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', borderBottom: '1px solid rgba(0,0,0,0.26)' }}>
+                <div
+                  className="radius"
+                  style={{ background: TYPE[this.state.typeCode], color: '#fff', width: '20px', height: '20px', textAlign: 'center', fontSize: '14px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                >
+                  <Icon
+                    style={{ fontSize: '14px' }}
+                    type={ICON[this.state.typeCode]}
+                  />
+                </div>
               </div>
-            </div>
           </div>
           <ul className="c7n-nav-ul">
             <Tooltip placement="right" title="详情">
@@ -1939,7 +1939,7 @@ class CreateSprint extends Component {
                                   onCancel={this.resetInfluenceVersions.bind(this)}
                                   readModeContent={<div>
                                     {
-                                      !this.state.influenceVersionsFixed.length && !this.state.influenceVersions.length ? '无' : (
+                                      !this.state.influenceVersionsFixed.length && !this.state.influenceVersions.length ? "无" : (
                                         <div>
                                           <div style={{ color: '#000' }}>
                                             {_.map(this.state.influenceVersionsFixed, 'name').join(' , ')}
@@ -2016,7 +2016,7 @@ class CreateSprint extends Component {
                               onCancel={this.resetFixVersions.bind(this)}
                               readModeContent={<div style={{ color: '#3f51b5' }}>
                                 {
-                                  !this.state.fixVersionsFixed.length && !this.state.fixVersions.length ? '无' : (
+                                  !this.state.fixVersionsFixed.length && !this.state.fixVersions.length ? "无" : (
                                     <div>
                                       <div style={{ color: '#000' }}>
                                         {_.map(this.state.fixVersionsFixed, 'name').join(' , ')}
@@ -2147,11 +2147,11 @@ class CreateSprint extends Component {
                                     }}
                                   >
                                     {this.state.originEpics.map(epic =>
-                                      (<Option key={`${epic.issueId}`} value={epic.issueId}>
-                                        <Tooltip title={epic.epicName}>
-                                          {epic.epicName}
-                                        </Tooltip>
-                                      </Option>),
+                                      <Option key={`${epic.issueId}`} value={epic.issueId}>
+                                      <Tooltip title={epic.epicName}>
+                                      {epic.epicName}
+                                      </Tooltip>                                      
+                                      </Option>,
                                     )}
                                   </Select>
                                 </ReadAndEdit>
@@ -2517,7 +2517,7 @@ class CreateSprint extends Component {
                       </div>
                     </div>
                     {this.renderDes()}
-                  </div>
+                    </div>
                   
                 </div>
 
@@ -2544,9 +2544,9 @@ class CreateSprint extends Component {
                       }}
                     />
                   </div>
-                </div>
+                  </div>
                   
-                <div id="test2">
+                  <div id="test2">
                   <div className="c7n-title-wrapper">
                     <div className="c7n-title-left">
                         <Icon type="explicit2 c7n-icon-title" />

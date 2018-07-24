@@ -262,7 +262,7 @@ class Test extends Component {
             </p>
           </Tooltip>
         </div>
-        
+
         <div style={{ flexShrink: '0' }}>
           <Tooltip mouseEnterDelay={0.5} title={`优先级： ${issue.priorityName}`}>
             <div style={{ marginRight: 12 }}>
@@ -468,7 +468,6 @@ class Test extends Component {
         render: (summary, record) => (
           !this.state.expand ? this.renderWideIssue(record) : this.renderNarrowIssue(record)
         ),
-
       },
     ];
     const sort = (
