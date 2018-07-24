@@ -351,7 +351,7 @@ class CycleExecute extends Component {
         formData.append('file', file);
       });
       const config = {
-        bucketName: 'test',      
+        bucketName: 'test',
         comment: '',
         attachmentLinkId: this.state.cycleData.executeId,
         attachmentType: 'CYCLE_CASE',
@@ -584,11 +584,11 @@ class CycleExecute extends Component {
       title: '预期结果',
       dataIndex: 'expectedResult',
       key: 'expectedResult',
-    }, 
+    },
     {
       title: '步骤附件',
       dataIndex: 'stepAttachment',
-      key: 'stepAttachment',      
+      key: 'stepAttachment',
       render(stepAttachment) {
         return (<Tooltip title={
           <div>
@@ -613,7 +613,7 @@ class CycleExecute extends Component {
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
-            }}        
+            }}
           >
             {stepAttachment.map((attachment, i) => (
               <div style={{
@@ -627,9 +627,9 @@ class CycleExecute extends Component {
                 </span>
               </div>))}
           </div>
-        </Tooltip>);       
+        </Tooltip>);
       },
-    }, 
+    },
     {
       title: '状态',
       dataIndex: 'stepStatus',
@@ -691,7 +691,7 @@ class CycleExecute extends Component {
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
-            }}        
+            }}
           >
             {caseAttachment.map((attachment, i) => (
               <div style={{
@@ -705,9 +705,9 @@ class CycleExecute extends Component {
                 </span>
               </div>))}
           </div>
-        </Tooltip>);       
+        </Tooltip>);
       },
-      
+
     },
     {
       title: '缺陷',
@@ -732,8 +732,6 @@ class CycleExecute extends Component {
           <div
             style={{
               width: 100,
-              display: 'flex',
-              alignItems: 'center',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
@@ -794,7 +792,7 @@ class CycleExecute extends Component {
             <Tooltip
               title={Choerodon.getMessage('返回', 'return')}
               placement="bottom"
-              // getTooltipContainer={that => that}
+            // getTooltipContainer={that => that}
             >
               <Button
                 type="primary"
@@ -958,8 +956,9 @@ class CycleExecute extends Component {
                         {defects.length > 0 ? (
                           <div
                             style={{
-                              display: 'flex',
-                              alignItems: 'center',
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                              whiteSpace: 'nowrap',
                             }}
                           >
                             {defects.map((defect, i) => (defect.defectName)).join('，')}
