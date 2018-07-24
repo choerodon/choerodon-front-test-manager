@@ -15,8 +15,8 @@ const TESTINDEX = asyncRouter(() => import('./project/Test'));
 class TestManagerIndex extends React.Component {
   render() {
     const { match, AppState } = this.props;
-    // const langauge = AppState.currentLanguage;
-    const langauge = 'en_US';
+    const langauge = AppState.currentLanguage;
+    // const langauge = 'en_US';
     if (langauge === 'zh_CN') {
       moment.locale('zh-cn');
     }    
