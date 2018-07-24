@@ -4,7 +4,7 @@ import { Page, Header, Content, stores } from 'choerodon-front-boot';
 import _ from 'lodash';
 import { withRouter } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
-import { TextEditToggle, RichTextShow } from '../../../../components/CommonComponent';
+import { TextEditToggle, RichTextShow, SelectFocusLoad } from '../../../../components/CommonComponent';
 import EditTestDetail from '../../../../components/EditTestDetail';
 import FullEditor from '../../../../components/FullEditor';
 import {
@@ -321,8 +321,6 @@ class CycleExecute extends Component {
     const { cycleData, issueList, defectIds, originDefects } = this.state;
     const { executeId } = cycleData;
     // addDefects(defects);
-
-
     const needAdd =
       issueList
         .filter(issue => defectIds.includes(issue.issueId.toString()))// 取到选中的issueList
@@ -507,20 +505,6 @@ class CycleExecute extends Component {
           }
         }
       },
-      // render(oldValue) {
-      //   return (
-      //     <div style={{
-      //       background: _.find(statusList, { statusName: oldValue }).statusColor,
-      //       width: 60,
-      //       textAlign: 'center',
-      //       borderRadius: '100px',
-      //       display: 'inline-block',
-      //       color: 'white',
-      //     }}
-      //     >
-      //       {oldValue}
-      //     </div>);
-      // },
     }, {
       title: <FormattedMessage id="execute_history_newValue" />,
       dataIndex: 'newValue',
@@ -557,20 +541,6 @@ class CycleExecute extends Component {
           }
         }
       },
-      // render(newValue) {
-      //   return (
-      //     <div style={{
-      //       background: _.find(statusList, { statusName: newValue }).statusColor,
-      //       width: 60,
-      //       textAlign: 'center',
-      //       borderRadius: '100px',
-      //       display: 'inline-block',
-      //       color: 'white',
-      //     }}
-      //     >
-      //       {newValue}
-      //     </div>);
-      // },
     }];
     const columns = [{
       title: <FormattedMessage id="execute_testStep" />,
@@ -723,7 +693,7 @@ class CycleExecute extends Component {
               >
                 {/* {i === 0 ? null : '，'} */}
                 <span>
-                  {defect.defectName}
+                  {defect.issueInfosDTO.issueName}
                 </span>
               </div>))}
           </div>}
@@ -736,7 +706,7 @@ class CycleExecute extends Component {
               whiteSpace: 'nowrap',
             }}
           >
-            {defects.map((defect, i) => (defect.defectName)).join('，')}
+            {defects.map((defect, i) => defect.issueInfosDTO.issueName).join(',')}
           </div>
         </Tooltip>),
     }, {
@@ -864,7 +834,7 @@ class CycleExecute extends Component {
                       onCancel={this.cancelEdit}
                     >
                       <Text>
-                        {reporterRealName ? (
+                        {reporterRealName ? ( 
                           <div
                             style={{
                               display: 'flex',
@@ -883,6 +853,15 @@ class CycleExecute extends Component {
                         ) : '无'}
                       </Text>
                       <Edit>
+                        {/* <SelectFocusLoad
+                        filter
+                        allowClear
+                        autoFocus
+                        request={getUsers}
+                        value={reporterRealName}
+                        style={{ width: 200 }}
+                        onChange={this.handleAssignedChange}
+                        /> */}
                         <Select
                           filter
                           allowClear
@@ -960,8 +939,7 @@ class CycleExecute extends Component {
                               whiteSpace: 'nowrap',
                             }}
                           >
-                            {defects.map((defect, i) => (defect.defectName)).join('，')}
-
+                            {defects.map((defect, i) => defect.issueInfosDTO.issueName).join(',')}
                           </div>
                         ) : '无'}
                       </Text>

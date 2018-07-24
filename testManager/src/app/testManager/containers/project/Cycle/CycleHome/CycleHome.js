@@ -95,8 +95,8 @@ class CycleHome extends Component {
           rightLoading: true,
           // currentCycle: data,
         });
-      }  
-      
+      }
+
       CycleStore.setCurrentCycle(data);
       // window.console.log(data);
       getStatusList('CYCLE_CASE').then((statusList) => {
@@ -282,8 +282,8 @@ class CycleHome extends Component {
     confirm({
       width: 560,
       title: Choerodon.getMessage('确认删除吗?', 'Confirm delete'),
-      content: <div style={{ marginBottom: 32 }}>      
-        {Choerodon.getMessage('当你点击删除后，该条数据将被永久删除，不可恢复!', 'When you click delete, after which the data will be permanently deleted and irreversible!')}   
+      content: <div style={{ marginBottom: 32 }}>
+        {Choerodon.getMessage('当你点击删除后，该条数据将被永久删除，不可恢复!', 'When you click delete, after which the data will be permanently deleted and irreversible!')}
       </div>,
       onOk() {
         that.setState({
@@ -376,7 +376,7 @@ class CycleHome extends Component {
         if (expandedKeys.indexOf(item.key) === -1) {
           expandedKeys.push(item.key);
         }
-        CycleStore.setExpandedKeys(expandedKeys); 
+        CycleStore.setExpandedKeys(expandedKeys);
         break;
       }
       case 'EDIT_CYCLE': {
@@ -413,7 +413,7 @@ class CycleHome extends Component {
             loading: false,
           });
           this.refresh();
-        }    
+        }
       }).catch(() => {
         Choerodon.prompt('网络出错');
         this.setState({
@@ -429,7 +429,7 @@ class CycleHome extends Component {
       loading: true,
     });
     // window.console.log(this.state.currentCycle);
-    
+
     addFolder({
       type: 'folder',
       cycleName: value,
@@ -583,20 +583,21 @@ class CycleHome extends Component {
       title: 'ID',
       dataIndex: 'issueId',
       key: 'issueId',
-      onCell: this.handleCell,             
-      width: '10%',     
+      onCell: this.handleCell,
+      width: '10%',
       // filters: [],   
       // onFilter: (value, record) => 
       //   record.issueInfosDTO && record.issueInfosDTO.issueName.indexOf(value) === 0,  
       render(issueId, record) {
-        const { issueInfosDTO } = record;     
+        const { issueInfosDTO } = record;
         return (<div
           title={issueInfosDTO && issueInfosDTO.issueName}
-          style={{ 
-            width: 100, 
-            overflow: 'hidden', 
-            whiteSpace: 'nowrap', 
-            textOverflow: 'ellipsis' }}
+          style={{
+            width: 100,
+            overflow: 'hidden',
+            whiteSpace: 'nowrap',
+            textOverflow: 'ellipsis'
+          }}
         >
           {issueInfosDTO && issueInfosDTO.issueName}
         </div>);
@@ -652,11 +653,8 @@ class CycleHome extends Component {
                 fontSize: '13px',
                 color: 'white',
               }}
-              >
-                {/* {i === 0 ? null : '，'} */}
-                <span>
-                  {defect.defectName}
-                </span>
+              >                  
+              {defect.issueInfosDTO.issueName}
               </div>))}
           </div>}
         >
@@ -666,9 +664,13 @@ class CycleHome extends Component {
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
-            }}        
+            }}
           >
+<<<<<<< HEAD
             {defects.map((defect, i) => (defect.defectName)).join('，')}
+=======
+            {defects.map((defect, i) => defect.issueInfosDTO.issueName).join(',')}
+>>>>>>> 调整缺陷相关格式
           </div>
         </Tooltip>),
     },
@@ -688,11 +690,12 @@ class CycleHome extends Component {
       key: 'assignedUserRealName',
       width: '10%',
       render(assignedUserRealName) {
-        return (<div style={{ 
+        return (<div style={{
           // width: 85, 
-          overflow: 'hidden', 
-          whiteSpace: 'nowrap', 
-          textOverflow: 'ellipsis' }}
+          overflow: 'hidden',
+          whiteSpace: 'nowrap',
+          textOverflow: 'ellipsis'
+        }}
         >
           {assignedUserRealName}
         </div>);
@@ -719,11 +722,12 @@ class CycleHome extends Component {
       key: 'lastUpdateDate',
       width: '10%',
       render(lastUpdateDate) {
-        return (<div style={{ 
-          width: 85, 
-          overflow: 'hidden', 
-          whiteSpace: 'nowrap', 
-          textOverflow: 'ellipsis' }}
+        return (<div style={{
+          width: 85,
+          overflow: 'hidden',
+          whiteSpace: 'nowrap',
+          textOverflow: 'ellipsis'
+        }}
         >
           {lastUpdateDate && moment(lastUpdateDate).format('D/MMMM/YY')}
         </div>);
@@ -734,11 +738,12 @@ class CycleHome extends Component {
       key: 'reporterRealName',
       width: '10%',
       render(reporterRealName) {
-        return (<div style={{ 
-          width: 60, 
-          overflow: 'hidden', 
-          whiteSpace: 'nowrap', 
-          textOverflow: 'ellipsis' }}
+        return (<div style={{
+          width: 60,
+          overflow: 'hidden',
+          whiteSpace: 'nowrap',
+          textOverflow: 'ellipsis'
+        }}
         >
           {reporterRealName}
         </div>);
@@ -939,7 +944,7 @@ class CycleHome extends Component {
                     >
                       <Icon type="playlist_add" />
                       <span>
-                        <FormattedMessage id="cycle_addCycle" />                      
+                        <FormattedMessage id="cycle_addCycle" />
                       </span>
                     </Button>
                   </div>
