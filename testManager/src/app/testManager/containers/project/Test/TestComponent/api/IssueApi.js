@@ -162,7 +162,11 @@ export function loadIssues(page = 0, size = 10, searchDTO, orderField, orderType
 export function loadIssuesInLink(page = 0, size = 10, issueId, content) {
   const projectId = AppState.currentMenuType.id;
   if (content) {
+<<<<<<< HEAD
     return axios.get(`/agile/v1/projects/${projectId}/issues/summary?issueId=${issueId}&self=false&content=${content}&page=${page}&size=${size}&onlyActiveSprint=false`);
+=======
+    return axios.get(`/agile/v1/projects/${projectId}/issues/summary?issueId=${issueId}&self=false&content=${content}&page=${page}&size=${size}`);
+>>>>>>> [FIX] upgrade to new version, fix some bugs
   } else {
     return axios.get(`/agile/v1/projects/${projectId}/issues/summary?issueId=${issueId}&self=false&page=${page}&size=${size}&onlyActiveSprint=false`);
   }
