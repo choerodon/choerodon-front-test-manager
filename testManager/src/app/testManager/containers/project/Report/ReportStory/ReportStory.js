@@ -103,7 +103,7 @@ class ReportStory extends Component {
     });
   }
   handleTableChange = (pagination, filters, sorter) => {
-    this.getList(pagination);
+    this.getReportsFromStory(pagination);
   }
   handleOpen=(issueId, keys) => {
     const { openId } = this.state;  
