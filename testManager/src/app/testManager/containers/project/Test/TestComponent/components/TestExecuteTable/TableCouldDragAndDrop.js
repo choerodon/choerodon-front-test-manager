@@ -132,7 +132,7 @@ class TableCanDragAndDrop extends Component {
     const urlParams = AppState.currentMenuType;
     const result = [];
     _.forEach(data, (item, index) => {
-      const status = _.find(this.state.status, { statusId: item.executionStatus });
+      const status = _.find(this.state.status, { statusId: item.executionStatus })||{};
       result.push(
         <div className={`${item.id}-list`} style={{ width: '100%', paddingLeft: 10, height: 34, borderBottom: '1px solid rgba(0, 0, 0, 0.12)', borderTop: '1px solid rgba(0, 0, 0, 0.12)', display: 'flex' }}>
           <span style={{ flex: 1, lineHeight: '34px' }}>
