@@ -170,6 +170,17 @@ const zhCN = {
   cycle_createExecute_others: '其他人',
   cycle_createExecute_selectAssign: '选择指派人',
   cycle_createExecute_folder: '文件夹',
+  cycle_createExecute_assigned: '被指定人',
+  cycle_createExecute_filter: '筛选器',
+  cycle_createExecute_priority: '优先级',
+  cycle_createExecute_executeStatus: '测试执行状态',
+  cycle_createExecute_component: '模块',
+  cycle_createExecute_label: '标签',
+  cycle_createExecute_hasDefects:'是否具有相关缺陷',
+  cycle_createExecute_yes:'是',
+  cycle_createExecute_no:'否',
+  cycle_createExecute_defectStatus:'缺陷状态',
+
 };
 
 export default zhCN;

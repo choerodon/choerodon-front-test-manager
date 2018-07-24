@@ -165,5 +165,15 @@ const enUS = {
   cycle_createExecute_others: 'Others',
   cycle_createExecute_selectAssign: 'Choose assign',
   cycle_createExecute_folder: 'Folder',
+  cycle_createExecute_assigned: 'Assigned to',
+  cycle_createExecute_filter: 'Filters',
+  cycle_createExecute_priority: 'Priority',
+  cycle_createExecute_executeStatus: 'Execute status',
+  cycle_createExecute_component: 'Components',
+  cycle_createExecute_label: 'Labels',
+  cycle_createExecute_hasDefects:'Has defects ?',
+  cycle_createExecute_yes:'Yes',
+  cycle_createExecute_no:'No',
+  cycle_createExecute_defectStatus:'Defect status',
 };
 export default enUS;
