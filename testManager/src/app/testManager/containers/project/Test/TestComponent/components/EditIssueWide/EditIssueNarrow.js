@@ -2059,7 +2059,11 @@ class CreateSprint extends Component {
                                     }}
                                   >
                                     {this.state.originEpics.map(epic =>
-                                      <Option key={`${epic.issueId}`} value={epic.issueId}>{epic.epicName}</Option>,
+                                      <Option key={`${epic.issueId}`} value={epic.issueId}>
+                                      <Tooltip title={epic.epicName}>
+                                      {epic.epicName}
+                                      </Tooltip>                                      
+                                      </Option>,
                                     )}
                                   </Select>
                                 </ReadAndEdit>

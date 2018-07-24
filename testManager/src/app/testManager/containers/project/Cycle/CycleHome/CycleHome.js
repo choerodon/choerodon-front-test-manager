@@ -670,17 +670,7 @@ class CycleHome extends Component {
               whiteSpace: 'nowrap',
             }}        
           >
-            {defects.map((defect, i) => (
-              <div style={{
-                fontSize: '13px',
-                // color: '#3F51B5',
-              }}
-              >
-                {i === 0 ? null : '，'}
-                <span>
-                  {defect.defectName}
-                </span>
-              </div>))}
+            {defects.map((defect, i) => (defect.defectName)).join('，')}
           </div>
         </Tooltip>),
     },
