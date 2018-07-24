@@ -596,7 +596,7 @@ class CycleHome extends Component {
             width: 100,
             overflow: 'hidden',
             whiteSpace: 'nowrap',
-            textOverflow: 'ellipsis'
+            textOverflow: 'ellipsis',
           }}
         >
           {issueInfosDTO && issueInfosDTO.issueName}
@@ -654,23 +654,19 @@ class CycleHome extends Component {
                 color: 'white',
               }}
               >                  
-              {defect.issueInfosDTO.issueName}
+                {defect.issueInfosDTO.issueName}
               </div>))}
           </div>}
         >
           <div
             style={{
-              width: 100,         
+              width: 100,             
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
             }}
           >
-<<<<<<< HEAD
-            {defects.map((defect, i) => (defect.defectName)).join('，')}
-=======
             {defects.map((defect, i) => defect.issueInfosDTO.issueName).join(',')}
->>>>>>> 调整缺陷相关格式
           </div>
         </Tooltip>),
     },
@@ -694,7 +690,7 @@ class CycleHome extends Component {
           // width: 85, 
           overflow: 'hidden',
           whiteSpace: 'nowrap',
-          textOverflow: 'ellipsis'
+          textOverflow: 'ellipsis',
         }}
         >
           {assignedUserRealName}
@@ -726,7 +722,7 @@ class CycleHome extends Component {
           width: 85,
           overflow: 'hidden',
           whiteSpace: 'nowrap',
-          textOverflow: 'ellipsis'
+          textOverflow: 'ellipsis',
         }}
         >
           {lastUpdateDate && moment(lastUpdateDate).format('D/MMMM/YY')}
@@ -742,7 +738,7 @@ class CycleHome extends Component {
           width: 60,
           overflow: 'hidden',
           whiteSpace: 'nowrap',
-          textOverflow: 'ellipsis'
+          textOverflow: 'ellipsis',
         }}
         >
           {reporterRealName}
