@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { Form, Input, Select, Icon, Modal, Upload, Spin } from 'choerodon-ui';
+import { Form, Input, Select, Modal, Spin } from 'choerodon-ui';
 import { Content, stores } from 'choerodon-front-boot';
-import PropTypes from 'prop-types';
+import { FormattedMessage } from 'react-intl';
 import { SketchPicker } from 'react-color';
 import './CreateStatus.less';
 import { createStatus } from '../../api/TestStatusApi';
@@ -67,8 +67,8 @@ class CreateStatus extends Component {
               style={{
                 padding: '0 0 10px 0',
               }}
-              title={`在项目“${AppState.currentMenuType.name}”中创建执行状态`}
-              description="您可以创建自定义状态，包括执行状态和步骤状态。"
+              title={<FormattedMessage id="status_side_content_title" />}
+              description={<FormattedMessage id="status_side_content_description" />}
               link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management/setting/status/"
             >
               <Form>
@@ -82,7 +82,7 @@ class CreateStatus extends Component {
                       required: true, message: '请选择类型!',
                     }],
                   })(
-                    <Select label="类型" style={{ width: 500 }}>
+                    <Select label={<FormattedMessage id="type" />} style={{ width: 500 }}>
                       <Option value="CYCLE_CASE">执行状态</Option>
                       <Option value="CASE_STEP">步骤状态</Option>
                     </Select>,
@@ -97,7 +97,7 @@ class CreateStatus extends Component {
                       required: true, message: '请输入状态!',
                     }],
                   })(
-                    <Input style={{ width: 500 }} maxLength={30} label="状态" />,
+                    <Input style={{ width: 500 }} maxLength={30} label={<FormattedMessage id="status" />} />,
                   )}
                 </FormItem>
                 <FormItem
@@ -109,7 +109,7 @@ class CreateStatus extends Component {
                     //   required: true, message: '请输入说明!',
                     // }],
                   })(
-                    <Input style={{ width: 500 }} maxLength={30} label="说明" />,
+                    <Input style={{ width: 500 }} maxLength={30} label={<FormattedMessage id="comment" />} />,
                     // <div style={{ width: 500 }}>
                     //   <TextArea maxLength={30} label="说明" placeholder="说明" autosize />
                     // </div>
@@ -117,7 +117,7 @@ class CreateStatus extends Component {
                 </FormItem>
 
                 <div className="c7n-CreateStatus-color-picker-container">
-                  颜色：
+                  <FormattedMessage id="color" />：
                   <div
                     role="none"
                     style={{ width: 18, height: 18, background: statusColor, position: 'relative', border: '1px solid gray' }}

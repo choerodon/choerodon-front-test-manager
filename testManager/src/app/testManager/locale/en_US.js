@@ -40,7 +40,8 @@ const enUS = {
   status: 'Status',
   version: 'Version',
   cycle: 'Cycle',
-  type: 'type',
+  type: 'Type',
+  color:'Color',
   comment: 'Description',
   name: 'Name',
   day: 'days',
@@ -103,7 +104,11 @@ const enUS = {
   status_type: 'Type',
   status_comment: 'Comment',
   status_color: 'Color',
-
+  //自定义状态侧边栏 
+  status_side_content_title: `Create status in project “${projectName}”`,
+  status_side_edit_content_title: `Edit status in project “${projectName}”`,
+  status_side_content_description:'You can create status which includes execute status and step status.',
+  status_side_edit_content_description:'You can edit the status in project.',
   // 报表
   report_title: 'All reports',
   report_switch: 'Switch report',

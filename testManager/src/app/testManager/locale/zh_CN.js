@@ -44,6 +44,7 @@ const zhCN = {
   version: '版本',
   cycle: '测试循环',
   type: '类型',
+  color:'颜色',
   comment: '说明',
   name: '名称',
   day: '天',
@@ -81,7 +82,7 @@ const zhCN = {
   summary_totalNotPlan: '总未规划数量',
   summary_testSummary: '测试统计',
   summary_summaryByVersion: '按版本',
-  summary_summaryByComponent: '按模块',  
+  summary_summaryByComponent: '按模块',
   summary_summaryByLabel: '按标签',
   summary_noVersion: '未规划',
   summary_noComponent: '无组件',
@@ -107,14 +108,18 @@ const zhCN = {
   status_type: '类型',
   status_comment: '说明',
   status_color: '颜色',
-
+  //自定义状态侧边栏 
+  status_side_content_title: `在项目“${projectName}”中创建状态`,
+  status_side_edit_content_title: `编辑项目“${projectName}”中的状态`,
+  status_side_content_description:'您可以创建自定义状态，包括执行状态和步骤状态。',
+  status_side_edit_content_description:'您可以自定义状态，包括执行状态和步骤状态。',
   // 报表
   report_title: '报表',
   report_switch: '切换报表',
   report_dropDown_demand: '要求到缺陷',
   report_dropDown_defect: '缺陷到要求',
   report_dropDown_home: '主页',
-  report_demandToDefect: '要求 -> 测试 -> 执行 -> 缺陷', 
+  report_demandToDefect: '要求 -> 测试 -> 执行 -> 缺陷',
   report_defectToDemand: '缺陷 -> 执行 -> 测试 -> 要求',
   report_demandToDefect_description: '从类型字段搜索要求或缺陷，然后选择合适版本以缩小范围，最后单击“生成” 创建可跟踪性报告。',
   report_defectToDemand_description: '从类型字段搜索要求或缺陷，然后选择合适版本以缩小范围，最后单击“生成” 创建可跟踪性报告。',
@@ -146,7 +151,7 @@ const zhCN = {
   cycle_executeTime: '执行时间',
   cycle_assignedTo: '被指定人',
   // 循环树
-  cycle_addFolder: '增加文件夹', 
+  cycle_addFolder: '增加文件夹',
   cycle_editCycle: '编辑循环',
   cycle_deleteCycle: '删除循环',
   cycle_cloneCycle: '克隆循环',
@@ -176,10 +181,10 @@ const zhCN = {
   cycle_createExecute_executeStatus: '测试执行状态',
   cycle_createExecute_component: '模块',
   cycle_createExecute_label: '标签',
-  cycle_createExecute_hasDefects:'是否具有相关缺陷',
-  cycle_createExecute_yes:'是',
-  cycle_createExecute_no:'否',
-  cycle_createExecute_defectStatus:'缺陷状态',
+  cycle_createExecute_hasDefects: '是否具有相关缺陷',
+  cycle_createExecute_yes: '是',
+  cycle_createExecute_no: '否',
+  cycle_createExecute_defectStatus: '缺陷状态',
 
 };
 
