@@ -20,6 +20,7 @@ const { AppState } = stores;
 const { Sidebar } = Modal;
 const { Option } = Select;
 const FormItem = Form.Item;
+let sign = false;
 
 class CreateSubIssue extends Component {
   constructor(props) {
@@ -62,6 +63,35 @@ class CreateSubIssue extends Component {
         });
       });
   }
+
+  onFilterChange(input) {
+    if (!sign) {
+      this.setState({
+        selectLoading: true,
+      });
+      getUsers(input).then((res) => {
+        this.setState({
+          originUsers: res.content,
+          selectLoading: false,
+        });
+      });
+      sign = true;
+    } else {
+      this.debounceFilterIssues(input);
+    }
+  }
+
+  debounceFilterIssues = _.debounce((input) => {
+    this.setState({
+      selectLoading: true,
+    });
+    getUsers(input).then((res) => {
+      this.setState({
+        originUsers: res.content,
+        selectLoading: false,
+      });
+    });
+  }, 500);
 
   setFileList = (data) => {
     this.setState({ fileList: data });
@@ -196,12 +226,6 @@ class CreateSubIssue extends Component {
           <h2 className="c7n-space-first">在项目“{AppState.currentMenuType.name}”中创建子任务</h2>
           <p>
             请在下面输入子任务的详细信息，创建问题的子任务。子任务会与父级问题的冲刺、史诗保持一致，并且子任务的状态会受父级问题的限制。
-            {/* <a href="#" rel="nofollow me noopener noreferrer" target="_blank" className="c7n-external-link">
-              <span className="c7n-external-link-content">
-              了解详情
-              </span>
-              <Icon type="open_in_new" />
-            </a> */}
           </p>
           <Form layout="vertical">
             <FormItem label="问题类型" style={{ width: 520 }}>
@@ -269,7 +293,7 @@ class CreateSubIssue extends Component {
               <div style={{ display: 'flex', marginBottom: 13, alignItems: 'center' }}>
                 <div style={{ fontWeight: 'bold' }}>描述</div>
                 <div style={{ marginLeft: 80 }}>
-                  <Button className="leftBtn" funcTyp="flat" onClick={() => this.setState({ edit: true })} style={{ display: 'flex', alignItems: 'center' }}>
+                  <Button className="leftBtn" funcType="flat" onClick={() => this.setState({ edit: true })} style={{ display: 'flex', alignItems: 'center' }}>
                     <Icon type="zoom_out_map" style={{ color: '#3f51b5', fontSize: '18px', marginRight: 12 }} />
                     <span style={{ color: '#3f51b5' }}>全屏编辑</span>
                   </Button>
@@ -299,17 +323,7 @@ class CreateSubIssue extends Component {
                   filter
                   filterOption={false}
                   allowClear
-                  onFilterChange={(input) => {
-                    this.setState({
-                      selectLoading: true,
-                    });
-                    getUsers(input).then((res) => {
-                      this.setState({
-                        originUsers: res.content,
-                        selectLoading: false,
-                      });
-                    });
-                  }}
+                  onFilterChange={this.onFilterChange.bind(this)}
                 >
                   {this.state.originUsers.map(user =>
                     (<Option key={user.id} value={user.id}>
@@ -364,7 +378,7 @@ class CreateSubIssue extends Component {
                     this.setState({
                       selectLoading: true,
                     });
-                    loadVersions().then((res) => {
+                    loadVersions(['version_planning', 'released']).then((res) => {
                       this.setState({
                         originFixVersions: res,
                         selectLoading: false,
