@@ -73,7 +73,7 @@ class ReportTest extends Component {
         issueStatusList,
         statusList,      
         stepStatusList, 
-        loading: false,
+        // loading: false,
         openId: [],
       });
     });

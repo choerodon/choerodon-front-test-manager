@@ -72,7 +72,7 @@ class ReportStory extends Component {
       this.setState({
         issueStatusList,
         statusList,       
-        loading: false,
+        // loading: false,
         openId: {},
       });
     });
