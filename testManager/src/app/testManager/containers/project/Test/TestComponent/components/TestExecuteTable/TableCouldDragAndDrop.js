@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Draggable, Droppable, DragDropContext } from 'react-beautiful-dnd';
-import { Button, Icon, Dropdown, Menu, Popconfirm } from 'choerodon-ui';
+import { Button, Icon,Tooltip, Dropdown, Menu, Popconfirm } from 'choerodon-ui';
 import { stores, axios } from 'choerodon-front-boot';
 import _ from 'lodash';
 import TimeAgo from 'timeago-react';
@@ -138,9 +138,11 @@ class TableCanDragAndDrop extends Component {
           <span style={{ flex: 1, lineHeight: '34px' }}>
             {item.versionName}
           </span>
+          <Tooltip title={item.cycleName}>
           <span style={{ flex: 2, lineHeight: '34px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
             {item.cycleName}
           </span>
+          </Tooltip>
           <span style={{ flex: 2, lineHeight: '34px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
             {item.folderName || ''}
           </span>
