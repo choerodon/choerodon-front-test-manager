@@ -25,9 +25,6 @@ import IssueList from './Component/IssueList';
 import LinkList from './Component/LinkList';
 import CopyIssue from '../CopyIssue';
 import TransformSubIssue from '../TransformSubIssue';
-import CreateBranch from '../CreateBranch';
-import Commits from '../Commits';
-import MergeRequest from '../MergeRequest';
 import TestStepTable from '../TestStepTable';
 import TestExecuteTable from '../TestExecuteTable';
 import CreateTest from '../CreateTest';
@@ -39,6 +36,7 @@ const { TextArea } = Input;
 const confirm = Modal.confirm;
 let sign = true;
 let flag;
+let filterSign = false;
 const STATUS_ICON = {
   done: {
     icon: 'check_circle',
@@ -61,6 +59,7 @@ class CreateSprint extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      issueLoading: false,
       flag: undefined,
       selectLoading: true,
       saveLoading: false,
@@ -72,11 +71,8 @@ class CreateSprint extends Component {
       createLoading: false,
       createSubTaskShow: false,
       createLinkTaskShow: false,
-      createBranchShow: false,
       createTestStepShow: false,
       editDesShow: false,
-      commitShow: false,
-      mergeRequestShow: false,
       executeTestShow: false,
       origin: {},
       loading: true,
@@ -132,6 +128,8 @@ class CreateSprint extends Component {
       linkIssues: [],
       fixVersions: [],
       influenceVersions: [],
+      fixVersionsFixed: [],
+      influenceVersionsFixed: [],
 
       originStatus: [],
       originpriorities: [],
@@ -248,8 +246,12 @@ class CreateSprint extends Component {
       name: issueAttachment.fileName,
       url: issueAttachment.url,
     }));
-    const fixVersions = _.filter(versionIssueRelDTOList, { relationType: 'fix' }) || [];
-    const influenceVersions = _.filter(versionIssueRelDTOList, { relationType: 'influence' }) || [];
+    const fixVersionsTotal = _.filter(versionIssueRelDTOList, { relationType: 'fix' }) || [];
+    const fixVersionsFixed = _.filter(fixVersionsTotal, { statusCode: 'archived' }) || [];
+    const fixVersions = _.filter(fixVersionsTotal, v => v.statusCode !== 'archived') || [];
+    const influenceVersionsTotal = _.filter(versionIssueRelDTOList, { relationType: 'influence' }) || [];
+    const influenceVersionsFixed =  _.filter(influenceVersionsTotal, { statusCode: 'archived' }) || [];
+    const influenceVersions = _.filter(influenceVersionsTotal, v => v.statusCode !== 'archived') || [];
     this.setState({
       origin: issue,
       activeSprint: activeSprint || {},
@@ -295,6 +297,9 @@ class CreateSprint extends Component {
       subIssueDTOList,
       fixVersions,
       influenceVersions,
+      fixVersionsFixed,
+      influenceVersionsFixed,
+      issueLoading: false,
     });
   }
 
@@ -326,6 +331,35 @@ class CreateSprint extends Component {
       }
     }
   }
+
+  onFilterChange(input) {
+    if (!filterSign) {
+      this.setState({
+        selectLoading: true,
+      });
+      getUsers(input).then((res) => {
+        this.setState({
+          originUsers: res.content,
+          selectLoading: false,
+        });
+      });
+      filterSign = true;
+    } else {
+      this.debounceFilterIssues(input);
+    }
+  }
+
+  debounceFilterIssues = _.debounce((input) => {
+    this.setState({
+      selectLoading: true,
+    });
+    getUsers(input).then((res) => {
+      this.setState({
+        originUsers: res.content,
+        selectLoading: false,
+      });
+    });
+  }, 500);
 
   handleTitleChange = (e) => {
     this.setState({ summary: e.target.value });
@@ -418,6 +452,8 @@ class CreateSprint extends Component {
       editComment: undefined,
       editLogId: undefined,
       editLog: undefined,
+
+      issueLoading: true,
     }, () => {
       loadIssue(issueId).then((res) => {
         this.setAnIssueToState(res);
@@ -447,8 +483,8 @@ class CreateSprint extends Component {
         .then((res) => {
           this.setState({ testExecuteData: res }, () => {
             this.setState({ testExecuteData: res });
-          });
         });
+      });
       this.setState({
         editDesShow: false,
       });
@@ -797,6 +833,7 @@ class CreateSprint extends Component {
         {
           this.state.issueCommentDTOList.map(comment => (
             <Comment
+              key={comment.commentId}
               comment={comment}
               onDeleteComment={() => this.reloadIssue()}
               onUpdateComment={() => this.reloadIssue()}
@@ -816,6 +853,7 @@ class CreateSprint extends Component {
         {
           this.state.worklogs.map(worklog => (
             <Log
+              key={worklog.logId}
               worklog={worklog}
               onDeleteLog={() => this.reloadIssue()}
               onUpdateLog={() => this.reloadIssue()}
@@ -835,19 +873,6 @@ class CreateSprint extends Component {
         datalogs={this.state.datalogs}
       />
     );
-    // return (
-    //   <div>
-    //     {
-    //       this.state.datalogs.map((datalog, i) => (
-    //         <DataLog
-    //           i={i}
-    //           datalog={datalog}
-    //           origin={this.state.datalogs}
-    //         />
-    //       ))
-    //     }
-    //   </div>
-    // );
   }
 
   /**
@@ -869,7 +894,7 @@ class CreateSprint extends Component {
       <div className="c7n-tasks">
         {
           _.map(group, (v, k) => (
-            <div>
+            <div key={k}>
               <div style={{ margin: '7px auto' }}>{k}</div>
               {
                 _.map(v, (linkIssue, i) => this.renderLinkList(linkIssue, i))
@@ -889,6 +914,7 @@ class CreateSprint extends Component {
   renderIssueList(issue, i) {
     return (
       <IssueList
+        key={issue.issueId}
         issue={{
           ...issue,
           typeCode: issue.typeCode || 'sub_task',
@@ -907,6 +933,7 @@ class CreateSprint extends Component {
   renderLinkList(link, i) {
     return (
       <LinkList
+        key={link.linkId}
         issue={{
           ...link,
           typeCode: link.typeCode,
@@ -1057,19 +1084,39 @@ class CreateSprint extends Component {
     );
     return (
       <div className="choerodon-modal-editIssue">
+        {
+          this.state.issueLoading ? (
+            <div
+              style={{
+                position: 'absolute',
+                top: 0,
+                bottom: 0,
+                left: 0,
+                right: 0, 
+                background: 'rgba(255, 255, 255, 0.65)',
+                zIndex: 9999,
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
+              <Spin />
+            </div>
+          ) : null 
+        }
         <div className="c7n-nav">
           <div>
-            <div style={{ height: 44, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', borderBottom: '1px solid rgba(0,0,0,0.26)' }}>
-              <div
-                className="radius"
-                style={{ background: TYPE[this.state.typeCode], color: '#fff', width: '20px', height: '20px', textAlign: 'center', fontSize: '14px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-              >
-                <Icon
-                  style={{ fontSize: '14px' }}
-                  type={ICON[this.state.typeCode]}
-                />
+              <div style={{ height: 44, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', borderBottom: '1px solid rgba(0,0,0,0.26)' }}>
+                <div
+                  className="radius"
+                  style={{ background: TYPE[this.state.typeCode], color: '#fff', width: '20px', height: '20px', textAlign: 'center', fontSize: '14px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                >
+                  <Icon
+                    style={{ fontSize: '14px' }}
+                    type={ICON[this.state.typeCode]}
+                  />
+                </div>
               </div>
-            </div>
           </div>
           <ul className="c7n-nav-ul">
             <Tooltip placement="right" title="详情">
@@ -1721,7 +1768,7 @@ class CreateSprint extends Component {
                   }
                 </div>
               </div>
-            </div>
+            </div> 
           </div>
           <div className="c7n-content-bottom" id="scroll-area" style={{ position: 'relative' }}>
             <section className="c7n-body-editIssue">
@@ -1818,7 +1865,8 @@ class CreateSprint extends Component {
                                     <div style={{ display: 'flex', flexWrap: 'wrap' }}>
                                       {
                                         this.transToArr(this.state.labelIssueRelDTOList, 'labelName', 'array').map(label => (
-                                          <div 
+                                          <div
+                                            key={label}
                                             style={{
                                               color: '#000',
                                               borderRadius: '100px',
@@ -1890,12 +1938,32 @@ class CreateSprint extends Component {
                                   onOk={this.updateVersionSelect.bind(this, 'originVersions', 'influenceVersions')}
                                   onCancel={this.resetInfluenceVersions.bind(this)}
                                   readModeContent={<div>
-                                    <p style={{ color: '#3f51b5', wordBreak: 'break-word', marginBottom: 0 }}>
-                                      {this.transToArr(this.state.influenceVersions, 'name')}
-                                    </p>
+                                    {
+                                      !this.state.influenceVersionsFixed.length && !this.state.influenceVersions.length ? "无" : (
+                                        <div>
+                                          <div style={{ color: '#000' }}>
+                                            {_.map(this.state.influenceVersionsFixed, 'name').join(' , ')}
+                                          </div>
+                                          <p style={{ color: '#3f51b5', wordBreak: 'break-word', marginBottom: 0 }}>
+                                            {_.map(this.state.influenceVersions, 'name').join(' , ')}
+                                          </p>
+                                        </div>
+                                      )
+                                    }
                                   </div>}
                                 >
+                                  {
+                                    this.state.influenceVersionsFixed.length ? (
+                                      <div>
+                                        <span>已归档版本：</span>
+                                        <span>
+                                          {_.map(this.state.influenceVersionsFixed, 'name').join(' , ')}
+                                        </span>
+                                      </div>
+                                    ) : null
+                                  }
                                   <Select
+                                    label="未归档版本"
                                     value={this.transToArr(this.state.influenceVersions, 'name', 'array')}
                                     mode="tags"
                                     autoFocus
@@ -1907,7 +1975,7 @@ class CreateSprint extends Component {
                                       this.setState({
                                         selectLoading: true,
                                       });
-                                      loadVersions().then((res) => {
+                                      loadVersions(['version_planning', 'released']).then((res) => {
                                         this.setState({
                                           originVersions: res,
                                           selectLoading: false,
@@ -1947,12 +2015,32 @@ class CreateSprint extends Component {
                               onOk={this.updateVersionSelect.bind(this, 'originVersions', 'fixVersions')}
                               onCancel={this.resetFixVersions.bind(this)}
                               readModeContent={<div style={{ color: '#3f51b5' }}>
-                                <p style={{ color: '#3f51b5', wordBreak: 'break-word', marginBottom: 0 }}>
-                                  {this.transToArr(this.state.fixVersions, 'name')}
-                                </p>
+                                {
+                                  !this.state.fixVersionsFixed.length && !this.state.fixVersions.length ? "无" : (
+                                    <div>
+                                      <div style={{ color: '#000' }}>
+                                        {_.map(this.state.fixVersionsFixed, 'name').join(' , ')}
+                                      </div>
+                                      <p style={{ color: '#3f51b5', wordBreak: 'break-word', marginBottom: 0 }}>
+                                        {_.map(this.state.fixVersions, 'name').join(' , ')}
+                                      </p>
+                                    </div>
+                                  )
+                                }
                               </div>}
                             >
+                              {
+                                this.state.fixVersionsFixed.length ? (
+                                  <div>
+                                    <span>已归档版本：</span>
+                                    <span>
+                                      {_.map(this.state.fixVersionsFixed, 'name').join(' , ')}
+                                    </span>
+                                  </div>
+                                ) : null
+                              }
                               <Select
+                                label="未归档版本"
                                 value={this.transToArr(this.state.fixVersions, 'name', 'array')}
                                 mode="tags"
                                 autoFocus
@@ -1964,7 +2052,7 @@ class CreateSprint extends Component {
                                   this.setState({
                                     selectLoading: true,
                                   });
-                                  loadVersions().then((res) => {
+                                  loadVersions(['version_planning', 'released']).then((res) => {
                                     this.setState({
                                       originVersions: res,
                                       selectLoading: false,
@@ -2220,17 +2308,7 @@ class CreateSprint extends Component {
                                 allowClear
                                 autoFocus
                                 filter
-                                onFilterChange={(input) => {
-                                  this.setState({
-                                    selectLoading: true,
-                                  });
-                                  getUsers(input).then((res) => {
-                                    this.setState({
-                                      originUsers: res.content,
-                                      selectLoading: false,
-                                    });
-                                  });
-                                }}
+                                onFilterChange={this.onFilterChange.bind(this)}
                                 getPopupContainer={triggerNode => triggerNode.parentNode}
                                 onChange={(value) => {
                                   this.setState({ reporterId: value });
@@ -2335,17 +2413,7 @@ class CreateSprint extends Component {
                                 allowClear
                                 autoFocus
                                 filter
-                                onFilterChange={(input) => {
-                                  this.setState({
-                                    selectLoading: true,
-                                  });
-                                  getUsers(input).then((res) => {
-                                    this.setState({
-                                      originUsers: res.content,
-                                      selectLoading: false,
-                                    });
-                                  });
-                                }}
+                                onFilterChange={this.onFilterChange.bind(this)}
                                 getPopupContainer={triggerNode => triggerNode.parentNode}
                                 onChange={(value) => {
                                   this.setState({ assigneeId: value });
@@ -2430,7 +2498,7 @@ class CreateSprint extends Component {
                       </div>
                       <div style={{ flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px' }} />
                       <div className="c7n-title-right" style={{ marginLeft: '14px', position: 'relative' }}>
-                        <Button className="leftBtn" funcTyp="flat" onClick={() => this.setState({ edit: true })}>
+                        <Button className="leftBtn" funcType="flat" onClick={() => this.setState({ edit: true })}>
                           <Icon type="zoom_out_map icon" style={{ marginRight: 2 }} />
                           <span>全屏编辑</span>
                         </Button>
@@ -2449,7 +2517,7 @@ class CreateSprint extends Component {
                       </div>
                     </div>
                     {this.renderDes()}
-                  </div>
+                    </div>
                   
                 </div>
 
@@ -2476,9 +2544,9 @@ class CreateSprint extends Component {
                       }}
                     />
                   </div>
-                </div>
-
-                <div id="test2">
+                  </div>
+                  
+                  <div id="test2">
                   <div className="c7n-title-wrapper">
                     <div className="c7n-title-left">
                       <Icon type="explicit2 c7n-icon-title" />
@@ -2524,7 +2592,7 @@ class CreateSprint extends Component {
                     </div>
                     <div style={{ flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px' }} />
                     <div className="c7n-title-right" style={{ marginLeft: '14px' }}>
-                      <Button className="leftBtn" funcTyp="flat" onClick={() => this.setState({ addCommit: true })}>
+                      <Button className="leftBtn" funcType="flat" onClick={() => this.setState({ addCommit: true })}>
                         <Icon type="playlist_add icon" />
                         <span>添加评论</span>
                       </Button>
@@ -2541,7 +2609,7 @@ class CreateSprint extends Component {
                     </div>
                     <div style={{ flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px' }} />
                     <div className="c7n-title-right" style={{ marginLeft: '14px' }}>
-                      <Button className="leftBtn" funcTyp="flat" onClick={() => this.setState({ dailyLogShow: true })}>
+                      <Button className="leftBtn" funcType="flat" onClick={() => this.setState({ dailyLogShow: true })}>
                         <Icon type="playlist_add icon" />
                         <span>登记工作</span>
                       </Button>
@@ -2571,7 +2639,7 @@ class CreateSprint extends Component {
                         </div>
                         <div style={{ flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px' }} />
                         <div className="c7n-title-right" style={{ marginLeft: '14px' }}>
-                          <Button className="leftBtn" funcTyp="flat" onClick={() => this.setState({ createLinkTaskShow: true })}>
+                          <Button className="leftBtn" funcType="flat" onClick={() => this.setState({ createLinkTaskShow: true })}>
                             <Icon type="playlist_add icon" />
                             <span>创建相关任务</span>
                           </Button>
@@ -2657,47 +2725,9 @@ class CreateSprint extends Component {
               visible={this.state.transformSubIssueShow}
               issueId={this.state.origin.issueId}
               issueNum={this.state.origin.issueNum}
+              ovn={this.state.origin.objectVersionNumber}
               onCancel={() => this.setState({ transformSubIssueShow: false })}
               onOk={this.handleTransformSubIssue.bind(this)}
-            />
-          ) : null
-        }
-        {
-          this.state.createBranchShow ? (
-            <CreateBranch
-              issueId={this.state.origin.issueId}
-              onOk={() => {
-                this.setState({ createBranchShow: false });
-                this.reloadIssue();
-              }}
-              onCancel={() => this.setState({ createBranchShow: false })}
-              visible={this.state.createBranchShow}
-            />
-          ) : null
-        }
-        {
-          this.state.commitShow ? (
-            <Commits
-              issueId={this.state.origin.issueId}
-              issueNum={this.state.origin.issueNum}
-              time={this.state.branchs.commitUpdateTime}
-              onCancel={() => {
-                this.setState({ commitShow: false });
-              }}
-              visible={this.state.commitShow}
-            />
-          ) : null
-        }
-        {
-          this.state.mergeRequestShow ? (
-            <MergeRequest
-              issueId={this.state.origin.issueId}
-              issueNum={this.state.origin.issueNum}
-              num={this.state.branchs.totalMergeRequest}
-              onCancel={() => {
-                this.setState({ mergeRequestShow: false });
-              }}
-              visible={this.state.mergeRequestShow}
             />
           ) : null
         }
