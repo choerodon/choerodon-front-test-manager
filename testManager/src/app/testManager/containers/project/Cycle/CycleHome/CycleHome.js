@@ -1,3 +1,4 @@
+/*eslint-disable */
 import React, { Component } from 'react';
 import { observer } from 'mobx-react';
 import { Page, Header, Content, stores } from 'choerodon-front-boot';
@@ -17,6 +18,7 @@ const { confirm } = Modal;
 let currentDropOverItem;
 let currentDropSide;
 let dropItem;
+var draging = null;
 const styles = {
   statusOption: {
     width: 60,
@@ -28,6 +30,61 @@ const styles = {
 };
 
 const dataList = [];
+function _animate(prevRect, target) {
+  const ms = 300;
+
+  if (ms) {
+    const currentRect = target.getBoundingClientRect();
+
+    if (prevRect.nodeType === 1) {
+      prevRect = prevRect.getBoundingClientRect();
+    }
+
+    _css(target, 'transition', 'none');
+    _css(target, 'transform', `translate3d(${
+      prevRect.left - currentRect.left}px,${
+      prevRect.top - currentRect.top}px,0)`,
+    );
+
+    target.offsetWidth; // 触发重绘
+    // 放在timeout里面也可以
+    // setTimeout(function() {
+    //     _css(target, 'transition', 'all ' + ms + 'ms');
+    //     _css(target, 'transform', 'translate3d(0,0,0)');
+    // }, 0);
+    _css(target, 'transition', `all ${ms}ms`);
+    _css(target, 'transform', 'translate3d(0,0,0)');
+
+    clearTimeout(target.animated);
+    target.animated = setTimeout(() => {
+      _css(target, 'transition', '');
+      _css(target, 'transform', '');
+      target.animated = false;
+    }, ms);
+  }
+}
+// 给元素添加style
+function _css(el, prop, val) {
+  const style = el && el.style;
+
+  if (style) {
+    if (val === void 0) {
+      if (document.defaultView && document.defaultView.getComputedStyle) {
+        val = document.defaultView.getComputedStyle(el, '');
+      } else if (el.currentStyle) {
+        val = el.currentStyle;
+      }
+
+      return prop === void 0 ? val : val[prop];
+    } else {
+      if (!(prop in style)) {
+        prop = `-webkit-${prop}`;
+      }
+
+      style[prop] = val + (typeof val === 'string' ? '' : 'px');
+    }
+  }
+}
 function dropSideClassName(side) {
   return `drop-row-${side}`;
 }
@@ -127,11 +184,13 @@ class CycleHome extends Component {
 
   // 拖拽开始
   handleDragtStart(dragData, e) {
+    window.console.log('start');
     e.dataTransfer.setData('text', 'choerodon');
     document.body.ondrop = function (event) {
       event.preventDefault();
       event.stopPropagation();
     };
+    draging = e.target;
     this.setState({
       dragData,
     });
@@ -139,6 +198,7 @@ class CycleHome extends Component {
 
   // 拖拽结束
   handleDragEnd = () => {
+    window.console.log('dragEnd');
     removeDragClass();
     if (dropItem) {
       this.handleDrop(dropItem);
@@ -150,37 +210,40 @@ class CycleHome extends Component {
 
   // 拖拽目标位置
   handleDragOver(record, e) {
-    e.preventDefault();
+    // e.preventDefault();
 
     dropItem = record;
-    const { currentTarget, pageY, dataTransfer } = e;
-    const { top, height } = currentTarget.getBoundingClientRect();
-    let before = height / 2;
-    let after = before;
-    let dropSide;
-
-    before = height / 3;
-    after = before * 2;
-    dropSide = 'in';
-    dataTransfer.dropEffect = 'copy';
-
-    const y = pageY - top;
-    if (y < before) {
-      dropSide = 'before';
-      dataTransfer.dropEffect = 'move';
-    } else if (y >= after) {
-      dropSide = 'after';
-      dataTransfer.dropEffect = 'move';
+    //console.log("onDrop over");
+    event.preventDefault();
+    var target = e.target;
+    //因为dragover会发生在ul上，所以要判断是不是li
+    if (target.nodeName === "TR") {
+      if (target !== draging) {
+        var targetRect = target.getBoundingClientRect();
+        var dragingRect = draging.getBoundingClientRect();
+        if (target) {
+          if (target.animated) {
+            return;
+          }
+        }
+        const { dragData, testList } = this.state;
+        const sourceIndex = _.findIndex(testList, { executeId: dragData.executeId });
+        const targetIndex = _.findIndex(testList, { executeId: record.executeId });
+        if (sourceIndex < targetIndex) {
+          target.parentNode.insertBefore(draging, target.nextSibling);
+        } else {
+          target.parentNode.insertBefore(draging, target);
+        }
+        _animate(dragingRect, draging);
+        _animate(targetRect, target);
+      }
     }
-
-    removeDragClass();
-    addDragClass(currentTarget, dropSide);
   }
 
   // 拖放
   handleDrop(record) {
     // const { dragData, testList } = this.state;
-
+    window.console.log('drop');
     // this.setState({
     //   testList: [record, dragData],
     // });
@@ -247,7 +310,9 @@ class CycleHome extends Component {
       draggable: true,
       onDragLeave: this.handleDragLeave,
       onDragOver: this.handleDragOver.bind(this, record),
+      onDragEnd: this.handleDragEnd,
       onDrop: this.handleDrop.bind(this, record),
+      onDragStart: this.handleDragtStart.bind(this, record),
     };
     return rowProps;
   };
@@ -583,7 +648,7 @@ class CycleHome extends Component {
       title: 'ID',
       dataIndex: 'issueId',
       key: 'issueId',
-      onCell: this.handleCell,
+      // onCell: this.handleCell,
       width: '10%',
       // filters: [],   
       // onFilter: (value, record) => 
@@ -660,7 +725,7 @@ class CycleHome extends Component {
         >
           <div
             style={{
-              width: 100,             
+              width: 100,
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',

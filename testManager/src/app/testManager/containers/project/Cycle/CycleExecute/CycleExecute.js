@@ -690,11 +690,8 @@ class CycleExecute extends Component {
                 fontSize: '13px',
                 color: 'white',
               }}
-              >
-                {/* {i === 0 ? null : '，'} */}
-                <span>
-                  {defect.issueInfosDTO.issueName}
-                </span>
+              >  
+              {defect.issueInfosDTO.issueName}
               </div>))}
           </div>}
         >
