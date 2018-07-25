@@ -407,12 +407,12 @@ class Test extends Component {
       },
     ];
     const filterColumns = [
-      {
-        title: '编号',
-        dataIndex: 'issueNum',
-        key: 'issueNum',
-        filters: [],
-      },
+      // {
+      //   title: '编号',
+      //   dataIndex: 'issueNum',
+      //   key: 'issueNum',
+      //   filters: [],
+      // },
       {
         title: '概要',
         dataIndex: 'summary',
@@ -506,7 +506,7 @@ class Test extends Component {
             </Menu.Item>
           ))
         }
-        
+
       </Menu>
     );
     const typeList = (
@@ -562,8 +562,8 @@ class Test extends Component {
           </Button>
         </Header>
         <Content style={{ display: 'flex', padding: '0' }}>
-          <div 
-            className="c7n-content-issue" 
+          <div
+            className="c7n-content-issue"
             style={{
               width: this.state.expand ? '28%' : '100%',
               display: 'block',
@@ -635,12 +635,12 @@ class Test extends Component {
                   />
                 )
               }
-              
+
               <div className="c7n-backlog-sprintIssue">
                 <div
                   style={{
                     userSelect: 'none',
-                    background: 'white',  
+                    background: 'white',
                     padding: '12px 0 12px 20px',
                     fontSize: 13,
                     display: 'flex',
@@ -681,7 +681,7 @@ class Test extends Component {
                         </div>
                       </div>
                       <div style={{ marginTop: 10, display: 'flex', marginLeft: 50, paddingRight: 70 }}>
-                        <Button 
+                        <Button
                           type="primary"
                           onClick={() => {
                             this.setState({
@@ -702,7 +702,7 @@ class Test extends Component {
                       style={{ color: '#3f51b5' }}
                       funcType="flat"
                       onClick={() => {
-                        this.setState({ 
+                        this.setState({
                           createIssue: true,
                           createIssueValue: '',
                         });
@@ -775,7 +775,7 @@ class Test extends Component {
                 visible={this.state.create}
                 onCancel={() => this.setState({ create: false })}
                 onOk={this.handleCreateIssue.bind(this)}
-                
+
               />
             ) : null
           }
