@@ -6,6 +6,7 @@
 .project
 .lock.json
 *lock.json
+.vscode
 
 
 # npm
