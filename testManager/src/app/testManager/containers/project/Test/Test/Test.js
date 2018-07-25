@@ -61,7 +61,7 @@ class Test extends Component {
     }
     if (paramStatus) {
       const obj = {
-        advancedSearchArgs: {},
+        advancedSearchArgs: { },
         searchArgs: {},
       };
       const a = [paramStatus];
@@ -219,7 +219,7 @@ class Test extends Component {
     const { issueNum, summary } = filters;
     obj.advancedSearchArgs.statusCode = statusCode || [];
     obj.advancedSearchArgs.priorityCode = priorityCode || [];
-    obj.advancedSearchArgs.typeCode = typeCode || [];
+    obj.advancedSearchArgs.typeCode = ['issue_test'];
     obj.searchArgs.issueNum = issueNum && issueNum.length ? issueNum[0] : '';
     obj.searchArgs.summary = summary && summary.length ? summary[0] : '';
     IssueStore.setFilter(obj);
