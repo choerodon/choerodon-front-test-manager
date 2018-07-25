@@ -375,7 +375,7 @@ class CycleHome extends Component {
       getCycleById({
         size: pagination.pageSize,
         page: pagination.current - 1,
-      }, currentCycle.cycleId).then((cycle) => {
+      }, currentCycle.cycleId, filters).then((cycle) => {
         this.setState({
           rightLoading: false,
           testList: cycle.content,
@@ -489,11 +489,11 @@ class CycleHome extends Component {
 
     const columns = [{
       title: 'ID',
-      dataIndex: 'issueId',
-      key: 'issueId',
+      dataIndex: 'issueName',
+      key: 'issueName',
       // onCell: this.handleCell,
       width: '10%',
-      // filters: [],   
+      filters: [],
       // onFilter: (value, record) => 
       //   record.issueInfosDTO && record.issueInfosDTO.issueName.indexOf(value) === 0,  
       render(issueId, record) {
@@ -514,7 +514,7 @@ class CycleHome extends Component {
       title: <FormattedMessage id="status" />,
       dataIndex: 'executionStatus',
       key: 'executionStatus',
-      // filters: statusList.map(status => ({ text: status.statusName, value: status.statusId })),
+      filters: statusList.map(status => ({ text: status.statusName, value: status.statusId })),
       // onFilter: (value, record) => record.executionStatus === value,  
       width: '9%',
       render(executionStatus) {
@@ -529,6 +529,7 @@ class CycleHome extends Component {
       title: <FormattedMessage id="cycle_comment" />,
       dataIndex: 'comment',
       key: 'comment',
+      filters: [],
       width: '10%',
       render(comment) {
         return (

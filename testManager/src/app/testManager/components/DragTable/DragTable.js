@@ -8,7 +8,7 @@ class DragTable extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: [], 
+      data: [],
     };
   }
 
@@ -19,9 +19,8 @@ class DragTable extends Component {
     // 更新数据并避免拖动后的跳动
     if (!(this.props.loading === false && nextProps.loading === true)) {
       this.setState({ data: nextProps.dataSource });
-    } 
+    }
   }
-
   onDragEnd(result) {
     window.console.log(result);
     const data = this.state.data.slice();
@@ -39,8 +38,26 @@ class DragTable extends Component {
       onDragEnd(fromIndex, toIndex);
     }
   }
+  getRowStyle = (draggableStyle, isDragging) => ({
+    // some basic styles to make the items look a bit nicer
+    // userSelect: 'none',
+    // padding: grid * 2,
 
-  renderThead=(data) => {
+    // styles we need to apply on draggables
+    ...draggableStyle,
+
+    // width: 850,
+    display: 'table',
+    
+  });
+  getTdStyle = isDragging => ({
+    // width: "200px",
+    display: 'table-cell',
+    // backgroundColor: isDragging ? 'lightgreen' : 'grey',
+  });
+
+
+  renderThead = (data) => {
     const { columns } = this.props;
     const ths = columns.map(column => (<th>{column.title} </th>));
     return (<tr>{ths}</tr>);
@@ -55,10 +72,11 @@ class DragTable extends Component {
             (
               <tr
                 ref={provided.innerRef}
+                
+                style={this.getRowStyle(provided.draggableStyle, snapshot.isDragging)}
                 {...provided.draggableProps}
                 {...provided.dragHandleProps}
-
-              >             
+              >
                 {columns.map((column) => {
                   let renderedItem = null;
                   const { dataIndex, key, render } = column;
@@ -69,10 +87,12 @@ class DragTable extends Component {
                       {data[index][dataIndex]}
                     </span>);
                   }
-                  return (<td>
+                  return (<td
+                    style={this.getTdStyle(snapshot.isDragging)}
+                  >
                     {renderedItem}
                   </td>);
-                })}    
+                })}
               </tr>
             )
           }
@@ -98,7 +118,7 @@ class DragTable extends Component {
           <DragDropContext onDragEnd={this.onDragEnd.bind(this)}>
             <table>
               <thead>
-                {this.renderThead(data)}            
+                {this.renderThead(data)}
               </thead>
               <Droppable droppableId="dropTable">
                 {(provided, snapshot) => (
@@ -117,7 +137,7 @@ class DragTable extends Component {
                 )}
               </Droppable>
             </table>
-          </DragDropContext>    
+          </DragDropContext>
         </Spin>
       </div>
     );
