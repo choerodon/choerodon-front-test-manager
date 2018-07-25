@@ -150,7 +150,9 @@ export function updateIssueType(data, projectId = AppState.currentMenuType.id) {
   return axios.post(`/agile/v1/projects/${projectId}/issues/update_type`, issueUpdateTypeDTO);
 }
 
-export function loadIssues(page = 0, size = 10, searchDTO, orderField, orderType) {
+export function loadIssues(page = 0, size = 10, search, orderField, orderType) {
+  const searchDTO = { ...search };
+  searchDTO.advancedSearchArgs.typeCode = ['issue_test'];
   const projectId = AppState.currentMenuType.id;
   return axios.post(`/agile/v1/projects/${projectId}/issues/test_component/no_sub?page=${page}&size=${size}`, searchDTO, {
     params: {

@@ -16,10 +16,6 @@ import CycleStore from '../../../../store/project/cycle/CycleStore';
 
 const { AppState } = stores;
 const { confirm } = Modal;
-let currentDropOverItem;
-let currentDropSide;
-let dropItem;
-var draging = null;
 const styles = {
   statusOption: {
     width: 60,
@@ -31,78 +27,6 @@ const styles = {
 };
 
 const dataList = [];
-function _animate(prevRect, target) {
-  const ms = 300;
-
-  if (ms) {
-    const currentRect = target.getBoundingClientRect();
-
-    if (prevRect.nodeType === 1) {
-      prevRect = prevRect.getBoundingClientRect();
-    }
-
-    _css(target, 'transition', 'none');
-    _css(target, 'transform', `translate3d(${
-      prevRect.left - currentRect.left}px,${
-      prevRect.top - currentRect.top}px,0)`,
-    );
-
-    target.offsetWidth; // 触发重绘
-    // 放在timeout里面也可以
-    // setTimeout(function() {
-    //     _css(target, 'transition', 'all ' + ms + 'ms');
-    //     _css(target, 'transform', 'translate3d(0,0,0)');
-    // }, 0);
-    _css(target, 'transition', `all ${ms}ms`);
-    _css(target, 'transform', 'translate3d(0,0,0)');
-
-    clearTimeout(target.animated);
-    target.animated = setTimeout(() => {
-      _css(target, 'transition', '');
-      _css(target, 'transform', '');
-      target.animated = false;
-    }, ms);
-  }
-}
-// 给元素添加style
-function _css(el, prop, val) {
-  const style = el && el.style;
-
-  if (style) {
-    if (val === void 0) {
-      if (document.defaultView && document.defaultView.getComputedStyle) {
-        val = document.defaultView.getComputedStyle(el, '');
-      } else if (el.currentStyle) {
-        val = el.currentStyle;
-      }
-
-      return prop === void 0 ? val : val[prop];
-    } else {
-      if (!(prop in style)) {
-        prop = `-webkit-${prop}`;
-      }
-
-      style[prop] = val + (typeof val === 'string' ? '' : 'px');
-    }
-  }
-}
-function dropSideClassName(side) {
-  return `drop-row-${side}`;
-}
-function addDragClass(currentTarget, dropSide) {
-  if (dropSide) {
-    currentDropOverItem = currentTarget;
-    currentDropSide = dropSide;
-    currentDropOverItem.classList.add(dropSideClassName(currentDropSide));
-  }
-}
-
-function removeDragClass() {
-  if (currentDropOverItem && currentDropSide) {
-    currentDropOverItem.classList.remove(dropSideClassName(currentDropSide));
-  }
-}
-
 
 const TreeNode = Tree.TreeNode;
 
@@ -177,88 +101,11 @@ class CycleHome extends Component {
       });
     }
   }
-  // 拖拽离开目标
-  handleDragLeave() {
-    removeDragClass();
-    dropItem = null;
-  }
 
-  // 拖拽开始
-  handleDragtStart(dragData, e) {
-    window.console.log('start');
-    e.dataTransfer.setData('text', 'choerodon');
-    document.body.ondrop = function (event) {
-      event.preventDefault();
-      event.stopPropagation();
-    };
-    draging = e.target;
-    this.setState({
-      dragData,
-    });
-  }
-
-  // 拖拽结束
-  handleDragEnd = () => {
-    window.console.log('dragEnd');
-    removeDragClass();
-    if (dropItem) {
-      this.handleDrop(dropItem);
-    }
-    this.setState({
-      dragData: null,
-    });
-  };
-
-  // 拖拽目标位置
-  handleDragOver(record, e) {
-    // e.preventDefault();
-
-    dropItem = record;
-    //console.log("onDrop over");
-    e.preventDefault();
-    var target = e.target;
-    window.console.log(draging, target)
-    //因为dragover会发生在ul上，所以要判断是不是li
-    if (target.nodeName === "TD") {
-      target = target.parentNode;
-      if (target !== draging) {
-        var targetRect = target.getBoundingClientRect();
-        var dragingRect = draging.getBoundingClientRect();
-        if (target) {
-          if (target.animated) {
-            return;
-          }
-        }
-        const { dragData, testList } = this.state;
-        const sourceIndex = _.findIndex(testList, { executeId: dragData.executeId });
-        const targetIndex = _.findIndex(testList, { executeId: record.executeId });
-        if (sourceIndex < targetIndex) {
-          target.parentNode.insertBefore(draging, target.nextSibling);
-        } else {
-          target.parentNode.insertBefore(draging, target);
-        }
-        _animate(dragingRect, draging);
-        _animate(targetRect, target);
-      }
-    }
-  }
-
-  // 拖放
-  handleDrop(record) {
-    // const { dragData, testList } = this.state;
-    window.console.log('drop');
-    // this.setState({
-    //   testList: [record, dragData],
-    // });
-    removeDragClass();
-    const { dragData, testList } = this.state;
-    const sourceIndex = _.findIndex(testList, { executeId: dragData.executeId });
-    const targetIndex = _.findIndex(testList, { executeId: record.executeId });
-    if (sourceIndex === targetIndex) {
-      return;
-    }
+  onDragEnd = (sourceIndex, targetIndex) => {
     let lastRank = null;
     let nextRank = null;
+    const { dragData, testList } = this.state;
     if (sourceIndex < targetIndex) {
       lastRank = testList[targetIndex].rank;
       nextRank = testList[targetIndex + 1] ? testList[targetIndex + 1].rank : null;
@@ -266,14 +113,9 @@ class CycleHome extends Component {
       lastRank = testList[targetIndex - 1] ? testList[targetIndex - 1].rank : null;
       nextRank = testList[targetIndex].rank;
     }
-    window.console.log(lastRank, nextRank);
-    // const [removed] = testList.splice(targetIndex, 1);
-    // testList.splice(sourceIndex, 0, removed);
-    this.setState({
-      // testList,
-      dragData: null,
-    });
-    const temp = { ...dragData };
+    window.console.log(sourceIndex, targetIndex, lastRank, nextRank);
+    const source = testList[sourceIndex];
+    const temp = { ...source };
     delete temp.defects;
     delete temp.caseAttachment;
     delete temp.testCycleCaseStepES;
@@ -304,9 +146,7 @@ class CycleHome extends Component {
         window.console.log(cycle);
       });
     });
-    // window.console.log(record, dragData, currentDropSide);
   }
-
   handleRow = (record) => {
     // const droppable = this.checkDroppable(record);
     const rowProps = {
@@ -1014,17 +854,21 @@ class CycleHome extends Component {
                   </div>
                 </div>
                 <ShowCycleData data={currentCycle} />
-                <Table
+                {/* <Table
                   pagination={executePagination}
                   loading={rightLoading}
                   columns={columns}
                   dataSource={testList}
                   onChange={this.handleExecuteTableChange}
-                  onRow={this.handleRow}
-                />
+                /> */}
+                <div id="test"></div>
                 <DragTable
-                  data={testList}
+                  pagination={executePagination}
+                  loading={rightLoading}
+                  onChange={this.handleExecuteTableChange}
+                  dataSource={testList}
                   columns={columns}
+                  onDragEnd={this.onDragEnd}
                 />
               </div>}
             </div>

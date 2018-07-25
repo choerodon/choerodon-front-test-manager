@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { Draggable, Droppable, DragDropContext } from 'react-beautiful-dnd';
-import { Button, Icon, Dropdown, Menu, Modal } from 'choerodon-ui';
-import { stores, axios } from 'choerodon-front-boot';
+import { Table, Spin } from 'choerodon-ui';
 import _ from 'lodash';
 import './DragTable.scss';
 
@@ -17,32 +16,28 @@ class DragTable extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.data !== this.props.data && nextProps.data) {
-      this.setState({ data: nextProps.data });
-    }
+    // 更新数据并避免拖动后的跳动
+    if (!(this.props.loading === false && nextProps.loading === true)) {
+      this.setState({ data: nextProps.dataSource });
+    } 
   }
 
   onDragEnd(result) {
     window.console.log(result);
-    const arr = this.state.data.slice();
+    const data = this.state.data.slice();
     const fromIndex = result.source.index;
     const toIndex = result.destination.index;
     if (fromIndex === toIndex) {
       return;
     }
-    const drag = arr[fromIndex];
-    arr.splice(fromIndex, 1);
-    arr.splice(toIndex, 0, drag);
-    this.setState({ data: arr });
-    // const testCaseStepDTO = {
-    //   ...drag,
-    //   lastRank: arr[toIndex].rank,
-    // };
-    // const projectId = AppState.currentMenuType.id;
-    // axios.put(`/test/v1/projects/${projectId}/case/step/change`, testCaseStepDTO)
-    //   .then((res) => {
-    //     // save success
-    //   });
+    const drag = data[fromIndex];
+    data.splice(fromIndex, 1);
+    data.splice(toIndex, 0, drag);
+    this.setState({ data });
+    const { onDragEnd } = this.props;
+    if (onDragEnd) {
+      onDragEnd(fromIndex, toIndex);
+    }
   }
 
   renderThead=(data) => {
@@ -89,36 +84,45 @@ class DragTable extends Component {
 
   render() {
     const { data } = this.state;
+    const { loading, pagination } = this.props;
+
+    // ReactDOM.render(dragarea, document.getElementsByClassName('ant-table-placeholder')[0]);
     return (
       <div className="c7n-dragtable">
-        <DragDropContext onDragEnd={this.onDragEnd.bind(this)}>
-          <table>
-          
-            <thead>
-              {this.renderThead(data)}
-            
-            </thead>
-            <Droppable droppableId="dropTable">
-              {(provided, snapshot) => (
-                <tbody
-                  ref={provided.innerRef}
-                  style={{
-                    // background: snapshot.isDraggingOver ? '#e9e9e9' : 'white',
-                    padding: 'grid',
-                    borderBottom: '1px solid rgba(0,0,0,0.12)',
-                    marginBottom: 0,
-                  }}
-                >
-                  {this.renderTbody(this.state.data)}
-                  {provided.placeholder}
-                </tbody>
-              )}
-            </Droppable>
-          </table>
-        </DragDropContext>
+        <Spin spinning={loading}>
+          <Table
+            {...this.props}
+            loading={false}
+            dataSource={[]}
+          />
+          <DragDropContext onDragEnd={this.onDragEnd.bind(this)}>
+            <table>
+              <thead>
+                {this.renderThead(data)}            
+              </thead>
+              <Droppable droppableId="dropTable">
+                {(provided, snapshot) => (
+                  <tbody
+                    ref={provided.innerRef}
+                    style={{
+                      // background: snapshot.isDraggingOver ? '#e9e9e9' : 'white',
+                      padding: 'grid',
+                      borderBottom: '1px solid rgba(0,0,0,0.12)',
+                      marginBottom: 0,
+                    }}
+                  >
+                    {this.renderTbody(this.state.data)}
+                    {provided.placeholder}
+                  </tbody>
+                )}
+              </Droppable>
+            </table>
+          </DragDropContext>    
+        </Spin>
       </div>
     );
   }
 }
 
 export default DragTable;
+
