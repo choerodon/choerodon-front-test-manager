@@ -662,10 +662,6 @@ class CycleExecute extends Component {
           </div>
         </Tooltip>);
       },
-<<<<<<< HEAD
-=======
-
->>>>>>> 修复缺陷省略号
     },
     {
       title: <FormattedMessage id="bug" />,
