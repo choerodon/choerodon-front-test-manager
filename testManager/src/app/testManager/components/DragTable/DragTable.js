@@ -40,15 +40,15 @@ class DragTable extends Component {
     arr.splice(fromIndex, 1);
     arr.splice(toIndex, 0, drag);
     this.setState({ data: arr });
-    const testCaseStepDTO = {
-      ...drag,
-      lastRank: arr[toIndex].rank,
-    };
-    const projectId = AppState.currentMenuType.id;
-    axios.put(`/test/v1/projects/${projectId}/case/step/change`, testCaseStepDTO)
-      .then((res) => {
-        // save success
-      });
+    // const testCaseStepDTO = {
+    //   ...drag,
+    //   lastRank: arr[toIndex].rank,
+    // };
+    // const projectId = AppState.currentMenuType.id;
+    // axios.put(`/test/v1/projects/${projectId}/case/step/change`, testCaseStepDTO)
+    //   .then((res) => {
+    //     // save success
+    //   });
   }
 
   getMenu = () => (
@@ -83,28 +83,32 @@ class DragTable extends Component {
     const result = [];
     _.forEach(data, (item, index) => {
       result.push(
-        <Draggable key={item.stepId} draggableId={item.stepId} index={index}>
-          {(provided1, snapshot1) => 
+        <Draggable key={item.executeId} draggableId={item.executeId} index={index}>
+          {(provided, snapshot) =>
             (
               <div
-                ref={provided1.innerRef}
-                {...provided1.draggableProps}
-                {...provided1.dragHandleProps}
+                ref={provided.innerRef}
+                {...provided.draggableProps}
+                {...provided.dragHandleProps}
+
               >
-                <div className={`${item.id}-list`} style={{ width: '100%', display: 'flex', height: 34, borderBottom: '1px solid rgba(0, 0, 0, 0.12)', borderTop: '1px solid rgba(0, 0, 0, 0.12)' }}>
-                  <span style={{ width: 50, display: 'inline-block', lineHeight: '34px', paddingLeft: 20 }}>
+                <tr
+                  // className={`${item.id}-list`}
+                  style={{ width: '100%', display: 'flex', height: 34, borderBottom: '1px solid rgba(0, 0, 0, 0.12)', borderTop: '1px solid rgba(0, 0, 0, 0.12)' }}
+                >
+                  <td style={{ width: 50, display: 'inline-block', lineHeight: '34px', paddingLeft: 20 }}>
                     {item.executeId}
-                  </span>
-                  <span style={{ width: 115, display: 'inline-block', lineHeight: '34px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', paddingRight: 15 }}>
+                  </td>
+                  <td style={{ width: 115, display: 'inline-block', lineHeight: '34px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', paddingRight: 15 }}>
                     {item.executeId}
-                  </span>
-                  <span style={{ width: 115, display: 'inline-block', lineHeight: '34px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', paddingRight: 15 }}>
+                  </td>
+                  <td style={{ width: 115, display: 'inline-block', lineHeight: '34px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', paddingRight: 15 }}>
                     {item.executeId}
-                  </span>
-                  <span style={{ width: 115, display: 'inline-block', lineHeight: '34px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', paddingRight: 15 }}>
+                  </td>
+                  <td style={{ width: 115, display: 'inline-block', lineHeight: '34px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', paddingRight: 15 }}>
                     {item.executeId}
-                  </span>
-                </div>
+                  </td>
+                </tr>
               </div>
             )
           }
@@ -117,20 +121,22 @@ class DragTable extends Component {
   render() {
     return (
       <DragDropContext onDragEnd={this.onDragEnd.bind(this)}>
-        <div style={{ width: 680 }}>
-          <div style={{ width: '100%', height: 30, background: 'rgba(0, 0, 0, 0.04)', borderTop: '2px solid rgba(0,0,0,0.12)', borderBottom: '1px solid rgba(0,0,0,0.12)' }}>
-            <span style={{ width: 50, display: 'inline-block', lineHeight: '30px' }} />
-            <span style={{ width: 115, display: 'inline-block', lineHeight: '30px' }}>
-              测试步骤
-            </span>
-            <span style={{ width: 115, display: 'inline-block', lineHeight: '30px' }}>测试数据</span>
-            <span style={{ width: 115, display: 'inline-block', lineHeight: '30px' }}>预期结果</span>
-            <span style={{ width: 250, display: 'inline-block', lineHeight: '30px' }}>分步附件</span>
-            <span />
-          </div>
+        <table style={{ width: 680 }}>
+          <thead>
+            <tr style={{ width: '100%', height: 30, background: 'rgba(0, 0, 0, 0.04)', borderTop: '2px solid rgba(0,0,0,0.12)', borderBottom: '1px solid rgba(0,0,0,0.12)' }}>
+              <th style={{ width: 50, display: 'inline-block', lineHeight: '30px' }} />
+              <th style={{ width: 115, display: 'inline-block', lineHeight: '30px' }}>
+                测试步骤
+              </th>
+              <th style={{ width: 115, display: 'inline-block', lineHeight: '30px' }}>测试数据</th>
+              <th style={{ width: 115, display: 'inline-block', lineHeight: '30px' }}>预期结果</th>
+              <th style={{ width: 250, display: 'inline-block', lineHeight: '30px' }}>分步附件</th>
+              <th />
+            </tr>
+          </thead>
           <Droppable droppableId="dropTable">
             {(provided, snapshot) => (
-              <div
+              <tbody
                 ref={provided.innerRef}
                 style={{
                   background: snapshot.isDraggingOver ? '#e9e9e9' : 'white',
@@ -141,10 +147,10 @@ class DragTable extends Component {
               >
                 {this.renderItem(this.state.data)}
                 {provided.placeholder}
-              </div>
+              </tbody>
             )}
           </Droppable>
-        </div>
+        </table>
       </DragDropContext>
     );
   }

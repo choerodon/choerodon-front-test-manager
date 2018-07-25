@@ -1024,6 +1024,7 @@ class CycleHome extends Component {
                 />
                 <DragTable
                   data={testList}
+                  columns={columns}
                 />
               </div>}
             </div>
