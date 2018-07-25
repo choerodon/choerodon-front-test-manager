@@ -274,7 +274,7 @@ class EditTestDetail extends Component {
             </Select>
             <br />
             <Select
-              mode="tags"
+              
               style={{ width: 500 }}
               label="缺陷"        
               value={defectIds}
@@ -282,9 +282,8 @@ class EditTestDetail extends Component {
               allowClear
               loading={selectLoading}
               filter
-              // onFilterChange={(input, option) =>
-              //   option.props.children.props.children[1].props.children.toLowerCase()
-              //     .indexOf(input.toLowerCase()) >= 0}
+              mode="multiple"
+              filterOption={false}
               onFilterChange={(value) => {
                 // window.console.log('filter');
                 this.setState({
