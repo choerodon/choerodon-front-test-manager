@@ -9,6 +9,7 @@ import moment from 'moment';
 import './CycleHome.scss';
 import { getCycles, deleteExecute, getCycleById, editCycleExecute, clone, addFolder, getStatusList } from '../../../../api/cycleApi';
 import { TreeTitle, CreateCycle, EditCycle, CreateCycleExecute, ShowCycleData } from '../../../../components/CycleComponent';
+import DragTable from '../../../../components/DragTable';
 import { RichTextShow } from '../../../../components/CommonComponent';
 import { delta2Html, delta2Text } from '../../../../common/utils';
 import CycleStore from '../../../../store/project/cycle/CycleStore';
@@ -214,10 +215,12 @@ class CycleHome extends Component {
 
     dropItem = record;
     //console.log("onDrop over");
-    event.preventDefault();
+    e.preventDefault();
     var target = e.target;
+    window.console.log(draging, target)
     //因为dragover会发生在ul上，所以要判断是不是li
-    if (target.nodeName === "TR") {
+    if (target.nodeName === "TD") {
+      target = target.parentNode;
       if (target !== draging) {
         var targetRect = target.getBoundingClientRect();
         var dragingRect = draging.getBoundingClientRect();
@@ -1018,6 +1021,9 @@ class CycleHome extends Component {
                   dataSource={testList}
                   onChange={this.handleExecuteTableChange}
                   onRow={this.handleRow}
+                />
+                <DragTable
+                  data={testList}
                 />
               </div>}
             </div>
