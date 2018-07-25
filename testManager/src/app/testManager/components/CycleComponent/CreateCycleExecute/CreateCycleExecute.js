@@ -339,15 +339,15 @@ class CreateCycleExecute extends Component {
           >
             <Tabs activeKey={tab} onChange={this.modeChange}>
               <TabPane tab="从问题添加" key="1">
-                <Select
-                  mode="tags"
+                <Select                 
                   style={{ width: 500, margin: '0 0 10px 0' }}
-                  label="测试问题"
-            
+                  label="测试问题"            
                   value={selectIssueList}
                   onChange={this.handleIssueChange}
-                  loading={selectLoading}
+                  loading={selectLoading}     
                   filter
+                  mode="multiple"
+                  filterOption={false}                               
                   // onFilterChange={(input, option) =>
                   //   option.props.children.props.children[1].props.children.toLowerCase()
                   //     .indexOf(input.toLowerCase()) >= 0}

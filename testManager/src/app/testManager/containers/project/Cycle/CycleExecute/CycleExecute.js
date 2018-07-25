@@ -707,7 +707,6 @@ class CycleExecute extends Component {
           </div>
         </Tooltip>);
       },
-
     },
     {
       title: '缺陷',
@@ -971,11 +970,25 @@ class CycleExecute extends Component {
                           // filter
                           allowClear
                           autoFocus
-                          mode="tags"
+                          filter
+                          mode="multiple"
+                          filterOption={false}
                           loading={selectLoading}
                           value={defectIds}
                           style={{ minWidth: 200 }}
                           onChange={this.handleDefectsChange}
+                          onFilterChange={(value) => {
+                            // window.console.log('filter');
+                            this.setState({
+                              selectLoading: true,
+                            });
+                            getIssueList(value).then((issueData) => {
+                              this.setState({
+                                issueList: issueData.content,
+                                selectLoading: false,
+                              });
+                            });
+                          }}
                           onFocus={() => {
                             this.setState({
                               selectLoading: true,
