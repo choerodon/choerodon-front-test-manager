@@ -13,14 +13,15 @@ export function getProjectVersion() {
 }
 export function getIssueList(summary, type) {
   const projectId = AppState.currentMenuType.id;
-  const search = {};
-  // if (type) {
-  //   search.typeCode = ['issue_test'];
-  // }
-  if (summary) {
-    search.summary = summary;
+  const advancedSearchArgs = {};
+  const searchArgs = {};
+  if (type) {
+    advancedSearchArgs.typeCode = ['issue_test'];
   }
-  return axios.post(`agile/v1/projects/${projectId}/issues/test_component/no_sub`, { advancedSearchArgs: search });
+  if (summary) {
+    searchArgs.summary = summary;
+  }
+  return axios.post(`agile/v1/projects/${projectId}/issues/test_component/no_sub`, { advancedSearchArgs, searchArgs });
 }
 export function getIssueListSearch(search) {
   const projectId = AppState.currentMenuType.id;

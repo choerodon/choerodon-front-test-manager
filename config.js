@@ -8,7 +8,7 @@ const config = {
     },
     cookieServer: '', // 子域名token共享
     server: 'http://api.alpha.saas.hand-china.com', // 后端接口服务器地址
-    // server:'http://172.20.1.50:8080',
+    // server:'http://10.211.111.130:8080',
     port: 9090 // 端口
 };
 

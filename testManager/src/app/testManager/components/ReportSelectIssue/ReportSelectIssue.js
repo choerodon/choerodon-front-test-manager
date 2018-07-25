@@ -165,8 +165,7 @@ class ReportSelectIssue extends Component {
                   onSelect={(value) => {
                     this.setState({
                       version: value,
-                    });
-                    this.getList();
+                    }, () => { this.getList(); });
                   }}
                 >
                   <Option value="all" key="all">
