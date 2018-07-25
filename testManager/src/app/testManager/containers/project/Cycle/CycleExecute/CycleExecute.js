@@ -691,7 +691,7 @@ class CycleExecute extends Component {
                 color: 'white',
               }}
               >  
-              {defect.issueInfosDTO.issueName}
+                {defect.issueInfosDTO.issueName}
               </div>))}
           </div>}
         >

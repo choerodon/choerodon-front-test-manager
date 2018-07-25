@@ -346,19 +346,16 @@ class CreateCycleExecute extends Component {
           >
             <Tabs activeKey={tab} onChange={this.modeChange}>
               <TabPane tab={<FormattedMessage id="cycle_createExecute_createFromQuestion" />} key="1">
-                <Select                 
+                <Select                
                   style={{ width: 500, margin: '0 0 10px 0' }}
                   label={<FormattedMessage id="cycle_createExecute_testQuestion" />}
             
                   value={selectIssueList}
                   onChange={this.handleIssueChange}
-                  loading={selectLoading}     
-                  filter
+                  loading={selectLoading}
+                  filter                  
                   mode="multiple"
-                  filterOption={false}                               
-                  // onFilterChange={(input, option) =>
-                  //   option.props.children.props.children[1].props.children.toLowerCase()
-                  //     .indexOf(input.toLowerCase()) >= 0}
+                  filterOption={false}
                   onFilterChange={(value) => {
                     // window.console.log('filter');
                     this.setState({
@@ -503,10 +500,10 @@ class CreateCycleExecute extends Component {
                       >
                         <RadioGroup onChange={this.onChange} value={this.state.value}>
                           <Radio style={radioStyle} value={1}>
-                          <FormattedMessage id="cycle_createExecute_me" />
+                            <FormattedMessage id="cycle_createExecute_me" />
                           </Radio>
                           <Radio style={radioStyle} value={2}>
-                          <FormattedMessage id="cycle_createExecute_others" />
+                            <FormattedMessage id="cycle_createExecute_others" />
                           </Radio>
                         </RadioGroup>
                         {this.state.value === 2 ? <FormItem>
@@ -663,40 +660,40 @@ class CreateCycleExecute extends Component {
                           value={hasIssue}
                         >
                           <Radio style={radioStyle} value={1}>
-                          <FormattedMessage id="cycle_createExecute_no" />
+                            <FormattedMessage id="cycle_createExecute_no" />
                           </Radio>
                           <Radio style={radioStyle} value={2}>
-                          <FormattedMessage id="cycle_createExecute_yes" />
+                            <FormattedMessage id="cycle_createExecute_yes" />
                           </Radio>
                         </RadioGroup>
                         {hasIssue === 2 ? 
-                        <FormItem>
-                          {getFieldDecorator('statusCode', {
+                          <FormItem>
+                            {getFieldDecorator('statusCode', {
                             // rules: [{
                             //   required: true, message: '请输入说明!',
                             // }],
-                          })(
-                            <Select
-                              mode="tags"
-                              style={{ width: 500, margin: '0 0 10px 0' }}
-                              label={<FormattedMessage id="cycle_createExecute_defectStatus" />}                             
-                              loading={selectLoading}
-                              onFocus={() => {
-                                this.setState({
-                                  selectLoading: true,
-                                });
-                                getIssueStatus().then((List) => {
+                            })(
+                              <Select
+                                mode="tags"
+                                style={{ width: 500, margin: '0 0 10px 0' }}
+                                label={<FormattedMessage id="cycle_createExecute_defectStatus" />}                             
+                                loading={selectLoading}
+                                onFocus={() => {
                                   this.setState({
-                                    issueStatusList: List,
-                                    selectLoading: false,
+                                    selectLoading: true,
                                   });
-                                });
-                              }}
-                            >
-                              {issueStatusOptions}
-                            </Select>,
-                          )}
-                        </FormItem> : null}
+                                  getIssueStatus().then((List) => {
+                                    this.setState({
+                                      issueStatusList: List,
+                                      selectLoading: false,
+                                    });
+                                  });
+                                }}
+                              >
+                                {issueStatusOptions}
+                              </Select>,
+                            )}
+                          </FormItem> : null}
 
                       </Panel>
                     </Collapse>

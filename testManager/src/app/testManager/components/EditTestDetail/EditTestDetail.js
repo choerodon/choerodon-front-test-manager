@@ -274,8 +274,7 @@ class EditTestDetail extends Component {
               {options}
             </Select>
             <br />
-            <Select
-              
+            <Select             
               style={{ width: 500 }}
               label={<FormattedMessage id="bug" />}        
               value={defectIds}
@@ -284,7 +283,8 @@ class EditTestDetail extends Component {
               loading={selectLoading}
               filter
               mode="multiple"
-              filterOption={false}
+              filterOption={false}                        
+
               onFilterChange={(value) => {
                 // window.console.log('filter');
                 this.setState({
