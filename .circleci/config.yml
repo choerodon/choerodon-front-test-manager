@@ -61,6 +61,8 @@ workflows:
           filters:
             tags:
               only: /^.*/
+            branches:
+              ignore: /.*/
       - docker_build:
           context: org-global
           requires:
@@ -68,6 +70,8 @@ workflows:
           filters:
             tags:
               only: /^.*/
+            branches:
+              ignore: /.*/
       - helm_chart_build:
           context: org-global
           requires:
@@ -76,3 +80,5 @@ workflows:
           filters:
             tags:
               only: /^.*/
+            branches:
+              ignore: /.*/
