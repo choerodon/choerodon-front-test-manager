@@ -45,7 +45,7 @@ class SummaryHome extends Component {
   getInfo = () => {
     this.setState({ loading: true });
     const { date, range } = this.state;
-    Promise.all([getIssueCount({}), getIssueCount({
+    Promise.all([getIssueCount({
       advancedSearchArgs: {
         typeCode: [
           'issue_test',
@@ -57,11 +57,11 @@ class SummaryHome extends Component {
     }), getCaseNotPlain(), getCaseNotRun(), getCaseNum(),
     getCycleRange(moment().format('YYYY-MM-DD'), range),
     getCreateRange(range), getProjectVersion(), getModules(), getLabels()])
-      .then(([totalIssueData, totalData, notPlan, notRun, caseNum, excuteList,
+      .then(([totalData, notPlan, notRun, caseNum, excuteList,
         createList, versionList, componentList, labelList]) => {
         this.setState({
           loading: false,
-          totalIssue: totalIssueData.totalElements,
+          // totalIssue: totalIssueData.totalElements,
           totalTest: totalData.totalElements,
           notPlan,
           notRun,
@@ -79,7 +79,7 @@ class SummaryHome extends Component {
           versionTable.unshift({
             versionId: null,
             name: '未规划',
-            num: totalIssueData.totalElements - _.sumBy(versionTable, 'num'),
+            num: totalData.totalElements - _.sumBy(versionTable, 'num'),
           });
           this.setState({
             versionTable,
@@ -89,7 +89,7 @@ class SummaryHome extends Component {
           labelTable.unshift({
             id: null,
             name: '无标签',
-            num: totalIssueData.totalElements - _.sumBy(labelTable, 'num'),
+            num: totalData.totalElements - _.sumBy(labelTable, 'num'),
           });
           this.setState({
             labelTable,
@@ -99,7 +99,7 @@ class SummaryHome extends Component {
           componentTable.unshift({
             id: null,
             name: '无组件',
-            num: totalIssueData.totalElements - _.sumBy(componentTable, 'num'),
+            num: totalData.totalElements - _.sumBy(componentTable, 'num'),
           });
           this.setState({
             componentTable,
@@ -114,7 +114,7 @@ class SummaryHome extends Component {
     versionList.map(version => new Promise((resolve, reject) => {
       const search = {
         advancedSearchArgs: {
-
+          typeCode: ['issue_test'],
         },
         otherArgs: {
           // version: [version.versionId],
@@ -133,7 +133,7 @@ class SummaryHome extends Component {
     labelList.map(label => new Promise((resolve, reject) => {
       const search = {
         advancedSearchArgs: {
-
+          typeCode: ['issue_test'],
         },
         otherArgs: {
           label: [label.labelId],
@@ -151,7 +151,7 @@ class SummaryHome extends Component {
     componentList.map(component => new Promise((resolve, reject) => {
       const search = {
         advancedSearchArgs: {
-
+          typeCode: ['issue_test'],
         },
         otherArgs: {
           component: [component.componentId],
