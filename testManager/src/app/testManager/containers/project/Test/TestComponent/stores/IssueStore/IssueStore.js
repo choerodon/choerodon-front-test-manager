@@ -32,7 +32,7 @@ class SprintCommonStore {
       orderType: '',
     });
     this.setFilter({
-      advancedSearchArgs: {},
+      advancedSearchArgs: { typeCode: ['issue_test'] },
       searchArgs: {},
     });
     this.setFilteredInfo({});
