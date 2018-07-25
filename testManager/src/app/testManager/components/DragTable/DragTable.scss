@@ -1,0 +1,39 @@
+.c7n-dragtable {
+    table {
+        thead {
+            tr {
+                width: 100%;
+                height: 30px;
+                display: flex;
+                align-items: center;
+                background: rgba(0, 0, 0, 0.04);
+                border-top: 2px solid rgba(0, 0, 0, 0.12);
+                border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+                th {
+                    font-weight: normal;
+                    // width: 50px;
+                    flex: 1;
+                    line-height: 20px;
+                    padding-left: 20px;
+                }
+            }
+        }
+        tbody {
+            tr {
+                width: 100%;
+                display: flex;
+                align-items: center;
+                height: 34px;
+                border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+                border-top: 1px solid rgba(0, 0, 0, 0.12);
+                td {
+                    // width: 50px;
+                    flex: 1;
+                    line-height: 20px;
+                    padding-left: 20px;
+                    table-layout: fixed;
+                }
+            }
+        }
+    }
+}
