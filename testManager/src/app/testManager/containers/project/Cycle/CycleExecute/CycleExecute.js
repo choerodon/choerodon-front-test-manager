@@ -192,10 +192,11 @@ class CycleExecute extends Component {
       });
   }
   getHistoryList = (pagination) => {
+    const { id } = this.props.match.params;
     getCycleHistiorys({
       page: pagination.current - 1,
       size: pagination.pageSize,
-    }, 1).then((history) => {
+    }, id).then((history) => {
       this.setState({
         historyPagination: {
           current: pagination.current,
@@ -207,10 +208,11 @@ class CycleExecute extends Component {
     });
   }
   getDetailList = (pagination) => {
+    const { id } = this.props.match.params;
     getCycleDetails({
       page: pagination.current - 1,
       size: pagination.pageSize,
-    }, 1).then((detail) => {
+    }, id).then((detail) => {
       this.setState({
         detailPagination: {
           current: pagination.current,
@@ -691,7 +693,7 @@ class CycleExecute extends Component {
                 color: 'white',
               }}
               >  
-                {defect.issueInfosDTO.issueName}
+                {defect.issueInfosDTO && defect.issueInfosDTO.issueName}
               </div>))}
           </div>}
         >
@@ -703,7 +705,7 @@ class CycleExecute extends Component {
               whiteSpace: 'nowrap',
             }}
           >
-            {defects.map((defect, i) => defect.issueInfosDTO.issueName).join(',')}
+            {defects.map((defect, i) => defect.issueInfosDTO && defect.issueInfosDTO.issueName).join(',')}
           </div>
         </Tooltip>),
     }, {
@@ -865,7 +867,6 @@ class CycleExecute extends Component {
                           autoFocus
                           filterOption={false}
                           onFilterChange={_.debounce((value) => {
-                            
                             this.setState({
                               selectLoading: true,
                             });
