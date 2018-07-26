@@ -158,7 +158,7 @@ class ReportStory extends Component {
           <div>
             <div className="c7n-collapse-header-container">
               <Link className="c7n-showId" to={issueLink(issueId)} target="_blank">{issueName}</Link>
-              <div className="c7n-collapse-header-icon">                 
+              <div className="c7n-issue-status-icon">                 
                 <span style={{ color: issueColor, borderColor: issueColor }}>
                   {issueStatusName}
                 </span>
@@ -189,13 +189,13 @@ class ReportStory extends Component {
               linkedTestIssues.map((issue, i) => (<Panel
                 showArrow={false}
                 header={
-                  <div >                                 
+                  <div>                                 
                     <div style={{ display: 'flex', alignItems: 'center' }}>     
                       <Icon type="navigate_next" className="c7n-collapse-icon" />       
                       <Link className="c7n-showId" to={issueLink(issue.issueId)} target="_blank">{issue.issueName}</Link>       
                            
                     </div>
-                    <div style={{ fontSize: '13px' }}>{issue.summary}</div>
+                    <div className="c7n-report-summary">{issue.summary}</div>
                   </div>
                 }
                 key={issue.issueId}
@@ -237,7 +237,7 @@ class ReportStory extends Component {
             const marginBottom = 
             Math.max((execute.defects.length + execute.subStepDefects.length) - 1, 0) * 20;
             return (
-              <div style={{ display: 'flex', margin: '5px 0', alignItems: 'center', marginBottom }} >
+              <div className="c7n-cycle-show-container">
                 <div
                   title={execute.cycleName}
                   style={{ width: 80, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}
@@ -296,9 +296,9 @@ class ReportStory extends Component {
                   const { defects, subStepDefects } = item;
                   return (<div>{defects.concat(subStepDefects).length > 0 ? 
                     defects.concat(subStepDefects).map(defect => 
-                      (<div className="c7n-collapse-show-item">
+                      (<div className="c7n-issue-show-container">
                         <Link className="c7n-showId" to={issueLink(defect.issueId)} target="_blank">{defect.defectName}</Link>
-                        <div className="c7n-collapse-header-icon">                 
+                        <div className="c7n-issue-status-icon">
                           <span style={{ 
                             color: defect.defectColor, borderColor: defect.defectColor }}
                           >
@@ -314,7 +314,7 @@ class ReportStory extends Component {
                           borderRadius: '100px',
                         }}
                         ><FormattedMessage id="step" /></div>}
-                      </div>)) : <div className="c7n-collapse-show-item">－</div>}</div>);
+                      </div>)) : <div className="c7n-issue-show-container">－</div>}</div>);
                 })
          
               } 

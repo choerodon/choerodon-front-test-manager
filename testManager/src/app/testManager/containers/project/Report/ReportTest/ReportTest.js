@@ -218,7 +218,7 @@ class ReportTest extends Component {
           }
             
           return (
-            <div style={{ display: 'flex', margin: '15px 0', alignItems: 'center' }} >
+            <div className="c7n-cycle-show-container">
               <div
                 title={execute.cycleName || execute.testStep}
                 style={{ width: 80, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}
@@ -284,7 +284,7 @@ class ReportTest extends Component {
         const caseShow = testCycleCaseES.concat(testCycleCaseStepES).map((execute) => {
           const { issueInfosDTO } = execute;
           const { issueColor, issueName, issueStatusName, summary } = issueInfosDTO;
-          return (<div>
+          return (<div className="c7n-issue-show-container">
             <div className="c7n-collapse-show-item">
               <Link className="c7n-showId" to={issueLink(issueId)} target="_blank">
                 {issueName}
@@ -295,11 +295,11 @@ class ReportTest extends Component {
                 </span>
               </div>        
             </div>
-            <div style={{ fontSize: '13px' }}>{summary}</div>
+            <div className="c7n-report-summary">{summary}</div>
           </div>);
         });
         return openId.includes(issueId.toString()) ?  
-          <div style={{ minHeight: 30 }}> { caseShow }   </div> 
+          <div style={{ minHeight: 50 }}> { caseShow }   </div> 
           :
           (         
             <div> <FormattedMessage id="report_total" />：{testCycleCaseES.concat(testCycleCaseStepES).length}</div>            
@@ -318,10 +318,10 @@ class ReportTest extends Component {
           const { issueLinkDTOS } = execute;
           // window.console.log(issueLinkDTOS.length);
           const issueLinks = issueLinkDTOS.map((link) => {
-            const { statusColor, statusName, issueNum, summary, issueId } = link;
-            return (<div>
+            const { statusColor, statusName, issueNum, summary } = link;
+            return (<div className="c7n-issue-show-container">
               <div className="c7n-collapse-show-item">
-                <Link className="c7n-showId" to={issueLink(issueId)} target="_blank">
+                <Link className="c7n-showId" to={issueLink(link.issueId)} target="_blank">
                   {issueNum}
                 </Link>                 
                 <div className="c7n-collapse-header-icon">                 
@@ -330,11 +330,11 @@ class ReportTest extends Component {
                   </span>
                 </div>        
               </div>
-              <div style={{ fontSize: '13px' }}>{summary}</div>
+              <div className="c7n-report-summary">{summary}</div>
             </div>);
           });
           return (<div style={{ 
-            minHeight: 40, 
+            minHeight: 50, 
           }}
           >{issueLinks}</div>);
         });
