@@ -135,9 +135,9 @@ class TableCanDragAndDrop extends Component {
                 {...provided1.draggableProps}
                 {...provided1.dragHandleProps}
               >
-                <div className={`${item.id}-list`} style={{ width: '100%', display: 'flex', height: 34, borderBottom: '1px solid rgba(0, 0, 0, 0.12)', borderTop: '1px solid rgba(0, 0, 0, 0.12)' }}>
+                <div className={`${item.stepId}-list`} style={{ width: '100%', display: 'flex', height: 34, borderBottom: '1px solid rgba(0, 0, 0, 0.12)', borderTop: '1px solid rgba(0, 0, 0, 0.12)' }}>
                   <span style={{ width: 50, display: 'inline-block', lineHeight: '34px', paddingLeft: 20 }}>
-                    {item.stepId}
+                    {index + 1}
                   </span>
                   <span style={{ width: 115, display: 'inline-block', lineHeight: '34px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', paddingRight: 15 }}>
                     {item.testStep}
@@ -148,8 +148,8 @@ class TableCanDragAndDrop extends Component {
                   <span style={{ width: 115, display: 'inline-block', lineHeight: '34px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', paddingRight: 15 }}>
                     {item.expectedResult}
                   </span>
-                  <span style={{ width: 250, display: 'inline-block', overflow: 'hidden', position: 'relative' }} role="none" onClick={this.handleChangeExpand.bind(this, item.id)}>
-                    <div className={`${item.id}-attachment`} style={{ }}>
+                  <span style={{ width: 250, display: 'inline-block', overflow: 'hidden', position: 'relative' }} role="none" onClick={this.handleChangeExpand.bind(this, item.stepId)}>
+                    <div className={`${item.stepId}-attachment`} style={{ }}>
                       {
                         item.attachments.map(attachment => (
                           <span style={{ padding: '3px 12px', display: 'inline-block', maxWidth: 192, marginTop: 4, lineHeight: '20px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', borderRadius: '100px', background: 'rgba(0, 0, 0, 0.08)', marginRight: 6 }}>
@@ -159,8 +159,8 @@ class TableCanDragAndDrop extends Component {
                       }
                     </div>
                     {
-                      item.attachments && item.attachments.length && document.getElementsByClassName(`${item.id}-attachment`)[0] && parseInt(window.getComputedStyle(document.getElementsByClassName(`${item.id}-attachment`)[0]).height, 10) > 34
-                        ? <span style={{ position: 'absolute', top: 10, right: 0 }} className={_.indexOf(this.state.expand, item.id) !== -1 ? 'icon icon-keyboard_arrow_up' : 'icon icon-keyboard_arrow_down'} /> : null
+                      item.attachments && item.attachments.length && document.getElementsByClassName(`${item.stepId}-attachment`)[0] && parseInt(window.getComputedStyle(document.getElementsByClassName(`${item.stepId}-attachment`)[0]).height, 10) > 34
+                        ? <span style={{ position: 'absolute', top: 10, right: 0 }} className={_.indexOf(this.state.expand, item.stepId) !== -1 ? 'icon icon-keyboard_arrow_up' : 'icon icon-keyboard_arrow_down'} /> : null
                     }
                   </span>
                   <span style={{ display: 'inline-block', lineHeight: '34px' }}>

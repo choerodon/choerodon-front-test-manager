@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Draggable, Droppable, DragDropContext } from 'react-beautiful-dnd';
-import { Button, Icon,Tooltip, Dropdown, Menu, Popconfirm } from 'choerodon-ui';
+import { Button, Icon, Tooltip, Dropdown, Menu, Popconfirm } from 'choerodon-ui';
 import { stores, axios } from 'choerodon-front-boot';
 import _ from 'lodash';
 import TimeAgo from 'timeago-react';
@@ -132,16 +132,16 @@ class TableCanDragAndDrop extends Component {
     const urlParams = AppState.currentMenuType;
     const result = [];
     _.forEach(data, (item, index) => {
-      const status = _.find(this.state.status, { statusId: item.executionStatus })||{};
+      const status = _.find(this.state.status, { statusId: item.executionStatus }) || {};
       result.push(
-        <div className={`${item.id}-list`} style={{ width: '100%', paddingLeft: 10, height: 34, borderBottom: '1px solid rgba(0, 0, 0, 0.12)', borderTop: '1px solid rgba(0, 0, 0, 0.12)', display: 'flex' }}>
-          <span style={{ flex: 1, lineHeight: '34px' }}>
+        <div className={`${item.executeId}-list`} style={{ width: '100%', paddingLeft: 10, height: 34, borderBottom: '1px solid rgba(0, 0, 0, 0.12)', borderTop: '1px solid rgba(0, 0, 0, 0.12)', display: 'flex' }}>
+          <span title={item.versionName} style={{ flex: 2, lineHeight: '34px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
             {item.versionName}
           </span>
           <Tooltip title={item.cycleName}>
-          <span style={{ flex: 2, lineHeight: '34px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-            {item.cycleName}
-          </span>
+            <span style={{ flex: 2, lineHeight: '34px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              {item.cycleName}
+            </span>
           </Tooltip>
           <span style={{ flex: 2, lineHeight: '34px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
             {item.folderName || ''}
@@ -198,7 +198,7 @@ class TableCanDragAndDrop extends Component {
     return (
       <div style={{ width: '100%' }}>
         <div style={{ width: '100%', paddingLeft: 10, height: 30, background: 'rgba(0, 0, 0, 0.04)', borderTop: '2px solid rgba(0,0,0,0.12)', borderBottom: '1px solid rgba(0,0,0,0.12)', display: 'flex' }}>
-          <span style={{ flex: 1, lineHeight: '30px' }}>
+          <span style={{ flex: 2, lineHeight: '30px' }}>
             版本
           </span>
           <span style={{ flex: 2, lineHeight: '30px' }}>
