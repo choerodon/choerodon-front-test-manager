@@ -181,7 +181,8 @@ class ReportStory extends Component {
       key: 'test',   
       width: '25%',
       render(test, record) {
-        const { issueStatus, linkedTestIssues, issueId } = record;
+        const { issueStatus, linkedTestIssues, defectInfo } = record;
+        const { issueId } = defectInfo;
         return (
           <Collapse 
             activeKey={openId[issueId]}
@@ -219,7 +220,7 @@ class ReportStory extends Component {
       key: 'cycleId',
       width: '25%',
       render(cycleId, record) {
-        const { linkedTestIssues } = record;        
+        const { linkedTestIssues, defectInfo } = record;        
         return (<div>{linkedTestIssues.map((testIssue) => {
           const { testCycleCaseES, issueId } = testIssue;
           
@@ -268,7 +269,7 @@ class ReportStory extends Component {
               </div>);
           });
           // window.console.log(executeStatus);
-          return openId[record.issueId] && openId[record.issueId]
+          return openId[record.defectInfo.issueId] && openId[record.defectInfo.issueId]
             .includes(issueId.toString()) ? <div style={{ minHeight: totalExecute === 0 ? 50 : 30 }}> { caseShow } </div> 
             :
             (
@@ -294,15 +295,15 @@ class ReportStory extends Component {
       key: 'demand',
       width: '25%',
       render(demand, record) {
-        const { linkedTestIssues } = record;        
+        const { linkedTestIssues, defectInfo } = record;        
         return (<div>{ linkedTestIssues.map((testIssue) => {
           const { testCycleCaseES, issueId } = testIssue;         
           if (testCycleCaseES.length === 0) {
             return <div style={{ minHeight: 50 }} />;
           }
-          return (openId[record.issueId] && openId[record.issueId]
+          return (openId[record.defectInfo.issueId] && openId[record.defectInfo.issueId]
             .includes(issueId.toString()) ? <div>
-              {                
+              {
                 testCycleCaseES.map((item) => {
                   const { defects, subStepDefects } = item;
                   return (<div>{defects.concat(subStepDefects).length > 0 ? 
