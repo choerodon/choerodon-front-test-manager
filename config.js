@@ -11,5 +11,5 @@ const config = {
     // server:'http://10.211.111.130:8080',
     port: 9090 // 端口
 };
-g
+
 module.exports = config;
