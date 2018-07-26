@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Table, Button, Icon, Card, Select, Spin, Upload, Tooltip } from 'choerodon-ui';
-import { Page, Header, Content, stores } from 'choerodon-front-boot';
+import { Page, Header, Content } from 'choerodon-front-boot';
 import _ from 'lodash';
 import { withRouter } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
@@ -17,10 +17,8 @@ import { delta2Html, delta2Text } from '../../../../common/utils';
 import './CycleExecute.less';
 import { getIssueList } from '../../../../api/agileApi';
 
-const { AppState } = stores;
 const Option = Select.Option;
-const Text = TextEditToggle.Text;
-const Edit = TextEditToggle.Edit;
+const { Text, Edit } = TextEditToggle;
 
 const styles = {
   cardTitle: {
@@ -133,22 +131,23 @@ class CycleExecute extends Component {
     originDefects: [],
   }
   componentDidMount() {
-    // this.getTestInfo();
-    // this.getUserList();
     this.getInfo();
   }
   getInfo = () => {
     const { id } = this.props.match.params;
     this.setState({ loading: true });
     const { historyPagination, detailPagination } = this.state;
-    Promise.all([getCycle(id), getStatusList('CYCLE_CASE'), getCycleDetails({
-      page: detailPagination.current - 1,
-      size: detailPagination.pageSize,
-    }, id),
-    getStatusList('CASE_STEP'), getCycleHistiorys({
-      page: historyPagination.current - 1,
-      size: historyPagination.pageSize,
-    }, id)])
+    Promise.all([
+      getCycle(id), 
+      getStatusList('CYCLE_CASE'), 
+      getCycleDetails({ page: detailPagination.current - 1, size: detailPagination.pageSize }, id),
+      getStatusList('CASE_STEP'), 
+      getCycleHistiorys({ 
+        page: historyPagination.current - 1, 
+        size: historyPagination.pageSize, 
+      }, id),
+    ],
+    )
       .then(([cycleData, statusList, detailData, stepStatusList, historyData]) => {
         const { caseAttachment } = cycleData;
         const fileList = caseAttachment.map((attachment) => {
@@ -417,10 +416,6 @@ class CycleExecute extends Component {
     const that = this;
     const props = {
       onRemove: (file) => {
-        // window.console.log(file);
-        // const fileList = this.state.fileList.slice();
-        // const index = fileList.indexOf(file);
-        // const newFileList = fileList.slice();
         if (file.url) {
           this.setState({
             loading: true,
@@ -569,11 +564,8 @@ class CycleExecute extends Component {
                 fontSize: '13px',
                 color: 'white',
               }}
-              >
-                {/* {i === 0 ? null : '，'} */}
-                <span>
-                  {attachment.attachmentName}
-                </span>
+              >                
+                {attachment.attachmentName}
               </div>))}
           </div>}
         >
@@ -587,17 +579,7 @@ class CycleExecute extends Component {
               whiteSpace: 'nowrap',
             }}
           >
-            {stepAttachment.map((attachment, i) => (
-              <div style={{
-                fontSize: '13px',
-                // color: '#3F51B5',
-              }}
-              >
-                {i === 0 ? null : '，'}
-                <span>
-                  {attachment.attachmentName}
-                </span>
-              </div>))}
+            {stepAttachment.map((attachment, i) => attachment.attachmentName).join(',')}
           </div>
         </Tooltip>);
       },
@@ -647,11 +629,8 @@ class CycleExecute extends Component {
                 fontSize: '13px',
                 color: 'white',
               }}
-              >
-                {/* {i === 0 ? null : '，'} */}
-                <span>
-                  {attachment.attachmentName}
-                </span>
+              >             
+                {attachment.attachmentName}             
               </div>))}
           </div>}
         >
@@ -665,17 +644,7 @@ class CycleExecute extends Component {
               whiteSpace: 'nowrap',
             }}
           >
-            {caseAttachment.map((attachment, i) => (
-              <div style={{
-                fontSize: '13px',
-                // color: '#3F51B5',
-              }}
-              >
-                {i === 0 ? null : '，'}
-                <span>
-                  {attachment.attachmentName}
-                </span>
-              </div>))}
+            {caseAttachment.map((attachment, i) => attachment.attachmentName).join(',')}            
           </div>
         </Tooltip>);
       },
@@ -692,7 +661,7 @@ class CycleExecute extends Component {
                 fontSize: '13px',
                 color: 'white',
               }}
-              >  
+              >
                 {defect.issueInfosDTO && defect.issueInfosDTO.issueName}
               </div>))}
           </div>}
@@ -728,8 +697,8 @@ class CycleExecute extends Component {
 
     const { executionStatus, executionStatusName,
       executionStatusColor, reporterJobNumber, reporterRealName,
-      assignedUserRealName, assignedUserJobNumber, lastUpdateDate, executeId,
-      issueId, comment, caseAttachment, testCycleCaseStepES, defects } = cycleData;
+      assignedUserRealName, assignedUserJobNumber, lastUpdateDate, 
+      comment, defects } = cycleData;
     const options = statusList.map((status) => {
       const { statusName, statusId, statusColor } = status;
       return (<Option value={statusId} key={statusId}>
@@ -751,8 +720,7 @@ class CycleExecute extends Component {
     const defectsOptions =
       issueList.map(issue => (<Option key={issue.issueId} value={issue.issueId.toString()}>
         {issue.issueNum} {issue.summary}
-      </Option>));
-    const urlParams = AppState.currentMenuType;
+      </Option>));  
     return (
       <Page className="c7n-clcle">
         <Header title={null}>
@@ -954,7 +922,7 @@ class CycleExecute extends Component {
                       <Edit>
                         <Select
                           // filter
-                          allowClear
+                          // allowClear
                           autoFocus
                           filter
                           mode="multiple"

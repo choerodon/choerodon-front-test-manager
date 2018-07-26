@@ -279,7 +279,7 @@ class EditTestDetail extends Component {
               label={<FormattedMessage id="bug" />}        
               value={defectIds}
               onChange={this.handleDefectsChange}
-              allowClear
+              // allowClear
               loading={selectLoading}
               filter
               mode="multiple"
