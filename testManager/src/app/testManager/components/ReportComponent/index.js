@@ -1,0 +1,1 @@
+export ReportStoryArea from './ReportStoryArea';

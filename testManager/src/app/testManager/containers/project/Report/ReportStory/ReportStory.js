@@ -10,6 +10,8 @@ import { getReportsFromStory } from '../../../../api/reportApi';
 import { getIssueStatus } from '../../../../api/agileApi';
 import { getStatusList } from '../../../../api/cycleApi';
 import { issueLink } from '../../../../common/utils';
+import { ReportStoryArea } from '../../../../components/ReportComponent';
+import ReportStoryStore from '../../../../store/project/report/ReportStoryStore';
 import './ReportStory.scss';
 
 const { AppState } = stores;
@@ -70,6 +72,7 @@ class ReportStory extends Component {
       getStatusList('CASE_STEP'),
       this.getReportsFromStory(),
     ]).then(([issueStatusList, statusList]) => {
+      // ReportStoryStore.setStatusList(statusList);  
       this.setState({
         issueStatusList,
         statusList,       
@@ -189,7 +192,12 @@ class ReportStory extends Component {
               linkedTestIssues.map((issue, i) => (<Panel
                 showArrow={false}
                 header={
-                  <div>                                 
+                  // 展开时加margin
+                  <div style={{ marginBottom: openId[issueId] && 
+                    openId[issueId].includes(issue.issueId.toString()) &&
+                    issue.testCycleCaseES.length > 1
+                    ? (issue.testCycleCaseES.length * 30) - 48 : 0 }}
+                  >                                 
                     <div style={{ display: 'flex', alignItems: 'center' }}>     
                       <Icon type="navigate_next" className="c7n-collapse-icon" />       
                       <Link className="c7n-showId" to={issueLink(issue.issueId)} target="_blank">{issue.issueName}</Link>       
@@ -214,6 +222,7 @@ class ReportStory extends Component {
         const { linkedTestIssues } = record;        
         return (<div>{linkedTestIssues.map((testIssue) => {
           const { testCycleCaseES, issueId } = testIssue;
+          
           // console.log()
           const totalExecute = testCycleCaseES.length;
           // const todoExecute = 0;
@@ -260,10 +269,10 @@ class ReportStory extends Component {
           });
           // window.console.log(executeStatus);
           return openId[record.issueId] && openId[record.issueId]
-            .includes(issueId.toString()) ? <div style={{ minHeight: 30 }}> { caseShow }   </div> 
+            .includes(issueId.toString()) ? <div style={{ minHeight: totalExecute === 0 ? 50 : 30 }}> { caseShow } </div> 
             :
             (
-              <div>
+              <div style={{ height: 50 }}>
                 <div><FormattedMessage id="report_total" />：{totalExecute}</div>
                 <div style={{ display: 'flex' }}>
                   {
@@ -288,7 +297,9 @@ class ReportStory extends Component {
         const { linkedTestIssues } = record;        
         return (<div>{ linkedTestIssues.map((testIssue) => {
           const { testCycleCaseES, issueId } = testIssue;         
-          
+          if (testCycleCaseES.length === 0) {
+            return <div style={{ minHeight: 50 }} />;
+          }
           return (openId[record.issueId] && openId[record.issueId]
             .includes(issueId.toString()) ? <div>
               {                
@@ -319,7 +330,7 @@ class ReportStory extends Component {
          
               } 
             </div> :            
-            <div>
+            <div style={{ minHeight: 50 }}>
               {
                 testCycleCaseES.map((item) => {
                   const { defects, subStepDefects } = item;
@@ -400,6 +411,7 @@ class ReportStory extends Component {
             dataSource={reportList}
             onChange={this.handleTableChange}
           />
+          {/* <ReportStoryArea demands={reportList} /> */}
         </Content>
       </Page>
     );
