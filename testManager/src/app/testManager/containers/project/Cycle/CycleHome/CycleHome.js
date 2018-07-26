@@ -1,4 +1,4 @@
-/*eslint-disable */
+
 import React, { Component } from 'react';
 import { observer } from 'mobx-react';
 import { Page, Header, Content, stores } from 'choerodon-front-boot';
@@ -39,7 +39,6 @@ class CycleHome extends Component {
     loading: true,
     leftVisible: true,
     sideVisible: false,
-    dragData: null,
     testList: [],
     // currentCycle: {},
     currentEditValue: {},
@@ -62,50 +61,10 @@ class CycleHome extends Component {
       autoExpandParent: false,
     });
   }
-
-  getParentKey = (key, tree) => key.split('-').slice(0, -1).join('-')
-
-
-  loadCycle = (selectedKeys, { selected, selectedNodes, node, event }, flag) => {
-    // window.console.log(selectedNodes, node, event);
-    CycleStore.setSelectedKeys(selectedKeys);
-    const { data } = node.props;
-    const { executePagination } = this.state;
-    if (data.cycleId) {
-      if (!flag) {
-        this.setState({
-          rightLoading: true,
-          // currentCycle: data,
-        });
-      }
-
-      CycleStore.setCurrentCycle(data);
-      // window.console.log(data);
-      getStatusList('CYCLE_CASE').then((statusList) => {
-        this.setState({ statusList });
-      });
-      getCycleById({
-        page: executePagination.current - 1,
-        size: executePagination.pageSize,
-      }, data.cycleId).then((cycle) => {
-        this.setState({
-          rightLoading: false,
-          testList: cycle.content,
-          executePagination: {
-            current: executePagination.current,
-            pageSize: executePagination.pageSize,
-            total: cycle.totalElements,
-          },
-        });
-        // window.console.log(cycle);
-      });
-    }
-  }
-
   onDragEnd = (sourceIndex, targetIndex) => {
     let lastRank = null;
     let nextRank = null;
-    const { dragData, testList } = this.state;
+    const { testList } = this.state;
     if (sourceIndex < targetIndex) {
       lastRank = testList[targetIndex].rank;
       nextRank = testList[targetIndex + 1] ? testList[targetIndex + 1].rank : null;
@@ -147,31 +106,43 @@ class CycleHome extends Component {
       });
     });
   }
-  handleRow = (record) => {
-    // const droppable = this.checkDroppable(record);
-    const rowProps = {
-      draggable: true,
-      onDragLeave: this.handleDragLeave,
-      onDragOver: this.handleDragOver.bind(this, record),
-      onDragEnd: this.handleDragEnd,
-      onDrop: this.handleDrop.bind(this, record),
-      onDragStart: this.handleDragtStart.bind(this, record),
-    };
-    return rowProps;
-  };
+  getParentKey = (key, tree) => key.split('-').slice(0, -1).join('-')
+  loadCycle = (selectedKeys, { selected, selectedNodes, node, event }, flag) => {
+    // window.console.log(selectedNodes, node, event);
+    CycleStore.setSelectedKeys(selectedKeys);
+    const { data } = node.props;
+    const { executePagination } = this.state;
+    if (data.cycleId) {
+      if (!flag) {
+        this.setState({
+          rightLoading: true,
+          // currentCycle: data,
+        });
+      }
 
-  handleCell = (record) => {
-    const cellProps = {
-      onDragEnd: this.handleDragEnd,
-    };
-    Object.assign(cellProps, {
-      draggable: true,
-      onDragStart: this.handleDragtStart.bind(this, record),
-      className: 'drag-cell',
-    });
+      CycleStore.setCurrentCycle(data);
+      // window.console.log(data);
+      getStatusList('CYCLE_CASE').then((statusList) => {
+        this.setState({ statusList });
+      });
+      getCycleById({
+        page: executePagination.current - 1,
+        size: executePagination.pageSize,
+      }, data.cycleId).then((cycle) => {
+        this.setState({
+          rightLoading: false,
+          testList: cycle.content,
+          executePagination: {
+            current: executePagination.current,
+            pageSize: executePagination.pageSize,
+            total: cycle.totalElements,
+          },
+        });
+        // window.console.log(cycle);
+      });
+    }
+  }
 
-    return cellProps;
-  };
 
   generateList = (data) => {
     for (let i = 0; i < data.length; i += 1) {
@@ -490,9 +461,8 @@ class CycleHome extends Component {
     const columns = [{
       title: 'ID',
       dataIndex: 'issueName',
-      key: 'issueName',
-      // onCell: this.handleCell,
-      width: '10%',
+      key: 'issueName', 
+      flex: 1,
       filters: [],
       // onFilter: (value, record) => 
       //   record.issueInfosDTO && record.issueInfosDTO.issueName.indexOf(value) === 0,  
@@ -516,7 +486,7 @@ class CycleHome extends Component {
       key: 'executionStatus',
       filters: statusList.map(status => ({ text: status.statusName, value: status.statusId })),
       // onFilter: (value, record) => record.executionStatus === value,  
-      width: '9%',
+      flex: 1,
       render(executionStatus) {
         const statusColor = _.find(statusList, { statusId: executionStatus }) ?
           _.find(statusList, { statusId: executionStatus }).statusColor : '';
@@ -530,7 +500,7 @@ class CycleHome extends Component {
       dataIndex: 'comment',
       key: 'comment',
       filters: [],
-      width: '10%',
+      flex: 1,
       render(comment) {
         return (
           <Tooltip title={<RichTextShow data={delta2Html(comment)} />}>
@@ -553,7 +523,7 @@ class CycleHome extends Component {
       title: <FormattedMessage id="bug" />,
       dataIndex: 'defects',
       key: 'defects',
-      width: '10%',
+      flex: 1,
       render: defects =>
         (<Tooltip title={
           <div>
@@ -593,7 +563,7 @@ class CycleHome extends Component {
       title: <FormattedMessage id="cycle_executeBy" />,
       dataIndex: 'assignedUserRealName',
       key: 'assignedUserRealName',
-      width: '10%',
+      flex: 1,
       render(assignedUserRealName) {
         return (<div style={{
           // width: 85, 
@@ -625,7 +595,7 @@ class CycleHome extends Component {
       title: <FormattedMessage id="cycle_executeTime" />,
       dataIndex: 'lastUpdateDate',
       key: 'lastUpdateDate',
-      width: '10%',
+      flex: 1,
       render(lastUpdateDate) {
         return (<div style={{
           width: 85,
@@ -641,7 +611,7 @@ class CycleHome extends Component {
       title: <FormattedMessage id="cycle_assignedTo" />,
       dataIndex: 'reporterRealName',
       key: 'reporterRealName',
-      width: '10%',
+      flex: 1,
       render(reporterRealName) {
         return (<div style={{
           width: 60,
@@ -672,7 +642,7 @@ class CycleHome extends Component {
     }, {
       title: '',
       key: 'action',
-      // width: '20%',
+      flex: 1,
       render(text, record) {
         return (
           record.projectId !== 0 &&
@@ -862,7 +832,7 @@ class CycleHome extends Component {
                   dataSource={testList}
                   onChange={this.handleExecuteTableChange}
                 /> */}
-                <div id="test"></div>
+                <div id="test" />
                 <DragTable
                   pagination={executePagination}
                   loading={rightLoading}

@@ -1,9 +1,15 @@
 import React, { Component } from 'react';
 import { Draggable, Droppable, DragDropContext } from 'react-beautiful-dnd';
 import { Table, Spin } from 'choerodon-ui';
-import _ from 'lodash';
 import './DragTable.scss';
 
+const reorder = (list, startIndex, endIndex) => {
+  const result = Array.from(list);
+  const [removed] = result.splice(startIndex, 1);
+  result.splice(endIndex, 0, removed);
+
+  return result;
+};
 class DragTable extends Component {
   constructor(props) {
     super(props);
@@ -11,10 +17,6 @@ class DragTable extends Component {
       data: [],
     };
   }
-
-  componentDidMount() {
-  }
-
   componentWillReceiveProps(nextProps) {
     // 更新数据并避免拖动后的跳动
     if (!(this.props.loading === false && nextProps.loading === true)) {
@@ -22,91 +24,64 @@ class DragTable extends Component {
     }
   }
   onDragEnd(result) {
-    window.console.log(result);
-    const data = this.state.data.slice();
     const fromIndex = result.source.index;
     const toIndex = result.destination.index;
     if (fromIndex === toIndex) {
       return;
     }
-    const drag = data[fromIndex];
-    data.splice(fromIndex, 1);
-    data.splice(toIndex, 0, drag);
+    const data = reorder(
+      this.state.data,
+      fromIndex,
+      toIndex,
+    );
     this.setState({ data });
     const { onDragEnd } = this.props;
     if (onDragEnd) {
       onDragEnd(fromIndex, toIndex);
     }
   }
-  getRowStyle = (draggableStyle, isDragging) => ({
-    // some basic styles to make the items look a bit nicer
-    // userSelect: 'none',
-    // padding: grid * 2,
-
-    // styles we need to apply on draggables
-    ...draggableStyle,
-
-    // width: 850,
-    display: 'table',
-    
-  });
-  getTdStyle = isDragging => ({
-    // width: "200px",
-    display: 'table-cell',
-    // backgroundColor: isDragging ? 'lightgreen' : 'grey',
-  });
-
-
-  renderThead = (data) => {
+  renderThead = () => {
     const { columns } = this.props;
-    const ths = columns.map(column => (<th>{column.title} </th>));
+    const ths = columns.map(column => (
+      <th style={{ flex: column.flex || 1 }}>{column.title} </th>
+    ));
     return (<tr>{ths}</tr>);
   }
-  renderTbody(data) {
-    const result = [];
+  renderTbody(data) {   
     const { columns } = this.props;
-    _.forEach(data, (item, index) => {
-      result.push(
-        <Draggable key={item.executeId} draggableId={item.executeId} index={index}>
-          {(provided, snapshot) =>
-            (
-              <tr
-                ref={provided.innerRef}
-                
-                style={this.getRowStyle(provided.draggableStyle, snapshot.isDragging)}
-                {...provided.draggableProps}
-                {...provided.dragHandleProps}
-              >
-                {columns.map((column) => {
-                  let renderedItem = null;
-                  const { dataIndex, key, render } = column;
-                  if (render) {
-                    renderedItem = render(data[index][dataIndex], data[index]);
-                  } else {
-                    renderedItem = (<span>
-                      {data[index][dataIndex]}
-                    </span>);
-                  }
-                  return (<td
-                    style={this.getTdStyle(snapshot.isDragging)}
-                  >
-                    {renderedItem}
-                  </td>);
-                })}
-              </tr>
-            )
-          }
-        </Draggable>,
-      );
-    });
-    return result;
+    const rows = data.map((item, index) => 
+      (<Draggable key={item.executeId} draggableId={item.executeId} index={index}>
+        {(provided, snapshot) =>
+          (
+            <tr
+              ref={provided.innerRef}
+              {...provided.draggableProps}
+              {...provided.dragHandleProps}
+            >
+              {columns.map((column) => {
+                let renderedItem = null;
+                const { dataIndex, key, flex, render } = column;
+                if (render) {
+                  renderedItem = render(data[index][dataIndex], data[index]);
+                } else {
+                  renderedItem = data[index][dataIndex];
+                }
+                return (<td style={{ flex: flex || 1 }} >
+                  {renderedItem}
+                </td>);
+              })}
+            </tr>
+          )
+        }
+      </Draggable>),
+    );
+    return rows;
   }
 
   render() {
     const { data } = this.state;
-    const { loading, pagination } = this.props;
+    const { loading } = this.props;
 
-    // ReactDOM.render(dragarea, document.getElementsByClassName('ant-table-placeholder')[0]);
     return (
       <div className="c7n-dragtable">
         <Spin spinning={loading}>
@@ -118,20 +93,18 @@ class DragTable extends Component {
           <DragDropContext onDragEnd={this.onDragEnd.bind(this)}>
             <table>
               <thead>
-                {this.renderThead(data)}
+                {this.renderThead()}
               </thead>
               <Droppable droppableId="dropTable">
                 {(provided, snapshot) => (
                   <tbody
                     ref={provided.innerRef}
-                    style={{
-                      // background: snapshot.isDraggingOver ? '#e9e9e9' : 'white',
-                      padding: 'grid',
+                    style={{                                      
                       borderBottom: '1px solid rgba(0,0,0,0.12)',
                       marginBottom: 0,
                     }}
                   >
-                    {this.renderTbody(this.state.data)}
+                    {this.renderTbody(data)}
                     {provided.placeholder}
                   </tbody>
                 )}

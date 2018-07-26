@@ -863,9 +863,19 @@ class CycleExecute extends Component {
                           filter
                           allowClear
                           autoFocus
-                          filterOption={(input, option) =>
-                            option.props.children.props.children[1].props.children.toLowerCase()
-                              .indexOf(input.toLowerCase()) >= 0}
+                          filterOption={false}
+                          onFilterChange={_.debounce((value) => {
+                            
+                            this.setState({
+                              selectLoading: true,
+                            });
+                            getUsers(value).then((userData) => {
+                              this.setState({
+                                userList: userData.content,
+                                selectLoading: false,
+                              });
+                            });
+                          })}
                           loading={selectLoading}
                           value={reporterRealName}
                           style={{ width: 200 }}

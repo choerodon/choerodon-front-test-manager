@@ -2148,9 +2148,9 @@ class CreateSprint extends Component {
                                   >
                                     {this.state.originEpics.map(epic =>
                                       (<Option key={`${epic.issueId}`} value={epic.issueId}>
-                                      <Tooltip title={epic.epicName}>
-                                      {epic.epicName}
-                                      </Tooltip>                                      
+                                        <Tooltip title={epic.epicName}>
+                                          {epic.epicName}
+                                        </Tooltip>                                      
                                       </Option>),
                                     )}
                                   </Select>
@@ -2547,14 +2547,14 @@ class CreateSprint extends Component {
                 </div>
                   
                 <div id="test2">
-                    <div className="c7n-title-wrapper">
+                  <div className="c7n-title-wrapper">
                     <div className="c7n-title-left">
                         <Icon type="explicit2 c7n-icon-title" />
                         <span>测试执行</span>
                       </div>
                     <div style={{ flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px' }} />
                   </div>
-                    <div className="c7n-content-wrapper" style={{ paddingLeft: 0 }}>
+                  <div className="c7n-content-wrapper" style={{ paddingLeft: 0 }}>
                     <TestExecuteTable
                         issueId={this.state.origin.issueId}
                         data={this.state.testExecuteData}
@@ -2565,6 +2565,7 @@ class CreateSprint extends Component {
                       />
                   </div>
                   </div>
+                </div>
 
                 <div id="attachment">
                   <div className="c7n-title-wrapper">
