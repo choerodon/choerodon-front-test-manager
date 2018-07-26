@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Form, Input, Tabs, Select, Radio, Collapse, Icon, Modal, Spin } from 'choerodon-ui';
+import { Form, Tabs, Select, Radio, Collapse, Icon, Modal, Spin } from 'choerodon-ui';
+import { FormattedMessage } from 'react-intl';
 import { Content, stores } from 'choerodon-front-boot';
 import {
   createCycleExecute, getCyclesByVersionId, getFoldersByCycleId,
@@ -324,7 +325,7 @@ class CreateCycleExecute extends Component {
       <Spin spinning={loading}>
         
         <Sidebar
-          title="添加测试执行"
+          title={<FormattedMessage id="cycle_createExecute_title" />}
           visible={visible}
           onOk={this.onOk}
           onCancel={onCancel}
@@ -333,24 +334,28 @@ class CreateCycleExecute extends Component {
             style={{
               padding: '0 0 10px 0',
             }}
-            title={`添加测试执行到${data.type === 'cycle' ? '测试循环' : '文件夹'}“${data.title}”`}
-            description="您可以在目标版本创建多个测试执行，可以从问题或已有执行创建。"
+            title={
+              <FormattedMessage
+                id="cycle_createExecute_content_title" 
+                values={{ type: data.type === 'cycle' ? Choerodon.getMessage('测试循环', 'Cycle')
+                  : Choerodon.getMessage('文件夹', 'Folder'),
+                title: data.title }} 
+              />}
+            description={<FormattedMessage id="cycle_createExecute_content_description" />}
             link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management/test-cycle/add-execution/"
           >
             <Tabs activeKey={tab} onChange={this.modeChange}>
-              <TabPane tab="从问题添加" key="1">
-                <Select                 
+              <TabPane tab={<FormattedMessage id="cycle_createExecute_createFromQuestion" />} key="1">
+                <Select                
                   style={{ width: 500, margin: '0 0 10px 0' }}
-                  label="测试问题"            
+                  label={<FormattedMessage id="cycle_createExecute_testQuestion" />}
+            
                   value={selectIssueList}
                   onChange={this.handleIssueChange}
-                  loading={selectLoading}     
-                  filter
+                  loading={selectLoading}
+                  filter                  
                   mode="multiple"
-                  filterOption={false}                               
-                  // onFilterChange={(input, option) =>
-                  //   option.props.children.props.children[1].props.children.toLowerCase()
-                  //     .indexOf(input.toLowerCase()) >= 0}
+                  filterOption={false}
                   onFilterChange={(value) => {
                     // window.console.log('filter');
                     this.setState({
@@ -378,15 +383,15 @@ class CreateCycleExecute extends Component {
                   {issueOptions}
                 </Select><br />
                 <RadioGroup onChange={this.onChange} value={this.state.value}>
-                  <Radio style={radioStyle} value={1}>我</Radio>
-                  <Radio style={radioStyle} value={2}>其他</Radio>
+                  <Radio style={radioStyle} value={1}><FormattedMessage id="cycle_createExecute_me" /></Radio>
+                  <Radio style={radioStyle} value={2}><FormattedMessage id="cycle_createExecute_others" /></Radio>
                 </RadioGroup><br />
                 {this.state.value === 2 ?
                   <Select
                     allowClear
                     loading={selectLoading}
                     style={{ width: 500, margin: '0 0 10px 0' }}
-                    label="选择指派人"
+                    label={<FormattedMessage id="cycle_createExecute_selectAssign" />}
                   
                     onChange={this.handleAssignedChange}
                     onFocus={() => {
@@ -406,7 +411,7 @@ class CreateCycleExecute extends Component {
                   :
                   null}
               </TabPane>
-              <TabPane tab="从其他循环添加" key="2">
+              <TabPane tab={<FormattedMessage id="cycle_createExecute_createFromCycle" />} key="2">
                 <div className="c7n-create-execute">
                   <Form>
                     <FormItem>
@@ -417,7 +422,7 @@ class CreateCycleExecute extends Component {
                       })(
                         <Select
                           style={{ width: 500, margin: '0 0 10px 0' }}
-                          label="版本"
+                          label={<FormattedMessage id="version" />}
                     
                           loading={selectLoading}
                           onFocus={this.loadVersions}
@@ -435,7 +440,7 @@ class CreateCycleExecute extends Component {
                         <Select
                           style={{ width: 500, margin: '0 0 10px 0' }}
                           loading={selectLoading}
-                          label="测试循环"
+                          label={<FormattedMessage id="cycle" />}
                       
                           onFocus={() => {
                             if (getFieldValue('versionId')) {
@@ -461,7 +466,7 @@ class CreateCycleExecute extends Component {
                         <Select
                           allowClear
                           style={{ width: 500, margin: '0 0 10px 0' }}
-                          label="测试文件夹"
+                          label={<FormattedMessage id="cycle_createExecute_folder" />}
                         
                           onFocus={() => {
                             if (getFieldValue('cycleId')) {
@@ -482,7 +487,9 @@ class CreateCycleExecute extends Component {
                       <Panel
                         header={
                           <div className="c7n-collapse-header-container">
-                            <div>被指定人</div>
+                            <div>
+                              {<FormattedMessage id="cycle_createExecute_assigned" />}                      
+                            </div>
                             <div className="c7n-collapse-header-icon">
                               <Icon type="navigate_next" />
                             </div>
@@ -492,8 +499,12 @@ class CreateCycleExecute extends Component {
                         showArrow={false}
                       >
                         <RadioGroup onChange={this.onChange} value={this.state.value}>
-                          <Radio style={radioStyle} value={1}>我</Radio>
-                          <Radio style={radioStyle} value={2}>其他</Radio>
+                          <Radio style={radioStyle} value={1}>
+                            <FormattedMessage id="cycle_createExecute_me" />
+                          </Radio>
+                          <Radio style={radioStyle} value={2}>
+                            <FormattedMessage id="cycle_createExecute_others" />
+                          </Radio>
                         </RadioGroup>
                         {this.state.value === 2 ? <FormItem>
                           {getFieldDecorator('assignedTo', {
@@ -505,7 +516,7 @@ class CreateCycleExecute extends Component {
                               allowClear
                               loading={selectLoading}
                               style={{ width: 500, margin: '0 0 10px 0' }}
-                              label="选择指派人"
+                              label={<FormattedMessage id="cycle_createExecute_selectAssign" />}
                              
                               onFocus={() => {
                                 this.setState({
@@ -529,7 +540,7 @@ class CreateCycleExecute extends Component {
                       <Panel
                         header={
                           <div className="c7n-collapse-header-container">
-                            <div>筛选器</div>
+                            <div><FormattedMessage id="cycle_createExecute_filter" /></div>
                             <div className="c7n-collapse-header-icon">
                               <Icon type="navigate_next" />
                             </div>
@@ -546,7 +557,7 @@ class CreateCycleExecute extends Component {
                               mode="tags"
                               style={{ width: 500, margin: '0 0 10px 0' }}
                               loading={selectLoading}
-                              label="优先级"
+                              label={<FormattedMessage id="cycle_createExecute_priority" />}
                            
                               onFocus={() => {
                                 this.setState({
@@ -571,8 +582,7 @@ class CreateCycleExecute extends Component {
                             <Select
                               mode="tags"
                               style={{ width: 500, margin: '0 0 10px 0' }}
-                              label="测试执行状态"
-                           
+                              label={<FormattedMessage id="cycle_createExecute_executeStatus" />}                           
                               loading={selectLoading}
                               onFocus={() => {
                                 this.setState({
@@ -597,7 +607,7 @@ class CreateCycleExecute extends Component {
                             <Select
                               mode="tags"
                               style={{ width: 500, margin: '0 0 10px 0' }}
-                              label="模块"
+                              label={<FormattedMessage id="cycle_createExecute_component" />}
                             
                               loading={selectLoading}
                               onFocus={() => {
@@ -623,7 +633,7 @@ class CreateCycleExecute extends Component {
                             <Select
                               mode="tags"
                               style={{ width: 500, margin: '0 0 10px 0' }}
-                              label="标签"
+                              label={<FormattedMessage id="cycle_createExecute_label" />}
                              
                               loading={selectLoading}
                               onFocus={() => {
@@ -642,46 +652,48 @@ class CreateCycleExecute extends Component {
                             </Select>,
                           )}
                         </FormItem>
-                        是否具有相关缺陷<br />
+                        <FormattedMessage id="cycle_createExecute_hasDefects" /><br />
                         <RadioGroup
                           onChange={(e) => {
                             this.setState({ hasIssue: e.target.value });
                           }}
                           value={hasIssue}
                         >
-                          <Radio style={radioStyle} value={1}>否</Radio>
-                          <Radio style={radioStyle} value={2}>是</Radio>
+                          <Radio style={radioStyle} value={1}>
+                            <FormattedMessage id="cycle_createExecute_no" />
+                          </Radio>
+                          <Radio style={radioStyle} value={2}>
+                            <FormattedMessage id="cycle_createExecute_yes" />
+                          </Radio>
                         </RadioGroup>
-                        {hasIssue === 2 ? <FormItem
-                          label="缺陷状态"
-                        >
-                          {getFieldDecorator('statusCode', {
+                        {hasIssue === 2 ? 
+                          <FormItem>
+                            {getFieldDecorator('statusCode', {
                             // rules: [{
                             //   required: true, message: '请输入说明!',
                             // }],
-                          })(
-                            <Select
-                              mode="tags"
-                              style={{ width: 500, margin: '0 0 10px 0' }}
-                              label="缺陷状态"
-                             
-                              loading={selectLoading}
-                              onFocus={() => {
-                                this.setState({
-                                  selectLoading: true,
-                                });
-                                getIssueStatus().then((List) => {
+                            })(
+                              <Select
+                                mode="tags"
+                                style={{ width: 500, margin: '0 0 10px 0' }}
+                                label={<FormattedMessage id="cycle_createExecute_defectStatus" />}                             
+                                loading={selectLoading}
+                                onFocus={() => {
                                   this.setState({
-                                    issueStatusList: List,
-                                    selectLoading: false,
+                                    selectLoading: true,
                                   });
-                                });
-                              }}
-                            >
-                              {issueStatusOptions}
-                            </Select>,
-                          )}
-                        </FormItem> : null}
+                                  getIssueStatus().then((List) => {
+                                    this.setState({
+                                      issueStatusList: List,
+                                      selectLoading: false,
+                                    });
+                                  });
+                                }}
+                              >
+                                {issueStatusOptions}
+                              </Select>,
+                            )}
+                          </FormItem> : null}
 
                       </Panel>
                     </Collapse>

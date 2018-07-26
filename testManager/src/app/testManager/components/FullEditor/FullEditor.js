@@ -37,7 +37,7 @@ class CreateSprint extends Component {
 
     return (
       <Modal
-        title="编辑描述"
+        title={Choerodon.getMessage('编辑描述', 'Edit description')}
         visible={visible || false}
         maskClosable={false}
         width={1200}

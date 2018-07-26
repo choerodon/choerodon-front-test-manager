@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { Icon, Modal, Upload, Spin, Select, Table } from 'choerodon-ui';
+import { Icon, Modal, Spin, Select, Table } from 'choerodon-ui';
 import { Content, stores } from 'choerodon-front-boot';
+import { FormattedMessage } from 'react-intl';
 import './ReportSelectIssue.less';
 import { getIssueListSearch, getIssueStatus, getProjectVersion } from '../../api/agileApi';
 
@@ -122,18 +123,18 @@ class ReportSelectIssue extends Component {
         {item.name}
       </Option>));
     const columns = [{
-      title: '类型',
+      title: <FormattedMessage id="type" />,
       dataIndex: 'typeCode',
       key: 'typeCode',
       render(typeCode) {
         return NAME[typeCode];
       },
     }, {
-      title: '测试问题ID',
+      title: <FormattedMessage id="report_select_questionId" />,
       dataIndex: 'issueNum',
       key: 'issueNum',
     }, {
-      title: '摘要',
+      title: <FormattedMessage id="report_select_summary" />,
       dataIndex: 'summary',
       key: 'summary', 
     }];
@@ -141,7 +142,7 @@ class ReportSelectIssue extends Component {
       <div onClick={() => { this.setState({ pickShow: false }); }} role="none">
         <Spin spinning={loading}>
           <Sidebar
-            title="选择问题"
+            title={<FormattedMessage id="report_select_title" />}
             visible={visible}
             onOk={this.onOk}
             onCancel={onCancel}
@@ -150,16 +151,16 @@ class ReportSelectIssue extends Component {
               style={{
                 padding: '0 0 10px 0',
               }}
-              title={`项目“${AppState.currentMenuType.name}”的报表选择问题`}
-              description="您可以根据选择的问题来生成报表"
-              link="http://choerodon.io/zh/docs/user-guide/test-management/test-report/report/"
+              title={<FormattedMessage id="report_select_title" />}
+              description={<FormattedMessage id="report_select_content_description" />}
+              link={'http://choerodon.io/zh/docs/user-guide/test-management/test-report/report/'}
             >
 
               <div style={{ display: 'flex' }}>
                 <Select
                   defaultValue={version}
                   style={{ flex: 1, maxWidth: 300, margin: '0 0 10px 0' }}
-                  label="版本"               
+                  label={<FormattedMessage id="version" />}               
                   loading={selectLoading}
                   onFocus={this.loadVersions}
                   onSelect={(value) => {
@@ -169,14 +170,14 @@ class ReportSelectIssue extends Component {
                   }}
                 >
                   <Option value="all" key="all">
-                    所有版本
+                    <FormattedMessage id="report_select_allVersion" />
                   </Option>
                   {versionOptions}
                 </Select>
                 <Select
                   defaultValue="story"
                   style={{ flex: 1, maxWidth: 300, margin: '0 0 10px 30px' }}
-                  label="类型"
+                  label={<FormattedMessage id="type" />}
                   onSelect={(code) => {
                     this.setState({
                       typeCode: code,

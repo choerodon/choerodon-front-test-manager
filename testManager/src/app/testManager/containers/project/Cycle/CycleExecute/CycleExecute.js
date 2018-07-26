@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { Table, Button, Icon, Card, Select, Spin, Upload, Tooltip } from 'choerodon-ui';
-import { Page, Header, Content, stores } from 'choerodon-front-boot';
+import { Page, Header, Content } from 'choerodon-front-boot';
 import _ from 'lodash';
 import { withRouter } from 'react-router-dom';
-import { injectIntl, FormattedMessage } from 'react-intl';
-import { TextEditToggle, RichTextShow } from '../../../../components/CommonComponent';
+import { FormattedMessage } from 'react-intl';
+import { TextEditToggle, RichTextShow, SelectFocusLoad } from '../../../../components/CommonComponent';
 import EditTestDetail from '../../../../components/EditTestDetail';
 import FullEditor from '../../../../components/FullEditor';
 import {
@@ -17,10 +17,8 @@ import { delta2Html, delta2Text } from '../../../../common/utils';
 import './CycleExecute.less';
 import { getIssueList } from '../../../../api/agileApi';
 
-const { AppState } = stores;
 const Option = Select.Option;
-const Text = TextEditToggle.Text;
-const Edit = TextEditToggle.Edit;
+const { Text, Edit } = TextEditToggle;
 
 const styles = {
   cardTitle: {
@@ -133,22 +131,23 @@ class CycleExecute extends Component {
     originDefects: [],
   }
   componentDidMount() {
-    // this.getTestInfo();
-    // this.getUserList();
     this.getInfo();
   }
   getInfo = () => {
     const { id } = this.props.match.params;
     this.setState({ loading: true });
     const { historyPagination, detailPagination } = this.state;
-    Promise.all([getCycle(id), getStatusList('CYCLE_CASE'), getCycleDetails({
-      page: detailPagination.current - 1,
-      size: detailPagination.pageSize,
-    }, id),
-    getStatusList('CASE_STEP'), getCycleHistiorys({
-      page: historyPagination.current - 1,
-      size: historyPagination.pageSize,
-    }, id)])
+    Promise.all([
+      getCycle(id), 
+      getStatusList('CYCLE_CASE'), 
+      getCycleDetails({ page: detailPagination.current - 1, size: detailPagination.pageSize }, id),
+      getStatusList('CASE_STEP'), 
+      getCycleHistiorys({ 
+        page: historyPagination.current - 1, 
+        size: historyPagination.pageSize, 
+      }, id),
+    ],
+    )
       .then(([cycleData, statusList, detailData, stepStatusList, historyData]) => {
         const { caseAttachment } = cycleData;
         const fileList = caseAttachment.map((attachment) => {
@@ -192,10 +191,11 @@ class CycleExecute extends Component {
       });
   }
   getHistoryList = (pagination) => {
+    const { id } = this.props.match.params;
     getCycleHistiorys({
       page: pagination.current - 1,
       size: pagination.pageSize,
-    }, 1).then((history) => {
+    }, id).then((history) => {
       this.setState({
         historyPagination: {
           current: pagination.current,
@@ -207,10 +207,11 @@ class CycleExecute extends Component {
     });
   }
   getDetailList = (pagination) => {
+    const { id } = this.props.match.params;
     getCycleDetails({
       page: pagination.current - 1,
       size: pagination.pageSize,
-    }, 1).then((detail) => {
+    }, id).then((detail) => {
       this.setState({
         detailPagination: {
           current: pagination.current,
@@ -321,8 +322,6 @@ class CycleExecute extends Component {
     const { cycleData, issueList, defectIds, originDefects } = this.state;
     const { executeId } = cycleData;
     // addDefects(defects);
-
-
     const needAdd =
       issueList
         .filter(issue => defectIds.includes(issue.issueId.toString()))// 取到选中的issueList
@@ -417,10 +416,6 @@ class CycleExecute extends Component {
     const that = this;
     const props = {
       onRemove: (file) => {
-        // window.console.log(file);
-        // const fileList = this.state.fileList.slice();
-        // const index = fileList.indexOf(file);
-        // const newFileList = fileList.slice();
         if (file.url) {
           this.setState({
             loading: true,
@@ -438,7 +433,7 @@ class CycleExecute extends Component {
       },
     };
     const columnsHistory = [{
-      title: '执行方',
+      title: <FormattedMessage id="execute_executive" />,
       dataIndex: 'user',
       key: 'user',
       render(user) {
@@ -463,7 +458,7 @@ class CycleExecute extends Component {
         </div>);
       },
     }, {
-      title: '执行日期',
+      title: <FormattedMessage id="execute_executeTime" />,
       dataIndex: 'lastUpdateDate',
       key: 'lastUpdateDate',
     }, {
@@ -471,7 +466,7 @@ class CycleExecute extends Component {
       dataIndex: 'field',
       key: 'field',
     }, {
-      title: '原值',
+      title: <FormattedMessage id="execute_history_oldValue" />,
       dataIndex: 'oldValue',
       key: 'oldValue',
       render(oldValue, record) {
@@ -507,22 +502,8 @@ class CycleExecute extends Component {
           }
         }
       },
-      // render(oldValue) {
-      //   return (
-      //     <div style={{
-      //       background: _.find(statusList, { statusName: oldValue }).statusColor,
-      //       width: 60,
-      //       textAlign: 'center',
-      //       borderRadius: '100px',
-      //       display: 'inline-block',
-      //       color: 'white',
-      //     }}
-      //     >
-      //       {oldValue}
-      //     </div>);
-      // },
     }, {
-      title: '新值',
+      title: <FormattedMessage id="execute_history_newValue" />,
       dataIndex: 'newValue',
       key: 'newValue',
       render(newValue, record) {
@@ -557,36 +538,22 @@ class CycleExecute extends Component {
           }
         }
       },
-      // render(newValue) {
-      //   return (
-      //     <div style={{
-      //       background: _.find(statusList, { statusName: newValue }).statusColor,
-      //       width: 60,
-      //       textAlign: 'center',
-      //       borderRadius: '100px',
-      //       display: 'inline-block',
-      //       color: 'white',
-      //     }}
-      //     >
-      //       {newValue}
-      //     </div>);
-      // },
     }];
     const columns = [{
-      title: '测试步骤',
+      title: <FormattedMessage id="execute_testStep" />,
       dataIndex: 'testStep',
       key: 'testStep',
     }, {
-      title: '测试数据',
+      title: <FormattedMessage id="execute_testData" />,
       dataIndex: 'testData',
       key: 'testData',
     }, {
-      title: '预期结果',
+      title: <FormattedMessage id="execute_expectedOutcome" />,
       dataIndex: 'expectedResult',
       key: 'expectedResult',
     },
     {
-      title: '步骤附件',
+      title: <FormattedMessage id="execute_stepAttachment" />,
       dataIndex: 'stepAttachment',
       key: 'stepAttachment',
       render(stepAttachment) {
@@ -597,11 +564,8 @@ class CycleExecute extends Component {
                 fontSize: '13px',
                 color: 'white',
               }}
-              >
-                {/* {i === 0 ? null : '，'} */}
-                <span>
-                  {attachment.attachmentName}
-                </span>
+              >                
+                {attachment.attachmentName}
               </div>))}
           </div>}
         >
@@ -615,23 +579,13 @@ class CycleExecute extends Component {
               whiteSpace: 'nowrap',
             }}
           >
-            {stepAttachment.map((attachment, i) => (
-              <div style={{
-                fontSize: '13px',
-                // color: '#3F51B5',
-              }}
-              >
-                {i === 0 ? null : '，'}
-                <span>
-                  {attachment.attachmentName}
-                </span>
-              </div>))}
+            {stepAttachment.map((attachment, i) => attachment.attachmentName).join(',')}
           </div>
         </Tooltip>);
       },
     },
     {
-      title: '状态',
+      title: <FormattedMessage id="execute_stepStatus" />,
       dataIndex: 'stepStatus',
       key: 'stepStatus',
       render(stepStatus) {
@@ -644,7 +598,7 @@ class CycleExecute extends Component {
       },
     },
     {
-      title: '注释',
+      title: <FormattedMessage id="execute_comment" />,
       dataIndex: 'comment',
       key: 'comment',
       render(comment, record) {
@@ -664,7 +618,7 @@ class CycleExecute extends Component {
         );
       },
     }, {
-      title: '附件',
+      title: <FormattedMessage id="attachment" />,
       dataIndex: 'caseAttachment',
       key: 'caseAttachment',
       render(caseAttachment) {
@@ -675,11 +629,8 @@ class CycleExecute extends Component {
                 fontSize: '13px',
                 color: 'white',
               }}
-              >
-                {/* {i === 0 ? null : '，'} */}
-                <span>
-                  {attachment.attachmentName}
-                </span>
+              >             
+                {attachment.attachmentName}             
               </div>))}
           </div>}
         >
@@ -693,23 +644,13 @@ class CycleExecute extends Component {
               whiteSpace: 'nowrap',
             }}
           >
-            {caseAttachment.map((attachment, i) => (
-              <div style={{
-                fontSize: '13px',
-                // color: '#3F51B5',
-              }}
-              >
-                {i === 0 ? null : '，'}
-                <span>
-                  {attachment.attachmentName}
-                </span>
-              </div>))}
+            {caseAttachment.map((attachment, i) => attachment.attachmentName).join(',')}            
           </div>
         </Tooltip>);
       },
     },
     {
-      title: '缺陷',
+      title: <FormattedMessage id="bug" />,
       dataIndex: 'defects',
       key: 'defects',
       render: defects =>
@@ -721,10 +662,7 @@ class CycleExecute extends Component {
                 color: 'white',
               }}
               >
-                {/* {i === 0 ? null : '，'} */}
-                <span>
-                  {defect.defectName}
-                </span>
+                {defect.issueInfosDTO && defect.issueInfosDTO.issueName}
               </div>))}
           </div>}
         >
@@ -736,7 +674,7 @@ class CycleExecute extends Component {
               whiteSpace: 'nowrap',
             }}
           >
-            {defects.map((defect, i) => (defect.defectName)).join('，')}
+            {defects.map((defect, i) => defect.issueInfosDTO && defect.issueInfosDTO.issueName).join(',')}
           </div>
         </Tooltip>),
     }, {
@@ -759,8 +697,8 @@ class CycleExecute extends Component {
 
     const { executionStatus, executionStatusName,
       executionStatusColor, reporterJobNumber, reporterRealName,
-      assignedUserRealName, assignedUserJobNumber, lastUpdateDate, executeId,
-      issueId, comment, caseAttachment, testCycleCaseStepES, defects } = cycleData;
+      assignedUserRealName, assignedUserJobNumber, lastUpdateDate, 
+      comment, defects } = cycleData;
     const options = statusList.map((status) => {
       const { statusName, statusId, statusColor } = status;
       return (<Option value={statusId} key={statusId}>
@@ -782,8 +720,7 @@ class CycleExecute extends Component {
     const defectsOptions =
       issueList.map(issue => (<Option key={issue.issueId} value={issue.issueId.toString()}>
         {issue.issueNum} {issue.summary}
-      </Option>));
-    const urlParams = AppState.currentMenuType;
+      </Option>));  
     return (
       <Page className="c7n-clcle">
         <Header title={null}>
@@ -825,12 +762,12 @@ class CycleExecute extends Component {
               >
                 <div style={styles.cardTitle}>
                   <Icon type="expand_more" />
-                  <span style={styles.cardTitleText}>测试执行</span>
+                  <span style={styles.cardTitleText}><FormattedMessage id="execute_cycle_execute" /></span>
                 </div>
                 <div style={styles.cardContent}>
                   <div style={styles.cardContentItem}>
                     <div style={styles.carsContentItemPrefix}>
-                      执行状态:
+                      <FormattedMessage id="execute_status" />:
                     </div>
                     <TextEditToggle
                       onSubmit={this.submit}
@@ -856,7 +793,7 @@ class CycleExecute extends Component {
                   </div>
                   <div style={styles.cardContentItem}>
                     <div style={styles.carsContentItemPrefix}>
-                      已指定至：
+                      <FormattedMessage id="execute_assignedTo" />：
                     </div>
                     <TextEditToggle
                       onSubmit={this.submit}
@@ -864,7 +801,7 @@ class CycleExecute extends Component {
                       onCancel={this.cancelEdit}
                     >
                       <Text>
-                        {reporterRealName ? (
+                        {reporterRealName ? ( 
                           <div
                             style={{
                               display: 'flex',
@@ -883,13 +820,31 @@ class CycleExecute extends Component {
                         ) : '无'}
                       </Text>
                       <Edit>
+                        {/* <SelectFocusLoad
+                        filter
+                        allowClear
+                        autoFocus
+                        request={getUsers}
+                        value={reporterRealName}
+                        style={{ width: 200 }}
+                        onChange={this.handleAssignedChange}
+                        /> */}
                         <Select
                           filter
                           allowClear
                           autoFocus
-                          filterOption={(input, option) =>
-                            option.props.children.props.children[1].props.children.toLowerCase()
-                              .indexOf(input.toLowerCase()) >= 0}
+                          filterOption={false}
+                          onFilterChange={_.debounce((value) => {
+                            this.setState({
+                              selectLoading: true,
+                            });
+                            getUsers(value).then((userData) => {
+                              this.setState({
+                                userList: userData.content,
+                                selectLoading: false,
+                              });
+                            });
+                          })}
                           loading={selectLoading}
                           value={reporterRealName}
                           style={{ width: 200 }}
@@ -913,7 +868,7 @@ class CycleExecute extends Component {
                   </div>
                   <div style={styles.cardContentItem}>
                     <div style={styles.carsContentItemPrefix}>
-                      执行方：
+                      <FormattedMessage id="execute_executive" />：
                     </div>
                     {assignedUserRealName ? (
                       <div
@@ -935,7 +890,7 @@ class CycleExecute extends Component {
                   </div>
                   <div style={styles.cardContentItem}>
                     <div style={styles.carsContentItemPrefix}>
-                      执行时间：
+                      <FormattedMessage id="execute_executeTime" />：
                     </div>
                     <div>
                       {lastUpdateDate}
@@ -943,7 +898,7 @@ class CycleExecute extends Component {
                   </div>
                   <div style={styles.cardContentItem}>
                     <div style={styles.carsContentItemPrefix}>
-                      缺陷：
+                      <FormattedMessage id="bug" />：
                     </div>
 
                     <TextEditToggle
@@ -960,15 +915,14 @@ class CycleExecute extends Component {
                               whiteSpace: 'nowrap',
                             }}
                           >
-                            {defects.map((defect, i) => (defect.defectName)).join('，')}
-
+                            {defects.map((defect, i) => defect.issueInfosDTO.issueName).join(',')}
                           </div>
                         ) : '无'}
                       </Text>
                       <Edit>
                         <Select
                           // filter
-                          allowClear
+                          // allowClear
                           autoFocus
                           filter
                           mode="multiple"
@@ -1016,10 +970,10 @@ class CycleExecute extends Component {
                 >
                   <div style={styles.cardTitle}>
                     <Icon type="expand_more" />
-                    <span style={styles.cardTitleText}>描述</span>
+                    <span style={styles.cardTitleText}><FormattedMessage id="execute_description" /></span>
                     <div style={{ flex: 1, visibility: 'hidden' }} />
                     <Button className="c7n-upload-button" onClick={() => { this.setState({ edit: true }); }}>
-                      <Icon type="zoom_out_map" /> 全屏编辑
+                      <Icon type="zoom_out_map" /> <FormattedMessage id="execute_edit_fullScreen" />
                     </Button>
                     <FullEditor
                       initValue={comment}
@@ -1040,18 +994,17 @@ class CycleExecute extends Component {
                   <div style={styles.cardTitle}>
                     <div>
                       <Icon type="expand_more" />
-                      <span style={styles.cardTitleText}>附件</span>
+                      <span style={styles.cardTitleText}><FormattedMessage id="attachment" /></span>
                     </div>
                     <div style={{ flex: 1, visibility: 'hidden' }} />
                     <Button className="c7n-upload-button">
-                      <Icon type="file_upload" /> 上传附件
+                      <Icon type="file_upload" /> <FormattedMessage id="upload_attachment" />
                       <input
                         ref={
                           (uploadInput) => { if (uploadInput) { this.uploadInput = uploadInput; } }
                         }
                         type="file"
-                        multiple
-                        title="更换头像"
+                        multiple                        
                         onChange={this.handleUpload}
                         style={{
                           position: 'absolute',
@@ -1083,7 +1036,7 @@ class CycleExecute extends Component {
             >
               <div style={styles.cardTitle}>
                 <Icon type="expand_more" />
-                <span style={styles.cardTitleText}>测试详细信息</span>
+                <span style={styles.cardTitleText}><FormattedMessage id="execute_testDetail" /></span>
               </div>
               <Table
                 filterBar={false}
@@ -1100,7 +1053,7 @@ class CycleExecute extends Component {
             >
               <div style={styles.cardTitle}>
                 <Icon type="expand_more" />
-                <span style={styles.cardTitleText}>执行历史记录</span>
+                <span style={styles.cardTitleText}><FormattedMessage id="execute_executeHistory" /></span>
               </div>
               <Table
                 filterBar={false}

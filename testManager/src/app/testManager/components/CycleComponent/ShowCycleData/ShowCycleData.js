@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import moment from 'moment';
 import 'moment/locale/zh-cn';
+import { FormattedMessage } from 'react-intl';
 import './ShowCycleData.scss';
 
 class ShowCycleData extends Component {
@@ -36,7 +37,8 @@ class ShowCycleData extends Component {
           <div className="c7n-right-card-column">
             <div className="c7n-right-card-item">
               <div className="c7n-right-card-item-label">
-              构建号：
+                <FormattedMessage id="cycle_build" />   
+              ：
               </div>
               <div className="c7n-right-card-item-text">
                 {build}
@@ -44,7 +46,7 @@ class ShowCycleData extends Component {
             </div>
             <div className="c7n-right-card-item">
               <div className="c7n-right-card-item-label">
-            开始时间：
+                <FormattedMessage id="cycle_startTime" /> ：
               </div>
               <div className="c7n-right-card-item-text">
                 {fromDate && moment(fromDate).format('D/MMMM/YY')}
@@ -52,7 +54,7 @@ class ShowCycleData extends Component {
             </div>
             <div className="c7n-right-card-item">
               <div className="c7n-right-card-item-label">
-            全层级执行数：
+                <FormattedMessage id="cycle_totalExecute" /> ：
               </div>
               <div className="c7n-right-card-item-text">
                 {allExectueNum}
@@ -60,7 +62,7 @@ class ShowCycleData extends Component {
             </div>
             <div className="c7n-right-card-item">
               <div className="c7n-right-card-item-label">
-            说明：
+                <FormattedMessage id="cycle_comment" /> ：
               </div>
               <div className="c7n-right-card-item-text">
                 {description}
@@ -70,7 +72,7 @@ class ShowCycleData extends Component {
           <div className="c7n-right-card-column">
             <div className="c7n-right-card-item">
               <div className="c7n-right-card-item-label">
-              环境：
+                <FormattedMessage id="cycle_environment" />：
               </div>
               <div className="c7n-right-card-item-text">
                 {environment}
@@ -78,7 +80,7 @@ class ShowCycleData extends Component {
             </div>
             <div className="c7n-right-card-item">
               <div className="c7n-right-card-item-label">
-              循环层执行数：
+                <FormattedMessage id="cycle_cycleExecute" />：
               </div>
               <div className="c7n-right-card-item-text">
                 {CycleExectueNum}
@@ -88,7 +90,7 @@ class ShowCycleData extends Component {
           <div className="c7n-right-card-column">
             <div className="c7n-right-card-item">
               <div className="c7n-right-card-item-label">
-              创建人：
+                <FormattedMessage id="cycle_createBy" />：
               </div>
               <div className="c7n-right-card-item-text">           
                 <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -103,7 +105,7 @@ class ShowCycleData extends Component {
             </div>
             <div className="c7n-right-card-item">
               <div className="c7n-right-card-item-label">
-              结束时间：
+                <FormattedMessage id="cycle_endTime" />：
               </div>
               <div className="c7n-right-card-item-text">
                 {toDate && moment(toDate).format('D/MMMM/YY')} 
@@ -111,7 +113,7 @@ class ShowCycleData extends Component {
             </div>
             <div className="c7n-right-card-item">
               <div className="c7n-right-card-item-label">
-              全层级已执行数：
+                <FormattedMessage id="cycle_totalExecuted" />：
               </div>
               <div className="c7n-right-card-item-text">
                 {ExectuedNum}
@@ -123,7 +125,7 @@ class ShowCycleData extends Component {
           <div className="c7n-right-card-column">
             <div className="c7n-right-card-item">
               <div className="c7n-right-card-item-label">
-              全部执行数：
+                <FormattedMessage id="cycle_totalExecute" />：
               </div>
               <div className="c7n-right-card-item-text">
                 {allExectueNum}
@@ -133,7 +135,7 @@ class ShowCycleData extends Component {
           <div className="c7n-right-card-column">            
             <div className="c7n-right-card-item">
               <div className="c7n-right-card-item-label">
-              已执行数：
+                <FormattedMessage id="cycle_totalExecuted" />：
               </div>
               <div className="c7n-right-card-item-text">
                 {ExectuedNum}

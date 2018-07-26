@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import { observer } from 'mobx-react';
 import { Menu, Input, Dropdown, Button } from 'choerodon-ui';
+import { FormattedMessage } from 'react-intl';
 import './TreeTitle.scss';
 import { editFolder, deleteCycleOrFolder } from '../../../api/cycleApi';
-import CycleStore from '../../../store/project/clcle/CycleStore';
+import CycleStore from '../../../store/project/cycle/CycleStore';
 
 class TreeTitle extends Component {
   state = {
@@ -96,18 +97,18 @@ class TreeTitle extends Component {
       } else if (type === 'folder' || type === 'cycle') {
         if (type === 'cycle') {
           items.push(<Menu.Item key="add">
-            增加文件夹
+            <FormattedMessage id="cycle_addFolder" />
           </Menu.Item>);
         }
         items = items.concat([
           <Menu.Item key="edit">
-            {type === 'folder' ? '编辑文件夹' : '编辑循环'}
+            {type === 'folder' ? <FormattedMessage id="cycle_editFolder" /> : <FormattedMessage id="cycle_editCycle" />}
           </Menu.Item>,
           <Menu.Item key="delete">
-            {type === 'folder' ? '删除文件夹' : '删除循环'}
+            {type === 'folder' ? <FormattedMessage id="cycle_deleteFolder" /> : <FormattedMessage id="cycle_deleteCycle" />}
           </Menu.Item>,
           <Menu.Item key="clone">
-            {type === 'folder' ? '克隆文件夹' : '克隆循环'}
+            {type === 'folder' ? <FormattedMessage id="cycle_cloneFolder" /> : <FormattedMessage id="cycle_cloneCycle" />}
           </Menu.Item>,
           // <Menu.Item key="export">
           //   {type === 'folder' ? '导出文件夹' : '导出循环'}

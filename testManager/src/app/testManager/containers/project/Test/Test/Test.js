@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { observer, inject } from 'mobx-react';
+import { observer } from 'mobx-react';
 import _ from 'lodash';
 import { Page, Header, Content, stores, axios } from 'choerodon-front-boot';
-import { Table, Button, Select, Popover, Tabs, Tooltip, Input, Dropdown, Menu, Pagination, Spin, Icon } from 'choerodon-ui';
+import { Table, Button, Tooltip, Input, Dropdown, Menu, Pagination, Spin, Icon } from 'choerodon-ui';
 
 import '../TestComponent/assets/main.scss';
 import './Test.scss';
@@ -16,16 +16,12 @@ import UserHead from '../TestComponent/components/UserHead';
 import PriorityTag from '../TestComponent/components/PriorityTag';
 import StatusTag from '../TestComponent/components/StatusTag';
 import TypeTag from '../TestComponent/components/TypeTag';
-import { ReadAndEdit } from '../TestComponent/components/CommonComponent';
 import EmptyBlock from '../TestComponent/components/EmptyBlock';
-import DailyLog from '../TestComponent/components/DailyLog';
 import CreateIssue from '../TestComponent/components/CreateIssue';
 import EditIssue from '../TestComponent/components/EditIssueWide';
 
 const FileSaver = require('file-saver');
 
-const Option = Select.Option;
-const TabPane = Tabs.TabPane;
 const { AppState } = stores;
 
 @observer
@@ -509,49 +505,22 @@ class Test extends Component {
 
       </Menu>
     );
-    const typeList = (
-      <Menu
-        style={{
-          background: '#fff',
-          boxShadow: '0 5px 5px -3px rgba(0, 0, 0, 0.20), 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12)',
-          borderRadius: '2px',
-        }}
-        onClick={this.handleChangeType.bind(this)}
-      >
-        {
-          ['issue_test'].map(type => (
-            <Menu.Item key={type}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <TypeTag
-                  type={{
-                    typeCode: type,
-                  }}
-                />
-                <span style={{ marginLeft: 8 }}>
-                  {TYPE_NAME[type]}
-                </span>
-              </div>
-            </Menu.Item>
-          ))
-        }
-      </Menu>
-    );
+
     return (
       <Page className="c7n-Issue c7n-region">
         <Header
           title="测试用例管理"
           backPath={IssueStore.getBackUrl}
         >
-          <Button className="leftBtn" funcType="flat" onClick={() => this.setState({ create: true })}>
+          <Button className="leftBtn" onClick={() => this.setState({ create: true })}>
             <Icon type="playlist_add icon" />
             <span>创建测试用例</span>
           </Button>
-          <Button className="leftBtn" funcType="flat" onClick={() => this.exportExcel()}>
+          <Button className="leftBtn" onClick={() => this.exportExcel()}>
             <Icon type="file_upload icon" />
             <span>导出</span>
           </Button>
-          <Button
-            funcType="flat"
+          <Button            
             onClick={() => {
               const { current, pageSize } = IssueStore.pagination;
               IssueStore.loadIssues(current - 1, pageSize);

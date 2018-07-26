@@ -9,11 +9,16 @@ export function getStatusList(statusType) {
   const projectId = AppState.currentMenuType.id;
   return axios.post(`/test/v1/projects/${projectId}/status/query`, { statusType, projectId });
 }
-export function getCycleById(pagination, cycleId) {
+export function getCycleById(pagination, cycleId, filters) {
   const projectId = AppState.currentMenuType.id;
   const { size, page } = pagination;
   //   return axios.get(`/test/v1/cycle/case/query/${cycleId}`);
-  return axios.get(`/test/v1/projects/${projectId}/cycle/case/query/${cycleId}?size=${size}&page=${page}`);
+  const Filters = { ...filters };
+  Filters && Object.keys(Filters).forEach((filter) => {
+    Filters[filter] = Filters[filter][0] 
+;},
+  );
+  return axios.post(`/test/v1/projects/${projectId}/cycle/case/query/cycleId?size=${size}&page=${page}`, { cycleId, ...Filters });
 }
 export function addCycle(data) {
   const projectId = AppState.currentMenuType.id;

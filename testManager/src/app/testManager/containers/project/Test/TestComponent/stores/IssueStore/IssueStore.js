@@ -122,17 +122,6 @@ class SprintCommonStore {
     } else {
       return `/agile/${this.paramUrl}?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}&organizationId=${urlParams.organizationId}`;
     }
-    // if (!this.paramType) {
-    //   return undefined;
-    // } else if (this.paramType === 'sprint') {
-    //   return `/agile/reporthost/sprintReport?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}&organizationId=${urlParams.organizationId}`;
-    // } else if (this.paramType === 'component') {
-    //   return `/agile/component?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}&organizationId=${urlParams.organizationId}`;
-    // } else if (this.paramType === 'version' && this.paramStatus) {
-    //   return `/agile/release?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}&organizationId=${urlParams.organizationId}`;
-    // } else if (this.paramType === 'versionReport') {
-    //   return `/agile/reporthost/versionReport?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}&organizationId=${urlParams.organizationId}`;
-    // }
   }
 
   @computed get getFilter() {

@@ -1,18 +1,16 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { Table, Radio, Menu, Dropdown, Button, Icon, Card, Select, Spin, Upload } from 'choerodon-ui';
-import { Page, Header, Content, stores } from 'choerodon-front-boot';
+
+import { Table, Radio, Button, Icon, Spin } from 'choerodon-ui';
+import { Page, Header, stores } from 'choerodon-front-boot';
 import { Chart, Axis, Geom, Tooltip } from 'bizcharts';
+import { FormattedMessage } from 'react-intl';
 import moment from 'moment';
 import _ from 'lodash';
-import 'moment/locale/zh-cn';
+
 import { getCaseNotPlain, getCaseNotRun, getCaseNum, getCycleRange, getCreateRange } from '../../../../api/summaryApi';
 import { getProjectVersion, getLabels, getModules, getIssueCount } from '../../../../api/agileApi';
 import './SummaryHome.less';
 
-
-moment.locale('zh-cn');
-const ButtonGroup = Button.Group;
 
 class SummaryHome extends Component {
   constructor() {
@@ -78,7 +76,7 @@ class SummaryHome extends Component {
         this.getVersionTable(versionList).then((versionTable) => {
           versionTable.unshift({
             versionId: null,
-            name: '未规划',
+            name: <FormattedMessage id="summary_noVersion" />,
             num: totalData.totalElements - _.sumBy(versionTable, 'num'),
           });
           this.setState({
@@ -87,9 +85,9 @@ class SummaryHome extends Component {
         });
         this.getLabelTable(labelList).then((labelTable) => {
           labelTable.unshift({
-            id: null,
-            name: '无标签',
+            id: null,          
             num: totalData.totalElements - _.sumBy(labelTable, 'num'),
+            name: <FormattedMessage id="summary_noComponent" />,           
           });
           this.setState({
             labelTable,
@@ -97,9 +95,9 @@ class SummaryHome extends Component {
         });
         this.getComponentTable(componentList).then((componentTable) => {
           componentTable.unshift({
-            id: null,
-            name: '无组件',
+            id: null,           
             num: totalData.totalElements - _.sumBy(componentTable, 'num'),
+            name: <FormattedMessage id="summary_noLabel" />,          
           });
           this.setState({
             componentTable,
@@ -207,48 +205,49 @@ class SummaryHome extends Component {
       labelTable, componentTable } = this.state;
     // window.console.log(labelTable);
     const versionColumns = [{
-      title: '版本',
+      title: <FormattedMessage id="summary_version" />,
       dataIndex: 'name',
       key: 'name',
     }, {
-      title: '数量',
+      title: <FormattedMessage id="summary_num" />,
       dataIndex: 'num',
       key: 'num',
     }];
     const labelColumns = [{
-      title: '模块',
+      title: <FormattedMessage id="summary_component" />,
       dataIndex: 'name',
       key: 'name',
     }, {
-      title: '数量',
+      title: <FormattedMessage id="summary_num" />,
       dataIndex: 'num',
       key: 'num',
     }];
     const componentColumns = [{
-      title: '标签',
+      title: <FormattedMessage id="summary_label" />,
       dataIndex: 'name',
       key: 'name',
     }, {
-      title: '数量',
+      title: <FormattedMessage id="summary_num" />,
       dataIndex: 'num',
       key: 'num',
     }];
     const createScale = {
-      value: { alias: '创建数' },
+      
+      value: { alias: Choerodon.getMessage('创建数', 'Created') },
       time: { alias: '日期', tickCount: 10 },
     };
     const executeScale = {
-      value: { alias: '执行数' },
+      value: { alias: Choerodon.getMessage('执行数', 'Executed') },
       time: { alias: '日期', tickCount: 10 },
     };
     const width = parseInt((window.innerWidth - 320) / 2, 10);
  
     return (
       <Page>
-        <Header title="测试摘要">
+        <Header title={<FormattedMessage id="summary_title" />}>
           <Button onClick={this.getInfo}>
             <Icon type="autorenew icon" />
-            <span>刷新</span>
+            <span><FormattedMessage id="refresh" /></span>
           </Button>
         </Header>
         <Spin spinning={loading}>
@@ -257,36 +256,40 @@ class SummaryHome extends Component {
               <div className="c7n-statistic-item-container">
                 <div className="c7n-statistic-item-colorBar" />
                 <div>
-                  <div className="c7n-statistic-item-title">总测试数量</div>
+                  <div className="c7n-statistic-item-title"><FormattedMessage id="summary_totalTest" /></div>
                   <div className="c7n-statistic-item-num">{totalTest}</div>
                 </div>
               </div>
               <div className="c7n-statistic-item-container">
                 <div className="c7n-statistic-item-colorBar" style={{ borderColor: '#FFB100' }} />
                 <div>
-                  <div className="c7n-statistic-item-title">总剩余数量</div>
+                  <div className="c7n-statistic-item-title"><FormattedMessage id="summary_totalRest" /></div>
                   <div className="c7n-statistic-item-num">{notRun}</div>
                 </div>
               </div>
               <div className="c7n-statistic-item-container">
                 <div className="c7n-statistic-item-colorBar" style={{ borderColor: '#00BFA5' }} />
                 <div>
-                  <div className="c7n-statistic-item-title">总执行数量</div>
+                  <div className="c7n-statistic-item-title"><FormattedMessage id="summary_totalExexute" /></div>
                   <div className="c7n-statistic-item-num">{caseNum - notRun}</div>
                 </div>
               </div>
               <div className="c7n-statistic-item-container">
                 <div className="c7n-statistic-item-colorBar" style={{ borderColor: '#FF7043' }} />
                 <div>
-                  <div className="c7n-statistic-item-title">总未规划数量</div>
+                  <div className="c7n-statistic-item-title"><FormattedMessage id="summary_totalNotPlan" /></div>
                   <div className="c7n-statistic-item-num">{totalTest - notPlan}</div>
                 </div>
               </div>
             </div>
             <div className="c7n-tableArea-container">
               <div className="c7n-table-container">
-                <div className="c7n-table-title">测试统计（按版本）</div>
+                <div className="c7n-table-title">
+                  <FormattedMessage id="summary_testSummary" />
+                （<FormattedMessage id="summary_summaryByVersion" />）
+                </div>
                 <Table
+                  // rowKey="name"
                   style={{ height: 180 }}
                   columns={versionColumns}
                   pagination={{ pageSize: 5, showSizeChanger: false }}
@@ -295,8 +298,12 @@ class SummaryHome extends Component {
                 />
               </div>
               <div className="c7n-table-container" style={{ margin: '0 15px' }}>
-                <div className="c7n-table-title">测试统计（按模块）</div>
+                <div className="c7n-table-title">
+                  <FormattedMessage id="summary_testSummary" />
+                （<FormattedMessage id="summary_summaryByComponent" />）
+                </div>
                 <Table
+                  // rowKey="name"
                   style={{ height: 180 }}
                   columns={componentColumns}
                   pagination={{ pageSize: 5, showSizeChanger: false }}
@@ -305,8 +312,12 @@ class SummaryHome extends Component {
                 />
               </div>
               <div className="c7n-table-container">
-                <div className="c7n-table-title">测试统计（按标签）</div>
+                <div className="c7n-table-title">
+                  <FormattedMessage id="summary_testSummary" />
+                （<FormattedMessage id="summary_summaryByLabel" />）
+                </div>
                 <Table
+                  // rowKey="name"
                   style={{ height: 180 }}
                   columns={labelColumns}
                   pagination={{ pageSize: 5, showSizeChanger: false }}
@@ -316,18 +327,18 @@ class SummaryHome extends Component {
               </div>
             </div>
             <div style={{ margin: '30px 20px 18px 20px', display: 'flex', alignItems: 'center' }}>
-              <div>查看时段：</div>
+              <div><FormattedMessage id="summary_summaryTimeLeap" />：</div>
               <Radio.Group value={range} onChange={this.handleRangeChange}>
                 {/* <Radio.Button value="1">1天</Radio.Button> */}
-                <Radio.Button value="7">7天</Radio.Button>
-                <Radio.Button value="15">15天</Radio.Button>
-                <Radio.Button value="30">30天</Radio.Button>
+                <Radio.Button value="7">7{<FormattedMessage id="day" />}</Radio.Button>
+                <Radio.Button value="15">15{<FormattedMessage id="day" />}</Radio.Button>
+                <Radio.Button value="30">30{<FormattedMessage id="day" />}</Radio.Button>
               </Radio.Group>
             </div>
             <div className="c7n-chartArea-container">
 
               <div className="c7n-chart-container">
-                <div style={{ fontWeight: 'bold', margin: 12 }}>测试创建</div>
+                <div style={{ fontWeight: 'bold', margin: 12 }}><FormattedMessage id="summary_testCreate" /></div>
                 <Chart height={240} scale={createScale} width={width} data={createList} padding="auto" >
                   <Axis name="creationDay" />
                   <Axis name="issueCount" />
@@ -336,21 +347,19 @@ class SummaryHome extends Component {
                     type="line"
                     position="time*value"
                     size={2}
-                    // tooltip={['time*value', (time, value) => ({
-                    //   // 自定义 tooltip 上显示的 title 显示内容等。
-                    //   name: '创建数',
-                    //   value,
-                    // })]}
                   />
                   <Geom type="point" position="time*value" size={4} shape={'circle'} style={{ stroke: '#fff', lineWidth: 1 }} />
                 </Chart>
                 <div style={{ color: 'rgba(0,0,0,0.65)', margin: 10 }}>
-                  创建测试：<span style={{ color: 'black', fontWeight: 'bold' }}>{totalCreate}</span>，
-                过去<span style={{ color: 'black', fontWeight: 'bold' }}> {range} </span>天
+                  <FormattedMessage id="summary_testCreated" />：
+                  <span style={{ color: 'black', fontWeight: 'bold' }}>{totalCreate}</span>，
+                  <FormattedMessage id="summary_testLast" />
+                  <span style={{ color: 'black', fontWeight: 'bold' }}> {range} </span>
+                  <FormattedMessage id="day" />
                 </div>
               </div>
               <div className="c7n-chart-container" style={{ marginLeft: 16 }}>
-                <div style={{ fontWeight: 'bold', margin: 12 }}>测试执行</div>
+                <div style={{ fontWeight: 'bold', margin: 12 }}><FormattedMessage id="summary_testExecute" /></div>
                 <Chart height={240} scale={executeScale} width={parseInt((window.innerWidth - 320) / 2, 10)} data={excuteList} padding="auto" >
                   <Axis name="time" />
                   <Axis name="value" />
@@ -358,12 +367,7 @@ class SummaryHome extends Component {
                   <Geom
                     type="line"
                     position="time*value"
-                    size={2}
-                    // tooltip={['time*value', (time, value) => ({
-                    //   // 自定义 tooltip 上显示的 title 显示内容等。
-                    //   name: '执行数',
-                    //   value,
-                    // })]}
+                    size={2}                  
                   />
                   <Geom
                     type="point"
@@ -374,8 +378,11 @@ class SummaryHome extends Component {
                   />
                 </Chart>
                 <div style={{ color: 'rgba(0,0,0,0.65)', margin: 10 }}>
-                  执行测试：<span style={{ color: 'black', fontWeight: 'bold' }}>{totalExcute}</span>，
-                过去<span style={{ color: 'black', fontWeight: 'bold' }}> {range} </span>天
+                  <FormattedMessage id="summary_testExecuted" />
+                ：<span style={{ color: 'black', fontWeight: 'bold' }}>{totalExcute}</span>，
+                  <FormattedMessage id="summary_testLast" />
+                  <span style={{ color: 'black', fontWeight: 'bold' }}> {range} </span>
+                  <FormattedMessage id="day" />
                 </div>
               </div>
             </div>

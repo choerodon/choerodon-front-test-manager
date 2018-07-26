@@ -1,6 +1,10 @@
 .c7n-report-story {
+    .ant-collapse-content-box {
+        display: none;
+    }
     .page-head-title {
-        width: 300px;
+        width: auto;
+        margin-right: 50px;
     }
     .page-head .ant-btn:not(.back-btn) {
         line-height: 10px;
@@ -20,7 +24,7 @@
         display: flex;
         align-items: center;
         user-select: none;
-        .c7n-collapse-header-icon {
+        .c7n-issue-status-icon {
             span {
                 margin-left: 10px;
                 border: 1px solid;
@@ -40,24 +44,6 @@
             transform: rotateZ(90deg);
         }
     }
-    .c7n-collapse-show-item {
-        display: flex;
-        align-items: center;
-        user-select: none;
-        height: 20px;
-        margin-top: 5px;
-        .c7n-collapse-header-icon {
-            span {
-                margin-left: 10px;
-                border: 1px solid;
-                // color: #4D90FE;
-                font-size: 12px;
-                border-radius: 2px;
-                padding: 2px;
-                user-select: none;
-            }
-        }
-    }
     .c7n-table-white {
         // padding-top: 0;
         background: white!important;
@@ -73,10 +59,46 @@
         user-select: none;
         text-align: center;
     }
+    .c7n-cycle-show-container {
+        height: 30px;
+        display: flex;
+        padding: 5px 0;
+        align-items: flex-start;
+    }
+    .c7n-issue-show-container {
+        display: flex;
+        align-items: center;
+        user-select: none;
+        height: 30px;
+        padding: 5px 0;
+        .c7n-issue-status-icon {
+            span {
+                margin-left: 10px;
+                border: 1px solid;
+                // color: #4D90FE;
+                font-size: 12px;
+                border-radius: 2px;
+                padding: 2px;
+                user-select: none;
+            }
+        }
+    }
     .c7n-showId {
         user-select: none;
         font-size: 13px;
+        width: 110px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
         // color: #303F9F;
+    }
+    .c7n-report-summary {
+        width: 160px;
+        margin-top: 5px;
+        font-size: 13px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
     tr {
         vertical-align: top;
