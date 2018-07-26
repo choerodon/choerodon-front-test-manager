@@ -9,6 +9,7 @@ import ReportSelectIssue from '../../../../components/ReportSelectIssue';
 import { getReportsFromDefect } from '../../../../api/reportApi';
 import { getIssueStatus } from '../../../../api/agileApi';
 import { getStatusList } from '../../../../api/cycleApi';
+import { issueLink } from '../../../../common/utils';
 import './ReportTest.scss';
 
 const { AppState } = stores;
@@ -165,7 +166,9 @@ class ReportTest extends Component {
                 <div>
                   <div className="c7n-collapse-show-item">
                     <Icon type="navigate_next" className="c7n-collapse-icon" />   
-                    <div style={{ width: 100, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{issueName}</div>
+                    <Link className="c7n-showId" to={issueLink(issueId)} target="_blank">
+                      {issueName}
+                    </Link>                      
                     <div className="c7n-collapse-header-icon">                 
                       <span style={{ color: issueColor, borderColor: issueColor }}>
                         {issueStatusName}
@@ -283,7 +286,9 @@ class ReportTest extends Component {
           const { issueColor, issueName, issueStatusName, summary } = issueInfosDTO;
           return (<div>
             <div className="c7n-collapse-show-item">
-              <div>{issueName}</div>
+              <Link className="c7n-showId" to={issueLink(issueId)} target="_blank">
+                {issueName}
+              </Link>              
               <div className="c7n-collapse-header-icon">                 
                 <span style={{ color: issueColor, borderColor: issueColor }}>
                   {issueStatusName}
@@ -313,10 +318,12 @@ class ReportTest extends Component {
           const { issueLinkDTOS } = execute;
           // window.console.log(issueLinkDTOS.length);
           const issueLinks = issueLinkDTOS.map((link) => {
-            const { statusColor, statusName, issueNum, summary } = link;
+            const { statusColor, statusName, issueNum, summary, issueId } = link;
             return (<div>
               <div className="c7n-collapse-show-item">
-                <div>{issueNum}</div>
+                <Link className="c7n-showId" to={issueLink(issueId)} target="_blank">
+                  {issueNum}
+                </Link>                 
                 <div className="c7n-collapse-header-icon">                 
                   <span style={{ color: statusColor, borderColor: statusColor }}>
                     {statusName}

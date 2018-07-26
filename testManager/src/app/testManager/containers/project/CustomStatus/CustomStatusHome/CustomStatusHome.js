@@ -169,7 +169,7 @@ class CustomStatusHome extends Component {
                 }}
               />
               <Icon 
-                type="delete" 
+                type="delete_forever" 
                 style={{ cursor: 'pointer', marginLeft: 10 }} 
                 onClick={() => { that.deleteStatus(record); }} 
               />

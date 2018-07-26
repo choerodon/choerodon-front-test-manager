@@ -77,6 +77,10 @@
     .c7n-showId {
         user-select: none;
         font-size: 13px;
+        width: 110px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
         // color: #303F9F;
     }
     tr {

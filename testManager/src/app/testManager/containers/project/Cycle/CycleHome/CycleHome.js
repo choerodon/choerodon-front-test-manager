@@ -171,21 +171,6 @@ class CycleHome extends Component {
         deleteExecute(executeId)
           .then((res) => {
             that.refresh();
-            // getCycleById({
-            //   page: executePagination.current - 1,
-            //   size: executePagination.pageSize,
-            // }, cycleId).then((cycle) => {
-            //   that.setState({
-            //     rightLoading: false,
-            //     testList: cycle.content,
-            //     executePagination: {
-            //       current: executePagination.current,
-            //       pageSize: executePagination.pageSize,
-            //       total: cycle.totalElements,
-            //     },
-            //   });
-            //   window.console.log(cycle);
-            // });
           }).catch(() => {
             Choerodon.prompt('网络异常');
             that.setState({
@@ -281,16 +266,13 @@ class CycleHome extends Component {
         loading: true,
       });
       clone(item.cycleId, { cycleName: value }, type).then((data) => {
+        this.setState({
+          loading: false,
+        });
         if (data.failed) {
-          Choerodon.prompt('名字重复');
-          this.setState({
-            loading: false,
-          });
+          Choerodon.prompt('名字重复');          
           CycleStore.removeAdding();
-        } else {
-          this.setState({
-            loading: false,
-          });
+        } else {          
           this.refresh();
         }
       }).catch(() => {
@@ -657,7 +639,7 @@ class CycleHome extends Component {
               }}
             />
             <Icon
-              type="delete"
+              type="delete_forever"
               style={{ cursor: 'pointer', marginLeft: 10 }}
               onClick={() => {
                 that.deleteExecute(record);

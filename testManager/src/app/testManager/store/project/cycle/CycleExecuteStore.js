@@ -5,8 +5,8 @@ import { getCycles } from '../../../api/cycleApi';
 
 const { AppState } = stores;
 
-@store('CycleStore')
-class CycleStore {
+@store('CycleExecuteStore')
+class CycleExecuteStore {
   @observable treeData = [
     { title: '所有版本', key: '0' },
   ]
@@ -65,5 +65,5 @@ class CycleStore {
   }
 }
 
-const cycleStore = new CycleStore();
-export default cycleStore;
+const cycleExecuteStore = new CycleExecuteStore();
+export default cycleExecuteStore;

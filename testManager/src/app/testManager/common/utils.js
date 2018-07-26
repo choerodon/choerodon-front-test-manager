@@ -1,4 +1,9 @@
-const QuillDeltaToHtmlConverter = require('quill-delta-to-html');
+import { stores } from 'choerodon-front-boot';
+import QuillDeltaToHtmlConverter from 'quill-delta-to-html';
+import createHistory from 'history/createBrowserHistory';
+
+const history = createHistory();
+const { AppState } = stores;
 
 export function text2Delta(description) {
   if (
@@ -38,3 +43,9 @@ export function delta2Text(delta) {
 export function escape(str) {
   return str.replace(/<\/script/g, '<\\/script').replace(/<!--/g, '<\\!--');
 }
+export function issueLink(issueId) {
+  const menu = AppState.currentMenuType;
+  const { type, id: projectId, name } = menu;
+  return `/agile/issue?type=${type}&id=${projectId}&name=${name}&paramIssueId=${issueId}`;
+}
+

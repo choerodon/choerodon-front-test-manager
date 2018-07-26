@@ -9,6 +9,7 @@ import ReportSelectIssue from '../../../../components/ReportSelectIssue';
 import { getReportsFromStory } from '../../../../api/reportApi';
 import { getIssueStatus } from '../../../../api/agileApi';
 import { getStatusList } from '../../../../api/cycleApi';
+import { issueLink } from '../../../../common/utils';
 import './ReportStory.scss';
 
 const { AppState } = stores;
@@ -150,13 +151,13 @@ class ReportStory extends Component {
       dataIndex: 'issueId',
       key: 'issueId',
       width: '25%',
-      render(issueId, record) {
+      render(issue, record) {
         const { defectInfo, defectCount } = record;
-        const { issueStatusName, issueName, issueColor } = defectInfo;
+        const { issueStatusName, issueName, issueColor, issueId } = defectInfo;
         return (
           <div>
             <div className="c7n-collapse-header-container">
-              <div>{issueName}</div>
+              <Link className="c7n-showId" to={issueLink(issueId)} target="_blank">{issueName}</Link>
               <div className="c7n-collapse-header-icon">                 
                 <span style={{ color: issueColor, borderColor: issueColor }}>
                   {issueStatusName}
@@ -190,9 +191,9 @@ class ReportStory extends Component {
                 header={
                   <div >                                 
                     <div style={{ display: 'flex', alignItems: 'center' }}>     
-                      <Icon type="navigate_next" className="c7n-collapse-icon" />               
-                      <div className="c7n-showId">{issue.issueName}</div>
-                         
+                      <Icon type="navigate_next" className="c7n-collapse-icon" />       
+                      <Link className="c7n-showId" to={issueLink(issue.issueId)} target="_blank">{issue.issueName}</Link>       
+                           
                     </div>
                     <div style={{ fontSize: '13px' }}>{issue.summary}</div>
                   </div>
@@ -286,8 +287,7 @@ class ReportStory extends Component {
       render(demand, record) {
         const { linkedTestIssues } = record;        
         return (<div>{ linkedTestIssues.map((testIssue) => {
-          const { testCycleCaseES, issueId } = testIssue;
-          
+          const { testCycleCaseES, issueId } = testIssue;         
           
           return (openId[record.issueId] && openId[record.issueId]
             .includes(issueId.toString()) ? <div>
@@ -297,7 +297,7 @@ class ReportStory extends Component {
                   return (<div>{defects.concat(subStepDefects).length > 0 ? 
                     defects.concat(subStepDefects).map(defect => 
                       (<div className="c7n-collapse-show-item">
-                        <div>{defect.defectName}</div>
+                        <Link className="c7n-showId" to={issueLink(defect.issueId)} target="_blank">{defect.defectName}</Link>
                         <div className="c7n-collapse-header-icon">                 
                           <span style={{ 
                             color: defect.defectColor, borderColor: defect.defectColor }}
@@ -330,9 +330,9 @@ class ReportStory extends Component {
                     }}
                     >
                       {i === 0 ? null : '，'}
-                      <span>
+                      <Link className="c7n-showId" to={issueLink(defect.issueId)} target="_blank">
                         {defect.defectName}
-                      </span>
+                      </Link>                     
                     </span>))}</div>);
                 })}
             </div>);
