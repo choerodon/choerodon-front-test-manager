@@ -24,20 +24,22 @@ class DragTable extends Component {
     }
   }
   onDragEnd(result) {
-    const fromIndex = result.source.index;
-    const toIndex = result.destination.index;
-    if (fromIndex === toIndex) {
-      return;
-    }
-    const data = reorder(
-      this.state.data,
-      fromIndex,
-      toIndex,
-    );
-    this.setState({ data });
-    const { onDragEnd } = this.props;
-    if (onDragEnd) {
-      onDragEnd(fromIndex, toIndex);
+    if (result.destination) {
+      const fromIndex = result.source.index;
+      const toIndex = result.destination.index;
+      if (fromIndex === toIndex) {
+        return;
+      }
+      const data = reorder(
+        this.state.data,
+        fromIndex,
+        toIndex,
+      );
+      this.setState({ data });
+      const { onDragEnd } = this.props;
+      if (onDragEnd) {
+        onDragEnd(fromIndex, toIndex);
+      }
     }
   }
   renderThead = () => {

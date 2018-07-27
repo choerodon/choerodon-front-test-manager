@@ -1,6 +1,9 @@
 .c7n-dragtable {
     position: relative;
     padding-bottom: 36px;
+    .ant-spin-blur {
+        overflow: initial;
+    }
     .ant-table {
         display: none;
     }
