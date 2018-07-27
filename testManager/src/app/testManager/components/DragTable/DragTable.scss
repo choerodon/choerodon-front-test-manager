@@ -1,26 +1,26 @@
 .c7n-dragtable {
-    position: relative;
-    padding-bottom: 36px;
-    .ant-spin-blur {
-        overflow: initial;
-    }
-    .ant-table {
-        display: none;
-    }
-    .ant-table-wrapper {
-        position: static;
-        .ant-spin-container {
-            position: static;
-        }
-        .ant-spin-nested-loading {
-            position: static;
-        }
-        .ant-pagination {
-            position: absolute;
-            bottom: -36px;
-            right: 0;
-        }
-    }
+    // position: relative;
+    // padding-bottom: 36px;
+    // .ant-spin-blur {
+    //     overflow: initial;
+    // }
+    // .ant-table {
+    //     display: none;
+    // }
+    // .ant-table-wrapper {
+    //     position: static;
+    //     .ant-spin-container {
+    //         position: static;
+    //     }
+    //     .ant-spin-nested-loading {
+    //         position: static;
+    //     }
+    //     .ant-pagination {
+    //         position: absolute;
+    //         bottom: -36px;
+    //         right: 0;
+    //     }
+    // }
     table {
         table-layout: fixed;
         width: 100%;

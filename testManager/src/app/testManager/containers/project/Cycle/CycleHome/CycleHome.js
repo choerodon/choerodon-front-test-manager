@@ -325,6 +325,7 @@ class CycleHome extends Component {
     window.console.log(pagination, filters, sorter);
     if (pagination.current) {
       this.setState({
+        rightLoading: true,
         executePagination: pagination,
       });
       const currentCycle = CycleStore.getCurrentCycle;
@@ -448,7 +449,7 @@ class CycleHome extends Component {
       dataIndex: 'issueName',
       key: 'issueName', 
       flex: 1,
-      filters: [],
+      // filters: [],
       // onFilter: (value, record) => 
       //   record.issueInfosDTO && record.issueInfosDTO.issueName.indexOf(value) === 0,  
       render(issueId, record) {
