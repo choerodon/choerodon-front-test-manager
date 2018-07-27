@@ -2565,7 +2565,7 @@ class CreateSprint extends Component {
                       />
                   </div>
                   </div>
-                </div>
+                
 
                 <div id="attachment">
                   <div className="c7n-title-wrapper">
@@ -2650,6 +2650,7 @@ class CreateSprint extends Component {
                     </div>
                   )
                 }
+                </div>
             </section>
           </div>
         </div>
