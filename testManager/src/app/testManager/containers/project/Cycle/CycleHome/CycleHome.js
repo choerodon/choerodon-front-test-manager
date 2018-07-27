@@ -463,7 +463,7 @@ class CycleHome extends Component {
                 whiteSpace: 'nowrap',
                 textOverflow: 'ellipsis',
               }}
-              to={issueLink(issueInfosDTO.issueId)}
+              to={issueLink(issueInfosDTO && issueInfosDTO.issueId)}
               target="_blank"
             >
               {issueInfosDTO && issueInfosDTO.issueName}
