@@ -963,10 +963,11 @@ class CycleExecute extends Component {
                 </div>
               </Card>
               <div style={{ marginLeft: 20, flex: 1 }}>
+                {/* 描述 */}
                 <Card
                   title={null}
-                  style={{ width: '100%', height: 124 }}
-                  bodyStyle={{ ...styles.cardBodyStyle, ...{ display: 'flex', flexDirection: 'column' } }}
+                  style={{ width: '100%' }}
+                  bodyStyle={{ ...styles.cardBodyStyle, ...{ display: 'flex', flexDirection: 'column', height: 124 } }}
                 >
                   <div style={styles.cardTitle}>
                     <Icon type="expand_more" />
@@ -982,7 +983,7 @@ class CycleExecute extends Component {
                       onOk={this.handleCommentSubmit}
                     />
                   </div>
-                  <div style={{ fontSize: 13, color: 'rgba(0,0,0,0.65)', lineHeight: '20px', marginTop: 20, padding: '0 20px 18px', flex: 1, overflow: 'auto' }}>
+                  <div style={{ fontSize: 13, color: 'rgba(0,0,0,0.65)', lineHeight: '20px', padding: '0 20px', flex: 1, overflow: 'auto' }}>
                     <RichTextShow data={delta2Html(comment)} />
                   </div>
                 </Card>

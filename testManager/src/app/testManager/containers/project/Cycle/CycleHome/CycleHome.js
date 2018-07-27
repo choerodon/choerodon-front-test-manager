@@ -38,6 +38,7 @@ class CycleHome extends Component {
     EditCycleVisible: false,
     loading: true,
     leftVisible: true,
+    rightLoading: false,
     sideVisible: false,
     testList: [],
     // currentCycle: {},
