@@ -129,7 +129,6 @@ class CycleHome extends Component {
 
       CycleStore.setCurrentCycle(data);
       // window.console.log(data);
-
       getCycleById({
         page: executePagination.current - 1,
         size: executePagination.pageSize,

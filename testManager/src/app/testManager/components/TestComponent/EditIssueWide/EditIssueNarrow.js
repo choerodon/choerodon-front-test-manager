@@ -479,8 +479,8 @@ class CreateSprint extends Component {
         .then((res) => {
           this.setState({ testExecuteData: res }, () => {
             this.setState({ testExecuteData: res });
+          });
         });
-      });
       this.setState({
         editDesShow: false,
       });
@@ -1103,17 +1103,17 @@ class CreateSprint extends Component {
         }
         <div className="c7n-nav">
           <div>
-              <div style={{ height: 44, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', borderBottom: '1px solid rgba(0,0,0,0.26)' }}>
-                <div
-                  className="radius"
-                  style={{ background: TYPE[this.state.typeCode], color: '#fff', width: '20px', height: '20px', textAlign: 'center', fontSize: '14px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                >
-                  <Icon
-                    style={{ fontSize: '14px' }}
-                    type={ICON[this.state.typeCode]}
-                  />
-                </div>
+            <div style={{ height: 44, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', borderBottom: '1px solid rgba(0,0,0,0.26)' }}>
+              <div
+                className="radius"
+                style={{ background: TYPE[this.state.typeCode], color: '#fff', width: '20px', height: '20px', textAlign: 'center', fontSize: '14px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              >
+                <Icon
+                  style={{ fontSize: '14px' }}
+                  type={ICON[this.state.typeCode]}
+                />
               </div>
+            </div>
           </div>
           <ul className="c7n-nav-ul">
             <Tooltip placement="right" title="详情">
@@ -2363,7 +2363,7 @@ class CreateSprint extends Component {
                       </div>
                     </div>
                     {this.renderDes()}
-                    </div>
+                  </div>
                   
                 </div>
 
