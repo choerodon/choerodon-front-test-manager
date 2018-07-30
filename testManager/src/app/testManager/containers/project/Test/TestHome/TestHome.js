@@ -526,12 +526,12 @@ class Test extends Component {
       },
     ];
     const filterColumns = [
-      // {
-      //   title: '编号',
-      //   dataIndex: 'issueNum',
-      //   key: 'issueNum',
-      //   filters: [],
-      // },
+      {
+        title: <FormattedMessage id="issue_issueFilterByNum" />,
+        dataIndex: 'issueNum',
+        key: 'issueNum',
+        filters: [],
+      },
       {
         title: <FormattedMessage id="issue_issueFilterBySummary" />,
         dataIndex: 'summary',
@@ -761,7 +761,7 @@ class Test extends Component {
                           <Input
                             autoFocus
                             value={this.state.createIssueValue}
-                            placeholder="需要做什么"
+                            placeholder={<FormattedMessage id="issue_whatToDo" />}
                             onChange={(e) => {
                               this.setState({
                                 createIssueValue: e.target.value,
@@ -780,12 +780,16 @@ class Test extends Component {
                               createIssue: false,
                             });
                           }}
-                        >取消</Button>
+                        >
+                          <FormattedMessage id="cancel" />
+                        </Button>
                         <Button
                           type="primary"
                           loading={this.state.createLoading}
                           onClick={this.handleBlurCreateIssue.bind(this)}
-                        >确定</Button>
+                        >
+                          <FormattedMessage id="ok" />
+                        </Button>
                       </div>
                     </div>
                   ) : (
@@ -801,7 +805,7 @@ class Test extends Component {
                       }}
                     >
                       <Icon type="playlist_add icon" />
-                      <span>创建问题</span>
+                      <span><FormattedMessage id="issue_issueCreate" /></span>
                     </Button>
                   )}
                 </div>

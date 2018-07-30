@@ -222,13 +222,15 @@ class CycleHome extends Component {
   filterCycle = (e) => {
     const value = e.target.value;    
     window.console.log(value);
-    const expandedKeys = dataList.map((item) => {
-      if (item.title.indexOf(value) > -1) {
-        return this.getParentKey(item.key, CycleStore.getTreeData);
-      }
-      return null;
-    }).filter((item, i, self) => item && self.indexOf(item) === i);
-    CycleStore.setExpandedKeys(expandedKeys);
+    if (value !== '') {
+      const expandedKeys = dataList.map((item) => {
+        if (item.title.indexOf(value) > -1) {
+          return this.getParentKey(item.key, CycleStore.getTreeData);
+        }
+        return null;
+      }).filter((item, i, self) => item && self.indexOf(item) === i);
+      CycleStore.setExpandedKeys(expandedKeys);
+    }
     this.setState({
       searchValue: value,
       autoExpandParent: true,
@@ -369,7 +371,7 @@ class CycleHome extends Component {
     const beforeStr = item.title.substr(0, index);
     const afterStr = item.title.substr(index + searchValue.length);
     const icon = (<Icon
-      style={{ color: '#00A48D' }}
+      style={{ color: 'rgba(0,0,0,0.65)' }}
       type={expandedKeys.includes(item.key) ? 'folder_open2' : 'folder_open'}
     />);
     if (type === 'CLONE_FOLDER' || type === 'CLONE_CYCLE') {
@@ -702,22 +704,7 @@ class CycleHome extends Component {
                 getStatusList('CYCLE_CASE').then((List) => {
                   this.setState({ statusList: List });
                 });
-                this.refresh();
-                // getCycleById({
-                //   page: executePagination.current - 1,
-                //   size: executePagination.pageSize,
-                // }, currentCycle.cycleId).then((cycle) => {
-                //   this.setState({
-                //     rightLoading: false,
-                //     testList: cycle.content,
-                //     executePagination: {
-                //       current: executePagination.current,
-                //       pageSize: executePagination.pageSize,
-                //       total: cycle.totalElements,
-                //     },
-                //   });
-                //   // window.console.log(cycle);
-                // });
+                this.refresh();                
               }}
             />
             <CreateCycle
@@ -832,22 +819,26 @@ class CycleHome extends Component {
                   </div>
                 </div>
                 <ShowCycleData data={currentCycle} />
-                <SelectFocusLoad
-                  label={<FormattedMessage id="cycle_executeBy" />}
-                  request={getUsers} 
-                  onChange={(value) => { 
-                    this.lastUpdatedBy = value;   
-                    this.loadCycle();
-                  }}
-                />
-                <SelectFocusLoad
-                  label={<FormattedMessage id="cycle_assignedTo" />}
-                  request={getUsers} 
-                  onChange={(value) => { 
-                    this.assignedTo = value;
-                    this.loadCycle(); 
-                  }}
-                />
+                <div style={{ display: 'flex' }}>
+                  <SelectFocusLoad
+                    label={<FormattedMessage id="cycle_executeBy" />}
+                    request={getUsers} 
+                    onChange={(value) => { 
+                      this.lastUpdatedBy = value;   
+                      this.loadCycle();
+                    }}
+                  />
+                  <div style={{ marginLeft: 20 }}>                
+                    <SelectFocusLoad
+                      label={<FormattedMessage id="cycle_assignedTo" />}
+                      request={getUsers} 
+                      onChange={(value) => { 
+                        this.assignedTo = value;
+                        this.loadCycle(); 
+                      }}
+                    />
+                  </div>
+                </div>
                 <DragTable
                   pagination={executePagination}
                   loading={rightLoading}

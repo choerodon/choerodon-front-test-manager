@@ -30,6 +30,7 @@ const zhCN = {
   active: '启用',
   edit: '修改',
   cancel: '取消',
+  ok: '确定',
   delete: '删除',
   confirm_delete: '确认删除吗？',
   confirm_deleteTip: '当你点击删除后，该条数据将被永久删除，不可恢复!',
@@ -205,9 +206,12 @@ const zhCN = {
   issue_issueSortByPriority: '问题优先级',
   issue_issueSortByStatus: '问题状态',
   issue_issueSortByPerson: '经办人',
+  issue_issueFilterByNum: '编号',
   issue_issueFilterBySummary: '概要',
   issue_issueFilterByPriority: '优先级',
   issue_issueFilterByStatus: '状态',
+  issue_issueCreate: '创建问题',
+  issue_whatToDo: '需要做什么',
 };
 
 export default zhCN;

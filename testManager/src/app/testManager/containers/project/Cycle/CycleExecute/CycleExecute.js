@@ -1001,7 +1001,7 @@ class CycleExecute extends Component {
                 <Card
                   title={null}
                   style={{ width: '100%' }}
-                  bodyStyle={{ ...styles.cardBodyStyle, ...{ display: 'flex', flexDirection: 'column', height: 124 } }}
+                  bodyStyle={{ ...styles.cardBodyStyle, ...{ display: 'flex', flexDirection: 'column', height: 146 } }}
                 >
                   <div style={styles.cardTitle}>
                     <Icon type="expand_more" />
@@ -1023,7 +1023,7 @@ class CycleExecute extends Component {
                 </Card>
                 <Card
                   title={null}
-                  style={{ width: '100%', height: 92, marginTop: 20 }}
+                  style={{ width: '100%', height: 70, marginTop: 20 }}
                   bodyStyle={styles.cardBodyStyle}
                 >
                   <div style={styles.cardTitle}>
@@ -1053,7 +1053,7 @@ class CycleExecute extends Component {
                       />
                     </Button>
                   </div>
-                  <div>
+                  <div style={{ marginTop: -10 }}>
                     {/* {caseAttachment} */}
                     <Upload
                       {...props}

@@ -27,6 +27,7 @@ const enUS = {
   refresh: 'Refresh',
   operate: 'Operate',
   cancel: 'Cancel',
+  ok: 'Ok',
   delete: 'Delete',
   confirm_delete: 'Confirm delete',
   confirm_deleteTip: 'When you click delete, after which the data will be permanently deleted and irreversible!',
@@ -199,8 +200,11 @@ const enUS = {
   issue_issueSortByPriority: 'Issue priority',
   issue_issueSortByStatus: 'Issue status',
   issue_issueSortByPerson: 'Issue manager',
+  issue_issueFilterByNum: 'ID',
   issue_issueFilterBySummary: 'Summary',
   issue_issueFilterByPriority: 'Priority',
   issue_issueFilterByStatus: 'Status',
+  issue_issueCreate: 'Create issue',
+  issue_whatToDo: 'What to do',
 };
 export default enUS;
