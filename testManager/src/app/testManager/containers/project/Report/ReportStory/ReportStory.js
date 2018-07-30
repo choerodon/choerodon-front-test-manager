@@ -332,8 +332,8 @@ class ReportStory extends Component {
                           whiteSpace: 'nowrap',
                         }}
                         ><FormattedMessage id="step" /></div>}
-                      </div>);
-                    }) : <div className="c7n-issue-show-container">－</div>}</div>);
+                      </div>),
+                    ) : <div className="c7n-issue-show-container">－</div>}</div>);
                 })
          
               } 
@@ -342,9 +342,9 @@ class ReportStory extends Component {
               {
                 testCycleCaseES.map((item) => {
                   const { defects, subStepDefects } = item;
-                  return (<div>{defects.concat(subStepDefects).map((defect, i) => {
-                    const { issueInfosDTO } = defect;               
-                    return (<span style={{
+                  return (<div>{defects.concat(subStepDefects).map((defect, i) => 
+                    // const { issueInfosDTO } = defect;               
+                    (<span style={{
                       fontSize: '13px',
                       color: '#3F51B5',                 
                     }}
@@ -353,8 +353,8 @@ class ReportStory extends Component {
                       <Link className="c7n-showId" to={issueLink(issueInfosDTO && issueInfosDTO.issueId)} target="_blank">
                         {issueInfosDTO && issueInfosDTO.issueName}
                       </Link>                     
-                    </span>); 
-                  })}</div>);
+                    </span>), 
+                  )}</div>);
                 })}
             </div>);
         })}
