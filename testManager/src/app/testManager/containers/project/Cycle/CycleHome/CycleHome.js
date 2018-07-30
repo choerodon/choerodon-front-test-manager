@@ -75,7 +75,7 @@ class CycleHome extends Component {
       lastRank = testList[targetIndex - 1] ? testList[targetIndex - 1].rank : null;
       nextRank = testList[targetIndex].rank;
     }
-    window.console.log(sourceIndex, targetIndex, lastRank, nextRank);
+    // window.console.log(sourceIndex, targetIndex, lastRank, nextRank);
     const source = testList[sourceIndex];
     const temp = { ...source };
     delete temp.defects;
@@ -495,8 +495,7 @@ class CycleHome extends Component {
       render(comment) {
         return (
           <Tooltip title={<RichTextShow data={delta2Html(comment)} />}>
-            <div
-              title={delta2Text(comment)}
+            <div              
               style={{
                 width: 65,
                 overflow: 'hidden',

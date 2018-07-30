@@ -153,29 +153,36 @@ export function handleFileUpload(propFileList, func, config) {
 }
 
 export function text2Delta(description) {
-  if (
-    description &&
-    description.indexOf('[') === 0 &&
-    description[description.length - 1] === ']'
-  ) {
-    return JSON.parse(description);
+  let temp = description;
+  try {
+    temp = JSON.parse(description);
+  } catch (error) {
+    temp = description;
   }
-  return description || '';
+  return temp;
 }
 
 /**
  * 将quill特有的文本结构转为html
  * @param {*} delta
  */
-export function delta2Html(description) {
-  const delta = text2Delta(description);
-  const converter = new QuillDeltaToHtmlConverter(delta, {});
-  const text = converter.convert();
-  if (text.substring(0, 3) === '<p>') {
-    return text.substring(3);
-  } else {
-    return text;
+export function delta2Html(description, config) {
+  // 修复普通文本显示
+  let temp = description;
+  try {
+    JSON.parse(description);
+  } catch (error) {
+    temp = JSON.stringify([{ insert: description }]);
   }
+  
+  const delta = text2Delta(temp);
+  const converter = new QuillDeltaToHtmlConverter(delta, config);
+  const text = converter.convert();
+  // if (text.substring(0, 3) === '<p>') {
+  //   return text.substring(3);
+  // } else {
+  return text;
+  // }
 }
 
 export function escape(str) {

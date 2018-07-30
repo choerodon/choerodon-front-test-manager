@@ -250,7 +250,7 @@ class ReportStory extends Component {
               <div className="c7n-cycle-show-container">
                 <div
                   title={execute.cycleName}
-                  style={{ width: 80, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}
+                  style={{ width: 80, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', marginBottom }}
                 >
                   {execute.cycleName}
                 </div>
@@ -270,7 +270,10 @@ class ReportStory extends Component {
           });
           // window.console.log(executeStatus);
           return openId[record.defectInfo.issueId] && openId[record.defectInfo.issueId]
-            .includes(issueId.toString()) ? <div style={{ minHeight: totalExecute === 0 ? 50 : 30 }}> { caseShow } </div> 
+            .includes(issueId.toString()) ? <div 
+              style={{ minHeight: totalExecute === 0 ? 50 : 30 }}
+            > 
+              { caseShow } </div> 
             :
             (
               <div style={{ height: 50 }}>
@@ -313,7 +316,8 @@ class ReportStory extends Component {
                         <Link className="c7n-showId" to={issueLink(issueInfosDTO.issueId)} target="_blank">{issueInfosDTO.issueName}</Link>
                         <div className="c7n-issue-status-icon">
                           <span style={{ 
-                            color: issueInfosDTO.issueColor, borderColor: issueInfosDTO.issueColor }}
+                            color: issueInfosDTO.issueColor, 
+                            borderColor: issueInfosDTO.issueColor }}
                           >
                             {issueInfosDTO.issueStatusName}
                           </span>
@@ -366,7 +370,7 @@ class ReportStory extends Component {
               <Icon type="arrow_drop_down" />
             </a>
           </Dropdown>
-          <Button 
+          <Button
             style={{ marginLeft: 30 }}
             onClick={() => {
               this.setState({
