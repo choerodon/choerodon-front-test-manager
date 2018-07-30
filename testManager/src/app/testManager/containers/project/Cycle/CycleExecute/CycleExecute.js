@@ -543,14 +543,47 @@ class CycleExecute extends Component {
       title: <FormattedMessage id="execute_testStep" />,
       dataIndex: 'testStep',
       key: 'testStep',
+      render: testStep => 
+        (<Tooltip title={testStep}>
+          <div
+            style={{
+              width: 150,        
+            }}
+            className="c7n-text-dot"
+          >
+            {testStep}
+          </div>
+        </Tooltip>),      
     }, {
       title: <FormattedMessage id="execute_testData" />,
       dataIndex: 'testData',
       key: 'testData',
+      render: testData => 
+        (<Tooltip title={testData}>
+          <div
+            style={{
+              width: 150,        
+            }}
+            className="c7n-text-dot"
+          >
+            {testData}
+          </div>
+        </Tooltip>),      
     }, {
       title: <FormattedMessage id="execute_expectedOutcome" />,
       dataIndex: 'expectedResult',
       key: 'expectedResult',
+      render: expectedResult => 
+        (<Tooltip title={expectedResult}>
+          <div
+            style={{
+              width: 150,        
+            }}
+            className="c7n-text-dot"
+          >
+            {expectedResult}
+          </div>
+        </Tooltip>),      
     },
     {
       title: <FormattedMessage id="execute_stepAttachment" />,
