@@ -471,7 +471,13 @@ class CycleHome extends Component {
       render(issueId, record) {
         const { issueInfosDTO } = record;
         return (
-          <Tooltip title={issueInfosDTO && issueInfosDTO.issueName}>
+          <Tooltip 
+            title={issueInfosDTO && 
+            <div>
+              <div>{issueInfosDTO.issueName}</div>
+              <div>{issueInfosDTO.summary}</div>
+            </div>}
+          >
             <Link
               style={{
                 width: 100,
