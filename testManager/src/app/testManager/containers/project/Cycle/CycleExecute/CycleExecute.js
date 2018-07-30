@@ -756,24 +756,25 @@ class CycleExecute extends Component {
       </Option>));  
     return (
       <Page className="c7n-clcle">
-        <Header title={null}>
-          <div>
-            <Tooltip
-              title={Choerodon.getMessage('返回', 'return')}
-              placement="bottom"
+        <Header title={<div>
+          <Tooltip
+            title={Choerodon.getMessage('返回', 'return')}
+            placement="bottom"
             // getTooltipContainer={that => that}
-            >
-              <Button
-                type="primary"
-                onClick={() => { this.props.history.goBack(); }}
-                className="back-btn small-tooltip"
-                shape="circle"
-                size="large"
-                icon="arrow_back"
-              />
-            </Tooltip>
-          </div>
-          <span className="c7n-head--clcle-title"><FormattedMessage id="execute_detail" /></span>
+          >
+            <Button
+              type="primary"
+              onClick={() => { this.props.history.goBack(); }}
+              className="back-btn small-tooltip"
+              shape="circle"
+              size="large"
+              icon="arrow_back"
+            />
+          </Tooltip>
+          <span><FormattedMessage id="execute_detail" /></span>
+        </div>}
+        >         
+          
           <Button onClick={this.getInfo}>
             <Icon type="autorenew icon" />
             <span><FormattedMessage id="refresh" /></span>

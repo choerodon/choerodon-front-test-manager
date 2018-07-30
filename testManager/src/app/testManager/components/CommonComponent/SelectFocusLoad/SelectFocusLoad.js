@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Table, Button, Icon, Card, Select, Spin, Upload, Tooltip } from 'choerodon-ui';
+
 const Option = Select.Option;
 const styles = {
   cardTitle: {
@@ -59,20 +60,37 @@ class SelectFocusLoad extends Component {
   }
   render() {
     const { onChange, request } = this.props;
-    const { loading,List } = this.state;
+    const { loading, List } = this.state;
     const Options = List.map(item =>
-      (<Option key={item.id} value={item.realName}>
-        <div style={{ display: 'inline-flex', alignItems: 'center', padding: '2px' }}>
-          <div style={styles.userOption}>
-            {item.imageUrl ? <img src={item.imageUrl} alt="" /> : item.realName.slice(0, 1)}
-          </div>
+      (<Option key={item.id} value={item.id}>
+        <div style={{ display: 'inline-flex', alignItems: 'center', padding: '2px' }}>          
+          {item.imageUrl ?
+            <img src={item.imageUrl} alt="" style={{ width: 20, height: 20, borderRadius: '50%', marginRight: '8px' }} /> :
+            <div style={styles.userOption}>{item.realName.slice(0, 1)}
+            </div>
+          }
           <span>{`${item.loginName} ${item.realName}`}</span>
         </div>
       </Option>),
     );
     return (<Select
-      {...this.props}      
-      loading={loading}
+      filter
+      allowClear
+      // autoFocus
+      filterOption={false}
+      loading={loading}   
+      style={{ width: 200 }}
+      onFilterChange={(value) => {
+        this.setState({
+          loading: true,
+        });
+        request(value).then((Data) => {
+          this.setState({
+            List: Data.content,
+            loading: false,
+          });
+        });
+      }}
       onFocus={() => {
         this.setState({
           loading: true,
@@ -84,6 +102,7 @@ class SelectFocusLoad extends Component {
           });
         });
       }}
+      {...this.props}   
     >
       {Options}
     </Select>);

@@ -1,4 +1,5 @@
 .c7n-cycle {
+    overflow: hidden;
     .ant-tree-switcher {
         margin-top: 3px;
     }
@@ -66,9 +67,9 @@ $drop-gradient: rgba(140, 158, 255, 0.16);
 
 .c7n-ch-left {
     // margin-left: 10px;
-    width: 330px;
+    width: 340px;
     // border-right: 1px solid rgba(0, 0, 0, 0.36);
-    padding-bottom: 30px;
+    // padding-bottom: 30px;
     .c7n-chlh-tree {
         margin-left: -4px;
     }
@@ -94,6 +95,9 @@ $drop-gradient: rgba(140, 158, 255, 0.16);
 }
 
 .c7n-chlh-tree {
+    min-height: calc(100% - 20px);
+    overflow-y: auto;
+    overflow-x: hidden;
     .ant-tree li .ant-tree-node-content-wrapper.ant-tree-node-selected {
         background: rgba(0, 0, 0, 0.04);
     }

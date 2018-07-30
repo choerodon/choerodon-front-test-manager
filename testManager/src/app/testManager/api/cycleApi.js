@@ -15,8 +15,8 @@ export function getCycleById(pagination, cycleId, filters) {
   //   return axios.get(`/test/v1/cycle/case/query/${cycleId}`);
   const Filters = { ...filters };
   Filters && Object.keys(Filters).forEach((filter) => {
-    Filters[filter] = Filters[filter][0] 
-;},
+    Filters[filter] = Filters[filter][0]; 
+  },
   );
   return axios.post(`/test/v1/projects/${projectId}/cycle/case/query/cycleId?size=${size}&page=${page}`, { cycleId, ...Filters });
 }

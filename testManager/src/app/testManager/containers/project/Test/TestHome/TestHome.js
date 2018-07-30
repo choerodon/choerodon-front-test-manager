@@ -3,12 +3,11 @@ import { observer } from 'mobx-react';
 import _ from 'lodash';
 import { Page, Header, Content, stores, axios } from 'choerodon-front-boot';
 import { Table, Button, Tooltip, Input, Dropdown, Menu, Pagination, Spin, Icon } from 'choerodon-ui';
-
+import { FormattedMessage } from 'react-intl';
+import FileSaver from 'file-saver';
 import '../../../../assets/main.scss';
 import './TestHome.scss';
-
 import IssueStore from '../../../../store/project/IssueStore';
-
 import { STATUS, COLOR, TYPE, ICON, TYPE_NAME } from '../../../../common/Constant';
 import pic from '../../../../assets/问题管理－空.png';
 import { loadIssue, createIssue } from '../../../../api/IssueApi';
@@ -20,7 +19,6 @@ import EmptyBlock from '../../../../components/TestComponent/EmptyBlock';
 import CreateIssue from '../../../../components/TestComponent/CreateIssue';
 import EditIssue from '../../../../components/TestComponent/EditIssueWide';
 
-const FileSaver = require('file-saver');
 
 const { AppState } = stores;
 
@@ -233,7 +231,132 @@ class Test extends Component {
         FileSaver.saveAs(blob, fileName);
       });
   }
+  renderTestIssue(issue) {
+    return (
+      <div style={{ display: 'flex', flex: 1, marginTop: '3px', flexDirection: 'column', marginBottom: '3px', cursor: 'pointer' }}>
+        <div style={{ display: 'flex', flex: 1, marginTop: '3px', marginBottom: '3px', cursor: 'pointer' }}>
+          <Tooltip mouseEnterDelay={0.5} title={`任务类型： ${TYPE_NAME[issue.typeCode]}`}>
+            <div>
+              <TypeTag
+                type={{
+                  typeCode: issue.typeCode,
+                }}
+              />
+            </div>
+          </Tooltip>
+          <Tooltip mouseEnterDelay={0.5} title={`任务编号： ${issue.issueNum}`}>
+            <a style={{ paddingLeft: 12, paddingRight: 12, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              {issue.issueNum}
+            </a>
+          </Tooltip>
+          <div style={{ overflow: 'hidden', flex: 1 }}>
+            <Tooltip mouseEnterDelay={0.5} placement="topLeft" title={`任务概要： ${issue.summary}`}>
+              <p style={{ paddingRight: '25px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 0, maxWidth: 'unset' }}>
+                {issue.summary}
+              </p>
+            </Tooltip>
+          </div>
 
+         
+          <div style={{ flexShrink: '0' }}>
+            {
+              issue.assigneeId ? (
+                <Tooltip mouseEnterDelay={0.5} title={`任务经办人： ${issue.assigneeName}`}>
+                  <div style={{ marginRight: 12 }}>
+                    <UserHead
+                      user={{
+                        id: issue.assigneeId,
+                        loginName: '',
+                        realName: issue.assigneeName,
+                        avatar: issue.imageUrl,
+                      }}
+                    />
+                  </div>
+                </Tooltip>
+              ) : null
+            }
+          </div>
+          <div style={{ flexShrink: '0', display: 'flex', justifyContent: 'flex-end' }}>
+            <Tooltip mouseEnterDelay={0.5} title={`任务状态： ${issue.statusName}`}>
+              <div>
+                <StatusTag
+                  status={{
+                    statusColor: issue.statusColor,
+                    statusName: issue.statusName,
+                  }}
+                />
+              </div>
+            </Tooltip>
+          </div>
+        </div>
+        {/* 第二行 */}
+        <div style={{ display: 'flex', flex: 1, marginTop: '3px', alignItems: 'center', marginBottom: '3px', cursor: 'pointer' }}>
+          <div style={{ flexShrink: '0' }}>
+            <Tooltip mouseEnterDelay={0.5} title={`优先级： ${issue.priorityName}`}>
+              <div style={{ marginRight: 12 }}>
+                <PriorityTag
+                  priority={{
+                    priorityCode: issue.priorityCode,
+                    priorityName: issue.priorityName,
+                  }}
+                />
+              </div>
+            </Tooltip>
+          </div>
+          <div 
+            style={{
+              color: 'blue',
+              height: 22,
+              borderWidth: '1px',
+              borderStyle: 'solid',
+              borderColor: 'blue',
+              borderRadius: '2px',
+              fontSize: '13px',
+              lineHeight: '20px',
+              padding: '0 8px',    
+            }}
+          >
+            {'0.1.2'}
+          </div>
+          <div 
+            style={{
+              color: 'blue',
+              height: 22,
+              borderWidth: '1px',
+              borderStyle: 'solid',
+              borderColor: 'blue',
+              borderRadius: '2px',
+              fontSize: '13px',
+              lineHeight: '20px',
+              padding: '0 8px',
+              marginLeft: 12,    
+            }}
+          >
+            {'史诗'}
+          </div>
+          <div style={{ marginLeft: 12, fontSize: '13px', color: 'rgba(0,0,0,0.65)' }}>
+            创建于
+          </div>
+          <div className="c7n-flex-space" />
+          <div
+            key={'前端'}
+            style={{
+              color: '#000',              
+              borderRadius: '100px',
+              fontSize: '13px',
+              lineHeight: '20px',
+              padding: '2px 12px',
+              background: 'rgba(0, 0, 0, 0.08)',
+              // marginRight: '8px',
+              // marginBottom: 3,
+            }}
+          >
+            {'前端'}
+          </div>
+        </div>
+      </div>
+    );
+  }
   renderWideIssue(issue) {
     return (
       <div style={{ display: 'flex', flex: 1, marginTop: '3px', marginBottom: '3px', cursor: 'pointer' }}>
@@ -383,23 +506,23 @@ class Test extends Component {
     const ORDER = [
       {
         code: 'summary',
-        showName: '问题名称',
+        showName: <FormattedMessage id="issue_issueSortByName" />,
       },
       {
         code: 'typeCode',
-        showName: '问题类型',
+        showName: <FormattedMessage id="issue_issueSortByType" />,
       },
       {
         code: 'priorityCode',
-        showName: '问题优先级',
+        showName: <FormattedMessage id="issue_issueSortByPriority" />,
       },
       {
         code: 'statusId',
-        showName: '问题状态',
+        showName: <FormattedMessage id="issue_issueSortByStatus" />,
       },
       {
         code: 'assigneeId',
-        showName: '经办人',
+        showName: <FormattedMessage id="issue_issueSortByPerson" />,
       },
     ];
     const filterColumns = [
@@ -410,46 +533,46 @@ class Test extends Component {
       //   filters: [],
       // },
       {
-        title: '概要',
+        title: <FormattedMessage id="issue_issueFilterBySummary" />,
         dataIndex: 'summary',
         key: 'summary',
         filters: [],
       },
       {
-        title: '优先级',
+        title: <FormattedMessage id="issue_issueFilterByPriority" />,
         dataIndex: 'priorityCode',
         key: 'priorityCode',
         filters: [
           {
-            text: '高',
+            text: <FormattedMessage id="high" />,
             value: 'high',
           },
           {
-            text: '中',
+            text: <FormattedMessage id="medium" />,
             value: 'medium',
           },
           {
-            text: '低',
+            text: <FormattedMessage id="low" />,
             value: 'low',
           },
         ],
         filterMultiple: true,
       },
       {
-        title: '状态',
+        title: <FormattedMessage id="issue_issueFilterByStatus" />,
         dataIndex: 'statusCode',
         key: 'statusCode',
         filters: [
           {
-            text: '待处理',
+            text: <FormattedMessage id="todo" />,
             value: 'todo',
           },
           {
-            text: '进行中',
+            text: <FormattedMessage id="doing" />,
             value: 'doing',
           },
           {
-            text: '已完成',
+            text: <FormattedMessage id="done" />,
             value: 'done',
           },
         ],
@@ -462,7 +585,7 @@ class Test extends Component {
         title: 'summary',
         dataIndex: 'summary',
         render: (summary, record) => (
-          !this.state.expand ? this.renderWideIssue(record) : this.renderNarrowIssue(record)
+          !this.state.expand ? this.renderTestIssue(record) : this.renderNarrowIssue(record)
         ),
       },
     ];
@@ -509,16 +632,16 @@ class Test extends Component {
     return (
       <Page className="c7n-Issue c7n-region">
         <Header
-          title="测试用例管理"
+          title={<FormattedMessage id="issue_name" />}
           backPath={IssueStore.getBackUrl}
         >
           <Button className="leftBtn" onClick={() => this.setState({ create: true })}>
             <Icon type="playlist_add icon" />
-            <span>创建测试用例</span>
+            <FormattedMessage id="issue_createTestIssue" />       
           </Button>
           <Button className="leftBtn" onClick={() => this.exportExcel()}>
             <Icon type="file_upload icon" />
-            <span>导出</span>
+            <FormattedMessage id="export" />        
           </Button>
           <Button            
             onClick={() => {
@@ -527,7 +650,7 @@ class Test extends Component {
             }}
           >
             <Icon type="autorenew icon" />
-            <span>刷新</span>
+            <FormattedMessage id="refresh" />    
           </Button>
         </Header>
         <Content style={{ display: 'flex', padding: '0' }}>
@@ -550,15 +673,15 @@ class Test extends Component {
                 onChange={this.handleFilterChange}
                 pagination={false}
                 filters={IssueStore.barFilters || []}
-                filterBarPlaceholder="过滤表"
+                filterBarPlaceholder={<FormattedMessage id="issue_filterTestIssue" />}
               />
             </section>
             <section className="c7n-count">
-              <span className="c7n-span-count">共{IssueStore.pagination.total}条任务</span>
+              <span className="c7n-span-count"><FormattedMessage id="issue_issueTotal" values={{ total: IssueStore.pagination.total }} /></span>
               <Dropdown overlay={sort} trigger={['click']}>
                 <div style={{ display: 'flex', alignItems: 'center', fontSize: '13px', lineHeight: '20px', cursor: 'pointer', position: 'absolute', right: 25, bottom: 28 }}>
                   <Icon type="swap_vert" style={{ fontSize: '16px', marginRight: '5px' }} />
-                  <span>排序</span>
+                  <FormattedMessage id="issue_issueSort" />
                 </div>
               </Dropdown>
             </section>

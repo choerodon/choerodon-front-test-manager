@@ -44,10 +44,17 @@ const zhCN = {
   version: '版本',
   cycle: '测试循环',
   type: '类型',
-  color:'颜色',
+  color: '颜色',
   comment: '说明',
   name: '名称',
   day: '天',
+  export: '导出',
+  high: '高',
+  medium: '中',
+  low: '低',
+  todo: '待处理',
+  doing: '进行中',
+  done: '已完成',
   // 执行详情
   execute_detail: '执行详情',
   execute_cycle_execute: '测试执行',
@@ -108,11 +115,11 @@ const zhCN = {
   status_type: '类型',
   status_comment: '说明',
   status_color: '颜色',
-  //自定义状态侧边栏 
+  // 自定义状态侧边栏 
   status_side_content_title: `在项目“${projectName}”中创建状态`,
   status_side_edit_content_title: `编辑项目“${projectName}”中的状态`,
-  status_side_content_description:'您可以创建自定义状态，包括执行状态和步骤状态。',
-  status_side_edit_content_description:'您可以自定义状态，包括执行状态和步骤状态。',
+  status_side_content_description: '您可以创建自定义状态，包括执行状态和步骤状态。',
+  status_side_edit_content_description: '您可以自定义状态，包括执行状态和步骤状态。',
   // 报表
   report_title: '报表',
   report_switch: '切换报表',
@@ -186,6 +193,21 @@ const zhCN = {
   cycle_createExecute_no: '否',
   cycle_createExecute_defectStatus: '缺陷状态',
 
+
+  // 测试用例管理
+  issue_name: '测试用例管理',
+  issue_createTestIssue: '创建测试用例',
+  issue_filterTestIssue: '过滤表',
+  issue_issueTotal: '共{total}条任务',
+  issue_issueSort: '排序',
+  issue_issueSortByName: '问题名称',
+  issue_issueSortByType: '问题类型',
+  issue_issueSortByPriority: '问题优先级',
+  issue_issueSortByStatus: '问题状态',
+  issue_issueSortByPerson: '经办人',
+  issue_issueFilterBySummary: '概要',
+  issue_issueFilterByPriority: '优先级',
+  issue_issueFilterByStatus: '状态',
 };
 
 export default zhCN;
