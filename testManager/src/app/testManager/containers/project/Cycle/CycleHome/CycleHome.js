@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import { observer } from 'mobx-react';
 import { Page, Header, Content, stores } from 'choerodon-front-boot';
 import { Tooltip, Table, Button, Icon, Input, Tree, Spin, Modal } from 'choerodon-ui';
+import { Link } from 'react-router-dom';
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import moment from 'moment';
@@ -11,8 +12,9 @@ import { getCycles, deleteExecute, getCycleById, editCycleExecute, clone, addFol
 import { TreeTitle, CreateCycle, EditCycle, CreateCycleExecute, ShowCycleData } from '../../../../components/CycleComponent';
 import DragTable from '../../../../components/DragTable';
 import { RichTextShow } from '../../../../components/CommonComponent';
-import { delta2Html, delta2Text } from '../../../../common/utils';
+import { delta2Html, delta2Text, issueLink } from '../../../../common/utils';
 import CycleStore from '../../../../store/project/cycle/CycleStore';
+
 
 const { AppState } = stores;
 const { confirm } = Modal;
@@ -38,6 +40,7 @@ class CycleHome extends Component {
     EditCycleVisible: false,
     loading: true,
     leftVisible: true,
+    rightLoading: false,
     sideVisible: false,
     testList: [],
     // currentCycle: {},
@@ -72,7 +75,7 @@ class CycleHome extends Component {
       lastRank = testList[targetIndex - 1] ? testList[targetIndex - 1].rank : null;
       nextRank = testList[targetIndex].rank;
     }
-    window.console.log(sourceIndex, targetIndex, lastRank, nextRank);
+    // window.console.log(sourceIndex, targetIndex, lastRank, nextRank);
     const source = testList[sourceIndex];
     const temp = { ...source };
     delete temp.defects;
@@ -102,7 +105,7 @@ class CycleHome extends Component {
             total: cycle.totalElements,
           },
         });
-        window.console.log(cycle);
+        // window.console.log(cycle);
       });
     });
   }
@@ -322,6 +325,7 @@ class CycleHome extends Component {
     window.console.log(pagination, filters, sorter);
     if (pagination.current) {
       this.setState({
+        rightLoading: true,
         executePagination: pagination,
       });
       const currentCycle = CycleStore.getCurrentCycle;
@@ -445,22 +449,27 @@ class CycleHome extends Component {
       dataIndex: 'issueName',
       key: 'issueName', 
       flex: 1,
-      filters: [],
+      // filters: [],
       // onFilter: (value, record) => 
       //   record.issueInfosDTO && record.issueInfosDTO.issueName.indexOf(value) === 0,  
       render(issueId, record) {
         const { issueInfosDTO } = record;
-        return (<div
-          title={issueInfosDTO && issueInfosDTO.issueName}
-          style={{
-            width: 100,
-            overflow: 'hidden',
-            whiteSpace: 'nowrap',
-            textOverflow: 'ellipsis',
-          }}
-        >
-          {issueInfosDTO && issueInfosDTO.issueName}
-        </div>);
+        return (
+          <Tooltip title={issueInfosDTO && issueInfosDTO.issueName}>
+            <Link
+              style={{
+                width: 100,
+                overflow: 'hidden',
+                whiteSpace: 'nowrap',
+                textOverflow: 'ellipsis',
+              }}
+              to={issueLink(issueInfosDTO && issueInfosDTO.issueId)}
+              target="_blank"
+            >
+              {issueInfosDTO && issueInfosDTO.issueName}
+            </Link>
+          </Tooltip>         
+        );
       },
     }, {
       title: <FormattedMessage id="status" />,
@@ -486,8 +495,7 @@ class CycleHome extends Component {
       render(comment) {
         return (
           <Tooltip title={<RichTextShow data={delta2Html(comment)} />}>
-            <div
-              title={delta2Text(comment)}
+            <div              
               style={{
                 width: 65,
                 overflow: 'hidden',
@@ -507,28 +515,21 @@ class CycleHome extends Component {
       key: 'defects',
       flex: 1,
       render: defects =>
-        (<Tooltip title={
-          <div>
-            {defects.map((defect, i) => (
-              <div style={{
-                fontSize: '13px',
-                color: 'white',
-              }}
-              >                  
-                {defect.issueInfosDTO.issueName}
-              </div>))}
-          </div>}
+        (<Tooltip 
+          placement="topLeft"
+          title={
+            <div>
+              {defects.map((defect, i) => (
+                <div style={{
+                  fontSize: '13px',
+                  color: 'white',
+                }}
+                >                  
+                  {defect.issueInfosDTO.issueName}
+                </div>))}
+            </div>}
         >
-          <div
-            style={{
-              width: 100,
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            {defects.map((defect, i) => defect.issueInfosDTO.issueName).join(',')}
-          </div>
+          {defects.map((defect, i) => defect.issueInfosDTO.issueName).join(',')}
         </Tooltip>),
     },
     // {
@@ -785,6 +786,7 @@ class CycleHome extends Component {
                   </Tree>
                 </div>
               </div>
+              <div style={{ width: 1, background: 'rgba(0,0,0,0.26)' }} />
               {cycleId && <div className="c7n-ch-right" >
                 <div style={{ display: 'flex' }}>
                   <div>

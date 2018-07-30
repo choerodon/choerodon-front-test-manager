@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Draggable, Droppable, DragDropContext } from 'react-beautiful-dnd';
-import { Table, Spin } from 'choerodon-ui';
+import { Table } from 'choerodon-ui';
 import './DragTable.scss';
 
 const reorder = (list, startIndex, endIndex) => {
@@ -24,21 +24,46 @@ class DragTable extends Component {
     }
   }
   onDragEnd(result) {
-    const fromIndex = result.source.index;
-    const toIndex = result.destination.index;
-    if (fromIndex === toIndex) {
-      return;
+    if (result.destination) {
+      const fromIndex = result.source.index;
+      const toIndex = result.destination.index;
+      if (fromIndex === toIndex) {
+        return;
+      }
+      const data = reorder(
+        this.state.data,
+        fromIndex,
+        toIndex,
+      );
+      this.setState({ data });
+      const { onDragEnd } = this.props;
+      if (onDragEnd) {
+        onDragEnd(fromIndex, toIndex);
+      }
     }
-    const data = reorder(
-      this.state.data,
-      fromIndex,
-      toIndex,
-    );
-    this.setState({ data });
-    const { onDragEnd } = this.props;
-    if (onDragEnd) {
-      onDragEnd(fromIndex, toIndex);
-    }
+  }
+  components = {
+    table: () => (<DragDropContext onDragEnd={this.onDragEnd.bind(this)}>
+      <table>
+        <thead>
+          {this.renderThead()}
+        </thead>
+        <Droppable droppableId="dropTable">
+          {(provided, snapshot) => (
+            <tbody
+              ref={provided.innerRef}
+              style={{                                      
+                borderBottom: '1px solid rgba(0,0,0,0.12)',
+                marginBottom: 0,
+              }}
+            >
+              {this.renderTbody(this.state.data)}
+              {provided.placeholder}
+            </tbody>
+          )}
+        </Droppable>
+      </table>
+    </DragDropContext>),
   }
   renderThead = () => {
     const { columns } = this.props;
@@ -80,38 +105,13 @@ class DragTable extends Component {
 
   render() {
     const { data } = this.state;
-    const { loading } = this.props;
-
     return (
-      <div className="c7n-dragtable">
-        <Spin spinning={loading}>
-          <Table
-            {...this.props}
-            loading={false}
-            dataSource={[]}
-          />
-          <DragDropContext onDragEnd={this.onDragEnd.bind(this)}>
-            <table>
-              <thead>
-                {this.renderThead()}
-              </thead>
-              <Droppable droppableId="dropTable">
-                {(provided, snapshot) => (
-                  <tbody
-                    ref={provided.innerRef}
-                    style={{                                      
-                      borderBottom: '1px solid rgba(0,0,0,0.12)',
-                      marginBottom: 0,
-                    }}
-                  >
-                    {this.renderTbody(data)}
-                    {provided.placeholder}
-                  </tbody>
-                )}
-              </Droppable>
-            </table>
-          </DragDropContext>
-        </Spin>
+      <div className="c7n-dragtable">        
+        <Table
+          {...this.props}   
+          dataSource={data}
+          components={this.components}
+        />
       </div>
     );
   }

@@ -23,6 +23,9 @@
     .ant-table-tbody>tr>td {
         padding: 5px 0 0 18px;
     }
+    .ant-table-columns-chooser {
+        display: none;
+    }
 }
 
 .drag-cell {
@@ -57,15 +60,15 @@ $drop-gradient: rgba(140, 158, 255, 0.16);
     display: flex;
     flex-direction: column;
     align-items: center;
-    border-right: 1px solid #d3d3d3;
+    // border-right: 1px solid #d3d3d3;
     height: 100%;
 }
 
 .c7n-ch-left {
     // margin-left: 10px;
     width: 330px;
-    border-right: 1px solid rgba(0, 0, 0, 0.36);
-    padding-bottom: 100px;
+    // border-right: 1px solid rgba(0, 0, 0, 0.36);
+    padding-bottom: 30px;
     .c7n-chlh-tree {
         margin-left: -4px;
     }
