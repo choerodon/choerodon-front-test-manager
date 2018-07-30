@@ -695,7 +695,7 @@ class CycleExecute extends Component {
                 color: 'white',
               }}
               >
-                {defect.issueInfosDTO && defect.issueInfosDTO.issueName}
+                {defect.defectName}
               </div>))}
           </div>}
         >
@@ -707,7 +707,7 @@ class CycleExecute extends Component {
               whiteSpace: 'nowrap',
             }}
           >
-            {defects.map((defect, i) => defect.issueInfosDTO && defect.issueInfosDTO.issueName).join(',')}
+            {defects.map((defect, i) => defect.defectName).join(',')}
           </div>
         </Tooltip>),
     }, {
@@ -949,7 +949,7 @@ class CycleExecute extends Component {
                               whiteSpace: 'nowrap',
                             }}
                           >
-                            {defects.map((defect, i) => defect.issueInfosDTO.issueName).join(',')}
+                            {defects.map((defect, i) => defect.defectName).join(',')}
                           </div>
                         ) : '无'}
                       </Text>

@@ -585,7 +585,7 @@ class Test extends Component {
         title: 'summary',
         dataIndex: 'summary',
         render: (summary, record) => (
-          !this.state.expand ? this.renderTestIssue(record) : this.renderNarrowIssue(record)
+          !this.state.expand ? this.renderWideIssue(record) : this.renderNarrowIssue(record)
         ),
       },
     ];

@@ -310,16 +310,16 @@ class ReportStory extends Component {
                 testCycleCaseES.map((item) => {
                   const { defects, subStepDefects } = item;
                   return (<div>{defects.concat(subStepDefects).length > 0 ? 
-                    defects.concat(subStepDefects).map((defect) => {
-                      const { issueInfosDTO } = defect;
-                      return (<div className="c7n-issue-show-container">
-                        <Link className="c7n-showId" to={issueLink(issueInfosDTO.issueId)} target="_blank">{issueInfosDTO.issueName}</Link>
+                    defects.concat(subStepDefects).map(defect => 
+                      // const { issueInfosDTO } = defect;
+                      (<div className="c7n-issue-show-container">
+                        <Link className="c7n-showId" to={issueLink(defect.defectLinkId)} target="_blank">{defect.defectName}</Link>
                         <div className="c7n-issue-status-icon">
                           <span style={{ 
-                            color: issueInfosDTO.issueColor, 
-                            borderColor: issueInfosDTO.issueColor }}
+                            color: defect.defectColor, 
+                            borderColor: defect.defectColor }}
                           >
-                            {issueInfosDTO.issueStatusName}
+                            {defect.defectStatus}
                           </span>
                         </div>
                         {defect.defectType === 'CASE_STEP' &&
@@ -331,8 +331,8 @@ class ReportStory extends Component {
                           borderRadius: '100px',
                         }}
                         ><FormattedMessage id="step" /></div>}
-                      </div>);
-                    }) : <div className="c7n-issue-show-container">－</div>}</div>);
+                      </div>),
+                    ) : <div className="c7n-issue-show-container">－</div>}</div>);
                 })
          
               } 
@@ -341,19 +341,19 @@ class ReportStory extends Component {
               {
                 testCycleCaseES.map((item) => {
                   const { defects, subStepDefects } = item;
-                  return (<div>{defects.concat(subStepDefects).map((defect, i) => {
-                    const { issueInfosDTO } = defect;               
-                    return (<span style={{
+                  return (<div>{defects.concat(subStepDefects).map((defect, i) => 
+                    // const { issueInfosDTO } = defect;               
+                    (<span style={{
                       fontSize: '13px',
                       color: '#3F51B5',                 
                     }}
                     >
                       {i === 0 ? null : '，'}
-                      <Link className="c7n-showId" to={issueLink(issueInfosDTO.issueId)} target="_blank">
-                        {issueInfosDTO.issueName}
+                      <Link className="c7n-showId" to={issueLink(defect.defectLinkId)} target="_blank">
+                        {defect.defectName}
                       </Link>                     
-                    </span>); 
-                  })}</div>);
+                    </span>), 
+                  )}</div>);
                 })}
             </div>);
         })}

@@ -549,11 +549,11 @@ class CycleHome extends Component {
                   color: 'white',
                 }}
                 >
-                  {defect.issueInfosDTO.issueName}
+                  {defect.defectName}
                 </div>))}
             </div>}
         >
-          {defects.map((defect, i) => defect.issueInfosDTO.issueName).join(',')}
+          {defects.map((defect, i) => defect.defectName).join(',')}
         </Tooltip>),
     },
     // {
@@ -819,7 +819,7 @@ class CycleHome extends Component {
                   </div>
                 </div>
                 <ShowCycleData data={currentCycle} />
-                <div style={{ display: 'flex' }}>
+                {/* <div style={{ display: 'flex' }}>
                   <SelectFocusLoad
                     label={<FormattedMessage id="cycle_executeBy" />}
                     request={getUsers} 
@@ -838,7 +838,7 @@ class CycleHome extends Component {
                       }}
                     />
                   </div>
-                </div>
+                </div> */}
                 <DragTable
                   pagination={executePagination}
                   loading={rightLoading}
