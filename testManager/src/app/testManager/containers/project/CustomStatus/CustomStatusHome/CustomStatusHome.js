@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { Table, Tabs, Button, Icon, Card, Select, Spin, Upload } from 'choerodon-ui';
-import PropTypes from 'prop-types';
+import { Table, Tabs, Button, Icon, Spin } from 'choerodon-ui';
+import { FormattedMessage } from 'react-intl';
 import { Page, Header, Content, stores } from 'choerodon-front-boot';
 import CreateStatus from '../../../../components/CreateStatus';
 import EditStatusSide from '../../../../components/EditStatusSide';
@@ -130,19 +130,19 @@ class CustomStatusHome extends Component {
     } = this.state;
     const that = this;
     const columns = [{
-      title: '类型',
+      title: <FormattedMessage id="status_type" />,
       dataIndex: 'statusName',
       key: 'statusName',
       filters: [],
       onFilter: (value, record) => record.statusName.indexOf(value) === 0,  
     }, {
-      title: '说明',
+      title: <FormattedMessage id="status_comment" />,
       dataIndex: 'description',
       key: 'description',
       filters: [],
       onFilter: (value, record) => record.description && record.description.indexOf(value) === 0,  
     }, {
-      title: '颜色',
+      title: <FormattedMessage id="status_color" />,
       dataIndex: 'statusColor',
       key: 'statusColor',
       render(statusColor) {
@@ -169,7 +169,7 @@ class CustomStatusHome extends Component {
                 }}
               />
               <Icon 
-                type="delete" 
+                type="delete_forever" 
                 style={{ cursor: 'pointer', marginLeft: 10 }} 
                 onClick={() => { that.deleteStatus(record); }} 
               />
@@ -192,18 +192,14 @@ class CustomStatusHome extends Component {
           onOk={() => { this.setState({ editVisible: false }); this.getList(statusType); }}
         />
 
-        <Header title="自定义状态">
+        <Header title={<FormattedMessage id="status_title" />}>
           <Button onClick={() => { this.setState({ createVisible: true }); }}>
             <Icon type="playlist_add" />
-            <span>创建状态</span>
+            <span><FormattedMessage id="status_create" /></span>
           </Button>
-          {/* <Button onClick={() => { this.setState({ createVisible: true }); }}>
-            <Icon type="playlist_add" />
-            <span>创建步骤状态</span>
-          </Button> */}
           <Button onClick={this.refresh}>
             <Icon type="autorenew icon" />
-            <span>刷新</span>
+            <span><FormattedMessage id="refresh" /></span>
           </Button>
         </Header>
         <Spin spinning={loading}>
@@ -211,21 +207,23 @@ class CustomStatusHome extends Component {
           // style={{
           //   padding: '0 0 10px 0',
           // }}
-            title={`项目"${AppState.currentMenuType.name}"的自定义状态`}
-            description="下表显示可用测试执行状态，测试步骤状态。"
+            title={<FormattedMessage id="status_custom_home_title" />}
+            description={<FormattedMessage id="status_custom_home_description" />}
             link="#"
           >
             <Tabs defaultActiveKey="CYCLE_CASE" onChange={this.handleTabChange}>
-              <TabPane tab="测试执行状态" key="CYCLE_CASE">
+              <TabPane tab={<FormattedMessage id="status_executeStatus" />} key="CYCLE_CASE">
                 <Table
+                  rowKey="statusId"
                   pagination={statusPagination}
                   columns={columns}
                   dataSource={statusList}
                   onChange={this.handleStatusTableChange}
                 />
               </TabPane>
-              <TabPane tab="测试步骤状态" key="CASE_STEP">
+              <TabPane tab={<FormattedMessage id="status_steptatus" />} key="CASE_STEP">
                 <Table
+                  rowKey="statusId"
                   pagination={statusPagination}
                   columns={columns}
                   dataSource={statusList}
@@ -240,8 +238,5 @@ class CustomStatusHome extends Component {
   }
 }
 
-CustomStatusHome.propTypes = {
-
-};
 
 export default CustomStatusHome;

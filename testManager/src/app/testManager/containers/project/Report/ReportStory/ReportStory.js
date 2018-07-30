@@ -4,10 +4,14 @@ import { Page, Header, Content, stores } from 'choerodon-front-boot';
 import { Link } from 'react-router-dom';
 import { Table, Menu, Dropdown, Button, Icon, Collapse } from 'choerodon-ui';
 import _ from 'lodash';
+import { FormattedMessage } from 'react-intl';
 import ReportSelectIssue from '../../../../components/ReportSelectIssue';
 import { getReportsFromStory } from '../../../../api/reportApi';
 import { getIssueStatus } from '../../../../api/agileApi';
 import { getStatusList } from '../../../../api/cycleApi';
+import { issueLink } from '../../../../common/utils';
+import { ReportStoryArea } from '../../../../components/ReportComponent';
+import ReportStoryStore from '../../../../store/project/report/ReportStoryStore';
 import './ReportStory.scss';
 
 const { AppState } = stores;
@@ -68,10 +72,11 @@ class ReportStory extends Component {
       getStatusList('CASE_STEP'),
       this.getReportsFromStory(),
     ]).then(([issueStatusList, statusList]) => {
+      // ReportStoryStore.setStatusList(statusList);  
       this.setState({
         issueStatusList,
         statusList,       
-        loading: false,
+        // loading: false,
         openId: {},
       });
     });
@@ -127,30 +132,36 @@ class ReportStory extends Component {
     const menu = (
       <Menu style={{ marginTop: 35 }}>
         <Menu.Item key="0">
-          <Link to={`/testManager/report/story?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`} >要求到缺陷</Link>
+          <Link to={`/testManager/report/story?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`} >
+            <FormattedMessage id="report_dropDown_demand" />
+          </Link>
         </Menu.Item>
         <Menu.Item key="1">
-          <Link to={`/testManager/report/test?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}>缺陷到要求</Link>
+          <Link to={`/testManager/report/test?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}>
+            <FormattedMessage id="report_dropDown_defect" /> 
+          </Link>
         </Menu.Item> 
         <Menu.Item key="2">
-          <Link to={`/testManager/report?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}>主页</Link>
+          <Link to={`/testManager/report?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}>
+            <FormattedMessage id="report_dropDown_home" /> 
+          </Link>
         </Menu.Item>     
       </Menu>
     );
     const columns = [{
       className: 'c7n-table-white',
-      title: '要求',
+      title: <FormattedMessage id="demand" />,
       dataIndex: 'issueId',
       key: 'issueId',
       width: '25%',
-      render(issueId, record) {
+      render(issue, record) {
         const { defectInfo, defectCount } = record;
-        const { issueStatusName, issueName, issueColor } = defectInfo;
+        const { issueStatusName, issueName, issueColor, issueId } = defectInfo;
         return (
           <div>
             <div className="c7n-collapse-header-container">
-              <div>{issueName}</div>
-              <div className="c7n-collapse-header-icon">                 
+              <Link className="c7n-showId" to={issueLink(issueId)} target="_blank">{issueName}</Link>
+              <div className="c7n-issue-status-icon">                 
                 <span style={{ color: issueColor, borderColor: issueColor }}>
                   {issueStatusName}
                 </span>
@@ -158,19 +169,20 @@ class ReportStory extends Component {
             
             </div>
             <div>
-              缺陷数: {defectCount}
+              <FormattedMessage id="report_defectCount" />: {defectCount}
             </div>
           </div>         
         );
       },
     }, {
       className: 'c7n-table-white',
-      title: '测试',
+      title: <FormattedMessage id="test" />,
       dataIndex: 'test',
       key: 'test',   
       width: '25%',
       render(test, record) {
-        const { issueStatus, linkedTestIssues, issueId } = record;
+        const { issueStatus, linkedTestIssues, defectInfo } = record;
+        const { issueId } = defectInfo;
         return (
           <Collapse 
             activeKey={openId[issueId]}
@@ -181,13 +193,18 @@ class ReportStory extends Component {
               linkedTestIssues.map((issue, i) => (<Panel
                 showArrow={false}
                 header={
-                  <div >                                 
+                  // 展开时加margin
+                  <div style={{ marginBottom: openId[issueId] && 
+                    openId[issueId].includes(issue.issueId.toString()) &&
+                    issue.testCycleCaseES.length > 1
+                    ? (issue.testCycleCaseES.length * 30) - 48 : 0 }}
+                  >                                 
                     <div style={{ display: 'flex', alignItems: 'center' }}>     
-                      <Icon type="navigate_next" className="c7n-collapse-icon" />               
-                      <div className="c7n-showId">{issue.issueName}</div>
-                         
+                      <Icon type="navigate_next" className="c7n-collapse-icon" />       
+                      <Link className="c7n-showId" to={issueLink(issue.issueId)} target="_blank">{issue.issueName}</Link>       
+                           
                     </div>
-                    <div style={{ fontSize: '13px' }}>{issue.summary}</div>
+                    <div className="c7n-report-summary">{issue.summary}</div>
                   </div>
                 }
                 key={issue.issueId}
@@ -198,14 +215,15 @@ class ReportStory extends Component {
       },
     }, {
       className: 'c7n-table-white',
-      title: '执行',
+      title: <FormattedMessage id="execute" />,
       dataIndex: 'cycleId',
       key: 'cycleId',
       width: '25%',
       render(cycleId, record) {
-        const { linkedTestIssues } = record;        
+        const { linkedTestIssues, defectInfo } = record;        
         return (<div>{linkedTestIssues.map((testIssue) => {
           const { testCycleCaseES, issueId } = testIssue;
+          
           // console.log()
           const totalExecute = testCycleCaseES.length;
           // const todoExecute = 0;
@@ -229,10 +247,10 @@ class ReportStory extends Component {
             const marginBottom = 
             Math.max((execute.defects.length + execute.subStepDefects.length) - 1, 0) * 20;
             return (
-              <div style={{ display: 'flex', margin: '5px 0', alignItems: 'center', marginBottom }} >
+              <div className="c7n-cycle-show-container">
                 <div
                   title={execute.cycleName}
-                  style={{ width: 80, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}
+                  style={{ width: 80, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', marginBottom }}
                 >
                   {execute.cycleName}
                 </div>
@@ -251,12 +269,15 @@ class ReportStory extends Component {
               </div>);
           });
           // window.console.log(executeStatus);
-          return openId[record.issueId] && openId[record.issueId]
-            .includes(issueId.toString()) ? <div style={{ minHeight: 30 }}> { caseShow }   </div> 
+          return openId[record.defectInfo.issueId] && openId[record.defectInfo.issueId]
+            .includes(issueId.toString()) ? <div 
+              style={{ minHeight: totalExecute === 0 ? 50 : 30 }}
+            > 
+              { caseShow } </div> 
             :
             (
-              <div>
-                <div>总共：{totalExecute}</div>
+              <div style={{ height: 50 }}>
+                <div><FormattedMessage id="report_total" />：{totalExecute}</div>
                 <div style={{ display: 'flex' }}>
                   {
                     Object.keys(executeStatus).map(key => (<div>
@@ -272,30 +293,33 @@ class ReportStory extends Component {
       },
     }, {
       className: 'c7n-table-white',
-      title: '缺陷',
+      title: <FormattedMessage id="bug" />,
       dataIndex: 'demand',
       key: 'demand',
       width: '25%',
       render(demand, record) {
-        const { linkedTestIssues } = record;        
+        const { linkedTestIssues, defectInfo } = record;        
         return (<div>{ linkedTestIssues.map((testIssue) => {
-          const { testCycleCaseES, issueId } = testIssue;
-          
-          
-          return (openId[record.issueId] && openId[record.issueId]
+          const { testCycleCaseES, issueId } = testIssue;         
+          if (testCycleCaseES.length === 0) {
+            return <div style={{ minHeight: 50 }} />;
+          }
+          return (openId[record.defectInfo.issueId] && openId[record.defectInfo.issueId]
             .includes(issueId.toString()) ? <div>
-              {                
+              {
                 testCycleCaseES.map((item) => {
                   const { defects, subStepDefects } = item;
                   return (<div>{defects.concat(subStepDefects).length > 0 ? 
-                    defects.concat(subStepDefects).map(defect => 
-                      (<div className="c7n-collapse-show-item">
-                        <div>{defect.defectName}</div>
-                        <div className="c7n-collapse-header-icon">                 
+                    defects.concat(subStepDefects).map((defect) => {
+                      const { issueInfosDTO } = defect;
+                      return (<div className="c7n-issue-show-container">
+                        <Link className="c7n-showId" to={issueLink(issueInfosDTO.issueId)} target="_blank">{issueInfosDTO.issueName}</Link>
+                        <div className="c7n-issue-status-icon">
                           <span style={{ 
-                            color: defect.defectColor, borderColor: defect.defectColor }}
+                            color: issueInfosDTO.issueColor, 
+                            borderColor: issueInfosDTO.issueColor }}
                           >
-                            {defect.defectStatus}
+                            {issueInfosDTO.issueStatusName}
                           </span>
                         </div>
                         {defect.defectType === 'CASE_STEP' &&
@@ -306,27 +330,30 @@ class ReportStory extends Component {
                           background: 'rgba(0,0,0,0.20)',
                           borderRadius: '100px',
                         }}
-                        >步骤</div>}
-                      </div>)) : <div className="c7n-collapse-show-item">－</div>}</div>);
+                        ><FormattedMessage id="step" /></div>}
+                      </div>);
+                    }) : <div className="c7n-issue-show-container">－</div>}</div>);
                 })
          
               } 
             </div> :            
-            <div>
+            <div style={{ minHeight: 50 }}>
               {
                 testCycleCaseES.map((item) => {
                   const { defects, subStepDefects } = item;
-                  return (<div>{defects.concat(subStepDefects).map((defect, i) => (
-                    <span style={{
+                  return (<div>{defects.concat(subStepDefects).map((defect, i) => {
+                    const { issueInfosDTO } = defect;               
+                    return (<span style={{
                       fontSize: '13px',
                       color: '#3F51B5',                 
                     }}
                     >
                       {i === 0 ? null : '，'}
-                      <span>
-                        {defect.defectName}
-                      </span>
-                    </span>))}</div>);
+                      <Link className="c7n-showId" to={issueLink(issueInfosDTO.issueId)} target="_blank">
+                        {issueInfosDTO.issueName}
+                      </Link>                     
+                    </span>); 
+                  })}</div>);
                 })}
             </div>);
         })}
@@ -336,13 +363,14 @@ class ReportStory extends Component {
 
     return (
       <Page className="c7n-report-story">
-        <Header title="要求 -> 测试 -> 执行 -> 缺陷">
-          <Dropdown overlay={menu} trigger="click">
+        <Header title={<FormattedMessage id="report_demandToDefect" />}>
+          <Dropdown overlay={menu} trigger={['click']}>
             <a className="ant-dropdown-link" href="#">
-          切换报表 <Icon type="arrow_drop_down" />
+              <FormattedMessage id="report_switch" /> 
+              <Icon type="arrow_drop_down" />
             </a>
           </Dropdown>
-          <Button 
+          <Button
             style={{ marginLeft: 30 }}
             onClick={() => {
               this.setState({
@@ -351,7 +379,9 @@ class ReportStory extends Component {
             }}
           >
             <Icon type="open_in_new" />
-            <span>选择问题</span>
+            <span>
+              <FormattedMessage id="report_chooseQuestion" />
+            </span>
           </Button>
           {/* <Dropdown overlay={menu} trigger="click">
             <a className="ant-dropdown-link" href="#">
@@ -360,16 +390,17 @@ class ReportStory extends Component {
           </Dropdown>    */}
           <Button onClick={this.getInfo} style={{ marginLeft: 30 }}>
             <Icon type="autorenew icon" />
-            <span>刷新</span>
+            <span>
+              <FormattedMessage id="refresh" />
+            </span>
           </Button>
         </Header>
         <Content
         // style={{
         //   padding: '0 0 10px 0',
         // }}
-          title={`项目"${AppState.currentMenuType.name}"的报表`}
-          description="两种可跟踪性报告可用：要求 -> 测试 -> 执行 -> 缺陷，缺陷 -> 执行 -> 测试 -> 。
-        点击您需要查看的报告类型可以查看具体的详细内容。"
+          title={<FormattedMessage id="report_content_title" />}
+          description={<FormattedMessage id="report_content_description" />}
           link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management/test-report/report/"
         >
           <div style={{ display: 'flex' }} />
@@ -389,6 +420,7 @@ class ReportStory extends Component {
             dataSource={reportList}
             onChange={this.handleTableChange}
           />
+          {/* <ReportStoryArea demands={reportList} /> */}
         </Content>
       </Page>
     );

@@ -1,6 +1,7 @@
 .c7n-report-test {
     .page-head-title {
-        width: 300px;
+        width: auto;
+        margin-right: 50px;
     }
     .page-head .ant-btn:not(.back-btn) {
         line-height: 10px;
@@ -44,8 +45,6 @@
         display: flex;
         align-items: center;
         user-select: none;
-        height: 20px;
-        margin-top: 5px;
         .c7n-collapse-header-icon {
             span {
                 margin-left: 10px;
@@ -73,10 +72,32 @@
         user-select: none;
         text-align: center;
     }
+    .c7n-cycle-show-container {
+        height: 50px;
+        display: flex;
+        padding: 10px 0 20px 0;
+        align-items: flex-start;
+    }
+    .c7n-issue-show-container {
+        height: 50px;
+        padding: 6px 0 0 0;
+    }
     .c7n-showId {
         user-select: none;
         font-size: 13px;
+        width: 110px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
         // color: #303F9F;
+    }
+    .c7n-report-summary {
+        width: 160px;
+        margin-top: 5px;
+        font-size: 13px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
     tr {
         vertical-align: top;

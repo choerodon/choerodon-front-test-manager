@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Button, Select, Icon, Modal, Upload, Spin } from 'choerodon-ui';
 import { Content } from 'choerodon-front-boot';
 import _ from 'lodash';
+import { FormattedMessage } from 'react-intl';
 import { editCycleSide, deleteAttachment, removeDefect, addDefects } from '../../api/CycleExecuteApi';
 import { getIssueList } from '../../api/agileApi';
 import './EditTestDetail.less';
@@ -246,7 +247,7 @@ class EditTestDetail extends Component {
       </Option>));
     return (
       <Sidebar
-        title="测试详细信息"
+        title={<FormattedMessage id="execute_stepDetail" />}
         visible={visible}
         onOk={this.onOk}
         onCancel={onCancel}
@@ -255,13 +256,13 @@ class EditTestDetail extends Component {
           style={{
             padding: '0 0 10px 0',
           }}
-          title={`修改“${testStep}”的信息`}
+          title={<FormattedMessage id="execute_stepEditTitle" values={{ testStep }} />}
           description="您可以修改一个测试步骤的详细信息。"
           link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management/case-management/update-list/"
         >
           <Spin spinning={loading}>
             <Select
-              label="状态"             
+              label={<FormattedMessage id="status" />}           
               value={stepStatus}
               style={{ width: 500 }}
               onChange={(value) => {
@@ -273,17 +274,17 @@ class EditTestDetail extends Component {
               {options}
             </Select>
             <br />
-            <Select
-              
+            <Select             
               style={{ width: 500 }}
-              label="缺陷"        
+              label={<FormattedMessage id="bug" />}        
               value={defectIds}
               onChange={this.handleDefectsChange}
-              allowClear
+              // allowClear
               loading={selectLoading}
               filter
               mode="multiple"
-              filterOption={false}
+              filterOption={false}                        
+
               onFilterChange={(value) => {
                 // window.console.log('filter');
                 this.setState({
@@ -310,13 +311,13 @@ class EditTestDetail extends Component {
             >
               {defectsOptions}
             </Select>
-            <div style={styles.editLabel}>附件</div>
+            <div style={styles.editLabel}><FormattedMessage id="attachment" /></div>
             <Upload {...props} fileList={fileList}>
               <Button className="c7n-EditTestDetail-uploadBtn">
-                <Icon type="file_upload" /> 上传附件
+                <Icon type="file_upload" /> <FormattedMessage id="upload_attachment" />
               </Button>
             </Upload>
-            <div style={styles.editLabel}>注释</div>
+            <div style={styles.editLabel}><FormattedMessage id="execute_comment" /></div>
             {reset && <WYSIWYGEditor
               // value={comment}
               value={delta}

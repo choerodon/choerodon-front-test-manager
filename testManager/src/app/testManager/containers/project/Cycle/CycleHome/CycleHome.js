@@ -1,22 +1,24 @@
+
 import React, { Component } from 'react';
 import { observer } from 'mobx-react';
 import { Page, Header, Content, stores } from 'choerodon-front-boot';
 import { Tooltip, Table, Button, Icon, Input, Tree, Spin, Modal } from 'choerodon-ui';
+import { Link } from 'react-router-dom';
 import _ from 'lodash';
+import { FormattedMessage } from 'react-intl';
 import moment from 'moment';
-import 'moment/locale/zh-cn';
 import './CycleHome.scss';
+import { getUsers } from '../../../../api/CommonApi';
 import { getCycles, deleteExecute, getCycleById, editCycleExecute, clone, addFolder, getStatusList } from '../../../../api/cycleApi';
 import { TreeTitle, CreateCycle, EditCycle, CreateCycleExecute, ShowCycleData } from '../../../../components/CycleComponent';
-import { RichTextShow } from '../../../../components/CommonComponent';
-import { delta2Html, delta2Text } from '../../../../common/utils';
-import CycleStore from '../../../../store/project/clcle/CycleStore';
+import DragTable from '../../../../components/DragTable';
+import { RichTextShow, SelectFocusLoad } from '../../../../components/CommonComponent';
+import { delta2Html, delta2Text, issueLink } from '../../../../common/utils';
+import CycleStore from '../../../../store/project/cycle/CycleStore';
+
 
 const { AppState } = stores;
 const { confirm } = Modal;
-let currentDropOverItem;
-let currentDropSide;
-let dropItem;
 const styles = {
   statusOption: {
     width: 60,
@@ -28,23 +30,6 @@ const styles = {
 };
 
 const dataList = [];
-function dropSideClassName(side) {
-  return `drop-row-${side}`;
-}
-function addDragClass(currentTarget, dropSide) {
-  if (dropSide) {
-    currentDropOverItem = currentTarget;
-    currentDropSide = dropSide;
-    currentDropOverItem.classList.add(dropSideClassName(currentDropSide));
-  }
-}
-
-function removeDragClass() {
-  if (currentDropOverItem && currentDropSide) {
-    currentDropOverItem.classList.remove(dropSideClassName(currentDropSide));
-  }
-}
-
 
 const TreeNode = Tree.TreeNode;
 
@@ -56,8 +41,8 @@ class CycleHome extends Component {
     EditCycleVisible: false,
     loading: true,
     leftVisible: true,
+    rightLoading: false,
     sideVisible: false,
-    dragData: null,
     testList: [],
     // currentCycle: {},
     currentEditValue: {},
@@ -69,6 +54,7 @@ class CycleHome extends Component {
       pageSize: 5,
     },
     statusList: [],
+    filters: {},
   };
   componentDidMount() {
     this.refresh();
@@ -80,119 +66,10 @@ class CycleHome extends Component {
       autoExpandParent: false,
     });
   }
-
-  getParentKey = (key, tree) => key.split('-').slice(0, -1).join('-')
-
-
-  loadCycle = (selectedKeys, { selected, selectedNodes, node, event }, flag) => {
-    // window.console.log(selectedNodes, node, event);
-    CycleStore.setSelectedKeys(selectedKeys);
-    const { data } = node.props;
-    const { executePagination } = this.state;
-    if (data.cycleId) {
-      if (!flag) {
-        this.setState({
-          rightLoading: true,
-          // currentCycle: data,
-        });
-      }  
-      
-      CycleStore.setCurrentCycle(data);
-      // window.console.log(data);
-      getStatusList('CYCLE_CASE').then((statusList) => {
-        this.setState({ statusList });
-      });
-      getCycleById({
-        page: executePagination.current - 1,
-        size: executePagination.pageSize,
-      }, data.cycleId).then((cycle) => {
-        this.setState({
-          rightLoading: false,
-          testList: cycle.content,
-          executePagination: {
-            current: executePagination.current,
-            pageSize: executePagination.pageSize,
-            total: cycle.totalElements,
-          },
-        });
-        // window.console.log(cycle);
-      });
-    }
-  }
-  // 拖拽离开目标
-  handleDragLeave() {
-    removeDragClass();
-    dropItem = null;
-  }
-
-  // 拖拽开始
-  handleDragtStart(dragData, e) {
-    e.dataTransfer.setData('text', 'choerodon');
-    document.body.ondrop = function (event) {
-      event.preventDefault();
-      event.stopPropagation();
-    };
-    this.setState({
-      dragData,
-    });
-  }
-
-  // 拖拽结束
-  handleDragEnd = () => {
-    removeDragClass();
-    if (dropItem) {
-      this.handleDrop(dropItem);
-    }
-    this.setState({
-      dragData: null,
-    });
-  };
-
-  // 拖拽目标位置
-  handleDragOver(record, e) {
-    e.preventDefault();
-
-    dropItem = record;
-    const { currentTarget, pageY, dataTransfer } = e;
-    const { top, height } = currentTarget.getBoundingClientRect();
-    let before = height / 2;
-    let after = before;
-    let dropSide;
-
-    before = height / 3;
-    after = before * 2;
-    dropSide = 'in';
-    dataTransfer.dropEffect = 'copy';
-
-    const y = pageY - top;
-    if (y < before) {
-      dropSide = 'before';
-      dataTransfer.dropEffect = 'move';
-    } else if (y >= after) {
-      dropSide = 'after';
-      dataTransfer.dropEffect = 'move';
-    }
-
-    removeDragClass();
-    addDragClass(currentTarget, dropSide);
-  }
-
-  // 拖放
-  handleDrop(record) {
-    // const { dragData, testList } = this.state;
-
-    // this.setState({
-    //   testList: [record, dragData],
-    // });
-    removeDragClass();
-    const { dragData, testList } = this.state;
-    const sourceIndex = _.findIndex(testList, { executeId: dragData.executeId });
-    const targetIndex = _.findIndex(testList, { executeId: record.executeId });
-    if (sourceIndex === targetIndex) {
-      return;
-    }
+  onDragEnd = (sourceIndex, targetIndex) => {
     let lastRank = null;
     let nextRank = null;
+    const { testList } = this.state;
     if (sourceIndex < targetIndex) {
       lastRank = testList[targetIndex].rank;
       nextRank = testList[targetIndex + 1] ? testList[targetIndex + 1].rank : null;
@@ -200,14 +77,9 @@ class CycleHome extends Component {
       lastRank = testList[targetIndex - 1] ? testList[targetIndex - 1].rank : null;
       nextRank = testList[targetIndex].rank;
     }
-    window.console.log(lastRank, nextRank);
-    // const [removed] = testList.splice(targetIndex, 1);
-    // testList.splice(sourceIndex, 0, removed);
-    this.setState({
-      // testList,
-      dragData: null,
-    });
-    const temp = { ...dragData };
+    // window.console.log(sourceIndex, targetIndex, lastRank, nextRank);
+    const source = testList[sourceIndex];
+    const temp = { ...source };
     delete temp.defects;
     delete temp.caseAttachment;
     delete temp.testCycleCaseStepES;
@@ -235,35 +107,53 @@ class CycleHome extends Component {
             total: cycle.totalElements,
           },
         });
-        window.console.log(cycle);
+        // window.console.log(cycle);
       });
     });
-    // window.console.log(record, dragData, currentDropSide);
+  }
+  getParentKey = (key, tree) => key.split('-').slice(0, -1).join('-')
+  loadCycle = (selectedKeys, { selected, selectedNodes, node, event } = {}, flag) => {
+    // window.console.log(selectedNodes, node, event);
+    if (selectedKeys) {
+      CycleStore.setSelectedKeys(selectedKeys);
+    }
+    const { executePagination, filters } = this.state;
+    const data = node ? node.props.data : CycleStore.getCurrentCycle;
+    if (data.cycleId) {
+      if (!flag) {
+        this.setState({
+          rightLoading: true,
+          // currentCycle: data,
+        });
+      }
+
+      CycleStore.setCurrentCycle(data);
+      // window.console.log(data);
+      getStatusList('CYCLE_CASE').then((statusList) => {
+        this.setState({ statusList });
+      });
+      getCycleById({
+        page: executePagination.current - 1,
+        size: executePagination.pageSize,
+      }, data.cycleId, 
+      { ...filters,
+        lastUpdatedBy: [Number(this.lastUpdatedBy)],
+        assignedTo: [Number(this.assignedTo)], 
+      }).then((cycle) => {
+        this.setState({
+          rightLoading: false,
+          testList: cycle.content,
+          executePagination: {
+            current: executePagination.current,
+            pageSize: executePagination.pageSize,
+            total: cycle.totalElements,
+          },
+        });
+        // window.console.log(cycle);
+      });
+    }
   }
 
-  handleRow = (record) => {
-    // const droppable = this.checkDroppable(record);
-    const rowProps = {
-      draggable: true,
-      onDragLeave: this.handleDragLeave,
-      onDragOver: this.handleDragOver.bind(this, record),
-      onDrop: this.handleDrop.bind(this, record),
-    };
-    return rowProps;
-  };
-
-  handleCell = (record) => {
-    const cellProps = {
-      onDragEnd: this.handleDragEnd,
-    };
-    Object.assign(cellProps, {
-      draggable: true,
-      onDragStart: this.handleDragtStart.bind(this, record),
-      className: 'drag-cell',
-    });
-
-    return cellProps;
-  };
 
   generateList = (data) => {
     for (let i = 0; i < data.length; i += 1) {
@@ -281,9 +171,9 @@ class CycleHome extends Component {
     const { executePagination } = this.state;
     confirm({
       width: 560,
-      title: '删除执行',
+      title: Choerodon.getMessage('确认删除吗?', 'Confirm delete'),
       content: <div style={{ marginBottom: 32 }}>
-        这个执行将会被彻底删除。包括所有附件和评论。
+        {Choerodon.getMessage('当你点击删除后，该条数据将被永久删除，不可恢复!', 'When you click delete, after which the data will be permanently deleted and irreversible!')}
       </div>,
       onOk() {
         that.setState({
@@ -292,21 +182,6 @@ class CycleHome extends Component {
         deleteExecute(executeId)
           .then((res) => {
             that.refresh();
-            // getCycleById({
-            //   page: executePagination.current - 1,
-            //   size: executePagination.pageSize,
-            // }, cycleId).then((cycle) => {
-            //   that.setState({
-            //     rightLoading: false,
-            //     testList: cycle.content,
-            //     executePagination: {
-            //       current: executePagination.current,
-            //       pageSize: executePagination.pageSize,
-            //       total: cycle.totalElements,
-            //     },
-            //   });
-            //   window.console.log(cycle);
-            // });
           }).catch(() => {
             Choerodon.prompt('网络异常');
             that.setState({
@@ -343,19 +218,23 @@ class CycleHome extends Component {
       this.loadCycle(selectedKeys, { node: { props: { data: currentCycle } } }, true);
     }
   }
+
   filterCycle = (e) => {
-    const value = e.target.value;
-    const expandedKeys = dataList.map((item) => {
-      if (item.title.indexOf(value) > -1) {
-        return this.getParentKey(item.key, CycleStore.getTreeData);
-      }
-      return null;
-    }).filter((item, i, self) => item && self.indexOf(item) === i);
-    CycleStore.setExpandedKeys(expandedKeys);
+    const value = e.target.value;    
+    window.console.log(value);
+    if (value !== '') {
+      const expandedKeys = dataList.map((item) => {
+        if (item.title.indexOf(value) > -1) {
+          return this.getParentKey(item.key, CycleStore.getTreeData);
+        }
+        return null;
+      }).filter((item, i, self) => item && self.indexOf(item) === i);
+      CycleStore.setExpandedKeys(expandedKeys);
+    }
     this.setState({
       searchValue: value,
       autoExpandParent: true,
-    });
+    });   
   }
   callback = (item, code) => {
     switch (code) {
@@ -370,13 +249,13 @@ class CycleHome extends Component {
         break;
       }
       case 'ADD_FOLDER': {
-        CycleStore.addItemByParentKey(item.key, { ...item, ...{ title: '新文件夹', key: `${item.key}-ADD_FOLDER`, type: 'ADD_FOLDER' } });
+        CycleStore.addItemByParentKey(item.key, { ...item, ...{ title: Choerodon.getMessage('新文件夹', 'New folder'), key: `${item.key}-ADD_FOLDER`, type: 'ADD_FOLDER' } });
         // 自动展开当前项
         const expandedKeys = CycleStore.getExpandedKeys;
         if (expandedKeys.indexOf(item.key) === -1) {
           expandedKeys.push(item.key);
         }
-        CycleStore.setExpandedKeys(expandedKeys); 
+        CycleStore.setExpandedKeys(expandedKeys);
         break;
       }
       case 'EDIT_CYCLE': {
@@ -402,18 +281,15 @@ class CycleHome extends Component {
         loading: true,
       });
       clone(item.cycleId, { cycleName: value }, type).then((data) => {
+        this.setState({
+          loading: false,
+        });
         if (data.failed) {
           Choerodon.prompt('名字重复');
-          this.setState({
-            loading: false,
-          });
           CycleStore.removeAdding();
         } else {
-          this.setState({
-            loading: false,
-          });
           this.refresh();
-        }    
+        }
       }).catch(() => {
         Choerodon.prompt('网络出错');
         this.setState({
@@ -429,7 +305,7 @@ class CycleHome extends Component {
       loading: true,
     });
     // window.console.log(this.state.currentCycle);
-    
+
     addFolder({
       type: 'folder',
       cycleName: value,
@@ -461,13 +337,19 @@ class CycleHome extends Component {
     window.console.log(pagination, filters, sorter);
     if (pagination.current) {
       this.setState({
+        rightLoading: true,
         executePagination: pagination,
+        filters,
       });
       const currentCycle = CycleStore.getCurrentCycle;
       getCycleById({
         size: pagination.pageSize,
         page: pagination.current - 1,
-      }, currentCycle.cycleId).then((cycle) => {
+      }, currentCycle.cycleId, 
+      { ...filters,
+        lastUpdatedBy: [Number(this.lastUpdatedBy)],
+        assignedTo: [Number(this.assignedTo)], 
+      }).then((cycle) => {
         this.setState({
           rightLoading: false,
           testList: cycle.content,
@@ -489,7 +371,7 @@ class CycleHome extends Component {
     const beforeStr = item.title.substr(0, index);
     const afterStr = item.title.substr(index + searchValue.length);
     const icon = (<Icon
-      style={{ color: '#00A48D' }}
+      style={{ color: 'rgba(0,0,0,0.65)' }}
       type={expandedKeys.includes(item.key) ? 'folder_open2' : 'folder_open'}
     />);
     if (type === 'CLONE_FOLDER' || type === 'CLONE_CYCLE') {
@@ -564,6 +446,7 @@ class CycleHome extends Component {
   });
 
   render() {
+    window.console.log('render');
     const { CreateCycleExecuteVisible, CreateCycleVisible, EditCycleVisible,
       loading, currentEditValue, testList, rightLoading,
       searchValue,
@@ -581,33 +464,44 @@ class CycleHome extends Component {
 
     const columns = [{
       title: 'ID',
-      dataIndex: 'issueId',
-      key: 'issueId',
-      onCell: this.handleCell,             
-      width: '10%',     
-      // filters: [],   
+      dataIndex: 'issueName',
+      key: 'issueName',
+      flex: 1,
+      // filters: [],
       // onFilter: (value, record) => 
       //   record.issueInfosDTO && record.issueInfosDTO.issueName.indexOf(value) === 0,  
       render(issueId, record) {
-        const { issueInfosDTO } = record;     
-        return (<div
-          title={issueInfosDTO && issueInfosDTO.issueName}
-          style={{ 
-            width: 100, 
-            overflow: 'hidden', 
-            whiteSpace: 'nowrap', 
-            textOverflow: 'ellipsis' }}
-        >
-          {issueInfosDTO && issueInfosDTO.issueName}
-        </div>);
+        const { issueInfosDTO } = record;
+        return (
+          <Tooltip 
+            title={issueInfosDTO && 
+            <div>
+              <div>{issueInfosDTO.issueName}</div>
+              <div>{issueInfosDTO.summary}</div>
+            </div>}
+          >
+            <Link
+              style={{
+                width: 100,
+                overflow: 'hidden',
+                whiteSpace: 'nowrap',
+                textOverflow: 'ellipsis',
+              }}
+              to={issueLink(issueInfosDTO && issueInfosDTO.issueId)}
+              target="_blank"
+            >
+              {issueInfosDTO && issueInfosDTO.issueName}
+            </Link>
+          </Tooltip>
+        );
       },
     }, {
-      title: '状态',
+      title: <FormattedMessage id="status" />,
       dataIndex: 'executionStatus',
       key: 'executionStatus',
-      // filters: statusList.map(status => ({ text: status.statusName, value: status.statusId })),
+      filters: statusList.map(status => ({ text: status.statusName, value: status.statusId })),
       // onFilter: (value, record) => record.executionStatus === value,  
-      width: '9%',
+      flex: 1,
       render(executionStatus) {
         const statusColor = _.find(statusList, { statusId: executionStatus }) ?
           _.find(statusList, { statusId: executionStatus }).statusColor : '';
@@ -617,15 +511,15 @@ class CycleHome extends Component {
         </div>);
       },
     }, {
-      title: '摘要',
+      title: <FormattedMessage id="cycle_comment" />,
       dataIndex: 'comment',
       key: 'comment',
-      width: '10%',
+      filters: [],
+      flex: 1,
       render(comment) {
         return (
           <Tooltip title={<RichTextShow data={delta2Html(comment)} />}>
             <div
-              title={delta2Text(comment)}
               style={{
                 width: 65,
                 overflow: 'hidden',
@@ -640,36 +534,26 @@ class CycleHome extends Component {
       },
     },
     {
-      title: '缺陷',
+      title: <FormattedMessage id="bug" />,
       dataIndex: 'defects',
       key: 'defects',
-      width: '10%',
+      flex: 1,
       render: defects =>
-        (<Tooltip title={
-          <div>
-            {defects.map((defect, i) => (
-              <div style={{
-                fontSize: '13px',
-                color: 'white',
-              }}
-              >
-                {/* {i === 0 ? null : '，'} */}
-                <span>
-                  {defect.defectName}
-                </span>
-              </div>))}
-          </div>}
+        (<Tooltip
+          placement="topLeft"
+          title={
+            <div>
+              {defects.map((defect, i) => (
+                <div style={{
+                  fontSize: '13px',
+                  color: 'white',
+                }}
+                >
+                  {defect.issueInfosDTO.issueName}
+                </div>))}
+            </div>}
         >
-          <div
-            style={{
-              width: 100,         
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-            }}        
-          >
-            {defects.map((defect, i) => (defect.defectName)).join('，')}
-          </div>
+          {defects.map((defect, i) => defect.issueInfosDTO.issueName).join(',')}
         </Tooltip>),
     },
     // {
@@ -683,16 +567,17 @@ class CycleHome extends Component {
     //   key: 'statusName',
     // }, 
     {
-      title: '执行方',
+      title: <FormattedMessage id="cycle_executeBy" />,
       dataIndex: 'assignedUserRealName',
       key: 'assignedUserRealName',
-      width: '10%',
+      flex: 1,
       render(assignedUserRealName) {
-        return (<div style={{ 
+        return (<div style={{
           // width: 85, 
-          overflow: 'hidden', 
-          whiteSpace: 'nowrap', 
-          textOverflow: 'ellipsis' }}
+          overflow: 'hidden',
+          whiteSpace: 'nowrap',
+          textOverflow: 'ellipsis',
+        }}
         >
           {assignedUserRealName}
         </div>);
@@ -714,31 +599,33 @@ class CycleHome extends Component {
       //   </div>);
       // },
     }, {
-      title: '执行时间',
+      title: <FormattedMessage id="cycle_executeTime" />,
       dataIndex: 'lastUpdateDate',
       key: 'lastUpdateDate',
-      width: '10%',
+      flex: 1,
       render(lastUpdateDate) {
-        return (<div style={{ 
-          width: 85, 
-          overflow: 'hidden', 
-          whiteSpace: 'nowrap', 
-          textOverflow: 'ellipsis' }}
+        return (<div style={{
+          width: 85,
+          overflow: 'hidden',
+          whiteSpace: 'nowrap',
+          textOverflow: 'ellipsis',
+        }}
         >
           {lastUpdateDate && moment(lastUpdateDate).format('D/MMMM/YY')}
         </div>);
       },
     }, {
-      title: '被指定人',
+      title: <FormattedMessage id="cycle_assignedTo" />,
       dataIndex: 'reporterRealName',
       key: 'reporterRealName',
-      width: '10%',
+      flex: 1,
       render(reporterRealName) {
-        return (<div style={{ 
-          width: 60, 
-          overflow: 'hidden', 
-          whiteSpace: 'nowrap', 
-          textOverflow: 'ellipsis' }}
+        return (<div style={{
+          width: 60,
+          overflow: 'hidden',
+          whiteSpace: 'nowrap',
+          textOverflow: 'ellipsis',
+        }}
         >
           {reporterRealName}
         </div>);
@@ -762,7 +649,7 @@ class CycleHome extends Component {
     }, {
       title: '',
       key: 'action',
-      // width: '20%',
+      flex: 1,
       render(text, record) {
         return (
           record.projectId !== 0 &&
@@ -777,7 +664,7 @@ class CycleHome extends Component {
               }}
             />
             <Icon
-              type="delete"
+              type="delete_forever"
               style={{ cursor: 'pointer', marginLeft: 10 }}
               onClick={() => {
                 that.deleteExecute(record);
@@ -789,15 +676,18 @@ class CycleHome extends Component {
     }];
     return (
       <Page className="c7n-cycle">
-        <Header title="测试循环">
+        <Header title={<FormattedMessage id="cycle_name" />}>
           <Button onClick={this.refresh}>
             <Icon type="autorenew icon" />
-            <span>刷新</span>
+            <span>
+              <FormattedMessage id="refresh" />
+            </span>
           </Button>
         </Header>
         <Content
-          title={`项目"${AppState.currentMenuType.name}"的循环摘要`}
-          description="循环摘要使用树状图查看本项目中不同版本锁对应的测试情况。"
+          title={<FormattedMessage id="cycle_title" />}
+          description={<FormattedMessage id="cycle_description" />}
+          style={{ paddingBottom: 0 }}
         >
           <Spin spinning={loading}>
             <CreateCycleExecute
@@ -814,22 +704,7 @@ class CycleHome extends Component {
                 getStatusList('CYCLE_CASE').then((List) => {
                   this.setState({ statusList: List });
                 });
-                this.refresh();
-                // getCycleById({
-                //   page: executePagination.current - 1,
-                //   size: executePagination.pageSize,
-                // }, currentCycle.cycleId).then((cycle) => {
-                //   this.setState({
-                //     rightLoading: false,
-                //     testList: cycle.content,
-                //     executePagination: {
-                //       current: executePagination.current,
-                //       pageSize: executePagination.pageSize,
-                //       total: cycle.totalElements,
-                //     },
-                //   });
-                //   // window.console.log(cycle);
-                // });
+                this.refresh();                
               }}
             />
             <CreateCycle
@@ -870,14 +745,15 @@ class CycleHome extends Component {
                           sideVisible: false,
                         });
                       }}
-                    >测试循环</p>
+                    ><FormattedMessage id="cycle_name" />
+                    </p>
                   )}
                 </div>
               </div>
               <div className={this.state.leftVisible ? 'c7n-ch-left' : 'c7n-ch-hidden'}>
                 <div className="c7n-chl-head">
                   <div className="c7n-chlh-search">
-                    <Input prefix={prefix} placeholder="&nbsp;过滤" onChange={this.filterCycle} />
+                    <Input prefix={prefix} placeholder="过滤" onChange={this.filterCycle} />
                   </div>
                   <div className="c7n-chlh-button">
                     <div
@@ -907,7 +783,7 @@ class CycleHome extends Component {
                     </div>
                   </div>
                 </div>
-                <div className="c7n-chlh-tree">
+                <div className="c7n-chlh-tree" style={{ height: window.innerHeight - 234 }}>
                   <Tree
                     selectedKeys={selectedKeys}
                     expandedKeys={expandedKeys}
@@ -920,10 +796,12 @@ class CycleHome extends Component {
                   </Tree>
                 </div>
               </div>
+              <div style={{ width: 1, background: 'rgba(0,0,0,0.26)' }} />
               {cycleId && <div className="c7n-ch-right" >
-                <div style={{ display: 'flex' }}>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
                   <div>
-                    循环名称：<span style={{ color: '#3F51B5' }}>{title}</span>
+                    <FormattedMessage id="cycle_cycleName" />
+                    ：<span style={{ color: '#3F51B5' }}>{title}</span>
                   </div>
                   <div style={{ flex: 1, visiblity: 'hidden' }} />
                   <div>
@@ -934,18 +812,40 @@ class CycleHome extends Component {
                       }}
                     >
                       <Icon type="playlist_add" />
-                      <span>添加执行</span>
+                      <span>
+                        <FormattedMessage id="cycle_addCycle" />
+                      </span>
                     </Button>
                   </div>
                 </div>
                 <ShowCycleData data={currentCycle} />
-                <Table
+                <div style={{ display: 'flex' }}>
+                  <SelectFocusLoad
+                    label={<FormattedMessage id="cycle_executeBy" />}
+                    request={getUsers} 
+                    onChange={(value) => { 
+                      this.lastUpdatedBy = value;   
+                      this.loadCycle();
+                    }}
+                  />
+                  <div style={{ marginLeft: 20 }}>                
+                    <SelectFocusLoad
+                      label={<FormattedMessage id="cycle_assignedTo" />}
+                      request={getUsers} 
+                      onChange={(value) => { 
+                        this.assignedTo = value;
+                        this.loadCycle(); 
+                      }}
+                    />
+                  </div>
+                </div>
+                <DragTable
                   pagination={executePagination}
                   loading={rightLoading}
-                  columns={columns}
-                  dataSource={testList}
                   onChange={this.handleExecuteTableChange}
-                  onRow={this.handleRow}
+                  dataSource={testList}
+                  columns={columns}
+                  onDragEnd={this.onDragEnd}
                 />
               </div>}
             </div>

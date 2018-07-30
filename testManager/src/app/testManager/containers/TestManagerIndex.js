@@ -2,6 +2,10 @@ import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 import { inject } from 'mobx-react';
 import { asyncLocaleProvider, asyncRouter, nomatch } from 'choerodon-front-boot';
+import 'moment/locale/zh-cn';
+import 'moment/locale/en-nz';
+import moment from 'moment';
+import '../assets/index.scss';
 
 const cycleIndex = asyncRouter(() => import('./project/Cycle'));
 const CustomStatusIndex = asyncRouter(() => import('./project/CustomStatus'));
@@ -13,6 +17,10 @@ class TestManagerIndex extends React.Component {
   render() {
     const { match, AppState } = this.props;
     const langauge = AppState.currentLanguage;
+    // const langauge = 'en_US';
+    if (langauge === 'zh_CN') {
+      moment.locale('zh-cn');
+    }    
     const IntlProviderAsync = asyncLocaleProvider(langauge, () => import(`../locale/${langauge}`));
     return (
       <IntlProviderAsync>
