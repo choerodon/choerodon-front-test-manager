@@ -499,7 +499,7 @@ class CycleHome extends Component {
       title: <FormattedMessage id="status" />,
       dataIndex: 'executionStatus',
       key: 'executionStatus',
-      filters: statusList.map(status => ({ text: status.statusName, value: status.statusId })),
+      // filters: statusList.map(status => ({ text: status.statusName, value: status.statusId })),
       // onFilter: (value, record) => record.executionStatus === value,  
       flex: 1,
       render(executionStatus) {
@@ -514,7 +514,7 @@ class CycleHome extends Component {
       title: <FormattedMessage id="cycle_comment" />,
       dataIndex: 'comment',
       key: 'comment',
-      filters: [],
+      // filters: [],
       flex: 1,
       render(comment) {
         return (
