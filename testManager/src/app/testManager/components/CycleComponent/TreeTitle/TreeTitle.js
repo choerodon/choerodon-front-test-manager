@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { observer } from 'mobx-react';
-import { Menu, Input, Dropdown, Button } from 'choerodon-ui';
+import { Menu, Input, Dropdown, Button, Popover } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 import './TreeTitle.scss';
 import { editFolder, deleteCycleOrFolder } from '../../../api/cycleApi';
@@ -119,10 +119,22 @@ class TreeTitle extends Component {
     };
 
     const { editing } = this.state;
-    const { title, processBar, data } = this.props;
+    const { title, processBar, data, statusList } = this.props;
+    const content = Object.keys(processBar).length > 0 ? (<div>{
+      Object.keys(processBar).map((key) => {
+        if (_.find(statusList, { statusColor: key })) {
+          const { statusName } = _.find(statusList, { statusColor: key });
+          return (<div style={{ display: 'flex', width: 100 }}>
+            <div>{statusName}</div>
+            <div className="c7n-flex-space" />
+            <div>{processBar[key]}</div>
+          </div>);
+        }
+        return null;
+      })
+    }</div>) : null;
     return (
-      <div className="c7n-tree-title">
-
+      <div className="c7n-tree-title">        
         {editing ?
           <Input
             style={{ width: 78 }}
@@ -140,15 +152,28 @@ class TreeTitle extends Component {
           : <div className="c7n-tt-text">
             {title}
           </div>}
-        <div className="c7n-tt-processBar" style={{ marginLeft: data.type === 'cycle' || data.type === 'temp' ? '18px' : 0 }}>
-          <div className="c7n-process-bar">
-            <span className="c7n-pb-unfill">
-              <div className="c7n-pb-fill-parent">
-                {this.creatProcessBar(processBar)}
+
+        {content ? 
+          <Popover content={content} title={null}>
+            <div className="c7n-tt-processBar" style={{ marginLeft: data.type === 'cycle' || data.type === 'temp' ? '18px' : 0 }}>
+              <div className="c7n-process-bar">
+                <span className="c7n-pb-unfill">
+                  <div className="c7n-pb-fill-parent">
+                    {this.creatProcessBar(processBar)}
+                  </div>
+                </span>
               </div>
-            </span>
-          </div>
-        </div>
+            </div>
+          </Popover> :
+          <div className="c7n-tt-processBar" style={{ marginLeft: data.type === 'cycle' || data.type === 'temp' ? '18px' : 0 }}>
+            <div className="c7n-process-bar">
+              <span className="c7n-pb-unfill">
+                <div className="c7n-pb-fill-parent">
+                  {this.creatProcessBar(processBar)}
+                </div>
+              </span>
+            </div>
+          </div>}
         <div role="none" className="c7n-tt-actionButton" onClick={e => e.stopPropagation()}>
           {data.type === 'temp'
             ? null :
@@ -157,6 +182,7 @@ class TreeTitle extends Component {
             </Dropdown>
           }
         </div>
+        
       </div>
     );
   }
