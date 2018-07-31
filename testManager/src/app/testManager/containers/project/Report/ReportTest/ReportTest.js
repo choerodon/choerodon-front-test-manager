@@ -345,7 +345,10 @@ class ReportTest extends Component {
 
     return (
       <Page className="c7n-report-test">
-        <Header title={<FormattedMessage id="report_defectToDemand" />}>
+        <Header
+          title={<FormattedMessage id="report_defectToDemand" />}
+          backPath={`/testManager/report?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}
+        >
           <Dropdown overlay={menu} trigger={['click']}>
             <a className="ant-dropdown-link" href="#">
               <FormattedMessage id="report_switch" />
