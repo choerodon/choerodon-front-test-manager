@@ -8,10 +8,11 @@ import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import moment from 'moment';
 import './CycleHome.scss';
+import { getUsers } from '../../../../api/CommonApi';
 import { getCycles, deleteExecute, getCycleById, editCycleExecute, clone, addFolder, getStatusList } from '../../../../api/cycleApi';
 import { TreeTitle, CreateCycle, EditCycle, CreateCycleExecute, ShowCycleData } from '../../../../components/CycleComponent';
 import DragTable from '../../../../components/DragTable';
-import { RichTextShow } from '../../../../components/CommonComponent';
+import { RichTextShow, SelectFocusLoad } from '../../../../components/CommonComponent';
 import { delta2Html, delta2Text, issueLink } from '../../../../common/utils';
 import CycleStore from '../../../../store/project/cycle/CycleStore';
 
@@ -53,6 +54,7 @@ class CycleHome extends Component {
       pageSize: 5,
     },
     statusList: [],
+    filters: {},
   };
   componentDidMount() {
     this.refresh();
@@ -110,11 +112,13 @@ class CycleHome extends Component {
     });
   }
   getParentKey = (key, tree) => key.split('-').slice(0, -1).join('-')
-  loadCycle = (selectedKeys, { selected, selectedNodes, node, event }, flag) => {
+  loadCycle = (selectedKeys, { selected, selectedNodes, node, event } = {}, flag) => {
     // window.console.log(selectedNodes, node, event);
-    CycleStore.setSelectedKeys(selectedKeys);
-    const { data } = node.props;
-    const { executePagination } = this.state;
+    if (selectedKeys) {
+      CycleStore.setSelectedKeys(selectedKeys);
+    }
+    const { executePagination, filters } = this.state;
+    const data = node ? node.props.data : CycleStore.getCurrentCycle;
     if (data.cycleId) {
       if (!flag) {
         this.setState({
@@ -131,7 +135,11 @@ class CycleHome extends Component {
       getCycleById({
         page: executePagination.current - 1,
         size: executePagination.pageSize,
-      }, data.cycleId).then((cycle) => {
+      }, data.cycleId, 
+      { ...filters,
+        lastUpdatedBy: [Number(this.lastUpdatedBy)],
+        assignedTo: [Number(this.assignedTo)], 
+      }).then((cycle) => {
         this.setState({
           rightLoading: false,
           testList: cycle.content,
@@ -210,19 +218,23 @@ class CycleHome extends Component {
       this.loadCycle(selectedKeys, { node: { props: { data: currentCycle } } }, true);
     }
   }
+
   filterCycle = (e) => {
-    const value = e.target.value;
-    const expandedKeys = dataList.map((item) => {
-      if (item.title.indexOf(value) > -1) {
-        return this.getParentKey(item.key, CycleStore.getTreeData);
-      }
-      return null;
-    }).filter((item, i, self) => item && self.indexOf(item) === i);
-    CycleStore.setExpandedKeys(expandedKeys);
+    const value = e.target.value;    
+    window.console.log(value);
+    if (value !== '') {
+      const expandedKeys = dataList.map((item) => {
+        if (item.title.indexOf(value) > -1) {
+          return this.getParentKey(item.key, CycleStore.getTreeData);
+        }
+        return null;
+      }).filter((item, i, self) => item && self.indexOf(item) === i);
+      CycleStore.setExpandedKeys(expandedKeys);
+    }
     this.setState({
       searchValue: value,
       autoExpandParent: true,
-    });
+    });   
   }
   callback = (item, code) => {
     switch (code) {
@@ -273,9 +285,9 @@ class CycleHome extends Component {
           loading: false,
         });
         if (data.failed) {
-          Choerodon.prompt('名字重复');          
+          Choerodon.prompt('名字重复');
           CycleStore.removeAdding();
-        } else {          
+        } else {
           this.refresh();
         }
       }).catch(() => {
@@ -327,12 +339,17 @@ class CycleHome extends Component {
       this.setState({
         rightLoading: true,
         executePagination: pagination,
+        filters,
       });
       const currentCycle = CycleStore.getCurrentCycle;
       getCycleById({
         size: pagination.pageSize,
         page: pagination.current - 1,
-      }, currentCycle.cycleId, filters).then((cycle) => {
+      }, currentCycle.cycleId, 
+      { ...filters,
+        lastUpdatedBy: [Number(this.lastUpdatedBy)],
+        assignedTo: [Number(this.assignedTo)], 
+      }).then((cycle) => {
         this.setState({
           rightLoading: false,
           testList: cycle.content,
@@ -354,7 +371,7 @@ class CycleHome extends Component {
     const beforeStr = item.title.substr(0, index);
     const afterStr = item.title.substr(index + searchValue.length);
     const icon = (<Icon
-      style={{ color: '#00A48D' }}
+      style={{ color: 'rgba(0,0,0,0.65)' }}
       type={expandedKeys.includes(item.key) ? 'folder_open2' : 'folder_open'}
     />);
     if (type === 'CLONE_FOLDER' || type === 'CLONE_CYCLE') {
@@ -429,6 +446,7 @@ class CycleHome extends Component {
   });
 
   render() {
+    window.console.log('render');
     const { CreateCycleExecuteVisible, CreateCycleVisible, EditCycleVisible,
       loading, currentEditValue, testList, rightLoading,
       searchValue,
@@ -447,7 +465,7 @@ class CycleHome extends Component {
     const columns = [{
       title: 'ID',
       dataIndex: 'issueName',
-      key: 'issueName', 
+      key: 'issueName',
       flex: 1,
       // filters: [],
       // onFilter: (value, record) => 
@@ -455,7 +473,13 @@ class CycleHome extends Component {
       render(issueId, record) {
         const { issueInfosDTO } = record;
         return (
-          <Tooltip title={issueInfosDTO && issueInfosDTO.issueName}>
+          <Tooltip 
+            title={issueInfosDTO && 
+            <div>
+              <div>{issueInfosDTO.issueName}</div>
+              <div>{issueInfosDTO.summary}</div>
+            </div>}
+          >
             <Link
               style={{
                 width: 100,
@@ -468,7 +492,7 @@ class CycleHome extends Component {
             >
               {issueInfosDTO && issueInfosDTO.issueName}
             </Link>
-          </Tooltip>         
+          </Tooltip>
         );
       },
     }, {
@@ -495,7 +519,7 @@ class CycleHome extends Component {
       render(comment) {
         return (
           <Tooltip title={<RichTextShow data={delta2Html(comment)} />}>
-            <div              
+            <div
               style={{
                 width: 65,
                 overflow: 'hidden',
@@ -515,7 +539,7 @@ class CycleHome extends Component {
       key: 'defects',
       flex: 1,
       render: defects =>
-        (<Tooltip 
+        (<Tooltip
           placement="topLeft"
           title={
             <div>
@@ -524,7 +548,7 @@ class CycleHome extends Component {
                   fontSize: '13px',
                   color: 'white',
                 }}
-                >                  
+                >
                   {defect.issueInfosDTO.issueName}
                 </div>))}
             </div>}
@@ -663,6 +687,7 @@ class CycleHome extends Component {
         <Content
           title={<FormattedMessage id="cycle_title" />}
           description={<FormattedMessage id="cycle_description" />}
+          style={{ paddingBottom: 0 }}
         >
           <Spin spinning={loading}>
             <CreateCycleExecute
@@ -679,22 +704,7 @@ class CycleHome extends Component {
                 getStatusList('CYCLE_CASE').then((List) => {
                   this.setState({ statusList: List });
                 });
-                this.refresh();
-                // getCycleById({
-                //   page: executePagination.current - 1,
-                //   size: executePagination.pageSize,
-                // }, currentCycle.cycleId).then((cycle) => {
-                //   this.setState({
-                //     rightLoading: false,
-                //     testList: cycle.content,
-                //     executePagination: {
-                //       current: executePagination.current,
-                //       pageSize: executePagination.pageSize,
-                //       total: cycle.totalElements,
-                //     },
-                //   });
-                //   // window.console.log(cycle);
-                // });
+                this.refresh();                
               }}
             />
             <CreateCycle
@@ -743,7 +753,7 @@ class CycleHome extends Component {
               <div className={this.state.leftVisible ? 'c7n-ch-left' : 'c7n-ch-hidden'}>
                 <div className="c7n-chl-head">
                   <div className="c7n-chlh-search">
-                    <Input prefix={prefix} placeholder="&nbsp;过滤" onChange={this.filterCycle} />
+                    <Input prefix={prefix} placeholder="过滤" onChange={this.filterCycle} />
                   </div>
                   <div className="c7n-chlh-button">
                     <div
@@ -773,7 +783,7 @@ class CycleHome extends Component {
                     </div>
                   </div>
                 </div>
-                <div className="c7n-chlh-tree">
+                <div className="c7n-chlh-tree" style={{ height: window.innerHeight - 234 }}>
                   <Tree
                     selectedKeys={selectedKeys}
                     expandedKeys={expandedKeys}
@@ -788,7 +798,7 @@ class CycleHome extends Component {
               </div>
               <div style={{ width: 1, background: 'rgba(0,0,0,0.26)' }} />
               {cycleId && <div className="c7n-ch-right" >
-                <div style={{ display: 'flex' }}>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
                   <div>
                     <FormattedMessage id="cycle_cycleName" />
                     ：<span style={{ color: '#3F51B5' }}>{title}</span>
@@ -809,14 +819,26 @@ class CycleHome extends Component {
                   </div>
                 </div>
                 <ShowCycleData data={currentCycle} />
-                {/* <Table
-                  pagination={executePagination}
-                  loading={rightLoading}
-                  columns={columns}
-                  dataSource={testList}
-                  onChange={this.handleExecuteTableChange}
-                /> */}
-                <div id="test" />
+                <div style={{ display: 'flex' }}>
+                  <SelectFocusLoad
+                    label={<FormattedMessage id="cycle_executeBy" />}
+                    request={getUsers} 
+                    onChange={(value) => { 
+                      this.lastUpdatedBy = value;   
+                      this.loadCycle();
+                    }}
+                  />
+                  <div style={{ marginLeft: 20 }}>                
+                    <SelectFocusLoad
+                      label={<FormattedMessage id="cycle_assignedTo" />}
+                      request={getUsers} 
+                      onChange={(value) => { 
+                        this.assignedTo = value;
+                        this.loadCycle(); 
+                      }}
+                    />
+                  </div>
+                </div>
                 <DragTable
                   pagination={executePagination}
                   loading={rightLoading}

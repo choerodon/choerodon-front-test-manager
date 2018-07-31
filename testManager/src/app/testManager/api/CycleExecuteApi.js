@@ -9,13 +9,13 @@ export function getStatusList(statusType) {
   const projectId = AppState.currentMenuType.id;
   return axios.post(`/test/v1/projects/${projectId}/status/query`, { statusType, projectId });
 }
-export function getUsers(param) {
-  const projectId = AppState.currentMenuType.id;
-  if (param) {
-    return axios.get(`/test/v1/projects/${projectId}/users?param=${param}`);
-  }
-  return axios.get(`/test/v1/projects/${projectId}/users`);
-}
+// export function getUsers(param) {
+//   const projectId = AppState.currentMenuType.id;
+//   if (param) {
+//     return axios.get(`/test/v1/projects/${projectId}/users?param=${param}`);
+//   }
+//   return axios.get(`/test/v1/projects/${projectId}/users`);
+// }
 export function editCycle(cycle) {
   const projectId = AppState.currentMenuType.id;
   return axios.post(`/test/v1/projects/${projectId}/cycle/case/update`, cycle);

@@ -9,9 +9,9 @@ import EditTestDetail from '../../../../components/EditTestDetail';
 import FullEditor from '../../../../components/FullEditor';
 import {
   getCycle, addDefects, getCycleDetails, getStatusList,
-  getUsers, editCycle, getCycleHistiorys, deleteAttachment, removeDefect,
+  editCycle, getCycleHistiorys, deleteAttachment, removeDefect,
 } from '../../../../api/CycleExecuteApi';
-import { uploadFile } from '../../../../api/CommonApi';
+import { uploadFile, getUsers } from '../../../../api/CommonApi';
 import { delta2Html, delta2Text } from '../../../../common/utils';
 
 import './CycleExecute.less';
@@ -146,9 +146,10 @@ class CycleExecute extends Component {
         page: historyPagination.current - 1, 
         size: historyPagination.pageSize, 
       }, id),
+      getIssueList(),
     ],
     )
-      .then(([cycleData, statusList, detailData, stepStatusList, historyData]) => {
+      .then(([cycleData, statusList, detailData, stepStatusList, historyData, issueData]) => {
         const { caseAttachment } = cycleData;
         const fileList = caseAttachment.map((attachment) => {
           const { url, attachmentName } = attachment;
@@ -180,6 +181,7 @@ class CycleExecute extends Component {
             total: historyData.totalElements,
           },
           historyList: historyData.content,
+          issueList: issueData.content,
           loading: false,
         });
         this.setStatusAndColor(this.state.cycleData.executionStatus, statusList);
@@ -743,9 +745,11 @@ class CycleExecute extends Component {
     const userOptions = userList.map(user =>
       (<Option key={user.id} value={user.realName}>
         <div style={{ display: 'inline-flex', alignItems: 'center', padding: '2px' }}>
-          <div style={styles.userOption}>
-            {user.imageUrl ? <img src={user.imageUrl} alt="" /> : user.realName.slice(0, 1)}
-          </div>
+          {user.imageUrl ?
+            <img src={user.imageUrl} alt="" style={{ width: 20, height: 20, borderRadius: '50%', marginRight: '8px' }} /> :
+            <div style={styles.userOption}>{user.realName.slice(0, 1)}
+            </div>
+          }          
           <span>{`${user.loginName} ${user.realName}`}</span>
         </div>
       </Option>),
@@ -756,24 +760,25 @@ class CycleExecute extends Component {
       </Option>));  
     return (
       <Page className="c7n-clcle">
-        <Header title={null}>
-          <div>
-            <Tooltip
-              title={Choerodon.getMessage('返回', 'return')}
-              placement="bottom"
+        <Header title={<div>
+          <Tooltip
+            title={Choerodon.getMessage('返回', 'return')}
+            placement="bottom"
             // getTooltipContainer={that => that}
-            >
-              <Button
-                type="primary"
-                onClick={() => { this.props.history.goBack(); }}
-                className="back-btn small-tooltip"
-                shape="circle"
-                size="large"
-                icon="arrow_back"
-              />
-            </Tooltip>
-          </div>
-          <span className="c7n-head--clcle-title"><FormattedMessage id="execute_detail" /></span>
+          >
+            <Button
+              type="primary"
+              onClick={() => { this.props.history.goBack(); }}
+              className="back-btn small-tooltip"
+              shape="circle"
+              size="large"
+              icon="arrow_back"
+            />
+          </Tooltip>
+          <span><FormattedMessage id="execute_detail" /></span>
+        </div>}
+        >         
+          
           <Button onClick={this.getInfo}>
             <Icon type="autorenew icon" />
             <span><FormattedMessage id="refresh" /></span>
@@ -861,6 +866,11 @@ class CycleExecute extends Component {
                         value={reporterRealName}
                         style={{ width: 200 }}
                         onChange={this.handleAssignedChange}
+                        /> */}
+                        {/* <SelectFocusLoad
+                          defaultValue={reporterRealName}                          
+                          request={getUsers} 
+                          onChange={this.handleAssignedChange}
                         /> */}
                         <Select
                           filter
@@ -1000,7 +1010,7 @@ class CycleExecute extends Component {
                 <Card
                   title={null}
                   style={{ width: '100%' }}
-                  bodyStyle={{ ...styles.cardBodyStyle, ...{ display: 'flex', flexDirection: 'column', height: 124 } }}
+                  bodyStyle={{ ...styles.cardBodyStyle, ...{ display: 'flex', flexDirection: 'column', height: 146 } }}
                 >
                   <div style={styles.cardTitle}>
                     <Icon type="expand_more" />
@@ -1022,7 +1032,7 @@ class CycleExecute extends Component {
                 </Card>
                 <Card
                   title={null}
-                  style={{ width: '100%', height: 92, marginTop: 20 }}
+                  style={{ width: '100%', height: 70, marginTop: 20 }}
                   bodyStyle={styles.cardBodyStyle}
                 >
                   <div style={styles.cardTitle}>
@@ -1052,7 +1062,7 @@ class CycleExecute extends Component {
                       />
                     </Button>
                   </div>
-                  <div>
+                  <div style={{ marginTop: -10 }}>
                     {/* {caseAttachment} */}
                     <Upload
                       {...props}

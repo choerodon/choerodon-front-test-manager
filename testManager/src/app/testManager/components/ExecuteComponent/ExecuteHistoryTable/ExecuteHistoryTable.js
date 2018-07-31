@@ -5,7 +5,7 @@ import { delta2Html, delta2Text } from '../../../common/utils';
 import { RichTextShow } from '../../CommonComponent';
 import {
   getCycle, addDefects, getCycleDetails, getStatusList,
-  getUsers, editCycle, getCycleHistiorys, deleteAttachment, removeDefect,
+  editCycle, getCycleHistiorys, deleteAttachment, removeDefect,
 } from '../../../api/CycleExecuteApi';
 
 class ExecuteHistoryTable extends PureComponent {

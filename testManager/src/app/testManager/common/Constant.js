@@ -25,7 +25,7 @@ export const TYPE = {
   task: '#4d90fe',
   issue_epic: '#743be7',
   sub_task: '#4d90fe',
-  issue_test: '#ff7043',
+  issue_test: '#FFB100',
 };
 
 export const ICON = {

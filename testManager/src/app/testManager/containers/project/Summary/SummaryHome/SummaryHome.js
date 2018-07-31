@@ -7,7 +7,7 @@ import { FormattedMessage } from 'react-intl';
 import moment from 'moment';
 import _ from 'lodash';
 
-import { getCaseNotPlain, getCaseNotRun, getCaseNum, getCycleRange, getCreateRange } from '../../../../api/summaryApi';
+import { getCaseNotPlain, getCaseNotRun, getCaseNum, getCycleRange, getCreateRange, getIssueStatistic } from '../../../../api/summaryApi';
 import { getProjectVersion, getLabels, getModules, getIssueCount } from '../../../../api/agileApi';
 import './SummaryHome.less';
 
@@ -72,34 +72,29 @@ class SummaryHome extends Component {
           componentList,
           labelList,
         });
-
-        this.getVersionTable(versionList).then((versionTable) => {
+        Promise.all([
+          this.getVersionTable(versionList),
+          this.getLabelTable(labelList),
+          this.getComponentTable(componentList),
+        ]).then(([versionTable, labelTable, componentTable]) => {
           versionTable.unshift({
             versionId: null,
             name: <FormattedMessage id="summary_noVersion" />,
             num: totalData.totalElements - _.sumBy(versionTable, 'num'),
           });
-          this.setState({
-            versionTable,
-          });
-        });
-        this.getLabelTable(labelList).then((labelTable) => {
           labelTable.unshift({
             id: null,          
             num: totalData.totalElements - _.sumBy(labelTable, 'num'),
             name: <FormattedMessage id="summary_noComponent" />,           
           });
-          this.setState({
-            labelTable,
-          });
-        });
-        this.getComponentTable(componentList).then((componentTable) => {
           componentTable.unshift({
             id: null,           
             num: totalData.totalElements - _.sumBy(componentTable, 'num'),
             name: <FormattedMessage id="summary_noLabel" />,          
           });
           this.setState({
+            versionTable,
+            labelTable,
             componentTable,
           });
         });
@@ -108,61 +103,43 @@ class SummaryHome extends Component {
         Choerodon.prompt('网络异常');
       });
   }
-  getVersionTable = versionList => Promise.all(
-    versionList.map(version => new Promise((resolve, reject) => {
-      const search = {
-        advancedSearchArgs: {
-          typeCode: ['issue_test'],
-        },
-        otherArgs: {
-          // version: [version.versionId],
-        },
-      };
-      if (version.versionId) {
-        search.otherArgs.version = [version.versionId];
-      }
-      getIssueCount(search).then((data) => {
-        // window.console.log(version.versionId, data.totalElements);
-        resolve({ name: version.name, versionId: version.versionId, num: data.totalElements });
-      });
-    }),
-    ))
-  getLabelTable = labelList => Promise.all(
-    labelList.map(label => new Promise((resolve, reject) => {
-      const search = {
-        advancedSearchArgs: {
-          typeCode: ['issue_test'],
-        },
-        otherArgs: {
-          label: [label.labelId],
-        },
-      };
+  getVersionTable = versionList => new Promise((resolve) => {
+    getIssueStatistic('version').then((data) => {
+      const versionTable = versionList.map((version) => {
+        let num = 0;
+        if (_.find(data, { typeName: version.versionId.toString() })) {
+          num = _.find(data, { typeName: version.versionId.toString() }).value;
+        } 
+        return { name: version.name, versionId: version.versionId, num };
+      });     
+      resolve(versionTable);
+    });
+  })
+  getLabelTable = labelList => new Promise((resolve) => {
+    getIssueStatistic('label').then((data) => {
+      const labelTable = labelList.map((label) => {
+        let num = 0;
+        if (_.find(data, { typeName: label.labelId.toString() })) {
+          num = _.find(data, { typeName: label.labelId.toString() }).value;
+        } 
+        return { name: label.labelName, id: label.labelId, num };
+      });     
+      resolve(labelTable);
+    });
+  })
+  getComponentTable = componentList => new Promise((resolve) => {
+    getIssueStatistic('component').then((data) => {
+      const componentTable = componentList.map((component) => {
+        let num = 0;
+        if (_.find(data, { typeName: component.componentId.toString() })) {
+          num = _.find(data, { typeName: component.componentId.toString() }).value;
+        } 
+        return { name: component.name, id: component.componentId, num };
+      });     
+      resolve(componentTable);
+    });
+  })
 
-
-      getIssueCount(search).then((data) => {
-        // window.console.log(label, data.totalElements);
-        resolve({ name: label.labelName, id: label.labelId, num: data.totalElements });
-      });
-    }),
-    ))
-  getComponentTable = componentList => Promise.all(
-    componentList.map(component => new Promise((resolve, reject) => {
-      const search = {
-        advancedSearchArgs: {
-          typeCode: ['issue_test'],
-        },
-        otherArgs: {
-          component: [component.componentId],
-        },
-      };
-
-
-      getIssueCount(search).then((data) => {
-        // window.console.log(component, data.totalElements);
-        resolve({ name: component.name, id: component.componentId, num: data.totalElements });
-      });
-    }),
-    ))
   handleRangeChange = (e) => {
     this.setState({ loading: true });
     Promise.all([
