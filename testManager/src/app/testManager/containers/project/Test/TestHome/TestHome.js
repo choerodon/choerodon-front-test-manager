@@ -240,7 +240,7 @@ class Test extends Component {
     return (
       <div style={{ display: 'flex', flex: 1, marginTop: '3px', flexDirection: 'column', marginBottom: '3px', cursor: 'pointer' }}>
         <div style={{ display: 'flex', flex: 1, marginTop: '3px', marginBottom: '3px', cursor: 'pointer' }}>
-          <Tooltip mouseEnterDelay={0.5} title={`任务类型： ${TYPE_NAME[typeCode]}`}>
+          <Tooltip mouseEnterDelay={0.5} title={<FormattedMessage id="issue_issueType" values={{ type: TYPE_NAME[typeCode] }} />}>
             <div>
               <TypeTag
                 type={{
@@ -249,13 +249,13 @@ class Test extends Component {
               />
             </div>
           </Tooltip>
-          <Tooltip mouseEnterDelay={0.5} title={`任务编号： ${issueNum}`}>
+          <Tooltip mouseEnterDelay={0.5} title={<FormattedMessage id="issue_issueNum" values={{ num: issueNum }} />}>
             <a style={{ paddingLeft: 12, paddingRight: 12, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               {issueNum}
             </a>
           </Tooltip>
           <div style={{ overflow: 'hidden' }}>
-            <Tooltip mouseEnterDelay={0.5} placement="topLeft" title={`任务概要： ${summary}`}>
+            <Tooltip mouseEnterDelay={0.5} placement="topLeft" title={<FormattedMessage id="issue_issueSummary" values={{ summary }} />}>
               <p style={{ paddingRight: '25px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 0, maxWidth: 'unset' }}>
                 {summary}
               </p>
@@ -264,7 +264,7 @@ class Test extends Component {
           <div className="c7n-flex-space" />          
           {
             assigneeId && reporterName ? (            
-              <Tooltip mouseEnterDelay={0.5} title={`任务经办人： ${assigneeName}`}>
+              <Tooltip mouseEnterDelay={0.5} title={<FormattedMessage id="issue_issueReport" values={{ report: reporterName }} />}>
                 <div style={{ margin: '0 5px' }}>
                   <UserHead
                     user={{
@@ -281,12 +281,12 @@ class Test extends Component {
           {
             assigneeId && reporterName ?
               <div style={{ margin: '0 5px' }}>
-            报告给
+                <FormattedMessage id="issue_issueReportTo" />              
               </div> : null
           }
           {
             assigneeId ? (            
-              <Tooltip mouseEnterDelay={0.5} title={`任务经办人： ${assigneeName}`}>
+              <Tooltip mouseEnterDelay={0.5} title={<FormattedMessage id="issue_issueAssign" values={{ assign: assigneeName }} />}>
                 <div style={{ margin: '0 5px' }}>
                   <UserHead
                     user={{
@@ -299,17 +299,16 @@ class Test extends Component {
                 </div>
               </Tooltip>
             ) : null
-          }
-          
+          }          
           <div style={{ margin: '0 5px' }}>
-            更新于   
+            <FormattedMessage id="issue_issueUpdateOn" />    
           </div>
           <Icon type="today" style={{ margin: '0 5px' }} />
           <div style={{ marginRight: 12 }}>
             {moment(lastUpdateDate).format('LL')}
           </div>   
           <div style={{ flexShrink: '0', display: 'flex', justifyContent: 'flex-end' }}>
-            <Tooltip mouseEnterDelay={0.5} title={`任务状态： ${statusName}`}>
+            <Tooltip mouseEnterDelay={0.5} title={<FormattedMessage id="issue_issueStatus" values={{ status: statusName }} />}>
               <div>
                 <StatusTag
                   status={{
@@ -324,7 +323,7 @@ class Test extends Component {
         {/* 第二行 */}
         <div style={{ display: 'flex', flex: 1, marginTop: '3px', alignItems: 'center', marginBottom: '3px', cursor: 'pointer' }}>
           <div style={{ flexShrink: '0' }}>
-            <Tooltip mouseEnterDelay={0.5} title={`优先级： ${priorityName}`}>
+            <Tooltip mouseEnterDelay={0.5} title={<FormattedMessage id="issue_issuePriority" values={{ priority: priorityName }} />}>
               <div style={{ marginRight: 5 }}>
                 <PriorityTag
                   priority={{
@@ -377,7 +376,7 @@ class Test extends Component {
             }
           </div> : null}
           <div style={{ margin: '0 5px', fontSize: '13px', color: 'rgba(0,0,0,0.65)' }}>
-            创建于
+            <FormattedMessage id="issue_issueCreateAt" />
           </div>
           <Icon type="today" style={{ margin: '0 5px' }} />
           {moment(creationDate).format('LL')}
@@ -392,7 +391,7 @@ class Test extends Component {
                 lineHeight: '20px',
                 padding: '2px 12px',
                 background: 'rgba(0, 0, 0, 0.08)',
-                // marginRight: '8px',
+                margin: '0 5px',
                 // marginBottom: 3,
               }}
             >

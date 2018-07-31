@@ -313,22 +313,23 @@ class ReportStory extends Component {
                     defects.concat(subStepDefects).map((defect) => {
                       const { issueInfosDTO } = defect;
                       return (<div className="c7n-issue-show-container">
-                        <Link className="c7n-showId" to={issueLink(issueInfosDTO.issueId)} target="_blank">{issueInfosDTO.issueName}</Link>
+                        <Link className="c7n-showId" to={issueLink(issueInfosDTO && issueInfosDTO.issueId)} target="_blank">{issueInfosDTO && issueInfosDTO.issueName}</Link>
                         <div className="c7n-issue-status-icon">
                           <span style={{ 
-                            color: issueInfosDTO.issueColor, 
-                            borderColor: issueInfosDTO.issueColor }}
+                            color: issueInfosDTO && issueInfosDTO.issueColor, 
+                            borderColor: issueInfosDTO && issueInfosDTO.issueColor }}
                           >
-                            {issueInfosDTO.issueStatusName}
+                            {issueInfosDTO && issueInfosDTO.issueStatusName}
                           </span>
                         </div>
                         {defect.defectType === 'CASE_STEP' &&
                         <div style={{
-                          marginLeft: 60,
+                          marginLeft: 20,
                           color: 'white',
                           padding: '0 8px',
                           background: 'rgba(0,0,0,0.20)',
                           borderRadius: '100px',
+                          whiteSpace: 'nowrap',
                         }}
                         ><FormattedMessage id="step" /></div>}
                       </div>);
@@ -349,8 +350,8 @@ class ReportStory extends Component {
                     }}
                     >
                       {i === 0 ? null : '，'}
-                      <Link className="c7n-showId" to={issueLink(issueInfosDTO.issueId)} target="_blank">
-                        {issueInfosDTO.issueName}
+                      <Link className="c7n-showId" to={issueLink(issueInfosDTO && issueInfosDTO.issueId)} target="_blank">
+                        {issueInfosDTO && issueInfosDTO.issueName}
                       </Link>                     
                     </span>); 
                   })}</div>);

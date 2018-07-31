@@ -155,13 +155,29 @@ class TableCanDragAndDrop extends Component {
             {
               item.defects.length ? (
                 <span>
-                  {_.map(item.defects, 'defectName').join(',')}
+                  <Tooltip
+                    placement="topLeft"
+                    title={
+                      <div>
+                        {item.defects.map((defect, i) => (
+                          <div style={{
+                            fontSize: '13px',
+                            color: 'white',
+                          }}
+                          >
+                            {defect.issueInfosDTO.issueName}
+                          </div>))}
+                      </div>}
+                  >
+                    {item.defects.map((defect, i) => defect.issueInfosDTO.issueName).join(',')}
+                  </Tooltip>),
                 </span>
               ) : '-'
             }
           </span>
           <span style={{ flex: 2, lineHeight: '34px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-            {item.assignedUserRealName}
+            {item.lastUpdateUser && item.lastUpdateUser.realName}
+
           </span>
           <span style={{ flex: 2, lineHeight: '34px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
             <TimeAgo
