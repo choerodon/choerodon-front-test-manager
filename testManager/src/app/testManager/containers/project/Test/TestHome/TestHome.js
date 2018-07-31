@@ -571,12 +571,12 @@ class Test extends Component {
       },
     ];
     const filterColumns = [
-      {
-        title: <FormattedMessage id="issue_issueFilterByNum" />,
-        dataIndex: 'issueNum',
-        key: 'issueNum',
-        filters: [],
-      },
+      // {
+      //   title: <FormattedMessage id="issue_issueFilterByNum" />,
+      //   dataIndex: 'issueNum',
+      //   key: 'issueNum',
+      //   filters: [],
+      // },
       {
         title: <FormattedMessage id="issue_issueFilterBySummary" />,
         dataIndex: 'summary',
