@@ -76,7 +76,7 @@ class SelectFocusLoad extends Component {
     return (<Select
       filter
       allowClear
-      autoFocus
+      // autoFocus
       filterOption={false}
       loading={loading}   
       style={{ width: 200 }}

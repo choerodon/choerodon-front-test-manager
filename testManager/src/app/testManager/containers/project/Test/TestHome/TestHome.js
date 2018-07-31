@@ -116,24 +116,24 @@ class Test extends Component {
 
   handleIssueUpdate(issueId = this.state.selectedIssue.issueId) {
     loadIssue(issueId).then((res) => {
-      const obj = {
-        assigneeId: res.assigneeId,
-        assigneeName: res.assigneeName,
-        imageUrl: res.imageUrl || '',
-        issueId: res.issueId,
-        issueNum: res.issueNum,
-        priorityCode: res.priorityCode,
-        priorityName: res.priorityName,
-        projectId: res.projectId,
-        statusCode: res.statusCode,
-        statusColor: res.statusColor,
-        statusName: res.statusName,
-        summary: res.summary,
-        typeCode: res.typeCode,
-      };
+      // const obj = {
+      //   assigneeId: res.assigneeId,
+      //   assigneeName: res.assigneeName,
+      //   imageUrl: res.imageUrl || '',
+      //   issueId: res.issueId,
+      //   issueNum: res.issueNum,
+      //   priorityCode: res.priorityCode,
+      //   priorityName: res.priorityName,
+      //   projectId: res.projectId,
+      //   statusCode: res.statusCode,
+      //   statusColor: res.statusColor,
+      //   statusName: res.statusName,
+      //   summary: res.summary,
+      //   typeCode: res.typeCode,
+      // };
       const originIssues = _.slice(IssueStore.issues);
       const index = _.findIndex(originIssues, { issueId: res.issueId });
-      originIssues[index] = obj;
+      originIssues[index] = res;
       IssueStore.setIssues(originIssues);
     });
   }
@@ -233,9 +233,10 @@ class Test extends Component {
       });
   }
   renderTestIssue(issue) {
-    const { typeCode, issueNum, summary, assigneeId, assigneeName, imageUrl, statusName, statusColor,
-      priorityName, priorityCode, epicName, epicColor, componentIssueRelDTOList, labelIssueRelDTOList, 
-      versionIssueRelDTOList, creationDate } = issue;
+    const { typeCode, issueNum, summary, assigneeId, assigneeName, assigneeImageUrl, reporterId,
+      reporterName, reporterImageUrl, statusName, statusColor, priorityName, priorityCode,
+      epicName, epicColor, componentIssueRelDTOList, labelIssueRelDTOList, 
+      versionIssueRelDTOList, creationDate, lastUpdateDate } = issue;
     return (
       <div style={{ display: 'flex', flex: 1, marginTop: '3px', flexDirection: 'column', marginBottom: '3px', cursor: 'pointer' }}>
         <div style={{ display: 'flex', flex: 1, marginTop: '3px', marginBottom: '3px', cursor: 'pointer' }}>
@@ -253,33 +254,60 @@ class Test extends Component {
               {issueNum}
             </a>
           </Tooltip>
-          <div style={{ overflow: 'hidden', flex: 1 }}>
+          <div style={{ overflow: 'hidden' }}>
             <Tooltip mouseEnterDelay={0.5} placement="topLeft" title={`任务概要： ${summary}`}>
               <p style={{ paddingRight: '25px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 0, maxWidth: 'unset' }}>
                 {summary}
               </p>
             </Tooltip>
           </div>
-
-         
-          <div style={{ flexShrink: '0' }}>
-            {
-              assigneeId ? (
-                <Tooltip mouseEnterDelay={0.5} title={`任务经办人： ${assigneeName}`}>
-                  <div style={{ marginRight: 12 }}>
-                    <UserHead
-                      user={{
-                        id: assigneeId,
-                        loginName: '',
-                        realName: assigneeName,
-                        avatar: imageUrl,
-                      }}
-                    />
-                  </div>
-                </Tooltip>
-              ) : null
-            }
+          <div className="c7n-flex-space" />          
+          {
+            assigneeId && reporterName ? (            
+              <Tooltip mouseEnterDelay={0.5} title={`任务经办人： ${assigneeName}`}>
+                <div style={{ margin: '0 5px' }}>
+                  <UserHead
+                    user={{
+                      id: reporterId,
+                      loginName: '',
+                      realName: reporterName,
+                      avatar: reporterImageUrl,
+                    }}
+                  />
+                </div>
+              </Tooltip>
+            ) : null
+          }
+          {
+            assigneeId && reporterName ?
+              <div style={{ margin: '0 5px' }}>
+            报告给
+              </div> : null
+          }
+          {
+            assigneeId ? (            
+              <Tooltip mouseEnterDelay={0.5} title={`任务经办人： ${assigneeName}`}>
+                <div style={{ margin: '0 5px' }}>
+                  <UserHead
+                    user={{
+                      id: assigneeId,
+                      loginName: '',
+                      realName: assigneeName,
+                      avatar: assigneeImageUrl,
+                    }}
+                  />
+                </div>
+              </Tooltip>
+            ) : null
+          }
+          
+          <div style={{ margin: '0 5px' }}>
+            更新于   
           </div>
+          <Icon type="today" style={{ margin: '0 5px' }} />
+          <div style={{ marginRight: 12 }}>
+            {moment(lastUpdateDate).format('LL')}
+          </div>   
           <div style={{ flexShrink: '0', display: 'flex', justifyContent: 'flex-end' }}>
             <Tooltip mouseEnterDelay={0.5} title={`任务状态： ${statusName}`}>
               <div>
@@ -297,7 +325,7 @@ class Test extends Component {
         <div style={{ display: 'flex', flex: 1, marginTop: '3px', alignItems: 'center', marginBottom: '3px', cursor: 'pointer' }}>
           <div style={{ flexShrink: '0' }}>
             <Tooltip mouseEnterDelay={0.5} title={`优先级： ${priorityName}`}>
-              <div style={{ marginRight: 12 }}>
+              <div style={{ marginRight: 5 }}>
                 <PriorityTag
                   priority={{
                     priorityCode,
@@ -318,7 +346,8 @@ class Test extends Component {
                 borderRadius: '2px',
                 fontSize: '13px',
                 lineHeight: '20px',
-                padding: '0 8px',    
+                padding: '0 8px', 
+                margin: '0 5px',   
               }}
             >
               {version.name}
@@ -336,37 +365,40 @@ class Test extends Component {
                 fontSize: '13px',
                 lineHeight: '20px',
                 padding: '0 8px',
-                marginLeft: 12,    
+                margin: '0 5px',    
               }}
             >
               {epicName}
             </div> : null
           }
-          <div style={{ marginLeft: 15, color: '#3F51B5', fontWeight: 'bold' }}>
+          {componentIssueRelDTOList.length > 0 ? <div style={{ margin: '0 5px', color: '#3F51B5', fontWeight: 'bold' }}>
             {
               componentIssueRelDTOList.map(component => component.name).join(',')
             }
-          </div>
-          <div style={{ marginLeft: 12, fontSize: '13px', color: 'rgba(0,0,0,0.65)' }}>
+          </div> : null}
+          <div style={{ margin: '0 5px', fontSize: '13px', color: 'rgba(0,0,0,0.65)' }}>
             创建于
           </div>
+          <Icon type="today" style={{ margin: '0 5px' }} />
           {moment(creationDate).format('LL')}
           <div className="c7n-flex-space" />
-          <div
-            key={'前端'}
-            style={{
-              color: '#000',              
-              borderRadius: '100px',
-              fontSize: '13px',
-              lineHeight: '20px',
-              padding: '2px 12px',
-              background: 'rgba(0, 0, 0, 0.08)',
-              // marginRight: '8px',
-              // marginBottom: 3,
-            }}
-          >
-            {'前端'}
-          </div>
+          {/* 标签 */}
+          {
+            labelIssueRelDTOList.map(label => (<div
+              style={{
+                color: '#000',              
+                borderRadius: '100px',
+                fontSize: '13px',
+                lineHeight: '20px',
+                padding: '2px 12px',
+                background: 'rgba(0, 0, 0, 0.08)',
+                // marginRight: '8px',
+                // marginBottom: 3,
+              }}
+            >
+              {label.labelName}
+            </div>))
+          }          
         </div>
       </div>
     );
