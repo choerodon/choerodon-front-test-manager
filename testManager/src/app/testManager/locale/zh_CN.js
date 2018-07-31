@@ -212,6 +212,16 @@ const zhCN = {
   issue_issueFilterByStatus: '状态',
   issue_issueCreate: '创建问题',
   issue_whatToDo: '需要做什么',
+  issue_issueType: '任务类型:   {type}',
+  issue_issueNum: '任务编号:   {num}',
+  issue_issueSummary: '任务概要:   {summary}',
+  issue_issueReport: '任务报告人:   {report}',
+  issue_issueAssign: '任务经办人:   {assign}',
+  issue_issueStatus: '任务状态:   {status}',
+  issue_issuePriority: '任务优先级:   {priority}',
+  issue_issueReportTo: '报告给',
+  issue_issueUpdateOn: '更新于',
+  issue_issueCreateAt: '创建于',
 };
 
 export default zhCN;

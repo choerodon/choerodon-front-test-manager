@@ -206,5 +206,15 @@ const enUS = {
   issue_issueFilterByStatus: 'Status',
   issue_issueCreate: 'Create issue',
   issue_whatToDo: 'What to do',
+  issue_issueType: 'Issue type:   {type}',
+  issue_issueNum: 'Issue Number:   {num}',
+  issue_issueSummary: 'Issue summary:   {summary}',
+  issue_issueReport: 'Issue reporter:   {report}',
+  issue_issueAssign: 'Issue manager:   {assign}',
+  issue_issueStatus: 'Issue status:   {status}',
+  issue_issuePriority: 'Issue priority:   {priority}',
+  issue_issueReportTo: 'Report to',
+  issue_issueUpdateOn: 'Update on',
+  issue_issueCreateAt: 'Create on',
 };
 export default enUS;

@@ -584,22 +584,6 @@ class CycleHome extends Component {
           {lastUpdateUser.realName}
         </div>);
       },
-      // render(assignedUserRealName, record) {
-      //   const { assignedUserJobNumber } = record;
-      //   return (<div style={{ width: 100 }}>
-      //     {assignedUserRealName ? (
-      //       <div style={{ display: 'flex', alignItems: 'center' }}>
-      //         <span className="c7n-avatar">
-      //           {assignedUserRealName.slice(0, 1)}
-      //         </span>
-      //         <span style={{ overflow: 'hidden', 
-      // whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
-      //           {`${assignedUserJobNumber} ${assignedUserRealName}`}
-      //         </span>
-      //       </div>
-      //     ) : '无'}
-      //   </div>);
-      // },
     }, {
       title: <FormattedMessage id="cycle_executeTime" />,
       dataIndex: 'lastUpdateDate',
@@ -629,25 +613,9 @@ class CycleHome extends Component {
           textOverflow: 'ellipsis',
         }}
         >
-          {assigneeUser.realName}
+          {assigneeUser && assigneeUser.realName}
         </div>);
       },
-      // render(reporterRealName, record) {
-      //   const { reporterJobNumber } = record;
-      //   return (<div style={{ width: 100 }}>
-      //     {reporterRealName ? (
-      //       <div style={{ display: 'flex', alignItems: 'center' }}>
-      //         <span className="c7n-avatar">
-      //           {reporterRealName.slice(0, 1)}
-      //         </span>
-      //         <span style={{ overflow: 'hidden',
-      //  whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
-      //           {`${reporterJobNumber} ${reporterRealName}`}
-      //         </span>
-      //       </div>
-      //     ) : '无'}
-      //   </div>);
-      // },
     }, {
       title: '',
       key: 'action',
