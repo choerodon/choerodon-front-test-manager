@@ -316,7 +316,7 @@ class CreateCycleExecute extends Component {
     });
     const issueStatusOptions = issueStatusList.map((status) => {
       const { categoryCode, name } = status;
-      return (<Option value={name} key={categoryCode}>
+      return (<Option value={categoryCode} key={categoryCode}>
         {name}
       </Option>);
     });
