@@ -891,7 +891,7 @@ class CycleExecute extends Component {
                       <FormattedMessage id="bug" />：
                     </div>
 
-                    <TextEditToggle
+                    <TextEditToggle              
                       onSubmit={this.addDefects}
                       originData={{ defects }}
                       onCancel={this.cancelEdit}
