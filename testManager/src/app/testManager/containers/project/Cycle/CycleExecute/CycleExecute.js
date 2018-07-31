@@ -9,9 +9,9 @@ import EditTestDetail from '../../../../components/EditTestDetail';
 import FullEditor from '../../../../components/FullEditor';
 import {
   getCycle, addDefects, getCycleDetails, getStatusList,
-  getUsers, editCycle, getCycleHistiorys, deleteAttachment, removeDefect,
+  editCycle, getCycleHistiorys, deleteAttachment, removeDefect,
 } from '../../../../api/CycleExecuteApi';
-import { uploadFile } from '../../../../api/CommonApi';
+import { uploadFile, getUsers } from '../../../../api/CommonApi';
 import { delta2Html, delta2Text } from '../../../../common/utils';
 
 import './CycleExecute.less';
@@ -146,9 +146,10 @@ class CycleExecute extends Component {
         page: historyPagination.current - 1, 
         size: historyPagination.pageSize, 
       }, id),
+      getIssueList(),
     ],
     )
-      .then(([cycleData, statusList, detailData, stepStatusList, historyData]) => {
+      .then(([cycleData, statusList, detailData, stepStatusList, historyData, issueData]) => {
         const { caseAttachment } = cycleData;
         const fileList = caseAttachment.map((attachment) => {
           const { url, attachmentName } = attachment;
@@ -180,6 +181,7 @@ class CycleExecute extends Component {
             total: historyData.totalElements,
           },
           historyList: historyData.content,
+          issueList: issueData.content,
           loading: false,
         });
         this.setStatusAndColor(this.state.cycleData.executionStatus, statusList);
@@ -743,9 +745,11 @@ class CycleExecute extends Component {
     const userOptions = userList.map(user =>
       (<Option key={user.id} value={user.realName}>
         <div style={{ display: 'inline-flex', alignItems: 'center', padding: '2px' }}>
-          <div style={styles.userOption}>
-            {user.imageUrl ? <img src={user.imageUrl} alt="" /> : user.realName.slice(0, 1)}
-          </div>
+          {user.imageUrl ?
+            <img src={user.imageUrl} alt="" style={{ width: 20, height: 20, borderRadius: '50%', marginRight: '8px' }} /> :
+            <div style={styles.userOption}>{user.realName.slice(0, 1)}
+            </div>
+          }          
           <span>{`${user.loginName} ${user.realName}`}</span>
         </div>
       </Option>),
@@ -862,6 +866,11 @@ class CycleExecute extends Component {
                         value={reporterRealName}
                         style={{ width: 200 }}
                         onChange={this.handleAssignedChange}
+                        /> */}
+                        {/* <SelectFocusLoad
+                          defaultValue={reporterRealName}                          
+                          request={getUsers} 
+                          onChange={this.handleAssignedChange}
                         /> */}
                         <Select
                           filter
