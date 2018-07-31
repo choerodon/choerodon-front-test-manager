@@ -4,7 +4,7 @@ import { Page, Header, Content } from 'choerodon-front-boot';
 import _ from 'lodash';
 import { withRouter } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
-import { TextEditToggle, RichTextShow, SelectFocusLoad } from '../../../../components/CommonComponent';
+import { TextEditToggle, RichTextShow, SelectFocusLoad, User } from '../../../../components/CommonComponent';
 import EditTestDetail from '../../../../components/EditTestDetail';
 import FullEditor from '../../../../components/FullEditor';
 import {
@@ -13,7 +13,6 @@ import {
 } from '../../../../api/CycleExecuteApi';
 import { uploadFile, getUsers } from '../../../../api/CommonApi';
 import { delta2Html, delta2Text } from '../../../../common/utils';
-import UserHead from '../../../../components/TestComponent/UserHead';
 import './CycleExecute.less';
 import { getIssueList } from '../../../../api/agileApi';
 
@@ -437,25 +436,7 @@ class CycleExecute extends Component {
       dataIndex: 'user',
       key: 'user',
       render(user) {
-        return (<div style={{ width: 200 }}>
-          {user ? (
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-              }}
-            >
-              <span
-                className="c7n-avatar"
-              >
-                {user.realName.slice(0, 1)}
-              </span>
-              <span style={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
-                {`${user.loginName} ${user.realName}`}
-              </span>
-            </div>
-          ) : '无'}
-        </div>);
+        return (<User user={user} />);
       },
     }, {
       title: <FormattedMessage id="execute_executeTime" />,
@@ -836,16 +817,8 @@ class CycleExecute extends Component {
                       onCancel={this.cancelEdit}
                     >
                       <Text>
-                        {assigneeUser ? ( 
-                          <UserHead
-                            user={{
-                              id: assigneeUser.id,
-                              loginName: assigneeUser.loginName,
-                              realName: assigneeUser.realName,
-                              avatar: assigneeUser.imageUrl,
-                            }}
-                          />  
-                        ) : '无'}
+                        {assigneeUser ? <User user={assigneeUser} />                       
+                          : '无'}
                       </Text>
                       <Edit>
                         {/* <SelectFocusLoad
@@ -903,16 +876,7 @@ class CycleExecute extends Component {
                     <div style={styles.carsContentItemPrefix}>
                       <FormattedMessage id="execute_executive" />：
                     </div>
-                    {lastUpdateUser ? (
-                      <UserHead
-                        user={{
-                          id: lastUpdateUser.id,
-                          loginName: lastUpdateUser.loginName,
-                          realName: lastUpdateUser.realName,
-                          avatar: lastUpdateUser.imageUrl,
-                        }}
-                      />  
-                    ) : '无'}
+                    {lastUpdateUser ? <User user={lastUpdateUser} /> : '无'}
                   </div>
                   <div style={styles.cardContentItem}>
                     <div style={styles.carsContentItemPrefix}>

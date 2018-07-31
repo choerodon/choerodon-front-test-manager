@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import moment from 'moment';
 import 'moment/locale/zh-cn';
 import { FormattedMessage } from 'react-intl';
-import UserHead from '../../../components/TestComponent/UserHead';
+import { User } from '../../../components/CommonComponent';
 import './ShowCycleData.scss';
 
 class ShowCycleData extends Component {
@@ -94,14 +94,8 @@ class ShowCycleData extends Component {
               </div>
               <div className="c7n-right-card-item-text">           
                 <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <UserHead
-                    user={{
-                      id: createdUser.id,
-                      loginName: createdUser.loginName,
-                      realName: createdUser.realName,
-                      avatar: createdUser.imageUrl,
-                    }}
-                  />                
+                
+                  <User user={createdUser} />                
                 </div>
               </div>
             </div>
