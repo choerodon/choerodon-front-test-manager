@@ -4,7 +4,7 @@ import { Page, Header, Content } from 'choerodon-front-boot';
 import _ from 'lodash';
 import { withRouter } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
-import { TextEditToggle, RichTextShow, SelectFocusLoad } from '../../../../components/CommonComponent';
+import { TextEditToggle, RichTextShow, SelectFocusLoad, User } from '../../../../components/CommonComponent';
 import EditTestDetail from '../../../../components/EditTestDetail';
 import FullEditor from '../../../../components/FullEditor';
 import {
@@ -13,7 +13,6 @@ import {
 } from '../../../../api/CycleExecuteApi';
 import { uploadFile, getUsers } from '../../../../api/CommonApi';
 import { delta2Html, delta2Text } from '../../../../common/utils';
-
 import './CycleExecute.less';
 import { getIssueList } from '../../../../api/agileApi';
 
@@ -242,15 +241,14 @@ class CycleExecute extends Component {
 
   handleAssignedChange = (assigned) => {
     const { userList } = this.state;
-    const target = _.find(userList, { realName: assigned });
+    const target = _.find(userList, { id: assigned });
     if (target) {
       this.setState({
         cycleData: {
           ...this.state.cycleData,
           ...{
             assignedTo: target.id,
-            reporterRealName: assigned,
-            reporterJobNumber: target.loginName,
+            assigneeUser: target,            
           },
         },
       });
@@ -260,8 +258,7 @@ class CycleExecute extends Component {
           ...this.state.cycleData,
           ...{
             assignedTo: 0,
-            reporterRealName: null,
-            reporterJobNumber: null,
+            assigneeUser: null,           
           },
         },
       });
@@ -439,25 +436,7 @@ class CycleExecute extends Component {
       dataIndex: 'user',
       key: 'user',
       render(user) {
-        return (<div style={{ width: 200 }}>
-          {user ? (
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-              }}
-            >
-              <span
-                className="c7n-avatar"
-              >
-                {user.realName.slice(0, 1)}
-              </span>
-              <span style={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
-                {`${user.loginName} ${user.realName}`}
-              </span>
-            </div>
-          ) : '无'}
-        </div>);
+        return (<User user={user} />);
       },
     }, {
       title: <FormattedMessage id="execute_executeTime" />,
@@ -731,9 +710,8 @@ class CycleExecute extends Component {
     }];
 
     const { executionStatus, executionStatusName,
-      executionStatusColor, reporterJobNumber, reporterRealName,
-      assignedUserRealName, assignedUserJobNumber, lastUpdateDate, 
-      comment, defects } = cycleData;
+      executionStatusColor, assigneeUser, lastUpdateUser,
+      lastUpdateDate, comment, defects } = cycleData;
     const options = statusList.map((status) => {
       const { statusName, statusId, statusColor } = status;
       return (<Option value={statusId} key={statusId}>
@@ -743,7 +721,7 @@ class CycleExecute extends Component {
       </Option>);
     });
     const userOptions = userList.map(user =>
-      (<Option key={user.id} value={user.realName}>
+      (<Option key={user.id} value={user.id}>
         <div style={{ display: 'inline-flex', alignItems: 'center', padding: '2px' }}>
           {user.imageUrl ?
             <img src={user.imageUrl} alt="" style={{ width: 20, height: 20, borderRadius: '50%', marginRight: '8px' }} /> :
@@ -835,27 +813,12 @@ class CycleExecute extends Component {
                     </div>
                     <TextEditToggle
                       onSubmit={this.submit}
-                      originData={{ reporterRealName, reporterJobNumber }}
+                      originData={{ assigneeUser }}
                       onCancel={this.cancelEdit}
                     >
                       <Text>
-                        {reporterRealName ? ( 
-                          <div
-                            style={{
-                              display: 'flex',
-                              alignItems: 'center',
-                            }}
-                          >
-                            <span
-                              className="c7n-avatar"
-                            >
-                              {reporterRealName.slice(0, 1)}
-                            </span>
-                            <span>
-                              {`${reporterJobNumber} ${reporterRealName}`}
-                            </span>
-                          </div>
-                        ) : '无'}
+                        {assigneeUser ? <User user={assigneeUser} />                       
+                          : '无'}
                       </Text>
                       <Edit>
                         {/* <SelectFocusLoad
@@ -889,7 +852,7 @@ class CycleExecute extends Component {
                             });
                           })}
                           loading={selectLoading}
-                          value={reporterRealName}
+                          value={assigneeUser ? assigneeUser.id : null}
                           style={{ width: 200 }}
                           onChange={this.handleAssignedChange}
                           onFocus={() => {
@@ -913,23 +876,7 @@ class CycleExecute extends Component {
                     <div style={styles.carsContentItemPrefix}>
                       <FormattedMessage id="execute_executive" />：
                     </div>
-                    {assignedUserRealName ? (
-                      <div
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                        }}
-                      >
-                        <span
-                          className="c7n-avatar"
-                        >
-                          {assignedUserRealName.slice(0, 1)}
-                        </span>
-                        <span>
-                          {`${assignedUserJobNumber} ${assignedUserRealName}`}
-                        </span>
-                      </div>
-                    ) : '无'}
+                    {lastUpdateUser ? <User user={lastUpdateUser} /> : '无'}
                   </div>
                   <div style={styles.cardContentItem}>
                     <div style={styles.carsContentItemPrefix}>

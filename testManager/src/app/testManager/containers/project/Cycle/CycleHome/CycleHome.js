@@ -129,9 +129,7 @@ class CycleHome extends Component {
 
       CycleStore.setCurrentCycle(data);
       // window.console.log(data);
-      getStatusList('CYCLE_CASE').then((statusList) => {
-        this.setState({ statusList });
-      });
+
       getCycleById({
         page: executePagination.current - 1,
         size: executePagination.pageSize,
@@ -197,6 +195,9 @@ class CycleHome extends Component {
   refresh = () => {
     this.setState({
       loading: true,
+    });
+    getStatusList('CYCLE_CASE').then((statusList) => {
+      this.setState({ statusList });
     });
     getCycles().then((data) => {
       CycleStore.setTreeData([{ title: '所有版本', key: '0', children: data.versions }]);
@@ -420,6 +421,7 @@ class CycleHome extends Component {
         <TreeNode
           title={item.cycleId ?
             <TreeTitle
+              statusList={this.state.statusList}
               refresh={this.refresh}
               callback={this.callback}
               text={item.title}
@@ -568,10 +570,10 @@ class CycleHome extends Component {
     // }, 
     {
       title: <FormattedMessage id="cycle_executeBy" />,
-      dataIndex: 'assignedUserRealName',
-      key: 'assignedUserRealName',
+      dataIndex: 'lastUpdateUser',
+      key: 'lastUpdateUser',
       flex: 1,
-      render(assignedUserRealName) {
+      render(lastUpdateUser) {
         return (<div style={{
           // width: 85, 
           overflow: 'hidden',
@@ -579,7 +581,7 @@ class CycleHome extends Component {
           textOverflow: 'ellipsis',
         }}
         >
-          {assignedUserRealName}
+          {lastUpdateUser.realName}
         </div>);
       },
       // render(assignedUserRealName, record) {
@@ -616,10 +618,10 @@ class CycleHome extends Component {
       },
     }, {
       title: <FormattedMessage id="cycle_assignedTo" />,
-      dataIndex: 'reporterRealName',
-      key: 'reporterRealName',
+      dataIndex: 'assigneeUser',
+      key: 'assigneeUser',
       flex: 1,
-      render(reporterRealName) {
+      render(assigneeUser) {
         return (<div style={{
           width: 60,
           overflow: 'hidden',
@@ -627,7 +629,7 @@ class CycleHome extends Component {
           textOverflow: 'ellipsis',
         }}
         >
-          {reporterRealName}
+          {assigneeUser.realName}
         </div>);
       },
       // render(reporterRealName, record) {
@@ -701,9 +703,6 @@ class CycleHome extends Component {
                   rightLoading: true,
                 });
                 // window.console.log(data);
-                getStatusList('CYCLE_CASE').then((List) => {
-                  this.setState({ statusList: List });
-                });
                 this.refresh();                
               }}
             />

@@ -2,15 +2,15 @@ import React, { Component } from 'react';
 import moment from 'moment';
 import 'moment/locale/zh-cn';
 import { FormattedMessage } from 'react-intl';
+import { User } from '../../../components/CommonComponent';
 import './ShowCycleData.scss';
 
 class ShowCycleData extends Component {
   render() {
     const { type, build, cycleId, versionName, title,
-      description, toDate, environment, fromDate, cycleCaseList, createdName,
+      description, toDate, environment, fromDate, cycleCaseList, createdUser,
       children,
-    } = this.props.data;
-    const user = createdName ? createdName.split(' ') : ['', ''];
+    } = this.props.data;   
     // 全局数
     let allExectueNum = 0;    
     // 全局执行过的数
@@ -94,12 +94,8 @@ class ShowCycleData extends Component {
               </div>
               <div className="c7n-right-card-item-text">           
                 <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <span className="c7n-avatar">
-                    {user[1].slice(0, 1)}
-                  </span>
-                  <span>
-                    {`${user[0]} ${user[1]}`}
-                  </span>
+                
+                  <User user={createdUser} />                
                 </div>
               </div>
             </div>
