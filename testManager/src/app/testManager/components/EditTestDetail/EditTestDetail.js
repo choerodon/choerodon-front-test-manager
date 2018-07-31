@@ -90,8 +90,15 @@ class EditTestDetail extends Component {
     });
     // 修复默认值不变
     if (this.props.visible === false && nextProps.visible === true) {
+      getIssueList().then((issueData) => {
+        this.setState({
+          issueList: issueData.content,
+          loading: false,
+        });
+      });
       this.setState({
         reset: false,
+        loading: true,
       }, () => {
         this.setState({
           reset: true,

@@ -146,9 +146,10 @@ class CycleExecute extends Component {
         page: historyPagination.current - 1, 
         size: historyPagination.pageSize, 
       }, id),
+      getIssueList(),
     ],
     )
-      .then(([cycleData, statusList, detailData, stepStatusList, historyData]) => {
+      .then(([cycleData, statusList, detailData, stepStatusList, historyData, issueData]) => {
         const { caseAttachment } = cycleData;
         const fileList = caseAttachment.map((attachment) => {
           const { url, attachmentName } = attachment;
@@ -180,6 +181,7 @@ class CycleExecute extends Component {
             total: historyData.totalElements,
           },
           historyList: historyData.content,
+          issueList: issueData.content,
           loading: false,
         });
         this.setStatusAndColor(this.state.cycleData.executionStatus, statusList);
@@ -935,7 +937,7 @@ class CycleExecute extends Component {
                       <FormattedMessage id="bug" />：
                     </div>
 
-                    <TextEditToggle
+                    <TextEditToggle              
                       onSubmit={this.addDefects}
                       originData={{ defects }}
                       onCancel={this.cancelEdit}
