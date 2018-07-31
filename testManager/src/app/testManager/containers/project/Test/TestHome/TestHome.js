@@ -4,6 +4,7 @@ import _ from 'lodash';
 import { Page, Header, Content, stores, axios } from 'choerodon-front-boot';
 import { Table, Button, Tooltip, Input, Dropdown, Menu, Pagination, Spin, Icon } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
+import moment from 'moment';
 import FileSaver from 'file-saver';
 import '../../../../assets/main.scss';
 import './TestHome.scss';
@@ -232,27 +233,30 @@ class Test extends Component {
       });
   }
   renderTestIssue(issue) {
+    const { typeCode, issueNum, summary, assigneeId, assigneeName, imageUrl, statusName, statusColor,
+      priorityName, priorityCode, epicName, epicColor, componentIssueRelDTOList, labelIssueRelDTOList, 
+      versionIssueRelDTOList, creationDate } = issue;
     return (
       <div style={{ display: 'flex', flex: 1, marginTop: '3px', flexDirection: 'column', marginBottom: '3px', cursor: 'pointer' }}>
         <div style={{ display: 'flex', flex: 1, marginTop: '3px', marginBottom: '3px', cursor: 'pointer' }}>
-          <Tooltip mouseEnterDelay={0.5} title={`任务类型： ${TYPE_NAME[issue.typeCode]}`}>
+          <Tooltip mouseEnterDelay={0.5} title={`任务类型： ${TYPE_NAME[typeCode]}`}>
             <div>
               <TypeTag
                 type={{
-                  typeCode: issue.typeCode,
+                  typeCode,
                 }}
               />
             </div>
           </Tooltip>
-          <Tooltip mouseEnterDelay={0.5} title={`任务编号： ${issue.issueNum}`}>
+          <Tooltip mouseEnterDelay={0.5} title={`任务编号： ${issueNum}`}>
             <a style={{ paddingLeft: 12, paddingRight: 12, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-              {issue.issueNum}
+              {issueNum}
             </a>
           </Tooltip>
           <div style={{ overflow: 'hidden', flex: 1 }}>
-            <Tooltip mouseEnterDelay={0.5} placement="topLeft" title={`任务概要： ${issue.summary}`}>
+            <Tooltip mouseEnterDelay={0.5} placement="topLeft" title={`任务概要： ${summary}`}>
               <p style={{ paddingRight: '25px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 0, maxWidth: 'unset' }}>
-                {issue.summary}
+                {summary}
               </p>
             </Tooltip>
           </div>
@@ -260,15 +264,15 @@ class Test extends Component {
          
           <div style={{ flexShrink: '0' }}>
             {
-              issue.assigneeId ? (
-                <Tooltip mouseEnterDelay={0.5} title={`任务经办人： ${issue.assigneeName}`}>
+              assigneeId ? (
+                <Tooltip mouseEnterDelay={0.5} title={`任务经办人： ${assigneeName}`}>
                   <div style={{ marginRight: 12 }}>
                     <UserHead
                       user={{
-                        id: issue.assigneeId,
+                        id: assigneeId,
                         loginName: '',
-                        realName: issue.assigneeName,
-                        avatar: issue.imageUrl,
+                        realName: assigneeName,
+                        avatar: imageUrl,
                       }}
                     />
                   </div>
@@ -277,12 +281,12 @@ class Test extends Component {
             }
           </div>
           <div style={{ flexShrink: '0', display: 'flex', justifyContent: 'flex-end' }}>
-            <Tooltip mouseEnterDelay={0.5} title={`任务状态： ${issue.statusName}`}>
+            <Tooltip mouseEnterDelay={0.5} title={`任务状态： ${statusName}`}>
               <div>
                 <StatusTag
                   status={{
-                    statusColor: issue.statusColor,
-                    statusName: issue.statusName,
+                    statusColor,
+                    statusName,
                   }}
                 />
               </div>
@@ -292,51 +296,61 @@ class Test extends Component {
         {/* 第二行 */}
         <div style={{ display: 'flex', flex: 1, marginTop: '3px', alignItems: 'center', marginBottom: '3px', cursor: 'pointer' }}>
           <div style={{ flexShrink: '0' }}>
-            <Tooltip mouseEnterDelay={0.5} title={`优先级： ${issue.priorityName}`}>
+            <Tooltip mouseEnterDelay={0.5} title={`优先级： ${priorityName}`}>
               <div style={{ marginRight: 12 }}>
                 <PriorityTag
                   priority={{
-                    priorityCode: issue.priorityCode,
-                    priorityName: issue.priorityName,
+                    priorityCode,
+                    priorityName,
                   }}
                 />
               </div>
             </Tooltip>
           </div>
-          <div 
-            style={{
-              color: 'blue',
-              height: 22,
-              borderWidth: '1px',
-              borderStyle: 'solid',
-              borderColor: 'blue',
-              borderRadius: '2px',
-              fontSize: '13px',
-              lineHeight: '20px',
-              padding: '0 8px',    
-            }}
-          >
-            {'0.1.2'}
-          </div>
-          <div 
-            style={{
-              color: 'blue',
-              height: 22,
-              borderWidth: '1px',
-              borderStyle: 'solid',
-              borderColor: 'blue',
-              borderRadius: '2px',
-              fontSize: '13px',
-              lineHeight: '20px',
-              padding: '0 8px',
-              marginLeft: 12,    
-            }}
-          >
-            {'史诗'}
+          {
+            versionIssueRelDTOList.map(version => (<div 
+              style={{
+                color: 'rgba(0,0,0,0.36)',
+                height: 22,
+                borderWidth: '1px',
+                borderStyle: 'solid',
+                borderColor: 'rgba(0,0,0,0.36)',
+                borderRadius: '2px',
+                fontSize: '13px',
+                lineHeight: '20px',
+                padding: '0 8px',    
+              }}
+            >
+              {version.name}
+            </div>))
+          }
+          {
+            epicName ? <div 
+              style={{
+                color: epicColor,
+                height: 22,
+                borderWidth: '1px',
+                borderStyle: 'solid',
+                borderColor: epicColor,
+                borderRadius: '2px',
+                fontSize: '13px',
+                lineHeight: '20px',
+                padding: '0 8px',
+                marginLeft: 12,    
+              }}
+            >
+              {epicName}
+            </div> : null
+          }
+          <div style={{ marginLeft: 15, color: '#3F51B5', fontWeight: 'bold' }}>
+            {
+              componentIssueRelDTOList.map(component => component.name).join(',')
+            }
           </div>
           <div style={{ marginLeft: 12, fontSize: '13px', color: 'rgba(0,0,0,0.65)' }}>
             创建于
           </div>
+          {moment(creationDate).format('LL')}
           <div className="c7n-flex-space" />
           <div
             key={'前端'}
