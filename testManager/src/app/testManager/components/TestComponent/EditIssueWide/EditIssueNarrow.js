@@ -2,32 +2,29 @@ import React, { Component } from 'react';
 import { stores, axios, Permission } from 'choerodon-front-boot';
 import { withRouter } from 'react-router-dom';
 import _ from 'lodash';
-import TimeAgo from 'timeago-react';
-import { Select, Input, DatePicker, Button, Modal, Tabs, Tooltip, Progress, Dropdown, Menu, Spin, Icon, Popover } from 'choerodon-ui';
+import { FormattedMessage } from 'react-intl';
+import { Select, Input, Button, Modal, Tooltip, Progress, Dropdown, Menu, Spin, Icon } from 'choerodon-ui';
 import { STATUS, COLOR, TYPE, ICON, TYPE_NAME } from '../../../common/Constant';
 import './EditIssueNarrow.scss';
 import '../../../assets/main.scss';
 import { UploadButtonNow, NumericInput, ReadAndEdit, IssueDescription } from '../CommonComponent';
 import { delta2Html, handleFileUpload, text2Delta, beforeTextUpload, formatDate, returnBeforeTextUpload } from '../../../common/utils';
-import { loadBranchs, loadDatalogs, loadLinkIssues, loadSubtask, updateWorklog, deleteWorklog, createIssue, loadLabels, loadIssue, loadWorklogs, updateIssue, loadPriorities, loadComponents, loadVersions, loadEpics, createCommit, deleteCommit, updateCommit, loadUsers, deleteIssue, updateIssueType, loadSprints, loadStatus } from '../../../api/IssueApi';
+import { loadDatalogs, loadLinkIssues, loadLabels, loadIssue, loadWorklogs, updateIssue, loadPriorities, loadComponents, loadVersions, loadEpics, createCommit, deleteIssue, updateIssueType, loadStatus } from '../../../api/IssueApi';
 import { getSelf, getUsers, getUser } from '../../../api/CommonApi';
 import WYSIWYGEditor from '../WYSIWYGEditor';
 import FullEditor from '../FullEditor';
 import DailyLog from '../DailyLog';
-import CreateSubTask from '../CreateSubTask';
 import CreateLinkTask from '../CreateLinkTask';
 import UserHead from '../UserHead';
 import Comment from './Component/Comment';
 import Log from './Component/Log';
 import DataLogs from './Component/DataLogs';
-import DataLog from './Component/DataLog';
 import IssueList from './Component/IssueList';
 import LinkList from './Component/LinkList';
 import CopyIssue from '../CopyIssue';
-import TransformSubIssue from '../TransformSubIssue';
 import TestStepTable from '../TestStepTable';
 import TestExecuteTable from '../TestExecuteTable';
-import CreateTest from '../CreateTest';
+import CreateTestStep from '../CreateTestStep';
 import ExecuteTest from '../ExecuteTest';
 
 const { AppState } = stores;
@@ -35,7 +32,6 @@ const { Option } = Select;
 const { TextArea } = Input;
 const confirm = Modal.confirm;
 let sign = true;
-let flag;
 let filterSign = false;
 const STATUS_ICON = {
   done: {
@@ -63,13 +59,11 @@ class CreateSprint extends Component {
       flag: undefined,
       selectLoading: true,
       saveLoading: false,
-      rollup: false,
+
       edit: false,
       addCommit: false,
       addCommitDes: '',
       dailyLogShow: false,
-      createLoading: false,
-      createSubTaskShow: false,
       createLinkTaskShow: false,
       createTestStepShow: false,
       editDesShow: false,
@@ -78,10 +72,7 @@ class CreateSprint extends Component {
       loading: true,
       nav: 'detail',
       editDes: undefined,
-      editCommentId: undefined,
-      editComment: undefined,
-      editLogId: undefined,
-      editLog: undefined,
+
       currentRae: undefined,
 
       issueId: undefined,
@@ -443,11 +434,8 @@ class CreateSprint extends Component {
       addCommit: false,
       addCommitDes: '',
       editDesShow: undefined,
-      editDes: undefined,
-      editCommentId: undefined,
-      editComment: undefined,
-      editLogId: undefined,
-      editLog: undefined,
+      editDes: undefined,    
+
 
       issueLoading: true,
     }, () => {
@@ -692,15 +680,6 @@ class CreateSprint extends Component {
     }
   }
 
-  handleCreateSubIssue(subIssue) {
-    this.reloadIssue();
-    this.setState({
-      createSubTaskShow: false,
-    });
-    if (this.props.onUpdate) {
-      this.props.onUpdate();
-    }
-  }
 
   handleCreateLinkIssue() {
     this.reloadIssue();
@@ -725,30 +704,14 @@ class CreateSprint extends Component {
     }
   }
 
-  handleTransformSubIssue() {
-    this.reloadIssue();
-    this.setState({
-      transformSubIssueShow: false,
-    });
-    if (this.props.onUpdate) {
-      this.props.onUpdate();
-    }
-    if (this.props.onCopyAndTransformToSubIssue) {
-      this.props.onCopyAndTransformToSubIssue();
-    }
-  }
 
   handleClickMenu(e) {
     if (e.key === '0') {
       this.setState({ dailyLogShow: true });
-    } else if (e.key === 'item_1') {
+    } else if (e.key === '1') {
       this.handleDeleteIssue(this.state.origin.issueId);
     } else if (e.key === '2') {
-      this.setState({ createSubTaskShow: true });
-    } else if (e.key === '3') {
       this.setState({ copyIssueShow: true });
-    } else if (e.key === '4') {
-      this.setState({ transformSubIssueShow: true });
     }
   }
 
@@ -1013,15 +976,15 @@ class CreateSprint extends Component {
     const getMenu = () => (
       <Menu onClick={this.handleClickMenu.bind(this)}>
         <Menu.Item key="0">
-          登记工作日志
+          <FormattedMessage id="issue_edit_addWworkLog" />        
         </Menu.Item>
         <Permission type={type} projectId={projectId} organizationId={orgId} service={['agile-service.issue.deleteIssue']}>
           <Menu.Item key="1">
-            删除
+            <FormattedMessage id="delete" /> 
           </Menu.Item>
         </Permission>
-        <Menu.Item key="3">
-          复制问题
+        <Menu.Item key="2">
+          <FormattedMessage id="issue_edit_copyIssue" /> 
         </Menu.Item>
       </Menu>
     );
@@ -1033,52 +996,7 @@ class CreateSprint extends Component {
         this.updateIssue('description');
       });
     };
-    const callbackUpload = (newFileList) => {
-      this.setState({ fileList: newFileList });
-    };
-    const typeList = (
-      <Menu
-        style={{
-          background: '#fff',
-          boxShadow: '0 5px 5px -3px rgba(0, 0, 0, 0.20), 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12)',
-          borderRadius: '2px',
-          // marginTop: 50,
-        }}
-        onClick={this.handleChangeType.bind(this)}
-      >
-        {
-          _.remove(['story', 'task', 'bug', 'issue_epic'], n => n !== this.state.typeCode).map(onetype => (
-            <Menu.Item key={onetype}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div
-                  style={{
-                    backgroundColor: TYPE[onetype],
-                    marginRight: 8,
-                    display: 'inline-flex',
-                    width: 20,
-                    height: 20,
-                    borderRadius: '50%',
-                    textAlign: 'center',
-                    color: '#fff',
-                    fontSize: '14px',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}
-                >
-                  <Icon
-                    style={{ fontSize: '14px' }}
-                    type={ICON[onetype]}
-                  />
-                </div>
-                <span>
-                  {TYPE_NAME[onetype]}
-                </span>
-              </div>
-            </Menu.Item>
-          ))
-        }
-      </Menu>
-    );
+
     return (
       <div className="choerodon-modal-editIssue">
         {
@@ -1269,7 +1187,7 @@ class CreateSprint extends Component {
                     onClick={() => this.props.onCancel()}
                   >
                     <Icon type="last_page" style={{ fontSize: '18px', fontWeight: '500' }} />
-                    <span>隐藏详情</span>
+                    <FormattedMessage id="issue_edit_hide" />
                   </div>
                 </div>
                 <div className="line-justify" style={{ marginBottom: 5, alignItems: 'center', marginTop: 10 }}>
@@ -1334,7 +1252,7 @@ class CreateSprint extends Component {
                     </span>
                     <div>
                       <div style={{ fontSize: '12px', color: 'rgba(0, 0, 0, 0.54)', marginBottom: 4 }}>
-                        状态
+                        <FormattedMessage id="issue_issueFilterByStatus" />
                       </div>
                       <div>
                         <ReadAndEdit
@@ -1413,7 +1331,7 @@ class CreateSprint extends Component {
                     </span>
                     <div>
                       <div style={{ fontSize: '12px', color: 'rgba(0, 0, 0, 0.54)', marginBottom: 4 }}>
-                        优先级
+                        <FormattedMessage id="issue_issueFilterByPriority" />
                       </div>
                       <div>
                         <ReadAndEdit
@@ -1507,51 +1425,7 @@ class CreateSprint extends Component {
                         </ReadAndEdit>
                       </div>
                     </div>
-                  </div>                 
-                  {
-                    this.state.issueId && this.state.typeCode === 'story' ? (
-                      <div style={{ display: 'flex', flex: 1 }}>
-                        <span
-                          style={{ width: 30, height: 30, borderRadius: '50%', background: '#d8d8d8', marginRight: 12, flexShrink: 0, display: 'flex', justifyContent: 'center', alignItems: 'center' }}
-                        >
-                          <Icon type="date_range" style={{ fontSize: '24px' }} />
-                        </span>
-                        <div>
-                          <div style={{ fontSize: '12px', color: 'rgba(0, 0, 0, 0.54)', marginBottom: 4 }}>
-                        故事点
-                          </div>
-                          <div>
-                            <ReadAndEdit
-                              callback={this.changeRae.bind(this)}
-                              thisType="storyPoints"
-                              current={this.state.currentRae}
-                              handleEnter
-                              origin={this.state.storyPoints}
-                              onInit={() => this.setAnIssueToState(this.state.origin)}
-                              onOk={this.updateIssue.bind(this, 'storyPoints')}
-                              onCancel={this.resetStoryPoints.bind(this)}
-                              readModeContent={<span>
-                                {this.state.storyPoints === undefined || this.state.storyPoints === null ? '无' : `${this.state.storyPoints} 点`}
-                              </span>}
-                            >
-                              <NumericInput
-                                maxLength="3"
-                                value={this.state.storyPoints}
-                                autoFocus
-                                onChange={this.handleStoryPointsChange.bind(this)}
-                                onPressEnter={() => {
-                                  this.updateIssue('storyPoints');
-                                  this.setState({
-                                    currentRae: undefined,
-                                  });
-                                }}
-                              />
-                            </ReadAndEdit>
-                          </div>
-                        </div>
-                      </div>
-                    ) : null
-                  }
+                  </div>
                   {
                     this.state.issueId && this.state.typeCode !== 'issue_epic' ? (
                       <div style={{ display: 'flex', flex: 1 }}>
@@ -1562,7 +1436,7 @@ class CreateSprint extends Component {
                         </span>
                         <div>
                           <div style={{ fontSize: '12px', color: 'rgba(0, 0, 0, 0.54)', marginBottom: 4 }}>
-                            预估时间
+                            <FormattedMessage id="issue_edit_planTime" />
                           </div>
                           <div>
                             <ReadAndEdit
@@ -1602,7 +1476,7 @@ class CreateSprint extends Component {
                       <div style={{ display: 'flex', flex: 1, justifyContent: 'center', borderLeft: '1px solid rgba(0, 0, 0, 0.26)' }}>
                         <Button funcType="flat" style={{ color: '#000' }} onClick={() => this.setState({ executeTestShow: true })}>
                           <Icon type="explicit-outline" />
-                          <span style={{ paddingLeft: 12 }}>执行测试</span>
+                          <span style={{ paddingLeft: 12 }}><FormattedMessage id="issue_edit_executeTest" /></span>
                         </Button>
                       </div>
                     ) : null
@@ -1619,7 +1493,7 @@ class CreateSprint extends Component {
                     <div className="c7n-title-wrapper" style={{ marginTop: 0 }}>
                       <div className="c7n-title-left">
                         <Icon type="error_outline c7n-icon-title" />
-                        <span>详情</span>
+                        <FormattedMessage id="detail" />
                       </div>
                       <div style={{ flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px' }} />
                     </div>
@@ -1630,7 +1504,7 @@ class CreateSprint extends Component {
                             <div className="line-start mt-10">
                               <div className="c7n-property-wrapper">
                                 <span className="c7n-property">
-                                  模块：
+                                  <FormattedMessage id="summary_component" />：
                                 </span>
                               </div>
                               <div className="c7n-value-wrapper">
@@ -1688,7 +1562,7 @@ class CreateSprint extends Component {
                         <div className="line-start mt-10">
                           <div className="c7n-property-wrapper">
                             <span className="c7n-property">
-                              标签：
+                              <FormattedMessage id="summary_label" />：
                             </span>
                           </div>
                           <div className="c7n-value-wrapper">
@@ -1761,90 +1635,12 @@ class CreateSprint extends Component {
                               </Select>
                             </ReadAndEdit>
                           </div>
-                        </div>
-                        {
-                          this.state.typeCode === 'bug' ? (
-                            <div className="line-start mt-10">
-                              <div className="c7n-property-wrapper">
-                                <span className="c7n-property">
-                                  影响的版本：
-                                </span>
-                              </div>
-                              <div className="c7n-value-wrapper">
-                                <ReadAndEdit
-                                  callback={this.changeRae.bind(this)}
-                                  thisType="influenceVersions"
-                                  current={this.state.currentRae}
-                                  origin={this.state.influenceVersions}
-                                  onInit={() => this.setAnIssueToState(this.state.origin)}
-                                  onOk={this.updateVersionSelect.bind(this, 'originVersions', 'influenceVersions')}
-                                  onCancel={this.resetInfluenceVersions.bind(this)}
-                                  readModeContent={<div>
-                                    {
-                                      !this.state.influenceVersionsFixed.length && !this.state.influenceVersions.length ? '无' : (
-                                        <div>
-                                          <div style={{ color: '#000' }}>
-                                            {_.map(this.state.influenceVersionsFixed, 'name').join(' , ')}
-                                          </div>
-                                          <p style={{ color: '#3f51b5', wordBreak: 'break-word', marginBottom: 0 }}>
-                                            {_.map(this.state.influenceVersions, 'name').join(' , ')}
-                                          </p>
-                                        </div>
-                                      )
-                                    }
-                                  </div>}
-                                >
-                                  {
-                                    this.state.influenceVersionsFixed.length ? (
-                                      <div>
-                                        <span>已归档版本：</span>
-                                        <span>
-                                          {_.map(this.state.influenceVersionsFixed, 'name').join(' , ')}
-                                        </span>
-                                      </div>
-                                    ) : null
-                                  }
-                                  <Select
-                                    label="未归档版本"
-                                    value={this.transToArr(this.state.influenceVersions, 'name', 'array')}
-                                    mode="tags"
-                                    autoFocus
-                                    loading={this.state.selectLoading}
-                                    getPopupContainer={triggerNode => triggerNode.parentNode}
-                                    tokenSeparators={[',']}
-                                    style={{ width: '200px', marginTop: 0, paddingTop: 0 }}
-                                    onFocus={() => {
-                                      this.setState({
-                                        selectLoading: true,
-                                      });
-                                      loadVersions(['version_planning', 'released']).then((res) => {
-                                        this.setState({
-                                          originVersions: res,
-                                          selectLoading: false,
-                                        });
-                                      });
-                                    }}
-                                    onChange={value => this.setState({ influenceVersions: value })}
-                                  >
-                                    {this.state.originVersions.map(version =>
-                                      (<Option
-                                        key={version.name}
-                                        value={version.name}
-                                      >
-                                        {version.name}
-                                      </Option>),
-                                    )}
-                                  </Select>
-                                </ReadAndEdit>
-                              </div>
-                            </div>
-                          ) : null
-                        }
+                        </div>           
                         
                         <div className="line-start mt-10">
                           <div className="c7n-property-wrapper">
                             <span className="c7n-property">
-                              修复的版本：
+                              <FormattedMessage id="issue_create_content_version" />：
                             </span>
                           </div>
                           <div className="c7n-value-wrapper">
@@ -1920,7 +1716,7 @@ class CreateSprint extends Component {
                             <div className="line-start mt-10">
                               <div className="c7n-property-wrapper">
                                 <span className="c7n-property">
-                                  史诗：
+                                  <FormattedMessage id="issue_create_content_epic" />：
                                 </span>
                               </div>
                               <div className="c7n-value-wrapper">
@@ -2008,7 +1804,7 @@ class CreateSprint extends Component {
                         <div className="line-start mt-10">
                           <div className="c7n-property-wrapper">
                             <span className="c7n-property">
-                              时间跟踪：
+                              <FormattedMessage id="issue_edit_timeFollow" />：
                             </span>
                           </div>
                           <div className="c7n-value-wrapper" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
@@ -2040,68 +1836,25 @@ class CreateSprint extends Component {
                                 });
                               }}
                             >
-                              登记工作
+                              <FormattedMessage id="issue_edit_registrationWork" />
                             </span>
                           </div>
-                        </div>
-                        {
-                          this.state.typeCode === 'issue_epic' ? (
-                            <div className="line-start mt-10">
-                              <div className="c7n-property-wrapper">
-                                <span className="c7n-property">
-                                  Epic名：
-                                </span>
-                              </div>
-                              <div className="c7n-value-wrapper" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', width: 200 }}>
-                                <ReadAndEdit
-                                  callback={this.changeRae.bind(this)}
-                                  thisType="epicName"
-                                  current={this.state.currentRae}
-                                  handleEnter
-                                  line
-                                  origin={this.state.epicName}
-                                  onInit={() => this.setAnIssueToState()}
-                                  onOk={this.updateIssue.bind(this, 'epicName')}
-                                  onCancel={this.resetEpicName.bind(this)}
-                                  readModeContent={<div>
-                                    <p style={{ wordBreak: 'break-word', marginBottom: 0 }}>
-                                      {this.state.epicName}
-                                    </p>
-                                  </div>}
-                                >
-                                  <TextArea
-                                    maxLength={44}
-                                    style={{ width: '200px' }}
-                                    value={this.state.epicName}
-                                    size="small"
-                                    autoFocus={{ minRows: 2, maxRows: 6 }}
-                                    onChange={this.handleEpicNameChange.bind(this)}
-                                    onPressEnter={() => {
-                                      this.updateIssue('epicName');
-                                      this.setState({
-                                        currentRae: undefined,
-                                      });
-                                    }}
-                                  />
-                                </ReadAndEdit>
-                              </div>
-                            </div>
-                          ) : null
-                        }
-                        
+                        </div>                        
                       </div>
                       {/* --- */}
                       <div style={{ flex: 1, width: '50%' }}>
                         <div className="line-start mt-10">
                           <div className="c7n-property-wrapper">
                             <span className="c7n-subtitle">
-                              人员
+                              <FormattedMessage id="issue_edit_person" />
                             </span>
                           </div>
                         </div>
                         <div className="line-start mt-10 assignee">
                           <div className="c7n-property-wrapper">
-                            <span className="c7n-property">报告人：</span>
+                            <span className="c7n-property">
+                              <FormattedMessage id="issue_edit_reporter" />
+                            ：</span>
                           </div>
                           <div className="c7n-value-wrapper" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
                             <ReadAndEdit
@@ -2200,13 +1953,15 @@ class CreateSprint extends Component {
                                 });
                               }}
                             >
-                              指派给我
+                              <FormattedMessage id="issue_edit_assignToMe" />
                             </span>
                           </div>
                         </div>
                         <div className="line-start mt-10 assignee">
                           <div className="c7n-property-wrapper">
-                            <span className="c7n-property">经办人：</span>
+                            <span className="c7n-property">
+                              <FormattedMessage id="issue_edit_manager" />
+                            ：</span>
                           </div>
                           <div className="c7n-value-wrapper" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
                             <ReadAndEdit
@@ -2305,20 +2060,22 @@ class CreateSprint extends Component {
                                 });
                               }}
                             >
-                              指派给我
+                              <FormattedMessage id="issue_edit_assignToMe" />
                             </span>
                           </div>
                         </div>
 
                         <div className="line-start mt-10">
                           <div className="c7n-property-wrapper">
-                            <span className="c7n-subtitle">日期</span>
+                            <span className="c7n-subtitle">
+                              <FormattedMessage id="issue_edit_date" />
+                            </span>
                           </div>
                         </div>
                         
                         <div className="line-start mt-10">
                           <div className="c7n-property-wrapper">
-                            <span className="c7n-property">创建时间：</span>
+                            <span className="c7n-property"><FormattedMessage id="issue_edit_createDate" />：</span>
                           </div>
                           <div className="c7n-value-wrapper">
                             {formatDate(this.state.creationDate)}
@@ -2326,7 +2083,7 @@ class CreateSprint extends Component {
                         </div>
                         <div className="line-start mt-10">
                           <div className="c7n-property-wrapper">
-                            <span className="c7n-property">更新时间：</span>
+                            <span className="c7n-property"><FormattedMessage id="issue_edit_updateDate" />：</span>
                           </div>
                           <div className="c7n-value-wrapper">
                             {formatDate(this.state.lastUpdateDate)}
@@ -2340,13 +2097,13 @@ class CreateSprint extends Component {
                     <div className="c7n-title-wrapper">
                       <div className="c7n-title-left">
                         <Icon type="subject c7n-icon-title" />
-                        <span>描述</span>
+                        <span><FormattedMessage id="execute_description" /></span>
                       </div>
                       <div style={{ flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px' }} />
                       <div className="c7n-title-right" style={{ marginLeft: '14px', position: 'relative' }}>
                         <Button className="leftBtn" funcType="flat" onClick={() => this.setState({ edit: true })}>
                           <Icon type="zoom_out_map icon" style={{ marginRight: 2 }} />
-                          <span>全屏编辑</span>
+                          <span><FormattedMessage id="execute_edit_fullScreen" /></span>
                         </Button>
                         <Icon
                           className="c7n-des-edit"
@@ -2371,13 +2128,13 @@ class CreateSprint extends Component {
                   <div className="c7n-title-wrapper">
                     <div className="c7n-title-left">
                       <Icon type="compass c7n-icon-title" />
-                      <span>测试详细信息</span>
+                      <FormattedMessage id="issue_edit_testDetail" />
                     </div>
                     <div style={{ flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px' }} />
                     <div className="c7n-title-right" style={{ marginLeft: '14px', position: 'relative' }}>
                       <Button className="leftBtn" funcTyp="flat" onClick={() => this.setState({ createTestStepShow: true })}>
                         <Icon type="playlist_add icon" style={{ marginRight: 2 }} />
-                        <span>添加测试信息</span>
+                        <FormattedMessage id="issue_edit_addTestDetail" />
                       </Button>
                     </div>
                   </div>
@@ -2396,7 +2153,7 @@ class CreateSprint extends Component {
                   <div className="c7n-title-wrapper">
                     <div className="c7n-title-left">
                       <Icon type="explicit2 c7n-icon-title" />
-                      <span>测试执行</span>
+                      <FormattedMessage id="execute_cycle_execute" />
                     </div>
                     <div style={{ flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px' }} />
                   </div>
@@ -2417,7 +2174,7 @@ class CreateSprint extends Component {
                   <div className="c7n-title-wrapper">
                     <div className="c7n-title-left">
                       <Icon type="attach_file c7n-icon-title" />
-                      <span>附件</span>
+                      <FormattedMessage id="attachment" />
                     </div>
                     <div style={{ flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px', marginRight: '114.67px' }} />
                   </div>
@@ -2435,13 +2192,13 @@ class CreateSprint extends Component {
                   <div className="c7n-title-wrapper">
                     <div className="c7n-title-left">
                       <Icon type="sms_outline c7n-icon-title" />
-                      <span>评论</span>
+                      <FormattedMessage id="issue_edit_comment" />
                     </div>
                     <div style={{ flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px' }} />
                     <div className="c7n-title-right" style={{ marginLeft: '14px' }}>
                       <Button className="leftBtn" funcType="flat" onClick={() => this.setState({ addCommit: true })}>
                         <Icon type="playlist_add icon" />
-                        <span>添加评论</span>
+                        <FormattedMessage id="issue_edit_addComment" />
                       </Button>
                     </div>
                   </div>
@@ -2452,13 +2209,13 @@ class CreateSprint extends Component {
                   <div className="c7n-title-wrapper">
                     <div className="c7n-title-left">
                       <Icon type="work_log c7n-icon-title" />
-                      <span>工作日志</span>
+                      <FormattedMessage id="issue_edit_workLog" />
                     </div>
                     <div style={{ flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px' }} />
                     <div className="c7n-title-right" style={{ marginLeft: '14px' }}>
                       <Button className="leftBtn" funcType="flat" onClick={() => this.setState({ dailyLogShow: true })}>
                         <Icon type="playlist_add icon" />
-                        <span>登记工作</span>
+                        <FormattedMessage id="issue_edit_registrationWork" />
                       </Button>
                     </div>
                   </div>
@@ -2469,7 +2226,7 @@ class CreateSprint extends Component {
                   <div className="c7n-title-wrapper">
                     <div className="c7n-title-left">
                       <Icon type="insert_invitation c7n-icon-title" />
-                      <span>活动日志</span>
+                      <FormattedMessage id="issue_edit_activeLog" />
                     </div>
                     <div style={{ flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px' }} />
                   </div>
@@ -2482,13 +2239,13 @@ class CreateSprint extends Component {
                       <div className="c7n-title-wrapper">
                         <div className="c7n-title-left">
                           <Icon type="link c7n-icon-title" />
-                          <span>相关任务</span>
+                          <FormattedMessage id="issue_edit_linkIssue" />
                         </div>
                         <div style={{ flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px' }} />
                         <div className="c7n-title-right" style={{ marginLeft: '14px' }}>
                           <Button className="leftBtn" funcType="flat" onClick={() => this.setState({ createLinkTaskShow: true })}>
                             <Icon type="playlist_add icon" />
-                            <span>创建相关任务</span>
+                            <FormattedMessage id="issue_edit_addLinkIssue" />
                           </Button>
                         </div>
                       </div>
@@ -2531,16 +2288,7 @@ class CreateSprint extends Component {
             />
           ) : null
         }
-        {
-          this.state.createSubTaskShow ? (
-            <CreateSubTask
-              issueId={this.state.origin.issueId}
-              visible={this.state.createSubTaskShow}
-              onCancel={() => this.setState({ createSubTaskShow: false })}
-              onOk={this.handleCreateSubIssue.bind(this)}
-            />
-          ) : null
-        }
+
         {
           this.state.createLinkTaskShow ? (
             <CreateLinkTask
@@ -2564,22 +2312,10 @@ class CreateSprint extends Component {
               onOk={this.handleCopyIssue.bind(this)}
             />
           ) : null
-        }
-        {
-          this.state.transformSubIssueShow ? (
-            <TransformSubIssue
-              visible={this.state.transformSubIssueShow}
-              issueId={this.state.origin.issueId}
-              issueNum={this.state.origin.issueNum}
-              ovn={this.state.origin.objectVersionNumber}
-              onCancel={() => this.setState({ transformSubIssueShow: false })}
-              onOk={this.handleTransformSubIssue.bind(this)}
-            />
-          ) : null
-        }
+        }        
         {
           this.state.createTestStepShow ? (
-            <CreateTest
+            <CreateTestStep
               issueId={this.state.origin.issueId}
               issueName={this.state.origin.issueNum}
               visible={this.state.createTestStepShow}

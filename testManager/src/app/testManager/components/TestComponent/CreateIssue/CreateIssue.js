@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import { stores, axios } from 'choerodon-front-boot';
+import { stores, axios, Content } from 'choerodon-front-boot';
 import { withRouter } from 'react-router-dom';
 import _ from 'lodash';
 import { Select, Form, Input, Button, Modal, Icon, Tooltip } from 'choerodon-ui';
-
+import { FormattedMessage } from 'react-intl';
 import './CreateIssue.scss';
 import '../../../assets/main.scss';
 import { UploadButton } from '../CommonComponent';
@@ -232,7 +232,7 @@ class CreateIssue extends Component {
     return (
       <Sidebar
         className="c7n-createIssue"
-        title="创建测试用例"
+        title={<FormattedMessage id="issue_create_name" />}
         visible={visible || false}
         onOk={this.handleCreateIssue}
         onCancel={onCancel}
@@ -240,45 +240,30 @@ class CreateIssue extends Component {
         cancelText="取消"
         confirmLoading={this.state.createLoading}
       >
-        <div className="c7n-region">
-          <h2 className="c7n-space-first">在项目“{AppState.currentMenuType.name}”中创建测试用例</h2>
-          <p>
-            请在下面输入测试用例的详细信息，包含详细描述、人员信息、版本信息、进度预估、优先级等等。您可以通过丰富的任务描述帮助相关人员更快更全面的理解任务，同时更好的把控问题进度。
-            <a href="http://v0-8.choerodon.io/zh/docs/user-guide/agile/issue/create-issue/" rel="nofollow me noopener noreferrer" target="_blank" className="c7n-external-link">
-              <span className="c7n-external-link-content">
-              了解详情
-              </span>
-              <Icon type="open_in_new" style={{ fontSize: '13px' }} />
-            </a>
-          </p>
+        <Content
+          style={{
+            padding: '0 0 10px 0',
+          }}
+          title={<FormattedMessage id="status_side_content_title" />}
+          description={<FormattedMessage id="issue_create_content_description" />}
+          link="http://v0-8.choerodon.io/zh/docs/user-guide/agile/issue/create-issue/"
+        >
           <Form layout="vertical">
-            <FormItem label="概要" style={{ width: 520 }}>
+            <FormItem style={{ width: 520 }}>
               {getFieldDecorator('summary', {
                 rules: [{ required: true, message: '概要为必输项' }],
               })(
-                <Input label="概要" maxLength={44} />,
+                <Input label={<FormattedMessage id="issue_issueFilterBySummary" />} maxLength={44} />,
               )}
             </FormItem>
 
-            {
-              this.props.form.getFieldValue('typeCode') === 'issue_epic' && (
-                <FormItem label="Epic名称" style={{ width: 520 }}>
-                  {getFieldDecorator('epicName', {
-                    rules: [{ required: true, message: 'Epic名称为必输项' }],
-                  })(
-                    <Input label="Epic名称" maxLength={44} />,
-                  )}
-                </FormItem>
-              )
-            }
-
-            <FormItem label="优先级" style={{ width: 520 }}>
+            <FormItem style={{ width: 520 }}>
               {getFieldDecorator('priorityCode', {
                 rules: [{ required: true, message: '优先级为必选项' }],
                 initialValue: this.state.origin.defaultPriorityCode,
               })(
                 <Select
-                  label="优先级"
+                  label={<FormattedMessage id="issue_issueFilterByPriority" />}
                   getPopupContainer={triggerNode => triggerNode.parentNode}
                 >
                   {this.transformPriorityCode(this.state.originPriorities).map(type =>
@@ -302,11 +287,11 @@ class CreateIssue extends Component {
 
             <div>
               <div style={{ display: 'flex', marginBottom: 13, alignItems: 'center' }}>
-                <div style={{ fontWeight: 'bold' }}>描述</div>
+                <div style={{ fontWeight: 'bold' }}><FormattedMessage id="execute_description" /></div>
                 <div style={{ marginLeft: 80 }}>
                   <Button className="leftBtn" funcType="flat" onClick={() => this.setState({ edit: true })} style={{ display: 'flex', alignItems: 'center' }}>
                     <Icon type="zoom_out_map" style={{ color: '#3f51b5', fontSize: '18px', marginRight: 12 }} />
-                    <span style={{ color: '#3f51b5' }}>全屏编辑</span>
+                    <span style={{ color: '#3f51b5' }}><FormattedMessage id="execute_edit_fullScreen" /></span>
                   </Button>
                 </div>
               </div>
@@ -325,10 +310,10 @@ class CreateIssue extends Component {
               }
             </div>
 
-            <FormItem label="经办人" style={{ width: 520, display: 'inline-block' }}>
+            <FormItem style={{ width: 520, display: 'inline-block' }}>
               {getFieldDecorator('assigneedId', {})(
                 <Select
-                  label="经办人"
+                  label={<FormattedMessage id="issue_issueSortByPerson" />}
                   getPopupContainer={triggerNode => triggerNode.parentNode}
                   loading={this.state.selectLoading}
                   filter
@@ -367,13 +352,14 @@ class CreateIssue extends Component {
 
             {
               this.props.form.getFieldValue('typeCode') !== 'issue_epic' && (
-                <FormItem label="史诗" style={{ width: 520 }}>
+                <FormItem style={{ width: 520 }}>
                   {getFieldDecorator('epicId', {})(
                     <Select
-                      label="史诗"
+                      label={<FormattedMessage id="issue_create_content_epic" />}
                       allowClear
                       filter
-                      filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                      filterOption={(input, option) => 
+                        option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
                       getPopupContainer={triggerNode => triggerNode.parentNode}
                       loading={this.state.selectLoading}
                       onFocus={() => {
@@ -397,13 +383,14 @@ class CreateIssue extends Component {
               )
             }
 
-            <FormItem label="冲刺" style={{ width: 520 }}>
+            <FormItem style={{ width: 520 }}>
               {getFieldDecorator('sprintId', {})(
                 <Select
-                  label="冲刺"
+                  label={<FormattedMessage id="issue_create_content_sprint" />}
                   allowClear
                   filter
-                  filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                  filterOption={(input, option) => 
+                    option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
                   getPopupContainer={triggerNode => triggerNode.parentNode}
                   loading={this.state.selectLoading}
                   onFocus={() => {
@@ -419,18 +406,21 @@ class CreateIssue extends Component {
                   }}
                 >
                   {this.state.originSprints.map(sprint =>
-                    <Option key={sprint.sprintId} value={sprint.sprintId}>{sprint.sprintName}</Option>,
+                    (<Option
+                      key={sprint.sprintId} 
+                      value={sprint.sprintId}
+                    >{sprint.sprintName}</Option>),
                   )}
                 </Select>,
               )}
             </FormItem>
 
-            <FormItem label="修复版本" style={{ width: 520 }}>
+            <FormItem style={{ width: 520 }}>
               {getFieldDecorator('fixVersionIssueRel', {
                 rules: [{ transform: value => (value ? value.toString() : value) }],
               })(
                 <Select
-                  label="修复版本"
+                  label={<FormattedMessage id="issue_create_content_version" />}
                   mode="tags"
                   loading={this.state.selectLoading}
                   getPopupContainer={triggerNode => triggerNode.parentNode}
@@ -454,12 +444,12 @@ class CreateIssue extends Component {
               )}
             </FormItem>
 
-            <FormItem label="模板" style={{ width: 520 }}>
+            <FormItem style={{ width: 520 }}>
               {getFieldDecorator('componentIssueRel', {
                 rules: [{ transform: value => (value ? value.toString() : value) }],
               })(
                 <Select
-                  label="模块"
+                  label={<FormattedMessage id="summary_component" />}
                   mode="tags"
                   loading={this.state.selectLoading}
                   getPopupContainer={triggerNode => triggerNode.parentNode}
@@ -483,12 +473,12 @@ class CreateIssue extends Component {
               )}
             </FormItem>
 
-            <FormItem label="标签" style={{ width: 520 }}>
+            <FormItem style={{ width: 520 }}>
               {getFieldDecorator('issueLink', {
                 rules: [{ transform: value => (value ? value.toString() : value) }],
               })(
                 <Select
-                  label="标签"
+                  label={<FormattedMessage id="summary_label" />}
                   mode="tags"
                   loading={this.state.selectLoading}
                   getPopupContainer={triggerNode => triggerNode.parentNode}
@@ -506,7 +496,10 @@ class CreateIssue extends Component {
                   }}
                 >
                   {this.state.originLabels.map(label =>
-                    <Option key={label.labelName} value={label.labelName}>{label.labelName}</Option>,
+                    (<Option 
+                      key={label.labelName}
+                      value={label.labelName}
+                    >{label.labelName}</Option>),
                   )}
                 </Select>,
               )}
@@ -515,7 +508,7 @@ class CreateIssue extends Component {
           
           <div className="sign-upload" style={{ marginTop: 38 }}>
             <div style={{ display: 'flex', marginBottom: '13px', alignItems: 'center' }}>
-              <div style={{ fontWeight: 'bold' }}>附件</div>
+              <div style={{ fontWeight: 'bold' }}><FormattedMessage id="attachment" /></div>
             </div>
             <div style={{ marginTop: -38 }}>
               <UploadButton
@@ -524,18 +517,18 @@ class CreateIssue extends Component {
                 fileList={this.state.fileList}
               />
             </div>
-          </div>
-        </div>
-        {
-          this.state.edit ? (
-            <FullEditor
-              initValue={this.state.delta}
-              visible={this.state.edit}
-              onCancel={() => this.setState({ edit: false })}
-              onOk={callback}
-            />
-          ) : null
-        }
+          </div>       
+          {
+            this.state.edit ? (
+              <FullEditor
+                initValue={this.state.delta}
+                visible={this.state.edit}
+                onCancel={() => this.setState({ edit: false })}
+                onOk={callback}
+              />
+            ) : null
+          }
+        </Content>
       </Sidebar>
     );
   }

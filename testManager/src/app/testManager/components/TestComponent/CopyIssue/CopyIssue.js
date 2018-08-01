@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { stores, axios, Content } from 'choerodon-front-boot';
 import { withRouter } from 'react-router-dom';
-import _ from 'lodash';
+import { FormattedMessage } from 'react-intl';
 import { Modal, Form, Input, Checkbox } from 'choerodon-ui';
 
 import './CopyIssue.scss';
@@ -54,12 +54,12 @@ class CopyIssue extends Component {
     return (
       <Modal
         className="c7n-copyIssue"
-        title={`复制问题${issueNum}`}
+        title={<FormattedMessage id="issue_copy_title" values={{ issueNum }} />}
         visible={visible || false}
         onOk={this.handleCopyIssue}
         onCancel={onCancel}
-        okText="复制"
-        cancelText="取消"
+        okText={<FormattedMessage id="copy" />}
+        cancelText={<FormattedMessage id="cancel" />}
         confirmLoading={this.state.loading}
       >
         <Form layout="vertical">
@@ -69,7 +69,7 @@ class CopyIssue extends Component {
               initialValue: issueSummary,
             })(
               <Input
-                label="概要"
+                label={<FormattedMessage id="issue_issueFilterBySummary" />}
                 prefix="CLONE - "
                 maxLength={44}
               />,
@@ -80,13 +80,13 @@ class CopyIssue extends Component {
               <FormItem>
                 {getFieldDecorator('sprint', {})(
                   <Checkbox>
-                    是否复制冲刺
+                    <FormattedMessage id="issue_copy_copySprint" />
                   </Checkbox>,
                 )}
               </FormItem>
             ) : null
           }
-          {
+          {/* {
             this.props.issue.subIssueDTOList.length ? (
               <FormItem>
                 {getFieldDecorator('copySubIssue', {})(
@@ -96,13 +96,13 @@ class CopyIssue extends Component {
                 )}
               </FormItem>
             ) : null
-          }
+          } */}
           {
             this.props.issueLink.length ? (
               <FormItem>
                 {getFieldDecorator('copyLinkIssue', {})(
                   <Checkbox>
-                    是否复制关联任务
+                    <FormattedMessage id="issue_copy_copyLinkIssue" />
                   </Checkbox>,
                 )}
               </FormItem>

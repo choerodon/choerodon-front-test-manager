@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { stores, axios, Content } from 'choerodon-front-boot';
 import { withRouter } from 'react-router-dom';
-import _ from 'lodash';
+import { FormattedMessage } from 'react-intl';
 import { Select, Form, Input, Button, Modal, Icon, Tooltip, Radio } from 'choerodon-ui';
 import UserHead from '../UserHead';
 import { getUsers, getSelf } from '../../../api/CommonApi';
@@ -15,7 +15,7 @@ const FormItem = Form.Item;
 const Option = Select.Option;
 const RadioGroup = Radio.Group;
 
-class CreateTest extends Component {
+class ExecuteTest extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -93,12 +93,12 @@ class CreateTest extends Component {
     return (
       <Sidebar
         className="c7n-createSubIssue"
-        title="执行测试"
+        title={<FormattedMessage id="issue_edit_executeTest" />}
         visible
         onOk={this.handleCreateIssue}
         onCancel={onCancel}
-        okText="执行"
-        cancelText="取消"
+        okText={<FormattedMessage id="execute" />}
+        cancelText={<FormattedMessage id="cancel" />}
         confirmLoading={this.state.createLoading}
       >
         <Content
@@ -106,12 +106,12 @@ class CreateTest extends Component {
             padding: 0,
             width: 512,
           }}
-          title={`在测试“${issueName}”中执行测试`}
-          description="将测试用例添加到测试循环或文件夹中，构成一次测试执行。"
+          title={<FormattedMessage id="issue_executeTest_content_title" values={{ issueName }} />}
+          description={<FormattedMessage id="issue_executeTest_content_description" />}
           link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management/execution-test/"
         >
           <Form layout="vertical">
-            <FormItem label="版本">
+            <FormItem>
               {getFieldDecorator('version', {
                 rules: [{
                   required: true,
@@ -119,10 +119,11 @@ class CreateTest extends Component {
                 }],
               })(
                 <Select
-                  label="版本"
+                  label={<FormattedMessage id="version" />}
                   loading={this.state.selectLoading}
                   filter
-                  filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                  filterOption={(input, option) => 
+                    option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
                   onFocus={() => {
                     this.setState({
                       selectLoading: true,
@@ -146,7 +147,7 @@ class CreateTest extends Component {
                 </Select>,
               )}
             </FormItem>
-            <FormItem label="测试循环">
+            <FormItem>
               {getFieldDecorator('circle', {
                 rules: [{
                   required: true,
@@ -154,11 +155,12 @@ class CreateTest extends Component {
                 }],
               })(
                 <Select
-                  label="测试循环"
+                  label={<FormattedMessage id="cycle" />}
                   disabled={!this.props.form.getFieldValue('version')}
                   loading={this.state.selectLoading}
                   filter
-                  filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                  filterOption={(input, option) => 
+                    option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
                   onFocus={() => {
                     this.setState({
                       selectLoading: true,
@@ -182,15 +184,16 @@ class CreateTest extends Component {
                 </Select>,
               )}
             </FormItem>
-            <FormItem label="测试文件夹">
+            <FormItem>
               {getFieldDecorator('folder', {
               })(
                 <Select
-                  label="测试文件夹"
+                  label={<FormattedMessage id="cycle_createExecute_folder" />}
                   disabled={!this.props.form.getFieldValue('circle')}
                   loading={this.state.selectLoading}
                   filter
-                  filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                  filterOption={(input, option) => 
+                    option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
                   onFocus={() => {
                     this.setState({
                       selectLoading: true,
@@ -214,17 +217,21 @@ class CreateTest extends Component {
                 </Select>,
               )}
             </FormItem>
-            <FormItem label="被指定人" style={{ marginBottom: 0 }}>
+            <FormItem style={{ marginBottom: 0 }}>
               {getFieldDecorator('assigneed', {
                 initialValue: 'mine',
               })(
-                <RadioGroup label="被指定人" onChange={this.onChangeRadio}>
-                  <Radio style={radioStyle} value={'mine'}>我</Radio>
-                  <Radio style={radioStyle} value={'other'}>其他人</Radio>
+                <RadioGroup label={<FormattedMessage id="cycle_createExecute_folder" />} onChange={this.onChangeRadio}>
+                  <Radio style={radioStyle} value={'mine'}>
+                    <FormattedMessage id="cycle_createExecute_me" />
+                  </Radio>
+                  <Radio style={radioStyle} value={'other'}>
+                    <FormattedMessage id="cycle_createExecute_others" />
+                  </Radio>
                 </RadioGroup>,
               )}
             </FormItem>
-            <FormItem label="其他人">
+            <FormItem>
               {getFieldDecorator('other', {
                 rules: [{
                   required: this.props.form.getFieldValue('assigneed') === 'other',
@@ -232,7 +239,7 @@ class CreateTest extends Component {
                 }],
               })(
                 <Select
-                  label="其他人"
+                  label={<FormattedMessage id="cycle_createExecute_others" />}
                   disabled={this.props.form.getFieldValue('assigneed') === 'mine'}
                   loading={this.state.selectLoading}
                   filter
@@ -273,4 +280,4 @@ class CreateTest extends Component {
     );
   }
 }
-export default Form.create({})(withRouter(CreateTest));
+export default Form.create({})(withRouter(ExecuteTest));

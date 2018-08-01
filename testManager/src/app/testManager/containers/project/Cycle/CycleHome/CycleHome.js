@@ -597,7 +597,8 @@ class CycleHome extends Component {
           textOverflow: 'ellipsis',
         }}
         >
-          {lastUpdateDate && moment(lastUpdateDate).format('D/MMMM/YY')}
+          {/* {lastUpdateDate && moment(lastUpdateDate).format('D/MMMM/YY')} */}
+          {lastUpdateDate && moment(lastUpdateDate).format('YYYY-MM-DD')}
         </div>);
       },
     }, {

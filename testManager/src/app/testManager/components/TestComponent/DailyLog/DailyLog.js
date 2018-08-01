@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { stores, axios } from 'choerodon-front-boot';
+import { stores, Content } from 'choerodon-front-boot';
 import { withRouter } from 'react-router-dom';
 import moment from 'moment';
-import _ from 'lodash';
+import { FormattedMessage } from 'react-intl';
 import { Select, Form, Input, DatePicker, Button, Modal, Tabs, Tooltip, Radio, message, Icon } from 'choerodon-ui';
 
 import './DailyLog.scss';
@@ -31,7 +31,7 @@ const TYPE = {
   4: 'reduce',
 };
 
-class CreateSprint extends Component {
+class DailyLog extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -192,23 +192,27 @@ class CreateSprint extends Component {
     return (
       <Sidebar
         className="choerodon-modal-createSprint"
-        title="登记工作日志"
+        title={<FormattedMessage id="issue_worklog_title" />}
         visible={visible || false}
         onOk={this.handleCreateDailyLog}
         onCancel={onCancel}
-        okText="创建"
-        cancelText="取消"
+        okText={<FormattedMessage id="create" />}
+        cancelText={<FormattedMessage id="cancel" />}
         confirmLoading={this.state.createLoading}
       >
-        <div className="c7n-region">
-          <h2 className="c7n-space-first">{`登记"${this.props.issueNum}"的工作日志`}</h2>
-          <p>
-            您可以在这里记录您的工作，花费的时间会在关联问题中预估时间进行扣减，以便更精确地计算问题进度和提升工作效率。
-          </p>
+        <Content
+          style={{
+            padding: '0 0 10px 0',
+          }}
+          title={<FormattedMessage id="issue_worklog_content_title" values={{ issueNum: this.props.issueNum }} />}
+          description={<FormattedMessage id="issue_worklog_content_description" />}
+          link="http://v0-8.choerodon.io/zh/docs/user-guide/agile/issue/create-issue/"
+        >
+        
           <section className="info">
             <div className="line-info">
               <NumericInput
-                label="耗费时间*"
+                label={<FormattedMessage id="issue_worklog_time" />}
                 style={tempAlignStyle}
                 value={this.state.dissipate}
                 onChange={this.handleDissipateChange.bind(this)}
@@ -228,7 +232,7 @@ class CreateSprint extends Component {
             <div className="dataPicker" style={{ width: 218, marginBottom: 32, display: 'flex', flexDirection: 'column', position: 'relative' }}>
               <div style={{ marginTop: 20, width: 220, paddingBottom: 3 }}>
                 <DatePicker
-                  label="工作日期*"
+                  label={<FormattedMessage id="issue_worklog_workTime" />}
                   value={this.state.startTime}
                   // value={this.transTime(this.state.startTime)}
                   format={DATA_FORMAT}
@@ -238,9 +242,13 @@ class CreateSprint extends Component {
             </div>
 
             <div className="line-info">
-              <RadioGroup label="剩余的估计" onChange={this.onRadioChange} value={this.state.radio}>
-                <Radio style={radioStyle} value={1}>自动调整</Radio>
-                <Radio style={radioStyle} value={2}>不设置预估时间</Radio>
+              <RadioGroup label={<FormattedMessage id="issue_worklog_lastTime" />} onChange={this.onRadioChange} value={this.state.radio}>
+                <Radio style={radioStyle} value={1}>
+                  <FormattedMessage id="issue_worklog_autoAdjust" />
+                </Radio>
+                <Radio style={radioStyle} value={2}>
+                  <FormattedMessage id="issue_worklog_withoutTime" />
+                </Radio>
                 <Radio
                   style={{
                     ...radioStyle,
@@ -248,7 +256,9 @@ class CreateSprint extends Component {
                   }}
                   value={3}
                 >
-                  <span style={{ display: 'inline-block', width: 52 }}>设置为</span>
+                  <span style={{ display: 'inline-block', width: 52 }}>
+                    <FormattedMessage id="issue_worklog_setTo" />
+                  </span>
                   <NumericInput
                     style={tempAlignStyle}
                     disabled={this.state.radio !== 3}
@@ -269,7 +279,9 @@ class CreateSprint extends Component {
                   </Select>
                 </Radio>
                 <Radio style={radioStyle} value={4}>
-                  <span style={{ display: 'inline-block', width: 52 }}>缩减</span>
+                  <span style={{ display: 'inline-block', width: 52 }}>
+                    <FormattedMessage id="issue_worklog_reduce" />
+                  </span>
                   <NumericInput
                     style={tempAlignStyle}
                     disabled={this.state.radio !== 4}
@@ -295,11 +307,15 @@ class CreateSprint extends Component {
             <div className="c7n-sidebar-info">
               <div>
                 <div style={{ display: 'flex', marginBottom: '13px', alignItems: 'center' }}>
-                  <div style={{ fontWeight: 'bold' }}>工作说明</div>
+                  <div style={{ fontWeight: 'bold' }}>
+                    <FormattedMessage id="issue_worklog_workDescription" />
+                  </div>
                   <div style={{ marginLeft: '80px' }}>
                     <Button className="leftBtn" funcType="flat" onClick={() => this.setState({ edit: true })} style={{ display: 'flex', alignItems: 'center' }}>
                       <Icon type="zoom_out_map" style={{ color: '#3f51b5', fontSize: '18px', marginRight: '12px' }} />
-                      <span style={{ color: '#3f51b5' }}>全屏编辑</span>
+                      <span style={{ color: '#3f51b5' }}>
+                        <FormattedMessage id="execute_edit_fullScreen" /> 
+                      </span>
                     </Button>
                   </div>
                 </div>
@@ -319,7 +335,7 @@ class CreateSprint extends Component {
               </div>
             </div> 
           </section>
-        </div>
+        </Content>
         {
           this.state.edit ? (
             <FullEditor
@@ -334,4 +350,4 @@ class CreateSprint extends Component {
     );
   }
 }
-export default Form.create({})(withRouter(CreateSprint));
+export default Form.create({})(withRouter(DailyLog));

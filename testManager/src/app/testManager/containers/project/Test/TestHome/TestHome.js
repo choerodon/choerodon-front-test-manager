@@ -744,8 +744,8 @@ class Test extends Component {
                     style={{ marginTop: 40 }}
                     border
                     pic={pic}
-                    title="根据当前搜索条件没有查询到问题"
-                    des="尝试修改您的过滤选项或者在下面创建新的问题"
+                    title={<FormattedMessage id="issue_noIssueTitle" />}
+                    des={<FormattedMessage id="issue_noIssueDescription" />}
                   />
                 ) : (
                   <Table

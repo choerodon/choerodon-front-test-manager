@@ -137,13 +137,13 @@ class CycleExecute extends Component {
     this.setState({ loading: true });
     const { historyPagination, detailPagination } = this.state;
     Promise.all([
-      getCycle(id), 
-      getStatusList('CYCLE_CASE'), 
+      getCycle(id),
+      getStatusList('CYCLE_CASE'),
       getCycleDetails({ page: detailPagination.current - 1, size: detailPagination.pageSize }, id),
-      getStatusList('CASE_STEP'), 
-      getCycleHistiorys({ 
-        page: historyPagination.current - 1, 
-        size: historyPagination.pageSize, 
+      getStatusList('CASE_STEP'),
+      getCycleHistiorys({
+        page: historyPagination.current - 1,
+        size: historyPagination.pageSize,
       }, id),
       getIssueList(),
     ],
@@ -248,7 +248,7 @@ class CycleExecute extends Component {
           ...this.state.cycleData,
           ...{
             assignedTo: target.id,
-            assigneeUser: target,            
+            assigneeUser: target,
           },
         },
       });
@@ -258,7 +258,7 @@ class CycleExecute extends Component {
           ...this.state.cycleData,
           ...{
             assignedTo: 0,
-            assigneeUser: null,           
+            assigneeUser: null,
           },
         },
       });
@@ -471,12 +471,7 @@ class CycleExecute extends Component {
           }
           default: {
             return (<div
-              style={{
-                width: 100,
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-              }}
+              className="c7n-text-dot"
             >
               {oldValue}
             </div>);
@@ -507,12 +502,7 @@ class CycleExecute extends Component {
           }
           default: {
             return (<div
-              style={{
-                width: 100,
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-              }}
+              className="c7n-text-dot"
             >
               {newValue}
             </div>);
@@ -524,47 +514,40 @@ class CycleExecute extends Component {
       title: <FormattedMessage id="execute_testStep" />,
       dataIndex: 'testStep',
       key: 'testStep',
-      render: testStep => 
+      width: '10%',
+      render: testStep =>
         (<Tooltip title={testStep}>
           <div
-            style={{
-              width: 150,        
-            }}
             className="c7n-text-dot"
           >
             {testStep}
           </div>
-        </Tooltip>),      
+        </Tooltip>),
     }, {
       title: <FormattedMessage id="execute_testData" />,
       dataIndex: 'testData',
       key: 'testData',
-      render: testData => 
+      render: testData =>
         (<Tooltip title={testData}>
           <div
-            style={{
-              width: 100,        
-            }}
             className="c7n-text-dot"
           >
             {testData}
           </div>
-        </Tooltip>),      
+        </Tooltip>),
     }, {
       title: <FormattedMessage id="execute_expectedOutcome" />,
       dataIndex: 'expectedResult',
       key: 'expectedResult',
-      render: expectedResult => 
+      render: expectedResult =>
         (<Tooltip title={expectedResult}>
           <div
-            style={{
-              width: 100,        
-            }}
+
             className="c7n-text-dot"
           >
             {expectedResult}
           </div>
-        </Tooltip>),      
+        </Tooltip>),
     },
     {
       title: <FormattedMessage id="execute_stepAttachment" />,
@@ -578,20 +561,13 @@ class CycleExecute extends Component {
                 fontSize: '13px',
                 color: 'white',
               }}
-              >                
+              >
                 {attachment.attachmentName}
               </div>))}
           </div>}
         >
           <div
-            style={{
-              width: 100,
-              display: 'flex',
-              alignItems: 'center',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-            }}
+            className="c7n-text-dot"
           >
             {stepAttachment.map((attachment, i) => attachment.attachmentName).join(',')}
           </div>
@@ -643,8 +619,8 @@ class CycleExecute extends Component {
                 fontSize: '13px',
                 color: 'white',
               }}
-              >             
-                {attachment.attachmentName}             
+              >
+                {attachment.attachmentName}
               </div>))}
           </div>}
         >
@@ -658,7 +634,7 @@ class CycleExecute extends Component {
               whiteSpace: 'nowrap',
             }}
           >
-            {caseAttachment.map((attachment, i) => attachment.attachmentName).join(',')}            
+            {caseAttachment.map((attachment, i) => attachment.attachmentName).join(',')}
           </div>
         </Tooltip>);
       },
@@ -727,7 +703,7 @@ class CycleExecute extends Component {
             <img src={user.imageUrl} alt="" style={{ width: 20, height: 20, borderRadius: '50%', marginRight: '8px' }} /> :
             <div style={styles.userOption}>{user.realName.slice(0, 1)}
             </div>
-          }          
+          }
           <span>{`${user.loginName} ${user.realName}`}</span>
         </div>
       </Option>),
@@ -735,14 +711,14 @@ class CycleExecute extends Component {
     const defectsOptions =
       issueList.map(issue => (<Option key={issue.issueId} value={issue.issueId.toString()}>
         {issue.issueNum} {issue.summary}
-      </Option>));  
+      </Option>));
     return (
-      <Page className="c7n-clcle">
+      <Page className="c7n-cycle">
         <Header title={<div>
           <Tooltip
             title={Choerodon.getMessage('返回', 'return')}
             placement="bottom"
-            // getTooltipContainer={that => that}
+          // getTooltipContainer={that => that}
           >
             <Button
               type="primary"
@@ -755,8 +731,8 @@ class CycleExecute extends Component {
           </Tooltip>
           <span><FormattedMessage id="execute_detail" /></span>
         </div>}
-        >         
-          
+        >
+
           <Button onClick={this.getInfo}>
             <Icon type="autorenew icon" />
             <span><FormattedMessage id="refresh" /></span>
@@ -817,7 +793,7 @@ class CycleExecute extends Component {
                       onCancel={this.cancelEdit}
                     >
                       <Text>
-                        {assigneeUser ? <User user={assigneeUser} />                       
+                        {assigneeUser ? <User user={assigneeUser} />
                           : '无'}
                       </Text>
                       <Edit>
@@ -995,7 +971,7 @@ class CycleExecute extends Component {
                           (uploadInput) => { if (uploadInput) { this.uploadInput = uploadInput; } }
                         }
                         type="file"
-                        multiple                        
+                        multiple
                         onChange={this.handleUpload}
                         style={{
                           position: 'absolute',
