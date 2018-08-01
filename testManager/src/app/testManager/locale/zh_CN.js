@@ -93,10 +93,10 @@ const zhCN = {
   summary_summaryByComponent: '按模块',
   summary_summaryByLabel: '按标签',
   summary_noVersion: '未规划',
-  summary_noComponent: '无组件',
+  summary_noComponent: '无模块',
   summary_noLabel: '无标签',
   summary_version: '版本',
-  summary_component: '组件',
+  summary_component: '模块',
   summary_label: '标签',
   summary_num: '数量',
   summary_summaryTimeLeap: '查看时段',
@@ -222,6 +222,13 @@ const zhCN = {
   issue_issueReportTo: '报告给',
   issue_issueUpdateOn: '更新于',
   issue_issueCreateAt: '创建于',
+  // 创建测试用例侧边栏
+  issue_create_name: '创建测试用例',
+  issue_create_title: `在项目“${projectName}”中创建测试用例`,
+  issue_create_content_description: '请在下面输入测试用例的详细信息，包含详细描述、人员信息、版本信息、进度预估、优先级等等。您可以通过丰富的任务描述帮助相关人员更快更全面的理解任务，同时更好的把控问题进度。',
+  issue_create_content_epic: '史诗',
+  issue_create_content_sprint: '冲刺',
+  issue_create_content_version: '修复版本',
 };
 
 export default zhCN;

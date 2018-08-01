@@ -216,5 +216,12 @@ const enUS = {
   issue_issueReportTo: 'Report to',
   issue_issueUpdateOn: 'Update on',
   issue_issueCreateAt: 'Create on',
+  // 创建测试用例侧边栏
+  issue_create_name: 'Create test issue',
+  issue_create_title: `Create test issue in project “${projectName}”`,
+  issue_create_content_description: 'Please enter the details of the test case below, including detailed descriptions, personnel information, version information, progress estimates, priorities, and more. You can help people understand tasks faster and more comprehensively through rich task descriptions, and better control the progress of problems.',
+  issue_create_content_epic: 'Epic',
+  issue_create_content_sprint: 'Sprint',
+  issue_create_content_version: 'Version',
 };
 export default enUS;
