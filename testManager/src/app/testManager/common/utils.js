@@ -43,10 +43,14 @@ export function delta2Text(delta) {
 export function escape(str) {
   return str.replace(/<\/script/g, '<\\/script').replace(/<!--/g, '<\\!--');
 }
-export function issueLink(issueId) {
+export function issueLink(issueId, typeCode) {
   const menu = AppState.currentMenuType;
   const { type, id: projectId, name } = menu;
-  return `/agile/issue?type=${type}&id=${projectId}&name=${name}&paramIssueId=${issueId}`;
+  if (typeCode === 'issue_test') {
+    return `/testManager/manager?type=${type}&id=${projectId}&name=${name}&paramIssueId=${issueId}`;
+  } else {
+    return `/agile/issue?type=${type}&id=${projectId}&name=${name}&paramIssueId=${issueId}`;
+  }
 }
 
 
