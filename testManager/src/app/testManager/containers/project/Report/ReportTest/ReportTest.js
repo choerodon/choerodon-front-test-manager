@@ -153,7 +153,7 @@ class ReportTest extends Component {
       width: '25%',
       render(test, record) {
         const { issueInfosDTO } = record;
-        const { issueId, issueColor, issueStatusName, issueName, summary } = issueInfosDTO;
+        const { issueId, issueColor, issueStatusName, issueName, summary, typeCode } = issueInfosDTO;
         return (
           <Collapse 
             activeKey={openId}
@@ -166,7 +166,7 @@ class ReportTest extends Component {
                 <div>
                   <div className="c7n-collapse-show-item">
                     <Icon type="navigate_next" className="c7n-collapse-icon" />   
-                    <Link className="c7n-showId" to={issueLink(issueId)} target="_blank">
+                    <Link className="c7n-showId" to={issueLink(issueId, typeCode)} target="_blank">
                       {issueName}
                     </Link>                      
                     <div className="c7n-collapse-header-icon">                 
@@ -283,10 +283,10 @@ class ReportTest extends Component {
         const { issueId } = record.issueInfosDTO;
         const caseShow = testCycleCaseES.concat(testCycleCaseStepES).map((execute) => {
           const { issueInfosDTO } = execute;
-          const { issueColor, issueName, issueStatusName, summary } = issueInfosDTO;
+          const { issueColor, issueName, issueStatusName, summary, typeCode } = issueInfosDTO;
           return (<div className="c7n-issue-show-container">
             <div className="c7n-collapse-show-item">
-              <Link className="c7n-showId" to={issueLink(issueId)} target="_blank">
+              <Link className="c7n-showId" to={issueLink(issueId, typeCode)} target="_blank">
                 {issueName}
               </Link>              
               <div className="c7n-collapse-header-icon">                 
@@ -321,7 +321,7 @@ class ReportTest extends Component {
             const { statusColor, statusName, issueNum, summary } = link;
             return (<div className="c7n-issue-show-container">
               <div className="c7n-collapse-show-item">
-                <Link className="c7n-showId" to={issueLink(link.issueId)} target="_blank">
+                <Link className="c7n-showId" to={issueLink(link.issueId, link.typeCode)} target="_blank">
                   {issueNum}
                 </Link>                 
                 <div className="c7n-collapse-header-icon">                 

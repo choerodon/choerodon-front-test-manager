@@ -44,7 +44,7 @@ const NAME = {
 };
 
 class ReportStory extends Component {
-  state={
+  state = {
     selectVisible: false,
     loading: false,
     reportList: [],
@@ -62,7 +62,7 @@ class ReportStory extends Component {
   componentDidMount() {
     this.getInfo();
   }
-  getInfo=() => {
+  getInfo = () => {
     this.setState({
       loading: true,
     });
@@ -75,7 +75,7 @@ class ReportStory extends Component {
       // ReportStoryStore.setStatusList(statusList);  
       this.setState({
         issueStatusList,
-        statusList,       
+        statusList,
         // loading: false,
         openId: {},
       });
@@ -83,7 +83,7 @@ class ReportStory extends Component {
   }
   getReportsFromStory = (pagination, issueIds = this.state.issueIds) => {
     const Pagination = pagination || this.state.pagination;
-   
+
     this.setState({ loading: true });
     getReportsFromStory({
       page: Pagination.current - 1,
@@ -110,8 +110,8 @@ class ReportStory extends Component {
   handleTableChange = (pagination, filters, sorter) => {
     this.getReportsFromStory(pagination);
   }
-  handleOpen=(issueId, keys) => {
-    const { openId } = this.state;  
+  handleOpen = (issueId, keys) => {
+    const { openId } = this.state;
     openId[issueId] = keys;
     // if (open) {
     this.setState({
@@ -138,14 +138,14 @@ class ReportStory extends Component {
         </Menu.Item>
         <Menu.Item key="1">
           <Link to={`/testManager/report/test?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}>
-            <FormattedMessage id="report_dropDown_defect" /> 
+            <FormattedMessage id="report_dropDown_defect" />
           </Link>
-        </Menu.Item> 
+        </Menu.Item>
         <Menu.Item key="2">
           <Link to={`/testManager/report?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}>
-            <FormattedMessage id="report_dropDown_home" /> 
+            <FormattedMessage id="report_dropDown_home" />
           </Link>
-        </Menu.Item>     
+        </Menu.Item>
       </Menu>
     );
     const columns = [{
@@ -156,37 +156,37 @@ class ReportStory extends Component {
       width: '25%',
       render(issue, record) {
         const { defectInfo, defectCount } = record;
-        const { issueStatusName, issueName, issueColor, issueId } = defectInfo;
+        const { issueStatusName, issueName, issueColor, issueId, typeCode } = defectInfo;
         return (
           <div>
             <div className="c7n-collapse-header-container">
-              <Link className="c7n-showId" to={issueLink(issueId)} target="_blank">{issueName}</Link>
-              <div className="c7n-issue-status-icon">                 
+              <Link className="c7n-showId" to={issueLink(issueId, typeCode)} target="_blank">{issueName}</Link>
+              <div className="c7n-issue-status-icon">
                 <span style={{ color: issueColor, borderColor: issueColor }}>
                   {issueStatusName}
                 </span>
               </div>
-            
+
             </div>
             <div>
               <FormattedMessage id="report_defectCount" />: {defectCount}
             </div>
-          </div>         
+          </div>
         );
       },
     }, {
       className: 'c7n-table-white',
       title: <FormattedMessage id="test" />,
       dataIndex: 'test',
-      key: 'test',   
+      key: 'test',
       width: '25%',
       render(test, record) {
         const { issueStatus, linkedTestIssues, defectInfo } = record;
         const { issueId } = defectInfo;
         return (
-          <Collapse 
+          <Collapse
             activeKey={openId[issueId]}
-            bordered={false} 
+            bordered={false}
             onChange={(keys) => { that.handleOpen(issueId, keys); }}
           >
             {
@@ -194,15 +194,17 @@ class ReportStory extends Component {
                 showArrow={false}
                 header={
                   // 展开时加margin
-                  <div style={{ marginBottom: openId[issueId] && 
-                    openId[issueId].includes(issue.issueId.toString()) &&
-                    issue.testCycleCaseES.length > 1
-                    ? (issue.testCycleCaseES.length * 30) - 48 : 0 }}
-                  >                                 
-                    <div style={{ display: 'flex', alignItems: 'center' }}>     
-                      <Icon type="navigate_next" className="c7n-collapse-icon" />       
-                      <Link className="c7n-showId" to={issueLink(issue.issueId)} target="_blank">{issue.issueName}</Link>       
-                           
+                  <div style={{
+                    marginBottom: openId[issueId] &&
+                      openId[issueId].includes(issue.issueId.toString()) &&
+                      issue.testCycleCaseES.length > 1
+                      ? (issue.testCycleCaseES.length * 30) - 48 : 0,
+                  }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                      <Icon type="navigate_next" className="c7n-collapse-icon" />
+                      <Link className="c7n-showId" to={issueLink(issue.issueId, 'issue_test')} target="_blank">{issue.issueName}</Link>
+
                     </div>
                     <div className="c7n-report-summary">{issue.summary}</div>
                   </div>
@@ -220,10 +222,10 @@ class ReportStory extends Component {
       key: 'cycleId',
       width: '25%',
       render(cycleId, record) {
-        const { linkedTestIssues, defectInfo } = record;        
+        const { linkedTestIssues, defectInfo } = record;
         return (<div>{linkedTestIssues.map((testIssue) => {
           const { testCycleCaseES, issueId } = testIssue;
-          
+
           // console.log()
           const totalExecute = testCycleCaseES.length;
           // const todoExecute = 0;
@@ -235,17 +237,17 @@ class ReportStory extends Component {
             const statusColor = _.find(statusList, { statusId: executionStatus }) ?
               _.find(statusList, { statusId: executionStatus }).statusColor : '';
             const statusName = _.find(statusList, { statusId: executionStatus }) &&
-                _.find(statusList, { statusId: executionStatus }).statusName;
-              // if (statusColor !== 'gray') {
-              //   doneExecute += 1;
-              // }
+              _.find(statusList, { statusId: executionStatus }).statusName;
+            // if (statusColor !== 'gray') {
+            //   doneExecute += 1;
+            // }
             if (!executeStatus[statusName]) {
               executeStatus[statusName] = 1;
             } else {
               executeStatus[statusName] += 1;
             }
-            const marginBottom = 
-            Math.max((execute.defects.length + execute.subStepDefects.length) - 1, 0) * 20;
+            const marginBottom =
+              Math.max((execute.defects.length + execute.subStepDefects.length) - 1, 0) * 20;
             return (
               <div className="c7n-cycle-show-container">
                 <div
@@ -255,12 +257,12 @@ class ReportStory extends Component {
                   {execute.cycleName}
                 </div>
                 <div
-                  className="c7n-collapse-text-icon" 
+                  className="c7n-collapse-text-icon"
                   style={{ color: statusColor, borderColor: statusColor }}
                 >
                   {statusName}
                 </div>
-                <Link 
+                <Link
                   style={{ lineHeight: '13px' }}
                   to={`/testManager/Cycle/execute/${execute.executeId}?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}
                 >
@@ -270,10 +272,10 @@ class ReportStory extends Component {
           });
           // window.console.log(executeStatus);
           return openId[record.defectInfo.issueId] && openId[record.defectInfo.issueId]
-            .includes(issueId.toString()) ? <div 
+            .includes(issueId.toString()) ? <div
               style={{ minHeight: totalExecute === 0 ? 50 : 30 }}
-            > 
-              { caseShow } </div> 
+            >
+              {caseShow} </div>
             :
             (
               <div style={{ height: 50 }}>
@@ -284,12 +286,12 @@ class ReportStory extends Component {
                       <span>{key}：</span>
                       <span>{executeStatus[key]}</span>
                     </div>))
-                  }                
-                </div>          
+                  }
+                </div>
               </div>
             );
         })}
-        </div>);        
+        </div>);
       },
     }, {
       className: 'c7n-table-white',
@@ -298,9 +300,9 @@ class ReportStory extends Component {
       key: 'demand',
       width: '25%',
       render(demand, record) {
-        const { linkedTestIssues, defectInfo } = record;        
-        return (<div>{ linkedTestIssues.map((testIssue) => {
-          const { testCycleCaseES, issueId } = testIssue;         
+        const { linkedTestIssues, defectInfo } = record;
+        return (<div>{linkedTestIssues.map((testIssue) => {
+          const { testCycleCaseES, issueId } = testIssue;
           if (testCycleCaseES.length === 0) {
             return <div style={{ minHeight: 50 }} />;
           }
@@ -309,51 +311,52 @@ class ReportStory extends Component {
               {
                 testCycleCaseES.map((item) => {
                   const { defects, subStepDefects } = item;
-                  return (<div>{defects.concat(subStepDefects).length > 0 ? 
+                  return (<div>{defects.concat(subStepDefects).length > 0 ?
                     defects.concat(subStepDefects).map((defect) => {
                       const { issueInfosDTO } = defect;
                       return (<div className="c7n-issue-show-container">
-                        <Link className="c7n-showId" to={issueLink(issueInfosDTO && issueInfosDTO.issueId)} target="_blank">{issueInfosDTO && issueInfosDTO.issueName}</Link>
+                        <Link className="c7n-showId" to={issueLink(issueInfosDTO && issueInfosDTO.issueId, issueInfosDTO && issueInfosDTO.typeCode)} target="_blank">{issueInfosDTO && issueInfosDTO.issueName}</Link>
                         <div className="c7n-issue-status-icon">
-                          <span style={{ 
-                            color: issueInfosDTO && issueInfosDTO.issueColor, 
-                            borderColor: issueInfosDTO && issueInfosDTO.issueColor }}
+                          <span style={{
+                            color: issueInfosDTO && issueInfosDTO.issueColor,
+                            borderColor: issueInfosDTO && issueInfosDTO.issueColor,
+                          }}
                           >
                             {issueInfosDTO && issueInfosDTO.issueStatusName}
                           </span>
                         </div>
                         {defect.defectType === 'CASE_STEP' &&
-                        <div style={{
-                          marginLeft: 20,
-                          color: 'white',
-                          padding: '0 8px',
-                          background: 'rgba(0,0,0,0.20)',
-                          borderRadius: '100px',
-                          whiteSpace: 'nowrap',
-                        }}
-                        ><FormattedMessage id="step" /></div>}
+                          <div style={{
+                            marginLeft: 20,
+                            color: 'white',
+                            padding: '0 8px',
+                            background: 'rgba(0,0,0,0.20)',
+                            borderRadius: '100px',
+                            whiteSpace: 'nowrap',
+                          }}
+                          ><FormattedMessage id="step" /></div>}
                       </div>);
                     }) : <div className="c7n-issue-show-container">－</div>}</div>);
                 })
-         
-              } 
-            </div> :            
+
+              }
+            </div> :
             <div style={{ minHeight: 50 }}>
               {
                 testCycleCaseES.map((item) => {
                   const { defects, subStepDefects } = item;
                   return (<div>{defects.concat(subStepDefects).map((defect, i) => {
-                    const { issueInfosDTO } = defect;               
+                    const { issueInfosDTO } = defect;
                     return (<span style={{
                       fontSize: '13px',
-                      color: '#3F51B5',                 
+                      color: '#3F51B5',
                     }}
                     >
                       {i === 0 ? null : '，'}
-                      <Link className="c7n-showId" to={issueLink(issueInfosDTO && issueInfosDTO.issueId)} target="_blank">
+                      <Link className="c7n-showId" to={issueLink(issueInfosDTO && issueInfosDTO.issueId, issueInfosDTO && issueInfosDTO.typeCode)} target="_blank">
                         {issueInfosDTO && issueInfosDTO.issueName}
-                      </Link>                     
-                    </span>); 
+                      </Link>
+                    </span>);
                   })}</div>);
                 })}
             </div>);
@@ -370,7 +373,7 @@ class ReportStory extends Component {
         >
           <Dropdown overlay={menu} trigger={['click']}>
             <a className="ant-dropdown-link" href="#">
-              <FormattedMessage id="report_switch" /> 
+              <FormattedMessage id="report_switch" />
               <Icon type="arrow_drop_down" />
             </a>
           </Dropdown>
@@ -400,24 +403,24 @@ class ReportStory extends Component {
           </Button>
         </Header>
         <Content
-        // style={{
-        //   padding: '0 0 10px 0',
-        // }}
+          // style={{
+          //   padding: '0 0 10px 0',
+          // }}
           title={<FormattedMessage id="report_content_title" />}
           description={<FormattedMessage id="report_content_description" />}
           link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management/test-report/report/"
         >
           <div style={{ display: 'flex' }} />
-          <ReportSelectIssue 
+          <ReportSelectIssue
             visible={selectVisible}
             onCancel={() => { this.setState({ selectVisible: false }); }}
             onOk={(issueIds) => {
-              this.setState({ selectVisible: false, issueIds }); 
+              this.setState({ selectVisible: false, issueIds });
               this.getReportsFromStory(null, issueIds);
             }}
           />
-          <Table     
-            filterBar={false}      
+          <Table
+            filterBar={false}
             loading={loading}
             pagination={pagination}
             columns={columns}
