@@ -197,6 +197,8 @@ const zhCN = {
 
   // 测试用例管理
   issue_name: '测试用例管理',
+  issue_noIssueTitle: '根据当前搜索条件没有查询到问题',
+  issue_noIssueDescription: '尝试修改您的过滤选项或者在下面创建新的问题',
   issue_createTestIssue: '创建测试用例',
   issue_filterTestIssue: '过滤表',
   issue_issueTotal: '共{total}条任务',
@@ -229,6 +231,29 @@ const zhCN = {
   issue_create_content_epic: '史诗',
   issue_create_content_sprint: '冲刺',
   issue_create_content_version: '修复版本',
+  // 编辑详情侧边栏
+  issue_edit_hide: '隐藏详情',
+  issue_edit_planTime: '预估时间',
+  issue_edit_executeTest: '执行测试',
+  issue_edit_version: '影响的版本',
+  issue_edit_timeFollow: '时间跟踪',
+  issue_edit_registrationWork: '登记工作',
+  issue_edit_person: '人员',
+  issue_edit_reporter: '报告人',
+  issue_edit_assignToMe: '指派给我',
+  issue_edit_date: '日期',
+  issue_edit_createDate: '创建时间',
+  issue_edit_updateDate: '更新时间',
+  issue_edit_testDetail: '测试详细信息',
+  issue_edit_addTestDetail: '添加测试信息',
+  issue_edit_comment: '评论',
+  issue_edit_addComment: '添加评论',
+  issue_edit_workLog: '工作日志',
+  issue_edit_addWworkLog: '登记工作日志',
+  issue_edit_copyIssue: '复制问题',
+  issue_edit_activeLog: '活动日志',
+  issue_edit_linkIssue: '相关任务',
+  issue_edit_addLinkIssue: '添加相关任务',
 };
 
 export default zhCN;

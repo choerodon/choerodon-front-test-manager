@@ -191,6 +191,8 @@ const enUS = {
 
   // 测试用例管理
   issue_name: 'Test issue management',
+  issue_noIssueTitle: 'No issues were found based on current search criteria',
+  issue_noIssueDescription: 'Try modifying your filtering options or creating a new issue below',
   issue_createTestIssue: 'Create test issue',
   issue_filterTestIssue: 'Filter',
   issue_issueTotal: '{total} issues in total',
@@ -223,5 +225,29 @@ const enUS = {
   issue_create_content_epic: 'Epic',
   issue_create_content_sprint: 'Sprint',
   issue_create_content_version: 'Version',
+  // 编辑详情侧边栏
+  issue_edit_hide: 'Hide detail',
+  issue_edit_planTime: 'Estimated time',
+  issue_edit_executeTest: 'Execute test',
+  issue_edit_version: 'Affected version',
+  issue_edit_timeFollow: 'Time tracking',
+  issue_edit_registrationWork: 'Registration work',
+  issue_edit_person: 'Personnel',
+  issue_edit_reporter: 'Reporter',
+  issue_edit_assignToMe: 'Assign to me',
+  issue_edit_manager: 'Manager',
+  issue_edit_date: 'Date',
+  issue_edit_createDate: 'Create at',
+  issue_edit_updateDate: 'Update at',
+  issue_edit_testDetail: 'Test detail',
+  issue_edit_addTestDetail: 'Create test detail',
+  issue_edit_comment: 'Comment',
+  issue_edit_addComment: 'Add comment',
+  issue_edit_workLog: 'Work log',
+  issue_edit_addWworkLog: 'Registration work log',
+  issue_edit_copyIssue: 'Copy issue',
+  issue_edit_activeLog: 'Activity log',
+  issue_edit_linkIssue: 'Linked Issue',
+  issue_edit_addLinkIssue: 'Add link issue',
 };
 export default enUS;
