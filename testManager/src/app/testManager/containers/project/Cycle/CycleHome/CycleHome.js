@@ -129,6 +129,7 @@ class CycleHome extends Component {
 
       CycleStore.setCurrentCycle(data);
       // window.console.log(data);
+
       getCycleById({
         page: executePagination.current - 1,
         size: executePagination.pageSize,
@@ -500,7 +501,7 @@ class CycleHome extends Component {
       title: <FormattedMessage id="status" />,
       dataIndex: 'executionStatus',
       key: 'executionStatus',
-      // filters: statusList.map(status => ({ text: status.statusName, value: status.statusId })),
+      filters: statusList.map(status => ({ text: status.statusName, value: status.statusId })),
       // onFilter: (value, record) => record.executionStatus === value,  
       flex: 1,
       render(executionStatus) {
@@ -515,7 +516,7 @@ class CycleHome extends Component {
       title: <FormattedMessage id="cycle_comment" />,
       dataIndex: 'comment',
       key: 'comment',
-      // filters: [],
+      filters: [],
       flex: 1,
       render(comment) {
         return (
@@ -550,11 +551,11 @@ class CycleHome extends Component {
                   color: 'white',
                 }}
                 >
-                  {defect.defectName}
+                  {defect.issueInfosDTO.issueName}
                 </div>))}
             </div>}
         >
-          {defects.map((defect, i) => defect.defectName).join(',')}
+          {defects.map((defect, i) => defect.issueInfosDTO.issueName).join(',')}
         </Tooltip>),
     },
     // {
@@ -785,7 +786,7 @@ class CycleHome extends Component {
                   </div>
                 </div>
                 <ShowCycleData data={currentCycle} />
-                {/* <div style={{ display: 'flex' }}>
+                <div style={{ display: 'flex' }}>
                   <SelectFocusLoad
                     label={<FormattedMessage id="cycle_executeBy" />}
                     request={getUsers} 
@@ -804,7 +805,7 @@ class CycleHome extends Component {
                       }}
                     />
                   </div>
-                </div> */}
+                </div>
                 <DragTable
                   pagination={executePagination}
                   loading={rightLoading}

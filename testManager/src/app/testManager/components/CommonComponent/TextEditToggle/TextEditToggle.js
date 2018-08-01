@@ -27,9 +27,6 @@ class TextEditToggle extends Component {
       editing: true,
       originData: this.props.originData,
     });
-    if (this.props.onEnterEdit) {
-      this.props.onEnterEdit();
-    }
   }
   // 取消编辑
   leaveEditing = () => {

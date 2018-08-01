@@ -571,12 +571,12 @@ class Test extends Component {
       },
     ];
     const filterColumns = [
-      // {
-      //   title: <FormattedMessage id="issue_issueFilterByNum" />,
-      //   dataIndex: 'issueNum',
-      //   key: 'issueNum',
-      //   filters: [],
-      // },
+      {
+        title: <FormattedMessage id="issue_issueFilterByNum" />,
+        dataIndex: 'issueNum',
+        key: 'issueNum',
+        filters: [],
+      },
       {
         title: <FormattedMessage id="issue_issueFilterBySummary" />,
         dataIndex: 'summary',
@@ -630,7 +630,7 @@ class Test extends Component {
         title: 'summary',
         dataIndex: 'summary',
         render: (summary, record) => (
-          !this.state.expand ? this.renderWideIssue(record) : this.renderNarrowIssue(record)
+          !this.state.expand ? this.renderTestIssue(record) : this.renderNarrowIssue(record)
         ),
       },
     ];

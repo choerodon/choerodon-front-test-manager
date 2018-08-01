@@ -1,3 +1,3 @@
-import TableCanDragAndDrop from './TableCanDragAndDrop';
+import TestStepTable from './TestStepTable';
 
-export default TableCanDragAndDrop;
+export default TestStepTable;

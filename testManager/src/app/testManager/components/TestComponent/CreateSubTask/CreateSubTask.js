@@ -4,7 +4,7 @@ import { withRouter } from 'react-router-dom';
 import _ from 'lodash';
 import { Select, Form, Input, Button, Modal, Icon, Tooltip } from 'choerodon-ui';
 
-import './CreateIssue.scss';
+import './CreateSubTask.scss';
 import '../../../assets/main.scss';
 import { UploadButton, NumericInput } from '../CommonComponent';
 import { handleFileUpload, beforeTextUpload } from '../../../common/utils';
@@ -416,7 +416,10 @@ class CreateSubIssue extends Component {
                   }}
                 >
                   {this.state.originLabels.map(label =>
-                    <Option key={label.labelName} value={label.labelName}>{label.labelName}</Option>,
+                    (<Option
+                      key={label.labelName} 
+                      value={label.labelName}
+                    >{label.labelName}</Option>),
                   )}
                 </Select>,
               )}

@@ -543,7 +543,7 @@ class CycleExecute extends Component {
         (<Tooltip title={testData}>
           <div
             style={{
-              width: 150,        
+              width: 100,        
             }}
             className="c7n-text-dot"
           >
@@ -558,7 +558,7 @@ class CycleExecute extends Component {
         (<Tooltip title={expectedResult}>
           <div
             style={{
-              width: 150,        
+              width: 100,        
             }}
             className="c7n-text-dot"
           >
@@ -676,7 +676,7 @@ class CycleExecute extends Component {
                 color: 'white',
               }}
               >
-                {defect.defectName}
+                {defect.issueInfosDTO && defect.issueInfosDTO.issueName}
               </div>))}
           </div>}
         >
@@ -688,7 +688,7 @@ class CycleExecute extends Component {
               whiteSpace: 'nowrap',
             }}
           >
-            {defects.map((defect, i) => defect.defectName).join(',')}
+            {defects.map((defect, i) => defect.issueInfosDTO && defect.issueInfosDTO.issueName).join(',')}
           </div>
         </Tooltip>),
     }, {
@@ -891,7 +891,7 @@ class CycleExecute extends Component {
                       <FormattedMessage id="bug" />：
                     </div>
 
-                    <TextEditToggle              
+                    <TextEditToggle
                       onSubmit={this.addDefects}
                       originData={{ defects }}
                       onCancel={this.cancelEdit}
@@ -905,7 +905,7 @@ class CycleExecute extends Component {
                               whiteSpace: 'nowrap',
                             }}
                           >
-                            {defects.map((defect, i) => defect.defectName).join(',')}
+                            {defects.map((defect, i) => defect.issueInfosDTO.issueName).join(',')}
                           </div>
                         ) : '无'}
                       </Text>
