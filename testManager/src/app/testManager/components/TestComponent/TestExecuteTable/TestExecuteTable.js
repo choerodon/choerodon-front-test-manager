@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Button, Icon, Tooltip, Menu, Popconfirm } from 'choerodon-ui';
 import { stores, axios } from 'choerodon-front-boot';
 import _ from 'lodash';
+import { FormattedMessage } from 'react-intl';
 import TimeAgo from 'timeago-react';
 
 const { AppState } = stores;
@@ -80,16 +81,16 @@ class TestExecuteTable extends Component {
   getMenu = () => (
     <Menu onClick={this.handleClickMenu.bind(this)}>
       <Menu.Item key="edit">
-        编辑
+        <FormattedMessage id="edit" />
       </Menu.Item>
       <Menu.Item key="clone">
-        克隆
+        <FormattedMessage id="clone" />
       </Menu.Item>
       <Menu.Item key="delete">
-        删除
+        <FormattedMessage id="delete" />
       </Menu.Item>
       <Menu.Item key="add">
-        添加附件
+        <FormattedMessage id="upload_attachment" />
       </Menu.Item>
     </Menu>
   );
@@ -193,12 +194,12 @@ class TestExecuteTable extends Component {
               }}
             />
             <Popconfirm
-              title="确认要删除该测试执行吗?"
+              title={Choerodon.getMessage('确认删除吗?', 'Confirm delete')}
               placement="left"
               onConfirm={this.confirm.bind(this, item.executeId)}
               onCancel={this.cancel}
-              okText="删除"
-              cancelText="取消"
+              okText={Choerodon.getMessage('删除', 'delete')}
+              cancelText={Choerodon.getMessage('取消', 'Cancel')}
               okType="danger"
             >
               <Icon type="delete_forever mlr-3 pointer" />
@@ -214,25 +215,25 @@ class TestExecuteTable extends Component {
       <div style={{ width: '100%' }}>
         <div style={{ width: '100%', paddingLeft: 10, height: 30, background: 'rgba(0, 0, 0, 0.04)', borderTop: '2px solid rgba(0,0,0,0.12)', borderBottom: '1px solid rgba(0,0,0,0.12)', display: 'flex' }}>
           <span style={{ flex: 2, lineHeight: '30px' }}>
-            版本
+            <FormattedMessage id="version" />
           </span>
           <span style={{ flex: 2, lineHeight: '30px' }}>
-            测试循环
+            <FormattedMessage id="cycle_name" />
           </span>
           <span style={{ flex: 2, lineHeight: '30px' }}>
-            文件夹
+            <FormattedMessage id="cycle_createExecute_folder" />
           </span>
           <span style={{ flex: 2, lineHeight: '30px' }}>
-            状态
+            <FormattedMessage id="status" />
           </span>
           <span style={{ flex: 2, lineHeight: '30px' }}>
-            缺陷
+            <FormattedMessage id="bug" />
           </span>
           <span style={{ flex: 2, lineHeight: '30px' }}>
-            执行方
+            <FormattedMessage id="execute_executive" />
           </span>
           <span style={{ flex: 2, lineHeight: '30px' }}>
-            执行时间
+            <FormattedMessage id="execute_executeTime" />
           </span>
           <span style={{ width: 70 }} />
         </div>

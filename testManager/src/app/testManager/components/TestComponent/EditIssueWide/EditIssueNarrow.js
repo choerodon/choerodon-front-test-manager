@@ -24,7 +24,7 @@ import LinkList from './Component/LinkList';
 import CopyIssue from '../CopyIssue';
 import TestStepTable from '../TestStepTable';
 import TestExecuteTable from '../TestExecuteTable';
-import CreateTest from '../CreateTest';
+import CreateTestStep from '../CreateTestStep';
 import ExecuteTest from '../ExecuteTest';
 
 const { AppState } = stores;
@@ -59,13 +59,11 @@ class CreateSprint extends Component {
       flag: undefined,
       selectLoading: true,
       saveLoading: false,
-      rollup: false,
+
       edit: false,
       addCommit: false,
       addCommitDes: '',
       dailyLogShow: false,
-      createLoading: false,
-
       createLinkTaskShow: false,
       createTestStepShow: false,
       editDesShow: false,
@@ -74,10 +72,7 @@ class CreateSprint extends Component {
       loading: true,
       nav: 'detail',
       editDes: undefined,
-      editCommentId: undefined,
-      editComment: undefined,
-      editLogId: undefined,
-      editLog: undefined,
+
       currentRae: undefined,
 
       issueId: undefined,
@@ -439,11 +434,8 @@ class CreateSprint extends Component {
       addCommit: false,
       addCommitDes: '',
       editDesShow: undefined,
-      editDes: undefined,
-      editCommentId: undefined,
-      editComment: undefined,
-      editLogId: undefined,
-      editLog: undefined,
+      editDes: undefined,    
+
 
       issueLoading: true,
     }, () => {
@@ -2323,7 +2315,7 @@ class CreateSprint extends Component {
         }        
         {
           this.state.createTestStepShow ? (
-            <CreateTest
+            <CreateTestStep
               issueId={this.state.origin.issueId}
               issueName={this.state.origin.issueNum}
               visible={this.state.createTestStepShow}

@@ -3,6 +3,7 @@ import { Draggable, Droppable, DragDropContext } from 'react-beautiful-dnd';
 import { Button, Icon, Dropdown, Menu, Modal } from 'choerodon-ui';
 import { stores, axios } from 'choerodon-front-boot';
 import _ from 'lodash';
+import { FormattedMessage } from 'react-intl';
 import EditTest from '../EditTest';
 
 const { AppState } = stores;
@@ -67,13 +68,13 @@ class TestStepTable extends Component {
   getMenu = () => (
     <Menu onClick={this.handleClickMenu.bind(this)}>
       <Menu.Item key="edit">
-        编辑
+        <FormattedMessage id="edit" />
       </Menu.Item>
       <Menu.Item key="delete">
-        删除
+        <FormattedMessage id="delete" />
       </Menu.Item>
       <Menu.Item key="clone">
-        克隆
+        <FormattedMessage id="clone" />
       </Menu.Item>
     </Menu>
   );
@@ -104,10 +105,10 @@ class TestStepTable extends Component {
     const that = this;
     confirm({
       width: 560,
-      title: '删除测试步骤',
+      title: Choerodon.getMessage('确认删除吗？', 'Confirm delete'),
       content: <div style={{ marginBottom: 32 }}>
-        <p style={{ marginBottom: 10 }}>请确认您要删除这个测试步骤。</p>
-        <p style={{ marginBottom: 10 }}>这个测试步骤将会被彻底删除。包括所有附件。</p>
+        {Choerodon.getMessage('当你点击删除后，该条数据将被永久删除，不可恢复!', 'When you click delete, after which the data will be permanently deleted and irreversible!')
+        }
       </div>,
       onOk() {
         return axios.delete(`/test/v1/projects/${AppState.currentMenuType.id}/case/step`, { data: { stepId: testStepId } })
@@ -116,7 +117,7 @@ class TestStepTable extends Component {
           });
       },
       onCancel() {},
-      okText: '删除',
+      okText: Choerodon.getMessage('删除', 'Delete'),
       okType: 'danger',
     });
   }
@@ -211,11 +212,17 @@ class TestStepTable extends Component {
           <div style={{ width: '100%', height: 30, background: 'rgba(0, 0, 0, 0.04)', borderTop: '2px solid rgba(0,0,0,0.12)', borderBottom: '1px solid rgba(0,0,0,0.12)', display: 'flex' }}>
             <span style={{ flex: 1, lineHeight: '30px' }} />
             <span style={{ flex: 2, lineHeight: '30px' }}>
-              测试步骤
+              <FormattedMessage id="execute_testStep" />
             </span>
-            <span style={{ flex: 2, lineHeight: '30px' }}>测试数据</span>
-            <span style={{ flex: 2, lineHeight: '30px' }}>预期结果</span>
-            <span style={{ flex: 5, lineHeight: '30px' }}>分步附件</span>
+            <span style={{ flex: 2, lineHeight: '30px' }}>
+              <FormattedMessage id="execute_testData" />
+            </span>
+            <span style={{ flex: 2, lineHeight: '30px' }}>
+              <FormattedMessage id="execute_expectedOutcome" />
+            </span>
+            <span style={{ flex: 5, lineHeight: '30px' }}>
+              <FormattedMessage id="execute_stepAttachment" />
+            </span>
             <span style={{ width: 50, lineHeight: '30px' }} />
           </div>
           <Droppable droppableId="dropTable">

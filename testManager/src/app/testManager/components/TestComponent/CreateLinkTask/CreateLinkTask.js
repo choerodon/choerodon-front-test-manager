@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { stores, axios } from 'choerodon-front-boot';
+import { stores, axios, Content } from 'choerodon-front-boot';
 import { withRouter } from 'react-router-dom';
 import _ from 'lodash';
+import { FormattedMessage } from 'react-intl';
 import { Select, Form, Modal } from 'choerodon-ui';
 
 import './CreateLinkTask.scss';
@@ -144,31 +145,26 @@ class CreateLinkTask extends Component {
     return (
       <Sidebar
         className="c7n-newLink"
-        title="创建链接"
+        title={<FormattedMessage id="issue_create_link_title" />}
         visible={visible || false}
         onOk={this.handleCreateIssue}
         onCancel={onCancel}
-        okText="创建"
-        cancelText="取消"
+        okText={<FormattedMessage id="create" />}
+        cancelText={<FormattedMessage id="cancel" />}
         confirmLoading={this.state.createLoading}
       >
-        <div className="c7n-region">
-          <h2 className="c7n-space-first">对问题创建链接</h2>
-          <p>
-            请在下面输入相关任务的基本信息，包括所要创建的关系（复制、阻塞、关联、破坏、被复制、被阻塞、被破坏等）以及所要关联的问题（支持多选）。
-            {/* <a href="#" rel="nofollow me noopener noreferrer" target="_blank" 
-            className="c7n-external-link">
-              <span className="c7n-external-link-content">
-              了解详情
-              </span>
-              <Icon type="open_in_new" />
-            </a> */}
-          </p>
+        <Content
+          style={{
+            padding: '0 0 10px 0',
+          }}
+          title={<FormattedMessage id="issue_create_link_content_title" />}
+          description={<FormattedMessage id="issue_create_link_content_description" />}
+        >
           <Form layout="vertical">
-            <FormItem label="关系" style={{ width: 520 }}>
+            <FormItem style={{ width: 520 }}>
               {getFieldDecorator('linkTypeId', {})(
                 <Select
-                  label="关系"
+                  label={<FormattedMessage id="issue_create_link_content_create_relation" />}
                   // labelInValue
                   loading={this.state.selectLoading}
                 >
@@ -181,10 +177,10 @@ class CreateLinkTask extends Component {
               )}
             </FormItem>
 
-            <FormItem label="问题" style={{ width: 520 }}>
+            <FormItem style={{ width: 520 }}>
               {getFieldDecorator('issues', {})(
                 <Select
-                  label="问题"
+                  label={<FormattedMessage id="issue_create_link_content_create_question" />}
                   mode="multiple"
                   loading={this.state.selectLoading}
                   optionLabelProp="value"
@@ -221,7 +217,7 @@ class CreateLinkTask extends Component {
               )}
             </FormItem>
           </Form>
-        </div>
+        </Content>
       </Sidebar>
     );
   }

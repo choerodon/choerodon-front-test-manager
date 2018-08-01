@@ -20,6 +20,7 @@ const enUS = {
   ...pageDetail,
   // public
   edit: 'Edit',
+  create: 'Create',
   detail: 'Detail',
   save: 'Save',
   active: 'Active',
@@ -29,6 +30,8 @@ const enUS = {
   cancel: 'Cancel',
   ok: 'Ok',
   delete: 'Delete',
+  clone: 'Clone',
+  copy: 'Copy',
   confirm_delete: 'Confirm delete',
   confirm_deleteTip: 'When you click delete, after which the data will be permanently deleted and irreversible!',
   demand: 'Demand',
@@ -249,5 +252,34 @@ const enUS = {
   issue_edit_activeLog: 'Activity log',
   issue_edit_linkIssue: 'Linked Issue',
   issue_edit_addLinkIssue: 'Add link issue',
+  // 创建测试步骤
+  issue_createStep_title: 'Add test detail',
+  issue_createStep_content_title: 'Create test dedail in issue “{issueName}”',
+  issue_createStep_content_description: 'You can create any number of test steps.',
+  // 执行测试侧边栏
+  issue_executeTest_content_title: 'Execute test in issue “{issueName}”',
+  issue_executeTest_content_description: 'Add test cases to a test loop or folder to form a test execution.',
+  // 拷贝issue
+  issue_copy_title: 'Copy issue {issueNum}',
+  issue_copy_copySprint: 'Copy sprint ?',
+  issue_copy_copyLinkIssue: 'Copy linked issue ?',
+  // 创建链接任务
+  issue_create_link_title: 'Create link',
+  issue_create_link_content_title: 'Create link for issue',
+  issue_create_link_content_description: 'Enter the basic information about the task below, including the relationship you want to create (copy, block, associate, destroy, be copied, blocked, broken, etc.) and the problem you want to associate (support multiple choices).',
+  issue_create_link_content_create_relation: 'Relation',
+  issue_create_link_content_create_question: 'Issue',
+  // 登记工作日志
+  issue_worklog_title: 'Registration work log',
+  issue_worklog_content_title: 'Registration work log for "{issueNum}"',
+  issue_worklog_content_description: 'You can record your work here, and the time spent will be deducted from the estimated time in the associated problem to more accurately calculate the progress of the problem and improve work efficiency.',
+  issue_worklog_time: 'Waste time*',
+  issue_worklog_workTime: 'Work date*',
+  issue_worklog_lastTime: 'Remaining estimate',
+  issue_worklog_autoAdjust: 'Auto adjust',
+  issue_worklog_withoutTime: "Don't set estimate",
+  issue_worklog_setTo: 'Set to',
+  issue_worklog_reduce: 'Reduce',
+  issue_worklog_workDescription: 'Work description',
 };
 export default enUS;

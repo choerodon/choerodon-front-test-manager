@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
 import { stores, axios, Content } from 'choerodon-front-boot';
 import { withRouter } from 'react-router-dom';
-import _ from 'lodash';
+import { FormattedMessage } from 'react-intl';
 import { Select, Form, Input, Button, Modal, Icon, Tooltip } from 'choerodon-ui';
 
 const { AppState } = stores;
 const { Sidebar } = Modal;
 const FormItem = Form.Item;
 
-class CreateTest extends Component {
+class CreateTestStep extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -53,14 +53,13 @@ class CreateTest extends Component {
     const { visible, issueName, onCancel, onOk } = this.props;
 
     return (
-      <Sidebar
-        className="c7n-createTest"
-        title="测试详细信息"
+      <Sidebar        
+        title={<FormattedMessage id="issue_createStep_title" />}
         visible={visible || false}
         onOk={this.handleCreateTest}
         onCancel={onCancel}
-        okText="创建"
-        cancelText="取消"
+        okText={<FormattedMessage id="create" />}
+        cancelText={<FormattedMessage id="cancel" />}
         confirmLoading={this.state.createLoading}
       >
         <Content
@@ -69,30 +68,30 @@ class CreateTest extends Component {
             paddingLeft: 0,
             width: 512,
           }}
-          title={`在用例“${issueName}”中创建测试步骤`}
-          description="您可以创建任意个测试步骤。"
+          title={<FormattedMessage id="issue_createStep_content_title" values={{ issueName }} />}
+          description={<FormattedMessage id="issue_createStep_content_description" />}
           link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management/case-management/update-list/"
         >
           <Form layout="vertical">
-            <FormItem label="测试步骤">
+            <FormItem>
               {getFieldDecorator('testStep', {
                 rules: [{ required: true, message: '测试步骤为必输项' }],
               })(
-                <Input label="测试步骤" maxLength={30} />,
+                <Input label={<FormattedMessage id="execute_testStep" />} maxLength={30} />,
               )}
             </FormItem>
-            <FormItem label="测试数据">
+            <FormItem>
               {getFieldDecorator('testData', {
                 rules: [{ required: true, message: '测试数据为必输项' }],
               })(
-                <Input label="测试数据" maxLength={30} />,
+                <Input label={<FormattedMessage id="execute_testData" />} maxLength={30} />,
               )}
             </FormItem>
-            <FormItem label="预期结果">
+            <FormItem>
               {getFieldDecorator('expectedResult', {
                 rules: [{ required: true, message: '预期结果为必输项' }],
               })(
-                <Input label="预期结果" maxLength={30} />,
+                <Input label={<FormattedMessage id="execute_expectedOutcome" />} maxLength={30} />,
               )}
             </FormItem>
           </Form>
@@ -101,4 +100,4 @@ class CreateTest extends Component {
     );
   }
 }
-export default Form.create({})(withRouter(CreateTest));
+export default Form.create({})(withRouter(CreateTestStep));

@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import ReactQuill, { Quill } from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+
+import { Button } from 'choerodon-ui';
 import ImageDrop from './ImageDrop';
 import './WYSIWYGEditor.scss';
-import { Button } from 'choerodon-ui';
 
 Quill.register('modules/imageDrop', ImageDrop);
 
@@ -81,7 +82,7 @@ class WYSIWYGEditor extends Component {
             modules={this.modules}
             formats={this.formats}
             style={{ height: editHeight }}
-            placeholder={placeholder || '描述'}
+            placeholder={placeholder || Choerodon.getMessage('描述', 'Description')}
             defaultValue={value}
             onChange={this.handleChange}
           />
@@ -96,13 +97,13 @@ class WYSIWYGEditor extends Component {
                   this.props.handleDelete();
                 }}
               >
-                取消
+                {Choerodon.getMessage('取消', 'Cancle')}
               </Button>
               <Button
                 type="primary"
                 onClick={() => this.props.handleSave()}
               >
-                保存
+                {Choerodon.getMessage('保存', 'Save')} 
               </Button>
             </div>
           )

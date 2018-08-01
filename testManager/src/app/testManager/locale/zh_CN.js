@@ -29,9 +29,12 @@ const zhCN = {
   save: '保存',
   active: '启用',
   edit: '修改',
+  create: '创建',
   cancel: '取消',
   ok: '确定',
   delete: '删除',
+  clone: '克隆',
+  copy: '复制',
   confirm_delete: '确认删除吗？',
   confirm_deleteTip: '当你点击删除后，该条数据将被永久删除，不可恢复!',
   demand: '要求',
@@ -254,6 +257,35 @@ const zhCN = {
   issue_edit_activeLog: '活动日志',
   issue_edit_linkIssue: '相关任务',
   issue_edit_addLinkIssue: '添加相关任务',
+  // 创建测试步骤
+  issue_createStep_title: '添加测试详细信息',
+  issue_createStep_content_title: '在用例“{issueName}”中创建测试步骤',
+  issue_createStep_content_description: '您可以创建任意个测试步骤。',
+  // 执行测试侧边栏
+  issue_executeTest_content_title: '在测试“{issueName}”中执行测试',
+  issue_executeTest_content_description: '将测试用例添加到测试循环或文件夹中，构成一次测试执行。',
+  // 拷贝issue
+  issue_copy_title: '复制问题{issueNum}',
+  issue_copy_copySprint: '是否复制冲刺',
+  issue_copy_copyLinkIssue: '是否复制关联任务',
+  // 创建链接任务
+  issue_create_link_title: '创建链接',
+  issue_create_link_content_title: '对问题创建链接',
+  issue_create_link_content_description: '请在下面输入相关任务的基本信息，包括所要创建的关系（复制、阻塞、关联、破坏、被复制、被阻塞、被破坏等）以及所要关联的问题（支持多选）。',
+  issue_create_link_content_create_relation: '关系',
+  issue_create_link_content_create_question: '问题',
+  // 登记工作日志
+  issue_worklog_title: '登记工作日志',
+  issue_worklog_content_title: '登记"{issueNum}"的工作日志',
+  issue_worklog_content_description: '您可以在这里记录您的工作，花费的时间会在关联问题中预估时间进行扣减，以便更精确地计算问题进度和提升工作效率。',
+  issue_worklog_time: '耗费时间*',
+  issue_worklog_workTime: '工作日期*',
+  issue_worklog_lastTime: '剩余的估计',
+  issue_worklog_autoAdjust: '自动调整',
+  issue_worklog_withoutTime: '不设置预估时间',
+  issue_worklog_setTo: '设置为',
+  issue_worklog_reduce: '缩减',
+  issue_worklog_workDescription: '工作说明',
 };
 
 export default zhCN;
