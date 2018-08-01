@@ -5,6 +5,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Upload, Button, Icon } from 'choerodon-ui';
+import { FormattedMessage } from 'react-intl';
 import { deleteFile } from '../../../api/FileApi';
 
 class UploadButton extends React.Component {
@@ -120,7 +121,8 @@ class UploadButton extends React.Component {
     return (
       <Upload {...props} fileList={fileList} className="upload-button">
         <Button funcType={this.props.funcType || 'primary'}>
-          <Icon type="file_upload" /> 上传附件
+          <Icon type="file_upload" /> 
+          <FormattedMessage id="upload_attachment" />
         </Button>
       </Upload>
     );

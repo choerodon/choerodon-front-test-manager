@@ -4,7 +4,7 @@ import { Button, Icon, Dropdown, Menu, Modal } from 'choerodon-ui';
 import { stores, axios } from 'choerodon-front-boot';
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
-import EditTest from '../EditTest';
+import EditTestStep from '../EditTestStep';
 
 const { AppState } = stores;
 const confirm = Modal.confirm;
@@ -244,7 +244,7 @@ class TestStepTable extends Component {
         </div>
         {
           this.state.editTestStepShow ? (
-            <EditTest
+            <EditTestStep
               attachments={this.state.currentAttments}
               issueId={this.props.issueId}
               stepId={this.state.currentTestStepId}

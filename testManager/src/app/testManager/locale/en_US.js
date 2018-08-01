@@ -32,6 +32,8 @@ const enUS = {
   delete: 'Delete',
   clone: 'Clone',
   copy: 'Copy',
+  expand: 'Expand',
+  fold: 'Fold',
   confirm_delete: 'Confirm delete',
   confirm_deleteTip: 'When you click delete, after which the data will be permanently deleted and irreversible!',
   demand: 'Demand',
@@ -281,5 +283,9 @@ const enUS = {
   issue_worklog_setTo: 'Set to',
   issue_worklog_reduce: 'Reduce',
   issue_worklog_workDescription: 'Work description',
+  // 编辑测试步骤
+  issue_edit_step_title: 'Test detail',
+  issue_edit_step_content_title: 'Edit detail of test step“{testStep}”',
+  issue_edit_step_content_description: 'You can edit the details of the test steps.',
 };
 export default enUS;

@@ -2,9 +2,10 @@ import React, { Component } from 'react';
 import { stores, axios, Content } from 'choerodon-front-boot';
 import { withRouter } from 'react-router-dom';
 import _ from 'lodash';
+import { FormattedMessage } from 'react-intl';
 import { Select, Form, Input, Button, Modal, Icon, Tooltip, Spin, Upload } from 'choerodon-ui';
 import { UploadButton } from '../CommonComponent';
-import './EditTest.scss';
+import './EditTestStep.scss';
 
 const { AppState } = stores;
 const { Sidebar } = Modal;
@@ -27,7 +28,7 @@ function deleteAttachment(id) {
   const projectId = AppState.currentMenuType.id;
   return axios.delete(`test/v1/projects/${projectId}/test/case/attachment/delete/bucket/test/attach/${id}`);
 }
-class EditTest extends Component {
+class EditTestStep extends Component {
   constructor(props) {
     super(props);
     window.console.log(props.attachments);
@@ -171,12 +172,12 @@ class EditTest extends Component {
     return (
       <Sidebar
         className="c7n-createTest"
-        title="测试详细信息"
+        title={<FormattedMessage id="issue_edit_step_title" />}
         visible={visible || false}
         onOk={this.handleEditTest}
         onCancel={onCancel}
-        okText="确定"
-        cancelText="取消"
+        okText={<FormattedMessage id="ok" />}
+        cancelText={<FormattedMessage id="cancel" />}
         confirmLoading={this.state.createLoading}
       >
         <Content
@@ -185,43 +186,46 @@ class EditTest extends Component {
             paddingLeft: 0,
             width: 512,
           }}
-          title={`编辑步骤“${this.state.origin.testStep}”的详细信息`}
-          description="您可以编辑测试步骤的详细信息。"
+          title={<FormattedMessage id="issue_edit_step_content_title" values={{ testStep: this.state.origin.testStep }} />}
+          description={<FormattedMessage id="issue_edit_step_content_description" />}
         >
           <Spin spinning={loading}>
             <Form layout="vertical">
-              <FormItem label="测试步骤">
+              <FormItem >
                 {getFieldDecorator('testStep', {
                   rules: [{ required: true, message: '测试步骤为必输项' }],
                   initialValue: this.state.origin.testStep,
                 })(
-                  <Input label="测试步骤" maxLength={30} />,
+                  <Input label={<FormattedMessage id="execute_testStep" />} maxLength={30} />,
                 )}
               </FormItem>
-              <FormItem label="测试数据">
+              <FormItem>
                 {getFieldDecorator('testData', {
                   rules: [{ required: true, message: '测试数据为必输项' }],
                   initialValue: this.state.origin.testData,
                 })(
-                  <Input label="测试数据" maxLength={30} />,
+                  <Input label={<FormattedMessage id="execute_testData" />} maxLength={30} />,
                 )}
               </FormItem>
-              <FormItem label="预期结果">
+              <FormItem>
                 {getFieldDecorator('expectedResult', {
                   rules: [{ required: true, message: '预期结果为必输项' }],
                   initialValue: this.state.origin.expectedResult,
                 })(
-                  <Input label="预期结果" maxLength={30} />,
+                  <Input label={<FormattedMessage id="execute_expectedOutcome" />} maxLength={30} />,
                 )}
               </FormItem>
             </Form>
             <div className="sign-upload" style={{ marginTop: 38 }}>
               <div style={{ display: 'flex', marginBottom: 13, alignItems: 'center' }}>
-                <div style={{ fontWeight: 'bold' }}>分步附件</div>
+                <div style={{ fontWeight: 'bold' }}>
+                  <FormattedMessage id="execute_stepAttachment" />
+                </div>
               </div>
               <Upload {...props} fileList={fileList}>
                 <Button className="c7n-EditTestDetail-uploadBtn">
-                  <Icon type="file_upload" /> 上传附件
+                  <Icon type="file_upload" /> 
+                  <FormattedMessage id="upload_attachment" />
                 </Button>
               </Upload>
               {/* <UploadButton
@@ -237,4 +241,4 @@ class EditTest extends Component {
     );
   }
 }
-export default Form.create({})(withRouter(EditTest));
+export default Form.create({})(withRouter(EditTestStep));

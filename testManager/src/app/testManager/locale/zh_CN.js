@@ -35,6 +35,8 @@ const zhCN = {
   delete: '删除',
   clone: '克隆',
   copy: '复制',
+  expand: '展开',
+  fold: '折叠',
   confirm_delete: '确认删除吗？',
   confirm_deleteTip: '当你点击删除后，该条数据将被永久删除，不可恢复!',
   demand: '要求',
@@ -244,6 +246,7 @@ const zhCN = {
   issue_edit_person: '人员',
   issue_edit_reporter: '报告人',
   issue_edit_assignToMe: '指派给我',
+  issue_edit_manager: '经办人',
   issue_edit_date: '日期',
   issue_edit_createDate: '创建时间',
   issue_edit_updateDate: '更新时间',
@@ -286,6 +289,10 @@ const zhCN = {
   issue_worklog_setTo: '设置为',
   issue_worklog_reduce: '缩减',
   issue_worklog_workDescription: '工作说明',
+  // 编辑测试步骤
+  issue_edit_step_title: '测试详细信息',
+  issue_edit_step_content_title: '编辑步骤“{testStep}”的详细信息',
+  issue_edit_step_content_description: '您可以编辑测试步骤的详细信息。',
 };
 
 export default zhCN;

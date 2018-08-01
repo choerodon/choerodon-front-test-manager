@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { Icon, Button } from 'choerodon-ui';
+import { FormattedMessage } from 'react-intl';
 import DataLog from './DataLog';
+
 
 const PROP = {
   Sprint: '冲刺',
@@ -48,7 +50,7 @@ class DataLogs extends Component {
             <div style={{ marginTop: 5 }}>
               <Button className="leftBtn" funcTyp="flat" onClick={() => this.setState({ expand: true })}>
                 <Icon type="baseline-arrow_drop_down icon" style={{ marginRight: 2 }} />
-                <span>展开</span>
+                <FormattedMessage id="expand" />
               </Button>
             </div>
           ) : null
@@ -58,7 +60,7 @@ class DataLogs extends Component {
             <div style={{ marginTop: 5 }}>
               <Button className="leftBtn" funcTyp="flat" onClick={() => this.setState({ expand: false })}>
                 <Icon type="baseline-arrow_drop_up icon" style={{ marginRight: 2 }} />
-                <span>折叠</span>
+                <FormattedMessage id="fold" />
               </Button>
             </div>
           ) : null
