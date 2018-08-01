@@ -8,7 +8,7 @@ import EditTest from '../EditTest';
 const { AppState } = stores;
 const confirm = Modal.confirm;
 
-class TableCanDragAndDrop extends Component {
+class TestStepTable extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -158,7 +158,7 @@ class TableCanDragAndDrop extends Component {
                 {...provided1.draggableProps}
                 {...provided1.dragHandleProps}
               >
-                <div className={`${item.stepId}-list`} style={{ width: '100%', display: 'flex', height: 34, borderBottom: '1px solid rgba(0, 0, 0, 0.12)', borderTop: '1px solid rgba(0, 0, 0, 0.12)', display: 'flex' }}>
+                <div className={`${item.stepId}-list`} style={{ width: '100%', display: 'flex', height: 34, borderBottom: '1px solid rgba(0, 0, 0, 0.12)', borderTop: '1px solid rgba(0, 0, 0, 0.12)' }}>
                   <span style={{ flex: 1, lineHeight: '34px' }}>
                     <span style={{ paddingLeft: 20, boxSizing: 'border-box' }}>
                       {/* {item.stepId} */}
@@ -258,4 +258,4 @@ class TableCanDragAndDrop extends Component {
   }
 }
 
-export default TableCanDragAndDrop;
+export default TestStepTable;

@@ -1,13 +1,12 @@
 import React, { Component } from 'react';
-import { Draggable, Droppable, DragDropContext } from 'react-beautiful-dnd';
-import { Button, Icon, Tooltip, Dropdown, Menu, Popconfirm } from 'choerodon-ui';
+import { Button, Icon, Tooltip, Menu, Popconfirm } from 'choerodon-ui';
 import { stores, axios } from 'choerodon-front-boot';
 import _ from 'lodash';
 import TimeAgo from 'timeago-react';
 
 const { AppState } = stores;
 
-class TableCanDragAndDrop extends Component {
+class TestExecuteTable extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -243,4 +242,4 @@ class TableCanDragAndDrop extends Component {
   }
 }
 
-export default TableCanDragAndDrop;
+export default TestExecuteTable;

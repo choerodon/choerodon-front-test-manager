@@ -1,3 +1,3 @@
-import TableCouldDragAndDrop from './TableCouldDragAndDrop';
+import TestExecuteTable from './TestExecuteTable';
 
-export default TableCouldDragAndDrop;
+export default TestExecuteTable;

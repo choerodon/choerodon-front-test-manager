@@ -543,7 +543,7 @@ class CycleExecute extends Component {
         (<Tooltip title={testData}>
           <div
             style={{
-              width: 150,        
+              width: 100,        
             }}
             className="c7n-text-dot"
           >
@@ -558,7 +558,7 @@ class CycleExecute extends Component {
         (<Tooltip title={expectedResult}>
           <div
             style={{
-              width: 150,        
+              width: 100,        
             }}
             className="c7n-text-dot"
           >

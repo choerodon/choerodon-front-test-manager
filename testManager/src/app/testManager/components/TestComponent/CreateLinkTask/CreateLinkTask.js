@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import { stores, axios } from 'choerodon-front-boot';
 import { withRouter } from 'react-router-dom';
 import _ from 'lodash';
-import { Select, Form, Input, Button, Modal, Spin, Icon } from 'choerodon-ui';
+import { Select, Form, Modal } from 'choerodon-ui';
 
-import './CreateIssue.scss';
+import './CreateLinkTask.scss';
 import '../../../assets/main.scss';
 import { createLink, loadIssuesInLink } from '../../../api/IssueApi';
 import TypeTag from '../TypeTag';
@@ -15,7 +15,7 @@ const { Option } = Select;
 const FormItem = Form.Item;
 let sign = false;
 
-class CreateSprint extends Component {
+class CreateLinkTask extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -156,7 +156,8 @@ class CreateSprint extends Component {
           <h2 className="c7n-space-first">对问题创建链接</h2>
           <p>
             请在下面输入相关任务的基本信息，包括所要创建的关系（复制、阻塞、关联、破坏、被复制、被阻塞、被破坏等）以及所要关联的问题（支持多选）。
-            {/* <a href="#" rel="nofollow me noopener noreferrer" target="_blank" className="c7n-external-link">
+            {/* <a href="#" rel="nofollow me noopener noreferrer" target="_blank" 
+            className="c7n-external-link">
               <span className="c7n-external-link-content">
               了解详情
               </span>
@@ -225,4 +226,4 @@ class CreateSprint extends Component {
     );
   }
 }
-export default Form.create({})(withRouter(CreateSprint));
+export default Form.create({})(withRouter(CreateLinkTask));
