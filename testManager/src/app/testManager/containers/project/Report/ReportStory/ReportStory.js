@@ -247,12 +247,12 @@ class ReportStory extends Component {
               executeStatus[statusName] += 1;
             }
             const marginBottom =
-              Math.max((execute.defects.length + execute.subStepDefects.length) - 1, 0) * 20;
+              Math.max((execute.defects.length + execute.subStepDefects.length) - 1, 0) * 30;
             return (
-              <div className="c7n-cycle-show-container">
+              <div className="c7n-cycle-show-container" style={{ marginBottom }}>
                 <div
                   title={execute.cycleName}
-                  style={{ width: 80, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', marginBottom }}
+                  style={{ width: 80, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}
                 >
                   {execute.cycleName}
                 </div>
