@@ -721,7 +721,7 @@ class CycleHome extends Component {
               <div className={this.state.leftVisible ? 'c7n-ch-left' : 'c7n-ch-hidden'}>
                 <div className="c7n-chl-head">
                   <div className="c7n-chlh-search">
-                    <Input prefix={prefix} placeholder="过滤" onChange={this.filterCycle} />
+                    <Input prefix={prefix} placeholder="过滤" onChange={_.debounce((e) => { this.filterCycle(e); }, 1000)} />
                   </div>
                   <div className="c7n-chlh-button">
                     <div

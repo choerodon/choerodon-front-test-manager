@@ -18,7 +18,7 @@ import StatusTag from '../../../../components/TestComponent/StatusTag';
 import TypeTag from '../../../../components/TestComponent/TypeTag';
 import EmptyBlock from '../../../../components/TestComponent/EmptyBlock';
 import CreateIssue from '../../../../components/TestComponent/CreateIssue';
-import EditIssue from '../../../../components/TestComponent/EditIssueWide';
+import EditIssueNarrow from '../../../../components/TestComponent/EditIssueNarrow';
 
 
 const { AppState } = stores;
@@ -689,7 +689,8 @@ class Test extends Component {
             <FormattedMessage id="export" />        
           </Button>
           <Button            
-            onClick={() => {
+            onClick={() => {        
+              this.EditIssueNarrow.reloadIssue(this.state.selectedIssue.issueId);   
               const { current, pageSize } = IssueStore.pagination;
               IssueStore.loadIssues(current - 1, pageSize);
             }}
@@ -885,7 +886,10 @@ class Test extends Component {
           >
             {
               this.state.expand ? (
-                <EditIssue
+                <EditIssueNarrow    
+                  ref={(instance) => { 
+                    if (instance) { this.EditIssueNarrow = instance; } 
+                  }}             
                   issueId={this.state.selectedIssue.issueId}
                   onCancel={() => {
                     this.setState({

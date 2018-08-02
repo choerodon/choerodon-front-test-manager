@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import { Icon, Popconfirm, Tooltip } from 'choerodon-ui';
 import { AppState } from 'choerodon-front-boot';
 import _ from 'lodash';
@@ -11,7 +12,7 @@ import PriorityTag from '../../PriorityTag';
 import StatusTag from '../../StatusTag';
 import TypeTag from '../../TypeTag';
 import './IssueList.scss';
-
+import { issueLink } from '../../../../common/utils';
 
 class IssueList extends Component {
   constructor(props, context) {
@@ -64,11 +65,13 @@ class IssueList extends Component {
             <p
               style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 0, color: 'rgb(63, 81, 181)' }}
               role="none"
-              onClick={() => {
-                this.props.onOpen(issue.issueId, issue.linkedIssueId);
-              }}
+              // onClick={() => {
+              //   this.props.onOpen(issue.issueId, issue.linkedIssueId);
+              // }}
             >
-              {`${issue.issueNum} ${issue.summary}`}
+              <Link to={issueLink(issue.issueId, issue.typeCode)} target="_blank">
+                {`${issue.issueNum} ${issue.summary}`}
+              </Link>
             </p>
           </div>
         </Tooltip>
