@@ -5,6 +5,7 @@ import { stores, axios } from 'choerodon-front-boot';
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import EditTestStep from '../EditTestStep';
+import DragTable from '../../DragTable';
 
 const { AppState } = stores;
 const confirm = Modal.confirm;
@@ -31,21 +32,18 @@ class TestStepTable extends Component {
     }
   }
 
-  onDragEnd(result) {
-    window.console.log(result);
+  onDragEnd=(sourceIndex, targetIndex) => {
     const arr = this.state.data.slice();
-    const fromIndex = result.source.index;
-    const toIndex = result.destination.index;
-    if (fromIndex === toIndex) {
+    if (sourceIndex === targetIndex) {
       return;
     }
-    const drag = arr[fromIndex];
-    arr.splice(fromIndex, 1);
-    arr.splice(toIndex, 0, drag);
+    const drag = arr[sourceIndex];
+    arr.splice(sourceIndex, 1);
+    arr.splice(targetIndex, 0, drag);
     this.setState({ data: arr });
     // arr此时是有序的，取toIndex前后两个的rank
-    const lastRank = toIndex === 0 ? null : arr[toIndex - 1].rank;
-    const nextRank = toIndex === arr.length - 1 ? null : arr[toIndex + 1].rank;
+    const lastRank = targetIndex === 0 ? null : arr[targetIndex - 1].rank;
+    const nextRank = targetIndex === arr.length - 1 ? null : arr[targetIndex + 1].rank;
     const dragCopy = { ...drag };
     delete dragCopy.attachments;
     const testCaseStepDTO = {
@@ -58,28 +56,15 @@ class TestStepTable extends Component {
       .then((res) => {
         // save success
         const a = this.state.data.slice();
-        a[toIndex] = res;
+        a[targetIndex] = res;
         this.setState({
           data: a,
         });
       });
   }
 
-  getMenu = () => (
-    <Menu onClick={this.handleClickMenu.bind(this)}>
-      <Menu.Item key="edit">
-        <FormattedMessage id="edit" />
-      </Menu.Item>
-      <Menu.Item key="delete">
-        <FormattedMessage id="delete" />
-      </Menu.Item>
-      <Menu.Item key="clone">
-        <FormattedMessage id="clone" />
-      </Menu.Item>
-    </Menu>
-  );
 
-  handleClickMenu(e) {
+  handleClickMenu=(e) => {
     const testStepId = this.state.currentTestStepId;
     if (e.key === 'edit') {
       this.setState({
@@ -100,7 +85,7 @@ class TestStepTable extends Component {
     }
   }
 
-  handleDeleteTestStep() {
+  handleDeleteTestStep=() => {
     const testStepId = this.state.currentTestStepId;
     const that = this;
     confirm({
@@ -122,126 +107,101 @@ class TestStepTable extends Component {
     });
   }
 
-  handleChangeExpand(id) {
+  handleChangeExpand=(id) => {
     const expand = this.state.expand.slice();
 
     if (expand.includes(id)) {
       // window.console.log(id, 'remove');
       expand.splice(expand.indexOf(id), 1);
-      document.getElementsByClassName(`${id}-list`)[0].style.height = '34px';
+      document.getElementById(`${id}-list`).style.height = '34px';
     } else {
       // window.console.log(id, 'add');
       expand.push(id);
-      document.getElementsByClassName(`${id}-list`)[0].style.height = 'auto';
+      document.getElementById(`${id}-list`).style.height = 'auto';
     }
     // window.console.log(expand);
     this.setState({ expand });
   }
-
-  renderIssueOrIntro(issues) {
-    if (issues) {
-      if (issues.length >= 0) {
-        return this.renderSprintIssue(issues);
-      }
-    }
-    return '';
-  }
-
-  renderSprintIssue(data, sprintId) {
-    const result = [];
-    _.forEach(data, (item, index) => {
-      result.push(
-        <Draggable key={item.stepId} draggableId={item.stepId} index={index}>
-          {(provided1, snapshot1) => 
-            (
-              <div
-                ref={provided1.innerRef}
-                {...provided1.draggableProps}
-                {...provided1.dragHandleProps}
-              >
-                <div className={`${item.stepId}-list`} style={{ width: '100%', display: 'flex', height: 34, boxShadow: '0 1px 0 0 #e8e8e8, 0 1px 0 0 #e8e8e8 inset' }}>
-                  <span style={{ flex: 1, lineHeight: '34px' }}>
-                    <span style={{ paddingLeft: 20, boxSizing: 'border-box' }}>
-                      {/* {item.stepId} */}
-                      {index + 1}
-                    </span>
-                  </span>
-                  <span style={{ flex: 2, display: 'inline-block', lineHeight: '34px' }} className="c7n-test-dot">
-                    {item.testStep}
-                  </span>
-                  <span style={{ flex: 2, display: 'inline-block', lineHeight: '34px' }} className="c7n-test-dot">
-                    {item.testData}
-                  </span>
-                  <span style={{ flex: 2, display: 'inline-block', lineHeight: '34px' }} className="c7n-test-dot">
-                    {item.expectedResult}
-                  </span>
-                  <span style={{ flex: 5, display: 'inline-block', overflow: 'hidden', position: 'relative' }} role="none" onClick={this.handleChangeExpand.bind(this, item.stepId)}>
-                    <div className={`${item.stepId}-attachment`} style={{ }}>
-                      {
-                        item.attachments.map(attachment => (
-                          <span style={{ padding: '3px 12px', display: 'inline-block', maxWidth: 192, marginTop: 4, lineHeight: '20px', borderRadius: '100px', background: 'rgba(0, 0, 0, 0.08)', marginRight: 6 }} className="c7n-test-dot">
-                            {attachment.attachmentName}
-                          </span>
-                        ))
-                      }
-                    </div>
-                    {
-                      item.attachments && item.attachments.length && document.getElementsByClassName(`${item.stepId}-attachment`)[0] && parseInt(window.getComputedStyle(document.getElementsByClassName(`${item.stepId}-attachment`)[0]).height, 10) > 34
-                        ? <span style={{ position: 'absolute', top: 10, right: 0 }} className={_.indexOf(this.state.expand, item.stepId) !== -1 ? 'icon icon-keyboard_arrow_up' : 'icon icon-keyboard_arrow_down'} /> : null
-                    }
-                  </span>
-                  <span style={{ width: 50, lineHeight: '34px' }}>
-                    <Dropdown overlay={this.getMenu()} trigger={['click']} onClick={() => this.setState({ currentTestStepId: item.stepId, currentAttments: item.attachments })}>
-                      <Button icon="more_vert" shape="circle" />
-                    </Dropdown>
-                  </span>
-                </div>
-              </div>
-            )
-          }
-        </Draggable>,
-      );
-    });
-    return result;
-  }
+         
 
   render() {
-    return (
-      <DragDropContext onDragEnd={this.onDragEnd.bind(this)}>
-        <div style={{ width: '100%' }}>
-          <div style={{ width: '100%', height: 30, background: 'rgba(0, 0, 0, 0.04)', display: 'flex' }}>
-            <span style={{ flex: 1, lineHeight: '30px' }} />
-            <span style={{ flex: 2, lineHeight: '30px' }}>
-              <FormattedMessage id="execute_testStep" />
-            </span>
-            <span style={{ flex: 2, lineHeight: '30px' }}>
-              <FormattedMessage id="execute_testData" />
-            </span>
-            <span style={{ flex: 2, lineHeight: '30px' }}>
-              <FormattedMessage id="execute_expectedOutcome" />
-            </span>
-            <span style={{ flex: 5, lineHeight: '30px' }}>
-              <FormattedMessage id="execute_stepAttachment" />
-            </span>
-            <span style={{ width: 50, lineHeight: '30px' }} />
+    const that = this;
+    const menus = (
+      <Menu onClick={this.handleClickMenu.bind(this)}>
+        <Menu.Item key="edit">
+          <FormattedMessage id="edit" />
+        </Menu.Item>
+        <Menu.Item key="delete">
+          <FormattedMessage id="delete" />
+        </Menu.Item>
+        <Menu.Item key="clone">
+          <FormattedMessage id="clone" />
+        </Menu.Item>
+      </Menu>
+    );
+    const columns = [{
+      title: null,
+      dataIndex: 'stepId',
+      key: 'stepId',
+      render(stepId, record, index) {
+        return index + 1;
+      },
+    }, {
+      title: <FormattedMessage id="execute_testStep" />,
+      dataIndex: 'testStep',
+      key: 'testStep',
+    }, {
+      title: <FormattedMessage id="execute_testData" />,
+      dataIndex: 'testData',
+      key: 'testData',
+    }, {
+      title: <FormattedMessage id="execute_expectedOutcome" />,
+      dataIndex: 'expectedResult',
+      key: 'expectedResult',
+    }, {
+      title: <FormattedMessage id="execute_stepAttachment" />,
+      dataIndex: 'attachments',
+      key: 'attachments',
+      render(attachments, record) {
+        return (
+          <div id={`${record.stepId}-list`} style={{ overflow: 'hidden', height: 34 }} onClick={that.handleChangeExpand.bind(this, record.stepId)} role="none">
+            <div style={{ position: 'relative', display: 'flex', flexWrap: 'wrap', paddingRight: 15 }} id={`${record.stepId}-attachment`}>          
+              {
+                attachments.map(attachment => (
+                  <div style={{ padding: '3px 12px', maxWidth: 192, borderRadius: '100px', background: 'rgba(0, 0, 0, 0.08)', margin: 5 }} className="c7n-text-dot">
+                    {attachment.attachmentName}
+                  </div>
+                ))
+              }
+              {
+                attachments && attachments.length && document.getElementsByClassName(`${record.stepId}-attachment`)[0] && parseInt(window.getComputedStyle(document.getElementById(`${record.stepId}-attachment`)).height, 10) > 34
+                  ? <span style={{ position: 'absolute', top: 10, right: 0 }} className={_.indexOf(that.state.expand, record.stepId) !== -1 ? 'icon icon-keyboard_arrow_up' : 'icon icon-keyboard_arrow_down'} /> : null
+              }
+            </div>
           </div>
-          <Droppable droppableId="dropTable">
-            {(provided, snapshot) => (
-              <div
-                ref={provided.innerRef}
-                style={{
-                  background: snapshot.isDraggingOver ? '#e9e9e9' : 'white',
-                  padding: 'grid',
-                  // borderBottom: '1px solid rgba(0,0,0,0.12)',
-                  marginBottom: 0,
-                }}
-              >
-                {this.renderIssueOrIntro(this.state.data)}
-                {provided.placeholder}
-              </div>
-            )}
-          </Droppable>
-        </div>
+        );
+      },
+    }, {
+      title: null,
+      dataIndex: 'action',
+      key: 'action',
+      render(attachments, record) {
+        return (
+          <Dropdown overlay={menus} trigger={['click']} onClick={() => that.setState({ currentTestStepId: record.stepId, currentAttments: record.attachments })}>
+            <Button icon="more_vert" shape="circle" />
+          </Dropdown>
+        );
+      },
+    }];
+    return (
+      <div>
+        <DragTable
+          pagination={false}
+          filterBar={false}
+          dataSource={this.state.data}
+          columns={columns}
+          onDragEnd={this.onDragEnd}
+        />       
         {
           this.state.editTestStepShow ? (
             <EditTestStep
@@ -260,7 +220,7 @@ class TestStepTable extends Component {
             />
           ) : null
         }
-      </DragDropContext>
+      </div>
     );
   }
 }

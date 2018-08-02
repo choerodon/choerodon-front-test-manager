@@ -135,23 +135,23 @@ class TestExecuteTable extends Component {
       const status = _.find(this.state.status, { statusId: item.executionStatus }) || {};
       result.push(
         <div className={`${item.executeId}-list`} style={{ width: '100%', paddingLeft: 10, height: 34, boxShadow: '0 1px 0 0 #e8e8e8, 0 1px 0 0 #e8e8e8 inset', display: 'flex' }}>
-          <span title={item.versionName} style={{ flex: 2, lineHeight: '34px' }} className="c7n-test-dot">
+          <span title={item.versionName} style={{ flex: 2, lineHeight: '34px' }} className="c7n-text-dot">
             {item.versionName}
           </span>
           <Tooltip title={item.cycleName}>
-            <span style={{ flex: 2, lineHeight: '34px' }} className="c7n-test-dot">
+            <span style={{ flex: 2, lineHeight: '34px' }} className="c7n-text-dot">
               {item.cycleName}
             </span>
           </Tooltip>
-          <span style={{ flex: 2, lineHeight: '34px' }} className="c7n-test-dot">
+          <span style={{ flex: 2, lineHeight: '34px' }} className="c7n-text-dot">
             {item.folderName || ''}
           </span>
-          <span style={{ flex: 2, lineHeight: '34px' }} className="c7n-test-dot">
+          <span style={{ flex: 2, lineHeight: '34px' }} className="c7n-text-dot">
             <span style={{ width: 60, height: 20, borderRadius: '100px', background: status.statusColor, display: 'inline-block', lineHeight: '20px', textAlign: 'center', color: '#fff' }}>
               {status && status.statusName}
             </span>
           </span>
-          <span style={{ flex: 2, lineHeight: '34px' }} className="c7n-test-dot">
+          <span style={{ flex: 2, lineHeight: '34px' }} className="c7n-text-dot">
             {
               item.defects.length ? (
                 <span>
@@ -175,11 +175,11 @@ class TestExecuteTable extends Component {
               ) : '-'
             }
           </span>
-          <span style={{ flex: 2, lineHeight: '34px' }} className="c7n-test-dot">
+          <span style={{ flex: 2, lineHeight: '34px' }} className="c7n-text-dot">
             {item.lastUpdateUser && item.lastUpdateUser.realName}
 
           </span>
-          <span style={{ flex: 2, lineHeight: '34px' }} className="c7n-test-dot">
+          <span style={{ flex: 2, lineHeight: '34px' }} className="c7n-text-dot">
             <TimeAgo
               datetime={item.lastUpdateDate}
               locale={Choerodon.getMessage('zh_CN', 'en')}
@@ -226,7 +226,7 @@ class TestExecuteTable extends Component {
           <span style={{ flex: 2, lineHeight: '30px' }}>
             <FormattedMessage id="status" />
           </span>
-          <span style={{ flex: 2, lineHeight: '30px' }}>
+          <span style={{ flex: 2, lineHeight: '30px' }} >
             <FormattedMessage id="bug" />
           </span>
           <span style={{ flex: 2, lineHeight: '30px' }}>
