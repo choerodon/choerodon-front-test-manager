@@ -4,6 +4,7 @@ import { stores, axios } from 'choerodon-front-boot';
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import TimeAgo from 'timeago-react';
+import './TestExecuteTable.scss';
 
 const { AppState } = stores;
 
@@ -186,13 +187,12 @@ class TestExecuteTable extends Component {
             />
           </span>
           <span style={{ width: 70, lineHeight: '34px' }}>
-            <Button
-              icon="explicit2"
-              shape="circle"
+            <Icon
+              type="explicit2 mlr-3 pointer"
               onClick={() => {
                 this.props.history.push(`/testManager/Cycle/execute/${item.executeId}?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`);
               }}
-            />
+            />            
             <Popconfirm
               title={Choerodon.getMessage('确认删除吗?', 'Confirm delete')}
               placement="left"

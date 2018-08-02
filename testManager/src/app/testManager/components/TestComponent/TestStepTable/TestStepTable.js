@@ -200,6 +200,7 @@ class TestStepTable extends Component {
           dataSource={this.state.data}
           columns={columns}
           onDragEnd={this.onDragEnd}
+          dragKey="stepId"
         />       
         {
           this.state.editTestStepShow ? (

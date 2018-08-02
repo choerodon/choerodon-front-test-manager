@@ -814,6 +814,7 @@ class CycleHome extends Component {
                   dataSource={testList}
                   columns={columns}
                   onDragEnd={this.onDragEnd}
+                  dragKey="executeId"
                 />
               </div>}
             </div>

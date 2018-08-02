@@ -70,9 +70,9 @@ class DragTable extends Component {
     return (<tr>{ths}</tr>);
   }
   renderTbody(data) {   
-    const { columns } = this.props;
+    const { columns, dragKey } = this.props;
     const rows = data.map((item, index) => 
-      (<Draggable key={item.executeId} draggableId={item.executeId} index={index}>
+      (<Draggable key={item[dragKey]} draggableId={item[dragKey]} index={index}>
         {(provided, snapshot) =>
           (
             <tr
