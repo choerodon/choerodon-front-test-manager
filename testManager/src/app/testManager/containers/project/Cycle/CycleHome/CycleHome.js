@@ -221,8 +221,8 @@ class CycleHome extends Component {
   }
 
   filterCycle = (e) => {
-    const value = e.target.value;    
-    window.console.log(value);
+    const value = e.target.value;
+    // window.console.log(value);
     if (value !== '') {
       const expandedKeys = dataList.map((item) => {
         if (item.title.indexOf(value) > -1) {
@@ -721,7 +721,7 @@ class CycleHome extends Component {
               <div className={this.state.leftVisible ? 'c7n-ch-left' : 'c7n-ch-hidden'}>
                 <div className="c7n-chl-head">
                   <div className="c7n-chlh-search">
-                    <Input prefix={prefix} placeholder="过滤" onChange={_.debounce((e) => { this.filterCycle(e); }, 1000)} />
+                    <Input prefix={prefix} placeholder="过滤" onChange={this.filterCycle} />
                   </div>
                   <div className="c7n-chlh-button">
                     <div
