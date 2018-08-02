@@ -20,7 +20,7 @@ const styles = {
   statusOption: {
     width: 60,
     textAlign: 'center',
-    borderRadius: '100px',
+    borderRadius: '2px',
     display: 'inline-block',
     color: 'white',
   },
