@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import { Form, Input, Select, Modal, Spin } from 'choerodon-ui';
+import { Form, Input, Select, Modal, Spin, Icon } from 'choerodon-ui';
 import { Content, stores } from 'choerodon-front-boot';
 import { FormattedMessage } from 'react-intl';
 import { SketchPicker } from 'react-color';
-import './CreateStatus.less';
+import './CreateStatus.scss';
 import { createStatus } from '../../api/TestStatusApi';
 
 const { AppState } = stores;
@@ -116,30 +116,39 @@ class CreateStatus extends Component {
                   )}
                 </FormItem>
 
-                <div className="c7n-CreateStatus-color-picker-container">
+                <div role="none" className="c7n-CreateStatus-color-picker-container" onClick={e => e.stopPropagation()}>
                   <FormattedMessage id="color" />：
                   <div
+                    className="c7n-CreateStatus-color-picker-show"
                     role="none"
-                    style={{ width: 18, height: 18, background: statusColor, position: 'relative', border: '1px solid gray' }}
+                    // style={{ background: statusColor }}
                     onClick={(e) => {
                       e.stopPropagation();
                       this.setState({ pickShow: true });
                     }}
+                  >            
+                    <div style={{ background: statusColor }}>
+                      <div className="c7n-CreateStatus-color-picker-show-rec-con">
+                        <div className="c7n-CreateStatus-color-picker-show-rec" />
+                      </div>
+                    </div>  
+                   
+                    
+                  </div>
+                  <div
+
+                    style={pickShow ?
+                      { display: 'block', position: 'absolute', bottom: 20, left: 60 } :
+                      { display: 'none' }}
                   >
-                    <div
-                      style={pickShow ?
-                        { display: 'block', position: 'absolute', bottom: 0, left: 20 } :
-                        { display: 'none' }}
-                    >
-                      <SketchPicker
-                        color={statusColor}
-                        onChangeComplete={(color) => {
-                          const { r, g, b, a } = color.rgb;
-                          // window.console.log(color);
-                          this.setState({ statusColor: `rgba(${r},${g},${b},${a})` });
-                        }}
-                      />
-                    </div>
+                    <SketchPicker
+                      color={statusColor}
+                      onChangeComplete={(color) => {
+                        const { r, g, b, a } = color.rgb;
+                        // window.console.log(color);
+                        this.setState({ statusColor: `rgba(${r},${g},${b},${a})` });
+                      }}
+                    />
                   </div>
                 </div>
               </Form>
