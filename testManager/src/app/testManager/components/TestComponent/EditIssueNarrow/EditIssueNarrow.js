@@ -2162,8 +2162,7 @@ class EditIssueNarrow extends Component {
                   <div className="c7n-content-wrapper" style={{ paddingLeft: 0 }}>
                     <TestExecuteTable
                       issueId={this.state.origin.issueId}
-                      data={this.state.testExecuteData}
-                      history={this.props.history}
+                      data={this.state.testExecuteData}                   
                       onOk={() => {
                         this.reloadIssue();
                       }}

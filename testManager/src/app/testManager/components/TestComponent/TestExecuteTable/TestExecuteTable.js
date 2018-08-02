@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import { Button, Icon, Tooltip, Menu, Popconfirm } from 'choerodon-ui';
 import { stores, axios } from 'choerodon-front-boot';
 import _ from 'lodash';
@@ -187,12 +188,12 @@ class TestExecuteTable extends Component {
             />
           </span>
           <span style={{ width: 70, lineHeight: '34px' }}>
-            <Icon
-              type="explicit2 mlr-3 pointer"
-              onClick={() => {
-                this.props.history.push(`/testManager/Cycle/execute/${item.executeId}?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`);
-              }}
-            />            
+            <Link to={`/testManager/Cycle/execute/${item.executeId}?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}>
+              <Icon
+                type="explicit2 mlr-3 pointer" 
+                style={{ color: 'black' }}            
+              />           
+            </Link> 
             <Popconfirm
               title={Choerodon.getMessage('确认删除吗?', 'Confirm delete')}
               placement="left"
