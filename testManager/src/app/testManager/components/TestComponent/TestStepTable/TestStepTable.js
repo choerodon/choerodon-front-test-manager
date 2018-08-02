@@ -173,7 +173,7 @@ class TestStepTable extends Component {
                 ))
               }
               {
-                attachments && attachments.length && document.getElementById(`${record.stepId}-attachment`) && parseInt(window.getComputedStyle(document.getElementById(`${record.stepId}-attachment`)).height, 10) > 34
+                attachments && attachments.length && document.getElementById(`${record.stepId}-attachment`) && parseInt(window.getComputedStyle(document.getElementById(`${record.stepId}-attachment`)).height, 10) > 40
                   ? <span style={{ position: 'absolute', top: 10, right: 0 }} className={_.indexOf(that.state.expand, record.stepId) !== -1 ? 'icon icon-keyboard_arrow_up' : 'icon icon-keyboard_arrow_down'} /> : null
               }
             </div>
