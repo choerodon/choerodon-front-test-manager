@@ -159,27 +159,27 @@ class TestStepTable extends Component {
                 {...provided1.draggableProps}
                 {...provided1.dragHandleProps}
               >
-                <div className={`${item.stepId}-list`} style={{ width: '100%', display: 'flex', height: 34, borderBottom: '1px solid rgba(0, 0, 0, 0.12)', borderTop: '1px solid rgba(0, 0, 0, 0.12)' }}>
+                <div className={`${item.stepId}-list`} style={{ width: '100%', display: 'flex', height: 34, boxShadow: '0 1px 0 0 #e8e8e8, 0 1px 0 0 #e8e8e8 inset' }}>
                   <span style={{ flex: 1, lineHeight: '34px' }}>
                     <span style={{ paddingLeft: 20, boxSizing: 'border-box' }}>
                       {/* {item.stepId} */}
                       {index + 1}
                     </span>
                   </span>
-                  <span style={{ flex: 2, display: 'inline-block', lineHeight: '34px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  <span style={{ flex: 2, display: 'inline-block', lineHeight: '34px' }} className="c7n-test-dot">
                     {item.testStep}
                   </span>
-                  <span style={{ flex: 2, display: 'inline-block', lineHeight: '34px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  <span style={{ flex: 2, display: 'inline-block', lineHeight: '34px' }} className="c7n-test-dot">
                     {item.testData}
                   </span>
-                  <span style={{ flex: 2, display: 'inline-block', lineHeight: '34px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  <span style={{ flex: 2, display: 'inline-block', lineHeight: '34px' }} className="c7n-test-dot">
                     {item.expectedResult}
                   </span>
                   <span style={{ flex: 5, display: 'inline-block', overflow: 'hidden', position: 'relative' }} role="none" onClick={this.handleChangeExpand.bind(this, item.stepId)}>
                     <div className={`${item.stepId}-attachment`} style={{ }}>
                       {
                         item.attachments.map(attachment => (
-                          <span style={{ padding: '3px 12px', display: 'inline-block', maxWidth: 192, marginTop: 4, lineHeight: '20px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', borderRadius: '100px', background: 'rgba(0, 0, 0, 0.08)', marginRight: 6 }}>
+                          <span style={{ padding: '3px 12px', display: 'inline-block', maxWidth: 192, marginTop: 4, lineHeight: '20px', borderRadius: '100px', background: 'rgba(0, 0, 0, 0.08)', marginRight: 6 }} className="c7n-test-dot">
                             {attachment.attachmentName}
                           </span>
                         ))
@@ -209,7 +209,7 @@ class TestStepTable extends Component {
     return (
       <DragDropContext onDragEnd={this.onDragEnd.bind(this)}>
         <div style={{ width: '100%' }}>
-          <div style={{ width: '100%', height: 30, background: 'rgba(0, 0, 0, 0.04)', borderTop: '2px solid rgba(0,0,0,0.12)', borderBottom: '1px solid rgba(0,0,0,0.12)', display: 'flex' }}>
+          <div style={{ width: '100%', height: 30, background: 'rgba(0, 0, 0, 0.04)', display: 'flex' }}>
             <span style={{ flex: 1, lineHeight: '30px' }} />
             <span style={{ flex: 2, lineHeight: '30px' }}>
               <FormattedMessage id="execute_testStep" />
@@ -232,7 +232,7 @@ class TestStepTable extends Component {
                 style={{
                   background: snapshot.isDraggingOver ? '#e9e9e9' : 'white',
                   padding: 'grid',
-                  borderBottom: '1px solid rgba(0,0,0,0.12)',
+                  // borderBottom: '1px solid rgba(0,0,0,0.12)',
                   marginBottom: 0,
                 }}
               >

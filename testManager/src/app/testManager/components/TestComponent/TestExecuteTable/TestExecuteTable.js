@@ -134,24 +134,24 @@ class TestExecuteTable extends Component {
     _.forEach(data, (item, index) => {
       const status = _.find(this.state.status, { statusId: item.executionStatus }) || {};
       result.push(
-        <div className={`${item.executeId}-list`} style={{ width: '100%', paddingLeft: 10, height: 34, borderBottom: '1px solid rgba(0, 0, 0, 0.12)', borderTop: '1px solid rgba(0, 0, 0, 0.12)', display: 'flex' }}>
-          <span title={item.versionName} style={{ flex: 2, lineHeight: '34px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+        <div className={`${item.executeId}-list`} style={{ width: '100%', paddingLeft: 10, height: 34, boxShadow: '0 1px 0 0 #e8e8e8, 0 1px 0 0 #e8e8e8 inset', display: 'flex' }}>
+          <span title={item.versionName} style={{ flex: 2, lineHeight: '34px' }} className="c7n-test-dot">
             {item.versionName}
           </span>
           <Tooltip title={item.cycleName}>
-            <span style={{ flex: 2, lineHeight: '34px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            <span style={{ flex: 2, lineHeight: '34px' }} className="c7n-test-dot">
               {item.cycleName}
             </span>
           </Tooltip>
-          <span style={{ flex: 2, lineHeight: '34px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          <span style={{ flex: 2, lineHeight: '34px' }} className="c7n-test-dot">
             {item.folderName || ''}
           </span>
-          <span style={{ flex: 2, lineHeight: '34px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          <span style={{ flex: 2, lineHeight: '34px' }} className="c7n-test-dot">
             <span style={{ width: 60, height: 20, borderRadius: '100px', background: status.statusColor, display: 'inline-block', lineHeight: '20px', textAlign: 'center', color: '#fff' }}>
               {status && status.statusName}
             </span>
           </span>
-          <span style={{ flex: 2, lineHeight: '34px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          <span style={{ flex: 2, lineHeight: '34px' }} className="c7n-test-dot">
             {
               item.defects.length ? (
                 <span>
@@ -175,11 +175,11 @@ class TestExecuteTable extends Component {
               ) : '-'
             }
           </span>
-          <span style={{ flex: 2, lineHeight: '34px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          <span style={{ flex: 2, lineHeight: '34px' }} className="c7n-test-dot">
             {item.lastUpdateUser && item.lastUpdateUser.realName}
 
           </span>
-          <span style={{ flex: 2, lineHeight: '34px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          <span style={{ flex: 2, lineHeight: '34px' }} className="c7n-test-dot">
             <TimeAgo
               datetime={item.lastUpdateDate}
               locale={Choerodon.getMessage('zh_CN', 'en')}
@@ -213,7 +213,7 @@ class TestExecuteTable extends Component {
   render() {
     return (
       <div style={{ width: '100%' }}>
-        <div style={{ width: '100%', paddingLeft: 10, height: 30, background: 'rgba(0, 0, 0, 0.04)', borderTop: '2px solid rgba(0,0,0,0.12)', borderBottom: '1px solid rgba(0,0,0,0.12)', display: 'flex' }}>
+        <div style={{ width: '100%', paddingLeft: 10, height: 30, background: 'rgba(0, 0, 0, 0.04)', display: 'flex' }}>
           <span style={{ flex: 2, lineHeight: '30px' }}>
             <FormattedMessage id="version" />
           </span>

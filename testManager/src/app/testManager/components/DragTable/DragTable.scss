@@ -22,14 +22,13 @@
     //     }
     // }
     table {
-        table-layout: fixed;
+        // table-layout: fixed;
+        border: none;
         width: 100%;
         thead {
             tr {
                 height: 30px;
                 background: rgba(0, 0, 0, 0.04);
-                border-top: 1px solid #e8e8e8;
-                border-bottom: 1px solid #e8e8e8;
                 display: flex;
                 align-items: center;
                 th {
@@ -49,8 +48,9 @@
                 display: flex;
                 align-items: center;
                 height: 34px;
-                border-bottom: 1px solid #e8e8e8;
-                border-top: 1px solid #e8e8e8;
+                // border-bottom: 1px solid #e8e8e8;
+                // border-top: 1px solid #e8e8e8;
+                box-shadow: 0 1px 0 0 #e8e8e8, 0 1px 0 0 #e8e8e8 inset;
                 td {
                     // width: 50px;
                     // flex: 1;

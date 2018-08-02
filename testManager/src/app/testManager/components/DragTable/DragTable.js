@@ -51,11 +51,7 @@ class DragTable extends Component {
         <Droppable droppableId="dropTable">
           {(provided, snapshot) => (
             <tbody
-              ref={provided.innerRef}
-              style={{                                      
-                borderBottom: '1px solid rgba(0,0,0,0.12)',
-                marginBottom: 0,
-              }}
+              ref={provided.innerRef}              
             >
               {this.renderTbody(this.state.data)}
               {provided.placeholder}
