@@ -81,6 +81,10 @@ class ReportStory extends Component {
       });
     });
   }
+  sliceIssueIds = (arr, pagination) => {
+    const { current, pageSize } = pagination;
+    return arr.slice(pageSize * (current - 1), pageSize * current);
+  }
   getReportsFromStory = (pagination, issueIds = this.state.issueIds) => {
     const Pagination = pagination || this.state.pagination;
 
@@ -88,7 +92,7 @@ class ReportStory extends Component {
     getReportsFromStory({
       page: Pagination.current - 1,
       size: Pagination.pageSize,
-    }, issueIds).then((reportData) => {
+    }, this.sliceIssueIds(issueIds, Pagination)).then((reportData) => {
       this.setState({
         loading: false,
         // reportList: reportData.content,
@@ -96,7 +100,8 @@ class ReportStory extends Component {
         pagination: {
           current: Pagination.current,
           pageSize: Pagination.pageSize,
-          total: reportData.totalElements,
+          // total: reportData.totalElements,
+          total: issueIds.length,
         },
       });
     }).catch((error) => {

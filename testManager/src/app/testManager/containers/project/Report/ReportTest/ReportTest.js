@@ -79,13 +79,17 @@ class ReportTest extends Component {
       });
     });
   }
+  sliceIssueIds = (arr, pagination) => {
+    const { current, pageSize } = pagination;
+    return arr.slice(pageSize * (current - 1), pageSize * current);
+  }
   getReportsFromDefect = (pagination, issueIds = this.state.issueIds) => {
     const Pagination = pagination || this.state.pagination;
     this.setState({ loading: true });
     getReportsFromDefect({
       page: Pagination.current - 1,
       size: Pagination.pageSize,
-    }, issueIds).then((reportData) => {
+    }, this.sliceIssueIds(issueIds, Pagination)).then((reportData) => {
       this.setState({
         loading: false,
         // reportList: reportData.content,
@@ -93,7 +97,8 @@ class ReportTest extends Component {
         pagination: {
           current: Pagination.current,
           pageSize: Pagination.pageSize,
-          total: reportData.totalElements,
+          // total: reportData.totalElements,
+          total: issueIds.length,
         },
       });
     }).catch((error) => {
@@ -153,7 +158,8 @@ class ReportTest extends Component {
       width: '25%',
       render(test, record) {
         const { issueInfosDTO } = record;
-        const { issueId, issueColor, issueStatusName, issueName, summary, typeCode } = issueInfosDTO;
+        const { issueId, issueColor, issueStatusName, 
+          issueName, summary, typeCode } = issueInfosDTO;
         return (
           <Collapse 
             activeKey={openId}
