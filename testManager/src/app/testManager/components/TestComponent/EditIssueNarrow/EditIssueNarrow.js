@@ -851,7 +851,6 @@ class EditIssueNarrow extends Component {
 
   renderLinkIssues() {
     const group = _.groupBy(this.state.linkIssues, 'ward');
-    window.console.log(group)
     return (
       <div className="c7n-tasks">
         {

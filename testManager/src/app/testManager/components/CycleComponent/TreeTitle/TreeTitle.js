@@ -120,19 +120,20 @@ class TreeTitle extends Component {
 
     const { editing } = this.state;
     const { title, processBar, data, statusList } = this.props;
-    const content = Object.keys(processBar).length > 0 ? (<div>{
-      Object.keys(processBar).map((key) => {
-        if (_.find(statusList, { statusColor: key })) {
-          const { statusName } = _.find(statusList, { statusColor: key });
-          return (<div style={{ display: 'flex', width: 100 }}>
-            <div>{statusName}</div>
-            <div className="c7n-flex-space" />
-            <div>{processBar[key]}</div>
-          </div>);
-        }
-        return null;
-      })
-    }</div>) : null;
+    const ProcessBar = {};
+    const content = [];
+    for (let i = 0; i < statusList.length; i += 1) {
+      const status = statusList[i];
+      if (processBar[status.statusColor]) {
+        ProcessBar[status.statusColor] = processBar[status.statusColor];
+        content.push(<div style={{ display: 'flex', width: 100 }}>
+          <div>{status.statusName}</div>
+          <div className="c7n-flex-space" />
+          <div>{processBar[status.statusColor]}</div>
+        </div>);
+      }
+    }    
+    
     return (
       <div className="c7n-tree-title">        
         {editing ?
@@ -153,13 +154,16 @@ class TreeTitle extends Component {
             {title}
           </div>}
 
-        {content ? 
-          <Popover content={content} title={null}>
+        {Object.keys(ProcessBar).length > 0 ? 
+          <Popover
+            content={<div>{content}</div>}
+            title={null}
+          >
             <div className="c7n-tt-processBar" style={{ marginLeft: data.type === 'cycle' || data.type === 'temp' ? '18px' : 0 }}>
               <div className="c7n-process-bar">
                 <span className="c7n-pb-unfill">
                   <div className="c7n-pb-fill-parent">
-                    {this.creatProcessBar(processBar)}
+                    {this.creatProcessBar(ProcessBar)}
                   </div>
                 </span>
               </div>
@@ -169,7 +173,7 @@ class TreeTitle extends Component {
             <div className="c7n-process-bar">
               <span className="c7n-pb-unfill">
                 <div className="c7n-pb-fill-parent">
-                  {this.creatProcessBar(processBar)}
+                  {this.creatProcessBar(ProcessBar)}
                 </div>
               </span>
             </div>
