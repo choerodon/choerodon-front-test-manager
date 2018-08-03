@@ -851,14 +851,15 @@ class EditIssueNarrow extends Component {
 
   renderLinkIssues() {
     const group = _.groupBy(this.state.linkIssues, 'ward');
+    window.console.log(group)
     return (
       <div className="c7n-tasks">
         {
-          _.map(group, (v, k) => (
-            <div key={k}>
-              <div style={{ margin: '7px auto' }}>{k}</div>
+          _.map(group, (issues, ward) => (
+            <div key={ward}>
+              <div style={{ margin: '7px auto' }}>{ward}</div>
               {
-                _.map(v, (linkIssue, i) => this.renderLinkList(linkIssue, i))
+                _.map(issues, (linkIssue, i) => this.renderLinkList(linkIssue, i))
               }
             </div>
           ))
