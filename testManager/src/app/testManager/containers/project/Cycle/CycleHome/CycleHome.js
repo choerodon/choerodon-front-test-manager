@@ -15,7 +15,7 @@ import DragTable from '../../../../components/DragTable';
 import { RichTextShow, SelectFocusLoad } from '../../../../components/CommonComponent';
 import { delta2Html, delta2Text, issueLink } from '../../../../common/utils';
 import CycleStore from '../../../../store/project/cycle/CycleStore';
-
+import noRight from './noright.svg';
 
 const { AppState } = stores;
 const { confirm } = Modal;
@@ -658,7 +658,7 @@ class CycleHome extends Component {
         <Content
           title={<FormattedMessage id="cycle_title" />}
           description={<FormattedMessage id="cycle_description" />}
-          style={{ paddingBottom: 0 }}
+          style={{ paddingBottom: 0, paddingRight: 0 }}
         >
           <Spin spinning={loading}>
             <CreateCycleExecute
@@ -765,7 +765,7 @@ class CycleHome extends Component {
                 </div>
               </div>
               <div style={{ width: 1, background: 'rgba(0,0,0,0.26)' }} />
-              {cycleId && <div className="c7n-ch-right" >
+              {cycleId ? <div className="c7n-ch-right" >
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                   <div>
                     <FormattedMessage id="cycle_cycleName" />
@@ -816,7 +816,12 @@ class CycleHome extends Component {
                   onDragEnd={this.onDragEnd}
                   dragKey="executeId"
                 />
-              </div>}
+              </div> : <div style={{ display: 'flex', alignItems: 'center', height: 250, margin: '88px auto', padding: '50px 75px', border: '1px dashed rgba(0,0,0,0.54)' }}><img src={noRight} alt="" />
+                <div style={{ marginLeft: 40 }}>
+                  <div style={{ fontSize: '14px', color: 'rgba(0,0,0,0.65)' }}>根据当前选定的测试循环没有查询到循环信息</div>
+                  <div style={{ fontSize: '20px', fontWeight: 'bold', marginTop: 10 }}>尝试在您的树状图中选择测试循环</div>
+                </div>
+              </div> }
             </div>
           </Spin>
         </Content>

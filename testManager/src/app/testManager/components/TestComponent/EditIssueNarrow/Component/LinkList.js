@@ -40,6 +40,7 @@ class IssueList extends Component {
 
   render() {
     const { issue, i } = this.props;
+    const Reg = /被/g;
     return (
       <div
         style={{
@@ -69,7 +70,7 @@ class IssueList extends Component {
               //   this.props.onOpen(issue.issueId, issue.linkedIssueId);
               // }}
             >
-              <Link to={issueLink(issue.issueId, issue.typeCode)} target="_blank">
+              <Link to={issueLink(Reg.test(issue.ward) ? issue.issueId : issue.linkedIssueId, issue.typeCode)} target="_blank">
                 {`${issue.issueNum} ${issue.summary}`}
               </Link>
             </p>
