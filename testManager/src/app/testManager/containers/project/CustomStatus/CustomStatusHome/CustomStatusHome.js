@@ -209,7 +209,7 @@ class CustomStatusHome extends Component {
           // }}
             title={<FormattedMessage id="status_custom_home_title" />}
             description={<FormattedMessage id="status_custom_home_description" />}
-            link="#"
+            link="http://choerodon.io/zh/docs/user-guide/test-management/setting/status/"
           >
             <Tabs defaultActiveKey="CYCLE_CASE" onChange={this.handleTabChange}>
               <TabPane tab={<FormattedMessage id="status_executeStatus" />} key="CYCLE_CASE">

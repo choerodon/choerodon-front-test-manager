@@ -1,3 +1,4 @@
+// 可拖动table
 import React, { Component } from 'react';
 import { Draggable, Droppable, DragDropContext } from 'react-beautiful-dnd';
 import { Table } from 'choerodon-ui';
@@ -51,11 +52,7 @@ class DragTable extends Component {
         <Droppable droppableId="dropTable">
           {(provided, snapshot) => (
             <tbody
-              ref={provided.innerRef}
-              style={{                                      
-                borderBottom: '1px solid rgba(0,0,0,0.12)',
-                marginBottom: 0,
-              }}
+              ref={provided.innerRef}              
             >
               {this.renderTbody(this.state.data)}
               {provided.placeholder}
@@ -73,9 +70,9 @@ class DragTable extends Component {
     return (<tr>{ths}</tr>);
   }
   renderTbody(data) {   
-    const { columns } = this.props;
+    const { columns, dragKey } = this.props;
     const rows = data.map((item, index) => 
-      (<Draggable key={item.executeId} draggableId={item.executeId} index={index}>
+      (<Draggable key={item[dragKey]} draggableId={item[dragKey]} index={index}>
         {(provided, snapshot) =>
           (
             <tr
@@ -87,7 +84,7 @@ class DragTable extends Component {
                 let renderedItem = null;
                 const { dataIndex, key, flex, render } = column;
                 if (render) {
-                  renderedItem = render(data[index][dataIndex], data[index]);
+                  renderedItem = render(data[index][dataIndex], data[index], index);
                 } else {
                   renderedItem = data[index][dataIndex];
                 }

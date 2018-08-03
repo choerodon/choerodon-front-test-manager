@@ -81,6 +81,10 @@ class ReportStory extends Component {
       });
     });
   }
+  sliceIssueIds = (arr, pagination) => {
+    const { current, pageSize } = pagination;
+    return arr.slice(pageSize * (current - 1), pageSize * current);
+  }
   getReportsFromStory = (pagination, issueIds = this.state.issueIds) => {
     const Pagination = pagination || this.state.pagination;
 
@@ -88,17 +92,32 @@ class ReportStory extends Component {
     getReportsFromStory({
       page: Pagination.current - 1,
       size: Pagination.pageSize,
-    }, issueIds).then((reportData) => {
-      this.setState({
-        loading: false,
-        // reportList: reportData.content,
-        reportList: reportData,
-        pagination: {
-          current: Pagination.current,
-          pageSize: Pagination.pageSize,
-          total: reportData.totalElements,
-        },
-      });
+    }, this.sliceIssueIds(issueIds, Pagination)).then((reportData) => {
+      if (reportData.totalElements) {
+        this.setState({
+          loading: false,
+          // reportList: reportData.content,
+          reportList: reportData.content,
+          pagination: {
+            current: Pagination.current,
+            pageSize: Pagination.pageSize,
+            // total: reportData.totalElements,
+            total: reportData.totalElements,
+          },
+        });
+      } else {
+        this.setState({
+          loading: false,
+          // reportList: reportData.content,
+          reportList: reportData,
+          pagination: {
+            current: Pagination.current,
+            pageSize: Pagination.pageSize,
+            // total: reportData.totalElements,
+            total: issueIds.length,
+          },
+        });
+      }
     }).catch((error) => {
       window.console.log(error);
       this.setState({
@@ -247,12 +266,12 @@ class ReportStory extends Component {
               executeStatus[statusName] += 1;
             }
             const marginBottom =
-              Math.max((execute.defects.length + execute.subStepDefects.length) - 1, 0) * 20;
+              Math.max((execute.defects.length + execute.subStepDefects.length) - 1, 0) * 30;
             return (
-              <div className="c7n-cycle-show-container">
+              <div className="c7n-cycle-show-container" style={{ marginBottom }}>
                 <div
                   title={execute.cycleName}
-                  style={{ width: 80, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', marginBottom }}
+                  style={{ width: 80, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}
                 >
                   {execute.cycleName}
                 </div>

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { stores, axios, Permission } from 'choerodon-front-boot';
-import { withRouter } from 'react-router-dom';
+// import { withRouter } from 'react-router-dom';
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import { Select, Input, Button, Modal, Tooltip, Progress, Dropdown, Menu, Spin, Icon } from 'choerodon-ui';
@@ -26,6 +26,7 @@ import TestStepTable from '../TestStepTable';
 import TestExecuteTable from '../TestExecuteTable';
 import CreateTestStep from '../CreateTestStep';
 import ExecuteTest from '../ExecuteTest';
+import IssueStore from '../../../store/project/IssueStore';
 
 const { AppState } = stores;
 const { Option } = Select;
@@ -51,7 +52,7 @@ const STATUS_ICON = {
   },
 };
 
-class CreateSprint extends Component {
+class EditIssueNarrow extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -156,9 +157,9 @@ class CreateSprint extends Component {
     if (nextProps.issueId !== this.props.issueId) {
       this.setState({
         currentRae: undefined,
-      });
+      });    
       this.reloadIssue(nextProps.issueId);
-    }
+    }   
   }
 
   /**
@@ -899,12 +900,13 @@ class CreateSprint extends Component {
           typeCode: link.typeCode,
         }}
         i={i}
-        onOpen={(issueId, linkedIssueId) => {
-          const menu = AppState.currentMenuType;
-          const { type, id: projectId, name } = menu;
-          this.props.history.push(`/agile/issue?type=${type}&id=${projectId}&name=${name}&paramIssueId=${linkedIssueId}`);
-          // this.reloadIssue(issueId === this.state.origin.issueId ? linkedIssueId : issueId);
-        }}
+        // onOpen={(issueId, linkedIssueId) => {
+        //   const menu = AppState.currentMenuType;
+        //   const { type, id: projectId, name } = menu;
+        //   this.props.history.push(`/agile/issue?
+        // type=${type}&id=${projectId}&name=${name}&paramIssueId=${linkedIssueId}`);
+        //   // this.reloadIssue(issueId === this.state.origin.issueId ? linkedIssueId : issueId);
+        // }}
         onRefresh={() => {
           this.reloadIssue(this.state.origin.issueId);
         }}
@@ -2160,8 +2162,7 @@ class CreateSprint extends Component {
                   <div className="c7n-content-wrapper" style={{ paddingLeft: 0 }}>
                     <TestExecuteTable
                       issueId={this.state.origin.issueId}
-                      data={this.state.testExecuteData}
-                      history={this.props.history}
+                      data={this.state.testExecuteData}                   
                       onOk={() => {
                         this.reloadIssue();
                       }}
@@ -2349,4 +2350,4 @@ class CreateSprint extends Component {
     );
   }
 }
-export default withRouter(CreateSprint);
+export default EditIssueNarrow;

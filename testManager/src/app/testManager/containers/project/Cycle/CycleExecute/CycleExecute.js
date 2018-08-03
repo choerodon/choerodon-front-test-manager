@@ -55,7 +55,7 @@ const styles = {
   statusOption: {
     width: 60,
     textAlign: 'center',
-    borderRadius: '100px',
+    borderRadius: '2px',
     display: 'inline-block',
     color: 'white',
   },
@@ -767,7 +767,7 @@ class CycleExecute extends Component {
                       onCancel={this.cancelEdit}
                     >
                       <Text>
-                        <div style={{ background: executionStatusColor, width: 60, textAlign: 'center', borderRadius: '100px', display: 'inline-block', color: 'white' }}>
+                        <div style={{ background: executionStatusColor, width: 60, textAlign: 'center', borderRadius: '2px', display: 'inline-block', color: 'white' }}>
                           {executionStatusName}
                         </div>
                       </Text>

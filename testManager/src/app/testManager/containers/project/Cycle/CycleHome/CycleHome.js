@@ -23,7 +23,7 @@ const styles = {
   statusOption: {
     width: 60,
     textAlign: 'center',
-    borderRadius: '100px',
+    borderRadius: '2px',
     display: 'inline-block',
     color: 'white',
   },
@@ -221,8 +221,8 @@ class CycleHome extends Component {
   }
 
   filterCycle = (e) => {
-    const value = e.target.value;    
-    window.console.log(value);
+    const value = e.target.value;
+    // window.console.log(value);
     if (value !== '') {
       const expandedKeys = dataList.map((item) => {
         if (item.title.indexOf(value) > -1) {
@@ -814,6 +814,7 @@ class CycleHome extends Component {
                   dataSource={testList}
                   columns={columns}
                   onDragEnd={this.onDragEnd}
+                  dragKey="executeId"
                 />
               </div>}
             </div>

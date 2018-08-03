@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import { Button, Icon, Tooltip, Menu, Popconfirm } from 'choerodon-ui';
 import { stores, axios } from 'choerodon-front-boot';
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import TimeAgo from 'timeago-react';
+import './TestExecuteTable.scss';
 
 const { AppState } = stores;
 
@@ -134,24 +136,24 @@ class TestExecuteTable extends Component {
     _.forEach(data, (item, index) => {
       const status = _.find(this.state.status, { statusId: item.executionStatus }) || {};
       result.push(
-        <div className={`${item.executeId}-list`} style={{ width: '100%', paddingLeft: 10, height: 34, borderBottom: '1px solid rgba(0, 0, 0, 0.12)', borderTop: '1px solid rgba(0, 0, 0, 0.12)', display: 'flex' }}>
-          <span title={item.versionName} style={{ flex: 2, lineHeight: '34px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+        <div className={`${item.executeId}-list`} style={{ width: '100%', paddingLeft: 10, height: 34, boxShadow: '0 1px 0 0 #e8e8e8, 0 1px 0 0 #e8e8e8 inset', display: 'flex' }}>
+          <span title={item.versionName} style={{ flex: 2, lineHeight: '34px' }} className="c7n-text-dot">
             {item.versionName}
           </span>
           <Tooltip title={item.cycleName}>
-            <span style={{ flex: 2, lineHeight: '34px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            <span style={{ flex: 2, lineHeight: '34px' }} className="c7n-text-dot">
               {item.cycleName}
             </span>
           </Tooltip>
-          <span style={{ flex: 2, lineHeight: '34px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          <span style={{ flex: 2, lineHeight: '34px' }} className="c7n-text-dot">
             {item.folderName || ''}
           </span>
-          <span style={{ flex: 2, lineHeight: '34px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-            <span style={{ width: 60, height: 20, borderRadius: '100px', background: status.statusColor, display: 'inline-block', lineHeight: '20px', textAlign: 'center', color: '#fff' }}>
+          <span style={{ flex: 2, lineHeight: '34px' }} className="c7n-text-dot">
+            <span style={{ width: 60, height: 20, borderRadius: '2px', background: status.statusColor, display: 'inline-block', lineHeight: '20px', textAlign: 'center', color: '#fff' }}>
               {status && status.statusName}
             </span>
           </span>
-          <span style={{ flex: 2, lineHeight: '34px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          <span style={{ flex: 2, lineHeight: '34px' }} className="c7n-text-dot">
             {
               item.defects.length ? (
                 <span>
@@ -175,24 +177,23 @@ class TestExecuteTable extends Component {
               ) : '-'
             }
           </span>
-          <span style={{ flex: 2, lineHeight: '34px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          <span style={{ flex: 2, lineHeight: '34px' }} className="c7n-text-dot">
             {item.lastUpdateUser && item.lastUpdateUser.realName}
 
           </span>
-          <span style={{ flex: 2, lineHeight: '34px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          <span style={{ flex: 2, lineHeight: '34px' }} className="c7n-text-dot">
             <TimeAgo
               datetime={item.lastUpdateDate}
               locale={Choerodon.getMessage('zh_CN', 'en')}
             />
           </span>
           <span style={{ width: 70, lineHeight: '34px' }}>
-            <Button
-              icon="explicit2"
-              shape="circle"
-              onClick={() => {
-                this.props.history.push(`/testManager/Cycle/execute/${item.executeId}?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`);
-              }}
-            />
+            <Link to={`/testManager/Cycle/execute/${item.executeId}?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}>
+              <Icon
+                type="explicit2 mlr-3 pointer" 
+                style={{ color: 'black' }}            
+              />           
+            </Link> 
             <Popconfirm
               title={Choerodon.getMessage('确认删除吗?', 'Confirm delete')}
               placement="left"
@@ -213,7 +214,7 @@ class TestExecuteTable extends Component {
   render() {
     return (
       <div style={{ width: '100%' }}>
-        <div style={{ width: '100%', paddingLeft: 10, height: 30, background: 'rgba(0, 0, 0, 0.04)', borderTop: '2px solid rgba(0,0,0,0.12)', borderBottom: '1px solid rgba(0,0,0,0.12)', display: 'flex' }}>
+        <div style={{ width: '100%', paddingLeft: 10, height: 30, background: 'rgba(0, 0, 0, 0.04)', display: 'flex' }}>
           <span style={{ flex: 2, lineHeight: '30px' }}>
             <FormattedMessage id="version" />
           </span>
@@ -226,7 +227,7 @@ class TestExecuteTable extends Component {
           <span style={{ flex: 2, lineHeight: '30px' }}>
             <FormattedMessage id="status" />
           </span>
-          <span style={{ flex: 2, lineHeight: '30px' }}>
+          <span style={{ flex: 2, lineHeight: '30px' }} >
             <FormattedMessage id="bug" />
           </span>
           <span style={{ flex: 2, lineHeight: '30px' }}>
