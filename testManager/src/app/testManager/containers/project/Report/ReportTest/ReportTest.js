@@ -90,17 +90,31 @@ class ReportTest extends Component {
       page: Pagination.current - 1,
       size: Pagination.pageSize,
     }, this.sliceIssueIds(issueIds, Pagination)).then((reportData) => {
-      this.setState({
-        loading: false,
-        // reportList: reportData.content,
-        reportList: reportData,
-        pagination: {
-          current: Pagination.current,
-          pageSize: Pagination.pageSize,
-          // total: reportData.totalElements,
-          total: issueIds.length,
-        },
-      });
+      if (reportData.totalElements) {
+        this.setState({
+          loading: false,
+          // reportList: reportData.content,
+          reportList: reportData.content,
+          pagination: {
+            current: Pagination.current,
+            pageSize: Pagination.pageSize,
+            // total: reportData.totalElements,
+            total: reportData.totalElements,
+          },
+        });
+      } else {
+        this.setState({
+          loading: false,
+          // reportList: reportData.content,
+          reportList: reportData,
+          pagination: {
+            current: Pagination.current,
+            pageSize: Pagination.pageSize,
+            // total: reportData.totalElements,
+            total: issueIds.length,
+          },
+        });
+      }
     }).catch((error) => {
       window.console.log(error);
       this.setState({
