@@ -305,6 +305,7 @@ class CycleExecute extends Component {
       if (defectIds.includes(deleteEle[0].toString())) {
         if (_.find(cycleData.defects, { issueId: Number(deleteEle[0]) })) {
           const id = _.find(cycleData.defects, { issueId: Number(deleteEle[0]) }).id;
+          cycleData.defects.splice(defectIds.indexOf(deleteEle[0].toString()));
           removeDefect(id);
         }
       }
@@ -315,6 +316,7 @@ class CycleExecute extends Component {
 
     this.setState({
       defectIds: List,
+      cycleData: { ...cycleData },
     });
   }
   addDefects = () => {
@@ -369,7 +371,8 @@ class CycleExecute extends Component {
   cancelEdit = (originData) => {
     let { cycleData } = this.state;
     cycleData = { ...cycleData, ...originData };
-    this.setState({ cycleData });
+    const defectIds = cycleData.defects.map(defect => defect.issueId.toString());
+    this.setState({ cycleData, defectIds });
   }
   handleCommentSubmit = (value) => {
     const cycleData = { ...this.state.cycleData };
