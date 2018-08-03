@@ -52,9 +52,9 @@ class ReportSelectIssue extends Component {
   }
   componentWillReceiveProps(nextProps) {
     if (this.props.visible === false && nextProps.visible === true) {
-      this.setState({
-        issueIds: [],
-      });
+      // this.setState({
+      //   issueIds: [],
+      // });
       this.getList();
     }
   }
@@ -112,7 +112,7 @@ class ReportSelectIssue extends Component {
     // const issueIds = selectedRows.map(row => row.issueId);
 
     this.setState({ issueIds: selectedRowKeys });
-    window.console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+    // window.console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
   }
   render() {
     const { visible, onOk, onCancel } = this.props;
