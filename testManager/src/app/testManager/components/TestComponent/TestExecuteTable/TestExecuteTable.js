@@ -149,7 +149,7 @@ class TestExecuteTable extends Component {
             {item.folderName || ''}
           </span>
           <span style={{ flex: 2, lineHeight: '34px' }} className="c7n-text-dot">
-            <span style={{ width: 60, height: 20, borderRadius: '100px', background: status.statusColor, display: 'inline-block', lineHeight: '20px', textAlign: 'center', color: '#fff' }}>
+            <span style={{ width: 60, height: 20, borderRadius: '2px', background: status.statusColor, display: 'inline-block', lineHeight: '20px', textAlign: 'center', color: '#fff' }}>
               {status && status.statusName}
             </span>
           </span>
