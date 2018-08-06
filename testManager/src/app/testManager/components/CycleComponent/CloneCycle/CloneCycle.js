@@ -11,6 +11,13 @@ class CloneCycle extends Component {
     versions: [],
     loading: false,
   }
+  componentWillReceiveProps(nextProps) {
+    const { resetFields } = this.props.form;
+    if (this.props.visible === false && nextProps.visible === true) {
+      resetFields();
+    }
+  }
+  
   loadVersions = () => {
     this.setState({
       selectLoading: true,
