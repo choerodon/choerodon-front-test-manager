@@ -834,7 +834,7 @@ class CycleHome extends Component {
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                   <div>
                     <FormattedMessage id="cycle_cycleName" />
-                    ：<span style={{ color: '#3F51B5' }}>{title}</span>
+                    ：<span>{title}</span>
                   </div>
                   <div style={{ flex: 1, visiblity: 'hidden' }} />
                   <div>
