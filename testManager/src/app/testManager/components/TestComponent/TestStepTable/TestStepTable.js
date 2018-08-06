@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Icon, Dropdown, Menu, Modal } from 'choerodon-ui';
+import { Button, Icon, Dropdown, Menu, Modal, Tooltip } from 'choerodon-ui';
 import { stores, axios } from 'choerodon-front-boot';
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
@@ -31,7 +31,7 @@ class TestStepTable extends Component {
     }
   }
 
-  onDragEnd=(sourceIndex, targetIndex) => {
+  onDragEnd = (sourceIndex, targetIndex) => {
     const arr = this.state.data.slice();
     if (sourceIndex === targetIndex) {
       return;
@@ -63,29 +63,38 @@ class TestStepTable extends Component {
   }
 
 
-  handleClickMenu=(e) => {
-    const testStepId = this.state.currentTestStepId;
-    if (e.key === 'edit') {
-      this.setState({
-        editTestStepShow: true,
-      });
-    } else if (e.key === 'delete') {
-      this.handleDeleteTestStep();
-    } else if (e.key === 'clone') {
-      axios.post(`/test/v1/projects/${AppState.currentMenuType.id}/case/step/clone`, {
-        stepId: testStepId,
-        issueId: this.props.issueId,
+  // handleClickMenu = (e) => {
+  //   const testStepId = this.state.currentTestStepId;
+  //   if (e.key === 'edit') {
+  //     this.setState({
+  //       editTestStepShow: true,
+  //     });
+  //   } else if (e.key === 'delete') {
+  //     this.handleDeleteTestStep();
+  //   } else if (e.key === 'clone') {
+  //     axios.post(`/test/v1/projects/${AppState.currentMenuType.id}/case/step/clone`, {
+  //       stepId: testStepId,
+  //       issueId: this.props.issueId,
+  //     })
+  //       .then((res) => {
+  //         this.props.onOk();
+  //       })
+  //       .catch((error) => {
+  //       });
+  //   }
+  // }
+  cloneStep = (stepId) => {
+    axios.post(`/test/v1/projects/${AppState.currentMenuType.id}/case/step/clone`, {
+      stepId,
+      issueId: this.props.issueId,
+    })
+      .then((res) => {
+        this.props.onOk();
       })
-        .then((res) => {
-          this.props.onOk();
-        })
-        .catch((error) => {
-        });
-    }
+      .catch((error) => {
+      });
   }
-
-  handleDeleteTestStep=() => {
-    const testStepId = this.state.currentTestStepId;
+  handleDeleteTestStep = (stepId) => {
     const that = this;
     confirm({
       width: 560,
@@ -95,18 +104,18 @@ class TestStepTable extends Component {
         }
       </div>,
       onOk() {
-        return axios.delete(`/test/v1/projects/${AppState.currentMenuType.id}/case/step`, { data: { stepId: testStepId } })
+        return axios.delete(`/test/v1/projects/${AppState.currentMenuType.id}/case/step`, { data: { stepId } })
           .then((res) => {
             that.props.onOk();
           });
       },
-      onCancel() {},
+      onCancel() { },
       okText: Choerodon.getMessage('删除', 'Delete'),
       okType: 'danger',
     });
   }
 
-  handleChangeExpand=(id) => {
+  handleChangeExpand = (id) => {
     const expand = this.state.expand.slice();
 
     if (expand.includes(id)) {
@@ -121,23 +130,23 @@ class TestStepTable extends Component {
     // window.console.log(expand);
     this.setState({ expand });
   }
-         
+
 
   render() {
     const that = this;
-    const menus = (
-      <Menu onClick={this.handleClickMenu.bind(this)}>
-        <Menu.Item key="edit">
-          <FormattedMessage id="edit" />
-        </Menu.Item>
-        <Menu.Item key="delete">
-          <FormattedMessage id="delete" />
-        </Menu.Item>
-        <Menu.Item key="clone">
-          <FormattedMessage id="clone" />
-        </Menu.Item>
-      </Menu>
-    );
+    // const menus = (
+    //   <Menu onClick={this.handleClickMenu.bind(this)}>
+    //     <Menu.Item key="edit">
+    //       <FormattedMessage id="edit" />
+    //     </Menu.Item>
+    //     <Menu.Item key="delete">
+    //       <FormattedMessage id="delete" />
+    //     </Menu.Item>
+    //     <Menu.Item key="clone">
+    //       <FormattedMessage id="clone" />
+    //     </Menu.Item>
+    //   </Menu>
+    // );
     const columns = [{
       title: null,
       dataIndex: 'stepId',
@@ -149,14 +158,41 @@ class TestStepTable extends Component {
       title: <FormattedMessage id="execute_testStep" />,
       dataIndex: 'testStep',
       key: 'testStep',
+      render(testStep) {
+        return (
+          <Tooltip title={testStep}>
+            <div className="c7n-text-dot">
+              {testStep}
+            </div>
+          </Tooltip>
+        );
+      },
     }, {
       title: <FormattedMessage id="execute_testData" />,
       dataIndex: 'testData',
       key: 'testData',
+      render(testData) {
+        return (
+          <Tooltip title={testData}>
+            <div className="c7n-text-dot">
+              {testData}
+            </div>
+          </Tooltip>
+        );
+      },
     }, {
       title: <FormattedMessage id="execute_expectedOutcome" />,
       dataIndex: 'expectedResult',
       key: 'expectedResult',
+      render(expectedResult) {
+        return (
+          <Tooltip title={expectedResult}>
+            <div className="c7n-text-dot">
+              {expectedResult}
+            </div>
+          </Tooltip>
+        );
+      },
     }, {
       title: <FormattedMessage id="execute_stepAttachment" />,
       dataIndex: 'attachments',
@@ -164,7 +200,7 @@ class TestStepTable extends Component {
       render(attachments, record) {
         return (
           <div id={`${record.stepId}-list`} style={{ overflow: 'hidden', height: 34 }} onClick={that.handleChangeExpand.bind(this, record.stepId)} role="none">
-            <div style={{ position: 'relative', display: 'flex', flexWrap: 'wrap', paddingRight: 15 }} id={`${record.stepId}-attachment`}>          
+            <div style={{ position: 'relative', display: 'flex', flexWrap: 'wrap', paddingRight: 15 }} id={`${record.stepId}-attachment`}>
               {
                 attachments.map(attachment => (
                   <div style={{ padding: '3px 12px', maxWidth: 192, borderRadius: '100px', background: 'rgba(0, 0, 0, 0.08)', margin: 5 }} className="c7n-text-dot">
@@ -186,9 +222,16 @@ class TestStepTable extends Component {
       key: 'action',
       render(attachments, record) {
         return (
-          <Dropdown overlay={menus} trigger={['click']} onClick={() => that.setState({ currentTestStepId: record.stepId, currentAttments: record.attachments })}>
-            <Button icon="more_vert" shape="circle" />
-          </Dropdown>
+          <div>
+            <Icon type="content_copy" style={{ cursor: 'pointer', margin: '0 5px' }} onClick={() => that.cloneStep(record.stepId)} />
+            <Icon type="delete_forever" style={{ cursor: 'pointer', margin: '0 5px' }} onClick={() => that.handleDeleteTestStep(record.stepId)} />
+          </div>
+          // <Dropdown overlay={menus} trigger={['click']} onClick={() => 
+          // that.setState({ currentTestStepId: record.stepId,
+          //  currentAttments: record.attachments })}>
+          //   <Button icon="more_vert" shape="circle" />
+
+          // </Dropdown>
         );
       },
     }];
@@ -201,7 +244,7 @@ class TestStepTable extends Component {
           columns={columns}
           onDragEnd={this.onDragEnd}
           dragKey="stepId"
-        />       
+        />
         {
           this.state.editTestStepShow ? (
             <EditTestStep

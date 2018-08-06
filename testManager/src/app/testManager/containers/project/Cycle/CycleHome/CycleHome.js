@@ -135,10 +135,11 @@ class CycleHome extends Component {
       getCycleById({
         page: executePagination.current - 1,
         size: executePagination.pageSize,
-      }, data.cycleId, 
-      { ...filters,
+      }, data.cycleId,
+      {
+        ...filters,
         lastUpdatedBy: [Number(this.lastUpdatedBy)],
-        assignedTo: [Number(this.assignedTo)], 
+        assignedTo: [Number(this.assignedTo)],
       }).then((cycle) => {
         this.setState({
           rightLoading: false,
@@ -166,27 +167,27 @@ class CycleHome extends Component {
   //     }
   //   }
   // }
-    generateList = (data) => {
-      // const temp = data;
-      // while (temp) {
-      //   dataList = dataList.concat(temp.children);
-      //   if()
-      // }
-      for (let i = 0; i < data.length; i += 1) {
-        const node = data[i];
-        const { key, title } = node;
-        // 找出url上的cycleId
-        const { cycleId } = getParams(location.href);    
-        const currentCycle = CycleStore.getCurrentCycle;    
-        if (!currentCycle.cycleId && Number(cycleId) === node.cycleId) {
-          this.setExpandDefault(node);
-        }   
-        dataList.push({ key, title });
-        if (node.children) {
-          this.generateList(node.children, node.key);
-        }
+  generateList = (data) => {
+    // const temp = data;
+    // while (temp) {
+    //   dataList = dataList.concat(temp.children);
+    //   if()
+    // }
+    for (let i = 0; i < data.length; i += 1) {
+      const node = data[i];
+      const { key, title } = node;
+      // 找出url上的cycleId
+      const { cycleId } = getParams(location.href);
+      const currentCycle = CycleStore.getCurrentCycle;
+      if (!currentCycle.cycleId && Number(cycleId) === node.cycleId) {
+        this.setExpandDefault(node);
+      }
+      dataList.push({ key, title });
+      if (node.children) {
+        this.generateList(node.children, node.key);
       }
     }
+  }
   deleteExecute = (record) => {
     const that = this;
     const { executeId, cycleId } = record;
@@ -234,10 +235,10 @@ class CycleHome extends Component {
       this.generateList([
         { title: '所有版本', key: '0', children: data.versions },
       ]);
-      
+
       // window.console.log(dataList);
     });
-    
+
     // 如果选中了项，就刷新table数据
     const currentCycle = CycleStore.getCurrentCycle;
     const selectedKeys = CycleStore.getSelectedKeys;
@@ -261,7 +262,7 @@ class CycleHome extends Component {
     this.setState({
       searchValue: value,
       autoExpandParent: true,
-    });   
+    });
   }
 
   // 默认展开并加载右侧数据
@@ -273,13 +274,13 @@ class CycleHome extends Component {
       this.setState({
         autoExpandParent: true,
         rightLoading: true,
-      });  
+      });
       const { executePagination } = this.state;
       getCycleById({
         page: executePagination.current - 1,
         size: executePagination.pageSize,
-      }, defaultExpandKeyItem.cycleId, 
-      { }).then((cycle) => {
+      }, defaultExpandKeyItem.cycleId,
+      {}).then((cycle) => {
         this.setState({
           rightLoading: false,
           testList: cycle.content,
@@ -407,10 +408,11 @@ class CycleHome extends Component {
       getCycleById({
         size: pagination.pageSize,
         page: pagination.current - 1,
-      }, currentCycle.cycleId, 
-      { ...filters,
+      }, currentCycle.cycleId,
+      {
+        ...filters,
         lastUpdatedBy: [Number(this.lastUpdatedBy)],
-        assignedTo: [Number(this.assignedTo)], 
+        assignedTo: [Number(this.assignedTo)],
       }).then((cycle) => {
         this.setState({
           rightLoading: false,
@@ -511,7 +513,7 @@ class CycleHome extends Component {
   render() {
     window.console.log('render');
     const { CreateCycleExecuteVisible, CreateCycleVisible, EditCycleVisible, CloneCycleVisible,
-      currentCloneCycle, loading, currentEditValue, testList, rightLoading, 
+      currentCloneCycle, loading, currentEditValue, testList, rightLoading,
       searchValue, autoExpandParent,
       executePagination,
       statusList,
@@ -535,19 +537,17 @@ class CycleHome extends Component {
       render(issueId, record) {
         const { issueInfosDTO } = record;
         return (
-          <Tooltip 
-            title={issueInfosDTO && 
-            <div>
-              <div>{issueInfosDTO.issueName}</div>
-              <div>{issueInfosDTO.summary}</div>
-            </div>}
+          <Tooltip
+            title={issueInfosDTO &&
+              <div>
+                <div>{issueInfosDTO.issueName}</div>
+                <div>{issueInfosDTO.summary}</div>
+              </div>}
           >
             <Link
+              className="c7n-text-dot"
               style={{
                 width: 100,
-                overflow: 'hidden',
-                whiteSpace: 'nowrap',
-                textOverflow: 'ellipsis',
               }}
               to={issueLink(issueInfosDTO && issueInfosDTO.issueId, issueInfosDTO.typeCode)}
               target="_blank"
@@ -582,11 +582,9 @@ class CycleHome extends Component {
         return (
           <Tooltip title={<RichTextShow data={delta2Html(comment)} />}>
             <div
+              className="c7n-text-dot"
               style={{
                 width: 65,
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
               }}
             >
               {delta2Text(comment)}
@@ -609,15 +607,15 @@ class CycleHome extends Component {
                 <div>
                   <Link
                     style={{
-                      color: 'white',                    
+                      color: 'white',
                     }}
                     to={issueLink(defect.issueInfosDTO.issueId, defect.issueInfosDTO.typeCode)}
                     target="_blank"
                   >
                     {defect.issueInfosDTO.issueName}
-                  </Link>                 
+                  </Link>
                   <div>{defect.issueInfosDTO.summary}</div>
-                </div>                  
+                </div>
               ))}
             </div>}
         >
@@ -640,12 +638,8 @@ class CycleHome extends Component {
       key: 'lastUpdateUser',
       flex: 1,
       render(lastUpdateUser) {
-        return (<div style={{
-          // width: 85, 
-          overflow: 'hidden',
-          whiteSpace: 'nowrap',
-          textOverflow: 'ellipsis',
-        }}
+        return (<div
+          className="c7n-text-dot"
         >
           {lastUpdateUser.realName}
         </div>);
@@ -656,12 +650,9 @@ class CycleHome extends Component {
       key: 'lastUpdateDate',
       flex: 1,
       render(lastUpdateDate) {
-        return (<div style={{
-          width: 85,
-          overflow: 'hidden',
-          whiteSpace: 'nowrap',
-          textOverflow: 'ellipsis',
-        }}
+        return (<div 
+          className="c7n-text-dot"
+        
         >
           {/* {lastUpdateDate && moment(lastUpdateDate).format('D/MMMM/YY')} */}
           {lastUpdateDate && moment(lastUpdateDate).format('YYYY-MM-DD')}
@@ -673,12 +664,9 @@ class CycleHome extends Component {
       key: 'assigneeUser',
       flex: 1,
       render(assigneeUser) {
-        return (<div style={{
-          width: 60,
-          overflow: 'hidden',
-          whiteSpace: 'nowrap',
-          textOverflow: 'ellipsis',
-        }}
+        return (<div 
+          className="c7n-text-dot"
+          
         >
           {assigneeUser && assigneeUser.realName}
         </div>);
@@ -738,7 +726,7 @@ class CycleHome extends Component {
                   rightLoading: true,
                 });
                 // window.console.log(data);
-                this.refresh();                
+                this.refresh();
               }}
             />
             <CreateCycle
@@ -752,7 +740,7 @@ class CycleHome extends Component {
               onCancel={() => { this.setState({ EditCycleVisible: false }); }}
               onOk={() => { this.setState({ EditCycleVisible: false }); this.refresh(); }}
             />
-            <CloneCycle 
+            <CloneCycle
               visible={CloneCycleVisible}
               currentCloneCycle={currentCloneCycle}
               onCancel={() => { this.setState({ CloneCycleVisible: false }); }}
@@ -861,19 +849,19 @@ class CycleHome extends Component {
                 <div style={{ display: 'flex' }}>
                   <SelectFocusLoad
                     label={<FormattedMessage id="cycle_executeBy" />}
-                    request={getUsers} 
-                    onChange={(value) => { 
-                      this.lastUpdatedBy = value;   
+                    request={getUsers}
+                    onChange={(value) => {
+                      this.lastUpdatedBy = value;
                       this.loadCycle();
                     }}
                   />
-                  <div style={{ marginLeft: 20 }}>                
+                  <div style={{ marginLeft: 20 }}>
                     <SelectFocusLoad
                       label={<FormattedMessage id="cycle_assignedTo" />}
-                      request={getUsers} 
-                      onChange={(value) => { 
+                      request={getUsers}
+                      onChange={(value) => {
                         this.assignedTo = value;
-                        this.loadCycle(); 
+                        this.loadCycle();
                       }}
                     />
                   </div>
@@ -892,7 +880,7 @@ class CycleHome extends Component {
                   <div style={{ fontSize: '14px', color: 'rgba(0,0,0,0.65)' }}>根据当前选定的测试循环没有查询到循环信息</div>
                   <div style={{ fontSize: '20px', fontWeight: 'bold', marginTop: 10 }}>尝试在您的树状图中选择测试循环</div>
                 </div>
-              </div> }
+              </div>}
             </div>
           </Spin>
         </Content>
