@@ -85,12 +85,12 @@ class SummaryHome extends Component {
           labelTable.unshift({
             id: null,          
             num: totalData.totalElements - _.sumBy(labelTable, 'num'),
-            name: <FormattedMessage id="summary_noComponent" />,           
+            name: <FormattedMessage id="summary_noLabel" />,           
           });
           componentTable.unshift({
             id: null,           
             num: totalData.totalElements - _.sumBy(componentTable, 'num'),
-            name: <FormattedMessage id="summary_noLabel" />,          
+            name: <FormattedMessage id="summary_noComponent" />,          
           });
           this.setState({
             versionTable,

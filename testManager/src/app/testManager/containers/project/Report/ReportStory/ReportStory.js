@@ -9,7 +9,7 @@ import ReportSelectIssue from '../../../../components/ReportSelectIssue';
 import { getReportsFromStory } from '../../../../api/reportApi';
 import { getIssueStatus } from '../../../../api/agileApi';
 import { getStatusList } from '../../../../api/cycleApi';
-import { issueLink } from '../../../../common/utils';
+import { issueLink, cycleLink } from '../../../../common/utils';
 import { ReportStoryArea } from '../../../../components/ReportComponent';
 import ReportStoryStore from '../../../../store/project/report/ReportStoryStore';
 import './ReportStory.scss';
@@ -270,10 +270,12 @@ class ReportStory extends Component {
             return (
               <div className="c7n-cycle-show-container" style={{ marginBottom }}>
                 <div
-                  title={execute.cycleName}
+                  title={`${execute.cycleName}${execute.folderName ? `/${execute.folderName}` : ''}`}
                   style={{ width: 80, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}
                 >
-                  {execute.cycleName}
+                  <Link className="c7n-showId" to={cycleLink(execute.cycleId)} target="_blank">
+                    {execute.cycleName}{execute.folderName ? `/${execute.folderName}` : ''}
+                  </Link>                  
                 </div>
                 <div
                   className="c7n-collapse-text-icon"

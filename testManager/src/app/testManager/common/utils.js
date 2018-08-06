@@ -223,3 +223,20 @@ export function formatDate(str) {
   return `${d[2]}/${MONTH[(d[1] * 1) - 1]}月/${d[0].slice(2)} ${t[0] < 12 ? t[0] : (t[0] * 1) - 12}:${t[1]}  ${t[0] * 1 < 12 ? ' 上' : ' 下'}午`;
 }
 
+export function getParams(url) {
+  const theRequest = {};
+  if (url.indexOf('?') !== -1) {
+    const str = url.split('?')[1];
+    const strs = str.split('&');
+    for (let i = 0; i < strs.length; i += 1) {
+      theRequest[strs[i].split('=')[0]] = decodeURI(strs[i].split('=')[1]);
+    }
+  }
+  return theRequest;
+}
+export function cycleLink(cycleId) {
+  const menu = AppState.currentMenuType;
+  const { type, id: projectId, name } = menu;
+ 
+  return `/testManager/Cycle?type=${type}&id=${projectId}&name=${name}&cycleId=${cycleId}`;
+}

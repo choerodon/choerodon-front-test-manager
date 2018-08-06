@@ -5,6 +5,7 @@ import { stores, axios } from 'choerodon-front-boot';
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import TimeAgo from 'timeago-react';
+import { cycleLink } from '../../../common/utils';
 import './TestExecuteTable.scss';
 
 const { AppState } = stores;
@@ -141,12 +142,17 @@ class TestExecuteTable extends Component {
             {item.versionName}
           </span>
           <Tooltip title={item.cycleName}>
+          
             <span style={{ flex: 2, lineHeight: '34px' }} className="c7n-text-dot">
-              {item.cycleName}
+              <Link className="c7n-showId" to={cycleLink(item.cycleId)} target="_blank">
+                {item.cycleName}
+              </Link>            
             </span>
           </Tooltip>
           <span style={{ flex: 2, lineHeight: '34px' }} className="c7n-text-dot">
-            {item.folderName || ''}
+            <Link className="c7n-showId" to={cycleLink(item.cycleId)} target="_blank">
+              {item.folderName || ''}
+            </Link>        
           </span>
           <span style={{ flex: 2, lineHeight: '34px' }} className="c7n-text-dot">
             <span style={{ width: 60, height: 20, borderRadius: '2px', background: status.statusColor, display: 'inline-block', lineHeight: '20px', textAlign: 'center', color: '#fff' }}>

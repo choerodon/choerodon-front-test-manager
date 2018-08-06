@@ -13,7 +13,7 @@ import { getCycles, deleteExecute, getCycleById, editCycleExecute, clone, addFol
 import { TreeTitle, CreateCycle, EditCycle, CreateCycleExecute, ShowCycleData } from '../../../../components/CycleComponent';
 import DragTable from '../../../../components/DragTable';
 import { RichTextShow, SelectFocusLoad } from '../../../../components/CommonComponent';
-import { delta2Html, delta2Text, issueLink } from '../../../../common/utils';
+import { delta2Html, delta2Text, issueLink, getParams } from '../../../../common/utils';
 import CycleStore from '../../../../store/project/cycle/CycleStore';
 import noRight from './noright.svg';
 
@@ -153,16 +153,38 @@ class CycleHome extends Component {
   }
 
 
-  generateList = (data) => {
-    for (let i = 0; i < data.length; i += 1) {
-      const node = data[i];
-      const { key, title } = node;
-      dataList.push({ key, title });
-      if (node.children) {
-        this.generateList(node.children, node.key);
+  // generateList = (data) => {
+  //   for (let i = 0; i < data.length; i += 1) {
+  //     const node = data[i];
+  //     const { key, title, cycleId } = node;
+  //     window.console.log(key, title, cycleId);
+  //     dataList.push({ ...node });
+  //     if (node.children) {
+  //       this.generateList(node.children, node.key);
+  //     }
+  //   }
+  // }
+    generateList = (data) => {
+      // const temp = data;
+      // while (temp) {
+      //   dataList = dataList.concat(temp.children);
+      //   if()
+      // }
+      for (let i = 0; i < data.length; i += 1) {
+        const node = data[i];
+        const { key, title } = node;
+        // 找出url上的cycleId
+        const { cycleId } = getParams(location.href);    
+        const currentCycle = CycleStore.getCurrentCycle;    
+        if (!currentCycle.cycleId && Number(cycleId) === node.cycleId) {
+          this.setExpandDefault(node);
+        }   
+        dataList.push({ key, title });
+        if (node.children) {
+          this.generateList(node.children, node.key);
+        }
       }
     }
-  }
   deleteExecute = (record) => {
     const that = this;
     const { executeId, cycleId } = record;
@@ -210,8 +232,10 @@ class CycleHome extends Component {
       this.generateList([
         { title: '所有版本', key: '0', children: data.versions },
       ]);
+      
       // window.console.log(dataList);
     });
+    
     // 如果选中了项，就刷新table数据
     const currentCycle = CycleStore.getCurrentCycle;
     const selectedKeys = CycleStore.getSelectedKeys;
@@ -236,6 +260,36 @@ class CycleHome extends Component {
       searchValue: value,
       autoExpandParent: true,
     });   
+  }
+
+  // 默认展开并加载右侧数据
+  setExpandDefault = (defaultExpandKeyItem) => {
+    if (defaultExpandKeyItem) {
+      CycleStore.setExpandedKeys([defaultExpandKeyItem.key]);
+      CycleStore.setSelectedKeys([defaultExpandKeyItem.key]);
+      CycleStore.setCurrentCycle(defaultExpandKeyItem);
+      this.setState({
+        autoExpandParent: true,
+        rightLoading: true,
+      });  
+      const { executePagination } = this.state;
+      getCycleById({
+        page: executePagination.current - 1,
+        size: executePagination.pageSize,
+      }, defaultExpandKeyItem.cycleId, 
+      { }).then((cycle) => {
+        this.setState({
+          rightLoading: false,
+          testList: cycle.content,
+          executePagination: {
+            current: executePagination.current,
+            pageSize: executePagination.pageSize,
+            total: cycle.totalElements,
+          },
+        });
+        // window.console.log(cycle);
+      });
+    }
   }
   callback = (item, code) => {
     switch (code) {
