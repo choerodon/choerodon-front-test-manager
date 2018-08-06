@@ -33,7 +33,9 @@ class TextEditToggle extends Component {
     this.setState({
       editing: false,
     });
-    this.props.onCancel(this.state.originData);
+    if (this.props.onCancel) {
+      this.props.onCancel(this.state.originData);
+    }
   }
 
   renderChild = () => {

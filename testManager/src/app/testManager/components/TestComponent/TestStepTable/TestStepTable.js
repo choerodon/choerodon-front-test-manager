@@ -1,14 +1,16 @@
 import React, { Component } from 'react';
-import { Button, Icon, Dropdown, Menu, Modal, Tooltip } from 'choerodon-ui';
+import { Input, Icon, Dropdown, Menu, Modal, Tooltip, Form } from 'choerodon-ui';
 import { stores, axios } from 'choerodon-front-boot';
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import EditTestStep from '../EditTestStep';
 import DragTable from '../../DragTable';
+import { TextEditToggle } from '../../CommonComponent';
 
+const { Text, Edit } = TextEditToggle;
 const { AppState } = stores;
 const confirm = Modal.confirm;
-
+const FormItem = Form.Item;
 class TestStepTable extends Component {
   constructor(props) {
     super(props);
@@ -83,6 +85,18 @@ class TestStepTable extends Component {
   //       });
   //   }
   // }
+  editStep = (record) => {
+    this.props.form.validateFields((err, values) => {
+      // window.console.log(values);
+      const projectId = AppState.currentMenuType.id;
+      // this.setState({ createLoading: true });
+      axios.put(`/test/v1/projects/${projectId}/case/step/change`, { ...record, ...values })
+        .then((res) => {
+          this.setState({ createLoading: false });
+          this.props.onOk();
+        });
+    });
+  };
   cloneStep = (stepId) => {
     axios.post(`/test/v1/projects/${AppState.currentMenuType.id}/case/step/clone`, {
       stepId,
@@ -133,6 +147,7 @@ class TestStepTable extends Component {
 
 
   render() {
+    const { getFieldDecorator } = this.props.form;
     const that = this;
     // const menus = (
     //   <Menu onClick={this.handleClickMenu.bind(this)}>
@@ -158,12 +173,29 @@ class TestStepTable extends Component {
       title: <FormattedMessage id="execute_testStep" />,
       dataIndex: 'testStep',
       key: 'testStep',
-      render(testStep) {
+      render(testStep, record) {
         return (
           <Tooltip title={testStep}>
-            <div className="c7n-text-dot">
-              {testStep}
-            </div>
+            <TextEditToggle
+              onSubmit={() => that.editStep(record)}
+              originData={testStep}
+            >
+              <Text>
+                <div className="c7n-text-dot">
+                  {testStep}
+                </div>
+              </Text>
+              <Edit>
+                <FormItem style={{ margin: '5px 0 0 0' }}>
+                  {getFieldDecorator('testStep', {
+                    initialValue: testStep,
+                  })(
+                    <Input />,
+                  )}
+                </FormItem>
+
+              </Edit>
+            </TextEditToggle>
           </Tooltip>
         );
       },
@@ -171,12 +203,29 @@ class TestStepTable extends Component {
       title: <FormattedMessage id="execute_testData" />,
       dataIndex: 'testData',
       key: 'testData',
-      render(testData) {
+      render(testData, record) {
         return (
           <Tooltip title={testData}>
-            <div className="c7n-text-dot">
-              {testData}
-            </div>
+            <TextEditToggle
+              onSubmit={() => that.editStep(record)}
+              originData={testData}
+            >
+              <Text>
+                <div className="c7n-text-dot">
+                  {testData}
+                </div>
+              </Text>
+              <Edit>
+                <FormItem style={{ margin: '5px 0 0 0' }}>
+                  {getFieldDecorator('testData', {
+                    initialValue: testData,
+                  })(
+                    <Input />,
+                  )}
+                </FormItem>
+
+              </Edit>
+            </TextEditToggle>
           </Tooltip>
         );
       },
@@ -184,12 +233,29 @@ class TestStepTable extends Component {
       title: <FormattedMessage id="execute_expectedOutcome" />,
       dataIndex: 'expectedResult',
       key: 'expectedResult',
-      render(expectedResult) {
+      render(expectedResult, record) {
         return (
           <Tooltip title={expectedResult}>
-            <div className="c7n-text-dot">
-              {expectedResult}
-            </div>
+            <TextEditToggle
+              onSubmit={() => that.editStep(record)}
+              originData={expectedResult}
+            >
+              <Text>
+                <div className="c7n-text-dot">
+                  {expectedResult}
+                </div>
+              </Text>
+              <Edit>
+                <FormItem style={{ margin: '5px 0 0 0' }}>
+                  {getFieldDecorator('expectedResult', {
+                    initialValue: expectedResult,
+                  })(
+                    <Input />,
+                  )}
+                </FormItem>
+
+              </Edit>
+            </TextEditToggle>
           </Tooltip>
         );
       },
@@ -237,35 +303,37 @@ class TestStepTable extends Component {
     }];
     return (
       <div>
-        <DragTable
-          pagination={false}
-          filterBar={false}
-          dataSource={this.state.data}
-          columns={columns}
-          onDragEnd={this.onDragEnd}
-          dragKey="stepId"
-        />
-        {
-          this.state.editTestStepShow ? (
-            <EditTestStep
-              attachments={this.state.currentAttments}
-              issueId={this.props.issueId}
-              stepId={this.state.currentTestStepId}
-              visible={this.state.editTestStepShow}
-              onCancel={() => {
-                this.setState({ editTestStepShow: false });
-                this.props.onOk();
-              }}
-              onOk={() => {
-                this.setState({ editTestStepShow: false });
-                this.props.onOk();
-              }}
-            />
-          ) : null
-        }
+        <Form>
+          <DragTable
+            pagination={false}
+            filterBar={false}
+            dataSource={this.state.data}
+            columns={columns}
+            onDragEnd={this.onDragEnd}
+            dragKey="stepId"
+          />
+          {
+            this.state.editTestStepShow ? (
+              <EditTestStep
+                attachments={this.state.currentAttments}
+                issueId={this.props.issueId}
+                stepId={this.state.currentTestStepId}
+                visible={this.state.editTestStepShow}
+                onCancel={() => {
+                  this.setState({ editTestStepShow: false });
+                  this.props.onOk();
+                }}
+                onOk={() => {
+                  this.setState({ editTestStepShow: false });
+                  this.props.onOk();
+                }}
+              />
+            ) : null
+          }
+        </Form>
       </div>
     );
   }
 }
 
-export default TestStepTable;
+export default Form.create({})(TestStepTable);
