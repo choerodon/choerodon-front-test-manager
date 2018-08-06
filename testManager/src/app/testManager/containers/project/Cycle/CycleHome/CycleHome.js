@@ -10,7 +10,7 @@ import moment from 'moment';
 import './CycleHome.scss';
 import { getUsers } from '../../../../api/CommonApi';
 import { getCycles, deleteExecute, getCycleById, editCycleExecute, clone, addFolder, getStatusList } from '../../../../api/cycleApi';
-import { TreeTitle, CreateCycle, EditCycle, CreateCycleExecute, ShowCycleData } from '../../../../components/CycleComponent';
+import { TreeTitle, CreateCycle, EditCycle, CreateCycleExecute, ShowCycleData, CloneCycle } from '../../../../components/CycleComponent';
 import DragTable from '../../../../components/DragTable';
 import { RichTextShow, SelectFocusLoad } from '../../../../components/CommonComponent';
 import { delta2Html, delta2Text, issueLink, getParams } from '../../../../common/utils';
@@ -39,6 +39,8 @@ class CycleHome extends Component {
     CreateCycleExecuteVisible: false,
     CreateCycleVisible: false,
     EditCycleVisible: false,
+    CloneCycleVisible: false,
+    currentCloneCycle: null,
     loading: true,
     leftVisible: true,
     rightLoading: false,
@@ -299,8 +301,13 @@ class CycleHome extends Component {
         break;
       }
       case 'CLONE_CYCLE': {
-        const parentKey = this.getParentKey(item.key, CycleStore.getTreeData);
-        CycleStore.addItemByParentKey(parentKey, { ...item, ...{ key: `${parentKey}-CLONE_CYCLE`, type: 'CLONE_CYCLE' } });
+        // const parentKey = this.getParentKey(item.key, CycleStore.getTreeData);
+        // CycleStore.addItemByParentKey(parentKey, 
+        // { ...item, ...{ key: `${parentKey}-CLONE_CYCLE`, type: 'CLONE_CYCLE' } });
+        this.setState({
+          currentCloneCycle: item.cycleId,
+          CloneCycleVisible: true,
+        });
         break;
       }
       case 'ADD_FOLDER': {
@@ -503,10 +510,9 @@ class CycleHome extends Component {
 
   render() {
     window.console.log('render');
-    const { CreateCycleExecuteVisible, CreateCycleVisible, EditCycleVisible,
-      loading, currentEditValue, testList, rightLoading,
-      searchValue,
-      autoExpandParent,
+    const { CreateCycleExecuteVisible, CreateCycleVisible, EditCycleVisible, CloneCycleVisible,
+      currentCloneCycle, loading, currentEditValue, testList, rightLoading, 
+      searchValue, autoExpandParent,
       executePagination,
       statusList,
     } = this.state;
@@ -740,7 +746,12 @@ class CycleHome extends Component {
               onCancel={() => { this.setState({ EditCycleVisible: false }); }}
               onOk={() => { this.setState({ EditCycleVisible: false }); this.refresh(); }}
             />
-
+            <CloneCycle 
+              visible={CloneCycleVisible}
+              currentCloneCycle={currentCloneCycle}
+              onCancel={() => { this.setState({ CloneCycleVisible: false }); }}
+              onOk={() => { this.setState({ CloneCycleVisible: false }); this.refresh(); }}
+            />
             <div className="c7n-cycleHome">
               <div className={this.state.sideVisible ? 'c7n-ch-side' : 'c7n-ch-hidden'}>
                 <div className="c7n-chs-button">
