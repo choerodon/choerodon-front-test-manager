@@ -23,9 +23,10 @@ export function getIssueList(summary, type) {
   }
   return axios.post(`agile/v1/projects/${projectId}/issues/test_component/no_sub`, { advancedSearchArgs, searchArgs });
 }
-export function getIssueListSearch(search) {
+export function getIssueListSearch(search, pagination) {
   const projectId = AppState.currentMenuType.id;
-  return axios.post(`agile/v1/projects/${projectId}/issues/test_component/no_sub`, search);
+  const { page, size } = pagination;
+  return axios.post(`agile/v1/projects/${projectId}/issues/test_component/no_sub?size=${size}&page=${page}`, search);
 }
 export function getModules() {
   const projectId = AppState.currentMenuType.id;

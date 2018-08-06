@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import { Page, Header, Content, stores } from 'choerodon-front-boot';
 import { Link } from 'react-router-dom';
-import { Table, Menu, Dropdown, Button, Icon, Collapse } from 'choerodon-ui';
+import { Table, Menu, Dropdown, Button, Icon, Collapse, Tooltip } from 'choerodon-ui';
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import ReportSelectIssue from '../../../../components/ReportSelectIssue';
@@ -175,11 +175,21 @@ class ReportStory extends Component {
       width: '25%',
       render(issue, record) {
         const { defectInfo, defectCount } = record;
-        const { issueStatusName, issueName, issueColor, issueId, typeCode } = defectInfo;
+        const { issueStatusName, issueName, issueColor, issueId, typeCode, summary } = defectInfo;
         return (
           <div>
             <div className="c7n-collapse-header-container">
-              <Link className="c7n-showId" to={issueLink(issueId, typeCode)} target="_blank">{issueName}</Link>
+              <Tooltip title={
+                <div>
+                  <div>{issueName}</div>
+                  <div>{summary}</div>
+                </div>
+              }
+              >
+                <Link className="c7n-showId" to={issueLink(issueId, typeCode)} target="_blank">
+                  {issueName}
+                </Link>
+              </Tooltip>              
               <div className="c7n-issue-status-icon">
                 <span style={{ color: issueColor, borderColor: issueColor }}>
                   {issueStatusName}
@@ -222,8 +232,11 @@ class ReportStory extends Component {
                   >
                     <div style={{ display: 'flex', alignItems: 'center' }}>
                       <Icon type="navigate_next" className="c7n-collapse-icon" />
-                      <Link className="c7n-showId" to={issueLink(issue.issueId, 'issue_test')} target="_blank">{issue.issueName}</Link>
-
+                      <Tooltip title={issue.issueName}>
+                        <Link className="c7n-showId" to={issueLink(issue.issueId, 'issue_test')} target="_blank">
+                          {issue.issueName}
+                        </Link>
+                      </Tooltip>
                     </div>
                     <div className="c7n-report-summary">{issue.summary}</div>
                   </div>
@@ -269,13 +282,14 @@ class ReportStory extends Component {
               Math.max((execute.defects.length + execute.subStepDefects.length) - 1, 0) * 30;
             return (
               <div className="c7n-cycle-show-container" style={{ marginBottom }}>
-                <div
-                  title={`${execute.cycleName}${execute.folderName ? `/${execute.folderName}` : ''}`}
+                <div                 
                   style={{ width: 80, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}
                 >
-                  <Link className="c7n-showId" to={cycleLink(execute.cycleId)} target="_blank">
-                    {execute.cycleName}{execute.folderName ? `/${execute.folderName}` : ''}
-                  </Link>                  
+                  <Tooltip title={`${execute.cycleName}${execute.folderName ? `/${execute.folderName}` : ''}`}>
+                    <Link className="c7n-showId" to={cycleLink(execute.cycleId)} target="_blank">
+                      {execute.cycleName}{execute.folderName ? `/${execute.folderName}` : ''}
+                    </Link>  
+                  </Tooltip>                
                 </div>
                 <div
                   className="c7n-collapse-text-icon"
@@ -336,7 +350,16 @@ class ReportStory extends Component {
                     defects.concat(subStepDefects).map((defect) => {
                       const { issueInfosDTO } = defect;
                       return (<div className="c7n-issue-show-container">
-                        <Link className="c7n-showId" to={issueLink(issueInfosDTO && issueInfosDTO.issueId, issueInfosDTO && issueInfosDTO.typeCode)} target="_blank">{issueInfosDTO && issueInfosDTO.issueName}</Link>
+                        <Tooltip title={issueInfosDTO && issueInfosDTO.issueName}>
+                          <Link 
+                            className="c7n-showId"
+                            to={issueLink(issueInfosDTO && issueInfosDTO.issueId, 
+                              issueInfosDTO && issueInfosDTO.typeCode)}
+                            target="_blank"
+                          >
+                            {issueInfosDTO && issueInfosDTO.issueName}
+                          </Link>
+                        </Tooltip>
                         <div className="c7n-issue-status-icon">
                           <span style={{
                             color: issueInfosDTO && issueInfosDTO.issueColor,
@@ -436,7 +459,13 @@ class ReportStory extends Component {
             visible={selectVisible}
             onCancel={() => { this.setState({ selectVisible: false }); }}
             onOk={(issueIds) => {
-              this.setState({ selectVisible: false, issueIds });
+              this.setState({ selectVisible: false,
+                pagination: {
+                  current: 1,
+                  total: 0,
+                  pageSize: 10,
+                },
+                issueIds });
               this.getReportsFromStory(null, issueIds);
             }}
           />

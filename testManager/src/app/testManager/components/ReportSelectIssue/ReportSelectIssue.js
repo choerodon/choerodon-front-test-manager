@@ -44,7 +44,7 @@ class ReportSelectIssue extends Component {
     pagination: {
       current: 1,
       total: 0,
-      pageSize: 4,
+      pageSize: 10,
     },
     typeCode: 'story',
     version: 'all',
@@ -76,7 +76,10 @@ class ReportSelectIssue extends Component {
         version: [this.state.version],
       };
     }
-    getIssueListSearch(search).then((issueData) => {
+    getIssueListSearch(search, {
+      page: pagination.current - 1,
+      size: pagination.pageSize,
+    }).then((issueData) => {
       this.setState({
         loading: false,
         issueList: issueData.content,
