@@ -150,7 +150,9 @@ class TestExecuteTable extends Component {
             </span>
           </Tooltip>
           <span style={{ flex: 2, lineHeight: '34px' }} className="c7n-text-dot">
-            {item.folderName || ''}
+            <Link className="c7n-showId" to={cycleLink(item.cycleId)} target="_blank">
+              {item.folderName || ''}
+            </Link>        
           </span>
           <span style={{ flex: 2, lineHeight: '34px' }} className="c7n-text-dot">
             <span style={{ width: 60, height: 20, borderRadius: '2px', background: status.statusColor, display: 'inline-block', lineHeight: '20px', textAlign: 'center', color: '#fff' }}>

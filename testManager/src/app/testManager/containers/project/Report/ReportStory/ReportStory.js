@@ -270,11 +270,11 @@ class ReportStory extends Component {
             return (
               <div className="c7n-cycle-show-container" style={{ marginBottom }}>
                 <div
-                  title={execute.cycleName}
+                  title={`${execute.cycleName}${execute.folderName ? `/${execute.folderName}` : ''}`}
                   style={{ width: 80, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}
                 >
                   <Link className="c7n-showId" to={cycleLink(execute.cycleId)} target="_blank">
-                    {execute.cycleName}
+                    {execute.cycleName}{execute.folderName ? `/${execute.folderName}` : ''}
                   </Link>                  
                 </div>
                 <div
