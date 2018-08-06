@@ -433,7 +433,7 @@ class CycleHome extends Component {
     const beforeStr = item.title.substr(0, index);
     const afterStr = item.title.substr(index + searchValue.length);
     const icon = (<Icon
-      style={{ color: 'rgba(0,0,0,0.65)' }}
+      style={{ color: '#3F51B5' }}
       type={expandedKeys.includes(item.key) ? 'folder_open2' : 'folder_open'}
     />);
     if (type === 'CLONE_FOLDER' || type === 'CLONE_CYCLE') {
@@ -606,13 +606,19 @@ class CycleHome extends Component {
           title={
             <div>
               {defects.map((defect, i) => (
-                <div style={{
-                  fontSize: '13px',
-                  color: 'white',
-                }}
-                >
-                  {defect.issueInfosDTO.issueName}
-                </div>))}
+                <div>
+                  <Link
+                    style={{
+                      color: 'white',                    
+                    }}
+                    to={issueLink(defect.issueInfosDTO.issueId, defect.issueInfosDTO.typeCode)}
+                    target="_blank"
+                  >
+                    {defect.issueInfosDTO.issueName}
+                  </Link>                 
+                  <div>{defect.issueInfosDTO.summary}</div>
+                </div>                  
+              ))}
             </div>}
         >
           {defects.map((defect, i) => defect.issueInfosDTO.issueName).join(',')}

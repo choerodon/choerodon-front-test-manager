@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { observer } from 'mobx-react';
-import { Menu, Input, Dropdown, Button, Popover } from 'choerodon-ui';
+import { Menu, Input, Dropdown, Button, Popover, Tooltip } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 import './TreeTitle.scss';
 import { editFolder, deleteCycleOrFolder } from '../../../api/cycleApi';
@@ -151,7 +151,9 @@ class TreeTitle extends Component {
             }}
           />
           : <div className="c7n-tt-text">
-            {title}
+            <Tooltip title={title}>
+              {title}
+            </Tooltip>
           </div>}
 
         {Object.keys(ProcessBar).length > 0 ? 
