@@ -553,10 +553,10 @@ class Test extends Component {
         code: 'summary',
         showName: <FormattedMessage id="issue_issueSortByName" />,
       },
-      {
-        code: 'typeCode',
-        showName: <FormattedMessage id="issue_issueSortByType" />,
-      },
+      // {
+      //   code: 'typeCode',
+      //   showName: <FormattedMessage id="issue_issueSortByType" />,
+      // },
       {
         code: 'priorityCode',
         showName: <FormattedMessage id="issue_issueSortByPriority" />,
