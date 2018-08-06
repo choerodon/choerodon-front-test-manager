@@ -707,12 +707,20 @@ class EditIssueNarrow extends Component {
 
 
   handleClickMenu(e) {
-    if (e.key === '0') {
-      this.setState({ dailyLogShow: true });
-    } else if (e.key === '1') {
-      this.handleDeleteIssue(this.state.origin.issueId);
-    } else if (e.key === '2') {
-      this.setState({ copyIssueShow: true });
+    switch (e.key) {
+      case 'add_worklog': {
+        this.setState({ dailyLogShow: true });
+        break;
+      }
+      case 'copy': {
+        this.setState({ copyIssueShow: true });
+        break;
+      }
+      case 'delete': {
+        this.handleDeleteIssue(this.state.origin.issueId);
+        break;
+      }
+      default:break;
     }
   }
 
@@ -977,17 +985,17 @@ class EditIssueNarrow extends Component {
     const { initValue, visible, onCancel, onOk } = this.props;
     const getMenu = () => (
       <Menu onClick={this.handleClickMenu.bind(this)}>
-        <Menu.Item key="0">
+        <Menu.Item key="add_worklog">
           <FormattedMessage id="issue_edit_addWworkLog" />        
+        </Menu.Item>        
+        <Menu.Item key="copy">
+          <FormattedMessage id="issue_edit_copyIssue" /> 
         </Menu.Item>
         <Permission type={type} projectId={projectId} organizationId={orgId} service={['agile-service.issue.deleteIssue']}>
-          <Menu.Item key="1">
+          <Menu.Item key="delete">
             <FormattedMessage id="delete" /> 
           </Menu.Item>
         </Permission>
-        <Menu.Item key="2">
-          <FormattedMessage id="issue_edit_copyIssue" /> 
-        </Menu.Item>
       </Menu>
     );
     const callback = (value) => {

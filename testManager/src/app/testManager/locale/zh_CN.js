@@ -258,8 +258,8 @@ const zhCN = {
   issue_edit_addWworkLog: '登记工作日志',
   issue_edit_copyIssue: '复制问题',
   issue_edit_activeLog: '活动日志',
-  issue_edit_linkIssue: '相关任务',
-  issue_edit_addLinkIssue: '添加相关任务',
+  issue_edit_linkIssue: '问题链接',
+  issue_edit_addLinkIssue: '创建链接',
   // 创建测试步骤
   issue_createStep_title: '添加测试详细信息',
   issue_createStep_content_title: '在用例“{issueName}”中创建测试步骤',
