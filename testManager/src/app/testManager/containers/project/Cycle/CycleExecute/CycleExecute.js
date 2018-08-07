@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Table, Button, Icon, Card, Select, Spin, Upload, Tooltip } from 'choerodon-ui';
+import { Form, Table, Button, Input, Icon, Card, Select, Spin, Upload, Tooltip } from 'choerodon-ui';
 import { Page, Header, Content } from 'choerodon-front-boot';
 import _ from 'lodash';
 import { withRouter } from 'react-router-dom';
@@ -15,10 +15,11 @@ import { uploadFile, getUsers } from '../../../../api/CommonApi';
 import { delta2Html, delta2Text } from '../../../../common/utils';
 import './CycleExecute.less';
 import { getIssueList } from '../../../../api/agileApi';
+import { StepTable } from '../../../../components/ExecuteComponent';
 
 const Option = Select.Option;
 const { Text, Edit } = TextEditToggle;
-
+const FormItem = Form.Item;
 const styles = {
   cardTitle: {
     fontWeight: 'bold',
@@ -410,6 +411,7 @@ class CycleExecute extends Component {
   handleDetailTableChange = (pagination, filters, sorter) => {
     this.getDetailList(pagination);
   }
+
   render() {
     const { fileList, userList, stepStatusList, detailList, historyList, loading, cycleData,
       statusList, selectLoading, historyPagination, detailPagination,
@@ -513,180 +515,7 @@ class CycleExecute extends Component {
         }
       },
     }];
-    const columns = [{
-      title: <FormattedMessage id="execute_testStep" />,
-      dataIndex: 'testStep',
-      key: 'testStep',
-      width: '10%',
-      render: testStep =>
-        (<Tooltip title={testStep}>
-          <div
-            className="c7n-text-dot"
-          >
-            {testStep}
-          </div>
-        </Tooltip>),
-    }, {
-      title: <FormattedMessage id="execute_testData" />,
-      dataIndex: 'testData',
-      key: 'testData',
-      render: testData =>
-        (<Tooltip title={testData}>
-          <div
-            className="c7n-text-dot"
-          >
-            {testData}
-          </div>
-        </Tooltip>),
-    }, {
-      title: <FormattedMessage id="execute_expectedOutcome" />,
-      dataIndex: 'expectedResult',
-      key: 'expectedResult',
-      render: expectedResult =>
-        (<Tooltip title={expectedResult}>
-          <div
-
-            className="c7n-text-dot"
-          >
-            {expectedResult}
-          </div>
-        </Tooltip>),
-    },
-    {
-      title: <FormattedMessage id="execute_stepAttachment" />,
-      dataIndex: 'stepAttachment',
-      key: 'stepAttachment',
-      render(stepAttachment) {
-        return (<Tooltip title={
-          <div>
-            {stepAttachment.map((attachment, i) => (
-              <div style={{
-                fontSize: '13px',
-                color: 'white',
-              }}
-              >
-                {attachment.attachmentName}
-              </div>))}
-          </div>}
-        >
-          <div
-            className="c7n-text-dot"
-          >
-            {stepAttachment.map((attachment, i) => attachment.attachmentName).join(',')}
-          </div>
-        </Tooltip>);
-      },
-    },
-    {
-      title: <FormattedMessage id="execute_stepStatus" />,
-      dataIndex: 'stepStatus',
-      key: 'stepStatus',
-      render(stepStatus) {
-        const statusColor = _.find(stepStatusList, { statusId: stepStatus }) ?
-          _.find(stepStatusList, { statusId: stepStatus }).statusColor : '';
-        return (<div style={{ ...styles.statusOption, ...{ background: statusColor } }}>
-          {_.find(stepStatusList, { statusId: stepStatus }) &&
-            _.find(stepStatusList, { statusId: stepStatus }).statusName}
-        </div>);
-      },
-    },
-    {
-      title: <FormattedMessage id="execute_comment" />,
-      dataIndex: 'comment',
-      key: 'comment',
-      render(comment, record) {
-        return (
-          <Tooltip title={<RichTextShow data={delta2Html(comment) || '空'} />}>
-            <div
-              style={{
-                width: 100,
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-              }}
-            >
-              {comment ? delta2Text(comment) : ''}
-            </div>
-          </Tooltip>
-        );
-      },
-    }, {
-      title: <FormattedMessage id="attachment" />,
-      dataIndex: 'caseAttachment',
-      key: 'caseAttachment',
-      render(caseAttachment) {
-        return (<Tooltip title={
-          <div>
-            {caseAttachment.map((attachment, i) => (
-              <div style={{
-                fontSize: '13px',
-                color: 'white',
-              }}
-              >
-                {attachment.attachmentName}
-              </div>))}
-          </div>}
-        >
-          <div
-            style={{
-              width: 100,
-              display: 'flex',
-              alignItems: 'center',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            {caseAttachment.map((attachment, i) => attachment.attachmentName).join(',')}
-          </div>
-        </Tooltip>);
-      },
-    },
-    {
-      title: <FormattedMessage id="bug" />,
-      dataIndex: 'defects',
-      key: 'defects',
-      render: defects =>
-        (<Tooltip title={
-          <div>
-            {defects.map((defect, i) => (
-              <div style={{
-                fontSize: '13px',
-                color: 'white',
-              }}
-              >
-                {defect.issueInfosDTO && defect.issueInfosDTO.issueName}
-              </div>))}
-          </div>}
-        >
-          <div
-            style={{
-              width: 100,
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            {defects.map((defect, i) => defect.issueInfosDTO && defect.issueInfosDTO.issueName).join(',')}
-          </div>
-        </Tooltip>),
-    }, {
-      title: null,
-      dataIndex: 'executeId',
-      key: 'executeId',
-      render(executeId, recorder) {
-        return (<Icon
-          type="mode_edit"
-          style={{ cursor: 'pointer' }}
-          onClick={() => {
-            that.setState({
-              editVisible: true,
-              editing: { ...recorder, ...{ stepStatusList } },
-            });
-          }}
-        />);
-      },
-    }];
+    
 
     const { executionStatus, executionStatusName,
       executionStatusColor, assigneeUser, lastUpdateUser,
@@ -1008,13 +837,30 @@ class CycleExecute extends Component {
                 <Icon type="expand_more" />
                 <span style={styles.cardTitleText}><FormattedMessage id="execute_testDetail" /></span>
               </div>
-              <Table
+              <StepTable
+                enterLoad={() => {
+                  this.setState({
+                    loading: true,
+                  });
+                }}
+                leaveLoad={() => {
+                  this.setState({
+                    loading: false,
+                  });
+                }}
+                onOk={this.getInfo}
+                stepStatusList={stepStatusList}
+                detailList={detailList}
+                onChange={this.handleDetailTableChange}
+                detailPagination={detailPagination}
+              />
+              {/* <Table
                 filterBar={false}
                 dataSource={detailList}
                 columns={columns}
                 pagination={detailPagination}
                 onChange={this.handleDetailTableChange}
-              />
+              /> */}
             </Card>
             <Card
               title={null}

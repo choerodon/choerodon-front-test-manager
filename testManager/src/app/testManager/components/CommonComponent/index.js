@@ -1,4 +1,9 @@
-export TextEditToggle from './TextEditToggle/TextEditToggle';
-export RichTextShow from './RichTextShow/RichTextShow';
-export SelectFocusLoad from './SelectFocusLoad/SelectFocusLoad';
-export User from './User/User';
+import TextEditToggle from './TextEditToggle';
+import RichTextShow from './RichTextShow';
+import SelectFocusLoad from './SelectFocusLoad';
+import User from './User/User';
+import UploadInTable from './UploadInTable';
+
+export {
+  TextEditToggle, RichTextShow, SelectFocusLoad, User, UploadInTable,
+};

@@ -42,7 +42,7 @@ const NAME = {
 };
 
 class ReportTest extends Component {
-  state={
+  state = {
     selectVisible: false,
     loading: false,
     reportList: [],
@@ -60,7 +60,7 @@ class ReportTest extends Component {
   componentDidMount() {
     this.getInfo();
   }
-  getInfo=() => {
+  getInfo = () => {
     this.setState({
       loading: true,
     });
@@ -72,8 +72,8 @@ class ReportTest extends Component {
     ]).then(([issueStatusList, statusList, stepStatusList]) => {
       this.setState({
         issueStatusList,
-        statusList,      
-        stepStatusList, 
+        statusList,
+        stepStatusList,
         // loading: false,
         openId: [],
       });
@@ -126,14 +126,14 @@ class ReportTest extends Component {
   handleTableChange = (pagination, filters, sorter) => {
     this.getReportsFromDefect(pagination);
   }
-  handleOpen=(issueId) => {
-    const { openId } = this.state;  
+  handleOpen = (issueId) => {
+    const { openId } = this.state;
     if (!openId.includes(issueId.toString())) {
       this.setState({
         openId: openId.concat([issueId.toString()]),
       });
     } else {
-      const index = openId.indexOf(issueId.toString());  
+      const index = openId.indexOf(issueId.toString());
       openId.splice(index, 1);
       this.setState({
         openId: [...openId],
@@ -154,30 +154,30 @@ class ReportTest extends Component {
         </Menu.Item>
         <Menu.Item key="1">
           <Link to={`/testManager/report/test?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}>
-            <FormattedMessage id="report_dropDown_defect" /> 
+            <FormattedMessage id="report_dropDown_defect" />
           </Link>
-        </Menu.Item> 
+        </Menu.Item>
         <Menu.Item key="2">
           <Link to={`/testManager/report?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}>
-            <FormattedMessage id="report_dropDown_home" /> 
+            <FormattedMessage id="report_dropDown_home" />
           </Link>
-        </Menu.Item>     
+        </Menu.Item>
       </Menu>
     );
     const columns = [{
       className: 'c7n-table-white',
       title: <FormattedMessage id="bug" />,
       dataIndex: 'a',
-      key: 'a',   
+      key: 'a',
       width: '25%',
       render(test, record) {
         const { issueInfosDTO } = record;
-        const { issueId, issueColor, issueStatusName, 
+        const { issueId, issueColor, issueStatusName,
           issueName, summary, typeCode } = issueInfosDTO;
         return (
-          <Collapse 
+          <Collapse
             activeKey={openId}
-            bordered={false} 
+            bordered={false}
             onChange={(keys) => { that.handleOpen(issueId, keys); }}
           >
             <Panel
@@ -185,17 +185,17 @@ class ReportTest extends Component {
               header={
                 <div>
                   <div className="c7n-collapse-show-item">
-                    <Icon type="navigate_next" className="c7n-collapse-icon" />   
+                    <Icon type="navigate_next" className="c7n-collapse-icon" />
                     <Tooltip title={issueName}>
                       <Link className="c7n-showId" to={issueLink(issueId, typeCode)} target="_blank">
                         {issueName}
-                      </Link>   
-                    </Tooltip>                   
-                    <div className="c7n-collapse-header-icon">                 
+                      </Link>
+                    </Tooltip>
+                    <div className="c7n-collapse-header-icon">
                       <span style={{ color: issueColor, borderColor: issueColor }}>
                         {issueStatusName}
                       </span>
-                    </div>        
+                    </div>
                   </div>
                   <div style={{ fontSize: '13px' }}>{summary}</div>
                 </div>
@@ -232,31 +232,31 @@ class ReportTest extends Component {
             statusName = _.find(stepStatusList, { statusId: stepStatus }) ?
               _.find(stepStatusList, { statusId: stepStatus }).statusName : '';
           }
-         
+
           if (!executeStatus[statusName]) {
             executeStatus[statusName] = 1;
           } else {
             executeStatus[statusName] += 1;
           }
-            
+
           return (
             <div className="c7n-cycle-show-container">
-              <div                
+              <div
                 style={{ width: 80, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}
               >
                 <Tooltip title={`${execute.cycleName}${execute.folderName ? `/${execute.folderName}` : ''}`}>
                   <Link className="c7n-showId" to={cycleLink(execute.cycleId)} target="_blank">
                     {execute.cycleName}{execute.folderName ? `/${execute.folderName}` : ''}
-                  </Link>  
-                </Tooltip>                  
+                  </Link>
+                </Tooltip>
               </div>
               <div
-                className="c7n-collapse-text-icon" 
+                className="c7n-collapse-text-icon"
                 style={{ color: statusColor, borderColor: statusColor }}
               >
                 {statusName}
               </div>
-              <Link 
+              <Link
                 style={{ lineHeight: '13px' }}
                 to={`/testManager/Cycle/execute/${execute.executeId}?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}
               >
@@ -274,13 +274,13 @@ class ReportTest extends Component {
                     borderRadius: '100px',
                   }}
                   ><FormattedMessage id="step" /></div> : null
-                  
+
               }
-              
+
             </div>);
         });
-        return openId.includes(issueId.toString()) ? 
-          <div style={{ minHeight: 30 }}> { caseShow }   </div> 
+        return openId.includes(issueId.toString()) ?
+          <div style={{ minHeight: 30 }}> {caseShow}   </div>
           :
           (
             <div>
@@ -291,8 +291,8 @@ class ReportTest extends Component {
                     <span>{key}：</span>
                     <span>{executeStatus[key]}</span>
                   </div>))
-                }                
-              </div>          
+                }
+              </div>
             </div>
           );
       },
@@ -314,22 +314,22 @@ class ReportTest extends Component {
               <Tooltip title={issueName}>
                 <Link className="c7n-showId" to={issueLink(issueId, typeCode)} target="_blank">
                   {issueName}
-                </Link>     
-              </Tooltip>         
-              <div className="c7n-collapse-header-icon">                 
+                </Link>
+              </Tooltip>
+              <div className="c7n-collapse-header-icon">
                 <span style={{ color: issueColor, borderColor: issueColor }}>
                   {issueStatusName}
                 </span>
-              </div>        
+              </div>
             </div>
             <div className="c7n-report-summary">{summary}</div>
           </div>);
         });
-        return openId.includes(issueId.toString()) ?  
-          <div style={{ minHeight: 50 }}> { caseShow }   </div> 
+        return openId.includes(issueId.toString()) ?
+          <div style={{ minHeight: 50 }}> {caseShow}   </div>
           :
-          (         
-            <div> <FormattedMessage id="report_total" />：{testCycleCaseES.concat(testCycleCaseStepES).length}</div>            
+          (
+            <div> <FormattedMessage id="report_total" />：{testCycleCaseES.concat(testCycleCaseStepES).length}</div>
           );
       },
     }, {
@@ -344,26 +344,26 @@ class ReportTest extends Component {
         const caseShow = testCycleCaseES.concat(testCycleCaseStepES).map((execute, i) => {
           const { issueLinkDTOS } = execute;
           // window.console.log(issueLinkDTOS.length);
-          const issueLinks = issueLinkDTOS.map((link) => {
+          const issueLinks = issueLinkDTOS && issueLinkDTOS.map((link) => {
             const { statusColor, statusName, issueNum, summary } = link;
             return (<div className="c7n-issue-show-container">
               <div className="c7n-collapse-show-item">
                 <Tooltip title={issueNum}>
                   <Link className="c7n-showId" to={issueLink(link.issueId, link.typeCode)} target="_blank">
                     {issueNum}
-                  </Link>     
-                </Tooltip>            
-                <div className="c7n-collapse-header-icon">                 
+                  </Link>
+                </Tooltip>
+                <div className="c7n-collapse-header-icon">
                   <span style={{ color: statusColor, borderColor: statusColor }}>
                     {statusName}
                   </span>
-                </div>        
+                </div>
               </div>
               <div className="c7n-report-summary">{summary}</div>
             </div>);
           });
-          return (<div style={{ 
-            minHeight: 50, 
+          return (<div style={{
+            minHeight: 50,
           }}
           >{issueLinks}</div>);
         });
@@ -384,11 +384,11 @@ class ReportTest extends Component {
               <Icon type="arrow_drop_down" />
             </a>
           </Dropdown>
-          <Button 
+          <Button
             style={{ marginLeft: 30 }}
             onClick={() => {
               this.setState({
-                selectVisible: true,                
+                selectVisible: true,
               });
             }}
           >
@@ -410,30 +410,32 @@ class ReportTest extends Component {
           </Button>
         </Header>
         <Content
-        // style={{
-        //   padding: '0 0 10px 0',
-        // }}
+          // style={{
+          //   padding: '0 0 10px 0',
+          // }}
           title={<FormattedMessage id="report_content_title" />}
           description={<FormattedMessage id="report_content_description" />}
           link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management/test-report/report/"
         >
           <div style={{ display: 'flex' }} />
-          <ReportSelectIssue 
+          <ReportSelectIssue
             visible={selectVisible}
             onCancel={() => { this.setState({ selectVisible: false }); }}
             onOk={(issueIds) => {
-              this.setState({ selectVisible: false, 
+              this.setState({
+                selectVisible: false,
                 pagination: {
                   current: 1,
                   total: 0,
                   pageSize: 10,
                 },
-                issueIds }); 
+                issueIds
+              });
               this.getReportsFromDefect(null, issueIds);
             }}
           />
-          <Table   
-            filterBar={false}        
+          <Table
+            filterBar={false}
             loading={loading}
             pagination={pagination}
             columns={columns}
