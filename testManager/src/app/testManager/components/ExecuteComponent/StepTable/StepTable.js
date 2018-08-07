@@ -2,10 +2,11 @@ import React, { Component } from 'react';
 import { Form, Table, Button, Input, Icon, Card, Select, Spin, Upload, Tooltip } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 import _ from 'lodash';
-import { editCycleStep, deleteAttachment } from '../../../api/CycleExecuteApi';
-import { TextEditToggle, RichTextShow, SelectFocusLoad, UploadInTable } from '../../CommonComponent';
+import { editCycleStep, deleteAttachment, addDefects } from '../../../api/CycleExecuteApi';
+import { TextEditToggle, RichTextShow, UploadInTable, DefectSelect } from '../../CommonComponent';
 import { delta2Html, delta2Text } from '../../../common/utils';
 import { uploadFile } from '../../../api/CommonApi';
+import { getIssueList } from '../../../api/agileApi';
 import './StepTable.scss';
 
 const Option = Select.Option;
@@ -64,7 +65,8 @@ const { Text, Edit } = TextEditToggle;
 const FormItem = Form.Item;
 class StepTable extends Component {
   state = {
-
+    selectLoading: false,
+    issueList: [],
   }
   editCycleStep = (record) => {
     this.props.form.validateFields((err, values) => {
@@ -98,6 +100,7 @@ class StepTable extends Component {
     const that = this;
     const { stepStatusList, detailList, detailPagination, onOk, enterLoad, leaveLoad } = this.props;
     const { getFieldDecorator } = this.props.form;
+    const { selectLoading, issueList } = this.state;
     const options = stepStatusList.map((status) => {
       const { statusName, statusId, statusColor } = status;
       return (<Option value={statusId} key={statusId}>
@@ -106,6 +109,10 @@ class StepTable extends Component {
         </div>
       </Option>);
     });
+    const defectsOptions =
+      issueList.map(issue => (<Option key={issue.issueId} value={issue.issueId.toString()}>
+        {issue.issueNum} {issue.summary}
+      </Option>));
     const columns = [{
       title: <FormattedMessage id="execute_testStep" />,
       dataIndex: 'testStep',
@@ -172,6 +179,7 @@ class StepTable extends Component {
       title: <FormattedMessage id="execute_stepStatus" />,
       dataIndex: 'stepStatus',
       key: 'stepStatus',
+      width: 120,
       render(stepStatus, record) {
         const statusColor = _.find(stepStatusList, { statusId: stepStatus }) ?
           _.find(stepStatusList, { statusId: stepStatus }).statusColor : '';
@@ -190,7 +198,7 @@ class StepTable extends Component {
               {getFieldDecorator('stepStatus', {
                 initialValue: stepStatus,
               })(
-                <Select autoFocus style={{ width: 120 }}>
+                <Select autoFocus style={{ width: 85 }}>
                   {options}
                 </Select>,
               )}
@@ -265,7 +273,7 @@ class StepTable extends Component {
         //   </div>
         // </Tooltip>);
         return (<TextEditToggle>
-          <Text>            
+          <Text>
             <div style={{ display: 'flex', overflow: 'hidden', height: 20 }}>
               {caseAttachment.map(attachment => (
                 <div style={{ fontSize: '12px', flexShrink: 0, margin: '0 2px' }} className="c7n-text-dot">
@@ -286,7 +294,7 @@ class StepTable extends Component {
                 attachmentLinkId: record.executeStepId,
                 attachmentType: 'CYCLE_STEP',
               }}
-            />            
+            />
           </Edit>
         </TextEditToggle>);
       },
@@ -295,30 +303,73 @@ class StepTable extends Component {
       title: <FormattedMessage id="bug" />,
       dataIndex: 'defects',
       key: 'defects',
-      render: defects =>
-        (<Tooltip title={
-          <div>
-            {defects.map((defect, i) => (
-              <div style={{
-                fontSize: '13px',
-                color: 'white',
-              }}
-              >
-                {defect.issueInfosDTO && defect.issueInfosDTO.issueName}
-              </div>))}
-          </div>}
+      render: (defects, record) =>
+        // (<Tooltip title={
+        //   <div>
+        //     {defects.map((defect, i) => (
+        //       <div style={{
+        //         fontSize: '13px',
+        //         color: 'white',
+        //       }}
+        //       >
+        //         {defect.issueInfosDTO && defect.issueInfosDTO.issueName}
+        //       </div>))}
+        //   </div>}
+        // >
+        //   <div
+        //     style={{
+        //       width: 100,
+        //       overflow: 'hidden',
+        //       textOverflow: 'ellipsis',
+        //       whiteSpace: 'nowrap',
+        //     }}
+        //   >
+        //     {defects.map((defect, i) => defect.issueInfosDTO &&
+        //  defect.issueInfosDTO.issueName).join(',')}
+        //   </div>
+        // </Tooltip>),
+        (<TextEditToggle
+          onSubmit={() => {
+            if (that.needAdd.length > 0) {
+              addDefects(that.needAdd).then((res) => {
+                onOk();
+              });
+            }
+          }}
+          // originData={{ defects }}
+          onCancel={onOk}
         >
-          <div
-            style={{
-              width: 100,
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            {defects.map((defect, i) => defect.issueInfosDTO && defect.issueInfosDTO.issueName).join(',')}
-          </div>
-        </Tooltip>),
+          <Text>
+            <Tooltip title={
+              <div>
+                {defects.map((defect, i) => (
+                  <div style={{
+                    fontSize: '13px',
+                    color: 'white',
+                  }}
+                  >
+                    {defect.issueInfosDTO && defect.issueInfosDTO.issueName}
+                  </div>))}
+              </div>}
+            >
+              <div
+                style={{
+                  width: 100,
+                }}
+                className="c7n-text-dot"
+              >
+                {defects.map((defect, i) => defect.issueInfosDTO && defect.issueInfosDTO.issueName).join(',')}
+              </div>
+            </Tooltip>
+          </Text>
+          <Edit>
+            <DefectSelect
+              defects={defects}
+              setNeedAdd={(needAdd) => { that.needAdd = needAdd; }}
+              executeStepId={record.executeStepId}
+            />
+          </Edit>
+        </TextEditToggle>),
     },
       // {
       //   title: null,

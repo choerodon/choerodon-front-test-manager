@@ -577,7 +577,7 @@ class CycleExecute extends Component {
           editing={editing}
         />
         <Spin spinning={loading}>
-          <div>
+          <Content>
             <div style={{ display: 'flex', padding: 24 }}>
               <Card
                 title={null}
@@ -879,7 +879,7 @@ class CycleExecute extends Component {
                 onChange={this.handleHistoryTableChange}
               />
             </Card>
-          </div>
+          </Content>
         </Spin>
       </Page>
     );
