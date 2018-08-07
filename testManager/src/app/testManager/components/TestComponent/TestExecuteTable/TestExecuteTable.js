@@ -7,7 +7,7 @@ import { FormattedMessage } from 'react-intl';
 import TimeAgo from 'timeago-react';
 import { cycleLink } from '../../../common/utils';
 import './TestExecuteTable.scss';
-
+import { editCycle } from '../../../api/CycleExecuteApi';
 const { AppState } = stores;
 
 class TestExecuteTable extends Component {
@@ -19,7 +19,7 @@ class TestExecuteTable extends Component {
       status: [],
     };
   }
-  
+
   componentDidMount() {
     this.loadStatus();
   }
@@ -56,7 +56,27 @@ class TestExecuteTable extends Component {
         this.props.onOk();
       });
   }
+  quickPass(execute) {
+    const cycleData = { ...execute };
+    if (_.find(this.state.status, { projectId: 0, statusName: '通过' })) {
+      cycleData.executionStatus = _.find(this.state.status, { projectId: 0, statusName: '通过' }).statusId;
+      delete cycleData.defects;
+      delete cycleData.caseAttachment;
+      delete cycleData.testCycleCaseStepES;
+      delete cycleData.lastRank;
+      delete cycleData.nextRank;
+      this.props.enterLoad();
+      editCycle(cycleData).then((Data) => {
+        this.props.onOk()
+      }).catch((error) => {
+        this.props.leaveLoad()
+        Choerodon.prompt('网络异常');
+      });
+    } else {
+      Choerodon.prompt("未找到通过")
+    }
 
+  }
   onDragEnd(result) {
     window.console.log(result);
     const arr = this.state.data.slice();
@@ -142,19 +162,19 @@ class TestExecuteTable extends Component {
             {item.versionName}
           </span>
           <Tooltip title={item.cycleName}>
-          
+
             <span style={{ flex: 2, lineHeight: '34px' }} className="c7n-text-dot">
               <Link className="c7n-showId" to={cycleLink(item.cycleId)} target="_blank">
                 {item.cycleName}
-              </Link>            
+              </Link>
             </span>
           </Tooltip>
           <span style={{ flex: 2, lineHeight: '34px' }} className="c7n-text-dot">
             <Tooltip title={item.folderName}>
               <Link className="c7n-showId" to={cycleLink(item.cycleId)} target="_blank">
                 {item.folderName || ''}
-              </Link>      
-            </Tooltip>  
+              </Link>
+            </Tooltip>
           </span>
           <span style={{ flex: 2, lineHeight: '34px' }} className="c7n-text-dot">
             <span style={{ width: 60, height: 20, borderRadius: '2px', background: status.statusColor, display: 'inline-block', lineHeight: '20px', textAlign: 'center', color: '#fff' }}>
@@ -196,12 +216,16 @@ class TestExecuteTable extends Component {
             />
           </span>
           <span style={{ width: 70, lineHeight: '34px' }}>
+            <Tooltip title={<FormattedMessage id="execute_quickPass" />}>
+              <Icon type="local_parking" onClick={this.quickPass.bind(this, item)} style={{ cursor: 'pointer' }} />
+            </Tooltip>
+
             <Link to={`/testManager/Cycle/execute/${item.executeId}?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}>
               <Icon
-                type="explicit2 mlr-3 pointer" 
-                style={{ color: 'black' }}            
-              />           
-            </Link> 
+                type="explicit2 mlr-3 pointer"
+                style={{ color: 'black' }}
+              />
+            </Link>
             <Popconfirm
               title={Choerodon.getMessage('确认删除吗?', 'Confirm delete')}
               placement="left"

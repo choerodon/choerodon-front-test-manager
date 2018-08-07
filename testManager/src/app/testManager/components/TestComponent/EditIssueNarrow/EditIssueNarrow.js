@@ -2181,6 +2181,16 @@ class EditIssueNarrow extends Component {
                     <TestExecuteTable
                       issueId={this.state.origin.issueId}
                       data={this.state.testExecuteData}
+                      enterLoad={() => {
+                        this.setState({
+                          issueLoading: true
+                        })
+                      }}
+                      leaveLoad={() => {
+                        this.setState({
+                          issueLoading: false
+                        })
+                      }}
                       onOk={() => {
                         this.reloadIssue();
                       }}
