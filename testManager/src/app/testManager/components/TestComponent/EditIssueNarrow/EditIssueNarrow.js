@@ -157,9 +157,9 @@ class EditIssueNarrow extends Component {
     if (nextProps.issueId !== this.props.issueId) {
       this.setState({
         currentRae: undefined,
-      });    
+      });
       this.reloadIssue(nextProps.issueId);
-    }   
+    }
   }
 
   /**
@@ -435,7 +435,7 @@ class EditIssueNarrow extends Component {
       addCommit: false,
       addCommitDes: '',
       editDesShow: undefined,
-      editDes: undefined,    
+      editDes: undefined,
 
 
       issueLoading: true,
@@ -720,7 +720,7 @@ class EditIssueNarrow extends Component {
         this.handleDeleteIssue(this.state.origin.issueId);
         break;
       }
-      default:break;
+      default: break;
     }
   }
 
@@ -765,7 +765,7 @@ class EditIssueNarrow extends Component {
             that.props.onDeleteIssue();
           });
       },
-      onCancel() {},
+      onCancel() { },
       okText: '删除',
       okType: 'danger',
     });
@@ -919,7 +919,7 @@ class EditIssueNarrow extends Component {
           this.reloadIssue(this.state.origin.issueId);
         }}
       />
-      
+
     );
   }
 
@@ -986,14 +986,14 @@ class EditIssueNarrow extends Component {
     const getMenu = () => (
       <Menu onClick={this.handleClickMenu.bind(this)}>
         <Menu.Item key="add_worklog">
-          <FormattedMessage id="issue_edit_addWworkLog" />        
-        </Menu.Item>        
+          <FormattedMessage id="issue_edit_addWworkLog" />
+        </Menu.Item>
         <Menu.Item key="copy">
-          <FormattedMessage id="issue_edit_copyIssue" /> 
+          <FormattedMessage id="issue_edit_copyIssue" />
         </Menu.Item>
         <Permission type={type} projectId={projectId} organizationId={orgId} service={['agile-service.issue.deleteIssue']}>
           <Menu.Item key="delete">
-            <FormattedMessage id="delete" /> 
+            <FormattedMessage id="delete" />
           </Menu.Item>
         </Permission>
       </Menu>
@@ -1017,7 +1017,7 @@ class EditIssueNarrow extends Component {
                 top: 0,
                 bottom: 0,
                 left: 0,
-                right: 0, 
+                right: 0,
                 background: 'rgba(255, 255, 255, 0.65)',
                 zIndex: 9999,
                 display: 'flex',
@@ -1027,7 +1027,7 @@ class EditIssueNarrow extends Component {
             >
               <Spin />
             </div>
-          ) : null 
+          ) : null
         }
         <div className="c7n-nav">
           <div>
@@ -1189,8 +1189,8 @@ class EditIssueNarrow extends Component {
                     }
                     <span>{this.state.issueNum}</span>
                   </div>
-                  
-                  
+
+
                   <div
                     style={{ cursor: 'pointer', fontSize: '13px', lineHeight: '20px', display: 'flex', alignItems: 'center' }}
                     role="none"
@@ -1236,7 +1236,7 @@ class EditIssueNarrow extends Component {
                       <Button icon="more_vert" />
                     </Dropdown>
                   </div>
-                </div>                
+                </div>
                 <div className="line-start" style={{ alignItems: 'center' }}>
                   <div style={{ display: 'flex', flex: 1 }}>
                     <span
@@ -1290,7 +1290,7 @@ class EditIssueNarrow extends Component {
                                     lineHeight: '18px',
                                   }}
                                 >
-                                  { this.state.statusName }
+                                  {this.state.statusName}
                                 </div>
                               ) : '无'
                             }
@@ -1323,7 +1323,7 @@ class EditIssueNarrow extends Component {
                             {
                               this.state.originStatus.map(status => (
                                 <Option key={status.id} value={status.id}>
-                                  { status.name }
+                                  {status.name}
                                 </Option>
                               ),
                               )
@@ -1374,14 +1374,14 @@ class EditIssueNarrow extends Component {
                                     lineHeight: '18px',
                                   }}
                                 >
-                                  { this.state.priorityName }
+                                  {this.state.priorityName}
                                 </div>
                               ) : '无'
                             }
                           </div>}
                         >
                           <Select
-                            value={this.state.originpriorities.length ? 
+                            value={this.state.originpriorities.length ?
                               this.state.priorityCode : this.state.priorityName}
                             style={{ width: '150px' }}
                             loading={this.state.selectLoading}
@@ -1415,7 +1415,7 @@ class EditIssueNarrow extends Component {
                                       <div
                                         className="c7n-level"
                                         style={{
-                                        // backgroundColor: COLOR[type.valueCode].bgColor,
+                                          // backgroundColor: COLOR[type.valueCode].bgColor,
                                           color: COLOR[onetype.valueCode].color,
                                           // borderRadius: '2px',
                                           // padding: '0 8px',
@@ -1424,12 +1424,12 @@ class EditIssueNarrow extends Component {
                                           lineHeight: '18px',
                                         }}
                                       >
-                                        { onetype.name }
+                                        {onetype.name}
                                       </div>
                                     </div>
                                   </Option>
                                 ),
-                                )
+                              )
                             }
                           </Select>
                         </ReadAndEdit>
@@ -1493,7 +1493,7 @@ class EditIssueNarrow extends Component {
                   }
                 </div>
               </div>
-            </div> 
+            </div>
           </div>
           <div className="c7n-content-bottom" id="scroll-area" style={{ position: 'relative' }}>
             <section className="c7n-body-editIssue">
@@ -1551,7 +1551,7 @@ class EditIssueNarrow extends Component {
                                         });
                                       });
                                     }}
-                                    onChange={value => 
+                                    onChange={value =>
                                       this.setState({ componentIssueRelDTOList: value })}
                                   >
                                     {this.state.originComponents.map(component =>
@@ -1568,7 +1568,7 @@ class EditIssueNarrow extends Component {
                             </div>
                           ) : null
                         }
-                        
+
                         <div className="line-start mt-10">
                           <div className="c7n-property-wrapper">
                             <span className="c7n-property">
@@ -1576,7 +1576,7 @@ class EditIssueNarrow extends Component {
                             </span>
                           </div>
                           <div className="c7n-value-wrapper">
-                          
+
                             <ReadAndEdit
                               callback={this.changeRae.bind(this)}
                               thisType="labelIssueRelDTOList"
@@ -1645,8 +1645,8 @@ class EditIssueNarrow extends Component {
                               </Select>
                             </ReadAndEdit>
                           </div>
-                        </div>           
-                        
+                        </div>
+
                         <div className="line-start mt-10">
                           <div className="c7n-property-wrapper">
                             <span className="c7n-property">
@@ -1748,7 +1748,7 @@ class EditIssueNarrow extends Component {
                                   readModeContent={<div>
                                     {
                                       this.state.epicId ? (
-                                        <div 
+                                        <div
                                           style={{
                                             color: this.state.epicColor,
                                             borderWidth: '1px',
@@ -1768,8 +1768,8 @@ class EditIssueNarrow extends Component {
                                   </div>}
                                 >
                                   <Select
-                                    value={this.state.originEpics.length ? 
-                                      this.state.epicId || undefined : 
+                                    value={this.state.originEpics.length ?
+                                      this.state.epicId || undefined :
                                       this.state.epicName || undefined}
                                     getPopupContainer={triggerNode => triggerNode.parentNode}
                                     style={{ width: '150px' }}
@@ -1800,17 +1800,17 @@ class EditIssueNarrow extends Component {
                                       (<Option key={`${epic.issueId}`} value={epic.issueId}>
                                         <Tooltip title={epic.epicName}>
                                           {epic.epicName}
-                                        </Tooltip>                                      
+                                        </Tooltip>
                                       </Option>),
                                     )}
                                   </Select>
                                 </ReadAndEdit>
-                                
+
                               </div>
                             </div>
                           ) : null
                         }
-                        
+
                         <div className="line-start mt-10">
                           <div className="c7n-property-wrapper">
                             <span className="c7n-property">
@@ -1822,7 +1822,7 @@ class EditIssueNarrow extends Component {
                               style={{ width: 100 }}
                               percent={
                                 this.getWorkloads() !== 0 ?
-                                  (this.getWorkloads() * 100) / 
+                                  (this.getWorkloads() * 100) /
                                   (this.getWorkloads() + (this.state.origin.remainingTime || 0))
                                   : 0
                               }
@@ -1849,7 +1849,7 @@ class EditIssueNarrow extends Component {
                               <FormattedMessage id="issue_edit_registrationWork" />
                             </span>
                           </div>
-                        </div>                        
+                        </div>
                       </div>
                       {/* --- */}
                       <div style={{ flex: 1, width: '50%' }}>
@@ -1864,7 +1864,7 @@ class EditIssueNarrow extends Component {
                           <div className="c7n-property-wrapper">
                             <span className="c7n-property">
                               <FormattedMessage id="issue_edit_reporter" />
-                            ：</span>
+                              ：</span>
                           </div>
                           <div className="c7n-value-wrapper" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
                             <ReadAndEdit
@@ -1971,7 +1971,7 @@ class EditIssueNarrow extends Component {
                           <div className="c7n-property-wrapper">
                             <span className="c7n-property">
                               <FormattedMessage id="issue_edit_manager" />
-                            ：</span>
+                              ：</span>
                           </div>
                           <div className="c7n-value-wrapper" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
                             <ReadAndEdit
@@ -2082,7 +2082,7 @@ class EditIssueNarrow extends Component {
                             </span>
                           </div>
                         </div>
-                        
+
                         <div className="line-start mt-10">
                           <div className="c7n-property-wrapper">
                             <span className="c7n-property"><FormattedMessage id="issue_edit_createDate" />：</span>
@@ -2131,7 +2131,7 @@ class EditIssueNarrow extends Component {
                     </div>
                     {this.renderDes()}
                   </div>
-                  
+
                 </div>
 
                 <div id="test1">
@@ -2152,13 +2152,23 @@ class EditIssueNarrow extends Component {
                     <TestStepTable
                       issueId={this.state.origin.issueId}
                       data={this.state.testStepData}
+                      enterLoad={() => {
+                        this.setState({
+                          issueLoading: true
+                        })
+                      }}
+                      leaveLoad={() => {
+                        this.setState({
+                          issueLoading: false
+                        })
+                      }}
                       onOk={() => {
                         this.reloadIssue();
                       }}
                     />
                   </div>
                 </div>
-                  
+
                 <div id="test2">
                   <div className="c7n-title-wrapper">
                     <div className="c7n-title-left">
@@ -2170,14 +2180,14 @@ class EditIssueNarrow extends Component {
                   <div className="c7n-content-wrapper" style={{ paddingLeft: 0 }}>
                     <TestExecuteTable
                       issueId={this.state.origin.issueId}
-                      data={this.state.testExecuteData}                   
+                      data={this.state.testExecuteData}
                       onOk={() => {
                         this.reloadIssue();
                       }}
                     />
                   </div>
                 </div>
-                
+
 
                 <div id="attachment">
                   <div className="c7n-title-wrapper">
@@ -2230,7 +2240,7 @@ class EditIssueNarrow extends Component {
                   </div>
                   {this.renderLogs()}
                 </div>
-                
+
                 <div id="data_log">
                   <div className="c7n-title-wrapper">
                     <div className="c7n-title-left">
@@ -2321,7 +2331,7 @@ class EditIssueNarrow extends Component {
               onOk={this.handleCopyIssue.bind(this)}
             />
           ) : null
-        }        
+        }
         {
           this.state.createTestStepShow ? (
             <CreateTestStep

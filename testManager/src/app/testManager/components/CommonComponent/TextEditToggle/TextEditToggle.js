@@ -19,7 +19,9 @@ class TextEditToggle extends Component {
     this.setState({
       editing: false,
     });
-    this.props.onSubmit(this.state.originData);
+    if (this.props.onSubmit) {
+      this.props.onSubmit(this.state.originData);
+    }
   }
   // 进入编辑状态
   enterEditing = () => {
@@ -46,7 +48,7 @@ class TextEditToggle extends Component {
       child = children.filter(current => current.type === Edit);
       child = (<div className="c7n-TextEditToggle-edit">
         {child}
-        <div style={{ textAlign: 'right' }}>
+        <div style={{ textAlign: 'right', lineHeight: '20px' }}>
           <Icon type="done" className="c7n-TextEditToggle-edit-icon" onClick={this.onSubmit} />
           <Icon type="close" className="c7n-TextEditToggle-edit-icon" onClick={this.leaveEditing} />
         </div>
