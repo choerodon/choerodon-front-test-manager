@@ -1,14 +1,33 @@
 import React, { Component } from 'react';
-import { Button, Icon, Dropdown, Menu, Modal } from 'choerodon-ui';
+import { Input, Icon, Dropdown, Menu, Modal, Tooltip, Form, Upload, Button } from 'choerodon-ui';
 import { stores, axios } from 'choerodon-front-boot';
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import EditTestStep from '../EditTestStep';
 import DragTable from '../../DragTable';
-
+import { TextEditToggle } from '../../CommonComponent';
+import './TestStepTable.scss';
+const { Text, Edit } = TextEditToggle;
 const { AppState } = stores;
 const confirm = Modal.confirm;
+const FormItem = Form.Item;
+function uploadFile(data, config) {
+  const { bucketName, attachmentLinkId } = config;
+  const projectId = AppState.currentMenuType.id;
+  const axiosConfig = {
+    headers: { 'content-type': 'multipart/form-datal' },
+  };
 
+  return axios.post(
+    `/zuul/test/v1/projects/${projectId}/test/case/attachment?bucket_name=test&attachmentLinkId=${attachmentLinkId}&attachmentType=CASE_STEP`,
+    data,
+    axiosConfig,
+  );
+}
+function deleteAttachment(id) {
+  const projectId = AppState.currentMenuType.id;
+  return axios.delete(`test/v1/projects/${projectId}/test/case/attachment/delete/bucket/test/attach/${id}`);
+}
 class TestStepTable extends Component {
   constructor(props) {
     super(props);
@@ -31,7 +50,7 @@ class TestStepTable extends Component {
     }
   }
 
-  onDragEnd=(sourceIndex, targetIndex) => {
+  onDragEnd = (sourceIndex, targetIndex) => {
     const arr = this.state.data.slice();
     if (sourceIndex === targetIndex) {
       return;
@@ -63,29 +82,50 @@ class TestStepTable extends Component {
   }
 
 
-  handleClickMenu=(e) => {
-    const testStepId = this.state.currentTestStepId;
-    if (e.key === 'edit') {
-      this.setState({
-        editTestStepShow: true,
-      });
-    } else if (e.key === 'delete') {
-      this.handleDeleteTestStep();
-    } else if (e.key === 'clone') {
-      axios.post(`/test/v1/projects/${AppState.currentMenuType.id}/case/step/clone`, {
-        stepId: testStepId,
-        issueId: this.props.issueId,
-      })
+  // handleClickMenu = (e) => {
+  //   const testStepId = this.state.currentTestStepId;
+  //   if (e.key === 'edit') {
+  //     this.setState({
+  //       editTestStepShow: true,
+  //     });
+  //   } else if (e.key === 'delete') {
+  //     this.handleDeleteTestStep();
+  //   } else if (e.key === 'clone') {
+  //     axios.post(`/test/v1/projects/${AppState.currentMenuType.id}/case/step/clone`, {
+  //       stepId: testStepId,
+  //       issueId: this.props.issueId,
+  //     })
+  //       .then((res) => {
+  //         this.props.onOk();
+  //       })
+  //       .catch((error) => {
+  //       });
+  //   }
+  // }
+  editStep = (record) => {
+    this.props.form.validateFields((err, values) => {
+      // window.console.log(values);
+      const projectId = AppState.currentMenuType.id;
+      // this.setState({ createLoading: true });
+      axios.put(`/test/v1/projects/${projectId}/case/step/change`, { ...record, ...values })
         .then((res) => {
+          this.setState({ createLoading: false });
           this.props.onOk();
-        })
-        .catch((error) => {
         });
-    }
+    });
+  };
+  cloneStep = (stepId) => {
+    axios.post(`/test/v1/projects/${AppState.currentMenuType.id}/case/step/clone`, {
+      stepId,
+      issueId: this.props.issueId,
+    })
+      .then((res) => {
+        this.props.onOk();
+      })
+      .catch((error) => {
+      });
   }
-
-  handleDeleteTestStep=() => {
-    const testStepId = this.state.currentTestStepId;
+  handleDeleteTestStep = (stepId) => {
     const that = this;
     confirm({
       width: 560,
@@ -95,18 +135,18 @@ class TestStepTable extends Component {
         }
       </div>,
       onOk() {
-        return axios.delete(`/test/v1/projects/${AppState.currentMenuType.id}/case/step`, { data: { stepId: testStepId } })
+        return axios.delete(`/test/v1/projects/${AppState.currentMenuType.id}/case/step`, { data: { stepId } })
           .then((res) => {
             that.props.onOk();
           });
       },
-      onCancel() {},
+      onCancel() { },
       okText: Choerodon.getMessage('删除', 'Delete'),
       okType: 'danger',
     });
   }
 
-  handleChangeExpand=(id) => {
+  handleChangeExpand = (id) => {
     const expand = this.state.expand.slice();
 
     if (expand.includes(id)) {
@@ -121,23 +161,25 @@ class TestStepTable extends Component {
     // window.console.log(expand);
     this.setState({ expand });
   }
-         
+
 
   render() {
+    const { getFieldDecorator } = this.props.form;
     const that = this;
-    const menus = (
-      <Menu onClick={this.handleClickMenu.bind(this)}>
-        <Menu.Item key="edit">
-          <FormattedMessage id="edit" />
-        </Menu.Item>
-        <Menu.Item key="delete">
-          <FormattedMessage id="delete" />
-        </Menu.Item>
-        <Menu.Item key="clone">
-          <FormattedMessage id="clone" />
-        </Menu.Item>
-      </Menu>
-    );
+    // const menus = (
+    //   <Menu onClick={this.handleClickMenu.bind(this)}>
+    //     <Menu.Item key="edit">
+    //       <FormattedMessage id="edit" />
+    //     </Menu.Item>
+    //     <Menu.Item key="delete">
+    //       <FormattedMessage id="delete" />
+    //     </Menu.Item>
+    //     <Menu.Item key="clone">
+    //       <FormattedMessage id="clone" />
+    //     </Menu.Item>
+    //   </Menu>
+    // );
+
     const columns = [{
       title: null,
       dataIndex: 'stepId',
@@ -149,35 +191,176 @@ class TestStepTable extends Component {
       title: <FormattedMessage id="execute_testStep" />,
       dataIndex: 'testStep',
       key: 'testStep',
+      render(testStep, record) {
+        return (
+          <Tooltip title={testStep}>
+            <TextEditToggle
+              onSubmit={() => that.editStep(record)}
+              originData={testStep}
+            >
+              <Text>
+                <div className="c7n-text-dot">
+                  {testStep}
+                </div>
+              </Text>
+              <Edit>
+                <FormItem style={{ margin: '5px 0 0 0' }}>
+                  {getFieldDecorator('testStep', {
+                    initialValue: testStep,
+                  })(
+                    <Input autoFocus />,
+                  )}
+                </FormItem>
+
+              </Edit>
+            </TextEditToggle>
+          </Tooltip>
+        );
+      },
     }, {
       title: <FormattedMessage id="execute_testData" />,
       dataIndex: 'testData',
       key: 'testData',
+      render(testData, record) {
+        return (
+          <Tooltip title={testData}>
+            <TextEditToggle
+              onSubmit={() => that.editStep(record)}
+              originData={testData}
+            >
+              <Text>
+                <div className="c7n-text-dot">
+                  {testData}
+                </div>
+              </Text>
+              <Edit>
+                <FormItem style={{ margin: '5px 0 0 0' }}>
+                  {getFieldDecorator('testData', {
+                    initialValue: testData,
+                  })(
+                    <Input autoFocus />,
+                  )}
+                </FormItem>
+
+              </Edit>
+            </TextEditToggle>
+          </Tooltip>
+        );
+      },
     }, {
       title: <FormattedMessage id="execute_expectedOutcome" />,
       dataIndex: 'expectedResult',
       key: 'expectedResult',
+      render(expectedResult, record) {
+        return (
+          <Tooltip title={expectedResult}>
+            <TextEditToggle
+              onSubmit={() => that.editStep(record)}
+              originData={expectedResult}
+            >
+              <Text>
+                <div className="c7n-text-dot">
+                  {expectedResult}
+                </div>
+              </Text>
+              <Edit>
+                <FormItem style={{ margin: '5px 0 0 0' }}>
+                  {getFieldDecorator('expectedResult', {
+                    initialValue: expectedResult,
+                  })(
+                    <Input autoFocus />,
+                  )}
+                </FormItem>
+
+              </Edit>
+            </TextEditToggle>
+          </Tooltip>
+        );
+      },
     }, {
       title: <FormattedMessage id="execute_stepAttachment" />,
       dataIndex: 'attachments',
       key: 'attachments',
       render(attachments, record) {
         return (
-          <div id={`${record.stepId}-list`} style={{ overflow: 'hidden', height: 34 }} onClick={that.handleChangeExpand.bind(this, record.stepId)} role="none">
-            <div style={{ position: 'relative', display: 'flex', flexWrap: 'wrap', paddingRight: 15 }} id={`${record.stepId}-attachment`}>          
-              {
-                attachments.map(attachment => (
-                  <div style={{ padding: '3px 12px', maxWidth: 192, borderRadius: '100px', background: 'rgba(0, 0, 0, 0.08)', margin: 5 }} className="c7n-text-dot">
-                    {attachment.attachmentName}
-                  </div>
-                ))
-              }
-              {
-                attachments && attachments.length && document.getElementById(`${record.stepId}-attachment`) && parseInt(window.getComputedStyle(document.getElementById(`${record.stepId}-attachment`)).height, 10) > 40
-                  ? <span style={{ position: 'absolute', top: 10, right: 0 }} className={_.indexOf(that.state.expand, record.stepId) !== -1 ? 'icon icon-keyboard_arrow_up' : 'icon icon-keyboard_arrow_down'} /> : null
-              }
-            </div>
-          </div>
+          <TextEditToggle
+            // onSubmit={() => that.editStep(record)}
+            originData={attachments}
+          >
+            <Text>
+              <div id={`${record.stepId}-list`} style={{ overflow: 'hidden', height: 34 }} onClick={that.handleChangeExpand.bind(this, record.stepId)} role="none">
+                <div style={{ position: 'relative', display: 'flex', flexWrap: 'wrap', paddingRight: 15 }} id={`${record.stepId}-attachment`}>
+                  {
+                    attachments.map(attachment => (
+                      <div style={{ padding: '0 12px', height: 23, lineHeight: '23px', maxWidth: 192, borderRadius: '100px', background: 'rgba(0, 0, 0, 0.08)', margin: 5 }} className="c7n-text-dot">
+                        {attachment.attachmentName}
+                      </div>
+                    ))
+                  }
+                  {
+                    attachments && attachments.length && document.getElementById(`${record.stepId}-attachment`) && parseInt(window.getComputedStyle(document.getElementById(`${record.stepId}-attachment`)).height, 10) > 40
+                      ? <span style={{ position: 'absolute', top: 10, right: 0 }} className={_.indexOf(that.state.expand, record.stepId) !== -1 ? 'icon icon-keyboard_arrow_up' : 'icon icon-keyboard_arrow_down'} /> : null
+                  }
+                </div>
+              </div>
+            </Text>
+            <Edit>
+              <Upload
+                // multiple
+                className="c7n-upload-reverse"
+                fileList={attachments.map(attachment => ({
+                  uid: attachment.id,
+                  name: attachment.attachmentName,
+                  status: 'done',
+                  url: attachment.url,
+                }))}
+                onRemove={(file) => {
+                  if (file.url) {
+                    that.props.enterLoad();
+                    deleteAttachment(file.uid).then(() => {
+                      that.props.onOk();
+                    }).catch(() => {
+                      that.props.leaveLoad();
+                      Choerodon.prompt('网络异常');
+                    });
+                  }
+                }}
+                beforeUpload={(file, fileList) => {
+                  const formData = new FormData();
+                  const config = {
+                    bucket_name: 'test',
+                    attachmentLinkId: record.stepId,
+                    attachmentType: 'CASE_STEP',
+                  };
+                  // upload file
+                  fileList.forEach((file) => {
+                    if (!file.url) {
+                      formData.append('file', file);
+                    }
+                  });
+                  // formData.append('file', file);
+                  that.props.enterLoad();
+                  uploadFile(formData, config).then(res => {
+                    if (res.failed) {
+                      that.props.leaveLoad();
+                      Choerodon.prompt("不能有重复附件")
+                    } else {
+                      that.props.onOk();
+                    }
+                  }).catch(() => {
+                    that.props.leaveLoad();
+                    Choerodon.prompt("网络错误")
+                  });
+                  return false;
+                }}
+              >
+                <Button icon="file_upload">
+                  <FormattedMessage id="upload_attachment" />
+                </Button>
+              </Upload>
+            </Edit>
+          </TextEditToggle>
+
         );
       },
     }, {
@@ -186,43 +369,52 @@ class TestStepTable extends Component {
       key: 'action',
       render(attachments, record) {
         return (
-          <Dropdown overlay={menus} trigger={['click']} onClick={() => that.setState({ currentTestStepId: record.stepId, currentAttments: record.attachments })}>
-            <Button icon="more_vert" shape="circle" />
-          </Dropdown>
+          <div>
+            <Icon type="content_copy" style={{ cursor: 'pointer', margin: '0 5px' }} onClick={() => that.cloneStep(record.stepId)} />
+            <Icon type="delete_forever" style={{ cursor: 'pointer', margin: '0 5px' }} onClick={() => that.handleDeleteTestStep(record.stepId)} />
+          </div>
+          // <Dropdown overlay={menus} trigger={['click']} onClick={() => 
+          // that.setState({ currentTestStepId: record.stepId,
+          //  currentAttments: record.attachments })}>
+          //   <Button icon="more_vert" shape="circle" />
+
+          // </Dropdown>
         );
       },
     }];
     return (
-      <div>
-        <DragTable
-          pagination={false}
-          filterBar={false}
-          dataSource={this.state.data}
-          columns={columns}
-          onDragEnd={this.onDragEnd}
-          dragKey="stepId"
-        />       
-        {
-          this.state.editTestStepShow ? (
-            <EditTestStep
-              attachments={this.state.currentAttments}
-              issueId={this.props.issueId}
-              stepId={this.state.currentTestStepId}
-              visible={this.state.editTestStepShow}
-              onCancel={() => {
-                this.setState({ editTestStepShow: false });
-                this.props.onOk();
-              }}
-              onOk={() => {
-                this.setState({ editTestStepShow: false });
-                this.props.onOk();
-              }}
-            />
-          ) : null
-        }
+      <div className="c7n-TestStepTable">
+        <Form>
+          <DragTable
+            pagination={false}
+            filterBar={false}
+            dataSource={this.state.data}
+            columns={columns}
+            onDragEnd={this.onDragEnd}
+            dragKey="stepId"
+          />
+          {
+            this.state.editTestStepShow ? (
+              <EditTestStep
+                attachments={this.state.currentAttments}
+                issueId={this.props.issueId}
+                stepId={this.state.currentTestStepId}
+                visible={this.state.editTestStepShow}
+                onCancel={() => {
+                  this.setState({ editTestStepShow: false });
+                  this.props.onOk();
+                }}
+                onOk={() => {
+                  this.setState({ editTestStepShow: false });
+                  this.props.onOk();
+                }}
+              />
+            ) : null
+          }
+        </Form>
       </div>
     );
   }
 }
 
-export default TestStepTable;
+export default Form.create({})(TestStepTable);
