@@ -31,7 +31,7 @@ const styles = {
   },
   cardBodyStyle: {
     // maxHeight: '100%',
-    padding: 12,
+    padding: '12px 20px',
     overflow: 'hidden',
   },
   cardContent: {
@@ -797,7 +797,7 @@ class CycleExecute extends Component {
                       <span style={styles.cardTitleText}><FormattedMessage id="attachment" /></span>
                     </div>
                     <div style={{ flex: 1, visibility: 'hidden' }} />
-                    <Button className="c7n-upload-button">
+                    <Button className="c7n-upload-button" onClick={() => this.uploadInput.click()}>
                       <Icon type="file_upload" /> <FormattedMessage id="upload_attachment" />
                       <input
                         ref={
@@ -806,15 +806,7 @@ class CycleExecute extends Component {
                         type="file"
                         multiple
                         onChange={this.handleUpload}
-                        style={{
-                          position: 'absolute',
-                          top: 0,
-                          left: 0,
-                          right: 0,
-                          bottom: 0,
-                          cursor: 'pointer',
-                          opacity: 0,
-                        }}
+                        style={{ display: 'none' }}
                       />
                     </Button>
                   </div>
@@ -834,7 +826,7 @@ class CycleExecute extends Component {
               style={{ margin: 24, marginTop: 0 }}
               bodyStyle={styles.cardBodyStyle}
             >
-              <div style={styles.cardTitle}>
+              <div style={{ ...styles.cardTitle, marginBottom: 10 }}>
                 <Icon type="expand_more" />
                 <span style={styles.cardTitleText}><FormattedMessage id="execute_testDetail" /></span>
               </div>
@@ -868,7 +860,7 @@ class CycleExecute extends Component {
               style={{ margin: 24 }}
               bodyStyle={styles.cardBodyStyle}
             >
-              <div style={styles.cardTitle}>
+              <div style={{ ...styles.cardTitle, marginBottom: 10 }}>
                 <Icon type="expand_more" />
                 <span style={styles.cardTitleText}><FormattedMessage id="execute_executeHistory" /></span>
               </div>
