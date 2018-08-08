@@ -1,3 +1,8 @@
-.ant-select-dropdown {
-    margin-left: -167px
+.c7n-cycle {
+    .ant-select-dropdown {
+        left: calc(100% - 400px)!important;
+    }
+    .ant-select-selection__choice__content {
+        width: 80px;
+    }
 }

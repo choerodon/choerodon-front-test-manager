@@ -15,13 +15,13 @@ class DefectSelect extends Component {
       issueList: [],
       defects: defects || [],
       defectIds: defects ? defects.map(defect => defect.issueId.toString()) : [],
-      originDefects: defects ? defects.map(defect => defect.issueId.toString()) : [], 
+      originDefects: defects ? defects.map(defect => defect.issueId.toString()) : [],
     };
   }
   componentDidMount() {
-    this.getIssueList(); 
+    this.getIssueList();
   }
-  getIssueList=() => {
+  getIssueList = () => {
     this.setState({
       selectLoading: true,
     });
@@ -51,15 +51,15 @@ class DefectSelect extends Component {
     }
     // 收集需要添加的缺陷
     const needAdd =
-    issueList
-      .filter(issue => List.includes(issue.issueId.toString()))// 取到选中的issueList
-      .filter(issue => !originDefects.includes(issue.issueId.toString()))// 去掉之前已有的
-      .map(item => ({
-        defectType: 'CASE_STEP',
-        defectLinkId: this.props.executeStepId,
-        issueId: item.issueId,
-        defectName: item.issueNum,
-      }));
+      issueList
+        .filter(issue => List.includes(issue.issueId.toString()))// 取到选中的issueList
+        .filter(issue => !originDefects.includes(issue.issueId.toString()))// 去掉之前已有的
+        .map(item => ({
+          defectType: 'CASE_STEP',
+          defectLinkId: this.props.executeStepId,
+          issueId: item.issueId,
+          defectName: item.issueNum,
+        }));
     this.props.setNeedAdd(needAdd);
     this.setState({
       defectIds: List,
@@ -68,44 +68,39 @@ class DefectSelect extends Component {
   render() {
     const { defects, selectLoading, defectIds, issueList, originDefects } = this.state;
     const defectsOptions =
-    issueList.map(issue => (<Option key={issue.issueId} value={issue.issueId.toString()}>
-      {issue.issueNum} {issue.summary}
-    </Option>));
-    return (<Select
-      autoFocus
-      filter
-      mode="multiple"
-      dropdownMatchSelectWidth={false}
-      filterOption={false}
-      loading={selectLoading}
-      defaultValue={defects.map(defect => defect.issueId.toString())}
-      style={{ width: 120 }}
-      onChange={this.handleDefectsChange}
-      onFilterChange={(value) => {
-        this.setState({
-          selectLoading: true,
-        });
-        getIssueList(value).then((issueData) => {
+      issueList.map(issue => (<Option key={issue.issueId} value={issue.issueId.toString()}>
+        {issue.issueNum} {issue.summary}
+      </Option>));
+    return (     
+      <Select          
+        dropdownStyle={{
+          right: 0,
+        }}
+        getPopupContainer={() => document.getElementsByClassName('c7n-cycle')[0]}
+        autoFocus
+        filter
+        mode="multiple"
+        dropdownMatchSelectWidth={false}
+        filterOption={false}
+        loading={selectLoading}
+        defaultValue={defects.map(defect => defect.issueId.toString())}
+        style={{ width: 140 }}
+        onChange={this.handleDefectsChange}
+        onFilterChange={(value) => {
           this.setState({
-            issueList: issueData.content,
-            selectLoading: false,
+            selectLoading: true,
           });
-        });
-      }}      
-      // onFocus={() => {
-      //   this.setState({
-      //     selectLoading: true,
-      //   });
-      //   getIssueList().then((issueData) => {
-      //     this.setState({
-      //       issueList: issueData.content,
-      //       selectLoading: false,
-      //     });
-      //   });
-      // }}
-    >
-      {defectsOptions}
-    </Select>);
+          getIssueList(value).then((issueData) => {
+            this.setState({
+              issueList: issueData.content,
+              selectLoading: false,
+            });
+          });
+        }}
+      >
+        {defectsOptions}
+      </Select>
+    );
   }
 }
 

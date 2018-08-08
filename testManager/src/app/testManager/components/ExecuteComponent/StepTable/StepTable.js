@@ -389,13 +389,16 @@ class StepTable extends Component {
       //   },
       // }
     ];
-    return (<Table
-      filterBar={false}
-      dataSource={detailList}
-      columns={columns}
-      pagination={detailPagination}
-      onChange={this.props.onChange}
-    />);
+    return (
+      <div className="StepTable">
+        <Table
+          filterBar={false}
+          dataSource={detailList}
+          columns={columns}
+          pagination={detailPagination}
+          onChange={this.props.onChange}
+        />
+      </div>);
   }
 }
 
