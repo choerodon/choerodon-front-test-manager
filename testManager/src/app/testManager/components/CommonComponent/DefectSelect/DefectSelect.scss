@@ -1,4 +1,8 @@
 .c7n-cycle {
+    .ant-select-selection__choice {
+        display: flex;
+        overflow: visible;
+    }
     .ant-select-dropdown {
         left: calc(100% - 400px)!important;
     }

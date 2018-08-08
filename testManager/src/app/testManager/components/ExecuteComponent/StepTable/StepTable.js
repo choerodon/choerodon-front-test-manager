@@ -179,33 +179,36 @@ class StepTable extends Component {
       title: <FormattedMessage id="execute_stepStatus" />,
       dataIndex: 'stepStatus',
       key: 'stepStatus',
-      width: 120,
+      // width: 120,
       render(stepStatus, record) {
         const statusColor = _.find(stepStatusList, { statusId: stepStatus }) ?
           _.find(stepStatusList, { statusId: stepStatus }).statusColor : '';
         const statusName = _.find(stepStatusList, { statusId: stepStatus }) &&
           _.find(stepStatusList, { statusId: stepStatus }).statusName;
-        return (<TextEditToggle
-          onSubmit={() => that.editCycleStep(record)}
-        >
-          <Text>
-            <div style={{ ...styles.statusOption, ...{ background: statusColor } }}>
-              {statusName}
-            </div>
-          </Text>
-          <Edit>
-            <FormItem style={{ margin: '5px 0 0 0' }}>
-              {getFieldDecorator('stepStatus', {
-                initialValue: stepStatus,
-              })(
-                <Select autoFocus style={{ width: 85 }}>
-                  {options}
-                </Select>,
-              )}
-            </FormItem>
+        return (
+          <div style={{ width: 85 }}>
+            <TextEditToggle
+              onSubmit={() => that.editCycleStep(record)}
+            >
+              <Text>
+                <div style={{ ...styles.statusOption, ...{ background: statusColor } }}>
+                  {statusName}
+                </div>
+              </Text>
+              <Edit>
+                <FormItem style={{ margin: '5px 0 0 0' }}>
+                  {getFieldDecorator('stepStatus', {
+                    initialValue: stepStatus,
+                  })(
+                    <Select autoFocus style={{ width: 85 }}>
+                      {options}
+                    </Select>,
+                  )}
+                </FormItem>
 
-          </Edit>
-        </TextEditToggle>);
+              </Edit>
+            </TextEditToggle>
+          </div>);
       },
     },
     {

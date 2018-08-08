@@ -1,8 +1,15 @@
 .StepTable {
+    padding: 0 20px;
     .ant-table-thead>tr>th {
         padding: 5px;
     }
     .ant-table-tbody>tr>td {
         padding: 5px;
+    }
+    .ant-table-thead>tr>th:first-child {
+        padding: 5px 12px;
+    }
+    .ant-table-tbody>tr>td:first-child {
+        padding: 5px 12px;
     }
 }

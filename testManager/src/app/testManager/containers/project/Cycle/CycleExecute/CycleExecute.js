@@ -864,13 +864,15 @@ class CycleExecute extends Component {
                 <Icon type="expand_more" />
                 <span style={styles.cardTitleText}><FormattedMessage id="execute_executeHistory" /></span>
               </div>
-              <Table
-                filterBar={false}
-                dataSource={historyList}
-                columns={columnsHistory}
-                pagination={historyPagination}
-                onChange={this.handleHistoryTableChange}
-              />
+              <div style={{ padding: '0 20px' }}>              
+                <Table
+                  filterBar={false}
+                  dataSource={historyList}
+                  columns={columnsHistory}
+                  pagination={historyPagination}
+                  onChange={this.handleHistoryTableChange}
+                />
+              </div>
             </Card>
           </Content>
         </Spin>
