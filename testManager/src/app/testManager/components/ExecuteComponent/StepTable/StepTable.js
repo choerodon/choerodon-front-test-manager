@@ -8,6 +8,7 @@ import { delta2Html, delta2Text } from '../../../common/utils';
 import { uploadFile } from '../../../api/CommonApi';
 import { getIssueList } from '../../../api/agileApi';
 import './StepTable.scss';
+import CycleExecuteStore from '../../../store/project/cycle/CycleExecuteStore';
 
 const Option = Select.Option;
 const styles = {
@@ -66,13 +67,13 @@ const FormItem = Form.Item;
 class StepTable extends Component {
   state = {
     selectLoading: false,
-    issueList: [],
+    // issueList: [],
   }
   editCycleStep = (record) => {
     this.props.form.validateFields((err, values) => {
-      this.setState({ loading: true });
+      // this.setState({ loading: true });
 
-      const formData = new FormData();
+      // const formData = new FormData();
       const data = { ...record, ...values };
       window.console.log(data);
       // Object.keys(data).forEach((key) => {
@@ -82,23 +83,25 @@ class StepTable extends Component {
       delete data.caseAttachment;
       delete data.stepAttachment;
       editCycleStep([data]).then(() => {
-        this.setState({
-          loading: false,
-        });
-        this.props.onOk();
+        // this.setState({
+        //   loading: false,
+        // });
+        CycleExecuteStore.loadDetailList();
       }).catch((error) => {
         window.console.log(error);
-        this.setState({
-          loading: false,
-        });
+        // this.setState({
+        //   loading: false,
+        // });
         Choerodon.prompt('网络错误');
       });
     });
-  };
-  uploadFile
+  }; 
   render() {
     const that = this;
-    const { stepStatusList, detailList, detailPagination, onOk, enterLoad, leaveLoad } = this.props;
+    // const { onOk, enterLoad, leaveLoad } = this.props;
+    const stepStatusList = CycleExecuteStore.getStepStatusList;
+    const detailList = CycleExecuteStore.getDetailList;
+    const detailPagination = CycleExecuteStore.getDetailPagination;
     const { getFieldDecorator } = this.props.form;
     const { selectLoading, issueList } = this.state;
     const options = stepStatusList.map((status) => {
@@ -109,10 +112,10 @@ class StepTable extends Component {
         </div>
       </Option>);
     });
-    const defectsOptions =
-      issueList.map(issue => (<Option key={issue.issueId} value={issue.issueId.toString()}>
-        {issue.issueNum} {issue.summary}
-      </Option>));
+    // const defectsOptions =
+    //   issueList.map(issue => (<Option key={issue.issueId} value={issue.issueId.toString()}>
+    //     {issue.issueNum} {issue.summary}
+    //   </Option>));
     const columns = [{
       title: <FormattedMessage id="execute_testStep" />,
       dataIndex: 'testStep',
@@ -157,7 +160,7 @@ class StepTable extends Component {
       render(stepAttachment) {
         return (<Tooltip title={
           <div>
-            {stepAttachment.map((attachment, i) => (
+            {stepAttachment.filter(attachment => attachment.attachmentType === 'CASE_STEP').map((attachment, i) => (
               <div style={{
                 fontSize: '13px',
                 color: 'white',
@@ -170,7 +173,7 @@ class StepTable extends Component {
           <div
             className="c7n-text-dot"
           >
-            {stepAttachment.map((attachment, i) => attachment.attachmentName).join(',')}
+            {stepAttachment.filter(attachment => attachment.attachmentType === 'CASE_STEP').map((attachment, i) => attachment.attachmentName).join(',')}
           </div>
         </Tooltip>);
       },
@@ -249,9 +252,9 @@ class StepTable extends Component {
       },
     }, {
       title: <FormattedMessage id="attachment" />,
-      dataIndex: 'caseAttachment',
+      dataIndex: 'stepAttachment',
       key: 'caseAttachment',
-      render(caseAttachment, record) {
+      render(stepAttachment, record) {       
         // return (<Tooltip title={
         //   <div>
         //     {caseAttachment.map((attachment, i) => (
@@ -278,7 +281,7 @@ class StepTable extends Component {
         return (<TextEditToggle>
           <Text>
             <div style={{ display: 'flex', overflow: 'hidden', height: 20 }}>
-              {caseAttachment.map(attachment => (
+              {stepAttachment.filter(attachment => attachment.attachmentType === 'CYCLE_STEP').map(attachment => (
                 <div style={{ fontSize: '12px', flexShrink: 0, margin: '0 2px' }} className="c7n-text-dot">
                   <Icon type="attach_file" style={{ fontSize: '12px', color: 'rgba(0,0,0,0.65)' }} />
                   <a href={attachment.url} target="_blank" rel="noopener noreferrer">{attachment.attachmentName}</a>
@@ -289,10 +292,10 @@ class StepTable extends Component {
           </Text>
           <Edit>
             <UploadInTable
-              fileList={caseAttachment}
-              onOk={onOk}
-              enterLoad={enterLoad}
-              leaveLoad={leaveLoad}
+              fileList={stepAttachment.filter(attachment => attachment.attachmentType === 'CYCLE_STEP')}
+              onOk={CycleExecuteStore.loadDetailList}
+              enterLoad={CycleExecuteStore.enterloading}
+              leaveLoad={CycleExecuteStore.unloading}
               config={{
                 attachmentLinkId: record.executeStepId,
                 attachmentType: 'CYCLE_STEP',
@@ -334,13 +337,16 @@ class StepTable extends Component {
         (<TextEditToggle
           onSubmit={() => {
             if (that.needAdd.length > 0) {
+              CycleExecuteStore.enterloading();
               addDefects(that.needAdd).then((res) => {
-                onOk();
+                CycleExecuteStore.loadDetailList();
               });
+            } else {
+              CycleExecuteStore.loadDetailList();
             }
           }}
           // originData={{ defects }}
-          onCancel={onOk}
+          onCancel={CycleExecuteStore.loadDetailList}
         >
           <Text>
             <Tooltip title={
@@ -399,7 +405,7 @@ class StepTable extends Component {
           dataSource={detailList}
           columns={columns}
           pagination={detailPagination}
-          onChange={this.props.onChange}
+          onChange={CycleExecuteStore.loadDetailList}
         />
       </div>);
   }

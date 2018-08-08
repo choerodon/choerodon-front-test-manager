@@ -21,7 +21,8 @@ class UploadInTable extends Component {
           this.props.enterLoad();
           deleteAttachment(file.uid).then(() => {
             this.props.onOk();
-          }).catch(() => {
+          }).catch((error) => {
+            window.console.log(error);
             this.props.leaveLoad();
             Choerodon.prompt('网络异常');
           });
@@ -45,7 +46,8 @@ class UploadInTable extends Component {
           } else {
             this.props.onOk();
           }
-        }).catch(() => {
+        }).catch((error) => {
+          window.console.log(error);
           this.props.leaveLoad();
           Choerodon.prompt('网络错误');
         });

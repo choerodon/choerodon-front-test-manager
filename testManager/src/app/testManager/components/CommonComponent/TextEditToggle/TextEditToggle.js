@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import { Icon } from 'choerodon-ui';
-import PropTypes from 'prop-types';
+import { Form } from 'choerodon-ui';
 import './TextEditToggle.scss';
 
 const Text = props => props.children;
 const Edit = props => props.children;
-
+const FormItem = Form.Item;
 class TextEditToggle extends Component {
   state = {
     editing: false,
@@ -16,11 +16,13 @@ class TextEditToggle extends Component {
   }
   // 提交编辑
   onSubmit = () => {
+    const { getFieldValue } = this.props.form;
     this.setState({
       editing: false,
     });
     if (this.props.onSubmit) {
-      this.props.onSubmit(this.state.originData);
+      // console.log(this.props.formKey, getFieldValue(this.props.formKey));
+      this.props.onSubmit(this.props.formKey ? getFieldValue(this.props.formKey) : null);
     }
   }
   // 进入编辑状态
@@ -42,12 +44,26 @@ class TextEditToggle extends Component {
 
   renderChild = () => {
     const { editing } = this.state;
-    const { children } = this.props;
+    const { children, originData, formKey } = this.props;
+    const { getFieldDecorator } = this.props.form;
     let child = null;
+    // window.console.log(children, children[0].props.children);
     if (editing) {
       child = children.filter(current => current.type === Edit);
       child = (<div className="c7n-TextEditToggle-edit">
-        {child}
+        <Form layout="vertical">
+          {child.map(one =>
+            (formKey ? <FormItem >
+              {getFieldDecorator(formKey, {
+                // rules: [{ required: true, message: '测试步骤为必输项' }],
+                initialValue: originData,
+              })(
+                one.props.children,
+              )}
+            </FormItem> : one),
+          )}
+        </Form>
+        {/* {child} */}
         <div style={{ textAlign: 'right', lineHeight: '20px' }}>
           <Icon type="done" className="c7n-TextEditToggle-edit-icon" onClick={this.onSubmit} />
           <Icon type="close" className="c7n-TextEditToggle-edit-icon" onClick={this.leaveEditing} />
@@ -73,9 +89,9 @@ TextEditToggle.Text = Text;
 TextEditToggle.Edit = Edit;
 
 TextEditToggle.propTypes = {
-  onSubmit: PropTypes.func.isRequired,
+  // onSubmit: PropTypes.func.isRequired,
   // originData: PropTypes.any.isRequired,
-  onCancel: PropTypes.func.isRequired,
+  // onCancel: PropTypes.func.isRequired,
 };
 
-export default TextEditToggle;
+export default Form.create({})(TextEditToggle);
