@@ -35,6 +35,10 @@ export function editCycleSide(data) {
   const projectId = AppState.currentMenuType.id;
   return axios.post(`/zuul/test/v1/projects/${projectId}/cycle/case/step/updateWithAttach`, data, axiosConfig);
 }
+export function editCycleStep(data) {
+  const projectId = AppState.currentMenuType.id;
+  return axios.put(`/test/v1/projects/${projectId}/cycle/case/step`, data);
+}
 export function getCycleDetails(pagination, cycleCaseId) {
   const { size, page } = pagination;
   const projectId = AppState.currentMenuType.id;

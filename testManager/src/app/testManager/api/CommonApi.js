@@ -11,19 +11,22 @@ const { AppState } = stores;
 // }
 
 export function uploadFile(data, config) {
-  const { bucketName, attachmentLinkId } = config;
+  const { bucketName, attachmentLinkId, attachmentType } = config;
   const projectId = AppState.currentMenuType.id;
   const axiosConfig = {
     headers: { 'content-type': 'multipart/form-datal' },
   };
 
   return axios.post(
-    `/zuul/test/v1/projects/${projectId}/test/case/attachment?bucket_name=${bucketName}&attachmentLinkId=${attachmentLinkId}&attachmentType=CYCLE_CASE`,
+    `/zuul/test/v1/projects/${projectId}/test/case/attachment?bucket_name=${'test'}&attachmentLinkId=${attachmentLinkId}&attachmentType=${attachmentType}`,
     data,
     axiosConfig,
   );
 }
-
+export function deleteAttachment(id) {
+  const projectId = AppState.currentMenuType.id;
+  return axios.delete(`test/v1/projects/${projectId}/test/case/attachment/delete/bucket/test/attach/${id}`);
+}
 export function getSelf() {
   return axios.get('/iam/v1/users/self');
 }

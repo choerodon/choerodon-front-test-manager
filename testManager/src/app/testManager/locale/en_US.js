@@ -82,7 +82,7 @@ const enUS = {
   // 编辑步骤详情侧边栏
   execute_stepDetail: 'Step detail',
   execute_stepEditTitle: 'Edit the info of test step“{testStep}”',
-
+  execute_quickPass: 'Pass the execute',
   // 测试摘要
   summary_title: 'Test Summary',
   summary_totalTest: 'Total Tests',

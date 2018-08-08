@@ -5,8 +5,9 @@ import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import EditTestStep from '../EditTestStep';
 import DragTable from '../../DragTable';
-import { TextEditToggle } from '../../CommonComponent';
+import { TextEditToggle, UploadInTable } from '../../CommonComponent';
 import './TestStepTable.scss';
+
 const { Text, Edit } = TextEditToggle;
 const { AppState } = stores;
 const confirm = Modal.confirm;
@@ -166,6 +167,7 @@ class TestStepTable extends Component {
   render() {
     const { getFieldDecorator } = this.props.form;
     const that = this;
+    const { onOk, enterLoad, leaveLoad } = this.props;
     // const menus = (
     //   <Menu onClick={this.handleClickMenu.bind(this)}>
     //     <Menu.Item key="edit">
@@ -288,76 +290,51 @@ class TestStepTable extends Component {
             originData={attachments}
           >
             <Text>
-              <div id={`${record.stepId}-list`} style={{ overflow: 'hidden', height: 34 }} onClick={that.handleChangeExpand.bind(this, record.stepId)} role="none">
-                <div style={{ position: 'relative', display: 'flex', flexWrap: 'wrap', paddingRight: 15 }} id={`${record.stepId}-attachment`}>
+              {/* <div id={`${record.stepId}-list`} style={{ overflow: 'hidden', height: 34 }} 
+              onClick={that.handleChangeExpand.bind(this, record.stepId)} role="none">
+                <div style={{ position: 'relative', display: 'flex', flexWrap: 'wrap', 
+                paddingRight: 15 }} id={`${record.stepId}-attachment`}>
                   {
                     attachments.map(attachment => (
-                      <div style={{ padding: '0 12px', height: 23, lineHeight: '23px', maxWidth: 192, borderRadius: '100px', background: 'rgba(0, 0, 0, 0.08)', margin: 5 }} className="c7n-text-dot">
+                      <div style={{ padding: '0 12px', height: 23, 
+                      lineHeight: '23px', maxWidth: 192, borderRadius: '100px',
+                       background: 'rgba(0, 0, 0, 0.08)', margin: 5 }} className="c7n-text-dot">
                         {attachment.attachmentName}
                       </div>
                     ))
                   }
                   {
-                    attachments && attachments.length && document.getElementById(`${record.stepId}-attachment`) && parseInt(window.getComputedStyle(document.getElementById(`${record.stepId}-attachment`)).height, 10) > 40
-                      ? <span style={{ position: 'absolute', top: 10, right: 0 }} className={_.indexOf(that.state.expand, record.stepId) !== -1 ? 'icon icon-keyboard_arrow_up' : 'icon icon-keyboard_arrow_down'} /> : null
+                    attachments && attachments.length && document.getElementById(
+                      `${record.stepId}-attachment`) && parseInt(window.getComputedSty
+                        le(document.getElementById(`${record.stepId}-attachment`)).height, 10) > 40
+                      ? <span style={{ position: 'absolute', top: 10, right: 0 }}
+                       className={_.indexOf(that.state.expand, record.stepId) 
+                        !== -1 ? 'icon icon-keyboard_arrow_up' : 'icon icon-keyboard_arrow_down'} 
+                        /> : null
                   }
                 </div>
+              </div> */}
+              <div style={{ display: 'flex', overflow: 'hidden' }}>
+                {attachments.map(attachment => (
+                  <div style={{ fontSize: '12px', flexShrink: 0, margin: '0 2px' }} className="c7n-text-dot">
+                    <Icon type="attach_file" style={{ fontSize: '12px', color: 'rgba(0,0,0,0.65)' }} />
+                    <a href={attachment.url} target="_blank" rel="noopener noreferrer">{attachment.attachmentName}</a>
+                  </div>
+                ))
+                }
               </div>
             </Text>
             <Edit>
-              <Upload
-                // multiple
-                className="c7n-upload-reverse"
-                fileList={attachments.map(attachment => ({
-                  uid: attachment.id,
-                  name: attachment.attachmentName,
-                  status: 'done',
-                  url: attachment.url,
-                }))}
-                onRemove={(file) => {
-                  if (file.url) {
-                    that.props.enterLoad();
-                    deleteAttachment(file.uid).then(() => {
-                      that.props.onOk();
-                    }).catch(() => {
-                      that.props.leaveLoad();
-                      Choerodon.prompt('网络异常');
-                    });
-                  }
+              <UploadInTable
+                fileList={attachments}
+                onOk={onOk}
+                enterLoad={enterLoad}
+                leaveLoad={leaveLoad}
+                config={{
+                  attachmentLinkId: record.stepId,
+                  attachmentType: 'CASE_STEP',
                 }}
-                beforeUpload={(file, fileList) => {
-                  const formData = new FormData();
-                  const config = {
-                    bucket_name: 'test',
-                    attachmentLinkId: record.stepId,
-                    attachmentType: 'CASE_STEP',
-                  };
-                  // upload file
-                  fileList.forEach((file) => {
-                    if (!file.url) {
-                      formData.append('file', file);
-                    }
-                  });
-                  // formData.append('file', file);
-                  that.props.enterLoad();
-                  uploadFile(formData, config).then(res => {
-                    if (res.failed) {
-                      that.props.leaveLoad();
-                      Choerodon.prompt("不能有重复附件")
-                    } else {
-                      that.props.onOk();
-                    }
-                  }).catch(() => {
-                    that.props.leaveLoad();
-                    Choerodon.prompt("网络错误")
-                  });
-                  return false;
-                }}
-              >
-                <Button icon="file_upload">
-                  <FormattedMessage id="upload_attachment" />
-                </Button>
-              </Upload>
+              /> 
             </Edit>
           </TextEditToggle>
 
@@ -370,7 +347,7 @@ class TestStepTable extends Component {
       render(attachments, record) {
         return (
           <div>
-            <Icon type="content_copy" style={{ cursor: 'pointer', margin: '0 5px' }} onClick={() => that.cloneStep(record.stepId)} />
+            <Icon type="library_books" style={{ cursor: 'pointer', margin: '0 5px' }} onClick={() => that.cloneStep(record.stepId)} />
             <Icon type="delete_forever" style={{ cursor: 'pointer', margin: '0 5px' }} onClick={() => that.handleDeleteTestStep(record.stepId)} />
           </div>
           // <Dropdown overlay={menus} trigger={['click']} onClick={() => 
