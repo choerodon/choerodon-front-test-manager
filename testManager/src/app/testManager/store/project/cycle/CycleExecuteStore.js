@@ -56,18 +56,7 @@ class CycleExecuteStore {
       getIssueList(),
     ],
     )
-      .then(([cycleData, statusList, detailData, stepStatusList, historyData, issueData]) => {
-        const { caseAttachment } = cycleData;
-        const fileList = caseAttachment.map((attachment) => {
-          const { url, attachmentName } = attachment;
-          return {
-            uid: attachment.id,
-            name: attachmentName,
-            status: 'done',
-            url,
-          };
-        });
-        const defectIds = cycleData.defects.map(defect => defect.issueId.toString());
+      .then(([cycleData, statusList, detailData, stepStatusList, historyData, issueData]) => {      
         this.setCycleData(cycleData);
         this.setStatusList(statusList);
         this.setDetailList(detailData.content);
@@ -84,8 +73,7 @@ class CycleExecuteStore {
         });
         this.setHistoryList(historyData.content);
         this.setIssueList(issueData.content);
-        this.unloading();
-        // this.setStatusAndColor(this.state.cycleData.executionStatus, statusList);
+        this.unloading();   
       }).catch((error) => {
         Choerodon.prompt('网络异常');
         this.unloading();

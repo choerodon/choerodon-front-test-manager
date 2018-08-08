@@ -42,17 +42,14 @@ class CycleExecute extends Component {
     CycleExecuteStore.getInfo(id);
   }
   render() {
-    const { fileList, userList, stepStatusList,
-      statusList, selectLoading,
-      editVisible, editing, issueList, defectIds }
-      = this.state;
+    const { editVisible, editing } = this.state;
     const loading = CycleExecuteStore.loading;
     const cycleData = CycleExecuteStore.getCycleData;
-    const detailList = CycleExecuteStore.getDetailList;
+    // const detailList = CycleExecuteStore.getDetailList;
     const historyList = CycleExecuteStore.getHistoryList;
     const historyPagination = CycleExecuteStore.getHistoryPagination;
-    const detailPagination = CycleExecuteStore.getDetailPagination;
-    const that = this;
+    // const detailPagination = CycleExecuteStore.getDetailPagination;
+    // const that = this;
     const columnsHistory = [{
       title: <FormattedMessage id="execute_executive" />,
       dataIndex: 'user',
@@ -158,7 +155,7 @@ class CycleExecute extends Component {
         </div>}
         >
 
-          <Button onClick={this.getInfo}>
+          <Button onClick={() => CycleExecuteStore.getInfo()}>
             <Icon type="autorenew icon" />
             <span><FormattedMessage id="refresh" /></span>
           </Button>
