@@ -84,7 +84,7 @@ class DefectSelect extends Component {
         filterOption={false}
         loading={selectLoading}
         defaultValue={defects.map(defect => defect.issueId.toString())}
-        style={{ width: 140 }}
+        // style={{ width: 140 }}
         onChange={this.handleDefectsChange}
         onFilterChange={(value) => {
           this.setState({

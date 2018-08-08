@@ -708,12 +708,13 @@ class CycleExecute extends Component {
                         {defects.length > 0 ? (
                           <div
                             style={{
+                              maxWidth: 300,
                               overflow: 'hidden',
                               textOverflow: 'ellipsis',
                               whiteSpace: 'nowrap',
                             }}
                           >
-                            {defects.map((defect, i) => defect.issueInfosDTO.issueName).join(',')}
+                            {defects.map((defect, i) => defect.issueInfosDTO.issueName).join('，')}
                           </div>
                         ) : '无'}
                       </Text>
