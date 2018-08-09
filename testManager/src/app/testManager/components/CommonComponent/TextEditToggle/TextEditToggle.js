@@ -41,16 +41,23 @@ class TextEditToggle extends Component {
       this.props.onCancel(this.state.originData);
     }
   }
-
+  renderFormItemChild(children) {
+    // formItem只有一个组件起作用
+    if (children instanceof Array) {
+      return children.filter(child => child.type && child.type.prototype instanceof Component)[0];
+    } else if (children.type.prototype instanceof Component) {
+      return children;
+    } else {
+      throw new Error('使用Form功能时，Edit的children必须是Component');
+    }
+  }
   renderChild = () => {
     const { editing } = this.state;
     const { children, originData, formKey } = this.props;
     const { getFieldDecorator } = this.props.form;
     let child = null;
-    
     if (editing) {
-      child = children.filter(current => current.type === Edit);
-      // window.console.log(child[0].props.children[1].type);
+      child = children.filter(current => current.type === Edit);      
       child = (<div className="c7n-TextEditToggle-edit">
         <Form layout="vertical">
           {child.map(one =>
@@ -59,7 +66,7 @@ class TextEditToggle extends Component {
                 // rules: [{ required: true, message: '测试步骤为必输项' }],
                 initialValue: originData,
               })(
-                one.props.children,
+                this.renderFormItemChild(one.props.children),
               )}
             </FormItem> : one),
           )}

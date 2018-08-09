@@ -585,9 +585,9 @@ class CycleHome extends Component {
           <Tooltip title={<RichTextShow data={delta2Html(comment)} />}>
             <div
               className="c7n-text-dot"
-              style={{
-                width: 65,
-              }}
+              // style={{
+              //   width: 65,
+              // }}
             >
               {delta2Text(comment)}
             </div>

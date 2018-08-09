@@ -233,8 +233,8 @@ class StepTable extends Component {
                   {delta2Text(comment)}
                 </div>
               </Text>
-              <Edit>                
-                <Input autoFocus />
+              <Edit>
+                <Input autoFocus />,
               </Edit>
             </TextEditToggle>
           </Tooltip>
@@ -381,7 +381,8 @@ class StepTable extends Component {
     //       onClick={() => {
     //         that.setState({
     //           editVisible: true,
-    //           editing: { ...recorder, ...{ stepStatusList: CycleExecuteStore.getStepStatusList } },
+    //           editing: { ...recorder, ...{ stepStatusList:
+    //  CycleExecuteStore.getStepStatusList } },
     //         });
     //       }}
     //     />);
