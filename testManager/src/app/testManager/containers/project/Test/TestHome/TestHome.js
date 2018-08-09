@@ -202,7 +202,7 @@ class Test extends Component {
   handleFilterChange = (pagination, filters, sorter, barFilters) => {
     IssueStore.setFilteredInfo(filters);
     IssueStore.setBarFilters(barFilters);
-    window.console.log(pagination, filters, sorter, barFilters[0]);
+    // window.console.log(pagination, filters, sorter, barFilters[0]);
     if (barFilters === undefined || barFilters.length === 0) {
       IssueStore.setBarFilters(undefined);
     }
@@ -215,7 +215,7 @@ class Test extends Component {
     obj.advancedSearchArgs.statusCode = statusCode || [];
     obj.advancedSearchArgs.priorityCode = priorityCode || [];
     obj.advancedSearchArgs.typeCode = ['issue_test'];
-    obj.searchArgs.issueNum = issueNum && issueNum.length ? issueNum[0] : '';
+    obj.searchArgs.issueNum = issueNum && issueNum.length ? issueNum[0] : barFilters[0];
     obj.searchArgs.summary = summary && summary.length ? summary[0] : '';
     IssueStore.setFilter(obj);
     const { current, pageSize } = IssueStore.pagination;

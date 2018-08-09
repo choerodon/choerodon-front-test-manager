@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Icon } from 'choerodon-ui';
 import { Form } from 'choerodon-ui';
+import PropTypes from 'prop-types';
 import './TextEditToggle.scss';
 
 const Text = props => props.children;
@@ -57,7 +58,7 @@ class TextEditToggle extends Component {
     const { getFieldDecorator } = this.props.form;
     let child = null;
     if (editing) {
-      child = children.filter(current => current.type === Edit);      
+      child = children.filter(current => current.type === Edit);
       child = (<div className="c7n-TextEditToggle-edit">
         <Form layout="vertical">
           {child.map(one =>
@@ -96,10 +97,10 @@ class TextEditToggle extends Component {
 TextEditToggle.Text = Text;
 TextEditToggle.Edit = Edit;
 
-TextEditToggle.propTypes = {
-  // onSubmit: PropTypes.func.isRequired,
-  // originData: PropTypes.any.isRequired,
-  // onCancel: PropTypes.func.isRequired,
+Text.propTypes = {
+  children: PropTypes.node,
 };
-
+Edit.propTypes = {
+  children: PropTypes.node,
+};
 export default Form.create({})(TextEditToggle);

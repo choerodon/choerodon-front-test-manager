@@ -234,7 +234,7 @@ class StepTable extends Component {
                 </div>
               </Text>
               <Edit>
-                <Input autoFocus />,
+                <Input autoFocus />,ss
               </Edit>
             </TextEditToggle>
           </Tooltip>
