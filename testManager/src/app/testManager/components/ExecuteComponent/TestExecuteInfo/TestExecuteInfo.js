@@ -3,7 +3,7 @@ import { Button, Icon, Card, Select, Upload } from 'choerodon-ui';
 import _ from 'lodash';
 import { observer } from 'mobx-react';
 import { FormattedMessage } from 'react-intl';
-import { TextEditToggle, RichTextShow, User } from '../../CommonComponent';
+import { TextEditToggle, RichTextShow, User, CreateIssueTiny } from '../../CommonComponent';
 import { uploadFile } from '../../../api/CommonApi';
 import { delta2Html } from '../../../common/utils';
 import { addDefects, editCycle, deleteAttachment, removeDefect } from '../../../api/CycleExecuteApi';
@@ -210,10 +210,10 @@ class TestExecuteInfo extends Component {
         </div>
       </Option>),
     );
-    return (<div style={{ display: 'flex', padding: 24 }}>
+    return (<div style={{ display: 'flex', marginBottom: 24 }}>
       <Card
         title={null}
-        style={{ flex: 1, height: 236 }}
+        style={{ flex: 1, minHeight: 236 }}
         bodyStyle={styles.cardBodyStyle}
       >
         <div style={styles.cardTitle}>
@@ -335,16 +335,20 @@ class TestExecuteInfo extends Component {
                   {defectsOptions}
                 </Select>
               </Edit>
-            </TextEditToggle>
+            </TextEditToggle>            
           </div>
+          <CreateIssueTiny    
+            typeCode="bug"       
+            // onOk={CycleExecuteStore.getInfo}
+          />
         </div>
       </Card>
       <div style={{ marginLeft: 20, flex: 1 }}>
         {/* 描述 */}
         <Card
           title={null}
-          style={{ width: '100%' }}
-          bodyStyle={{ ...styles.cardBodyStyle, ...{ display: 'flex', flexDirection: 'column', height: 146 } }}
+          style={{ width: '100%', height: '60%' }}
+          bodyStyle={{ ...styles.cardBodyStyle, ...{ display: 'flex', flexDirection: 'column' } }}
         >
           <div style={styles.cardTitle}>
             <Icon type="expand_more" />
@@ -366,7 +370,7 @@ class TestExecuteInfo extends Component {
         </Card>
         <Card
           title={null}
-          style={{ width: '100%', height: 70, marginTop: 20 }}
+          style={{ width: '100%', height: 'calc(40% - 20px)', marginTop: 20 }}
           bodyStyle={styles.cardBodyStyle}
         >
           <div style={styles.cardTitle}>

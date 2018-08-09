@@ -4,7 +4,8 @@ import SelectFocusLoad from './SelectFocusLoad';
 import User from './User/User';
 import UploadInTable from './UploadInTable';
 import DefectSelect from './DefectSelect';
+import CreateIssueTiny from './CreateIssueTiny';
 
 export {
-  TextEditToggle, RichTextShow, SelectFocusLoad, User, UploadInTable, DefectSelect,
+  TextEditToggle, RichTextShow, SelectFocusLoad, User, UploadInTable, DefectSelect, CreateIssueTiny,
 };

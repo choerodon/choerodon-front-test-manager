@@ -513,9 +513,9 @@ class CycleHome extends Component {
   });
 
   render() {
-    window.console.log('render');
+    // window.console.log('render');
     const { CreateCycleExecuteVisible, CreateCycleVisible, EditCycleVisible, CloneCycleVisible,
-      currentCloneCycle, loading, currentEditValue, testList, rightLoading,
+      currentCloneCycle, loading, currentEditValue, testList, rightLoading, leftVisible,
       searchValue, autoExpandParent,
       executePagination,
       statusList,
@@ -624,16 +624,7 @@ class CycleHome extends Component {
           {defects.map((defect, i) => defect.issueInfosDTO.issueName).join(',')}
         </Tooltip>),
     },
-    // {
-    //   title: '模块',
-    //   dataIndex: 'assignedTo',
-    //   key: 'assignedTo',
-    // }, 
-    // {
-    //   title: '标签',
-    //   dataIndex: 'statusName',
-    //   key: 'statusName',
-    // }, 
+
     {
       title: <FormattedMessage id="cycle_executeBy" />,
       dataIndex: 'lastUpdateUser',
@@ -654,7 +645,6 @@ class CycleHome extends Component {
       render(lastUpdateDate) {
         return (<div
           className="c7n-text-dot"
-
         >
           {/* {lastUpdateDate && moment(lastUpdateDate).format('D/MMMM/YY')} */}
           {lastUpdateDate && moment(lastUpdateDate).format('YYYY-MM-DD')}
@@ -668,7 +658,6 @@ class CycleHome extends Component {
       render(assigneeUser) {
         return (<div
           className="c7n-text-dot"
-
         >
           {assigneeUser && assigneeUser.realName}
         </div>);
@@ -701,6 +690,68 @@ class CycleHome extends Component {
         );
       },
     }];
+    const otherColumns = [
+      {
+        title: '模块',
+        dataIndex: 'defects',
+        key: 'component',
+        render(defects) {
+          return (<Tooltip
+            placement="topLeft"
+            title={
+              <div>
+                {defects.map((defect, i) => (
+                  <div>                
+                    {defect.issueInfosDTO.issueName}                
+                  </div>
+                ))}
+              </div>}
+          >
+            {defects.map((defect, i) => defect.issueInfosDTO.issueName).join(',')}
+          </Tooltip>);
+        },
+      }, 
+      {
+        title: '标签',
+        dataIndex: 'defects',
+        key: 'statusName',
+        render(defects) {
+          return (<Tooltip
+            placement="topLeft"
+            title={
+              <div>
+                {defects.map((defect, i) => (
+                  <div>                
+                    {defect.issueInfosDTO.issueName}                
+                  </div>
+                ))}
+              </div>}
+          >
+            <div style={{ display: 'flex', flexFlow: 'row wrap', width: '100%', justifyContent: 'space-between', alignItems: 'center', height: 24, overflow: 'hidden' }}>          
+              {defects.map((defect, i) => (<div
+                style={{
+                  flexShrink: 0,
+                  width: '48%',
+                  color: '#000',              
+                  borderRadius: '100px',
+                  fontSize: '13px',
+                  lineHeight: '20px',
+                  padding: '2px 5px',
+                  textAlign: 'center',
+                  background: 'rgba(0, 0, 0, 0.08)',
+                  // margin: '0 5px',
+                // marginBottom: 3,
+                }}
+                className="c7n-text-dot"
+              >
+                {defect.issueInfosDTO.issueName}
+              </div>))}
+            </div>
+  
+          </Tooltip>);
+        },
+      },
+    ];
     return (
       <Page className="c7n-cycle">
         <Header title={<FormattedMessage id="cycle_name" />}>
@@ -779,7 +830,7 @@ class CycleHome extends Component {
                   )}
                 </div>
               </div>
-              <div className={this.state.leftVisible ? 'c7n-ch-left' : 'c7n-ch-hidden'}>
+              <div className={leftVisible ? 'c7n-ch-left' : 'c7n-ch-hidden'}>
                 <div className="c7n-chl-head">
                   <div className="c7n-chlh-search">
                     <Input prefix={prefix} placeholder="过滤" onChange={this.filterCycle} />
@@ -873,7 +924,8 @@ class CycleHome extends Component {
                   loading={rightLoading}
                   onChange={this.handleExecuteTableChange}
                   dataSource={testList}
-                  columns={columns}
+                  columns={leftVisible ? columns : 
+                    columns.slice(0, 4).concat(otherColumns).concat(columns.slice(4))}
                   onDragEnd={this.onDragEnd}
                   dragKey="executeId"
                 />
