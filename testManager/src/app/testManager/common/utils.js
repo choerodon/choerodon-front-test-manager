@@ -52,7 +52,11 @@ export function issueLink(issueId, typeCode) {
     return `/agile/issue?type=${type}&id=${projectId}&name=${name}&paramIssueId=${issueId}`;
   }
 }
-
+export function createIssueLink() {
+  const menu = AppState.currentMenuType;
+  const { type, id: projectId, name } = menu;
+  return `/agile/issue?type=${type}&id=${projectId}&name=${name}`;
+}
 
 /**
  * 将以base64的图片url数据转换为Blob

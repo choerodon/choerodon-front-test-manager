@@ -58,7 +58,7 @@ class CreateCycleExecute extends Component {
     hasIssue: 1,
   }
 
-  componentWillReceiveProps(nextProps) {   
+  componentWillReceiveProps(nextProps) {
     const { resetFields } = this.props.form;
     if (this.props.visible === false && nextProps.visible === true) {
       resetFields();
@@ -94,7 +94,7 @@ class CreateCycleExecute extends Component {
       if (!err) {
         this.setState({ loading: true });
         window.console.log('Received values of form: ', values);
-        const { assignedTo, cycleId, folderId, priorityCode, 
+        const { assignedTo, cycleId, folderId, priorityCode,
           executionStatus, component, lable, statusCode } = values;
         // const obj = {};
         // [].forEach((key) => {
@@ -102,7 +102,7 @@ class CreateCycleExecute extends Component {
         //     obj[key] = values.key;
         //   }
         // });
-        const filter = {       
+        const filter = {
           advancedSearchArgs: {
             // priorityCode: [
             //   'high',
@@ -110,7 +110,7 @@ class CreateCycleExecute extends Component {
             // statusCode: [
             //   'todo',
             // ],
-          }, 
+          },
           otherArgs: {
             // issueIds: [
             //   '7023',
@@ -138,13 +138,13 @@ class CreateCycleExecute extends Component {
         if (lable) {
           filter.otherArgs.lable = lable;
         }
-        createCycleExecuteFromCycle(folderId || cycleId, this.props.data.cycleId, 
-          assignedTo || AppState.userInfo.id, 
+        createCycleExecuteFromCycle(folderId || cycleId, this.props.data.cycleId,
+          assignedTo || AppState.userInfo.id,
           filter).then((res) => {
           if (res.failed) {
             Choerodon.prompt('当前实例已存在');
           } else {
-            this.props.onOk();          
+            this.props.onOk();
           }
           this.setState({
             loading: false,
@@ -180,7 +180,7 @@ class CreateCycleExecute extends Component {
         //     }
         // }
         // { executionStatus, advancedSearchArgs: { typeCode: ['issue_test'], ...filter } }
-        
+
         // CreateCycleExecute({
         //   ...values,
         //   ...{ statusColor, statusType: type },
@@ -263,9 +263,11 @@ class CreateCycleExecute extends Component {
     const userOptions = userList.map(user =>
       (<Option key={user.id} value={user.id}>
         <div style={{ display: 'inline-flex', alignItems: 'center', padding: '2px' }}>
-          <div style={styles.userOption}>
-            {user.imageUrl ? <img src={user.imageUrl} alt="" /> : user.realName.slice(0, 1)}
-          </div>
+          {user.imageUrl ?
+            <img src={user.imageUrl} alt="" style={{ width: 20, height: 20, borderRadius: '50%', marginRight: '8px' }} /> :
+            <div style={styles.userOption}>{user.realName.slice(0, 1)}
+            </div>
+          }
           <span>{`${user.loginName} ${user.realName}`}</span>
         </div>
       </Option>),
@@ -321,9 +323,9 @@ class CreateCycleExecute extends Component {
       </Option>);
     });
     return (
-      
+
       <Spin spinning={loading}>
-        
+
         <Sidebar
           title={<FormattedMessage id="cycle_createExecute_title" />}
           visible={visible}
@@ -336,24 +338,26 @@ class CreateCycleExecute extends Component {
             }}
             title={
               <FormattedMessage
-                id="cycle_createExecute_content_title" 
-                values={{ type: data.type === 'cycle' ? Choerodon.getMessage('测试循环', 'Cycle')
-                  : Choerodon.getMessage('文件夹', 'Folder'),
-                title: data.title }} 
+                id="cycle_createExecute_content_title"
+                values={{
+                  type: data.type === 'cycle' ? Choerodon.getMessage('测试循环', 'Cycle')
+                    : Choerodon.getMessage('文件夹', 'Folder'),
+                  title: data.title,
+                }}
               />}
             description={<FormattedMessage id="cycle_createExecute_content_description" />}
             link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management/test-cycle/add-execution/"
           >
             <Tabs activeKey={tab} onChange={this.modeChange}>
               <TabPane tab={<FormattedMessage id="cycle_createExecute_createFromQuestion" />} key="1">
-                <Select                
+                <Select
                   style={{ width: 500, margin: '0 0 10px 0' }}
                   label={<FormattedMessage id="cycle_createExecute_testQuestion" />}
-            
+
                   value={selectIssueList}
                   onChange={this.handleIssueChange}
                   loading={selectLoading}
-                  filter                  
+                  filter
                   mode="multiple"
                   filterOption={false}
                   onFilterChange={(value) => {
@@ -392,8 +396,20 @@ class CreateCycleExecute extends Component {
                     loading={selectLoading}
                     style={{ width: 500, margin: '0 0 10px 0' }}
                     label={<FormattedMessage id="cycle_createExecute_selectAssign" />}
-                  
+                    filter
+                    filterOption={false}
                     onChange={this.handleAssignedChange}
+                    onFilterChange={(value) => {
+                      this.setState({
+                        selectLoading: true,
+                      });
+                      getUsers(value).then((userData) => {
+                        this.setState({
+                          userList: userData.content,
+                          selectLoading: false,
+                        });
+                      });
+                    }}
                     onFocus={() => {
                       this.setState({
                         selectLoading: true,
@@ -423,7 +439,7 @@ class CreateCycleExecute extends Component {
                         <Select
                           style={{ width: 500, margin: '0 0 10px 0' }}
                           label={<FormattedMessage id="version" />}
-                    
+
                           loading={selectLoading}
                           onFocus={this.loadVersions}
                         >
@@ -441,7 +457,7 @@ class CreateCycleExecute extends Component {
                           style={{ width: 500, margin: '0 0 10px 0' }}
                           loading={selectLoading}
                           label={<FormattedMessage id="cycle" />}
-                      
+
                           onFocus={() => {
                             if (getFieldValue('versionId')) {
                               getCyclesByVersionId(getFieldValue('versionId')).then((List) => {
@@ -467,7 +483,7 @@ class CreateCycleExecute extends Component {
                           allowClear
                           style={{ width: 500, margin: '0 0 10px 0' }}
                           label={<FormattedMessage id="cycle_createExecute_folder" />}
-                        
+
                           onFocus={() => {
                             if (getFieldValue('cycleId')) {
                               getFoldersByCycleId(getFieldValue('cycleId')).then((List) => {
@@ -488,7 +504,7 @@ class CreateCycleExecute extends Component {
                         header={
                           <div className="c7n-collapse-header-container">
                             <div>
-                              {<FormattedMessage id="cycle_createExecute_assigned" />}                      
+                              {<FormattedMessage id="cycle_createExecute_assigned" />}
                             </div>
                             <div className="c7n-collapse-header-icon">
                               <Icon type="navigate_next" />
@@ -517,7 +533,19 @@ class CreateCycleExecute extends Component {
                               loading={selectLoading}
                               style={{ width: 500, margin: '0 0 10px 0' }}
                               label={<FormattedMessage id="cycle_createExecute_selectAssign" />}
-                             
+                              filter
+                              filterOption={false}
+                              onFilterChange={(value) => {
+                                this.setState({
+                                  selectLoading: true,
+                                });
+                                getUsers(value).then((userData) => {
+                                  this.setState({
+                                    userList: userData.content,
+                                    selectLoading: false,
+                                  });
+                                });
+                              }}
                               onFocus={() => {
                                 this.setState({
                                   selectLoading: true,
@@ -558,7 +586,7 @@ class CreateCycleExecute extends Component {
                               style={{ width: 500, margin: '0 0 10px 0' }}
                               loading={selectLoading}
                               label={<FormattedMessage id="cycle_createExecute_priority" />}
-                           
+
                               onFocus={() => {
                                 this.setState({
                                   selectLoading: true,
@@ -582,7 +610,7 @@ class CreateCycleExecute extends Component {
                             <Select
                               mode="tags"
                               style={{ width: 500, margin: '0 0 10px 0' }}
-                              label={<FormattedMessage id="cycle_createExecute_executeStatus" />}                           
+                              label={<FormattedMessage id="cycle_createExecute_executeStatus" />}
                               loading={selectLoading}
                               onFocus={() => {
                                 this.setState({
@@ -608,7 +636,7 @@ class CreateCycleExecute extends Component {
                               mode="tags"
                               style={{ width: 500, margin: '0 0 10px 0' }}
                               label={<FormattedMessage id="cycle_createExecute_component" />}
-                            
+
                               loading={selectLoading}
                               onFocus={() => {
                                 this.setState({
@@ -634,7 +662,7 @@ class CreateCycleExecute extends Component {
                               mode="tags"
                               style={{ width: 500, margin: '0 0 10px 0' }}
                               label={<FormattedMessage id="cycle_createExecute_label" />}
-                             
+
                               loading={selectLoading}
                               onFocus={() => {
                                 this.setState({
@@ -666,17 +694,17 @@ class CreateCycleExecute extends Component {
                             <FormattedMessage id="cycle_createExecute_yes" />
                           </Radio>
                         </RadioGroup>
-                        {hasIssue === 2 ? 
+                        {hasIssue === 2 ?
                           <FormItem>
                             {getFieldDecorator('statusCode', {
-                            // rules: [{
-                            //   required: true, message: '请输入说明!',
-                            // }],
+                              // rules: [{
+                              //   required: true, message: '请输入说明!',
+                              // }],
                             })(
                               <Select
                                 mode="tags"
                                 style={{ width: 500, margin: '0 0 10px 0' }}
-                                label={<FormattedMessage id="cycle_createExecute_defectStatus" />}                             
+                                label={<FormattedMessage id="cycle_createExecute_defectStatus" />}
                                 loading={selectLoading}
                                 onFocus={() => {
                                   this.setState({
@@ -706,9 +734,9 @@ class CreateCycleExecute extends Component {
 
           </Content>
         </Sidebar>
-        
+
       </Spin>
-      
+
     );
   }
 }
