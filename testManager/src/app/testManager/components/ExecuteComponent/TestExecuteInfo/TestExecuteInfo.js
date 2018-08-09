@@ -2,11 +2,10 @@ import React, { Component } from 'react';
 import { Button, Icon, Card, Select, Upload } from 'choerodon-ui';
 import _ from 'lodash';
 import { observer } from 'mobx-react';
-import { Link } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
-import { TextEditToggle, RichTextShow, User } from '../../CommonComponent';
+import { TextEditToggle, RichTextShow, User, SelectCreateIssueFooter } from '../../CommonComponent';
 import { uploadFile } from '../../../api/CommonApi';
-import { delta2Html, createIssueLink } from '../../../common/utils';
+import { delta2Html } from '../../../common/utils';
 import { addDefects, editCycle, deleteAttachment, removeDefect } from '../../../api/CycleExecuteApi';
 import FullEditor from '../../../components/FullEditor';
 import CycleExecuteStore from '../../../store/project/cycle/CycleExecuteStore';
@@ -327,7 +326,7 @@ class TestExecuteInfo extends Component {
                   mode="multiple"
                   filterOption={false}
                   loading={selectLoading}
-                  footer={<Button funcType="raised" type="primary"><Link style={{ color: 'white' }} to={createIssueLink()} target="_blank">新建缺陷</Link></Button>}
+                  footer={<SelectCreateIssueFooter />}
                   // value={defectIds}
                   style={{ minWidth: 250 }}
                   onChange={this.handleDefectsChange}

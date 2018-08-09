@@ -294,6 +294,8 @@ const zhCN = {
   issue_edit_step_title: '测试详细信息',
   issue_edit_step_content_title: '编辑步骤“{testStep}”的详细信息',
   issue_edit_step_content_description: '您可以编辑测试步骤的详细信息。',
+  // 
+  issue_create_bug: '新建缺陷',
 };
 
 export default zhCN;
