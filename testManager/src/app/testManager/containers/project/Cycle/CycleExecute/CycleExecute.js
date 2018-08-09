@@ -5,7 +5,7 @@ import { observer } from 'mobx-react';
 import { withRouter } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
 import { RichTextShow, User } from '../../../../components/CommonComponent';
-import EditTestDetail from '../../../../components/EditTestDetail';
+// import EditTestDetail from '../../../../components/EditTestDetail';
 import { delta2Html, delta2Text } from '../../../../common/utils';
 import './CycleExecute.less';
 import { StepTable, TestExecuteInfo } from '../../../../components/ExecuteComponent';
@@ -160,12 +160,7 @@ class CycleExecute extends Component {
             <span><FormattedMessage id="refresh" /></span>
           </Button>
         </Header>
-        <EditTestDetail
-          visible={editVisible}
-          onCancel={() => { this.setState({ editVisible: false }); this.getInfo(); }}
-          onOk={(data) => { this.setState({ editVisible: false }); this.getInfo(); }}
-          editing={editing}
-        />
+
         <Spin spinning={loading}>
           <Content>
             <TestExecuteInfo />

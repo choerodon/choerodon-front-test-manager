@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Form, Table, Button, Input, Icon, Card, Select, Spin, Upload, Tooltip } from 'choerodon-ui';
+import { Table, Button, Input, Icon, Card, Select, Spin, Upload, Tooltip } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 import _ from 'lodash';
 import { editCycleStep, deleteAttachment, addDefects } from '../../../api/CycleExecuteApi';
@@ -7,6 +7,7 @@ import { TextEditToggle, RichTextShow, UploadInTable, DefectSelect } from '../..
 import { delta2Html, delta2Text } from '../../../common/utils';
 import { uploadFile } from '../../../api/CommonApi';
 import { getIssueList } from '../../../api/agileApi';
+import EditTestDetail from '../EditTestDetail';
 import './StepTable.scss';
 import CycleExecuteStore from '../../../store/project/cycle/CycleExecuteStore';
 
@@ -63,37 +64,36 @@ const styles = {
   },
 };
 const { Text, Edit } = TextEditToggle;
-const FormItem = Form.Item;
+// const FormItem = Form.Item;
 class StepTable extends Component {
-  state = {
-    selectLoading: false,
+  state = {   
+    editVisible: false,
+    editing: null,
     // issueList: [],
   }
-  editCycleStep = (record) => {
-    this.props.form.validateFields((err, values) => {
-      // this.setState({ loading: true });
+  editCycleStep = (values) => {
+    // this.setState({ loading: true });
 
-      // const formData = new FormData();
-      const data = { ...record, ...values };
-      window.console.log(data);
-      // Object.keys(data).forEach((key) => {
-      //   formData.append(key, JSON.stringify(data[key]));
+    // const formData = new FormData();
+    const data = { ...values };
+    // window.console.log(data);
+    // Object.keys(data).forEach((key) => {
+    //   formData.append(key, JSON.stringify(data[key]));
+    // });
+    delete data.defects;
+    delete data.caseAttachment;
+    delete data.stepAttachment;
+    editCycleStep([data]).then(() => {
+      // this.setState({
+      //   loading: false,
       // });
-      delete data.defects;
-      delete data.caseAttachment;
-      delete data.stepAttachment;
-      editCycleStep([data]).then(() => {
-        // this.setState({
-        //   loading: false,
-        // });
-        CycleExecuteStore.loadDetailList();
-      }).catch((error) => {
-        window.console.log(error);
-        // this.setState({
-        //   loading: false,
-        // });
-        Choerodon.prompt('网络错误');
-      });
+      CycleExecuteStore.loadDetailList();
+    }).catch((error) => {
+      window.console.log(error);
+      // this.setState({
+      //   loading: false,
+      // });
+      Choerodon.prompt('网络错误');
     });
   }; 
   render() {
@@ -102,8 +102,8 @@ class StepTable extends Component {
     const stepStatusList = CycleExecuteStore.getStepStatusList;
     const detailList = CycleExecuteStore.getDetailList;
     const detailPagination = CycleExecuteStore.getDetailPagination;
-    const { getFieldDecorator } = this.props.form;
-    const { selectLoading, issueList } = this.state;
+    // const { getFieldDecorator } = this.props.form;
+    const { editVisible, editing } = this.state;
     const options = stepStatusList.map((status) => {
       const { statusName, statusId, statusColor } = status;
       return (<Option value={statusId} key={statusId}>
@@ -191,7 +191,9 @@ class StepTable extends Component {
         return (
           <div style={{ width: 85 }}>
             <TextEditToggle
-              onSubmit={() => that.editCycleStep(record)}
+              formKey="stepStatus"
+              onSubmit={value => that.editCycleStep({ ...record, stepStatus: value })}
+              originData={stepStatus}
             >
               <Text>
                 <div style={{ ...styles.statusOption, ...{ background: statusColor } }}>
@@ -199,16 +201,9 @@ class StepTable extends Component {
                 </div>
               </Text>
               <Edit>
-                <FormItem style={{ margin: '5px 0 0 0' }}>
-                  {getFieldDecorator('stepStatus', {
-                    initialValue: stepStatus,
-                  })(
-                    <Select autoFocus style={{ width: 85 }}>
-                      {options}
-                    </Select>,
-                  )}
-                </FormItem>
-
+                <Select autoFocus style={{ width: 85 }}>
+                  {options}
+                </Select>
               </Edit>
             </TextEditToggle>
           </div>);
@@ -219,11 +214,13 @@ class StepTable extends Component {
       dataIndex: 'comment',
       key: 'comment',
       render(comment, record) {
+        // window.console.log(delta2Text(comment));
         return (
           <Tooltip title={<RichTextShow data={comment} />}>
             <TextEditToggle
-              onSubmit={() => that.editCycleStep(record)}
-              originData={comment}
+              formKey="comment"
+              onSubmit={(value) => { that.editCycleStep({ ...record, comment: value }); }}
+              originData={delta2Text(comment)}
             >
               <Text>
                 <div
@@ -233,18 +230,11 @@ class StepTable extends Component {
                   }}
                   className="c7n-text-dot"
                 >
-                  {comment}
+                  {delta2Text(comment)}
                 </div>
               </Text>
-              <Edit>
-                <FormItem style={{ margin: '5px 0 0 0' }}>
-                  {getFieldDecorator('comment', {
-                    initialValue: comment,
-                  })(
-                    <Input autoFocus />,
-                  )}
-                </FormItem>
-
+              <Edit>                
+                <Input autoFocus />
               </Edit>
             </TextEditToggle>
           </Tooltip>
@@ -380,26 +370,38 @@ class StepTable extends Component {
           </Edit>
         </TextEditToggle>),
     },
-      // {
-      //   title: null,
-      //   dataIndex: 'executeId',
-      //   key: 'executeId',
-      //   render(executeId, recorder) {
-      //     return (<Icon
-      //       type="mode_edit"
-      //       style={{ cursor: 'pointer' }}
-      //       onClick={() => {
-      //         that.setState({
-      //           editVisible: true,
-      //           editing: { ...recorder, ...{ stepStatusList } },
-      //         });
-      //       }}
-      //     />);
-      //   },
-      // }
+    // {
+    //   title: null,
+    //   dataIndex: 'executeId',
+    //   key: 'executeId',
+    //   render(executeId, recorder) {
+    //     return (<Icon
+    //       type="mode_edit"
+    //       style={{ cursor: 'pointer' }}
+    //       onClick={() => {
+    //         that.setState({
+    //           editVisible: true,
+    //           editing: { ...recorder, ...{ stepStatusList: CycleExecuteStore.getStepStatusList } },
+    //         });
+    //       }}
+    //     />);
+    //   },
+    // },
     ];
     return (
       <div className="StepTable">
+        <EditTestDetail
+          visible={editVisible}
+          onCancel={() => { 
+            this.setState({ editVisible: false });
+            CycleExecuteStore.loadDetailList(); 
+          }}
+          onOk={(data) => { 
+            this.setState({ editVisible: false });
+            CycleExecuteStore.loadDetailList(); 
+          }}
+          editing={editing}
+        />
         <Table
           filterBar={false}
           dataSource={detailList}
@@ -412,4 +414,4 @@ class StepTable extends Component {
 }
 
 
-export default Form.create({})(StepTable);
+export default StepTable;
