@@ -202,7 +202,7 @@ class Test extends Component {
   handleFilterChange = (pagination, filters, sorter, barFilters) => {
     IssueStore.setFilteredInfo(filters);
     IssueStore.setBarFilters(barFilters);
-    window.console.log(barFilters);
+    window.console.log(pagination, filters, sorter, barFilters[0]);
     if (barFilters === undefined || barFilters.length === 0) {
       IssueStore.setBarFilters(undefined);
     }
@@ -689,8 +689,10 @@ class Test extends Component {
             <FormattedMessage id="export" />        
           </Button>
           <Button            
-            onClick={() => {        
-              this.EditIssueNarrow.reloadIssue(this.state.selectedIssue.issueId);   
+            onClick={() => {      
+              if (this.EditIssueNarrow) {
+                this.EditIssueNarrow.reloadIssue(this.state.selectedIssue.issueId);   
+              }                
               const { current, pageSize } = IssueStore.pagination;
               IssueStore.loadIssues(current - 1, pageSize);
             }}

@@ -3,12 +3,12 @@ import { Button, Select, Icon, Modal, Upload, Spin } from 'choerodon-ui';
 import { Content } from 'choerodon-front-boot';
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
-import { editCycleSide, deleteAttachment, removeDefect, addDefects } from '../../api/CycleExecuteApi';
-import { getIssueList } from '../../api/agileApi';
+import { editCycleSide, deleteAttachment, removeDefect, addDefects } from '../../../api/CycleExecuteApi';
+import { getIssueList } from '../../../api/agileApi';
 import './EditTestDetail.less';
-import WYSIWYGEditor from '../WYSIWYGEditor';
+import WYSIWYGEditor from '../../WYSIWYGEditor';
 
-import { text2Delta } from '../../common/utils';
+import { text2Delta } from '../../../common/utils';
 
 const { Sidebar } = Modal;
 const { Option } = Select;
@@ -20,7 +20,7 @@ const styles = {
   statusOption: {
     width: 60,
     textAlign: 'center',
-    borderRadius: '100px',
+    borderRadius: '2px',
     display: 'inline-block',
     color: 'white',
   },
@@ -90,8 +90,15 @@ class EditTestDetail extends Component {
     });
     // 修复默认值不变
     if (this.props.visible === false && nextProps.visible === true) {
+      getIssueList().then((issueData) => {
+        this.setState({
+          issueList: issueData.content,
+          loading: false,
+        });
+      });
       this.setState({
         reset: false,
+        loading: true,
       }, () => {
         this.setState({
           reset: true,
@@ -279,7 +286,7 @@ class EditTestDetail extends Component {
               label={<FormattedMessage id="bug" />}        
               value={defectIds}
               onChange={this.handleDefectsChange}
-              allowClear
+              // allowClear
               loading={selectLoading}
               filter
               mode="multiple"

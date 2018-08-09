@@ -47,13 +47,14 @@ class TextEditToggle extends Component {
     const { children, originData, formKey } = this.props;
     const { getFieldDecorator } = this.props.form;
     let child = null;
-    // window.console.log(children, children[0].props.children);
+    
     if (editing) {
       child = children.filter(current => current.type === Edit);
+      // window.console.log(child[0].props.children[1].type);
       child = (<div className="c7n-TextEditToggle-edit">
         <Form layout="vertical">
           {child.map(one =>
-            (formKey ? <FormItem >
+            (formKey ? <FormItem>
               {getFieldDecorator(formKey, {
                 // rules: [{ required: true, message: '测试步骤为必输项' }],
                 initialValue: originData,
