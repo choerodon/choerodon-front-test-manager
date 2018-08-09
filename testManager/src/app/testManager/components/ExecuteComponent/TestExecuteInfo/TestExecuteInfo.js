@@ -327,7 +327,7 @@ class TestExecuteInfo extends Component {
                   filterOption={false}
                   loading={selectLoading}
                   // value={defectIds}
-                  style={{ minWidth: 200 }}
+                  style={{ minWidth: 250 }}
                   onChange={this.handleDefectsChange}
                   onFilterChange={(value) => { CycleExecuteStore.loadIssueList(value); }}
                   onFocus={() => { CycleExecuteStore.loadIssueList(); }}
