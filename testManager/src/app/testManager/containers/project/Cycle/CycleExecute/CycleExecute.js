@@ -135,7 +135,7 @@ class CycleExecute extends Component {
       executionStatusColor, assigneeUser, lastUpdateUser,
       lastUpdateDate, comment, defects } = cycleData;
     return (
-      <Page className="c7n-cycle">
+      <Page className="c7n-cycleExecute">
         <Header title={<div>
           <Tooltip
             title={Choerodon.getMessage('返回', 'return')}

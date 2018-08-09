@@ -77,7 +77,7 @@ class DefectSelect extends Component {
         dropdownStyle={{
           right: 0,
         }}
-        getPopupContainer={() => document.getElementsByClassName('c7n-cycle')[0]}
+        getPopupContainer={() => document.getElementsByClassName('c7n-cycleExecute')[0]}
         autoFocus
         filter
         mode="multiple"
