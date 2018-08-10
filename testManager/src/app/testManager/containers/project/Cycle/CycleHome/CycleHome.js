@@ -690,7 +690,7 @@ class CycleHome extends Component {
     }];
     const otherColumns = [
       {
-        title: '模块',
+        title: <FormattedMessage id="cycle_createExecute_component" />,
         dataIndex: 'issueInfosDTO',
         key: 'component',
         render(issueInfosDTO) {
@@ -714,7 +714,7 @@ class CycleHome extends Component {
         },
       },
       {
-        title: '标签',
+        title: <FormattedMessage id="cycle_createExecute_label" />,
         dataIndex: 'issueInfosDTO',
         key: 'statusName',
         render(issueInfosDTO) {
