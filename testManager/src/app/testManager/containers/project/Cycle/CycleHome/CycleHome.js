@@ -691,42 +691,50 @@ class CycleHome extends Component {
     const otherColumns = [
       {
         title: '模块',
-        dataIndex: 'defects',
+        dataIndex: 'issueInfosDTO',
         key: 'component',
-        render(defects) {
+        render(issueInfosDTO) {
+          if (!issueInfosDTO) {
+            return null;
+          }
+          const { componentIssueRelDTOList } = issueInfosDTO;
           return (<Tooltip
             placement="topLeft"
             title={
               <div>
-                {defects.map((defect, i) => (
+                {componentIssueRelDTOList.map((component, i) => (
                   <div>
-                    {defect.issueInfosDTO.issueName}
+                    {component.name}
                   </div>
                 ))}
               </div>}
           >
-            {defects.map((defect, i) => defect.issueInfosDTO.issueName).join(',')}
+            {componentIssueRelDTOList.map((component, i) => component.name).join(',')}
           </Tooltip>);
         },
       },
       {
         title: '标签',
-        dataIndex: 'defects',
+        dataIndex: 'issueInfosDTO',
         key: 'statusName',
-        render(defects) {
+        render(issueInfosDTO) {
+          if (!issueInfosDTO) {
+            return null;
+          }
+          const { labelIssueRelDTOList } = issueInfosDTO;
           return (<Tooltip
             placement="topLeft"
             title={
               <div>
-                {defects.map((defect, i) => (
+                {labelIssueRelDTOList.map((label, i) => (
                   <div>
-                    {defect.issueInfosDTO.issueName}
+                    {label.labelName}
                   </div>
                 ))}
               </div>}
           >
             <div style={{ display: 'flex', flexFlow: 'row wrap', width: '100%', justifyContent: 'space-between', alignItems: 'center', height: 24, overflow: 'hidden' }}>
-              {defects.map((defect, i) => (<div
+              {labelIssueRelDTOList.map((label, i) => (<div
                 style={{
                   flexShrink: 0,
                   width: '48%',
@@ -742,7 +750,7 @@ class CycleHome extends Component {
                 }}
                 className="c7n-text-dot"
               >
-                {defect.issueInfosDTO.issueName}
+                {label.labelName}
               </div>))}
             </div>
 
