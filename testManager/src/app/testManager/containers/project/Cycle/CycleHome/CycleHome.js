@@ -34,7 +34,25 @@ const styles = {
 const dataList = [];
 
 const TreeNode = Tree.TreeNode;
-
+function debounce(fn, delay) {
+  // 定时器，用来 setTimeout
+  let timer;
+  // 返回一个函数，这个函数会在一个时间区间结束后的 delay 毫秒时执行 fn 函数
+  return function (e) {
+    // 保存函数调用时的上下文和参数，传递给 fn
+    const context = this;
+    // console.log(args);
+    // 每次这个返回的函数被调用，就清除定时器，以保证不执行 fn
+    clearTimeout(timer);
+    // e.persist();
+    const value = e.target.value;
+    // 当返回的函数被最后一次调用后（也就是用户停止了某个连续的操作），
+    // 再过 delay 毫秒就执行 fn
+    timer = setTimeout(() => {
+      fn.call(context, value);
+    }, delay);
+  };
+}
 @observer
 class CycleHome extends Component {
   state = {
@@ -249,8 +267,7 @@ class CycleHome extends Component {
     }
   }
 
-  filterCycle = (e) => {
-    const value = e.target.value;
+  filterCycle = (value) => {
     // window.console.log(value);
     if (value !== '') {
       const expandedKeys = dataList.map((item) => {
@@ -585,9 +602,9 @@ class CycleHome extends Component {
           <Tooltip title={<RichTextShow data={delta2Html(comment)} />}>
             <div
               className="c7n-text-dot"
-              // style={{
-              //   width: 65,
-              // }}
+            // style={{
+            //   width: 65,
+            // }}
             >
               {delta2Text(comment)}
             </div>
@@ -701,8 +718,8 @@ class CycleHome extends Component {
             title={
               <div>
                 {defects.map((defect, i) => (
-                  <div>                
-                    {defect.issueInfosDTO.issueName}                
+                  <div>
+                    {defect.issueInfosDTO.issueName}
                   </div>
                 ))}
               </div>}
@@ -710,7 +727,7 @@ class CycleHome extends Component {
             {defects.map((defect, i) => defect.issueInfosDTO.issueName).join(',')}
           </Tooltip>);
         },
-      }, 
+      },
       {
         title: '标签',
         dataIndex: 'defects',
@@ -721,18 +738,18 @@ class CycleHome extends Component {
             title={
               <div>
                 {defects.map((defect, i) => (
-                  <div>                
-                    {defect.issueInfosDTO.issueName}                
+                  <div>
+                    {defect.issueInfosDTO.issueName}
                   </div>
                 ))}
               </div>}
           >
-            <div style={{ display: 'flex', flexFlow: 'row wrap', width: '100%', justifyContent: 'space-between', alignItems: 'center', height: 24, overflow: 'hidden' }}>          
+            <div style={{ display: 'flex', flexFlow: 'row wrap', width: '100%', justifyContent: 'space-between', alignItems: 'center', height: 24, overflow: 'hidden' }}>
               {defects.map((defect, i) => (<div
                 style={{
                   flexShrink: 0,
                   width: '48%',
-                  color: '#000',              
+                  color: '#000',
                   borderRadius: '100px',
                   fontSize: '13px',
                   lineHeight: '20px',
@@ -740,14 +757,14 @@ class CycleHome extends Component {
                   textAlign: 'center',
                   background: 'rgba(0, 0, 0, 0.08)',
                   // margin: '0 5px',
-                // marginBottom: 3,
+                  // marginBottom: 3,
                 }}
                 className="c7n-text-dot"
               >
                 {defect.issueInfosDTO.issueName}
               </div>))}
             </div>
-  
+
           </Tooltip>);
         },
       },
@@ -833,7 +850,7 @@ class CycleHome extends Component {
               <div className={leftVisible ? 'c7n-ch-left' : 'c7n-ch-hidden'}>
                 <div className="c7n-chl-head">
                   <div className="c7n-chlh-search">
-                    <Input prefix={prefix} placeholder="过滤" onChange={this.filterCycle} />
+                    <Input prefix={prefix} placeholder="过滤" onChange={debounce(this.filterCycle, 200)} />
                   </div>
                   <div className="c7n-chlh-button">
                     <div
@@ -924,7 +941,7 @@ class CycleHome extends Component {
                   loading={rightLoading}
                   onChange={this.handleExecuteTableChange}
                   dataSource={testList}
-                  columns={leftVisible ? columns : 
+                  columns={leftVisible ? columns :
                     columns.slice(0, 4).concat(otherColumns).concat(columns.slice(4))}
                   onDragEnd={this.onDragEnd}
                   dragKey="executeId"
