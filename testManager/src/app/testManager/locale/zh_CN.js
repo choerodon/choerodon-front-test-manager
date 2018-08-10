@@ -160,7 +160,7 @@ const zhCN = {
   cycle_endTime: '结束时间',
   cycle_totalExecute: '全层级执行数',
   cycle_totalExecuted: '全层级已执行数',
-  cycle_comment: '说明',
+  cycle_comment: '描述',
   cycle_executeBy: '执行方',
   cycle_executeTime: '执行时间',
   cycle_assignedTo: '被指定人',

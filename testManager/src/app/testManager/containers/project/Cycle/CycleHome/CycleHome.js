@@ -899,7 +899,7 @@ class CycleHome extends Component {
                   </div>
                 </div>
                 <ShowCycleData data={currentCycle} />
-                <div style={{ display: 'flex' }}>
+                <div style={{ display: 'flex', marginBottom: 20 }}>
                   <SelectFocusLoad
                     label={<FormattedMessage id="cycle_executeBy" />}
                     request={getUsers}
