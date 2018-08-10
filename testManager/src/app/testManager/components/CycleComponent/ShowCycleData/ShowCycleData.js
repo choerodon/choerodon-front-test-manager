@@ -16,7 +16,7 @@ class ShowCycleData extends Component {
     // 全局执行过的数
     let ExectuedNum = 0;
     Object.keys(cycleCaseList || {}).forEach((key) => {
-      if (key !== 'gray') {
+      if (key !== 'rgba(0,0,0,0.18)') {
         ExectuedNum += cycleCaseList[key];
       }
       allExectueNum += cycleCaseList[key];
