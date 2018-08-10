@@ -4,6 +4,7 @@ import _ from 'lodash';
 import { removeDefect, addDefects } from '../../../api/CycleExecuteApi';
 import { getIssueList } from '../../../api/agileApi';
 import './DefectSelect.scss';
+import SelectCreateIssueFooter from '../SelectCreateIssueFooter';
 
 const { Option } = Select;
 class DefectSelect extends Component {
@@ -76,7 +77,7 @@ class DefectSelect extends Component {
         dropdownStyle={{
           right: 0,
         }}
-        getPopupContainer={() => document.getElementsByClassName('c7n-cycle')[0]}
+        getPopupContainer={() => document.getElementsByClassName('c7n-cycleExecute')[0]}
         autoFocus
         filter
         mode="multiple"
@@ -84,6 +85,7 @@ class DefectSelect extends Component {
         filterOption={false}
         loading={selectLoading}
         defaultValue={defects.map(defect => defect.issueId.toString())}
+        footer={<SelectCreateIssueFooter />}
         // style={{ width: 140 }}
         onChange={this.handleDefectsChange}
         onFilterChange={(value) => {

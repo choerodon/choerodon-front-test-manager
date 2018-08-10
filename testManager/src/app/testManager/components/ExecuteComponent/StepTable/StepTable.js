@@ -233,8 +233,8 @@ class StepTable extends Component {
                   {delta2Text(comment)}
                 </div>
               </Text>
-              <Edit>                
-                <Input autoFocus />
+              <Edit>
+                <Input autoFocus />,ss
               </Edit>
             </TextEditToggle>
           </Tooltip>
@@ -339,27 +339,35 @@ class StepTable extends Component {
           onCancel={CycleExecuteStore.loadDetailList}
         >
           <Text>
-            <Tooltip title={
-              <div>
-                {defects.map((defect, i) => (
-                  <div style={{
-                    fontSize: '13px',
-                    color: 'white',
+            {
+              defects.length > 0 ? <Tooltip title={
+                <div>
+                  {defects.map((defect, i) => (
+                    <div style={{
+                      fontSize: '13px',
+                      color: 'white',
+                    }}
+                    >
+                      {defect.issueInfosDTO && defect.issueInfosDTO.issueName}
+                    </div>))}
+                </div>}
+              >
+                <div
+                  style={{
+                    width: 100,
+                    height: 20,
                   }}
-                  >
-                    {defect.issueInfosDTO && defect.issueInfosDTO.issueName}
-                  </div>))}
-              </div>}
-            >
-              <div
+                  className="c7n-text-dot"
+                >
+                  {defects.map((defect, i) => defect.issueInfosDTO && defect.issueInfosDTO.issueName).join(',')}
+                </div>
+              </Tooltip> : <div
                 style={{
                   width: 100,
+                  height: 20,
                 }}
-                className="c7n-text-dot"
-              >
-                {defects.map((defect, i) => defect.issueInfosDTO && defect.issueInfosDTO.issueName).join(',')}
-              </div>
-            </Tooltip>
+              />
+            }
           </Text>
           <Edit>
             <DefectSelect
@@ -381,7 +389,8 @@ class StepTable extends Component {
     //       onClick={() => {
     //         that.setState({
     //           editVisible: true,
-    //           editing: { ...recorder, ...{ stepStatusList: CycleExecuteStore.getStepStatusList } },
+    //           editing: { ...recorder, ...{ stepStatusList:
+    //  CycleExecuteStore.getStepStatusList } },
     //         });
     //       }}
     //     />);

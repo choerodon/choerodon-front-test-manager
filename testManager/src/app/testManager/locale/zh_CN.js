@@ -160,7 +160,7 @@ const zhCN = {
   cycle_endTime: '结束时间',
   cycle_totalExecute: '全层级执行数',
   cycle_totalExecuted: '全层级已执行数',
-  cycle_comment: '说明',
+  cycle_comment: '描述',
   cycle_executeBy: '执行方',
   cycle_executeTime: '执行时间',
   cycle_assignedTo: '被指定人',
@@ -294,6 +294,8 @@ const zhCN = {
   issue_edit_step_title: '测试详细信息',
   issue_edit_step_content_title: '编辑步骤“{testStep}”的详细信息',
   issue_edit_step_content_description: '您可以编辑测试步骤的详细信息。',
+  // 
+  issue_create_bug: '新建缺陷',
 };
 
 export default zhCN;

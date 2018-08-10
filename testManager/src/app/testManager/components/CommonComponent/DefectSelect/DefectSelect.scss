@@ -1,12 +1,15 @@
-.c7n-cycle {
+.StepTable {
     .ant-select-selection__choice {
         display: flex;
         overflow: visible;
     }
-    .ant-select-dropdown {
-        left: calc(100% - 400px)!important;
-    }
     .ant-select-selection__choice__content {
         width: 70px;
+    }
+}
+
+.c7n-cycleExecute {
+    .ant-select-dropdown--multiple {
+        left: calc(100% - 400px)!important;
     }
 }

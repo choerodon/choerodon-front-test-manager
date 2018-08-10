@@ -135,7 +135,7 @@ class CycleExecute extends Component {
       executionStatusColor, assigneeUser, lastUpdateUser,
       lastUpdateDate, comment, defects } = cycleData;
     return (
-      <Page className="c7n-cycle">
+      <Page className="c7n-cycleExecute">
         <Header title={<div>
           <Tooltip
             title={Choerodon.getMessage('返回', 'return')}
@@ -166,7 +166,7 @@ class CycleExecute extends Component {
             <TestExecuteInfo />
             <Card
               title={null}
-              style={{ margin: 24, marginTop: 0 }}
+              style={{ marginBottom: 24 }}
               bodyStyle={styles.cardBodyStyle}
             >
               <div style={{ ...styles.cardTitle, marginBottom: 10 }}>
@@ -178,7 +178,7 @@ class CycleExecute extends Component {
             </Card>
             <Card
               title={null}
-              style={{ margin: 24 }}
+              // style={{ margin: 24 }}
               bodyStyle={styles.cardBodyStyle}
             >
               <div style={{ ...styles.cardTitle, marginBottom: 10 }}>

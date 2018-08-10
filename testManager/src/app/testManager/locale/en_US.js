@@ -287,5 +287,6 @@ const enUS = {
   issue_edit_step_title: 'Test detail',
   issue_edit_step_content_title: 'Edit detail of test step“{testStep}”',
   issue_edit_step_content_description: 'You can edit the details of the test steps.',
+  issue_create_bug: 'Create bug',
 };
 export default enUS;

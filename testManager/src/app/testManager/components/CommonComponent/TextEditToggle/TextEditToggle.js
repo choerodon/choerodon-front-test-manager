@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Icon } from 'choerodon-ui';
 import { Form } from 'choerodon-ui';
+import PropTypes from 'prop-types';
 import './TextEditToggle.scss';
 
 const Text = props => props.children;
@@ -41,16 +42,23 @@ class TextEditToggle extends Component {
       this.props.onCancel(this.state.originData);
     }
   }
-
+  renderFormItemChild(children) {
+    // formItem只有一个组件起作用
+    if (children instanceof Array) {
+      return children.filter(child => child.type && child.type.prototype instanceof Component)[0];
+    } else if (children.type.prototype instanceof Component) {
+      return children;
+    } else {
+      throw new Error('使用Form功能时，Edit的children必须是Component');
+    }
+  }
   renderChild = () => {
     const { editing } = this.state;
     const { children, originData, formKey } = this.props;
     const { getFieldDecorator } = this.props.form;
     let child = null;
-    
     if (editing) {
       child = children.filter(current => current.type === Edit);
-      // window.console.log(child[0].props.children[1].type);
       child = (<div className="c7n-TextEditToggle-edit">
         <Form layout="vertical">
           {child.map(one =>
@@ -59,7 +67,7 @@ class TextEditToggle extends Component {
                 // rules: [{ required: true, message: '测试步骤为必输项' }],
                 initialValue: originData,
               })(
-                one.props.children,
+                this.renderFormItemChild(one.props.children),
               )}
             </FormItem> : one),
           )}
@@ -89,10 +97,10 @@ class TextEditToggle extends Component {
 TextEditToggle.Text = Text;
 TextEditToggle.Edit = Edit;
 
-TextEditToggle.propTypes = {
-  // onSubmit: PropTypes.func.isRequired,
-  // originData: PropTypes.any.isRequired,
-  // onCancel: PropTypes.func.isRequired,
+Text.propTypes = {
+  children: PropTypes.node,
 };
-
+Edit.propTypes = {
+  children: PropTypes.node,
+};
 export default Form.create({})(TextEditToggle);
