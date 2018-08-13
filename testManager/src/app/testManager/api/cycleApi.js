@@ -72,3 +72,8 @@ export function getFoldersByCycleId(cycleId) {
   const projectId = AppState.currentMenuType.id;
   return axios.post(`/test/v1/projects/${projectId}/cycle/query/folder/cycleId/${cycleId}`);
 }
+
+export function exportCycle(cycleId) {
+  const projectId = AppState.currentMenuType.id;
+  return axios.get(`/test/v1/projects/${projectId}/cycle/case/download/excel/${cycleId}`, { responseType: 'arraybuffer' });
+}

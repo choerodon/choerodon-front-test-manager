@@ -171,6 +171,8 @@ const enUS = {
   cycle_editFolder: 'Edit folder',
   cycle_deleteFolder: 'Delete folder',
   cycle_cloneFolder: 'Clone folder',
+  cycle_exportCycle: 'Export cycle',
+  cycle_exportFolder: 'Export folder',
   cycle_newFolder: 'New folder',
   // 创建测试循环侧边
   cycle_create_title: 'Create cycle',

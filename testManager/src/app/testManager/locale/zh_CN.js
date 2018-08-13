@@ -176,6 +176,8 @@ const zhCN = {
   cycle_editFolder: '编辑文件夹',
   cycle_deleteFolder: '删除文件夹',
   cycle_cloneFolder: '克隆文件夹',
+  cycle_exportCycle: '导出循环',
+  cycle_exportFolder: '导出文件夹',
   cycle_newFolder: '新文件夹',
 
   // 创建测试循环侧边
