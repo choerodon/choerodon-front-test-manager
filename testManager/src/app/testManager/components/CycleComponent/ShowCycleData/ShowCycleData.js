@@ -10,7 +10,7 @@ class ShowCycleData extends Component {
     const { type, build, cycleId, versionName, title,
       description, toDate, environment, fromDate, cycleCaseList, createdUser,
       children,
-    } = this.props.data;   
+    } = this.props.data;
     // 全局数
     let allExectueNum = 0;    
     // 全局执行过的数

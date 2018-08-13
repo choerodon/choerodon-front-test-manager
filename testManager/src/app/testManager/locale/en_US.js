@@ -86,9 +86,13 @@ const enUS = {
   // 测试摘要
   summary_title: 'Test Summary',
   summary_totalTest: 'Total Tests',
+  summary_totalTest_tip: 'Total number of test cases',
   summary_totalRest: 'Total Rests',
+  summary_totalRest_tip: 'Total number of test executions with status "not executed"',
   summary_totalExexute: 'Total Execute',
+  summary_totalExexute_tip: 'Number of test executions other than "not executed"',
   summary_totalNotPlan: 'Not Plan',
+  summary_totalNotPlan_tip: 'Number of test cases without test execution added',
   summary_testSummary: 'Test Summary',
   summary_summaryByVersion: 'By Version',
   summary_summaryByComponent: 'By Component',  

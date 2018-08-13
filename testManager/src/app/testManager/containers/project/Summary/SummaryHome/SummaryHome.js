@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import { Table, Radio, Button, Icon, Spin } from 'choerodon-ui';
+import { Table, Radio, Button, Icon, Spin, Popover } from 'choerodon-ui';
 import { Page, Header, stores } from 'choerodon-front-boot';
 import { Chart, Axis, Geom, Tooltip } from 'bizcharts';
 import { FormattedMessage } from 'react-intl';
@@ -230,34 +230,54 @@ class SummaryHome extends Component {
         <Spin spinning={loading}>
           <div className="c7n-content-container">
             <div className="c7n-statistic-container">
-              <div className="c7n-statistic-item-container">
-                <div className="c7n-statistic-item-colorBar" />
-                <div>
-                  <div className="c7n-statistic-item-title"><FormattedMessage id="summary_totalTest" /></div>
-                  <div className="c7n-statistic-item-num">{totalTest}</div>
+              <Popover
+                content={<div><FormattedMessage id="summary_totalTest_tip" /></div>}
+                title={null}
+              >
+                <div className="c7n-statistic-item-container">
+                  <div className="c7n-statistic-item-colorBar" />
+                  <div>
+                    <div className="c7n-statistic-item-title"><FormattedMessage id="summary_totalTest" /></div>
+                    <div className="c7n-statistic-item-num">{totalTest}</div>
+                  </div>
                 </div>
-              </div>
-              <div className="c7n-statistic-item-container">
-                <div className="c7n-statistic-item-colorBar" style={{ borderColor: '#FFB100' }} />
-                <div>
-                  <div className="c7n-statistic-item-title"><FormattedMessage id="summary_totalRest" /></div>
-                  <div className="c7n-statistic-item-num">{notRun}</div>
+              </Popover>
+              <Popover
+                content={<div><FormattedMessage id="summary_totalRest_tip" /></div>}
+                title={null}
+              >
+                <div className="c7n-statistic-item-container">
+                  <div className="c7n-statistic-item-colorBar" style={{ borderColor: '#FFB100' }} />
+                  <div>
+                    <div className="c7n-statistic-item-title"><FormattedMessage id="summary_totalRest" /></div>
+                    <div className="c7n-statistic-item-num">{notRun}</div>
+                  </div>
                 </div>
-              </div>
-              <div className="c7n-statistic-item-container">
-                <div className="c7n-statistic-item-colorBar" style={{ borderColor: '#00BFA5' }} />
-                <div>
-                  <div className="c7n-statistic-item-title"><FormattedMessage id="summary_totalExexute" /></div>
-                  <div className="c7n-statistic-item-num">{caseNum - notRun}</div>
+              </Popover>
+              <Popover
+                content={<div><FormattedMessage id="summary_totalExexute_tip" /></div>}
+                title={null}
+              >
+                <div className="c7n-statistic-item-container">
+                  <div className="c7n-statistic-item-colorBar" style={{ borderColor: '#00BFA5' }} />
+                  <div>
+                    <div className="c7n-statistic-item-title"><FormattedMessage id="summary_totalExexute" /></div>
+                    <div className="c7n-statistic-item-num">{caseNum - notRun}</div>
+                  </div>
                 </div>
-              </div>
-              <div className="c7n-statistic-item-container">
-                <div className="c7n-statistic-item-colorBar" style={{ borderColor: '#FF7043' }} />
-                <div>
-                  <div className="c7n-statistic-item-title"><FormattedMessage id="summary_totalNotPlan" /></div>
-                  <div className="c7n-statistic-item-num">{totalTest - notPlan}</div>
+              </Popover>
+              <Popover
+                content={<div><FormattedMessage id="summary_totalNotPlan_tip" /></div>}
+                title={null}
+              >
+                <div className="c7n-statistic-item-container">
+                  <div className="c7n-statistic-item-colorBar" style={{ borderColor: '#FF7043' }} />
+                  <div>
+                    <div className="c7n-statistic-item-title"><FormattedMessage id="summary_totalNotPlan" /></div>
+                    <div className="c7n-statistic-item-num">{totalTest - notPlan}</div>
+                  </div>
                 </div>
-              </div>
+              </Popover>
             </div>
             <div className="c7n-tableArea-container">
               <div className="c7n-table-container">
