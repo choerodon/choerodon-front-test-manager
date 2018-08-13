@@ -68,8 +68,7 @@ class TreeTitle extends Component {
         break;
       }
       case 'export': {
-        const iframe = document.getElementById('invisible');
-        iframe.src = 'file.doc';
+        this.props.callback(data, 'EXPORT_CYCLE');
         break;
       }
       default: break;
@@ -110,9 +109,9 @@ class TreeTitle extends Component {
           <Menu.Item key="clone">
             {type === 'folder' ? <FormattedMessage id="cycle_cloneFolder" /> : <FormattedMessage id="cycle_cloneCycle" />}
           </Menu.Item>,
-          // <Menu.Item key="export">
-          //   {type === 'folder' ? '导出文件夹' : '导出循环'}
-          // </Menu.Item>,
+          <Menu.Item key="export">
+            {type === 'folder' ? <FormattedMessage id="cycle_exportFolder" /> : <FormattedMessage id="cycle_exportCycle" />}
+          </Menu.Item>,
         ]);
       }
       return <Menu onClick={this.handleItemClick} style={{ margin: '10px 0 0 28px' }}>{items}</Menu>;
@@ -132,10 +131,10 @@ class TreeTitle extends Component {
           <div>{processBar[status.statusColor]}</div>
         </div>);
       }
-    }    
-    
+    }
+
     return (
-      <div className="c7n-tree-title">        
+      <div className="c7n-tree-title">
         {editing ?
           <Input
             style={{ width: 78 }}
@@ -156,7 +155,7 @@ class TreeTitle extends Component {
             </Tooltip>
           </div>}
 
-        {Object.keys(ProcessBar).length > 0 ? 
+        {Object.keys(ProcessBar).length > 0 ?
           <Popover
             content={<div>{content}</div>}
             title={null}
@@ -181,14 +180,14 @@ class TreeTitle extends Component {
             </div>
           </div>}
         <div role="none" className="c7n-tt-actionButton" onClick={e => e.stopPropagation()}>
-          {data.type === 'temp'
-            ? null :
-            <Dropdown overlay={getMenu(data.type)} trigger={['click']}>
-              <Button shape="circle" icon="more_vert" />
-            </Dropdown>
-          }
+          {/* {data.type === 'temp'
+            ? null : */}
+          <Dropdown overlay={getMenu(data.type)} trigger={['click']}>
+            <Button shape="circle" icon="more_vert" />
+          </Dropdown>
+          {/* } */}
         </div>
-        
+
       </div>
     );
   }

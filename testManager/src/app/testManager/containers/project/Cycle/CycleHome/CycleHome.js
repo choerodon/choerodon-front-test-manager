@@ -6,10 +6,11 @@ import { Tooltip, Table, Button, Icon, Input, Tree, Spin, Modal } from 'choerodo
 import { Link } from 'react-router-dom';
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
+import FileSaver from 'file-saver';
 import moment from 'moment';
 import './CycleHome.scss';
 import { getUsers } from '../../../../api/CommonApi';
-import { getCycles, deleteExecute, getCycleById, editCycleExecute, clone, addFolder, getStatusList } from '../../../../api/cycleApi';
+import { getCycles, deleteExecute, getCycleById, editCycleExecute, clone, addFolder, getStatusList, exportCycle } from '../../../../api/cycleApi';
 import { TreeTitle, CreateCycle, EditCycle, CreateCycleExecute, ShowCycleData, CloneCycle } from '../../../../components/CycleComponent';
 import DragTable from '../../../../components/DragTable';
 import { RichTextShow, SelectFocusLoad } from '../../../../components/CommonComponent';
@@ -325,6 +326,14 @@ class CycleHome extends Component {
         this.setState({
           EditCycleVisible: true,
           currentEditValue: item,
+        });
+        break;
+      }
+      case 'EXPORT_CYCLE': {
+        exportCycle(item.cycleId).then((data) => {
+          const blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+          const fileName = `${AppState.currentMenuType.name}.xls`;
+          FileSaver.saveAs(blob, fileName);
         });
         break;
       }
