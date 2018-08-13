@@ -429,6 +429,7 @@ class CycleHome extends Component {
   }
   renderTreeNodes = data => data.map((item) => {
     const { children, key, cycleCaseList, type } = item;
+    // debugger;
     const { searchValue } = this.state;
     const expandedKeys = CycleStore.getExpandedKeys;
     const index = item.title.indexOf(searchValue);

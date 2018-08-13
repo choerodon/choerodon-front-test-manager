@@ -91,9 +91,13 @@ const zhCN = {
   // 测试摘要
   summary_title: '测试摘要',
   summary_totalTest: '总测试数量',
+  summary_totalTest_tip: '测试用例总数',
   summary_totalRest: '总剩余数量',
+  summary_totalRest_tip: '状态为"未执行"的测试执行总数',
   summary_totalExexute: '总执行数量',
+  summary_totalExexute_tip: '状态为"未执行"以外的测试执行数',
   summary_totalNotPlan: '总未规划数量',
+  summary_totalNotPlan_tip: '未添加测试执行的测试用例数量',
   summary_testSummary: '测试统计',
   summary_summaryByVersion: '按版本',
   summary_summaryByComponent: '按模块',
