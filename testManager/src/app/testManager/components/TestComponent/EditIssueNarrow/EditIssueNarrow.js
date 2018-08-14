@@ -706,7 +706,7 @@ class EditIssueNarrow extends Component {
   }
 
 
-  handleClickMenu(e) {
+  handleClickMenu(e) {    
     switch (e.key) {
       case 'add_worklog': {
         this.setState({ dailyLogShow: true });
@@ -716,7 +716,7 @@ class EditIssueNarrow extends Component {
         this.setState({ copyIssueShow: true });
         break;
       }
-      case 'delete': {
+      case 'item_2': {
         this.handleDeleteIssue(this.state.origin.issueId);
         break;
       }
@@ -747,6 +747,7 @@ class EditIssueNarrow extends Component {
   }
 
   handleDeleteIssue = (issueId) => {
+    console.log(issueId);
     const that = this;
     confirm({
       width: 560,
@@ -992,7 +993,7 @@ class EditIssueNarrow extends Component {
           <FormattedMessage id="issue_edit_copyIssue" />
         </Menu.Item>
         <Permission type={type} projectId={projectId} organizationId={orgId} service={['agile-service.issue.deleteIssue']}>
-          <Menu.Item key="delete">
+          <Menu.Item key="item_2">
             <FormattedMessage id="delete" />
           </Menu.Item>
         </Permission>
