@@ -1,0 +1,7 @@
+1. [manager-service]: group-label-controller, all methods.
+2. [manager-service]: instance-controller, PUT method, 修改实例的配置, path='/v1/instances/{instance_id}/configs/{config_id}'.
+3. [organization-service]: default-back-check-controller, all methods.
+4. [iam-service]: default-back-check-controller, all methods.
+5. [iam-service]: ldap-controller, POST method, 创建LDAP, path='/v1/organizations/{organization_id}/ldaps'.
+6. [iam-service]: ldap-controller, DELETE method, 删除组织下的LDAP, path='/v1/organizations/{organization_id}/ldaps/{id}'.
+7. [iam-service]: user-controller, POST method, 批量查询用户信息列表, path='/v1/users/ids'.
