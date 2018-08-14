@@ -466,7 +466,11 @@ class ReportStory extends Component {
                   pageSize: 10,
                 },
                 issueIds });
-              this.getReportsFromStory(null, issueIds);
+              this.getReportsFromStory({
+                current: 1,
+                total: 0,
+                pageSize: 10,
+              }, issueIds);
             }}
           />
           <Table

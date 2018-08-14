@@ -6,7 +6,7 @@
     "scripts": {
         "start": "choerodon-front-boot start --config ../config.js",
         "build": "choerodon-front-boot build --config ../config.js",
-        "test": "mocha ./test/apiTest/statusService/statusApi.js"
+        "test": " mocha ./test/apiTest/index.js"
     },
     "contributors": [
         "choerodon"
