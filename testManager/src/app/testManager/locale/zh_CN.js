@@ -302,6 +302,12 @@ const zhCN = {
   issue_edit_step_content_description: '您可以编辑测试步骤的详细信息。',
   // 
   issue_create_bug: '新建缺陷',
+
+  // dashboard
+  dashboard_issue: '测试用例管理',
+  dashboard_cycle: '测试循环',
+  dashboard_execute: '执行测试',
+  dashboard_report: '测试报告',
 };
 
 export default zhCN;
