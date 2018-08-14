@@ -1,0 +1,278 @@
+error:
+    RoleAssignmentSearchDTO:
+        sourceId:
+            'null': RoleAssignmentSearchDTO的sourceId为空
+    authorizedGrantTypes:
+        'null': 客户端认证类型不能为空
+    client:
+        additionalInfo:
+            notJson: 客户端的额外信息需要是json字符串
+        create: 客户端创建失败
+        delete: 客户端删除失败
+        not:
+            exist: 该客户端不存在
+        update: 更新客户端失败
+    clientName:
+        exist: 客户端名字已存在
+        'null': 客户端名字不能为空
+    email:
+        empty: 邮箱地址不能为空
+        illegal: 邮箱格式不合法，请输入正确的邮箱
+    event:
+        cancel: 取消事件失败
+        confirm: 确认事件失败
+        create: 创建事件失败
+        preConfirm: 预确认事件失败
+    eventStoreService:
+        timeout: event store 服务没有运行或请求超时
+    excel:
+        io: Excel IO 错误
+        type: excel单元格类型不支持{0}
+    label:
+        id:
+            'null': label id为空
+        init:
+            not:
+                exist: 初始化name = {0}的label不存在
+        not:
+            exist: id={0}的label不存在
+    ldap:
+        account:
+            empty: ldap的账户为空
+        attribute:
+            match: ldap属性匹配失败
+        connect: 连接服务器错误或登录失败
+        create: 无法创建ldap
+        emailField:
+            empty: ldap的emailField为空
+        loginNameField:
+            empty: ldap的loginNameField为空
+        name:
+            empty: ldap的名字为空
+        objectClass:
+            empty: ldap的对象类型为空
+        organizationId:
+            not:
+                match: ldap的组织id和url的组织id不匹配
+            'null': ldap的组织id为空
+        password:
+            empty: ldap的密码为空
+        port:
+            empty: ldap的端口为空
+        serverAddress:
+            empty: ldap的服务地址为空
+        update: 无法更新ldap
+        user:
+            can:
+                not:
+                    update:
+                        password: ldap用户不能更新密码
+    level:
+        illegal: 层级不合法
+    lookup:
+        code:
+            duplication: 快码code重复
+        not:
+            exist: id={0}的lookup不存在
+    lookupValue:
+        id:
+            'null': 快码值id为空
+    memberRole:
+        create: 授权失败
+        data:
+            'null': 角色分配删除时data为空
+        exists:
+            and:
+                use:
+                    update: 用户已分配角色，请使用更新操作
+        not:
+            exist: roleId={0} memberId={1}的memberRole不存在
+        select: 查询授权失败
+        sourceId:
+            'null': 角色分配sourceId为空
+        update: 更新授权失败
+        view:
+            empty: 角色分配删除角色时view为空
+    member_role:
+        view:
+            illegal: 角色分配删除角色时view不合法，只有userView或者roleView两种情况
+    menu:
+        code:
+            empty: 菜单编码为空
+            illegal: 菜单编码不合法
+        code-level-type:
+            exist: 菜单的code-level-type的组合已经存在了
+        create: 菜单创建失败
+        default: 默认菜单，不能编辑或删除
+        delete: 删除菜单失败
+        have:
+            children: 菜单下有其他菜单，不能删除
+        not:
+            exist: 菜单不存在
+        update: 更新菜单失败
+    menuCode:
+        exist: 菜单编码已存在
+        'null': 菜单编码不能为空
+    menuIcon:
+        'null': 菜单图标不能为空
+    menuLevel:
+        'null': 菜单层级不能为空
+    menuName:
+        'null': 菜单名不能为空
+    menuType:
+        illegal: 不合法的菜单类型（应为root，dir或者menu）
+        'null': 菜单类型不能为空（root，dir或者menu）
+    name:
+        empty: 用户名不能为空
+        size: 用户名长度1至32字符
+    objectVersionNumber:
+        'null': 对象的objectVersionNumber为空
+    organization:
+        code:
+            empty: 组织code为空
+            exist: 组织code已存在
+        create: 无法创建组织
+        name:
+            empty: 组织名为空
+        not:
+            exist: 组织不存在
+            has:
+                ldap: 组织{0}下没有id={1}的ldap
+        notFound: 组织不存在
+        send:
+            message: 由于发送事件失败，导致创建组织失败
+        update: 无法更新组织
+    organizationId:
+        not:
+            same: 客户端不在该组织下
+    organization_id:
+        'null': 组织id不能为空
+    parentId:
+        'null': 菜单的父节点id不能为空（无父节点则为0）
+    password:
+        'null': 密码不能为空
+        originalPassword: 原始密码错误
+        policy:
+            length: 密码长度不达标，最少要求{0}个字符
+        update: 密码更新失败
+    passwordPolicy:
+        create: 创建密码策略失败
+        insert: 插入密码策略错误
+        not:
+            exist: id对应的密码策略不存在
+        organizationId:
+            not:
+                same: 密码策略不在该组织下
+        select: 查询密码策略失败
+        update: 更新密码策略失败
+    passwordPolicyName:
+        size: 密码策略名长度1至32
+    permission:
+        delete:
+            fetch:
+                swaggerJson: 删除权限时抓取swagger json失败
+        does:
+            not:
+                exist: 权限不存在
+        id:
+            'null': 权限id为空
+        not:
+            exist: id={0}的权限不存在
+            obsoleting: 权限不是废弃的，不能删除
+    phone:
+        illegal: 手机号码格式错误
+    project:
+        code: code已存在
+        code.duplicated: 项目code重复
+        code.empty: 项目code为空
+        code.exist: 项目code已存在
+        create: 创建项目失败
+        name: 项目名已存在
+        name.empty: 项目名为空
+        not:
+            exist: 项目 {0} 不存在
+        organizationId:
+            'null': 项目的组织Id为空
+        query: 查询项目列表失败
+        select: 查询项目列表失败
+        send:
+            event: 由于发送事件失败，导致创建项目失败
+    role:
+        code:
+            empty: 角色编码为空
+            exist: 角色编码已存在
+            length: 角色code长度不合法，请不要超过128个字符
+            regular:
+                illegal: 角色编码不合法
+        create: 无法创建角色
+        level:
+            empty: 角色层级为空
+            not:
+                equals:
+                    to:
+                        permission:
+                            level: 角色层级和权限层级不一致
+        name:
+            empty: 角色名为空
+            size: 角色名长度错误
+        not:
+            allow:
+                to:
+                    be:
+                        delete: 角色不允许被删除
+            exist: 角色不存在
+            found:
+                by:
+                    label: 角色label name={0},type={1}的角色不存在，请联系管理员添加
+        query: 无法查询角色
+    roleId:
+        'null': 角色id不能为空
+    roleIds:
+        'null': 至少需要一个选择的角色
+    rolePermission:
+        update: 更新权限角色失败
+    role_permission:
+        empty: 该角色没有一个权限，请至少选择一个权限
+    roles:
+        in:
+            same:
+                level: 所选角色不在同一层级
+    secret:
+        'null': 客户端密钥不能为空
+    service:
+        query: 查询服务失败
+        update: 服务信息修改失败
+    token:
+        query: 无法查询Token
+    user:
+        admin:
+            size: 至少需要保留一个管理员用户
+        avatar:
+            size: 头像太大，请上传小于64Kb的头像
+        create: 无法创建用户
+        delete: 用户删除失败
+        disabled: 停用用户失败
+        email:
+            empty: 用户邮箱为空
+            exist: 用户email已存在
+            illegal: 用户邮箱不合法
+        enabled: 启用用户失败
+        loginName:
+            exist: 用户名已存在
+        login_name:
+            empty: 用户登录名为空
+        not:
+            exist: id={0}的用户不存在
+        organizationId: 组织id不匹配
+        photo:
+            save: 头像保存失败
+        query: 无法查询用户
+        update: 无法更新用户
+        validation:
+            fields:
+                empty: 用户校验字段为空
+    userLabel:
+        create: 用户标签创建失败
+        delete: 删除用户标签失败
+        insert: 创建用户标签失败
+        query: 查询用户标签失败
