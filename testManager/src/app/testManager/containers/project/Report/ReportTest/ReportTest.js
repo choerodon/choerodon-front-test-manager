@@ -429,9 +429,13 @@ class ReportTest extends Component {
                   total: 0,
                   pageSize: 10,
                 },
-                issueIds
+                issueIds,
               });
-              this.getReportsFromDefect(null, issueIds);
+              this.getReportsFromDefect({
+                current: 1,
+                total: 0,
+                pageSize: 10,
+              }, issueIds);
             }}
           />
           <Table

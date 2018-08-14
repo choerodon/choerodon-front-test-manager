@@ -183,6 +183,8 @@ class CycleHome extends Component {
       const currentCycle = CycleStore.getCurrentCycle;
       if (!currentCycle.cycleId && Number(cycleId) === node.cycleId) {
         this.setExpandDefault(node);
+      } else if (currentCycle.cycleId === node.cycleId) {
+        CycleStore.setCurrentCycle(node);
       }
       dataList.push({ key, title });
       if (node.children) {
@@ -201,9 +203,9 @@ class CycleHome extends Component {
         {Choerodon.getMessage('当你点击删除后，该条数据将被永久删除，不可恢复!', 'When you click delete, after which the data will be permanently deleted and irreversible!')}
       </div>,
       onOk() {
-        that.setState({
-          rightLoading: true,
-        });
+        // that.setState({
+        //   rightLoading: true,
+        // });
         deleteExecute(executeId)
           .then((res) => {
             that.refresh();
