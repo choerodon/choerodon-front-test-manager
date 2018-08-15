@@ -76,6 +76,7 @@ const enUS = {
   execute_stepAttachment: 'Step attachment', 
   execute_stepStatus: 'Status',
   execute_comment: 'Comment',    
+  execute_copy: 'Copy test step',
   // 执行历史记录表格
   execute_history_oldValue: 'Old value',
   execute_history_newValue: 'New value',  

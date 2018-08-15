@@ -11,6 +11,7 @@ import moment from 'moment';
 import './CycleHome.scss';
 import { getUsers } from '../../../../api/CommonApi';
 import { getCycles, deleteExecute, getCycleById, editCycleExecute, clone, addFolder, getStatusList, exportCycle } from '../../../../api/cycleApi';
+import { editCycle } from '../../../../api/CycleExecuteApi';
 import { TreeTitle, CreateCycle, EditCycle, CreateCycleExecute, ShowCycleData, CloneCycle } from '../../../../components/CycleComponent';
 import DragTable from '../../../../components/DragTable';
 import { RichTextShow, SelectFocusLoad } from '../../../../components/CommonComponent';
@@ -521,7 +522,30 @@ class CycleHome extends Component {
         data={item}
       />);
   });
-
+  quickPass(execute) {
+    const cycleData = { ...execute };
+    if (_.find(this.state.statusList, { projectId: 0, statusName: '通过' })) {
+      cycleData.executionStatus = _.find(this.state.statusList, { projectId: 0, statusName: '通过' }).statusId;
+      delete cycleData.defects;
+      delete cycleData.caseAttachment;
+      delete cycleData.testCycleCaseStepES;
+      delete cycleData.lastRank;
+      delete cycleData.nextRank;
+      this.setState({
+        rightLoading: true,
+      });
+      editCycle(cycleData).then((Data) => {
+        this.loadCycle();
+      }).catch((error) => {
+        this.setState({
+          rightLoading: false,
+        });
+        Choerodon.prompt('网络错误');
+      });
+    } else {
+      Choerodon.prompt('未找到通过');
+    }
+  }
   render() {
     // window.console.log('render');
     const { CreateCycleExecuteVisible, CreateCycleVisible, EditCycleVisible, CloneCycleVisible,
@@ -549,8 +573,8 @@ class CycleHome extends Component {
       render(issueId, record) {
         const { issueInfosDTO } = record;
         return (
-          <Tooltip
-            title={issueInfosDTO &&
+          issueInfosDTO && <Tooltip
+            title={
               <div>
                 <div>{issueInfosDTO.issueName}</div>
                 <div>{issueInfosDTO.summary}</div>
@@ -561,10 +585,10 @@ class CycleHome extends Component {
               style={{
                 width: 100,
               }}
-              to={issueLink(issueInfosDTO && issueInfosDTO.issueId, issueInfosDTO.typeCode)}
+              to={issueLink(issueInfosDTO.issueId, issueInfosDTO.typeCode)}
               target="_blank"
             >
-              {issueInfosDTO && issueInfosDTO.issueName}
+              {issueInfosDTO.issueName}
             </Link>
           </Tooltip>
         );
@@ -616,7 +640,7 @@ class CycleHome extends Component {
           title={
             <div>
               {defects.map((defect, i) => (
-                <div>
+                defect.issueInfosDTO && <div>
                   <Link
                     style={{
                       color: 'white',
@@ -680,9 +704,12 @@ class CycleHome extends Component {
         return (
           record.projectId !== 0 &&
           <div style={{ display: 'flex' }}>
+            <Tooltip title={<FormattedMessage id="execute_quickPass" />}>
+              <Icon type="local_parking" onClick={that.quickPass.bind(that, record)} style={{ cursor: 'pointer' }} />
+            </Tooltip>
             <Icon
               type="explicit2"
-              style={{ cursor: 'pointer' }}
+              style={{ cursor: 'pointer', margin: '0 10px' }}
               onClick={() => {
                 const { history } = that.props;
                 const urlParams = AppState.currentMenuType;
@@ -691,7 +718,7 @@ class CycleHome extends Component {
             />
             <Icon
               type="delete_forever"
-              style={{ cursor: 'pointer', marginLeft: 10 }}
+              style={{ cursor: 'pointer' }}
               onClick={() => {
                 that.deleteExecute(record);
               }}

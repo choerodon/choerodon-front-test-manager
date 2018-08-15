@@ -314,7 +314,7 @@ class TestStepTable extends Component {
                   }
                 </div>
               </div> */}
-              <div style={{ display: 'flex', overflow: 'hidden' }}>
+              <div style={{ display: 'flex', overflow: 'hidden', minHeight: 34 }}>
                 {attachments.map(attachment => (
                   <div style={{ fontSize: '12px', flexShrink: 0, margin: '0 2px' }} className="c7n-text-dot">
                     <Icon type="attach_file" style={{ fontSize: '12px', color: 'rgba(0,0,0,0.65)' }} />
@@ -347,7 +347,9 @@ class TestStepTable extends Component {
       render(attachments, record) {
         return (
           <div>
-            <Icon type="library_books" style={{ cursor: 'pointer', margin: '0 5px' }} onClick={() => that.cloneStep(record.stepId)} />
+            <Tooltip title={<FormattedMessage id="execute_copy" />}>
+              <Icon type="library_books" style={{ cursor: 'pointer', margin: '0 5px' }} onClick={() => that.cloneStep(record.stepId)} />
+            </Tooltip>
             <Icon type="delete_forever" style={{ cursor: 'pointer', margin: '0 5px' }} onClick={() => that.handleDeleteTestStep(record.stepId)} />
           </div>
           // <Dropdown overlay={menus} trigger={['click']} onClick={() => 
