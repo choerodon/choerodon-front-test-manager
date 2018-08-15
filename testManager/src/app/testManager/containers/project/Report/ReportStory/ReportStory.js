@@ -172,7 +172,6 @@ class ReportStory extends Component {
       title: <FormattedMessage id="demand" />,
       dataIndex: 'issueId',
       key: 'issueId',
-      width: '25%',
       render(issue, record) {
         const { defectInfo, defectCount } = record;
         const { issueStatusName, issueName, issueColor, issueId, typeCode, summary } = defectInfo;
@@ -208,7 +207,6 @@ class ReportStory extends Component {
       title: <FormattedMessage id="test" />,
       dataIndex: 'test',
       key: 'test',
-      width: '25%',
       render(test, record) {
         const { issueStatus, linkedTestIssues, defectInfo } = record;
         const { issueId } = defectInfo;
@@ -252,7 +250,6 @@ class ReportStory extends Component {
       title: <FormattedMessage id="execute" />,
       dataIndex: 'cycleId',
       key: 'cycleId',
-      width: '25%',
       render(cycleId, record) {
         const { linkedTestIssues, defectInfo } = record;
         return (<div>{linkedTestIssues.map((testIssue) => {
@@ -333,7 +330,6 @@ class ReportStory extends Component {
       title: <FormattedMessage id="bug" />,
       dataIndex: 'demand',
       key: 'demand',
-      width: '25%',
       render(demand, record) {
         const { linkedTestIssues, defectInfo } = record;
         return (<div>{linkedTestIssues.map((testIssue) => {
@@ -389,17 +385,16 @@ class ReportStory extends Component {
               {
                 testCycleCaseES.map((item) => {
                   const { defects, subStepDefects } = item;
-                  return (<div>{defects.concat(subStepDefects).map((defect, i) => {
+                  return (<div style={{ display: 'flex', flexWrap: 'wrap' }}>{defects.concat(subStepDefects).map((defect, i) => {
                     const { issueInfosDTO } = defect;
                     return (<span style={{
                       fontSize: '13px',
                       color: '#3F51B5',
                     }}
                     >
-                      {i === 0 ? null : '，'}
                       <Link className="c7n-showId" to={issueLink(issueInfosDTO && issueInfosDTO.issueId, issueInfosDTO && issueInfosDTO.typeCode)} target="_blank">
                         {issueInfosDTO && issueInfosDTO.issueName}
-                      </Link>
+                      </Link>{i === defects.concat(subStepDefects).length - 1 ? null : '，'}
                     </span>);
                   })}</div>);
                 })}

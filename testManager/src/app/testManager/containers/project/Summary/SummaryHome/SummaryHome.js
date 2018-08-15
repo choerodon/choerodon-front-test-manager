@@ -243,7 +243,15 @@ class SummaryHome extends Component {
                 </div>
               </Popover>
               <Popover
-                content={<div><FormattedMessage id="summary_totalRest_tip" /></div>}
+                content={
+                  <div>
+                    <FormattedMessage id="summary_total_tip1" />
+                    <FormattedMessage id="summary_total_tip2" values={{
+                      text: <strong style={{ color: 'rgb(255, 85, 0)' }}>{Choerodon.getMessage("未执行", "not executed")}</strong>
+                    }} />
+                    <FormattedMessage id="summary_totalRest_tip3" />
+                  </div>
+                }
                 title={null}
               >
                 <div className="c7n-statistic-item-container">
@@ -255,7 +263,15 @@ class SummaryHome extends Component {
                 </div>
               </Popover>
               <Popover
-                content={<div><FormattedMessage id="summary_totalExexute_tip" /></div>}
+                content={
+                  <div>
+                    <FormattedMessage id="summary_total_tip1" />
+                    <FormattedMessage id="summary_total_tip2" values={{
+                      text: <strong style={{ color: 'rgb(255, 85, 0)' }}>{Choerodon.getMessage("未执行以外", "out of not executed")}</strong>
+                    }} />
+                    <FormattedMessage id="summary_totalExexute_tip3" />
+                  </div>
+                }
                 title={null}
               >
                 <div className="c7n-statistic-item-container">
