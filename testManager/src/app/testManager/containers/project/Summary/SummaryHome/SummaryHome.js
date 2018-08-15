@@ -76,22 +76,7 @@ class SummaryHome extends Component {
           this.getVersionTable(versionList),
           this.getLabelTable(labelList),
           this.getComponentTable(componentList),
-        ]).then(([versionTable, labelTable, componentTable]) => {
-          versionTable.unshift({
-            versionId: null,
-            name: <FormattedMessage id="summary_noVersion" />,
-            num: totalData.totalElements - _.sumBy(versionTable, 'num'),
-          });
-          labelTable.unshift({
-            id: null,          
-            num: totalData.totalElements - _.sumBy(labelTable, 'num'),
-            name: <FormattedMessage id="summary_noLabel" />,           
-          });
-          componentTable.unshift({
-            id: null,           
-            num: totalData.totalElements - _.sumBy(componentTable, 'num'),
-            name: <FormattedMessage id="summary_noComponent" />,          
-          });
+        ]).then(([versionTable, labelTable, componentTable]) => {         
           this.setState({
             versionTable,
             labelTable,
@@ -109,9 +94,16 @@ class SummaryHome extends Component {
         let num = 0;
         if (_.find(data, { typeName: version.versionId.toString() })) {
           num = _.find(data, { typeName: version.versionId.toString() }).value;
-        } 
+        }
         return { name: version.name, versionId: version.versionId, num };
-      });     
+      });
+      const noVersionData = _.find(data, { typeName: null }) || {};
+      const noVersion = {
+        num: noVersionData.value,
+        id: null,
+        name: <FormattedMessage id="summary_noVersion" />,
+      };
+      versionTable.unshift(noVersion);
       resolve(versionTable);
     });
   })
@@ -123,7 +115,15 @@ class SummaryHome extends Component {
           num = _.find(data, { typeName: label.labelId.toString() }).value;
         } 
         return { name: label.labelName, id: label.labelId, num };
-      });     
+      });
+      // 加入无标签项
+      const noLabelData = _.find(data, { typeName: null }) || {};
+      const noLabel = {
+        num: noLabelData.value,
+        id: null,
+        name: <FormattedMessage id="summary_noLabel" />,
+      };
+      labelTable.unshift(noLabel);
       resolve(labelTable);
     });
   })
@@ -133,9 +133,16 @@ class SummaryHome extends Component {
         let num = 0;
         if (_.find(data, { typeName: component.componentId.toString() })) {
           num = _.find(data, { typeName: component.componentId.toString() }).value;
-        } 
+        }
         return { name: component.name, id: component.componentId, num };
-      });     
+      });
+      const noComponentData = _.find(data, { typeName: null }) || {};
+      const noComponent = {
+        num: noComponentData.value,
+        id: null,
+        name: <FormattedMessage id="summary_noComponent" />,
+      };
+      componentTable.unshift(noComponent);
       resolve(componentTable);
     });
   })
@@ -175,7 +182,7 @@ class SummaryHome extends Component {
     time: moment().subtract(list.length - i - 1, 'days').format('D/MMMM'),
     value: item,
   }))
-  
+
   render() {
     const { loading, range, excuteList, createList, totalExcute,
       totalCreate, totalTest, notPlan, notRun, caseNum, versionTable,
@@ -191,15 +198,6 @@ class SummaryHome extends Component {
       key: 'num',
     }];
     const labelColumns = [{
-      title: <FormattedMessage id="summary_component" />,
-      dataIndex: 'name',
-      key: 'name',
-    }, {
-      title: <FormattedMessage id="summary_num" />,
-      dataIndex: 'num',
-      key: 'num',
-    }];
-    const componentColumns = [{
       title: <FormattedMessage id="summary_label" />,
       dataIndex: 'name',
       key: 'name',
@@ -208,8 +206,17 @@ class SummaryHome extends Component {
       dataIndex: 'num',
       key: 'num',
     }];
+    const componentColumns = [{
+      title: <FormattedMessage id="summary_component" />,
+      dataIndex: 'name',
+      key: 'name',
+    }, {
+      title: <FormattedMessage id="summary_num" />,
+      dataIndex: 'num',
+      key: 'num',
+    }];
     const createScale = {
-      
+
       value: { alias: Choerodon.getMessage('创建数', 'Created') },
       time: { alias: '日期', tickCount: 10 },
     };
@@ -218,7 +225,7 @@ class SummaryHome extends Component {
       time: { alias: '日期', tickCount: 10 },
     };
     const width = parseInt((window.innerWidth - 320) / 2, 10);
- 
+
     return (
       <Page>
         <Header title={<FormattedMessage id="summary_title" />}>
@@ -246,9 +253,12 @@ class SummaryHome extends Component {
                 content={
                   <div>
                     <FormattedMessage id="summary_total_tip1" />
-                    <FormattedMessage id="summary_total_tip2" values={{
-                      text: <strong style={{ color: 'rgb(255, 85, 0)' }}>{Choerodon.getMessage("未执行", "not executed")}</strong>
-                    }} />
+                    <FormattedMessage
+                      id="summary_total_tip2"
+                      values={{
+                        text: <strong style={{ color: 'rgb(255, 85, 0)' }}>{Choerodon.getMessage('未执行', 'not executed')}</strong>,
+                      }}
+                    />
                     <FormattedMessage id="summary_totalRest_tip3" />
                   </div>
                 }
@@ -266,9 +276,12 @@ class SummaryHome extends Component {
                 content={
                   <div>
                     <FormattedMessage id="summary_total_tip1" />
-                    <FormattedMessage id="summary_total_tip2" values={{
-                      text: <strong style={{ color: 'rgb(255, 85, 0)' }}>{Choerodon.getMessage("未执行以外", "out of not executed")}</strong>
-                    }} />
+                    <FormattedMessage
+                      id="summary_total_tip2"
+                      values={{
+                        text: <strong style={{ color: 'rgb(255, 85, 0)' }}>{Choerodon.getMessage('未执行以外', 'out of not executed')}</strong>,
+                      }}
+                    />
                     <FormattedMessage id="summary_totalExexute_tip3" />
                   </div>
                 }
@@ -299,7 +312,7 @@ class SummaryHome extends Component {
               <div className="c7n-table-container">
                 <div className="c7n-table-title">
                   <FormattedMessage id="summary_testSummary" />
-                （<FormattedMessage id="summary_summaryByVersion" />）
+                  （<FormattedMessage id="summary_summaryByVersion" />）
                 </div>
                 <Table
                   // rowKey="name"
@@ -313,7 +326,7 @@ class SummaryHome extends Component {
               <div className="c7n-table-container" style={{ margin: '0 15px' }}>
                 <div className="c7n-table-title">
                   <FormattedMessage id="summary_testSummary" />
-                （<FormattedMessage id="summary_summaryByComponent" />）
+                  （<FormattedMessage id="summary_summaryByComponent" />）
                 </div>
                 <Table
                   // rowKey="name"
@@ -327,7 +340,7 @@ class SummaryHome extends Component {
               <div className="c7n-table-container">
                 <div className="c7n-table-title">
                   <FormattedMessage id="summary_testSummary" />
-                （<FormattedMessage id="summary_summaryByLabel" />）
+                  （<FormattedMessage id="summary_summaryByLabel" />）
                 </div>
                 <Table
                   // rowKey="name"
@@ -380,7 +393,7 @@ class SummaryHome extends Component {
                   <Geom
                     type="line"
                     position="time*value"
-                    size={2}                  
+                    size={2}
                   />
                   <Geom
                     type="point"
@@ -392,7 +405,7 @@ class SummaryHome extends Component {
                 </Chart>
                 <div style={{ color: 'rgba(0,0,0,0.65)', margin: 10 }}>
                   <FormattedMessage id="summary_testExecuted" />
-                ：<span style={{ color: 'black', fontWeight: 'bold' }}>{totalExcute}</span>，
+                  ：<span style={{ color: 'black', fontWeight: 'bold' }}>{totalExcute}</span>，
                   <FormattedMessage id="summary_testLast" />
                   <span style={{ color: 'black', fontWeight: 'bold' }}> {range} </span>
                   <FormattedMessage id="day" />
