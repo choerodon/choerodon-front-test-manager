@@ -5,9 +5,10 @@ import { stores, axios } from 'choerodon-front-boot';
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import TimeAgo from 'timeago-react';
-import { cycleLink } from '../../../common/utils';
+import { cycleLink, issueLink } from '../../../common/utils';
 import './TestExecuteTable.scss';
 import { editCycle } from '../../../api/CycleExecuteApi';
+
 const { AppState } = stores;
 
 class TestExecuteTable extends Component {
@@ -67,15 +68,14 @@ class TestExecuteTable extends Component {
       delete cycleData.nextRank;
       this.props.enterLoad();
       editCycle(cycleData).then((Data) => {
-        this.props.onOk()
+        this.props.onOk();
       }).catch((error) => {
-        this.props.leaveLoad()
+        this.props.leaveLoad();
         Choerodon.prompt('网络异常');
       });
     } else {
-      Choerodon.prompt("未找到通过")
+      Choerodon.prompt('未找到通过');
     }
-
   }
   onDragEnd(result) {
     window.console.log(result);
@@ -190,13 +190,20 @@ class TestExecuteTable extends Component {
                     title={
                       <div>
                         {item.defects.map((defect, i) => (
-                          <div style={{
-                            fontSize: '13px',
-                            color: 'white',
-                          }}
-                          >
-                            {defect.issueInfosDTO.issueName}
-                          </div>))}
+                          <div>
+                            <Link
+                              style={{
+                                color: 'white',
+                              }}
+                              to={issueLink(defect.issueInfosDTO.issueId,
+                                defect.issueInfosDTO.typeCode)}
+                              target="_blank"
+                            >
+                              {defect.issueInfosDTO.issueName}
+                            </Link>
+                            <div>{defect.issueInfosDTO.summary}</div>
+                          </div>
+                        ))}
                       </div>}
                   >
                     {item.defects.map((defect, i) => defect.issueInfosDTO.issueName).join(',')}
@@ -215,9 +222,9 @@ class TestExecuteTable extends Component {
               locale={Choerodon.getMessage('zh_CN', 'en')}
             />
           </span>
-          <span style={{ width: 70, lineHeight: '34px' }}>
+          <span style={{ width: 80, lineHeight: '34px' }}>
             <Tooltip title={<FormattedMessage id="execute_quickPass" />}>
-              <Icon type="local_parking" onClick={this.quickPass.bind(this, item)} style={{ cursor: 'pointer' }} />
+              <Icon type="local_parking mlr-3 pointer" onClick={this.quickPass.bind(this, item)} />
             </Tooltip>
 
             <Link to={`/testManager/Cycle/execute/${item.executeId}?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}>

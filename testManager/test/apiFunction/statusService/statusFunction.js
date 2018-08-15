@@ -26,5 +26,19 @@ const statusFunction = {
         console.log(err);
       });
   },
+  createStatus(body) {
+    return chai.request(utils.config.gateway)
+      .post(`/test/v1/projects/${144}/status`)
+      .send(body)
+      .set('Authorization', global.user.token)
+      .set('Content-Type', 'application/json')
+      .then((res) => {
+        res.should.have.status(200);
+        return res;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
 };
 module.exports = statusFunction;
