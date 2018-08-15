@@ -163,7 +163,7 @@ class TestExecuteTable extends Component {
           </span>
           <Tooltip title={item.cycleName}>
 
-            <span style={{ flex: 2, lineHeight: '34px' }} className="c7n-text-dot">
+            <span style={{ flex: 2, lineHeight: '34px', paddingLeft: 4 }} className="c7n-text-dot">
               <Link className="c7n-showId" to={cycleLink(item.cycleId)} target="_blank">
                 {item.cycleName}
               </Link>

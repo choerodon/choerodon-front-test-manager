@@ -655,10 +655,9 @@ class CycleHome extends Component {
               ))}
             </div>}
         >
-          {defects.map((defect, i) => defect.issueInfosDTO.issueName).join(',')}
+          {defects.map((defect, i) => defect.issueInfosDTO && defect.issueInfosDTO.issueName).join(',')}
         </Tooltip>),
     },
-
     {
       title: <FormattedMessage id="cycle_executeBy" />,
       dataIndex: 'lastUpdateUser',
