@@ -771,7 +771,7 @@ class CycleHome extends Component {
                 ))}
               </div>}
           >
-            <div style={{ display: 'flex', flexFlow: 'row wrap', width: '100%', justifyContent: 'space-between', alignItems: 'center', height: 24, overflow: 'hidden' }}>
+            <div style={{ display: 'flex', flexFlow: 'row wrap', width: '100%', justifyContent: 'space-between', alignItems: 'center', maxHeight: 24, overflow: 'hidden' }}>
               {labelIssueRelDTOList.map((label, i) => (<div
                 style={{
                   flexShrink: 0,
