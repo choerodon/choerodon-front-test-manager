@@ -3,6 +3,6 @@ dashboard:
     icon: test
     title: "测试管理"
     description: "测试管理测试"
-    level: site
+    level: project
     sort: 1
 
