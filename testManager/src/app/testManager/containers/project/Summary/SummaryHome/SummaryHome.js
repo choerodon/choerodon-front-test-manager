@@ -101,7 +101,7 @@ class SummaryHome extends Component {
       });
       const noVersionData = _.find(data, { typeName: null }) || {};
       const noVersion = {
-        num: noVersionData.value,
+        num: noVersionData.value || 0,
         id: null,
         name: <FormattedMessage id="summary_noVersion" />,
       };
@@ -122,7 +122,7 @@ class SummaryHome extends Component {
       // 加入无标签项
       const noLabelData = _.find(data, { typeName: null }) || {};
       const noLabel = {
-        num: noLabelData.value,
+        num: noLabelData.value || 0,
         id: null,
         name: <FormattedMessage id="summary_noLabel" />,
       };
@@ -142,7 +142,7 @@ class SummaryHome extends Component {
       });
       const noComponentData = _.find(data, { typeName: null }) || {};
       const noComponent = {
-        num: noComponentData.value,
+        num: noComponentData.value || 0,
         id: null,
         name: <FormattedMessage id="summary_noComponent" />,
       };
@@ -391,13 +391,12 @@ class SummaryHome extends Component {
       dataIndex: 'num',
       key: 'num',
     }];
-    const createScale = {
-
-      value: { alias: Choerodon.getMessage('创建数', 'Created') },
+    const createScale = {      
+      value: { type: 'linear', alias: Choerodon.getMessage('创建数', 'Created') },
       time: { alias: '日期', tickCount: 10 },
     };
-    const executeScale = {
-      value: { alias: Choerodon.getMessage('执行数', 'Executed') },
+    const executeScale = {     
+      value: { type: 'linear', alias: Choerodon.getMessage('执行数', 'Executed') },
       time: { alias: '日期', tickCount: 10 },
     };
     const width = parseInt((window.innerWidth - 320) / 2, 10);
@@ -571,8 +570,14 @@ class SummaryHome extends Component {
                 {/* <Chart height={240} scale={createScale} 
                 width={width} data={createList} padding="auto">
                   <Axis name="creationDay" />
-                  <Axis name="issueCount" />
-                  <Tooltip crosshairs={{ type: 'y' }} />
+                  <Axis
+                    name="issueCount"             
+                    
+                  />
+                  <Tooltip crosshairs={{
+                    type: 'y',    
+                  }}
+                  />
                   <Geom
                     type="line"
                     position="time*value"
