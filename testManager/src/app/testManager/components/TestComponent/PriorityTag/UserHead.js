@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { Button, Table, Spin, Popover, Tooltip, Icon, Avatar } from 'choerodon-ui';
-import './UserHead.scss';
+import {
+ Button, Table, Spin, Popover, Tooltip, Icon, Avatar 
+} from 'choerodon-ui';
 
 const COLOR = {
   medium: {

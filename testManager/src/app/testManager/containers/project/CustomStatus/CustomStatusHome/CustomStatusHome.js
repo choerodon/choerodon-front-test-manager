@@ -1,7 +1,11 @@
 import React, { Component } from 'react';
-import { Table, Tabs, Button, Icon, Spin } from 'choerodon-ui';
+import {
+  Table, Tabs, Button, Icon, Spin, 
+} from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
-import { Page, Header, Content, stores } from 'choerodon-front-boot';
+import {
+  Page, Header, Content, stores, 
+} from 'choerodon-front-boot';
 import CreateStatus from '../../../../components/CreateStatus';
 import EditStatusSide from '../../../../components/EditStatusSide';
 import { getStatusList, deleteStatus } from '../../../../api/TestStatusApi';
@@ -29,6 +33,7 @@ class CustomStatusHome extends Component {
       pageSize: 10,
     },
   }
+
   // getList = (pagination) => {
   //   this.setState({ loading: true });
   //   getStatusList({
@@ -91,18 +96,22 @@ class CustomStatusHome extends Component {
       Choerodon.prompt('网络异常');
     });
   }
+
   refresh=() => {
     this.getList(this.state.statusType);
   }
+
   handleStatusTableChange = (pagination, filters, sorter) => {
     // this.getList(pagination);
   }
+
   handleTabChange = (key) => {
     this.setState({
       statusType: key,
     });
     this.getList(key);
   }
+
   deleteStatus=(data) => {
     this.setState({
       loading: true,
@@ -122,6 +131,7 @@ class CustomStatusHome extends Component {
     });
     // window.console.log(data);
   }
+
   render() {
     const { 
       loading, statusType, 
@@ -155,25 +165,27 @@ class CustomStatusHome extends Component {
       key: 'action',
       render(text, record) {
         return (
-          record.projectId !== 0 &&
+          record.projectId !== 0
+            && (
             <div>
               <Icon
                 type="mode_edit"
                 style={{ cursor: 'pointer' }}
                 onClick={() => {
-                // window.console.log(record);
-                  that.setState({
-                    editVisible: true,
-                    editing: record,
-                  });
-                }}
+      // window.console.log(record);
+      that.setState({
+        editVisible: true,
+        editing: record,
+      });
+    }}
               />
               <Icon 
                 type="delete_forever" 
                 style={{ cursor: 'pointer', marginLeft: 10 }} 
-                onClick={() => { that.deleteStatus(record); }} 
+                onClick={() => { that.deleteStatus(record); }}
               />
             </div>
+            )
         );
       },
     }];
@@ -215,19 +227,19 @@ class CustomStatusHome extends Component {
               <TabPane tab={<FormattedMessage id="status_executeStatus" />} key="CYCLE_CASE">
                 <Table
                   rowKey="statusId"
-                  pagination={statusPagination}
+                  // pagination={statusPagination}
                   columns={columns}
                   dataSource={statusList}
-                  onChange={this.handleStatusTableChange}
+                  // onChange={this.handleStatusTableChange}
                 />
               </TabPane>
               <TabPane tab={<FormattedMessage id="status_steptatus" />} key="CASE_STEP">
                 <Table
                   rowKey="statusId"
-                  pagination={statusPagination}
+                  // pagination={statusPagination}
                   columns={columns}
                   dataSource={statusList}
-                  onChange={this.handleStatusTableChange}
+                  // onChange={this.handleStatusTableChange}
                 />
               </TabPane>
             </Tabs>

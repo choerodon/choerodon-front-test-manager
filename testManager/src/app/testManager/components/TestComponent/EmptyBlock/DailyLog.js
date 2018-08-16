@@ -26,13 +26,16 @@ class EmptyBlock extends Component {
           <div className="c7n-imgWrap">
             <img src={this.props.pic} alt="" className="c7n-img" />
           </div>
-          <div className="c7n-textWrap">
+          <div
+            className="c7n-textWrap"
+            style={{ width: this.props.textWidth || 150 }}
+          >
             <h1 className="c7n-title">
               {this.props.title || ''}
             </h1>
-            <p className="c7n-des">
+            <div className="c7n-des">
               {this.props.des || ''}
-            </p>
+            </div>
           </div>
         </div>
       </div>

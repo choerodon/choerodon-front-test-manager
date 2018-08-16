@@ -52,6 +52,7 @@
         "no-console": "error",
         "no-debugger": "off",
         "react/sort-comp": "off",
+        "react/destructuring-assignment": "off",
         "jsx-a11y/anchor-is-valid": [
             "warn",
             {
