@@ -945,7 +945,11 @@ class Test extends Component {
                       }}
                     >
                       <Icon type="playlist_add icon" style={{ marginRight: -2 }} />
+<<<<<<< HEAD
                       <span><FormattedMessage id="issue_issueCreate" /></span>
+=======
+                      <FormattedMessage id="issue_issueCreate" />
+>>>>>>> [FIX]修改样式
                     </Button>
                   )}
                 </div>

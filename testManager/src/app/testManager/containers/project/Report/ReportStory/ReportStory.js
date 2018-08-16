@@ -1,8 +1,12 @@
 
 import React, { Component } from 'react';
-import { Page, Header, Content, stores } from 'choerodon-front-boot';
+import {
+  Page, Header, Content, stores,
+} from 'choerodon-front-boot';
 import { Link } from 'react-router-dom';
-import { Table, Menu, Dropdown, Button, Icon, Collapse, Tooltip } from 'choerodon-ui';
+import {
+  Table, Menu, Dropdown, Button, Icon, Collapse, Tooltip,
+} from 'choerodon-ui';
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import ReportSelectIssue from '../../../../components/ReportSelectIssue';
@@ -15,7 +19,7 @@ import ReportStoryStore from '../../../../store/project/report/ReportStoryStore'
 import './ReportStory.scss';
 
 const { AppState } = stores;
-const Panel = Collapse.Panel;
+const { Panel } = Collapse;
 const ICON = {
   story: 'turned_in',
   bug: 'bug_report',
@@ -59,9 +63,11 @@ class ReportStory extends Component {
     openId: {},
     issueIds: [],
   }
+
   componentDidMount() {
     this.getInfo();
   }
+
   getInfo = () => {
     this.setState({
       loading: true,
@@ -81,10 +87,12 @@ class ReportStory extends Component {
       });
     });
   }
+
   sliceIssueIds = (arr, pagination) => {
     const { current, pageSize } = pagination;
     return arr.slice(pageSize * (current - 1), pageSize * current);
   }
+
   getReportsFromStory = (pagination, issueIds = this.state.issueIds) => {
     const Pagination = pagination || this.state.pagination;
 
@@ -126,9 +134,11 @@ class ReportStory extends Component {
       Choerodon.prompt('网络异常');
     });
   }
+
   handleTableChange = (pagination, filters, sorter) => {
     this.getReportsFromStory(pagination);
   }
+
   handleOpen = (issueId, keys) => {
     const { openId } = this.state;
     openId[issueId] = keys;
@@ -143,15 +153,18 @@ class ReportStory extends Component {
     //   });
     // }
   }
+
   render() {
-    const { selectVisible, reportList, loading, pagination,
-      issueStatusList, statusList, openId } = this.state;
+    const {
+      selectVisible, reportList, loading, pagination,
+      issueStatusList, statusList, openId,
+    } = this.state;
     const urlParams = AppState.currentMenuType;
     const that = this;
     const menu = (
       <Menu style={{ marginTop: 35 }}>
         <Menu.Item key="0">
-          <Link to={`/testManager/report/story?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`} >
+          <Link to={`/testManager/report/story?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}>
             <FormattedMessage id="report_dropDown_demand" />
           </Link>
         </Menu.Item>
@@ -174,21 +187,23 @@ class ReportStory extends Component {
       key: 'issueId',
       render(issue, record) {
         const { defectInfo, defectCount } = record;
-        const { issueStatusName, issueName, issueColor, issueId, typeCode, summary } = defectInfo;
+        const {
+          issueStatusName, issueName, issueColor, issueId, typeCode, summary,
+        } = defectInfo;
         return (
           <div>
             <div className="c7n-collapse-header-container">
-              <Tooltip title={
+              <Tooltip title={(
                 <div>
                   <div>{issueName}</div>
                   <div>{summary}</div>
                 </div>
-              }
+              )}
               >
                 <Link className="c7n-showId" to={issueLink(issueId, typeCode)} target="_blank">
                   {issueName}
                 </Link>
-              </Tooltip>              
+              </Tooltip>
               <div className="c7n-issue-status-icon">
                 <span style={{ color: issueColor, borderColor: issueColor }}>
                   {issueStatusName}
@@ -197,7 +212,10 @@ class ReportStory extends Component {
 
             </div>
             <div>
-              <FormattedMessage id="report_defectCount" />: {defectCount}
+              <FormattedMessage id="report_defectCount" />
+              :
+              {' '}
+              {defectCount}
             </div>
           </div>
         );
@@ -217,30 +235,32 @@ class ReportStory extends Component {
             onChange={(keys) => { that.handleOpen(issueId, keys); }}
           >
             {
-              linkedTestIssues.map((issue, i) => (<Panel
-                showArrow={false}
-                header={
-                  // 展开时加margin
-                  <div style={{
-                    marginBottom: openId[issueId] &&
-                      openId[issueId].includes(issue.issueId.toString()) &&
-                      issue.testCycleCaseES.length > 1
-                      ? (issue.testCycleCaseES.length * 30) - 48 : 0,
-                  }}
-                  >
-                    <div style={{ display: 'flex', alignItems: 'center' }}>
-                      <Icon type="navigate_next" className="c7n-collapse-icon" />
-                      <Tooltip title={issue.issueName}>
-                        <Link className="c7n-showId" to={issueLink(issue.issueId, 'issue_test')} target="_blank">
-                          {issue.issueName}
-                        </Link>
-                      </Tooltip>
-                    </div>
-                    <div className="c7n-report-summary">{issue.summary}</div>
-                  </div>
-                }
-                key={issue.issueId}
-              />))
+              linkedTestIssues.map((issue, i) => (
+                <Panel
+                  showArrow={false}
+                  header={
+                    (
+                      <div style={{
+                        marginBottom: openId[issueId]
+                          && openId[issueId].includes(issue.issueId.toString())
+                          && issue.testCycleCaseES.length > 1
+                          ? (issue.testCycleCaseES.length * 30) - 48 : 0,
+                      }}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                          <Icon type="navigate_next" className="c7n-collapse-icon" />
+                          <Tooltip title={issue.issueName}>
+                            <Link className="c7n-showId" style={{ display: 'inline-block' }} to={issueLink(issue.issueId, 'issue_test')} target="_blank">
+                              {issue.issueName}
+                            </Link>
+                          </Tooltip>
+                        </div>
+                        <div className="c7n-report-summary">{issue.summary}</div>
+                      </div>
+                    )}
+                  key={issue.issueId}
+                />
+              ))
             }
           </Collapse>
         );
@@ -252,9 +272,12 @@ class ReportStory extends Component {
       key: 'cycleId',
       render(cycleId, record) {
         const { linkedTestIssues, defectInfo } = record;
-        return (<div>{linkedTestIssues.map((testIssue) => {
-          const { testCycleCaseES, issueId } = testIssue;
+        return (
+          <div>
+            {linkedTestIssues.map((testIssue) => {
+              const { testCycleCaseES, issueId } = testIssue;
 
+<<<<<<< HEAD
           // console.log()
           const totalExecute = testCycleCaseES.length;
           // const todoExecute = 0;
@@ -324,6 +347,89 @@ class ReportStory extends Component {
             );
         })}
         </div>);
+=======
+              // console.log()
+              const totalExecute = testCycleCaseES.length;
+              // const todoExecute = 0;
+              // let doneExecute = 0;
+              const executeStatus = {};
+              const caseShow = testCycleCaseES.map((execute) => {
+                // 执行的颜色
+                const { executionStatus } = execute;
+                const statusColor = _.find(statusList, { statusId: executionStatus })
+                  ? _.find(statusList, { statusId: executionStatus }).statusColor : '';
+                const statusName = _.find(statusList, { statusId: executionStatus })
+                  && _.find(statusList, { statusId: executionStatus }).statusName;
+                // if (statusColor !== 'gray') {
+                //   doneExecute += 1;
+                // }
+                if (!executeStatus[statusName]) {
+                  executeStatus[statusName] = 1;
+                } else {
+                  executeStatus[statusName] += 1;
+                }
+                const marginBottom = Math.max((execute.defects.length + execute.subStepDefects.length) - 1, 0) * 30;
+                return (
+                  <div className="c7n-cycle-show-container" style={{ marginBottom }}>
+                    <div>
+                      <Tooltip title={`${execute.cycleName}${execute.folderName ? `/${execute.folderName}` : ''}`}>
+                        <Link className="c7n-showId " style={{ display: 'inline-block' }} to={cycleLink(execute.cycleId)} target="_blank">
+                          {execute.cycleName}
+                          {execute.folderName ? `/${execute.folderName}` : ''}
+                        </Link>
+                      </Tooltip>
+                    </div>
+                    <div
+                      className="c7n-collapse-text-icon"
+                      style={{ color: statusColor, borderColor: statusColor }}
+                    >
+                      {statusName}
+                    </div>
+                    <Link
+                      style={{ lineHeight: '13px' }}
+                      to={`/testManager/Cycle/execute/${execute.executeId}?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}
+                    >
+                      <Icon type="explicit2" style={{ marginLeft: 10, color: 'black' }} />
+                    </Link>
+                  </div>);
+              });
+              // window.console.log(executeStatus);
+              return openId[record.defectInfo.issueId] && openId[record.defectInfo.issueId]
+                .includes(issueId.toString()) ? (
+                  <div
+                    style={{ minHeight: totalExecute === 0 ? 50 : 30 }}
+                  >
+                    {caseShow}
+                    {' '}
+
+                  </div>
+                )
+                : (
+                  <div style={{ height: 50 }}>
+                    <div>
+                      <FormattedMessage id="report_total" />
+                      ：
+                      {totalExecute}
+                    </div>
+                    <div style={{ display: 'flex' }}>
+                      {
+                        Object.keys(executeStatus).map(key => (
+                          <div>
+                            <span>
+                              {key}
+                              ：
+                            </span>
+                            <span>{executeStatus[key]}</span>
+                          </div>
+                        ))
+                      }
+                    </div>
+                  </div>
+                );
+            })}
+          </div>
+        );
+>>>>>>> [FIX]修改样式
       },
     }, {
       className: 'c7n-table-white',
@@ -332,75 +438,102 @@ class ReportStory extends Component {
       key: 'demand',
       render(demand, record) {
         const { linkedTestIssues, defectInfo } = record;
-        return (<div>{linkedTestIssues.map((testIssue) => {
-          const { testCycleCaseES, issueId } = testIssue;
-          if (testCycleCaseES.length === 0) {
-            return <div style={{ minHeight: 50 }} />;
-          }
-          return (openId[record.defectInfo.issueId] && openId[record.defectInfo.issueId]
-            .includes(issueId.toString()) ? <div>
-              {
-                testCycleCaseES.map((item) => {
-                  const { defects, subStepDefects } = item;
-                  return (<div>{defects.concat(subStepDefects).length > 0 ?
-                    defects.concat(subStepDefects).map((defect) => {
-                      const { issueInfosDTO } = defect;
-                      return (<div className="c7n-issue-show-container">
-                        <Tooltip title={issueInfosDTO && issueInfosDTO.issueName}>
-                          <Link 
-                            className="c7n-showId"
-                            to={issueLink(issueInfosDTO && issueInfosDTO.issueId, 
-                              issueInfosDTO && issueInfosDTO.typeCode)}
-                            target="_blank"
-                          >
-                            {issueInfosDTO && issueInfosDTO.issueName}
-                          </Link>
-                        </Tooltip>
-                        <div className="c7n-issue-status-icon">
-                          <span style={{
-                            color: issueInfosDTO && issueInfosDTO.issueColor,
-                            borderColor: issueInfosDTO && issueInfosDTO.issueColor,
-                          }}
-                          >
-                            {issueInfosDTO && issueInfosDTO.issueStatusName}
-                          </span>
-                        </div>
-                        {defect.defectType === 'CASE_STEP' &&
-                          <div style={{
-                            marginLeft: 20,
-                            color: 'white',
-                            padding: '0 8px',
-                            background: 'rgba(0,0,0,0.20)',
-                            borderRadius: '100px',
-                            whiteSpace: 'nowrap',
-                          }}
-                          ><FormattedMessage id="step" /></div>}
-                      </div>);
-                    }) : <div className="c7n-issue-show-container">－</div>}</div>);
-                })
-
+        return (
+          <div>
+            {linkedTestIssues.map((testIssue) => {
+              const { testCycleCaseES, issueId } = testIssue;
+              if (testCycleCaseES.length === 0) {
+                return <div style={{ minHeight: 50 }} />;
               }
-            </div> :
-            <div style={{ minHeight: 50 }}>
-              {
-                testCycleCaseES.map((item) => {
-                  const { defects, subStepDefects } = item;
-                  return (<div style={{ display: 'flex', flexWrap: 'wrap' }}>{defects.concat(subStepDefects).map((defect, i) => {
-                    const { issueInfosDTO } = defect;
-                    return (<span style={{
-                      fontSize: '13px',
-                      color: '#3F51B5',
-                    }}
-                    >
-                      <Link className="c7n-showId" to={issueLink(issueInfosDTO && issueInfosDTO.issueId, issueInfosDTO && issueInfosDTO.typeCode)} target="_blank">
-                        {issueInfosDTO && issueInfosDTO.issueName}
-                      </Link>{i === defects.concat(subStepDefects).length - 1 ? null : '，'}
-                    </span>);
-                  })}</div>);
-                })}
-            </div>);
-        })}
-        </div>);
+              return (openId[record.defectInfo.issueId] && openId[record.defectInfo.issueId]
+                .includes(issueId.toString()) ? (
+                  <div>
+                    {
+                      testCycleCaseES.map((item) => {
+                        const { defects, subStepDefects } = item;
+                        return (
+                          <div>
+                            {defects.concat(subStepDefects).length > 0
+                              ? defects.concat(subStepDefects).map((defect) => {
+                                const { issueInfosDTO } = defect;
+                                return (
+                                  <div className="c7n-issue-show-container">
+                                    <Tooltip title={issueInfosDTO && issueInfosDTO.issueName}>
+                                      <Link
+                                        className="c7n-showId"
+                                        to={issueLink(issueInfosDTO && issueInfosDTO.issueId,
+                                          issueInfosDTO && issueInfosDTO.typeCode)}
+                                        target="_blank"
+                                      >
+                                        {issueInfosDTO && issueInfosDTO.issueName}
+                                      </Link>
+                                    </Tooltip>
+                                    <div className="c7n-issue-status-icon">
+                                      <span style={{
+                                        color: issueInfosDTO && issueInfosDTO.issueColor,
+                                        borderColor: issueInfosDTO && issueInfosDTO.issueColor,
+                                      }}
+                                      >
+                                        {issueInfosDTO && issueInfosDTO.issueStatusName}
+                                      </span>
+                                    </div>
+                                    {defect.defectType === 'CASE_STEP'
+                                      && (
+                                        <div style={{
+                                          marginLeft: 20,
+                                          color: 'white',
+                                          padding: '0 8px',
+                                          background: 'rgba(0,0,0,0.20)',
+                                          borderRadius: '100px',
+                                          whiteSpace: 'nowrap',
+                                        }}
+                                        >
+                                          <FormattedMessage id="step" />
+
+                                        </div>
+                                      )}
+                                  </div>
+                                );
+                              }) : <div className="c7n-issue-show-container">－</div>}
+
+                          </div>
+                        );
+                      })
+
+                    }
+                  </div>
+                )
+                : (
+                  <div style={{ minHeight: 50 }}>
+                    {
+                      testCycleCaseES.map((item) => {
+                        const { defects, subStepDefects } = item;
+                        return (
+                          <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+                            {defects.concat(subStepDefects).map((defect, i) => {
+                              const { issueInfosDTO } = defect;
+                              return (
+                                <span style={{
+                                  fontSize: '13px',
+                                  color: '#3F51B5',
+                                }}
+                                >
+                                  <Link className="c7n-showId" to={issueLink(issueInfosDTO && issueInfosDTO.issueId, issueInfosDTO && issueInfosDTO.typeCode)} target="_blank">
+                                    {issueInfosDTO && issueInfosDTO.issueName}
+                                  </Link>
+                                  {i === defects.concat(subStepDefects).length - 1 ? null : '，'}
+                                </span>
+                              );
+                            })}
+
+                          </div>
+                        );
+                      })}
+                  </div>
+                ));
+            })}
+          </div>
+        );
       },
     }];
 
@@ -454,13 +587,15 @@ class ReportStory extends Component {
             visible={selectVisible}
             onCancel={() => { this.setState({ selectVisible: false }); }}
             onOk={(issueIds) => {
-              this.setState({ selectVisible: false,
+              this.setState({
+                selectVisible: false,
                 pagination: {
                   current: 1,
                   total: 0,
                   pageSize: 10,
                 },
-                issueIds });
+                issueIds,
+              });
               this.getReportsFromStory({
                 current: 1,
                 total: 0,

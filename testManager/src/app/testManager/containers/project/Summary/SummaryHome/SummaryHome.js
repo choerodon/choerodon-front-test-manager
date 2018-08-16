@@ -10,7 +10,11 @@ import {
 import { FormattedMessage } from 'react-intl';
 import moment from 'moment';
 import _ from 'lodash';
+<<<<<<< HEAD
 import ReactEcharts from 'echarts-for-react';
+=======
+
+>>>>>>> [FIX]修改样式
 import {
   getCaseNotPlain, getCaseNotRun, getCaseNum, getCycleRange, getCreateRange, getIssueStatistic,
 } from '../../../../api/summaryApi';
@@ -28,12 +32,22 @@ class SummaryHome extends Component {
       range: '7',
       excuteList: [],
       createList: [],
+<<<<<<< HEAD
+=======
+      // totalIssue: 0,
+>>>>>>> [FIX]修改样式
       totalTest: 0,
       notPlan: 0,
       notRun: 0,
       caseNum: 0,
       totalExcute: 0,
       totalCreate: 0,
+<<<<<<< HEAD
+=======
+      // versionList: [],
+      // componentList: [],
+      // labelList: [],
+>>>>>>> [FIX]修改样式
       versionTable: [],
       componentTable: [],
       labelTable: [],
@@ -72,6 +86,12 @@ class SummaryHome extends Component {
           totalExcute: _.sum(excuteList),
           createList: this.createTransform(createList, range),
           totalCreate: _.sumBy(createList, 'issueCount'),
+<<<<<<< HEAD
+=======
+          // versionList,
+          // componentList,
+          // labelList,
+>>>>>>> [FIX]修改样式
         });
         Promise.all([
           this.getVersionTable(versionList),
@@ -101,7 +121,7 @@ class SummaryHome extends Component {
       });
       const noVersionData = _.find(data, { typeName: null }) || {};
       const noVersion = {
-        num: noVersionData.value,
+        num: noVersionData.value || 0,
         id: null,
         name: <FormattedMessage id="summary_noVersion" />,
       };
@@ -122,7 +142,7 @@ class SummaryHome extends Component {
       // 加入无标签项
       const noLabelData = _.find(data, { typeName: null }) || {};
       const noLabel = {
-        num: noLabelData.value,
+        num: noLabelData.value || 0,
         id: null,
         name: <FormattedMessage id="summary_noLabel" />,
       };
@@ -142,7 +162,7 @@ class SummaryHome extends Component {
       });
       const noComponentData = _.find(data, { typeName: null }) || {};
       const noComponent = {
-        num: noComponentData.value,
+        num: noComponentData.value || 0,
         id: null,
         name: <FormattedMessage id="summary_noComponent" />,
       };
@@ -391,13 +411,12 @@ class SummaryHome extends Component {
       dataIndex: 'num',
       key: 'num',
     }];
-    const createScale = {
-
-      value: { alias: Choerodon.getMessage('创建数', 'Created') },
+    const createScale = {      
+      value: { type: 'linear', alias: Choerodon.getMessage('创建数', 'Created') },
       time: { alias: '日期', tickCount: 10 },
     };
-    const executeScale = {
-      value: { alias: Choerodon.getMessage('执行数', 'Executed') },
+    const executeScale = {     
+      value: { type: 'linear', alias: Choerodon.getMessage('执行数', 'Executed') },
       time: { alias: '日期', tickCount: 10 },
     };
     const width = parseInt((window.innerWidth - 320) / 2, 10);
@@ -427,7 +446,10 @@ class SummaryHome extends Component {
                 </div>
               </Popover>
               <Popover
+<<<<<<< HEAD
                 placement="topLeft"
+=======
+>>>>>>> [FIX]修改样式
                 content={(
                   <div>
                     <FormattedMessage id="summary_total_tip1" />
@@ -438,8 +460,13 @@ class SummaryHome extends Component {
                       }}
                     />
                     <FormattedMessage id="summary_totalRest_tip3" />
+<<<<<<< HEAD
                   </div>)
                 }
+=======
+                  </div>
+                )}
+>>>>>>> [FIX]修改样式
                 title={null}
               >
                 <div className="c7n-statistic-item-container">
@@ -451,7 +478,10 @@ class SummaryHome extends Component {
                 </div>
               </Popover>
               <Popover
+<<<<<<< HEAD
                 placement="topLeft"
+=======
+>>>>>>> [FIX]修改样式
                 content={(
                   <div>
                     <FormattedMessage id="summary_total_tip1" />
@@ -462,8 +492,13 @@ class SummaryHome extends Component {
                       }}
                     />
                     <FormattedMessage id="summary_totalExexute_tip3" />
+<<<<<<< HEAD
                   </div>)
                 }
+=======
+                  </div>
+                )}
+>>>>>>> [FIX]修改样式
                 title={null}
               >
                 <div className="c7n-statistic-item-container">
@@ -562,6 +597,7 @@ class SummaryHome extends Component {
             <div className="c7n-chartArea-container">
 
               <div className="c7n-chart-container">
+<<<<<<< HEAD
                 <div style={{ fontWeight: 500, margin: '12px 12px 0 12px' }}><FormattedMessage id="summary_testCreate" /></div>
                 <div style={{ height: 260 }}>
                   <ReactEcharts
@@ -570,18 +606,34 @@ class SummaryHome extends Component {
                 </div>
                 {/* <Chart height={240} scale={createScale} 
                 width={width} data={createList} padding="auto">
+=======
+                <div style={{ fontWeight: 500, margin: 12 }}><FormattedMessage id="summary_testCreate" /></div>
+                <Chart height={240} scale={createScale} width={width} data={createList} padding="auto">
+>>>>>>> [FIX]修改样式
                   <Axis name="creationDay" />
-                  <Axis name="issueCount" />
-                  <Tooltip crosshairs={{ type: 'y' }} />
+                  <Axis
+                    name="issueCount"             
+                    
+                  />
+                  <Tooltip crosshairs={{
+                    type: 'y',    
+                  }}
+                  />
                   <Geom
                     type="line"
                     position="time*value"
                     size={2}
                   />
+<<<<<<< HEAD
                   <Geom type="point" position="time*value" size={4} shape="circle"
                    style={{ stroke: '#fff', lineWidth: 1 }} />
                 </Chart> */}
                 <div style={{ color: 'rgba(0,0,0,0.65)', marginLeft: 38 }}>
+=======
+                  <Geom type="point" position="time*value" size={4} shape="circle" style={{ stroke: '#fff', lineWidth: 1 }} />
+                </Chart>
+                <div style={{ color: 'rgba(0,0,0,0.65)', margin: 10 }}>
+>>>>>>> [FIX]修改样式
                   <FormattedMessage id="summary_testCreated" />
                   ：
                   <span style={{ color: 'black', fontWeight: 500 }}>{totalCreate}</span>
@@ -596,6 +648,7 @@ class SummaryHome extends Component {
                 </div>
               </div>
               <div className="c7n-chart-container" style={{ marginLeft: 16 }}>
+<<<<<<< HEAD
                 <div style={{ fontWeight: 500, margin: '12px 12px 0 12px' }}><FormattedMessage id="summary_testExecute" /></div>
                 <div style={{ height: 260 }}>
                   <ReactEcharts
@@ -605,6 +658,10 @@ class SummaryHome extends Component {
                 {/* <Chart height={240} scale={executeScale}
                  width={parseInt((window.innerWidth - 320) / 2, 10)} 
                  data={excuteList} padding="auto">
+=======
+                <div style={{ fontWeight: 500, margin: 12 }}><FormattedMessage id="summary_testExecute" /></div>
+                <Chart height={240} scale={executeScale} width={parseInt((window.innerWidth - 320) / 2, 10)} data={excuteList} padding="auto">
+>>>>>>> [FIX]修改样式
                   <Axis name="time" />
                   <Axis name="value" />
                   <Tooltip crosshairs={{ type: 'y' }} />

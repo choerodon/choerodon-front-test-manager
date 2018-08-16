@@ -217,11 +217,18 @@ class CycleHome extends Component {
     confirm({
       width: 560,
       title: Choerodon.getMessage('确认删除吗?', 'Confirm delete'),
+<<<<<<< HEAD:testManager/src/app/testManager/containers/project/TestExecute/CycleHome/CycleHome.js
       content:
   <div style={{ marginBottom: 32 }}>
     {Choerodon.getMessage('当你点击删除后，该条数据将被永久删除，不可恢复!', 'When you click delete, after which the data will be permanently deleted and irreversible!')}
   </div>,
       onOk: () => {
+=======
+      content: <div style={{ marginBottom: 32 }}>
+        {Choerodon.getMessage('当你点击删除后，该条数据将被永久删除，不可恢复!', 'When you click delete, after which the data will be permanently deleted and irreversible!')}
+      </div>,
+      onOk() {
+>>>>>>> [FIX]修改样式:testManager/src/app/testManager/containers/project/Cycle/CycleHome/CycleHome.js
         // that.setState({
         //   rightLoading: true,
         // });
@@ -614,7 +621,12 @@ class CycleHome extends Component {
               <Link
                 className="c7n-text-dot"
                 style={{
+<<<<<<< HEAD:testManager/src/app/testManager/containers/project/TestExecute/CycleHome/CycleHome.js
                   width: 100,
+=======
+                  width: '100%',
+                  display: 'inline-block',
+>>>>>>> [FIX]修改样式:testManager/src/app/testManager/containers/project/Cycle/CycleHome/CycleHome.js
                 }}
                 to={issueLink(issueInfosDTO.issueId, issueInfosDTO.typeCode)}
                 target="_blank"
@@ -748,22 +760,36 @@ class CycleHome extends Component {
           && (
             <div style={{ display: 'flex' }}>
               <Tooltip title={<FormattedMessage id="execute_quickPass" />}>
+<<<<<<< HEAD:testManager/src/app/testManager/containers/project/TestExecute/CycleHome/CycleHome.js
                 <Icon type="pass" onClick={this.quickPass.bind(this, record)} style={{ cursor: 'pointer' }} />
+=======
+                <Icon type="pass" onClick={that.quickPass.bind(that, record)} style={{ cursor: 'pointer' }} />
+>>>>>>> [FIX]修改样式:testManager/src/app/testManager/containers/project/Cycle/CycleHome/CycleHome.js
               </Tooltip>
               <Icon
                 type="explicit2"
                 style={{ cursor: 'pointer', margin: '0 10px' }}
                 onClick={() => {
+<<<<<<< HEAD:testManager/src/app/testManager/containers/project/TestExecute/CycleHome/CycleHome.js
                   const { history } = this.props;
                   const urlParams = AppState.currentMenuType;
                   history.push(`/testManager/TestExecute/execute/${record.executeId}?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`);
+=======
+                  const { history } = that.props;
+                  const urlParams = AppState.currentMenuType;
+                  history.push(`/testManager/Cycle/execute/${record.executeId}?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`);
+>>>>>>> [FIX]修改样式:testManager/src/app/testManager/containers/project/Cycle/CycleHome/CycleHome.js
                 }}
               />
               <Icon
                 type="delete_forever"
                 style={{ cursor: 'pointer' }}
                 onClick={() => {
+<<<<<<< HEAD:testManager/src/app/testManager/containers/project/TestExecute/CycleHome/CycleHome.js
                   this.deleteExecute(record);
+=======
+                  that.deleteExecute(record);
+>>>>>>> [FIX]修改样式:testManager/src/app/testManager/containers/project/Cycle/CycleHome/CycleHome.js
                 }}
               />
             </div>
@@ -993,10 +1019,15 @@ class CycleHome extends Component {
                           this.setState({ CreateCycleExecuteVisible: true });
                         }}
                       >
+<<<<<<< HEAD:testManager/src/app/testManager/containers/project/TestExecute/CycleHome/CycleHome.js
                         <Icon type="playlist_add" style={{ marginRight: -2 }} />
                         <span>
                           <FormattedMessage id="cycle_addCycle" />
                         </span>
+=======
+                        <Icon type="playlist_add" style={{ marginRight: -2 }} />                       
+                        <FormattedMessage id="cycle_addCycle" />                      
+>>>>>>> [FIX]修改样式:testManager/src/app/testManager/containers/project/Cycle/CycleHome/CycleHome.js
                       </Button>
                     </div>
                   </div>
@@ -1039,9 +1070,15 @@ class CycleHome extends Component {
                 >
                   <img src={noRight} alt="" />
                   <div style={{ marginLeft: 40 }}>
+<<<<<<< HEAD:testManager/src/app/testManager/containers/project/TestExecute/CycleHome/CycleHome.js
                       <div style={{ fontSize: '14px', color: 'rgba(0,0,0,0.65)' }}>根据当前选定的测试循环没有查询到循环信息</div>
                       <div style={{ fontSize: '20px', marginTop: 10 }}>尝试在您的树状图中选择测试循环</div>
                     </div>
+=======
+                    <div style={{ fontSize: '14px', color: 'rgba(0,0,0,0.65)' }}>根据当前选定的测试循环没有查询到循环信息</div>
+                    <div style={{ fontSize: '20px', fontWeight: 500, marginTop: 10 }}>尝试在您的树状图中选择测试循环</div>
+                  </div>
+>>>>>>> [FIX]修改样式:testManager/src/app/testManager/containers/project/Cycle/CycleHome/CycleHome.js
                 </div>
               )}
             </div>

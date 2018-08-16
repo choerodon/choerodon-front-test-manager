@@ -1,9 +1,7 @@
 .c7n-report-story {
-
     table {
         table-layout: fixed;
     }
-
     .ant-collapse-content-box {
         display: none;
     }
@@ -52,8 +50,8 @@
     .c7n-table-white {
         // padding-top: 0;
         width: 25%;
-        word-wrap:break-word;
-        word-break:break-all;
+        word-wrap: break-word;
+        word-break: break-all;
         background: white!important;
     }
     .c7n-collapse-text-icon {
@@ -94,7 +92,7 @@
     .c7n-showId {
         user-select: none;
         font-size: 13px;
-        width: 110px;
+        width: 80px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
