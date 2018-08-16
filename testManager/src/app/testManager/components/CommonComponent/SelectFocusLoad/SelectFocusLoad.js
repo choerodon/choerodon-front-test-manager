@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
-import { Table, Button, Icon, Card, Select, Spin, Upload, Tooltip } from 'choerodon-ui';
+import {
+  Table, Button, Icon, Card, Select, Spin, Upload, Tooltip, 
+} from 'choerodon-ui';
 
 const Option = Select.Option;
 const styles = {
   cardTitle: {
-    fontWeight: 'bold',
+    fontWeight: 500,
     display: 'flex',
   },
   cardTitleText: {
@@ -58,54 +60,68 @@ class SelectFocusLoad extends Component {
     loading: false,
     List: [],
   }
+
   render() {
     const { onChange, request } = this.props;
     const { loading, List } = this.state;
-    const Options = List.map(item =>
-      (<Option key={item.id} value={item.id}>
+    const Options = List.map(item => (
+      <Option key={item.id} value={item.id}>
         <div style={{ display: 'inline-flex', alignItems: 'center', padding: '2px' }}>          
-          {item.imageUrl ?
-            <img src={item.imageUrl} alt="" style={{ width: 20, height: 20, borderRadius: '50%', marginRight: '8px' }} /> :
-            <div style={styles.userOption}>{item.realName.slice(0, 1)}
-            </div>
+          {item.imageUrl
+            ? (
+              <img
+                src={item.imageUrl}
+                alt=""
+                style={{
+                  width: 19, height: 19, borderRadius: '50%', marginRight: '8px', 
+                }}
+              />
+            )
+            : (
+              <div style={styles.userOption}>
+                {item.realName.slice(0, 1)}
+              </div>
+            )
           }
           <span>{`${item.loginName} ${item.realName}`}</span>
         </div>
-      </Option>),
-    );
-    return (<Select
-      filter
-      allowClear
+      </Option>
+    ));
+    return (
+      <Select
+        filter
+        allowClear
       // autoFocus
-      filterOption={false}
-      loading={loading}   
-      style={{ width: 200 }}
-      onFilterChange={(value) => {
-        this.setState({
-          loading: true,
-        });
-        request(value).then((Data) => {
+        filterOption={false}
+        loading={loading}   
+        style={{ width: 200 }}
+        onFilterChange={(value) => {
           this.setState({
-            List: Data.content,
-            loading: false,
+            loading: true,
           });
-        });
-      }}
-      onFocus={() => {
-        this.setState({
-          loading: true,
-        });
-        request().then((Data) => {
+          request(value).then((Data) => {
+            this.setState({
+              List: Data.content,
+              loading: false,
+            });
+          });
+        }}
+        onFocus={() => {
           this.setState({
-            List: Data.content,
-            loading: false,
+            loading: true,
           });
-        });
-      }}
-      {...this.props}   
-    >
-      {Options}
-    </Select>);
+          request().then((Data) => {
+            this.setState({
+              List: Data.content,
+              loading: false,
+            });
+          });
+        }}
+        {...this.props}
+      >
+        {Options}
+      </Select>
+    );
   }
 }
 

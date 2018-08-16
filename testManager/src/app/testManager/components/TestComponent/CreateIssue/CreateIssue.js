@@ -287,7 +287,7 @@ class CreateIssue extends Component {
 
             <div>
               <div style={{ display: 'flex', marginBottom: 13, alignItems: 'center' }}>
-                <div style={{ fontWeight: 'bold' }}><FormattedMessage id="execute_description" /></div>
+                <div style={{ fontWeight: 500 }}><FormattedMessage id="execute_description" /></div>
                 <div style={{ marginLeft: 80 }}>
                   <Button className="leftBtn" funcType="flat" onClick={() => this.setState({ edit: true })} style={{ display: 'flex', alignItems: 'center' }}>
                     <Icon type="zoom_out_map" style={{ color: '#3f51b5', fontSize: '18px', marginRight: 12 }} />
@@ -508,7 +508,7 @@ class CreateIssue extends Component {
           
           <div className="sign-upload" style={{ marginTop: 38 }}>
             <div style={{ display: 'flex', marginBottom: '13px', alignItems: 'center' }}>
-              <div style={{ fontWeight: 'bold' }}><FormattedMessage id="attachment" /></div>
+              <div style={{ fontWeight: 500 }}><FormattedMessage id="attachment" /></div>
             </div>
             <div style={{ marginTop: -38 }}>
               <UploadButton

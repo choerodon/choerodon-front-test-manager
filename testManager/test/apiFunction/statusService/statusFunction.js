@@ -81,9 +81,9 @@ const statusFunction = {
     return chai.request(utils.config.gateway)
       .delete(`/test/v1/projects/${144}/status/${statusId}`)
       .set('Authorization', global.user.token)
-      .set("Content-Type", "text/plain")
+      // .set("Accept", "text/plain")
       .then((res) => {
-        res.should.have.status(200);
+        res.should.have.status(204);
         return res;
       })
       // .catch((err) => {

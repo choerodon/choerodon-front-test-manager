@@ -1,14 +1,22 @@
 import React, { Component } from 'react';
 
-import { Table, Radio, Button, Icon, Spin, Popover } from 'choerodon-ui';
+import {
+  Table, Radio, Button, Icon, Spin, Popover,
+} from 'choerodon-ui';
 import { Page, Header, stores } from 'choerodon-front-boot';
-import { Chart, Axis, Geom, Tooltip } from 'bizcharts';
+import {
+  Chart, Axis, Geom, Tooltip,
+} from 'bizcharts';
 import { FormattedMessage } from 'react-intl';
 import moment from 'moment';
 import _ from 'lodash';
 
-import { getCaseNotPlain, getCaseNotRun, getCaseNum, getCycleRange, getCreateRange, getIssueStatistic } from '../../../../api/summaryApi';
-import { getProjectVersion, getLabels, getModules, getIssueCount } from '../../../../api/agileApi';
+import {
+  getCaseNotPlain, getCaseNotRun, getCaseNum, getCycleRange, getCreateRange, getIssueStatistic,
+} from '../../../../api/summaryApi';
+import {
+  getProjectVersion, getLabels, getModules, getIssueCount,
+} from '../../../../api/agileApi';
 import './SummaryHome.less';
 
 
@@ -20,16 +28,16 @@ class SummaryHome extends Component {
       range: '7',
       excuteList: [],
       createList: [],
-      totalIssue: 0,
+      // totalIssue: 0,
       totalTest: 0,
       notPlan: 0,
       notRun: 0,
       caseNum: 0,
       totalExcute: 0,
       totalCreate: 0,
-      versionList: [],
-      componentList: [],
-      labelList: [],
+      // versionList: [],
+      // componentList: [],
+      // labelList: [],
       versionTable: [],
       componentTable: [],
       labelTable: [],
@@ -68,15 +76,15 @@ class SummaryHome extends Component {
           totalExcute: _.sum(excuteList),
           createList: this.createTransform(createList, range),
           totalCreate: _.sumBy(createList, 'issueCount'),
-          versionList,
-          componentList,
-          labelList,
+          // versionList,
+          // componentList,
+          // labelList,
         });
         Promise.all([
           this.getVersionTable(versionList),
           this.getLabelTable(labelList),
           this.getComponentTable(componentList),
-        ]).then(([versionTable, labelTable, componentTable]) => {         
+        ]).then(([versionTable, labelTable, componentTable]) => {
           this.setState({
             versionTable,
             labelTable,
@@ -88,6 +96,7 @@ class SummaryHome extends Component {
         Choerodon.prompt('网络异常');
       });
   }
+
   getVersionTable = versionList => new Promise((resolve) => {
     getIssueStatistic('version').then((data) => {
       const versionTable = versionList.map((version) => {
@@ -99,7 +108,7 @@ class SummaryHome extends Component {
       });
       const noVersionData = _.find(data, { typeName: null }) || {};
       const noVersion = {
-        num: noVersionData.value,
+        num: noVersionData.value || 0,
         id: null,
         name: <FormattedMessage id="summary_noVersion" />,
       };
@@ -107,19 +116,20 @@ class SummaryHome extends Component {
       resolve(versionTable);
     });
   })
+
   getLabelTable = labelList => new Promise((resolve) => {
     getIssueStatistic('label').then((data) => {
       const labelTable = labelList.map((label) => {
         let num = 0;
         if (_.find(data, { typeName: label.labelId.toString() })) {
           num = _.find(data, { typeName: label.labelId.toString() }).value;
-        } 
+        }
         return { name: label.labelName, id: label.labelId, num };
       });
       // 加入无标签项
       const noLabelData = _.find(data, { typeName: null }) || {};
       const noLabel = {
-        num: noLabelData.value,
+        num: noLabelData.value || 0,
         id: null,
         name: <FormattedMessage id="summary_noLabel" />,
       };
@@ -127,6 +137,7 @@ class SummaryHome extends Component {
       resolve(labelTable);
     });
   })
+
   getComponentTable = componentList => new Promise((resolve) => {
     getIssueStatistic('component').then((data) => {
       const componentTable = componentList.map((component) => {
@@ -138,7 +149,7 @@ class SummaryHome extends Component {
       });
       const noComponentData = _.find(data, { typeName: null }) || {};
       const noComponent = {
-        num: noComponentData.value,
+        num: noComponentData.value || 0,
         id: null,
         name: <FormattedMessage id="summary_noComponent" />,
       };
@@ -162,6 +173,7 @@ class SummaryHome extends Component {
       });
     });
   }
+
   createTransform = (source, range) => Array(Number(range)).fill(0).map((item, i) => {
     const time = moment().subtract(range - i - 1, 'days').format('YYYY-MM-DD');
     if (_.find(source, { creationDay: time })) {
@@ -184,9 +196,11 @@ class SummaryHome extends Component {
   }))
 
   render() {
-    const { loading, range, excuteList, createList, totalExcute,
+    const {
+      loading, range, excuteList, createList, totalExcute,
       totalCreate, totalTest, notPlan, notRun, caseNum, versionTable,
-      labelTable, componentTable } = this.state;
+      labelTable, componentTable,
+    } = this.state;
     // window.console.log(labelTable);
     const versionColumns = [{
       title: <FormattedMessage id="summary_version" />,
@@ -215,13 +229,12 @@ class SummaryHome extends Component {
       dataIndex: 'num',
       key: 'num',
     }];
-    const createScale = {
-
-      value: { alias: Choerodon.getMessage('创建数', 'Created') },
+    const createScale = {      
+      value: { type: 'linear', alias: Choerodon.getMessage('创建数', 'Created') },
       time: { alias: '日期', tickCount: 10 },
     };
-    const executeScale = {
-      value: { alias: Choerodon.getMessage('执行数', 'Executed') },
+    const executeScale = {     
+      value: { type: 'linear', alias: Choerodon.getMessage('执行数', 'Executed') },
       time: { alias: '日期', tickCount: 10 },
     };
     const width = parseInt((window.innerWidth - 320) / 2, 10);
@@ -250,7 +263,7 @@ class SummaryHome extends Component {
                 </div>
               </Popover>
               <Popover
-                content={
+                content={(
                   <div>
                     <FormattedMessage id="summary_total_tip1" />
                     <FormattedMessage
@@ -261,7 +274,7 @@ class SummaryHome extends Component {
                     />
                     <FormattedMessage id="summary_totalRest_tip3" />
                   </div>
-                }
+                )}
                 title={null}
               >
                 <div className="c7n-statistic-item-container">
@@ -273,7 +286,7 @@ class SummaryHome extends Component {
                 </div>
               </Popover>
               <Popover
-                content={
+                content={(
                   <div>
                     <FormattedMessage id="summary_total_tip1" />
                     <FormattedMessage
@@ -284,7 +297,7 @@ class SummaryHome extends Component {
                     />
                     <FormattedMessage id="summary_totalExexute_tip3" />
                   </div>
-                }
+                )}
                 title={null}
               >
                 <div className="c7n-statistic-item-container">
@@ -312,7 +325,9 @@ class SummaryHome extends Component {
               <div className="c7n-table-container">
                 <div className="c7n-table-title">
                   <FormattedMessage id="summary_testSummary" />
-                  （<FormattedMessage id="summary_summaryByVersion" />）
+                  （
+                  <FormattedMessage id="summary_summaryByVersion" />
+                  ）
                 </div>
                 <Table
                   // rowKey="name"
@@ -326,7 +341,9 @@ class SummaryHome extends Component {
               <div className="c7n-table-container" style={{ margin: '0 15px' }}>
                 <div className="c7n-table-title">
                   <FormattedMessage id="summary_testSummary" />
-                  （<FormattedMessage id="summary_summaryByComponent" />）
+                  （
+                  <FormattedMessage id="summary_summaryByComponent" />
+                  ）
                 </div>
                 <Table
                   // rowKey="name"
@@ -340,7 +357,9 @@ class SummaryHome extends Component {
               <div className="c7n-table-container">
                 <div className="c7n-table-title">
                   <FormattedMessage id="summary_testSummary" />
-                  （<FormattedMessage id="summary_summaryByLabel" />）
+                  （
+                  <FormattedMessage id="summary_summaryByLabel" />
+                  ）
                 </div>
                 <Table
                   // rowKey="name"
@@ -353,40 +372,64 @@ class SummaryHome extends Component {
               </div>
             </div>
             <div style={{ margin: '30px 20px 18px 20px', display: 'flex', alignItems: 'center' }}>
-              <div><FormattedMessage id="summary_summaryTimeLeap" />：</div>
+              <div>
+                <FormattedMessage id="summary_summaryTimeLeap" />
+                ：
+              </div>
               <Radio.Group value={range} onChange={this.handleRangeChange}>
                 {/* <Radio.Button value="1">1天</Radio.Button> */}
-                <Radio.Button value="7">7{<FormattedMessage id="day" />}</Radio.Button>
-                <Radio.Button value="15">15{<FormattedMessage id="day" />}</Radio.Button>
-                <Radio.Button value="30">30{<FormattedMessage id="day" />}</Radio.Button>
+                <Radio.Button value="7">
+                  7
+                  {<FormattedMessage id="day" />}
+                </Radio.Button>
+                <Radio.Button value="15">
+                  15
+                  {<FormattedMessage id="day" />}
+                </Radio.Button>
+                <Radio.Button value="30">
+                  30
+                  {<FormattedMessage id="day" />}
+                </Radio.Button>
               </Radio.Group>
             </div>
             <div className="c7n-chartArea-container">
 
               <div className="c7n-chart-container">
-                <div style={{ fontWeight: 'bold', margin: 12 }}><FormattedMessage id="summary_testCreate" /></div>
-                <Chart height={240} scale={createScale} width={width} data={createList} padding="auto" >
+                <div style={{ fontWeight: 500, margin: 12 }}><FormattedMessage id="summary_testCreate" /></div>
+                <Chart height={240} scale={createScale} width={width} data={createList} padding="auto">
                   <Axis name="creationDay" />
-                  <Axis name="issueCount" />
-                  <Tooltip crosshairs={{ type: 'y' }} />
+                  <Axis
+                    name="issueCount"             
+                    
+                  />
+                  <Tooltip crosshairs={{
+                    type: 'y',    
+                  }}
+                  />
                   <Geom
                     type="line"
                     position="time*value"
                     size={2}
                   />
-                  <Geom type="point" position="time*value" size={4} shape={'circle'} style={{ stroke: '#fff', lineWidth: 1 }} />
+                  <Geom type="point" position="time*value" size={4} shape="circle" style={{ stroke: '#fff', lineWidth: 1 }} />
                 </Chart>
                 <div style={{ color: 'rgba(0,0,0,0.65)', margin: 10 }}>
-                  <FormattedMessage id="summary_testCreated" />：
-                  <span style={{ color: 'black', fontWeight: 'bold' }}>{totalCreate}</span>，
+                  <FormattedMessage id="summary_testCreated" />
+                  ：
+                  <span style={{ color: 'black', fontWeight: 500 }}>{totalCreate}</span>
+                  ，
                   <FormattedMessage id="summary_testLast" />
-                  <span style={{ color: 'black', fontWeight: 'bold' }}> {range} </span>
+                  <span style={{ color: 'black', fontWeight: 500 }}>
+                    {' '}
+                    {range}
+                    {' '}
+                  </span>
                   <FormattedMessage id="day" />
                 </div>
               </div>
               <div className="c7n-chart-container" style={{ marginLeft: 16 }}>
-                <div style={{ fontWeight: 'bold', margin: 12 }}><FormattedMessage id="summary_testExecute" /></div>
-                <Chart height={240} scale={executeScale} width={parseInt((window.innerWidth - 320) / 2, 10)} data={excuteList} padding="auto" >
+                <div style={{ fontWeight: 500, margin: 12 }}><FormattedMessage id="summary_testExecute" /></div>
+                <Chart height={240} scale={executeScale} width={parseInt((window.innerWidth - 320) / 2, 10)} data={excuteList} padding="auto">
                   <Axis name="time" />
                   <Axis name="value" />
                   <Tooltip crosshairs={{ type: 'y' }} />
@@ -399,15 +442,21 @@ class SummaryHome extends Component {
                     type="point"
                     position="time*value"
                     size={4}
-                    shape={'circle'}
+                    shape="circle"
                     style={{ stroke: '#fff', lineWidth: 1 }}
                   />
                 </Chart>
                 <div style={{ color: 'rgba(0,0,0,0.65)', margin: 10 }}>
                   <FormattedMessage id="summary_testExecuted" />
-                  ：<span style={{ color: 'black', fontWeight: 'bold' }}>{totalExcute}</span>，
+                  ：
+                  <span style={{ color: 'black', fontWeight: 500 }}>{totalExcute}</span>
+                  ，
                   <FormattedMessage id="summary_testLast" />
-                  <span style={{ color: 'black', fontWeight: 'bold' }}> {range} </span>
+                  <span style={{ color: 'black', fontWeight: 500 }}>
+                    {' '}
+                    {range}
+                    {' '}
+                  </span>
                   <FormattedMessage id="day" />
                 </div>
               </div>

@@ -404,7 +404,7 @@ class Test extends Component {
             ) : null
           }
           {componentIssueRelDTOList.length > 0 ? (
-            <div style={{ margin: '0 5px', color: '#3F51B5', fontWeight: 'bold' }}>
+            <div style={{ margin: '0 5px', color: '#3F51B5', fontWeight: 500 }}>
               {
               componentIssueRelDTOList.map(component => component.name).join(',')
             }
@@ -914,8 +914,8 @@ class Test extends Component {
                         });
                       }}
                     >
-                      <Icon type="playlist_add icon" />
-                      <span><FormattedMessage id="issue_issueCreate" /></span>
+                      <Icon type="playlist_add icon" style={{ marginRight: -2 }} />
+                      <FormattedMessage id="issue_issueCreate" />
                     </Button>
                   )}
                 </div>

@@ -1,11 +1,11 @@
 
 import React, { Component } from 'react';
 import {
-  Page, Header, Content, stores, 
+  Page, Header, Content, stores,
 } from 'choerodon-front-boot';
 import { Link } from 'react-router-dom';
 import {
-  Table, Menu, Dropdown, Button, Icon, Collapse, Tooltip, 
+  Table, Menu, Dropdown, Button, Icon, Collapse, Tooltip,
 } from 'choerodon-ui';
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
@@ -17,7 +17,7 @@ import { issueLink, cycleLink } from '../../../../common/utils';
 import './ReportTest.scss';
 
 const { AppState } = stores;
-const Panel = Collapse.Panel;
+const { Panel } = Collapse;
 const ICON = {
   story: 'turned_in',
   bug: 'bug_report',
@@ -154,7 +154,7 @@ class ReportTest extends Component {
   render() {
     const {
       selectVisible, reportList, loading, pagination,
-      issueStatusList, statusList, stepStatusList, openId, 
+      issueStatusList, statusList, stepStatusList, openId,
     } = this.state;
     const urlParams = AppState.currentMenuType;
     const that = this;
@@ -187,7 +187,7 @@ class ReportTest extends Component {
         const { issueInfosDTO } = record;
         const {
           issueId, issueColor, issueStatusName,
-          issueName, summary, typeCode, 
+          issueName, summary, typeCode,
         } = issueInfosDTO;
         return (
           <Collapse
@@ -214,7 +214,7 @@ class ReportTest extends Component {
                   </div>
                   <div style={{ fontSize: '13px' }}>{summary}</div>
                 </div>
-)}
+              )}
               key={issueId}
             />
           </Collapse>
@@ -256,13 +256,9 @@ class ReportTest extends Component {
 
           return (
             <div className="c7n-cycle-show-container">
-              <div
-                style={{
-                  width: 80, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', 
-                }}
-              >
+              <div>
                 <Tooltip title={`${execute.cycleName}${execute.folderName ? `/${execute.folderName}` : ''}`}>
-                  <Link className="c7n-showId" to={cycleLink(execute.cycleId)} target="_blank">
+                  <Link className="c7n-showId" style={{ display: 'inline-block' }} to={cycleLink(execute.cycleId)} target="_blank">
                     {execute.cycleName}
                     {execute.folderName ? `/${execute.folderName}` : ''}
                   </Link>
@@ -304,7 +300,7 @@ class ReportTest extends Component {
         });
         return openId.includes(issueId.toString())
           ? (
-            <div style={{ minHeight: 30 }}> 
+            <div style={{ minHeight: 30 }}>
               {' '}
               {caseShow}
               {' '}
@@ -314,7 +310,7 @@ class ReportTest extends Component {
             <div>
               <div>
                 <FormattedMessage id="report_total" />
-：
+                ：
                 {totalExecute}
               </div>
               <div style={{ display: 'flex' }}>
@@ -323,7 +319,7 @@ class ReportTest extends Component {
                     <div>
                       <span>
                         {key}
-：
+                        ：
                       </span>
                       <span>{executeStatus[key]}</span>
                     </div>
@@ -346,13 +342,13 @@ class ReportTest extends Component {
         const caseShow = testCycleCaseES.concat(testCycleCaseStepES).map((execute) => {
           const { issueInfosDTO } = execute;
           const {
-            issueColor, issueName, issueStatusName, summary, typeCode, 
-          } = issueInfosDTO;
+            issueColor, issueName, issueStatusName, summary, typeCode,
+          } = issueInfosDTO || {};
           return (
             <div className="c7n-issue-show-container">
               <div className="c7n-collapse-show-item">
                 <Tooltip title={issueName}>
-                  <Link className="c7n-showId" to={issueLink(issueInfosDTO.issueId, typeCode)} target="_blank">
+                  <Link className="c7n-showId" to={issueLink(issueInfosDTO && issueInfosDTO.issueId, typeCode)} target="_blank">
                     {issueName}
                   </Link>
                 </Tooltip>
@@ -368,17 +364,17 @@ class ReportTest extends Component {
         });
         return openId.includes(issueId.toString())
           ? (
-            <div style={{ minHeight: 50 }}> 
+            <div style={{ minHeight: 50 }}>
               {' '}
               {caseShow}
               {' '}
             </div>
           )
           : (
-            <div> 
+            <div>
               {' '}
               <FormattedMessage id="report_total" />
-：
+              ：
               {testCycleCaseES.concat(testCycleCaseStepES).length}
             </div>
           );
@@ -397,7 +393,7 @@ class ReportTest extends Component {
           // window.console.log(issueLinkDTOS.length);
           const issueLinks = issueLinkDTOS && issueLinkDTOS.map((link) => {
             const {
-              statusColor, statusName, issueNum, summary, 
+              statusColor, statusName, issueNum, summary,
             } = link;
             return (
               <div className="c7n-issue-show-container">

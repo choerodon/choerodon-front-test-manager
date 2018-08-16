@@ -13,7 +13,7 @@ import CycleExecuteStore from '../../../../store/project/cycle/CycleExecuteStore
 
 const styles = {
   cardTitle: {
-    fontWeight: 'bold',
+    fontWeight: 500,
     display: 'flex',
   },
   cardTitleText: {
