@@ -10,11 +10,7 @@ import {
 import { FormattedMessage } from 'react-intl';
 import moment from 'moment';
 import _ from 'lodash';
-<<<<<<< HEAD
 import ReactEcharts from 'echarts-for-react';
-=======
-
->>>>>>> [FIX]修改样式
 import {
   getCaseNotPlain, getCaseNotRun, getCaseNum, getCycleRange, getCreateRange, getIssueStatistic,
 } from '../../../../api/summaryApi';
@@ -32,22 +28,12 @@ class SummaryHome extends Component {
       range: '7',
       excuteList: [],
       createList: [],
-<<<<<<< HEAD
-=======
-      // totalIssue: 0,
->>>>>>> [FIX]修改样式
       totalTest: 0,
       notPlan: 0,
       notRun: 0,
       caseNum: 0,
       totalExcute: 0,
       totalCreate: 0,
-<<<<<<< HEAD
-=======
-      // versionList: [],
-      // componentList: [],
-      // labelList: [],
->>>>>>> [FIX]修改样式
       versionTable: [],
       componentTable: [],
       labelTable: [],
@@ -86,12 +72,6 @@ class SummaryHome extends Component {
           totalExcute: _.sum(excuteList),
           createList: this.createTransform(createList, range),
           totalCreate: _.sumBy(createList, 'issueCount'),
-<<<<<<< HEAD
-=======
-          // versionList,
-          // componentList,
-          // labelList,
->>>>>>> [FIX]修改样式
         });
         Promise.all([
           this.getVersionTable(versionList),
@@ -447,9 +427,13 @@ class SummaryHome extends Component {
               </Popover>
               <Popover
 <<<<<<< HEAD
+<<<<<<< HEAD
                 placement="topLeft"
 =======
 >>>>>>> [FIX]修改样式
+=======
+                placement="topLeft"
+>>>>>>> [FIX]更改用例管理侧边栏优先级背景，popover位置
                 content={(
                   <div>
                     <FormattedMessage id="summary_total_tip1" />
@@ -479,9 +463,13 @@ class SummaryHome extends Component {
               </Popover>
               <Popover
 <<<<<<< HEAD
+<<<<<<< HEAD
                 placement="topLeft"
 =======
 >>>>>>> [FIX]修改样式
+=======
+                placement="topLeft"
+>>>>>>> [FIX]更改用例管理侧边栏优先级背景，popover位置
                 content={(
                   <div>
                     <FormattedMessage id="summary_total_tip1" />
