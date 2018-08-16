@@ -1,8 +1,12 @@
 
 import React, { Component } from 'react';
-import { Page, Header, Content, stores } from 'choerodon-front-boot';
+import {
+  Page, Header, Content, stores, 
+} from 'choerodon-front-boot';
 import { Link } from 'react-router-dom';
-import { Table, Menu, Dropdown, Button, Icon, Collapse, Tooltip } from 'choerodon-ui';
+import {
+  Table, Menu, Dropdown, Button, Icon, Collapse, Tooltip, 
+} from 'choerodon-ui';
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import ReportSelectIssue from '../../../../components/ReportSelectIssue';
@@ -57,9 +61,11 @@ class ReportTest extends Component {
     openId: [],
     issueIds: [],
   }
+
   componentDidMount() {
     this.getInfo();
   }
+
   getInfo = () => {
     this.setState({
       loading: true,
@@ -79,10 +85,12 @@ class ReportTest extends Component {
       });
     });
   }
+
   sliceIssueIds = (arr, pagination) => {
     const { current, pageSize } = pagination;
     return arr.slice(pageSize * (current - 1), pageSize * current);
   }
+
   getReportsFromDefect = (pagination, issueIds = this.state.issueIds) => {
     const Pagination = pagination || this.state.pagination;
     this.setState({ loading: true });
@@ -123,9 +131,11 @@ class ReportTest extends Component {
       Choerodon.prompt('网络异常');
     });
   }
+
   handleTableChange = (pagination, filters, sorter) => {
     this.getReportsFromDefect(pagination);
   }
+
   handleOpen = (issueId) => {
     const { openId } = this.state;
     if (!openId.includes(issueId.toString())) {
@@ -140,15 +150,18 @@ class ReportTest extends Component {
       });
     }
   }
+
   render() {
-    const { selectVisible, reportList, loading, pagination,
-      issueStatusList, statusList, stepStatusList, openId } = this.state;
+    const {
+      selectVisible, reportList, loading, pagination,
+      issueStatusList, statusList, stepStatusList, openId, 
+    } = this.state;
     const urlParams = AppState.currentMenuType;
     const that = this;
     const menu = (
       <Menu style={{ marginTop: 35 }}>
         <Menu.Item key="0">
-          <Link to={`/testManager/report/story?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`} >
+          <Link to={`/testManager/report/story?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}>
             <FormattedMessage id="report_dropDown_demand" />
           </Link>
         </Menu.Item>
@@ -172,8 +185,10 @@ class ReportTest extends Component {
       width: '25%',
       render(test, record) {
         const { issueInfosDTO } = record;
-        const { issueId, issueColor, issueStatusName,
-          issueName, summary, typeCode } = issueInfosDTO;
+        const {
+          issueId, issueColor, issueStatusName,
+          issueName, summary, typeCode, 
+        } = issueInfosDTO;
         return (
           <Collapse
             activeKey={openId}
@@ -182,7 +197,7 @@ class ReportTest extends Component {
           >
             <Panel
               showArrow={false}
-              header={
+              header={(
                 <div>
                   <div className="c7n-collapse-show-item">
                     <Icon type="navigate_next" className="c7n-collapse-icon" />
@@ -199,7 +214,7 @@ class ReportTest extends Component {
                   </div>
                   <div style={{ fontSize: '13px' }}>{summary}</div>
                 </div>
-              }
+)}
               key={issueId}
             />
           </Collapse>
@@ -222,15 +237,15 @@ class ReportTest extends Component {
           let statusColor = '';
           let statusName = '';
           if (executionStatus) {
-            statusColor = _.find(statusList, { statusId: executionStatus }) ?
-              _.find(statusList, { statusId: executionStatus }).statusColor : '';
-            statusName = _.find(statusList, { statusId: executionStatus }) &&
-              _.find(statusList, { statusId: executionStatus }).statusName;
+            statusColor = _.find(statusList, { statusId: executionStatus })
+              ? _.find(statusList, { statusId: executionStatus }).statusColor : '';
+            statusName = _.find(statusList, { statusId: executionStatus })
+              && _.find(statusList, { statusId: executionStatus }).statusName;
           } else {
-            statusColor = _.find(stepStatusList, { statusId: stepStatus }) ?
-              _.find(stepStatusList, { statusId: stepStatus }).statusColor : '';
-            statusName = _.find(stepStatusList, { statusId: stepStatus }) ?
-              _.find(stepStatusList, { statusId: stepStatus }).statusName : '';
+            statusColor = _.find(stepStatusList, { statusId: stepStatus })
+              ? _.find(stepStatusList, { statusId: stepStatus }).statusColor : '';
+            statusName = _.find(stepStatusList, { statusId: stepStatus })
+              ? _.find(stepStatusList, { statusId: stepStatus }).statusName : '';
           }
 
           if (!executeStatus[statusName]) {
@@ -242,11 +257,14 @@ class ReportTest extends Component {
           return (
             <div className="c7n-cycle-show-container">
               <div
-                style={{ width: 80, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}
+                style={{
+                  width: 80, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', 
+                }}
               >
                 <Tooltip title={`${execute.cycleName}${execute.folderName ? `/${execute.folderName}` : ''}`}>
                   <Link className="c7n-showId" to={cycleLink(execute.cycleId)} target="_blank">
-                    {execute.cycleName}{execute.folderName ? `/${execute.folderName}` : ''}
+                    {execute.cycleName}
+                    {execute.folderName ? `/${execute.folderName}` : ''}
                   </Link>
                 </Tooltip>
               </div>
@@ -263,34 +281,53 @@ class ReportTest extends Component {
                 <Icon type="explicit2" style={{ marginLeft: 10, color: 'black' }} />
               </Link>
               {
-                i >= testCycleCaseES.length ?
-                  <div style={{
-                    height: 20,
-                    width: 43,
-                    marginLeft: 30,
-                    color: 'white',
-                    padding: '0 8px',
-                    background: 'rgba(0,0,0,0.20)',
-                    borderRadius: '100px',
-                  }}
-                  ><FormattedMessage id="step" /></div> : null
+                i >= testCycleCaseES.length
+                  ? (
+                    <div style={{
+                      height: 20,
+                      width: 43,
+                      marginLeft: 30,
+                      color: 'white',
+                      padding: '0 8px',
+                      background: 'rgba(0,0,0,0.20)',
+                      borderRadius: '100px',
+                    }}
+                    >
+                      <FormattedMessage id="step" />
+
+                    </div>
+                  ) : null
 
               }
 
             </div>);
         });
-        return openId.includes(issueId.toString()) ?
-          <div style={{ minHeight: 30 }}> {caseShow}   </div>
-          :
-          (
+        return openId.includes(issueId.toString())
+          ? (
+            <div style={{ minHeight: 30 }}> 
+              {' '}
+              {caseShow}
+              {' '}
+            </div>
+          )
+          : (
             <div>
-              <div><FormattedMessage id="report_total" />：{totalExecute}</div>
+              <div>
+                <FormattedMessage id="report_total" />
+：
+                {totalExecute}
+              </div>
               <div style={{ display: 'flex' }}>
                 {
-                  Object.keys(executeStatus).map(key => (<div>
-                    <span>{key}：</span>
-                    <span>{executeStatus[key]}</span>
-                  </div>))
+                  Object.keys(executeStatus).map(key => (
+                    <div>
+                      <span>
+                        {key}
+：
+                      </span>
+                      <span>{executeStatus[key]}</span>
+                    </div>
+                  ))
                 }
               </div>
             </div>
@@ -308,28 +345,42 @@ class ReportTest extends Component {
         const { issueId } = record.issueInfosDTO;
         const caseShow = testCycleCaseES.concat(testCycleCaseStepES).map((execute) => {
           const { issueInfosDTO } = execute;
-          const { issueColor, issueName, issueStatusName, summary, typeCode } = issueInfosDTO;
-          return (<div className="c7n-issue-show-container">
-            <div className="c7n-collapse-show-item">
-              <Tooltip title={issueName}>
-                <Link className="c7n-showId" to={issueLink(issueId, typeCode)} target="_blank">
-                  {issueName}
-                </Link>
-              </Tooltip>
-              <div className="c7n-collapse-header-icon">
-                <span style={{ color: issueColor, borderColor: issueColor }}>
-                  {issueStatusName}
-                </span>
+          const {
+            issueColor, issueName, issueStatusName, summary, typeCode, 
+          } = issueInfosDTO;
+          return (
+            <div className="c7n-issue-show-container">
+              <div className="c7n-collapse-show-item">
+                <Tooltip title={issueName}>
+                  <Link className="c7n-showId" to={issueLink(issueInfosDTO.issueId, typeCode)} target="_blank">
+                    {issueName}
+                  </Link>
+                </Tooltip>
+                <div className="c7n-collapse-header-icon">
+                  <span style={{ color: issueColor, borderColor: issueColor }}>
+                    {issueStatusName}
+                  </span>
+                </div>
               </div>
+              <div className="c7n-report-summary">{summary}</div>
             </div>
-            <div className="c7n-report-summary">{summary}</div>
-          </div>);
+          );
         });
-        return openId.includes(issueId.toString()) ?
-          <div style={{ minHeight: 50 }}> {caseShow}   </div>
-          :
-          (
-            <div> <FormattedMessage id="report_total" />：{testCycleCaseES.concat(testCycleCaseStepES).length}</div>
+        return openId.includes(issueId.toString())
+          ? (
+            <div style={{ minHeight: 50 }}> 
+              {' '}
+              {caseShow}
+              {' '}
+            </div>
+          )
+          : (
+            <div> 
+              {' '}
+              <FormattedMessage id="report_total" />
+：
+              {testCycleCaseES.concat(testCycleCaseStepES).length}
+            </div>
           );
       },
     }, {
@@ -345,27 +396,36 @@ class ReportTest extends Component {
           const { issueLinkDTOS } = execute;
           // window.console.log(issueLinkDTOS.length);
           const issueLinks = issueLinkDTOS && issueLinkDTOS.map((link) => {
-            const { statusColor, statusName, issueNum, summary } = link;
-            return (<div className="c7n-issue-show-container">
-              <div className="c7n-collapse-show-item">
-                <Tooltip title={issueNum}>
-                  <Link className="c7n-showId" to={issueLink(link.issueId, link.typeCode)} target="_blank">
-                    {issueNum}
-                  </Link>
-                </Tooltip>
-                <div className="c7n-collapse-header-icon">
-                  <span style={{ color: statusColor, borderColor: statusColor }}>
-                    {statusName}
-                  </span>
+            const {
+              statusColor, statusName, issueNum, summary, 
+            } = link;
+            return (
+              <div className="c7n-issue-show-container">
+                <div className="c7n-collapse-show-item">
+                  <Tooltip title={issueNum}>
+                    <Link className="c7n-showId" to={issueLink(link.linkedIssueId, link.typeCode)} target="_blank">
+                      {issueNum}
+                    </Link>
+                  </Tooltip>
+                  <div className="c7n-collapse-header-icon">
+                    <span style={{ color: statusColor, borderColor: statusColor }}>
+                      {statusName}
+                    </span>
+                  </div>
                 </div>
+                <div className="c7n-report-summary">{summary}</div>
               </div>
-              <div className="c7n-report-summary">{summary}</div>
-            </div>);
+            );
           });
-          return (<div style={{
-            minHeight: 50,
-          }}
-          >{issueLinks}</div>);
+          return (
+            <div style={{
+              minHeight: 50,
+            }}
+            >
+              {issueLinks}
+
+            </div>
+          );
         });
 
         return openId.includes(issueId.toString()) ? caseShow : '-';
@@ -454,4 +514,3 @@ class ReportTest extends Component {
 
 
 export default ReportTest;
-
