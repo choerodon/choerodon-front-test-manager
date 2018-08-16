@@ -14,7 +14,7 @@ import CycleExecuteStore from '../../../store/project/cycle/CycleExecuteStore';
 const Option = Select.Option;
 const styles = {
   cardTitle: {
-    fontWeight: 'bold',
+    fontWeight: 500,
     display: 'flex',
   },
   cardTitleText: {

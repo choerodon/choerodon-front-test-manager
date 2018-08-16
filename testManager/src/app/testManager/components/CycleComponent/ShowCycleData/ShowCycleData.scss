@@ -1,5 +1,5 @@
 .c7n-right-card-container {
-    margin: 18px 0;
+    margin: 12px 0 18px 0;
     padding: 20px;
     display: flex;
     box-shadow: 0 1px 0 0 rgba(0, 0, 0, 0.20), 0 0 0 1px rgba(0, 0, 0, 0.12), 0 2px 2px -1px rgba(0, 0, 0, 0.12);
@@ -13,7 +13,7 @@
                 overflow: hidden;
                 text-overflow: ellipsis;
                 white-space: nowrap;
-                font-weight: bold;
+                font-weight: 500;
                 width: 105px;
                 font-size: 13px;
             }

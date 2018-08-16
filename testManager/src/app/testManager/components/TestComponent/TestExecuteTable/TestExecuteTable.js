@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import {
- Button, Icon, Tooltip, Menu, Popconfirm 
+  Button, Icon, Tooltip, Menu, Popconfirm,
 } from 'choerodon-ui';
 import { stores, axios } from 'choerodon-front-boot';
 import _ from 'lodash';
@@ -161,9 +161,12 @@ class TestExecuteTable extends Component {
     _.forEach(data, (item, index) => {
       const status = _.find(this.state.status, { statusId: item.executionStatus }) || {};
       result.push(
-        <div className={`${item.executeId}-list`} style={{
- width: '100%', paddingLeft: 10, height: 34, boxShadow: '0 1px 0 0 #e8e8e8, 0 1px 0 0 #e8e8e8 inset', display: 'flex' 
-}}>
+        <div
+          className={`${item.executeId}-list`}
+          style={{
+            width: '100%', paddingLeft: 10, height: 34, boxShadow: '0 1px 0 0 #e8e8e8, 0 1px 0 0 #e8e8e8 inset', display: 'flex',
+          }}
+        >
           <span title={item.versionName} style={{ flex: 2, lineHeight: '34px' }} className="c7n-text-dot">
             {item.versionName}
           </span>
@@ -184,8 +187,9 @@ class TestExecuteTable extends Component {
           </span>
           <span style={{ flex: 2, lineHeight: '34px' }} className="c7n-text-dot">
             <span style={{
- width: 60, height: 20, borderRadius: '2px', background: status.statusColor, display: 'inline-block', lineHeight: '20px', textAlign: 'center', color: '#fff' 
-}}>
+              width: 60, height: 20, borderRadius: '2px', background: status.statusColor, display: 'inline-block', lineHeight: '20px', textAlign: 'center', color: '#fff',
+            }}
+            >
               {status && status.statusName}
             </span>
           </span>
@@ -196,7 +200,7 @@ class TestExecuteTable extends Component {
                   <Tooltip
                     placement="topLeft"
                     title={(
-<div>
+                      <div>
                         {item.defects.map((defect, i) => (
                           <div>
                             <Link
@@ -213,7 +217,7 @@ class TestExecuteTable extends Component {
                           </div>
                         ))}
                       </div>
-)}
+                    )}
                   >
                     {item.defects.map((defect, i) => defect.issueInfosDTO.issueName).join(',')}
                   </Tooltip>
@@ -233,7 +237,7 @@ class TestExecuteTable extends Component {
           </span>
           <span style={{ width: 80, lineHeight: '34px' }}>
             <Tooltip title={<FormattedMessage id="execute_quickPass" />}>
-              <Icon type="local_parking mlr-3 pointer" onClick={this.quickPass.bind(this, item)} />
+              <Icon type="pass mlr-3 pointer" onClick={this.quickPass.bind(this, item)} />
             </Tooltip>
 
             <Link to={`/testManager/Cycle/execute/${item.executeId}?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}>
@@ -254,8 +258,8 @@ class TestExecuteTable extends Component {
               <Icon type="delete_forever mlr-3 pointer" />
             </Popconfirm>
           </span>
-        </div>
-);
+        </div>,
+      );
     });
     return result;
   }
@@ -264,8 +268,9 @@ class TestExecuteTable extends Component {
     return (
       <div style={{ width: '100%' }}>
         <div style={{
- width: '100%', paddingLeft: 10, height: 30, background: 'rgba(0, 0, 0, 0.04)', display: 'flex' 
-}}>
+          width: '100%', paddingLeft: 10, height: 30, background: 'rgba(0, 0, 0, 0.04)', display: 'flex',
+        }}
+        >
           <span style={{ flex: 2, lineHeight: '30px' }}>
             <FormattedMessage id="version" />
           </span>

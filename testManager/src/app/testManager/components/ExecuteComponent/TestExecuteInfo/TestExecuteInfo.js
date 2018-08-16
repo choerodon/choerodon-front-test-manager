@@ -19,7 +19,7 @@ function beforeUpload(file) {
 }
 const styles = {
   cardTitle: {
-    fontWeight: 'bold',
+    fontWeight: 500,
     display: 'flex',
   },
   cardTitleText: {

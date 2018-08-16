@@ -111,22 +111,22 @@ class DataLog extends Component {
                       PROP[datalog.field] ? (
                         <div style={{ display: 'inline' }}>
                     将
-                          <span style={{ fontWeight: 'bold' }}>
+                          <span style={{ fontWeight: 500 }}>
                             {` ${PROP[datalog.field] || datalog.field} `}
                           </span>
                     由 
-                          <span style={{ fontWeight: 'bold', paddingLeft: 5, paddingRight: 5 }}>
+                          <span style={{ fontWeight: 500, paddingLeft: 5, paddingRight: 5 }}>
                             {datalog.oldString || '无'}
                           </span>
                     改为
-                          <span style={{ fontWeight: 'bold', paddingLeft: 5, paddingRight: 5 }}>
+                          <span style={{ fontWeight: 500, paddingLeft: 5, paddingRight: 5 }}>
                             {datalog.newString || '无'}
                           </span>
                         </div>
                       ) : (
                         <div style={{ display: 'inline' }}>
                     修改了
-                          <span style={{ fontWeight: 'bold' }}>
+                          <span style={{ fontWeight: 500 }}>
                             {` ${PROP_SIMPLE[datalog.field] || datalog.field} `}
                           </span>
                         </div>

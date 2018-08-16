@@ -218,7 +218,7 @@ class EditTestStep extends Component {
             </Form>
             <div className="sign-upload" style={{ marginTop: 38 }}>
               <div style={{ display: 'flex', marginBottom: 13, alignItems: 'center' }}>
-                <div style={{ fontWeight: 'bold' }}>
+                <div style={{ fontWeight: 500 }}>
                   <FormattedMessage id="execute_stepAttachment" />
                 </div>
               </div>
