@@ -238,6 +238,7 @@ class SummaryHome extends Component {
           <div className="c7n-content-container">
             <div className="c7n-statistic-container">
               <Popover
+                placement="topLeft"
                 content={<div><FormattedMessage id="summary_totalTest_tip" /></div>}
                 title={null}
               >
@@ -250,7 +251,8 @@ class SummaryHome extends Component {
                 </div>
               </Popover>
               <Popover
-                content={
+                placement="topLeft"
+                content={(
                   <div>
                     <FormattedMessage id="summary_total_tip1" />
                     <FormattedMessage
@@ -273,7 +275,8 @@ class SummaryHome extends Component {
                 </div>
               </Popover>
               <Popover
-                content={
+                placement="topLeft"
+                content={(
                   <div>
                     <FormattedMessage id="summary_total_tip1" />
                     <FormattedMessage
@@ -296,6 +299,7 @@ class SummaryHome extends Component {
                 </div>
               </Popover>
               <Popover
+                placement="topLeft"
                 content={<div><FormattedMessage id="summary_totalNotPlan_tip" /></div>}
                 title={null}
               >
