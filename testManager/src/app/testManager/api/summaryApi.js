@@ -31,6 +31,6 @@ export function getCreateRange(range) {
 }
 export function getIssueStatistic(type) {
   const projectId = AppState.currentMenuType.id;
-  return axios.post(`/agile/v1/projects/${projectId}/issues/test_component/statistic?type=${type}`, 
-    ['sub_task', 'story', 'task', 'issue_epic']);
+  return axios.post(`/agile/v1/projects/${projectId}/issues/test_component/statistic?type=${type}`,
+    ['sub_task', 'story', 'task', 'issue_epic', 'bug']);
 }
