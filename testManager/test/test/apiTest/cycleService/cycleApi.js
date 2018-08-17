@@ -13,5 +13,9 @@ describe('Cycle Api-GET', () => {
   });  
   it('[GET] 查询执行下的步骤', () => {
     return cycleFunc.getExecuteSteps(1636);
-  });    
+  });
+  it('[GET] 查询执行下的历史记录', () => {
+    return cycleFunc.getExecuteHistiorys(1636);
+  });
+  
 });
