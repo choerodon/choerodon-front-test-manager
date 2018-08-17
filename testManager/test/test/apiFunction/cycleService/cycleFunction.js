@@ -69,7 +69,7 @@ const cycleFunction = {
   },
   getExecuteSteps(executeId) {
     return chai.request(utils.config.gateway)
-      .get(`test/v1/projects/${projectId}/cycle/case/step/query/${executeId}?size=${5}&page=${0}`)   
+      .get(`/test/v1/projects/${projectId}/cycle/case/step/query/${executeId}?size=${5}&page=${0}`)   
       .set('Authorization', global.user.token)
       .set('Content-Type', 'application/json')
       .then((res) => {
