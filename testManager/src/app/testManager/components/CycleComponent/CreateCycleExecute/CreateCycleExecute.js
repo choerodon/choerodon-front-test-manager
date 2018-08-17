@@ -141,20 +141,20 @@ class CreateCycleExecute extends Component {
         createCycleExecuteFromCycle(folderId || cycleId, this.props.data.cycleId,
           assignedTo || AppState.userInfo.id,
           filter).then((res) => {
-          if (res.failed) {
-            Choerodon.prompt('当前实例已存在');
-          } else {
-            this.props.onOk();
-          }
-          this.setState({
-            loading: false,
+            if (res.failed) {
+              Choerodon.prompt('当前实例已存在');
+            } else {
+              this.props.onOk();
+            }
+            this.setState({
+              loading: false,
+            });
+          }).catch(() => {
+            this.setState({
+              loading: false,
+            });
+            Choerodon.prompt('网络错误');
           });
-        }).catch(() => {
-          this.setState({
-            loading: false,
-          });
-          Choerodon.prompt('网络错误');
-        });
         // POST / v1 / projects / { project_id } / issues / test_component / no_sub;
 
 
@@ -705,20 +705,29 @@ class CreateCycleExecute extends Component {
                                 mode="tags"
                                 style={{ width: 500, margin: '0 0 10px 0' }}
                                 label={<FormattedMessage id="cycle_createExecute_defectStatus" />}
-                                loading={selectLoading}
-                                onFocus={() => {
-                                  this.setState({
-                                    selectLoading: true,
-                                  });
-                                  getIssueStatus().then((List) => {
-                                    this.setState({
-                                      issueStatusList: List,
-                                      selectLoading: false,
-                                    });
-                                  });
-                                }}
+                              // loading={selectLoading}
+                              // onFocus={() => {
+                              //   this.setState({
+                              //     selectLoading: true,
+                              //   });
+                              //   getIssueStatus().then((List) => {
+                              //     this.setState({
+                              //       issueStatusList: List,
+                              //       selectLoading: false,
+                              //     });
+                              //   });
+                              // }}
                               >
-                                {issueStatusOptions}
+                                <Option value={'todo'} key={'todo'}>
+                                  待处理
+                                </Option>
+                                <Option value={'doing'} key={'doing'}>
+                                  处理中
+                                </Option>
+                                <Option value={'done'} key={'done'}>
+                                  已完成
+                                </Option>
+                                {/* {issueStatusOptions} */}
                               </Select>,
                             )}
                           </FormItem> : null}
