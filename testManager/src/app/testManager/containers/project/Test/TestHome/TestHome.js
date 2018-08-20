@@ -914,7 +914,7 @@ class Test extends Component {
                         });
                       }}
                     >
-                      <Icon type="playlist_add icon" />
+                      <Icon type="playlist_add icon" style={{ marginRight: -2 }}/>
                       <span><FormattedMessage id="issue_issueCreate" /></span>
                     </Button>
                   )}

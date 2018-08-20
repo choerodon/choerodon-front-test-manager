@@ -2,10 +2,10 @@
 import React, { Component } from 'react';
 import { observer } from 'mobx-react';
 import {
-  Page, Header, Content, stores, 
+  Page, Header, Content, stores,
 } from 'choerodon-front-boot';
 import {
-  Tooltip, Table, Button, Icon, Input, Tree, Spin, Modal, 
+  Tooltip, Table, Button, Icon, Input, Tree, Spin, Modal,
 } from 'choerodon-ui';
 import { Link } from 'react-router-dom';
 import _ from 'lodash';
@@ -15,16 +15,16 @@ import moment from 'moment';
 import './CycleHome.scss';
 import { getUsers } from '../../../../api/CommonApi';
 import {
-  getCycles, deleteExecute, getCycleById, editCycleExecute, clone, addFolder, getStatusList, exportCycle, 
+  getCycles, deleteExecute, getCycleById, editCycleExecute, clone, addFolder, getStatusList, exportCycle,
 } from '../../../../api/cycleApi';
 import { editCycle } from '../../../../api/CycleExecuteApi';
 import {
-  TreeTitle, CreateCycle, EditCycle, CreateCycleExecute, ShowCycleData, CloneCycle, 
+  TreeTitle, CreateCycle, EditCycle, CreateCycleExecute, ShowCycleData, CloneCycle,
 } from '../../../../components/CycleComponent';
 import DragTable from '../../../../components/DragTable';
 import { RichTextShow, SelectFocusLoad } from '../../../../components/CommonComponent';
 import {
-  delta2Html, delta2Text, issueLink, getParams, 
+  delta2Html, delta2Text, issueLink, getParams,
 } from '../../../../common/utils';
 import CycleStore from '../../../../store/project/cycle/CycleStore';
 import noRight from './noright.svg';
@@ -132,7 +132,7 @@ class CycleHome extends Component {
   getParentKey = (key, tree) => key.split('-').slice(0, -1).join('-')
 
   loadCycle = (selectedKeys, {
-    selected, selectedNodes, node, event, 
+    selected, selectedNodes, node, event,
   } = {}, flag) => {
     // window.console.log(selectedNodes, node, event);
     if (selectedKeys) {
@@ -155,22 +155,22 @@ class CycleHome extends Component {
         page: executePagination.current - 1,
         size: executePagination.pageSize,
       }, data.cycleId,
-      {
-        ...filters,
-        lastUpdatedBy: [Number(this.lastUpdatedBy)],
-        assignedTo: [Number(this.assignedTo)],
-      }).then((cycle) => {
-        this.setState({
-          rightLoading: false,
-          testList: cycle.content,
-          executePagination: {
-            current: executePagination.current,
-            pageSize: executePagination.pageSize,
-            total: cycle.totalElements,
-          },
+        {
+          ...filters,
+          lastUpdatedBy: [Number(this.lastUpdatedBy)],
+          assignedTo: [Number(this.assignedTo)],
+        }).then((cycle) => {
+          this.setState({
+            rightLoading: false,
+            testList: cycle.content,
+            executePagination: {
+              current: executePagination.current,
+              pageSize: executePagination.pageSize,
+              total: cycle.totalElements,
+            },
+          });
+          // window.console.log(cycle);
         });
-        // window.console.log(cycle);
-      });
     }
   }
 
@@ -219,7 +219,7 @@ class CycleHome extends Component {
       title: Choerodon.getMessage('确认删除吗?', 'Confirm delete'),
       content: <div style={{ marginBottom: 32 }}>
         {Choerodon.getMessage('当你点击删除后，该条数据将被永久删除，不可恢复!', 'When you click delete, after which the data will be permanently deleted and irreversible!')}
-               </div>,
+      </div>,
       onOk() {
         // that.setState({
         //   rightLoading: true,
@@ -302,18 +302,18 @@ class CycleHome extends Component {
         page: executePagination.current - 1,
         size: executePagination.pageSize,
       }, defaultExpandKeyItem.cycleId,
-      {}).then((cycle) => {
-        this.setState({
-          rightLoading: false,
-          testList: cycle.content,
-          executePagination: {
-            current: executePagination.current,
-            pageSize: executePagination.pageSize,
-            total: cycle.totalElements,
-          },
+        {}).then((cycle) => {
+          this.setState({
+            rightLoading: false,
+            testList: cycle.content,
+            executePagination: {
+              current: executePagination.current,
+              pageSize: executePagination.pageSize,
+              total: cycle.totalElements,
+            },
+          });
+          // window.console.log(cycle);
         });
-        // window.console.log(cycle);
-      });
     }
   }
 
@@ -441,28 +441,28 @@ class CycleHome extends Component {
         size: pagination.pageSize,
         page: pagination.current - 1,
       }, currentCycle.cycleId,
-      {
-        ...filters,
-        lastUpdatedBy: [Number(this.lastUpdatedBy)],
-        assignedTo: [Number(this.assignedTo)],
-      }).then((cycle) => {
-        this.setState({
-          rightLoading: false,
-          testList: cycle.content,
-          executePagination: {
-            current: pagination.current,
-            pageSize: pagination.pageSize,
-            total: cycle.totalElements,
-          },
+        {
+          ...filters,
+          lastUpdatedBy: [Number(this.lastUpdatedBy)],
+          assignedTo: [Number(this.assignedTo)],
+        }).then((cycle) => {
+          this.setState({
+            rightLoading: false,
+            testList: cycle.content,
+            executePagination: {
+              current: pagination.current,
+              pageSize: pagination.pageSize,
+              total: cycle.totalElements,
+            },
+          });
+          // window.console.log(cycle);
         });
-        // window.console.log(cycle);
-      });
     }
   }
 
   renderTreeNodes = data => data.map((item) => {
     const {
-      children, key, cycleCaseList, type, 
+      children, key, cycleCaseList, type,
     } = item;
     // debugger;
     const { searchValue } = this.state;
@@ -482,14 +482,14 @@ class CycleHome extends Component {
           title={(
             <div onClick={e => e.stopPropagation()} role="none">
               <Input
-    defaultValue={item.title}
-    autoFocus
-    onBlur={(e) => {
+                defaultValue={item.title}
+                autoFocus
+                onBlur={(e) => {
                   this.Clone(item, e, type);
                 }}
-  />
-                        </div>
-)}
+              />
+            </div>
+          )}
           icon={icon}
           data={item}
         />);
@@ -499,14 +499,14 @@ class CycleHome extends Component {
           title={(
             <div onClick={e => e.stopPropagation()} role="none">
               <Input
-    defaultValue={item.title}
-    autoFocus
-    onBlur={(e) => {
+                defaultValue={item.title}
+                autoFocus
+                onBlur={(e) => {
                   this.addFolder(item, e, type);
                 }}
-  />
-                        </div>
-)}
+              />
+            </div>
+          )}
           icon={icon}
           data={item}
         />);
@@ -523,15 +523,15 @@ class CycleHome extends Component {
           title={item.cycleId
             ? (
               <TreeTitle
-  statusList={this.state.statusList}
-  refresh={this.refresh}
-  callback={this.callback}
-  text={item.title}
-  key={key}
-  data={item}
-  title={title}
-  processBar={cycleCaseList}
-/>
+                statusList={this.state.statusList}
+                refresh={this.refresh}
+                callback={this.callback}
+                text={item.title}
+                key={key}
+                data={item}
+                title={title}
+                processBar={cycleCaseList}
+              />
             ) : title}
           key={key}
           data={item}
@@ -604,25 +604,25 @@ class CycleHome extends Component {
         const { issueInfosDTO } = record;
         return (
           issueInfosDTO && (
-          <Tooltip
-            title={(
-    <div>
-  <div>{issueInfosDTO.issueName}</div>
-  <div>{issueInfosDTO.summary}</div>
-</div>
-)}
-          >
-            <Link
-    className="c7n-text-dot"
-    style={{
-                width: 100,
-              }}
-    to={issueLink(issueInfosDTO.issueId, issueInfosDTO.typeCode)}
-    target="_blank"
-  >
-    {issueInfosDTO.issueName}
-  </Link>
-                    </Tooltip>
+            <Tooltip
+              title={(
+                <div>
+                  <div>{issueInfosDTO.issueName}</div>
+                  <div>{issueInfosDTO.summary}</div>
+                </div>
+              )}
+            >
+              <Link
+                className="c7n-text-dot"
+                style={{
+                  width: 100,
+                }}
+                to={issueLink(issueInfosDTO.issueId, issueInfosDTO.typeCode)}
+                target="_blank"
+              >
+                {issueInfosDTO.issueName}
+              </Link>
+            </Tooltip>
           )
         );
       },
@@ -639,8 +639,8 @@ class CycleHome extends Component {
         return (
           <div style={{ ...styles.statusOption, ...{ background: statusColor } }}>
             {_.find(statusList, { statusId: executionStatus })
-            && _.find(statusList, { statusId: executionStatus }).statusName}
-                    </div>
+              && _.find(statusList, { statusId: executionStatus }).statusName}
+          </div>
         );
       },
     }, {
@@ -673,28 +673,28 @@ class CycleHome extends Component {
         <Tooltip
           placement="topLeft"
           title={(
-    <div>
-  {defects.map((defect, i) => (
+            <div>
+              {defects.map((defect, i) => (
                 defect.issueInfosDTO && (
-<div>
-                  <Link
-                    style={{
-                      color: 'white',
-                    }}
-                    to={issueLink(defect.issueInfosDTO.issueId, defect.issueInfosDTO.typeCode)}
-                    target="_blank"
-                  >
-                    {defect.issueInfosDTO.issueName}
-                  </Link>
-                  <div>{defect.issueInfosDTO.summary}</div>
-                </div>
-)
+                  <div>
+                    <Link
+                      style={{
+                        color: 'white',
+                      }}
+                      to={issueLink(defect.issueInfosDTO.issueId, defect.issueInfosDTO.typeCode)}
+                      target="_blank"
+                    >
+                      {defect.issueInfosDTO.issueName}
+                    </Link>
+                    <div>{defect.issueInfosDTO.summary}</div>
+                  </div>
+                )
               ))}
-</div>
-)}
+            </div>
+          )}
         >
           {defects.map((defect, i) => defect.issueInfosDTO && defect.issueInfosDTO.issueName).join(',')}
-                </Tooltip>
+        </Tooltip>
       ),
     },
     {
@@ -708,7 +708,7 @@ class CycleHome extends Component {
             className="c7n-text-dot"
           >
             {lastUpdateUser.realName}
-                    </div>
+          </div>
         );
       },
     }, {
@@ -723,7 +723,7 @@ class CycleHome extends Component {
           >
             {/* {lastUpdateDate && moment(lastUpdateDate).format('D/MMMM/YY')} */}
             {lastUpdateDate && moment(lastUpdateDate).format('YYYY-MM-DD')}
-                    </div>
+          </div>
         );
       },
     }, {
@@ -737,7 +737,7 @@ class CycleHome extends Component {
             className="c7n-text-dot"
           >
             {assigneeUser && assigneeUser.realName}
-                    </div>
+          </div>
         );
       },
     }, {
@@ -748,27 +748,27 @@ class CycleHome extends Component {
         return (
           record.projectId !== 0
           && (
-          <div style={{ display: 'flex' }}>
-  <Tooltip title={<FormattedMessage id="execute_quickPass" />}>
-              <Icon type="local_parking" onClick={that.quickPass.bind(that, record)} style={{ cursor: 'pointer' }} />
-            </Tooltip>
-  <Icon
-              type="explicit2"
-              style={{ cursor: 'pointer', margin: '0 10px' }}
-              onClick={() => {
-                const { history } = that.props;
-                const urlParams = AppState.currentMenuType;
-                history.push(`/testManager/Cycle/execute/${record.executeId}?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`);
-              }}
-            />
-  <Icon
-              type="delete_forever"
-              style={{ cursor: 'pointer' }}
-              onClick={() => {
-                that.deleteExecute(record);
-              }}
-            />
-</div>
+            <div style={{ display: 'flex' }}>
+              <Tooltip title={<FormattedMessage id="execute_quickPass" />}>
+                <Icon type="pass" onClick={that.quickPass.bind(that, record)} style={{ cursor: 'pointer' }} />
+              </Tooltip>
+              <Icon
+                type="explicit2"
+                style={{ cursor: 'pointer', margin: '0 10px' }}
+                onClick={() => {
+                  const { history } = that.props;
+                  const urlParams = AppState.currentMenuType;
+                  history.push(`/testManager/Cycle/execute/${record.executeId}?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`);
+                }}
+              />
+              <Icon
+                type="delete_forever"
+                style={{ cursor: 'pointer' }}
+                onClick={() => {
+                  that.deleteExecute(record);
+                }}
+              />
+            </div>
           )
         );
       },
@@ -787,17 +787,17 @@ class CycleHome extends Component {
             <Tooltip
               placement="topLeft"
               title={(
-    <div>
-  {componentIssueRelDTOList.map((component, i) => (
-                  <div>
-                    {component.name}
-                  </div>
-                ))}
-</div>
-)}
+                <div>
+                  {componentIssueRelDTOList.map((component, i) => (
+                    <div>
+                      {component.name}
+                    </div>
+                  ))}
+                </div>
+              )}
             >
               {componentIssueRelDTOList.map((component, i) => component.name).join(',')}
-                        </Tooltip>
+            </Tooltip>
           );
         },
       },
@@ -814,41 +814,41 @@ class CycleHome extends Component {
             <Tooltip
               placement="topLeft"
               title={(
-    <div>
-  {labelIssueRelDTOList.map((label, i) => (
-                  <div>
+                <div>
+                  {labelIssueRelDTOList.map((label, i) => (
+                    <div>
+                      {label.labelName}
+                    </div>
+                  ))}
+                </div>
+              )}
+            >
+              <div style={{
+                display: 'flex', flexFlow: 'row wrap', width: '100%', justifyContent: 'space-between', alignItems: 'center', maxHeight: 24, overflow: 'hidden',
+              }}>
+                {labelIssueRelDTOList.map((label, i) => (
+                  <div
+                    style={{
+                      flexShrink: 0,
+                      width: '48%',
+                      color: '#000',
+                      borderRadius: '100px',
+                      fontSize: '13px',
+                      lineHeight: '20px',
+                      padding: '2px 5px',
+                      textAlign: 'center',
+                      background: 'rgba(0, 0, 0, 0.08)',
+                      // margin: '0 5px',
+                      // marginBottom: 3,
+                    }}
+                    className="c7n-text-dot"
+                  >
                     {label.labelName}
                   </div>
                 ))}
-</div>
-)}
-            >
-              <div style={{
-    display: 'flex', flexFlow: 'row wrap', width: '100%', justifyContent: 'space-between', alignItems: 'center', maxHeight: 24, overflow: 'hidden', 
-  }}>
-    {labelIssueRelDTOList.map((label, i) => (
-                <div
-  style={{
-                  flexShrink: 0,
-                  width: '48%',
-                  color: '#000',
-                  borderRadius: '100px',
-                  fontSize: '13px',
-                  lineHeight: '20px',
-                  padding: '2px 5px',
-                  textAlign: 'center',
-                  background: 'rgba(0, 0, 0, 0.08)',
-                  // margin: '0 5px',
-                  // marginBottom: 3,
-                }}
-  className="c7n-text-dot"
->
-  {label.labelName}
-</div>
-              ))}
-  </div>
+              </div>
 
-                        </Tooltip>
+            </Tooltip>
           );
         },
       },
@@ -982,69 +982,69 @@ class CycleHome extends Component {
               {cycleId ? (
                 <div className="c7n-ch-right">
                   <div style={{ display: 'flex', alignItems: 'center' }}>
-    <div>
-                    <FormattedMessage id="cycle_cycleName" />
-                    ：
+                    <div>
+                      <FormattedMessage id="cycle_cycleName" />
+                      ：
                     <span>{title}</span>
+                    </div>
+                    <div style={{ flex: 1, visiblity: 'hidden' }} />
+                    <div>
+                      <Button
+                        style={{ color: '#3f51b5', marginRight: '-15px' }}
+                        onClick={() => {
+                          this.setState({ CreateCycleExecuteVisible: true });
+                        }}
+                      >
+                        <Icon type="playlist_add" style={{ marginRight: -2 }}/>
+                        <span>
+                          <FormattedMessage id="cycle_addCycle" />
+                        </span>
+                      </Button>
+                    </div>
                   </div>
-    <div style={{ flex: 1, visiblity: 'hidden' }} />
-    <div>
-                    <Button
-                      style={{ color: '#3f51b5', marginRight: '-15px' }}
-                      onClick={() => {
-                        this.setState({ CreateCycleExecuteVisible: true });
-                      }}
-                    >
-                      <Icon type="playlist_add" />
-                      <span>
-                        <FormattedMessage id="cycle_addCycle" />
-                      </span>
-                    </Button>
-                  </div>
-  </div>
                   <ShowCycleData data={currentCycle} />
                   <div style={{ display: 'flex', marginBottom: 20 }}>
-    <SelectFocusLoad
-                    label={<FormattedMessage id="cycle_executeBy" />}
-                    request={getUsers}
-                    onChange={(value) => {
-                      this.lastUpdatedBy = value;
-                      this.loadCycle();
-                    }}
-                  />
-    <div style={{ marginLeft: 20 }}>
                     <SelectFocusLoad
-                      label={<FormattedMessage id="cycle_assignedTo" />}
+                      label={<FormattedMessage id="cycle_executeBy" />}
                       request={getUsers}
                       onChange={(value) => {
-                        this.assignedTo = value;
+                        this.lastUpdatedBy = value;
                         this.loadCycle();
                       }}
                     />
+                    <div style={{ marginLeft: 20 }}>
+                      <SelectFocusLoad
+                        label={<FormattedMessage id="cycle_assignedTo" />}
+                        request={getUsers}
+                        onChange={(value) => {
+                          this.assignedTo = value;
+                          this.loadCycle();
+                        }}
+                      />
+                    </div>
                   </div>
-  </div>
                   <DragTable
-    pagination={executePagination}
-    loading={rightLoading}
-    onChange={this.handleExecuteTableChange}
-    dataSource={testList}
-    columns={leftVisible ? columns
-                    : columns.slice(0, 4).concat(otherColumns).concat(columns.slice(4))}
-    onDragEnd={this.onDragEnd}
-    dragKey="executeId"
-  />
-                                </div>
+                    pagination={executePagination}
+                    loading={rightLoading}
+                    onChange={this.handleExecuteTableChange}
+                    dataSource={testList}
+                    columns={leftVisible ? columns
+                      : columns.slice(0, 4).concat(otherColumns).concat(columns.slice(4))}
+                    onDragEnd={this.onDragEnd}
+                    dragKey="executeId"
+                  />
+                </div>
               ) : (
-                <div style={{
-    display: 'flex', alignItems: 'center', height: 250, margin: '88px auto', padding: '50px 75px', border: '1px dashed rgba(0,0,0,0.54)', 
-  }}>
-    <img src={noRight} alt="" />
-    <div style={{ marginLeft: 40 }}>
-    <div style={{ fontSize: '14px', color: 'rgba(0,0,0,0.65)' }}>根据当前选定的测试循环没有查询到循环信息</div>
-    <div style={{ fontSize: '20px', fontWeight: 'bold', marginTop: 10 }}>尝试在您的树状图中选择测试循环</div>
-  </div>
-    </div>
-              )}
+                  <div style={{
+                    display: 'flex', alignItems: 'center', height: 250, margin: '88px auto', padding: '50px 75px', border: '1px dashed rgba(0,0,0,0.54)',
+                  }}>
+                    <img src={noRight} alt="" />
+                    <div style={{ marginLeft: 40 }}>
+                      <div style={{ fontSize: '14px', color: 'rgba(0,0,0,0.65)' }}>根据当前选定的测试循环没有查询到循环信息</div>
+                      <div style={{ fontSize: '20px', fontWeight: 'bold', marginTop: 10 }}>尝试在您的树状图中选择测试循环</div>
+                    </div>
+                  </div>
+                )}
             </div>
           </Spin>
         </Content>
