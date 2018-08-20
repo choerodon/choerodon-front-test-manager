@@ -262,7 +262,7 @@ class SummaryHome extends Component {
                       }}
                     />
                     <FormattedMessage id="summary_totalRest_tip3" />
-                  </div>
+                  </div>)
                 }
                 title={null}
               >
@@ -286,7 +286,7 @@ class SummaryHome extends Component {
                       }}
                     />
                     <FormattedMessage id="summary_totalExexute_tip3" />
-                  </div>
+                  </div>)
                 }
                 title={null}
               >
