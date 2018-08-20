@@ -196,14 +196,19 @@ class SummaryHome extends Component {
       trigger: 'axis',
     },
     grid: {
-      top: '5%',
+      top: '13%',
       left: 26,
-      right: '5%',
-      bottom: '28%',
+      right: '8%',
+      bottom: '23%',
       // containLabel: true,
     },
     xAxis: {
       type: 'category',
+      name: '日期',
+      // nameGap: 28,
+      nameTextStyle: {
+        color: 'black',
+      },
       boundaryGap: false,
       axisLine: {
         lineStyle: {
@@ -230,6 +235,10 @@ class SummaryHome extends Component {
     },
     yAxis: {
       type: 'value',
+      name: '数值',      
+      nameTextStyle: {
+        color: 'black',
+      },
       axisLine: {
         lineStyle: {
           color: '#EEEEEE',
@@ -271,20 +280,20 @@ class SummaryHome extends Component {
       trigger: 'axis',
     },
     grid: {
-      top: '5%',
+      top: '13%',
       left: 26,
-      right: '5%',
-      bottom: '28%',
+      right: '8%',
+      bottom: '23%',
       // containLabel: true,
     },
     xAxis: {
       type: 'category',      
-      // name: '日期',
-      nameGap: 28,
+      name: '日期',
+      // nameGap: 28,
       nameTextStyle: {
         color: 'black',
       },
-      nameLocation: 'middle',
+      // nameLocation: 'middle',
       boundaryGap: false,
       axisLine: {
         lineStyle: {
@@ -311,7 +320,10 @@ class SummaryHome extends Component {
     },
     yAxis: {
       type: 'value',
-      name: '数值',
+      name: '数值',      
+      nameTextStyle: {
+        color: 'black',
+      },
       axisLine: {
         lineStyle: {
           color: '#EEEEEE',
@@ -550,8 +562,8 @@ class SummaryHome extends Component {
             <div className="c7n-chartArea-container">
 
               <div className="c7n-chart-container">
-                <div style={{ fontWeight: 'bold', margin: 12 }}><FormattedMessage id="summary_testCreate" /></div>
-                <div style={{ height: 245 }}>
+                <div style={{ fontWeight: 'bold', margin: '12px 12px 0 12px' }}><FormattedMessage id="summary_testCreate" /></div>
+                <div style={{ height: 260 }}>
                   <ReactEcharts
                     option={this.getCreateOption()}
                   />
@@ -584,8 +596,8 @@ class SummaryHome extends Component {
                 </div>
               </div>
               <div className="c7n-chart-container" style={{ marginLeft: 16 }}>
-                <div style={{ fontWeight: 'bold', margin: 12 }}><FormattedMessage id="summary_testExecute" /></div>
-                <div style={{ height: 245 }}>
+                <div style={{ fontWeight: 'bold', margin: '12px 12px 0 12px' }}><FormattedMessage id="summary_testExecute" /></div>
+                <div style={{ height: 260 }}>
                   <ReactEcharts
                     option={this.getExecuteOption()}
                   />
