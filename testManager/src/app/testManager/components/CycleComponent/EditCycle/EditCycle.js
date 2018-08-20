@@ -1,63 +1,70 @@
 import React, { Component } from 'react';
-import { Form, Input, Select, Modal, Spin, DatePicker } from 'choerodon-ui';
+import {
+  Form, Input, Select, Modal, Spin, DatePicker, 
+} from 'choerodon-ui';
 import { Content, stores } from 'choerodon-front-boot';
 import moment from 'moment';
 import { getProjectVersion } from '../../../api/agileApi';
 import { editFolder } from '../../../api/cycleApi';
 
-const Option = Select.Option;
+const { Option } = Select;
 const { AppState } = stores;
 const FormItem = Form.Item;
 const { Sidebar } = Modal;
 
 class EditCycle extends Component {
-    state = {
-      versions: [],
-      selectLoading: false,
-      loading: false,      
+  state = {
+    versions: [],
+    selectLoading: false,
+    loading: false,
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { setFieldsValue } = this.props.form;
+    if (this.props.visible === false && nextProps.visible === true) {
+      const {
+        versionId,
+        title,
+        description,
+        build,
+        environment,
+        fromDate,
+        toDate,
+      } = nextProps.initialValue;
+      setFieldsValue({
+        versionId,
+        cycleName: title,
+        description,
+        build,
+        environment,
+        fromDate: fromDate ? moment(fromDate) : null,
+        toDate: toDate ? moment(toDate) : null,
+      });
     }
-    componentWillReceiveProps(nextProps) {
-      const { setFieldsValue } = this.props.form;
-      if (this.props.visible === false && nextProps.visible === true) {
-        const {
-          versionId,
-          title, 
-          description, 
-          build, 
-          environment, 
-          fromDate, 
-          toDate,
-        } = nextProps.initialValue;
-        setFieldsValue({
-          versionId,
-          cycleName: title, 
-          description, 
-          build, 
-          environment, 
-          fromDate: fromDate ? moment(fromDate) : null, 
-          toDate: toDate ? moment(toDate) : null,         
-        });
-      }
-    }
+  }
 
   onOk = () => {
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
         this.setState({ loading: true });
         window.console.log('Received values of form: ', values);
-        const { fromDate, toDate } = values;        
+        const { fromDate, toDate } = values;
         const { initialValue } = this.props;
-        editFolder({ 
+        editFolder({
           ...values,
           ...{
             cycleId: initialValue.cycleId,
             type: 'cycle',
             fromDate: fromDate ? fromDate.format('YYYY-MM-DD HH:mm:ss') : null,
             toDate: toDate ? toDate.format('YYYY-MM-DD HH:mm:ss') : null,
-          }, 
-        }).then((data) => {
+          },
+        }).then((res) => {
+          if (res.failed) {
+            Choerodon.prompt('同名循环已存在');
+          } else {
+            this.props.onOk();
+          }
           this.setState({ loading: false });
-          this.props.onOk();
         }).catch(() => {
           Choerodon.prompt('网络异常');
           this.setState({ loading: false });
@@ -65,7 +72,8 @@ class EditCycle extends Component {
       }
     });
   }
-  loadVersions=() => {
+
+  loadVersions = () => {
     this.setState({
       selectLoading: true,
     });
@@ -76,17 +84,21 @@ class EditCycle extends Component {
       });
     });
   }
+
   render() {
     const { visible, onCancel, initialValue } = this.props;
     const { getFieldDecorator } = this.props.form;
     const { versions, loading, selectLoading } = this.state;
-    const { versionId, title, description, build, environment, fromDate, toDate } = initialValue;
-    const options = versions.map(version => 
-      (<Option value={version.versionId} key={version.versionId}>     
-        {version.name}     
-      </Option>));
+    const {
+      versionId, title, description, build, environment, fromDate, toDate, 
+    } = initialValue;
+    const options = versions.map(version => (
+      <Option value={version.versionId} key={version.versionId}>
+        {version.name}
+      </Option>
+    ));
     return (
-      <div onClick={() => { this.setState({ pickShow: false }); }} role="none">
+      <div>
         <Spin spinning={loading}>
           <Sidebar
             title="修改测试循环"
@@ -107,7 +119,7 @@ class EditCycle extends Component {
                   // {...formItemLayout}
                   label={null}
                 >
-                  {getFieldDecorator('versionId', {                
+                  {getFieldDecorator('versionId', {
                     rules: [{
                       required: true, message: '请选择版本!',
                     }],
@@ -117,17 +129,17 @@ class EditCycle extends Component {
                       onFocus={this.loadVersions}
                       style={{ width: 500, margin: '0 0 10px 0' }}
                       label="版本"
-                                
+
                     >
                       {options}
-                    </Select>,     
+                    </Select>,
                   )}
                 </FormItem>
                 <FormItem
                   // {...formItemLayout}
                   label={null}
                 >
-                  {getFieldDecorator('cycleName', {                    
+                  {getFieldDecorator('cycleName', {
                     rules: [{
                       required: true, message: '请输入名称!',
                     }],
@@ -142,7 +154,7 @@ class EditCycle extends Component {
                   // {...formItemLayout}
                   label={null}
                 >
-                  {getFieldDecorator('description', {                 
+                  {getFieldDecorator('description', {
                     // rules: [{
                     //   required: true, message: '请输入说明!',
                     // }],
@@ -157,7 +169,7 @@ class EditCycle extends Component {
                   // {...formItemLayout}
                   label={null}
                 >
-                  {getFieldDecorator('build', {                   
+                  {getFieldDecorator('build', {
                     // rules: [{
                     //   required: true, message: '请输入构建号!',
                     // }],
@@ -172,7 +184,7 @@ class EditCycle extends Component {
                   // {...formItemLayout}
                   label={null}
                 >
-                  {getFieldDecorator('environment', {                   
+                  {getFieldDecorator('environment', {
                     // rules: [{
                     //   required: true, message: '请输入环境!',
                     // }],
@@ -183,15 +195,15 @@ class EditCycle extends Component {
                     // </div>
                   )}
                 </FormItem>
-                <FormItem >
-                  {getFieldDecorator('fromDate', {                    
+                <FormItem>
+                  {getFieldDecorator('fromDate', {
                     // rules: [{
                     //   required: true, message: '请选择日期!',
                     // }],
                   })(
-                    <DatePicker 
+                    <DatePicker
                       format="YYYY-MM-DD"
-                      style={{ width: 500 }} 
+                      style={{ width: 500 }}
                       label="开始日期"
                     />,
                     // <div style={{ width: 500 }}>
@@ -199,15 +211,15 @@ class EditCycle extends Component {
                     // </div>
                   )}
                 </FormItem>
-                <FormItem >
-                  {getFieldDecorator('toDate', {                   
+                <FormItem>
+                  {getFieldDecorator('toDate', {
                     // rules: [{
                     //   required: true, message: '请选择日期!',
                     // }],
                   })(
-                    <DatePicker 
+                    <DatePicker
                       format="YYYY-MM-DD"
-                      style={{ width: 500 }} 
+                      style={{ width: 500 }}
                       label="结束日期"
                     />,
                     // <div style={{ width: 500 }}>

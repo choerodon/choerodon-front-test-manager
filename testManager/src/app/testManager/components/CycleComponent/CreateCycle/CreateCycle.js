@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
-import { Form, Input, Select, Button, Icon, Modal, Upload, Spin, DatePicker } from 'choerodon-ui';
+import {
+  Form, Input, Select, Button, Icon, Modal, Upload, Spin, DatePicker, 
+} from 'choerodon-ui';
 import { Content, stores } from 'choerodon-front-boot';
 // import './CreateCycle.less';
 import { FormattedMessage } from 'react-intl';
 import { getProjectVersion } from '../../../api/agileApi';
 import { addCycle } from '../../../api/cycleApi';
 
-const Option = Select.Option;
+const { Option } = Select;
 const { AppState } = stores;
 const FormItem = Form.Item;
 const { Sidebar } = Modal;
@@ -16,8 +18,9 @@ class CreateCycle extends Component {
   state = {
     versions: [],
     selectLoading: false,
-    loading: false,    
+    loading: false,
   }
+
   componentWillReceiveProps(nextProps) {
     const { resetFields } = this.props.form;
     if (this.props.visible === false && nextProps.visible === true) {
@@ -31,17 +34,21 @@ class CreateCycle extends Component {
         this.setState({ loading: true });
         window.console.log('Received values of form: ', values);
         const { fromDate, toDate } = values;
-        
-        addCycle({ 
+
+        addCycle({
           ...values,
           ...{
             type: 'cycle',
             fromDate: fromDate ? fromDate.format('YYYY-MM-DD HH:mm:ss') : null,
             toDate: toDate ? toDate.format('YYYY-MM-DD HH:mm:ss') : null,
-          }, 
-        }).then((data) => {
+          },
+        }).then((res) => {
+          if (res.failed) {
+            Choerodon.prompt('同名循环已存在');
+          } else {
+            this.props.onOk();
+          }
           this.setState({ loading: false });
-          this.props.onOk();
         }).catch(() => {
           Choerodon.prompt('网络异常');
           this.setState({ loading: false });
@@ -49,7 +56,8 @@ class CreateCycle extends Component {
       }
     });
   }
-  loadVersions=() => {
+
+  loadVersions = () => {
     this.setState({
       selectLoading: true,
     });
@@ -60,16 +68,20 @@ class CreateCycle extends Component {
       });
     });
   }
+
   render() {
-    const { visible, onOk, onCancel, type } = this.props;
+    const {
+      visible, onOk, onCancel, type, 
+    } = this.props;
     const { getFieldDecorator } = this.props.form;
     const { versions, loading, selectLoading } = this.state;
-    const options = versions.map(version => 
-      (<Option value={version.versionId} key={version.versionId}>     
-        {version.name}     
-      </Option>));
+    const options = versions.map(version => (
+      <Option value={version.versionId} key={version.versionId}>
+        {version.name}
+      </Option>
+    ));
     return (
-      <div onClick={() => { this.setState({ pickShow: false }); }} role="none">
+      <div>
         <Spin spinning={loading}>
           <Sidebar
             title={<FormattedMessage id="cycle_create_title" />}
@@ -99,10 +111,10 @@ class CreateCycle extends Component {
                       loading={selectLoading}
                       onFocus={this.loadVersions}
                       style={{ width: 500, margin: '0 0 10px 0' }}
-                      label={<FormattedMessage id="version" />}                               
+                      label={<FormattedMessage id="version" />}
                     >
                       {options}
-                    </Select>,     
+                    </Select>,
                   )}
                 </FormItem>
                 <FormItem
@@ -165,15 +177,15 @@ class CreateCycle extends Component {
                     // </div>
                   )}
                 </FormItem>
-                <FormItem >
+                <FormItem>
                   {getFieldDecorator('fromDate', {
                     // rules: [{
                     //   required: true, message: '请选择日期!',
                     // }],
                   })(
-                    <DatePicker 
+                    <DatePicker
                       format="YYYY-MM-DD"
-                      style={{ width: 500 }} 
+                      style={{ width: 500 }}
                       label={<FormattedMessage id="cycle_startTime" />}
                     />,
                     // <div style={{ width: 500 }}>
@@ -181,16 +193,16 @@ class CreateCycle extends Component {
                     // </div>
                   )}
                 </FormItem>
-                <FormItem >
+                <FormItem>
                   {getFieldDecorator('toDate', {
                     // rules: [{
                     //   required: true, message: '请选择日期!',
                     // }],
                   })(
-                    <DatePicker 
+                    <DatePicker
                       label={<FormattedMessage id="cycle_endTime" />}
                       format="YYYY-MM-DD"
-                      style={{ width: 500 }}                       
+                      style={{ width: 500 }}
                     />,
                     // <div style={{ width: 500 }}>
                     //   <TextArea maxLength={30} label="说明" placeholder="说明" autosize />
