@@ -19,7 +19,7 @@ function beforeUpload(file) {
 }
 const styles = {
   cardTitle: {
-    fontWeight: 'bold',
+    fontWeight: 500,
     display: 'flex',
   },
   cardTitleText: {
@@ -73,7 +73,7 @@ const Option = Select.Option;
 const { Text, Edit } = TextEditToggle;
 @observer
 class TestExecuteInfo extends Component {
-  state={
+  state = {
     edit: false,
   }
   handleUpload = (e) => {
@@ -106,7 +106,7 @@ class TestExecuteInfo extends Component {
     const cycleData = CycleExecuteStore.getCycleData;
     const defectIds = CycleExecuteStore.getDefectIds;
     const { executeId } = cycleData;
-    const needAdd = issueList.filter(issueId => !defectIds.includes(issueId))        
+    const needAdd = issueList.filter(issueId => !defectIds.includes(issueId))
       .map(issueId => ({
         defectType: 'CYCLE_CASE',
         defectLinkId: executeId,
@@ -134,9 +134,9 @@ class TestExecuteInfo extends Component {
         if (_.find(cycleData.defects, { issueId: Number(deleteEle[0]) })) {
           const id = _.find(cycleData.defects, { issueId: Number(deleteEle[0]) }).id;
           cycleData.defects.splice(defectIds.indexOf(deleteEle[0].toString()));
-          removeDefect(id).then((res) => {            
-            cycleData.defects.splice(defectIds.indexOf(deleteEle[0])); 
-            CycleExecuteStore.setCycleData(cycleData);           
+          removeDefect(id).then((res) => {
+            cycleData.defects.splice(defectIds.indexOf(deleteEle[0]));
+            CycleExecuteStore.setCycleData(cycleData);
           });
         }
       }
@@ -157,12 +157,12 @@ class TestExecuteInfo extends Component {
     delete newData.nextRank;
 
     editCycle(newData).then((Data) => {
-      this.setState({       
+      this.setState({
         edit: false,
-      });     
+      });
       CycleExecuteStore.getInfo();
     }).catch((error) => {
-      Choerodon.prompt('网络异常');    
+      Choerodon.prompt('网络异常');
     });
   }
   render() {
@@ -195,9 +195,9 @@ class TestExecuteInfo extends Component {
       </div>
     </Option>));
     const defectsOptions =
-    issueList.map(issue => (<Option key={issue.issueId} value={issue.issueId.toString()}>
-      {issue.issueNum} {issue.summary}
-    </Option>));
+      issueList.map(issue => (<Option key={issue.issueId} value={issue.issueId.toString()}>
+        {issue.issueNum} {issue.summary}
+      </Option>));
     const userOptions = userList.map(user =>
       (<Option key={user.id} value={user.id}>
         <div style={{ display: 'inline-flex', alignItems: 'center', padding: '2px' }}>
@@ -229,7 +229,7 @@ class TestExecuteInfo extends Component {
               formKey="executionStatus"
               onSubmit={(id) => { this.submit({ executionStatus: id }); }}
               originData={executionStatus}
-              // onCancel={this.cancelEdit}
+            // onCancel={this.cancelEdit}
             >
               <Text>
                 <div style={{ background: statusColor, width: 60, textAlign: 'center', borderRadius: '2px', display: 'inline-block', color: 'white' }}>
@@ -241,7 +241,7 @@ class TestExecuteInfo extends Component {
                   autoFocus
                   // defaultValue={executionStatus}
                   style={{ width: 200 }}
-                  // onSelect={this.handleStatusChange}
+                // onSelect={this.handleStatusChange}
                 >
                   {options}
                 </Select>
@@ -254,7 +254,7 @@ class TestExecuteInfo extends Component {
             </div>
             <TextEditToggle
               formKey="assignedTo"
-              onSubmit={(id) => { this.submit({ assignedTo: id }); }}
+              onSubmit={(id) => { this.submit({ assignedTo: id || 0 }); }}
               originData={assigneeUser ? assigneeUser.id : null}
               onCancel={this.cancelEdit}
             >
@@ -269,8 +269,8 @@ class TestExecuteInfo extends Component {
                   autoFocus
                   filterOption={false}
                   onFilterChange={(value) => { CycleExecuteStore.loadUserList(value); }}
-                  loading={selectLoading}              
-                  style={{ width: 200 }}                 
+                  loading={selectLoading}
+                  style={{ width: 200 }}
                   onFocus={() => { CycleExecuteStore.loadUserList(); }}
                 >
                   {userOptions}
@@ -319,8 +319,8 @@ class TestExecuteInfo extends Component {
               </Text>
               <Edit>
                 <Select
-                // filter
-                // allowClear
+                  // filter
+                  // allowClear
                   autoFocus
                   filter
                   mode="multiple"
@@ -336,7 +336,7 @@ class TestExecuteInfo extends Component {
                   {defectsOptions}
                 </Select>
               </Edit>
-            </TextEditToggle>            
+            </TextEditToggle>
           </div>
           {/* <CreateIssueTiny    
             typeCode="bug"       

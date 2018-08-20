@@ -6,9 +6,7 @@ const utils = require('../../../Utils');
 chai.should();
 chai.use(chaiHttp);
 
-const testData = {
-
-}
+const projectId = utils.config.projectId;
 const statusFunction = {
   /**
    * 查询状态列表
@@ -18,7 +16,7 @@ const statusFunction = {
   getStatusList(body) {
     // console.log('token', global.user.token);
     return chai.request(utils.config.gateway)
-      .post(`/test/v1/projects/${144}/status/query`)
+      .post(`/test/v1/projects/${projectId}/status/query`)
       .send(body)
       .set('Authorization', global.user.token)
       .set('Content-Type', 'application/json')
@@ -31,24 +29,9 @@ const statusFunction = {
       });
   },
   createStatus(body) {
-    // return chai.request(utils.config.gateway)
-    //   .post(`/test/v1/projects/${144}/status`)
-    //   .send(body)
-    //   .set('Authorization', global.user.token)
-    //   .set('Content-Type', 'application/json')
-    //   .then((res) => {
-    //     res.should.have.status(201);
-
-    //     console.log(res.body);
-    //     return res;
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //   });
-
     return new Promise((resolve, reject) => {
       chai.request(utils.config.gateway)
-        .post(`/test/v1/projects/${144}/status`)
+        .post(`/test/v1/projects/${projectId}/status`)
         .send(body)
         .set('Authorization', global.user.token)
         .set('Content-Type', 'application/json')
@@ -64,7 +47,7 @@ const statusFunction = {
   },
   editStatus(body) {
     return chai.request(utils.config.gateway)
-      .put(`/test/v1/projects/${144}/status/update`)
+      .put(`/test/v1/projects/${projectId}/status/update`)
       .send(body)
       .set('Authorization', global.user.token)
       .set('Content-Type', 'application/json')
@@ -77,13 +60,13 @@ const statusFunction = {
       });
   },
   deleteStatus(statusId) {
-    console.log(statusId)
+    // console.log(statusId)
     return chai.request(utils.config.gateway)
-      .delete(`/test/v1/projects/${144}/status/${statusId}`)
+      .delete(`/test/v1/projects/${projectId}/status/${statusId}`)
       .set('Authorization', global.user.token)
-      .set("Content-Type", "text/plain")
+      // .set("Accept", "text/plain")
       .then((res) => {
-        res.should.have.status(200);
+        res.should.have.status(204);
         return res;
       })
       // .catch((err) => {

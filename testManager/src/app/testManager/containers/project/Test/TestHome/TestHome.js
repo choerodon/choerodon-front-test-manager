@@ -1,15 +1,21 @@
 import React, { Component } from 'react';
 import { observer } from 'mobx-react';
 import _ from 'lodash';
-import { Page, Header, Content, stores, axios } from 'choerodon-front-boot';
-import { Table, Button, Tooltip, Input, Dropdown, Menu, Pagination, Spin, Icon } from 'choerodon-ui';
+import {
+  Page, Header, Content, stores, axios, 
+} from 'choerodon-front-boot';
+import {
+  Table, Button, Tooltip, Input, Dropdown, Menu, Pagination, Spin, Icon, 
+} from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 import moment from 'moment';
 import FileSaver from 'file-saver';
 import '../../../../assets/main.scss';
 import './TestHome.scss';
 import IssueStore from '../../../../store/project/IssueStore';
-import { STATUS, COLOR, TYPE, ICON, TYPE_NAME } from '../../../../common/Constant';
+import {
+  STATUS, COLOR, TYPE, ICON, TYPE_NAME, 
+} from '../../../../common/Constant';
 import pic from '../../../../assets/问题管理－空.png';
 import { loadIssue, createIssue } from '../../../../api/IssueApi';
 import UserHead from '../../../../components/TestComponent/UserHead';
@@ -37,13 +43,16 @@ class Test extends Component {
       createLoading: false,
     };
   }
+
   componentDidMount() {
     this.getInit();
   }
 
   getInit() {
     const Request = this.GetRequest(this.props.location.search);
-    const { paramType, paramId, paramName, paramStatus, paramIssueId, paramUrl } = Request;
+    const {
+      paramType, paramId, paramName, paramStatus, paramIssueId, paramUrl, 
+    } = Request;
     IssueStore.setParamId(paramId);
     IssueStore.setParamType(paramType);
     IssueStore.setParamName(paramName);
@@ -232,14 +241,23 @@ class Test extends Component {
         FileSaver.saveAs(blob, fileName);
       });
   }
+
   renderTestIssue(issue) {
-    const { typeCode, issueNum, summary, assigneeId, assigneeName, assigneeImageUrl, reporterId,
+    const {
+      typeCode, issueNum, summary, assigneeId, assigneeName, assigneeImageUrl, reporterId,
       reporterName, reporterImageUrl, statusName, statusColor, priorityName, priorityCode,
       epicName, epicColor, componentIssueRelDTOList, labelIssueRelDTOList, 
-      versionIssueRelDTOList, creationDate, lastUpdateDate } = issue;
+      versionIssueRelDTOList, creationDate, lastUpdateDate, 
+    } = issue;
     return (
-      <div style={{ display: 'flex', flex: 1, marginTop: '3px', flexDirection: 'column', marginBottom: '3px', cursor: 'pointer' }}>
-        <div style={{ display: 'flex', flex: 1, marginTop: '3px', marginBottom: '3px', cursor: 'pointer' }}>
+      <div style={{
+        display: 'flex', flex: 1, marginTop: '3px', flexDirection: 'column', marginBottom: '3px', cursor: 'pointer', 
+      }}
+      >
+        <div style={{
+          display: 'flex', flex: 1, marginTop: '3px', marginBottom: '3px', cursor: 'pointer', 
+        }}
+        >
           <Tooltip mouseEnterDelay={0.5} title={<FormattedMessage id="issue_issueType" values={{ type: TYPE_NAME[typeCode] }} />}>
             <div>
               <TypeTag
@@ -250,13 +268,19 @@ class Test extends Component {
             </div>
           </Tooltip>
           <Tooltip mouseEnterDelay={0.5} title={<FormattedMessage id="issue_issueNum" values={{ num: issueNum }} />}>
-            <a style={{ paddingLeft: 12, paddingRight: 12, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            <a style={{
+              paddingLeft: 12, paddingRight: 12, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', 
+            }}
+            >
               {issueNum}
             </a>
           </Tooltip>
           <div style={{ overflow: 'hidden' }}>
             <Tooltip mouseEnterDelay={0.5} placement="topLeft" title={<FormattedMessage id="issue_issueSummary" values={{ summary }} />}>
-              <p style={{ paddingRight: '25px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 0, maxWidth: 'unset' }}>
+              <p style={{
+                paddingRight: '25px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 0, maxWidth: 'unset', 
+              }}
+              >
                 {summary}
               </p>
             </Tooltip>
@@ -279,10 +303,12 @@ class Test extends Component {
             ) : null
           }
           {
-            assigneeId && reporterName ?
-              <div style={{ margin: '0 5px' }}>
-                <FormattedMessage id="issue_issueReportTo" />              
-              </div> : null
+            assigneeId && reporterName
+              ? (
+                <div style={{ margin: '0 5px' }}>
+                  <FormattedMessage id="issue_issueReportTo" />              
+                </div>
+              ) : null
           }
           {
             assigneeId ? (            
@@ -321,7 +347,10 @@ class Test extends Component {
           </div>
         </div>
         {/* 第二行 */}
-        <div style={{ display: 'flex', flex: 1, marginTop: '3px', alignItems: 'center', marginBottom: '3px', cursor: 'pointer' }}>
+        <div style={{
+          display: 'flex', flex: 1, marginTop: '3px', alignItems: 'center', marginBottom: '3px', cursor: 'pointer', 
+        }}
+        >
           <div style={{ flexShrink: '0' }}>
             <Tooltip mouseEnterDelay={0.5} title={<FormattedMessage id="issue_issuePriority" values={{ priority: priorityName }} />}>
               <div style={{ marginRight: 5 }}>
@@ -335,46 +364,52 @@ class Test extends Component {
             </Tooltip>
           </div>
           {
-            versionIssueRelDTOList.map(version => (<div 
-              style={{
-                color: 'rgba(0,0,0,0.36)',
-                height: 22,
-                borderWidth: '1px',
-                borderStyle: 'solid',
-                borderColor: 'rgba(0,0,0,0.36)',
-                borderRadius: '2px',
-                fontSize: '13px',
-                lineHeight: '20px',
-                padding: '0 8px', 
-                margin: '0 5px',   
-              }}
-            >
-              {version.name}
-            </div>))
+            versionIssueRelDTOList.map(version => (
+              <div 
+                style={{
+                  color: 'rgba(0,0,0,0.36)',
+                  height: 22,
+                  borderWidth: '1px',
+                  borderStyle: 'solid',
+                  borderColor: 'rgba(0,0,0,0.36)',
+                  borderRadius: '2px',
+                  fontSize: '13px',
+                  lineHeight: '20px',
+                  padding: '0 8px', 
+                  margin: '0 5px',   
+                }}
+              >
+                {version.name}
+              </div>
+            ))
           }
           {
-            epicName ? <div 
-              style={{
-                color: epicColor,
-                height: 22,
-                borderWidth: '1px',
-                borderStyle: 'solid',
-                borderColor: epicColor,
-                borderRadius: '2px',
-                fontSize: '13px',
-                lineHeight: '20px',
-                padding: '0 8px',
-                margin: '0 5px',    
-              }}
-            >
-              {epicName}
-            </div> : null
+            epicName ? (
+              <div 
+                style={{
+                  color: epicColor,
+                  height: 22,
+                  borderWidth: '1px',
+                  borderStyle: 'solid',
+                  borderColor: epicColor,
+                  borderRadius: '2px',
+                  fontSize: '13px',
+                  lineHeight: '20px',
+                  padding: '0 8px',
+                  margin: '0 5px',    
+                }}
+              >
+                {epicName}
+              </div>
+            ) : null
           }
-          {componentIssueRelDTOList.length > 0 ? <div style={{ margin: '0 5px', color: '#3F51B5', fontWeight: 'bold' }}>
-            {
+          {componentIssueRelDTOList.length > 0 ? (
+            <div style={{ margin: '0 5px', color: '#3F51B5', fontWeight: 'bold' }}>
+              {
               componentIssueRelDTOList.map(component => component.name).join(',')
             }
-          </div> : null}
+            </div>
+          ) : null}
           <div style={{ margin: '0 5px', fontSize: '13px', color: 'rgba(0,0,0,0.65)' }}>
             <FormattedMessage id="issue_issueCreateAt" />
           </div>
@@ -383,28 +418,34 @@ class Test extends Component {
           <div className="c7n-flex-space" />
           {/* 标签 */}
           {
-            labelIssueRelDTOList.map(label => (<div
-              style={{
-                color: '#000',              
-                borderRadius: '100px',
-                fontSize: '13px',
-                lineHeight: '20px',
-                padding: '2px 12px',
-                background: 'rgba(0, 0, 0, 0.08)',
-                margin: '0 5px',
-                // marginBottom: 3,
-              }}
-            >
-              {label.labelName}
-            </div>))
+            labelIssueRelDTOList.map(label => (
+              <div
+                style={{
+                  color: '#000',              
+                  borderRadius: '100px',
+                  fontSize: '13px',
+                  lineHeight: '20px',
+                  padding: '2px 12px',
+                  background: 'rgba(0, 0, 0, 0.08)',
+                  margin: '0 5px',
+                  // marginBottom: 3,
+                }}
+              >
+                {label.labelName}
+              </div>
+            ))
           }          
         </div>
       </div>
     );
   }
+
   renderWideIssue(issue) {
     return (
-      <div style={{ display: 'flex', flex: 1, marginTop: '3px', marginBottom: '3px', cursor: 'pointer' }}>
+      <div style={{
+        display: 'flex', flex: 1, marginTop: '3px', marginBottom: '3px', cursor: 'pointer', 
+      }}
+      >
         <Tooltip mouseEnterDelay={0.5} title={`任务类型： ${TYPE_NAME[issue.typeCode]}`}>
           <div>
             <TypeTag
@@ -415,13 +456,19 @@ class Test extends Component {
           </div>
         </Tooltip>
         <Tooltip mouseEnterDelay={0.5} title={`任务编号： ${issue.issueNum}`}>
-          <a style={{ paddingLeft: 12, paddingRight: 12, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          <a style={{
+            paddingLeft: 12, paddingRight: 12, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', 
+          }}
+          >
             {issue.issueNum}
           </a>
         </Tooltip>
         <div style={{ overflow: 'hidden', flex: 1 }}>
           <Tooltip mouseEnterDelay={0.5} placement="topLeft" title={`任务概要： ${issue.summary}`}>
-            <p style={{ paddingRight: '25px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 0, maxWidth: 'unset' }}>
+            <p style={{
+              paddingRight: '25px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 0, maxWidth: 'unset', 
+            }}
+            >
               {issue.summary}
             </p>
           </Tooltip>
@@ -476,7 +523,10 @@ class Test extends Component {
   renderNarrowIssue(issue) {
     return (
       <div style={{ marginTop: '5px', marginBottom: '5px', cursor: 'pointer' }}>
-        <div style={{ display: 'flex', marginBottom: '5px', width: '100%', flex: 1 }}>
+        <div style={{
+          display: 'flex', marginBottom: '5px', width: '100%', flex: 1, 
+        }}
+        >
           <Tooltip mouseEnterDelay={0.5} title={`任务类型： ${TYPE_NAME[issue.typeCode]}`}>
             <div>
               <TypeTag
@@ -487,13 +537,19 @@ class Test extends Component {
             </div>
           </Tooltip>
           <Tooltip mouseEnterDelay={0.5} title={`任务编号： ${issue.issueNum}`}>
-            <a style={{ paddingLeft: 12, paddingRight: 12, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            <a style={{
+              paddingLeft: 12, paddingRight: 12, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', 
+            }}
+            >
               {issue.issueNum}
             </a>
           </Tooltip>
           <div style={{ overflow: 'hidden', flex: 1 }}>
             <Tooltip mouseEnterDelay={0.5} placement="topLeft" title={`任务概要： ${issue.summary}`}>
-              <p style={{ paddingRight: '25px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 0, maxWidth: 'unset' }}>
+              <p style={{
+                paddingRight: '25px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 0, maxWidth: 'unset', 
+              }}
+              >
                 {issue.summary}
               </p>
             </Tooltip>
@@ -727,7 +783,10 @@ class Test extends Component {
             <section className="c7n-count">
               <span className="c7n-span-count"><FormattedMessage id="issue_issueTotal" values={{ total: IssueStore.pagination.total }} /></span>
               <Dropdown overlay={sort} trigger={['click']}>
-                <div style={{ display: 'flex', alignItems: 'center', fontSize: '13px', lineHeight: '20px', cursor: 'pointer', position: 'absolute', right: 25, bottom: 28 }}>
+                <div style={{
+                  display: 'flex', alignItems: 'center', fontSize: '13px', lineHeight: '20px', cursor: 'pointer', position: 'absolute', right: 25, bottom: 28, 
+                }}
+                >
                   <Icon type="swap_vert" style={{ fontSize: '16px', marginRight: '5px' }} />
                   <FormattedMessage id="issue_issueSort" />
                 </div>
@@ -820,7 +879,10 @@ class Test extends Component {
                           />
                         </div>
                       </div>
-                      <div style={{ marginTop: 10, display: 'flex', marginLeft: 50, paddingRight: 70 }}>
+                      <div style={{
+                        marginTop: 10, display: 'flex', marginLeft: 50, paddingRight: 70, 
+                      }}
+                      >
                         <Button
                           type="primary"
                           onClick={() => {
@@ -860,7 +922,10 @@ class Test extends Component {
               </div>
               {
                 IssueStore.issues.length !== 0 ? (
-                  <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 16, marginBottom: 16 }}>
+                  <div style={{
+                    display: 'flex', justifyContent: 'flex-end', marginTop: 16, marginBottom: 16, 
+                  }}
+                  >
                     <Pagination
                       current={IssueStore.pagination.current}
                       defaultCurrent={1}

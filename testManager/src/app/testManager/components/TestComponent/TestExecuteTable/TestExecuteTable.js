@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { Button, Icon, Tooltip, Menu, Popconfirm } from 'choerodon-ui';
+import {
+  Button, Icon, Tooltip, Menu, Popconfirm,
+} from 'choerodon-ui';
 import { stores, axios } from 'choerodon-front-boot';
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
@@ -57,6 +59,7 @@ class TestExecuteTable extends Component {
         this.props.onOk();
       });
   }
+
   quickPass(execute) {
     const cycleData = { ...execute };
     if (_.find(this.state.status, { projectId: 0, statusName: '通过' })) {
@@ -77,6 +80,7 @@ class TestExecuteTable extends Component {
       Choerodon.prompt('未找到通过');
     }
   }
+
   onDragEnd(result) {
     window.console.log(result);
     const arr = this.state.data.slice();
@@ -157,7 +161,12 @@ class TestExecuteTable extends Component {
     _.forEach(data, (item, index) => {
       const status = _.find(this.state.status, { statusId: item.executionStatus }) || {};
       result.push(
-        <div className={`${item.executeId}-list`} style={{ width: '100%', paddingLeft: 10, height: 34, boxShadow: '0 1px 0 0 #e8e8e8, 0 1px 0 0 #e8e8e8 inset', display: 'flex' }}>
+        <div
+          className={`${item.executeId}-list`}
+          style={{
+            width: '100%', paddingLeft: 10, height: 34, boxShadow: '0 1px 0 0 #e8e8e8, 0 1px 0 0 #e8e8e8 inset', display: 'flex',
+          }}
+        >
           <span title={item.versionName} style={{ flex: 2, lineHeight: '34px' }} className="c7n-text-dot">
             {item.versionName}
           </span>
@@ -177,7 +186,10 @@ class TestExecuteTable extends Component {
             </Tooltip>
           </span>
           <span style={{ flex: 2, lineHeight: '34px' }} className="c7n-text-dot">
-            <span style={{ width: 60, height: 20, borderRadius: '2px', background: status.statusColor, display: 'inline-block', lineHeight: '20px', textAlign: 'center', color: '#fff' }}>
+            <span style={{
+              width: 60, height: 20, borderRadius: '2px', background: status.statusColor, display: 'inline-block', lineHeight: '20px', textAlign: 'center', color: '#fff',
+            }}
+            >
               {status && status.statusName}
             </span>
           </span>
@@ -187,7 +199,7 @@ class TestExecuteTable extends Component {
                 <span>
                   <Tooltip
                     placement="topLeft"
-                    title={
+                    title={(
                       <div>
                         {item.defects.map((defect, i) => (
                           <div>
@@ -204,10 +216,11 @@ class TestExecuteTable extends Component {
                             <div>{defect.issueInfosDTO.summary}</div>
                           </div>
                         ))}
-                      </div>}
+                      </div>
+                    )}
                   >
                     {item.defects.map((defect, i) => defect.issueInfosDTO.issueName).join(',')}
-                  </Tooltip>),
+                  </Tooltip>
                 </span>
               ) : '-'
             }
@@ -224,7 +237,7 @@ class TestExecuteTable extends Component {
           </span>
           <span style={{ width: 80, lineHeight: '34px' }}>
             <Tooltip title={<FormattedMessage id="execute_quickPass" />}>
-              <Icon type="local_parking mlr-3 pointer" onClick={this.quickPass.bind(this, item)} />
+              <Icon type="pass mlr-3 pointer" onClick={this.quickPass.bind(this, item)} />
             </Tooltip>
 
             <Link to={`/testManager/Cycle/execute/${item.executeId}?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}>
@@ -245,7 +258,8 @@ class TestExecuteTable extends Component {
               <Icon type="delete_forever mlr-3 pointer" />
             </Popconfirm>
           </span>
-        </div>);
+        </div>,
+      );
     });
     return result;
   }
@@ -253,7 +267,10 @@ class TestExecuteTable extends Component {
   render() {
     return (
       <div style={{ width: '100%' }}>
-        <div style={{ width: '100%', paddingLeft: 10, height: 30, background: 'rgba(0, 0, 0, 0.04)', display: 'flex' }}>
+        <div style={{
+          width: '100%', paddingLeft: 10, height: 30, background: 'rgba(0, 0, 0, 0.04)', display: 'flex',
+        }}
+        >
           <span style={{ flex: 2, lineHeight: '30px' }}>
             <FormattedMessage id="version" />
           </span>
@@ -266,7 +283,7 @@ class TestExecuteTable extends Component {
           <span style={{ flex: 2, lineHeight: '30px' }}>
             <FormattedMessage id="status" />
           </span>
-          <span style={{ flex: 2, lineHeight: '30px' }} >
+          <span style={{ flex: 2, lineHeight: '30px' }}>
             <FormattedMessage id="bug" />
           </span>
           <span style={{ flex: 2, lineHeight: '30px' }}>

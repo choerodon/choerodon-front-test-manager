@@ -18,6 +18,7 @@ const yamlConfig = loadYAMLConfigFile('./config.yaml');
 const errors = loadYAMLMessageFile('messages_zh_CN.yaml');
 
 const utils = {
+  projectId: yamlConfig.projectId,
   gateway: yamlConfig.gateway,
   loginKey: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=',
   loginName: yamlConfig.login.username,

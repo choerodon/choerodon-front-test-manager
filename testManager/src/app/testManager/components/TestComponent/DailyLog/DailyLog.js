@@ -307,7 +307,7 @@ class DailyLog extends Component {
             <div className="c7n-sidebar-info">
               <div>
                 <div style={{ display: 'flex', marginBottom: '13px', alignItems: 'center' }}>
-                  <div style={{ fontWeight: 'bold' }}>
+                  <div style={{ fontWeight: 500 }}>
                     <FormattedMessage id="issue_worklog_workDescription" />
                   </div>
                   <div style={{ marginLeft: '80px' }}>

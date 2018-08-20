@@ -1,8 +1,12 @@
 /*eslint-disable */
-const chai = require('chai');
-const chaiHttp = require('chai-http');
-const utils = require('../../Utils');
-
+import chai from 'chai';
+import chaiHttp from 'chai-http';
+import utils from '../../Utils';
+import './statusService/statusApi';
+import './cycleService/cycleApi';
+import './summaryService/summaryApi';
+import './issueService/issueApi';
+import './fileService/FileApi';
 chai.should();
 chai.use(chaiHttp);
 global.before(function () {
@@ -16,6 +20,3 @@ global.before(function () {
 });
 
 global.after(() => utils.logout());
-require('./statusService/statusApi');
-require('./cycleService/cycleApi');
-require('./fileService/FileApi');
