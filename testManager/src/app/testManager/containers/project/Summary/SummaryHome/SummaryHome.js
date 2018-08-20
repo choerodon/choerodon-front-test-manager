@@ -197,7 +197,7 @@ class SummaryHome extends Component {
     },
     grid: {
       top: '13%',
-      left: 26,
+      left: 38,
       right: '8%',
       bottom: '23%',
       // containLabel: true,
@@ -281,7 +281,7 @@ class SummaryHome extends Component {
     },
     grid: {
       top: '13%',
-      left: 26,
+      left: 38,
       right: '8%',
       bottom: '23%',
       // containLabel: true,
@@ -581,7 +581,7 @@ class SummaryHome extends Component {
                   <Geom type="point" position="time*value" size={4} shape="circle"
                    style={{ stroke: '#fff', lineWidth: 1 }} />
                 </Chart> */}
-                <div style={{ color: 'rgba(0,0,0,0.65)', marginLeft: 26 }}>
+                <div style={{ color: 'rgba(0,0,0,0.65)', marginLeft: 38 }}>
                   <FormattedMessage id="summary_testCreated" />
                   ：
                   <span style={{ color: 'black', fontWeight: 'bold' }}>{totalCreate}</span>
@@ -621,7 +621,7 @@ class SummaryHome extends Component {
                     style={{ stroke: '#fff', lineWidth: 1 }}
                   />
                 </Chart> */}
-                <div style={{ color: 'rgba(0,0,0,0.65)', marginLeft: 26 }}>
+                <div style={{ color: 'rgba(0,0,0,0.65)', marginLeft: 38 }}>
                   <FormattedMessage id="summary_testExecuted" />
                   ：
                   <span style={{ color: 'black', fontWeight: 'bold' }}>{totalExcute}</span>
