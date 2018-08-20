@@ -257,8 +257,7 @@ const issueFunction = {
    * @param {*} issueId 
    * @param {*} content 
    */
-  getIssuesInLink(page, size, issueId, content) {
-    console.log('en '+ page);
+  getIssuesInLink(page, size, issueId, content) {    
     let url = content ? `/agile/v1/projects/${projectId}/issues/summary?issueId=${issueId}&self=false&content=${content}&page=${page}&size=${size}&onlyActiveSprint=false`
       : `/agile/v1/projects/${projectId}/issues/summary?issueId=${issueId}&self=false&page=${page}&size=${size}&onlyActiveSprint=false`;
 

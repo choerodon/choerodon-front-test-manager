@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
-import { Form, Tabs, Select, Radio, Collapse, Icon, Modal, Spin } from 'choerodon-ui';
+import {
+  Form, Tabs, Select, Radio, Collapse, Icon, Modal, Spin, 
+} from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 import { Content, stores } from 'choerodon-front-boot';
 import {
@@ -7,13 +9,15 @@ import {
   getStatusList, createCycleExecuteFromCycle,
 } from '../../../api/cycleApi';
 import { getUsers } from '../../../api/CommonApi';
-import { getIssueList, getIssueStatus, getProjectVersion, getModules, getLabels, getPrioritys } from '../../../api/agileApi';
+import {
+  getIssueList, getIssueStatus, getProjectVersion, getModules, getLabels, getPrioritys, 
+} from '../../../api/agileApi';
 import './CreateCycleExecute.scss';
 
 const { AppState } = stores;
-const TabPane = Tabs.TabPane;
-const Panel = Collapse.Panel;
-const Option = Select.Option;
+const { TabPane } = Tabs;
+const { Panel } = Collapse;
+const { Option } = Select;
 const FormItem = Form.Item;
 const { Sidebar } = Modal;
 const RadioGroup = Radio.Group;
@@ -78,7 +82,9 @@ class CreateCycleExecute extends Component {
 
   onOk = () => {
     const { selectIssueList, assignedTo } = this.state;
-    const { onOk, type, data, rank } = this.props;
+    const {
+      onOk, type, data, rank, 
+    } = this.props;
     const { cycleId } = data;
     if (this.state.tab === '1') {
       this.createFromIssue();
@@ -86,16 +92,20 @@ class CreateCycleExecute extends Component {
       this.createFromCycle();
     }
   }
+
   modeChange = (key) => {
     this.setState({ tab: key });
   }
+
   createFromCycle = () => {
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
         this.setState({ loading: true });
         window.console.log('Received values of form: ', values);
-        const { assignedTo, cycleId, folderId, priorityCode,
-          executionStatus, component, lable, statusCode } = values;
+        const {
+          assignedTo, cycleId, folderId, priorityCode,
+          executionStatus, component, lable, statusCode, 
+        } = values;
         // const obj = {};
         // [].forEach((key) => {
         //   if (values[key]) {
@@ -141,20 +151,20 @@ class CreateCycleExecute extends Component {
         createCycleExecuteFromCycle(folderId || cycleId, this.props.data.cycleId,
           assignedTo || AppState.userInfo.id,
           filter).then((res) => {
-            if (res.failed) {
-              Choerodon.prompt('当前实例已存在');
-            } else {
-              this.props.onOk();
-            }
-            this.setState({
-              loading: false,
-            });
-          }).catch(() => {
-            this.setState({
-              loading: false,
-            });
-            Choerodon.prompt('网络错误');
+          if (res.failed) {
+            Choerodon.prompt('当前实例已存在');
+          } else {
+            this.props.onOk();
+          }
+          this.setState({
+            loading: false,
           });
+        }).catch(() => {
+          this.setState({
+            loading: false,
+          });
+          Choerodon.prompt('网络错误');
+        });
         // POST / v1 / projects / { project_id } / issues / test_component / no_sub;
 
 
@@ -194,9 +204,12 @@ class CreateCycleExecute extends Component {
       }
     });
   }
+
   createFromIssue = () => {
     const { selectIssueList, assignedTo } = this.state;
-    const { onOk, type, data, rank } = this.props;
+    const {
+      onOk, type, data, rank, 
+    } = this.props;
     const { cycleId } = data;
     const fin = selectIssueList.map((issueId, i) => {
       if (i === 0) {
@@ -226,17 +239,20 @@ class CreateCycleExecute extends Component {
       Choerodon.prompt('请选择问题');
     }
   }
+
   handleAssignedChange = (assignedTo) => {
     window.console.log(assignedTo);
     this.setState({
       assignedTo,
     });
   }
+
   handleIssueChange = (selectIssueList) => {
     this.setState({
       selectIssueList,
     });
   }
+
   loadVersions = () => {
     this.setState({
       selectLoading: true,
@@ -248,79 +264,111 @@ class CreateCycleExecute extends Component {
       });
     });
   }
+
   render() {
-    const { visible, onOk, onCancel, data } = this.props;
+    const {
+      visible, onOk, onCancel, data, 
+    } = this.props;
     const { getFieldDecorator, getFieldValue } = this.props.form;
-    const { loading, userList, issueList, assignedTo,
+    const {
+      loading, userList, issueList, assignedTo,
       selectLoading, selectIssueList, versions, tab, cycleList,
       folderList, priorityList, statusList, moduleList, labelList,
-      hasIssue, issueStatusList } = this.state;
+      hasIssue, issueStatusList, 
+    } = this.state;
     const radioStyle = {
       display: 'block',
       height: '30px',
       lineHeight: '30px',
     };
-    const userOptions = userList.map(user =>
-      (<Option key={user.id} value={user.id}>
+    const userOptions = userList.map(user => (
+      <Option key={user.id} value={user.id}>
         <div style={{ display: 'inline-flex', alignItems: 'center', padding: '2px' }}>
-          {user.imageUrl ?
-            <img src={user.imageUrl} alt="" style={{ width: 20, height: 20, borderRadius: '50%', marginRight: '8px' }} /> :
-            <div style={styles.userOption}>{user.realName.slice(0, 1)}
-            </div>
+          {user.imageUrl
+            ? (
+              <img
+                src={user.imageUrl}
+                alt=""
+                style={{
+                  width: 20, height: 20, borderRadius: '50%', marginRight: '8px', 
+                }}
+              />
+            )
+            : (
+              <div style={styles.userOption}>
+                {user.realName.slice(0, 1)}
+              </div>
+            )
           }
           <span>{`${user.loginName} ${user.realName}`}</span>
         </div>
-      </Option>),
-    );
-    const issueOptions =
-      issueList.map(issue => (<Option key={issue.issueId} value={issue.issueId.toString()}>
-        {issue.issueNum} {issue.summary}
-      </Option>));
-    const versionOptions = versions.map(version =>
-      (<Option value={version.versionId} key={version.versionId}>
+      </Option>
+    ));
+    const issueOptions = issueList.map(issue => (
+      <Option key={issue.issueId} value={issue.issueId.toString()}>
+        {issue.issueNum} 
+        {' '}
+        {issue.summary}
+      </Option>
+    ));
+    const versionOptions = versions.map(version => (
+      <Option value={version.versionId} key={version.versionId}>
         {version.name}
-      </Option>));
-    const cycleOptions = cycleList.map(cycle =>
-      (<Option value={cycle.cycleId} key={cycle.cycleId}>
+      </Option>
+    ));
+    const cycleOptions = cycleList.map(cycle => (
+      <Option value={cycle.cycleId} key={cycle.cycleId}>
         {cycle.cycleName}
-      </Option>));
-    const folderOptions = folderList.map(cycle =>
-      (<Option value={cycle.cycleId} key={cycle.cycleId}>
+      </Option>
+    ));
+    const folderOptions = folderList.map(cycle => (
+      <Option value={cycle.cycleId} key={cycle.cycleId}>
         {cycle.cycleName}
-      </Option>));
+      </Option>
+    ));
     const priorityOptions = priorityList.map((priority) => {
       const { valueCode, name } = priority;
-      return (<Option value={valueCode} key={valueCode}>
-        {/* <div style={{ ...styles.statusOption, ...{ background: statusColor } }}> */}
-        {name}
-        {/* </div> */}
-      </Option>);
+      return (
+        <Option value={valueCode} key={valueCode}>
+          {/* <div style={{ ...styles.statusOption, ...{ background: statusColor } }}> */}
+          {name}
+          {/* </div> */}
+        </Option>
+      );
     });
     const statusOptions = statusList.map((status) => {
       const { statusName, statusId, statusColor } = status;
-      return (<Option value={statusId.toString()} key={statusId}>
-        {/* <div style={{ ...styles.statusOption, ...{ background: statusColor } }}> */}
-        {statusName}
-        {/* </div> */}
-      </Option>);
+      return (
+        <Option value={statusId.toString()} key={statusId}>
+          {/* <div style={{ ...styles.statusOption, ...{ background: statusColor } }}> */}
+          {statusName}
+          {/* </div> */}
+        </Option>
+      );
     });
     const moduleOptions = moduleList.map((component) => {
       const { componentId, name } = component;
-      return (<Option value={componentId.toString()} key={componentId}>
-        {name}
-      </Option>);
+      return (
+        <Option value={componentId.toString()} key={componentId}>
+          {name}
+        </Option>
+      );
     });
     const labelOptions = labelList.map((label) => {
       const { labelId, labelName } = label;
-      return (<Option value={labelId.toString()} key={labelId}>
-        {labelName}
-      </Option>);
+      return (
+        <Option value={labelId.toString()} key={labelId}>
+          {labelName}
+        </Option>
+      );
     });
     const issueStatusOptions = issueStatusList.map((status) => {
       const { categoryCode, name } = status;
-      return (<Option value={categoryCode} key={categoryCode}>
-        {name}
-      </Option>);
+      return (
+        <Option value={categoryCode} key={categoryCode}>
+          {name}
+        </Option>
+      );
     });
     return (
 
@@ -336,7 +384,7 @@ class CreateCycleExecute extends Component {
             style={{
               padding: '0 0 10px 0',
             }}
-            title={
+            title={(
               <FormattedMessage
                 id="cycle_createExecute_content_title"
                 values={{
@@ -344,7 +392,8 @@ class CreateCycleExecute extends Component {
                     : Choerodon.getMessage('文件夹', 'Folder'),
                   title: data.title,
                 }}
-              />}
+              />
+)}
             description={<FormattedMessage id="cycle_createExecute_content_description" />}
             link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management/test-cycle/add-execution/"
           >
@@ -385,47 +434,50 @@ class CreateCycleExecute extends Component {
                   }}
                 >
                   {issueOptions}
-                </Select><br />
+                </Select>
+                <br />
                 <RadioGroup onChange={this.onChange} value={this.state.value}>
                   <Radio style={radioStyle} value={1}><FormattedMessage id="cycle_createExecute_me" /></Radio>
                   <Radio style={radioStyle} value={2}><FormattedMessage id="cycle_createExecute_others" /></Radio>
-                </RadioGroup><br />
-                {this.state.value === 2 ?
-                  <Select
-                    allowClear
-                    loading={selectLoading}
-                    style={{ width: 500, margin: '0 0 10px 0' }}
-                    label={<FormattedMessage id="cycle_createExecute_selectAssign" />}
-                    filter
-                    filterOption={false}
-                    onChange={this.handleAssignedChange}
-                    onFilterChange={(value) => {
-                      this.setState({
-                        selectLoading: true,
-                      });
-                      getUsers(value).then((userData) => {
+                </RadioGroup>
+                <br />
+                {this.state.value === 2
+                  ? (
+                    <Select
+                      allowClear
+                      loading={selectLoading}
+                      style={{ width: 500, margin: '0 0 10px 0' }}
+                      label={<FormattedMessage id="cycle_createExecute_selectAssign" />}
+                      filter
+                      filterOption={false}
+                      onChange={this.handleAssignedChange}
+                      onFilterChange={(value) => {
                         this.setState({
-                          userList: userData.content,
-                          selectLoading: false,
+                          selectLoading: true,
                         });
-                      });
-                    }}
-                    onFocus={() => {
-                      this.setState({
-                        selectLoading: true,
-                      });
-                      getUsers().then((userData) => {
+                        getUsers(value).then((userData) => {
+                          this.setState({
+                            userList: userData.content,
+                            selectLoading: false,
+                          });
+                        });
+                      }}
+                      onFocus={() => {
                         this.setState({
-                          userList: userData.content,
-                          selectLoading: false,
+                          selectLoading: true,
                         });
-                      });
-                    }}
-                  >
-                    {userOptions}
-                  </Select>
-                  :
-                  null}
+                        getUsers().then((userData) => {
+                          this.setState({
+                            userList: userData.content,
+                            selectLoading: false,
+                          });
+                        });
+                      }}
+                    >
+                      {userOptions}
+                    </Select>
+                  )
+                  : null}
               </TabPane>
               <TabPane tab={<FormattedMessage id="cycle_createExecute_createFromCycle" />} key="2">
                 <div className="c7n-create-execute">
@@ -499,9 +551,9 @@ class CreateCycleExecute extends Component {
                         </Select>,
                       )}
                     </FormItem>
-                    <Collapse bordered={false} >
+                    <Collapse bordered={false}>
                       <Panel
-                        header={
+                        header={(
                           <div className="c7n-collapse-header-container">
                             <div>
                               {<FormattedMessage id="cycle_createExecute_assigned" />}
@@ -510,7 +562,7 @@ class CreateCycleExecute extends Component {
                               <Icon type="navigate_next" />
                             </div>
                           </div>
-                        }
+)}
                         key="1"
                         showArrow={false}
                       >
@@ -522,58 +574,60 @@ class CreateCycleExecute extends Component {
                             <FormattedMessage id="cycle_createExecute_others" />
                           </Radio>
                         </RadioGroup>
-                        {this.state.value === 2 ? <FormItem>
-                          {getFieldDecorator('assignedTo', {
-                            // rules: [{
-                            //   required: true, message: '请输入说明!',
-                            // }],
-                          })(
-                            <Select
-                              allowClear
-                              loading={selectLoading}
-                              style={{ width: 500, margin: '0 0 10px 0' }}
-                              label={<FormattedMessage id="cycle_createExecute_selectAssign" />}
-                              filter
-                              filterOption={false}
-                              onFilterChange={(value) => {
-                                this.setState({
-                                  selectLoading: true,
-                                });
-                                getUsers(value).then((userData) => {
+                        {this.state.value === 2 ? (
+                          <FormItem>
+                            {getFieldDecorator('assignedTo', {
+                              // rules: [{
+                              //   required: true, message: '请输入说明!',
+                              // }],
+                            })(
+                              <Select
+                                allowClear
+                                loading={selectLoading}
+                                style={{ width: 500, margin: '0 0 10px 0' }}
+                                label={<FormattedMessage id="cycle_createExecute_selectAssign" />}
+                                filter
+                                filterOption={false}
+                                onFilterChange={(value) => {
                                   this.setState({
-                                    userList: userData.content,
-                                    selectLoading: false,
+                                    selectLoading: true,
                                   });
-                                });
-                              }}
-                              onFocus={() => {
-                                this.setState({
-                                  selectLoading: true,
-                                });
-                                getUsers().then((userData) => {
+                                  getUsers(value).then((userData) => {
+                                    this.setState({
+                                      userList: userData.content,
+                                      selectLoading: false,
+                                    });
+                                  });
+                                }}
+                                onFocus={() => {
                                   this.setState({
-                                    userList: userData.content,
-                                    selectLoading: false,
+                                    selectLoading: true,
                                   });
-                                });
-                              }}
-                            >
-                              {userOptions}
-                            </Select>,
-                          )}
-                        </FormItem> : null}
+                                  getUsers().then((userData) => {
+                                    this.setState({
+                                      userList: userData.content,
+                                      selectLoading: false,
+                                    });
+                                  });
+                                }}
+                              >
+                                {userOptions}
+                              </Select>,
+                            )}
+                          </FormItem>
+                        ) : null}
                       </Panel>
                     </Collapse>
-                    <Collapse bordered={false} >
+                    <Collapse bordered={false}>
                       <Panel
-                        header={
+                        header={(
                           <div className="c7n-collapse-header-container">
                             <div><FormattedMessage id="cycle_createExecute_filter" /></div>
                             <div className="c7n-collapse-header-icon">
                               <Icon type="navigate_next" />
                             </div>
                           </div>
-                        }
+)}
                         key="1"
                         showArrow={false}
                       >
@@ -680,7 +734,8 @@ class CreateCycleExecute extends Component {
                             </Select>,
                           )}
                         </FormItem>
-                        <FormattedMessage id="cycle_createExecute_hasDefects" /><br />
+                        <FormattedMessage id="cycle_createExecute_hasDefects" />
+                        <br />
                         <RadioGroup
                           onChange={(e) => {
                             this.setState({ hasIssue: e.target.value });
@@ -694,43 +749,33 @@ class CreateCycleExecute extends Component {
                             <FormattedMessage id="cycle_createExecute_yes" />
                           </Radio>
                         </RadioGroup>
-                        {hasIssue === 2 ?
-                          <FormItem>
-                            {getFieldDecorator('statusCode', {
-                              // rules: [{
-                              //   required: true, message: '请输入说明!',
-                              // }],
-                            })(
-                              <Select
-                                mode="tags"
-                                style={{ width: 500, margin: '0 0 10px 0' }}
-                                label={<FormattedMessage id="cycle_createExecute_defectStatus" />}
-                              // loading={selectLoading}
-                              // onFocus={() => {
-                              //   this.setState({
-                              //     selectLoading: true,
-                              //   });
-                              //   getIssueStatus().then((List) => {
-                              //     this.setState({
-                              //       issueStatusList: List,
-                              //       selectLoading: false,
-                              //     });
-                              //   });
-                              // }}
-                              >
-                                <Option value={'todo'} key={'todo'}>
+                        {hasIssue === 2
+                          ? (
+                            <FormItem>
+                              {getFieldDecorator('statusCode', {
+                                // rules: [{
+                                //   required: true, message: '请输入说明!',
+                                // }],
+                              })(
+                                <Select
+                                  mode="tags"
+                                  style={{ width: 500, margin: '0 0 10px 0' }}
+                                  label={<FormattedMessage id="cycle_createExecute_defectStatus" />}
+                                >
+                                  <Option value="todo" key="todo">
                                   待处理
-                                </Option>
-                                <Option value={'doing'} key={'doing'}>
+                                  </Option>
+                                  <Option value="doing" key="doing">
                                   处理中
-                                </Option>
-                                <Option value={'done'} key={'done'}>
+                                  </Option>
+                                  <Option value="done" key="done">
                                   已完成
-                                </Option>
-                                {/* {issueStatusOptions} */}
-                              </Select>,
-                            )}
-                          </FormItem> : null}
+                                  </Option>
+                                  {/* {issueStatusOptions} */}
+                                </Select>,
+                              )}
+                            </FormItem>
+                          ) : null}
 
                       </Panel>
                     </Collapse>

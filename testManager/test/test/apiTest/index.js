@@ -2,11 +2,11 @@
 import chai from 'chai';
 import chaiHttp from 'chai-http';
 import utils from '../../Utils';
-import './statusService/statusApi';
+// import './statusService/statusApi';
 import './cycleService/cycleApi';
-import './summaryService/summaryApi';
-import './issueService/issueApi';
-import './fileService/FileApi';
+// import './summaryService/summaryApi';
+// import './issueService/issueApi';
+// import './fileService/FileApi';
 chai.should();
 chai.use(chaiHttp);
 global.before(function () {

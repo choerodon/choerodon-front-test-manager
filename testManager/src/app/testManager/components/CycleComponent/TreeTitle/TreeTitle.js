@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { observer } from 'mobx-react';
-import { Menu, Input, Dropdown, Button, Popover, Tooltip } from 'choerodon-ui';
+import {
+  Menu, Input, Dropdown, Button, Popover, Tooltip, 
+} from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 import './TreeTitle.scss';
 import { editFolder, deleteCycleOrFolder } from '../../../api/cycleApi';
@@ -10,6 +12,7 @@ class TreeTitle extends Component {
   state = {
     editing: false,
   }
+
   creatProcessBar = (processBar) => {
     let count = 0;
     const processBarObject = Object.entries(processBar);
@@ -23,6 +26,7 @@ class TreeTitle extends Component {
       );
     });
   };
+
   handleItemClick = ({ item, key, keyPath }) => {
     const { data, refresh } = this.props;
     const { type, cycleId } = data;
@@ -74,6 +78,7 @@ class TreeTitle extends Component {
       default: break;
     }
   }
+
   handleEdit = (data) => {
     editFolder(data).then((res) => {
       if (res.failed) {
@@ -86,18 +91,23 @@ class TreeTitle extends Component {
       editing: false,
     });
   }
+
   render() {
     const getMenu = (type) => {
       let items = [];
       if (type === 'temp') {
-        items.push(<Menu.Item key="export">
+        items.push(
+          <Menu.Item key="export">
           导出循环
-        </Menu.Item>);
+          </Menu.Item>,
+        );
       } else if (type === 'folder' || type === 'cycle') {
         if (type === 'cycle') {
-          items.push(<Menu.Item key="add">
-            <FormattedMessage id="cycle_addFolder" />
-          </Menu.Item>);
+          items.push(
+            <Menu.Item key="add">
+              <FormattedMessage id="cycle_addFolder" />
+            </Menu.Item>,
+          );
         }
         items = items.concat([
           <Menu.Item key="edit">
@@ -118,48 +128,69 @@ class TreeTitle extends Component {
     };
 
     const { editing } = this.state;
-    const { title, processBar, data, statusList } = this.props;
+    const {
+      title, processBar, data, statusList, 
+    } = this.props;
     const ProcessBar = {};
     const content = [];
     for (let i = 0; i < statusList.length; i += 1) {
       const status = statusList[i];
       if (processBar[status.statusColor]) {
         ProcessBar[status.statusColor] = processBar[status.statusColor];
-        content.push(<div style={{ display: 'flex', width: 100 }}>
-          <div>{status.statusName}</div>
-          <div className="c7n-flex-space" />
-          <div>{processBar[status.statusColor]}</div>
-        </div>);
+        content.push(
+          <div style={{ display: 'flex', width: 100 }}>
+            <div>{status.statusName}</div>
+            <div className="c7n-flex-space" />
+            <div>{processBar[status.statusColor]}</div>
+          </div>,
+        );
       }
     }
 
     return (
       <div className="c7n-tree-title">
-        {editing ?
-          <Input
-            style={{ width: 78 }}
-            defaultValue={this.props.text}
-            autoFocus
-            onBlur={(e) => {
-              this.handleEdit({
-                cycleId: data.cycleId,
-                cycleName: e.target.value,
-                type: 'folder',
-                objectVersionNumber: data.objectVersionNumber,
-              });
-            }}
-          />
-          : <div className="c7n-tt-text">
-            <Tooltip title={title}>
-              {title}
-            </Tooltip>
-          </div>}
+        {editing
+          ? (
+            <Input
+              style={{ width: 78 }}
+              defaultValue={this.props.text}
+              autoFocus
+              onBlur={(e) => {
+                this.handleEdit({
+                  cycleId: data.cycleId,
+                  cycleName: e.target.value,
+                  type: 'folder',
+                  objectVersionNumber: data.objectVersionNumber,
+                });
+              }}
+            />
+          )
+          : (
+            <div className="c7n-tt-text">
+              <Tooltip title={title}>
+                {title}
+              </Tooltip>
+            </div>
+          )}
 
-        {Object.keys(ProcessBar).length > 0 ?
-          <Popover
-            content={<div>{content}</div>}
-            title={null}
-          >
+        {Object.keys(ProcessBar).length > 0
+          ? (
+            <Popover
+              content={<div>{content}</div>}
+              title={null}
+            >
+              <div className="c7n-tt-processBar" style={{ marginLeft: data.type === 'cycle' || data.type === 'temp' ? '18px' : 0 }}>
+                <div className="c7n-process-bar">
+                  <span className="c7n-pb-unfill">
+                    <div className="c7n-pb-fill-parent">
+                      {this.creatProcessBar(ProcessBar)}
+                    </div>
+                  </span>
+                </div>
+              </div>
+            </Popover>
+          )
+          : (
             <div className="c7n-tt-processBar" style={{ marginLeft: data.type === 'cycle' || data.type === 'temp' ? '18px' : 0 }}>
               <div className="c7n-process-bar">
                 <span className="c7n-pb-unfill">
@@ -169,16 +200,7 @@ class TreeTitle extends Component {
                 </span>
               </div>
             </div>
-          </Popover> :
-          <div className="c7n-tt-processBar" style={{ marginLeft: data.type === 'cycle' || data.type === 'temp' ? '18px' : 0 }}>
-            <div className="c7n-process-bar">
-              <span className="c7n-pb-unfill">
-                <div className="c7n-pb-fill-parent">
-                  {this.creatProcessBar(ProcessBar)}
-                </div>
-              </span>
-            </div>
-          </div>}
+          )}
         <div role="none" className="c7n-tt-actionButton" onClick={e => e.stopPropagation()}>
           {/* {data.type === 'temp'
             ? null : */}
