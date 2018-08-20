@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
-import { Form, Input, Select, Button, Icon, Modal, Upload, Spin, DatePicker } from 'choerodon-ui';
+import {
+  Form, Input, Select, Button, Icon, Modal, Upload, Spin, DatePicker, 
+} from 'choerodon-ui';
 import { Content, stores } from 'choerodon-front-boot';
 // import './CreateCycle.less';
 import { FormattedMessage } from 'react-intl';
 import { getProjectVersion } from '../../../api/agileApi';
 import { addCycle } from '../../../api/cycleApi';
 
-const Option = Select.Option;
+const { Option } = Select;
 const { AppState } = stores;
 const FormItem = Form.Item;
 const { Sidebar } = Modal;
@@ -18,6 +20,7 @@ class CreateCycle extends Component {
     selectLoading: false,
     loading: false,
   }
+
   componentWillReceiveProps(nextProps) {
     const { resetFields } = this.props.form;
     if (this.props.visible === false && nextProps.visible === true) {
@@ -46,7 +49,6 @@ class CreateCycle extends Component {
             this.props.onOk();
           }
           this.setState({ loading: false });
-
         }).catch(() => {
           Choerodon.prompt('网络异常');
           this.setState({ loading: false });
@@ -54,6 +56,7 @@ class CreateCycle extends Component {
       }
     });
   }
+
   loadVersions = () => {
     this.setState({
       selectLoading: true,
@@ -65,16 +68,20 @@ class CreateCycle extends Component {
       });
     });
   }
+
   render() {
-    const { visible, onOk, onCancel, type } = this.props;
+    const {
+      visible, onOk, onCancel, type, 
+    } = this.props;
     const { getFieldDecorator } = this.props.form;
     const { versions, loading, selectLoading } = this.state;
-    const options = versions.map(version =>
-      (<Option value={version.versionId} key={version.versionId}>
+    const options = versions.map(version => (
+      <Option value={version.versionId} key={version.versionId}>
         {version.name}
-      </Option>));
+      </Option>
+    ));
     return (
-      <div onClick={() => { this.setState({ pickShow: false }); }} role="none">
+      <div>
         <Spin spinning={loading}>
           <Sidebar
             title={<FormattedMessage id="cycle_create_title" />}
@@ -170,7 +177,7 @@ class CreateCycle extends Component {
                     // </div>
                   )}
                 </FormItem>
-                <FormItem >
+                <FormItem>
                   {getFieldDecorator('fromDate', {
                     // rules: [{
                     //   required: true, message: '请选择日期!',
@@ -186,7 +193,7 @@ class CreateCycle extends Component {
                     // </div>
                   )}
                 </FormItem>
-                <FormItem >
+                <FormItem>
                   {getFieldDecorator('toDate', {
                     // rules: [{
                     //   required: true, message: '请选择日期!',

@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
-import { Form, Input, Select, Modal, Spin, DatePicker } from 'choerodon-ui';
+import {
+  Form, Input, Select, Modal, Spin, DatePicker, 
+} from 'choerodon-ui';
 import { Content, stores } from 'choerodon-front-boot';
 import moment from 'moment';
 import { getProjectVersion } from '../../../api/agileApi';
 import { editFolder } from '../../../api/cycleApi';
 
-const Option = Select.Option;
+const { Option } = Select;
 const { AppState } = stores;
 const FormItem = Form.Item;
 const { Sidebar } = Modal;
@@ -16,6 +18,7 @@ class EditCycle extends Component {
     selectLoading: false,
     loading: false,
   }
+
   componentWillReceiveProps(nextProps) {
     const { setFieldsValue } = this.props.form;
     if (this.props.visible === false && nextProps.visible === true) {
@@ -69,6 +72,7 @@ class EditCycle extends Component {
       }
     });
   }
+
   loadVersions = () => {
     this.setState({
       selectLoading: true,
@@ -80,17 +84,21 @@ class EditCycle extends Component {
       });
     });
   }
+
   render() {
     const { visible, onCancel, initialValue } = this.props;
     const { getFieldDecorator } = this.props.form;
     const { versions, loading, selectLoading } = this.state;
-    const { versionId, title, description, build, environment, fromDate, toDate } = initialValue;
-    const options = versions.map(version =>
-      (<Option value={version.versionId} key={version.versionId}>
+    const {
+      versionId, title, description, build, environment, fromDate, toDate, 
+    } = initialValue;
+    const options = versions.map(version => (
+      <Option value={version.versionId} key={version.versionId}>
         {version.name}
-      </Option>));
+      </Option>
+    ));
     return (
-      <div onClick={() => { this.setState({ pickShow: false }); }} role="none">
+      <div>
         <Spin spinning={loading}>
           <Sidebar
             title="修改测试循环"
@@ -187,7 +195,7 @@ class EditCycle extends Component {
                     // </div>
                   )}
                 </FormItem>
-                <FormItem >
+                <FormItem>
                   {getFieldDecorator('fromDate', {
                     // rules: [{
                     //   required: true, message: '请选择日期!',
@@ -203,7 +211,7 @@ class EditCycle extends Component {
                     // </div>
                   )}
                 </FormItem>
-                <FormItem >
+                <FormItem>
                   {getFieldDecorator('toDate', {
                     // rules: [{
                     //   required: true, message: '请选择日期!',

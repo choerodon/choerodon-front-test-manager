@@ -15,7 +15,8 @@ import moment from 'moment';
 import './CycleHome.scss';
 import { getUsers } from '../../../../api/CommonApi';
 import {
-  getCycles, deleteExecute, getCycleById, editCycleExecute, clone, addFolder, getStatusList, exportCycle,
+  getCycles, deleteExecute, getCycleById, editCycleExecute, 
+  clone, addFolder, getStatusList, exportCycle,
 } from '../../../../api/cycleApi';
 import { editCycle } from '../../../../api/CycleExecuteApi';
 import {
@@ -45,7 +46,7 @@ const styles = {
 
 const dataList = [];
 
-const TreeNode = Tree.TreeNode;
+const { TreeNode } = Tree;
 @observer
 class CycleHome extends Component {
   state = {
@@ -155,22 +156,22 @@ class CycleHome extends Component {
         page: executePagination.current - 1,
         size: executePagination.pageSize,
       }, data.cycleId,
-        {
-          ...filters,
-          lastUpdatedBy: [Number(this.lastUpdatedBy)],
-          assignedTo: [Number(this.assignedTo)],
-        }).then((cycle) => {
-          this.setState({
-            rightLoading: false,
-            testList: cycle.content,
-            executePagination: {
-              current: executePagination.current,
-              pageSize: executePagination.pageSize,
-              total: cycle.totalElements,
-            },
-          });
-          // window.console.log(cycle);
+      {
+        ...filters,
+        lastUpdatedBy: [Number(this.lastUpdatedBy)],
+        assignedTo: [Number(this.assignedTo)],
+      }).then((cycle) => {
+        this.setState({
+          rightLoading: false,
+          testList: cycle.content,
+          executePagination: {
+            current: executePagination.current,
+            pageSize: executePagination.pageSize,
+            total: cycle.totalElements,
+          },
         });
+        // window.console.log(cycle);
+      });
     }
   }
 
@@ -196,7 +197,7 @@ class CycleHome extends Component {
       const node = data[i];
       const { key, title } = node;
       // 找出url上的cycleId
-      const { cycleId } = getParams(location.href);
+      const { cycleId } = getParams(window.location.href);
       const currentCycle = CycleStore.getCurrentCycle;
       if (!currentCycle.cycleId && Number(cycleId) === node.cycleId) {
         this.setExpandDefault(node);
@@ -217,9 +218,10 @@ class CycleHome extends Component {
     confirm({
       width: 560,
       title: Choerodon.getMessage('确认删除吗?', 'Confirm delete'),
-      content: <div style={{ marginBottom: 32 }}>
-        {Choerodon.getMessage('当你点击删除后，该条数据将被永久删除，不可恢复!', 'When you click delete, after which the data will be permanently deleted and irreversible!')}
-      </div>,
+      content: 
+  <div style={{ marginBottom: 32 }}>
+    {Choerodon.getMessage('当你点击删除后，该条数据将被永久删除，不可恢复!', 'When you click delete, after which the data will be permanently deleted and irreversible!')}
+  </div>,
       onOk() {
         // that.setState({
         //   rightLoading: true,
@@ -302,18 +304,18 @@ class CycleHome extends Component {
         page: executePagination.current - 1,
         size: executePagination.pageSize,
       }, defaultExpandKeyItem.cycleId,
-        {}).then((cycle) => {
-          this.setState({
-            rightLoading: false,
-            testList: cycle.content,
-            executePagination: {
-              current: executePagination.current,
-              pageSize: executePagination.pageSize,
-              total: cycle.totalElements,
-            },
-          });
-          // window.console.log(cycle);
+      {}).then((cycle) => {
+        this.setState({
+          rightLoading: false,
+          testList: cycle.content,
+          executePagination: {
+            current: executePagination.current,
+            pageSize: executePagination.pageSize,
+            total: cycle.totalElements,
+          },
         });
+        // window.console.log(cycle);
+      });
     }
   }
 
@@ -441,22 +443,22 @@ class CycleHome extends Component {
         size: pagination.pageSize,
         page: pagination.current - 1,
       }, currentCycle.cycleId,
-        {
-          ...filters,
-          lastUpdatedBy: [Number(this.lastUpdatedBy)],
-          assignedTo: [Number(this.assignedTo)],
-        }).then((cycle) => {
-          this.setState({
-            rightLoading: false,
-            testList: cycle.content,
-            executePagination: {
-              current: pagination.current,
-              pageSize: pagination.pageSize,
-              total: cycle.totalElements,
-            },
-          });
-          // window.console.log(cycle);
+      {
+        ...filters,
+        lastUpdatedBy: [Number(this.lastUpdatedBy)],
+        assignedTo: [Number(this.assignedTo)],
+      }).then((cycle) => {
+        this.setState({
+          rightLoading: false,
+          testList: cycle.content,
+          executePagination: {
+            current: pagination.current,
+            pageSize: pagination.pageSize,
+            total: cycle.totalElements,
+          },
         });
+        // window.console.log(cycle);
+      });
     }
   }
 
@@ -825,7 +827,8 @@ class CycleHome extends Component {
             >
               <div style={{
                 display: 'flex', flexFlow: 'row wrap', width: '100%', justifyContent: 'space-between', alignItems: 'center', maxHeight: 24, overflow: 'hidden',
-              }}>
+              }}
+              >
                 {labelIssueRelDTOList.map((label, i) => (
                   <div
                     style={{
@@ -985,7 +988,7 @@ class CycleHome extends Component {
                     <div>
                       <FormattedMessage id="cycle_cycleName" />
                       ：
-                    <span>{title}</span>
+                      <span>{title}</span>
                     </div>
                     <div style={{ flex: 1, visiblity: 'hidden' }} />
                     <div>
@@ -995,7 +998,7 @@ class CycleHome extends Component {
                           this.setState({ CreateCycleExecuteVisible: true });
                         }}
                       >
-                        <Icon type="playlist_add" style={{ marginRight: -2 }}/>
+                        <Icon type="playlist_add" style={{ marginRight: -2 }} />
                         <span>
                           <FormattedMessage id="cycle_addCycle" />
                         </span>
@@ -1035,16 +1038,17 @@ class CycleHome extends Component {
                   />
                 </div>
               ) : (
-                  <div style={{
-                    display: 'flex', alignItems: 'center', height: 250, margin: '88px auto', padding: '50px 75px', border: '1px dashed rgba(0,0,0,0.54)',
-                  }}>
-                    <img src={noRight} alt="" />
-                    <div style={{ marginLeft: 40 }}>
-                      <div style={{ fontSize: '14px', color: 'rgba(0,0,0,0.65)' }}>根据当前选定的测试循环没有查询到循环信息</div>
-                      <div style={{ fontSize: '20px', fontWeight: 'bold', marginTop: 10 }}>尝试在您的树状图中选择测试循环</div>
-                    </div>
+                <div style={{
+                  display: 'flex', alignItems: 'center', height: 250, margin: '88px auto', padding: '50px 75px', border: '1px dashed rgba(0,0,0,0.54)',
+                }}
+                >
+                  <img src={noRight} alt="" />
+                  <div style={{ marginLeft: 40 }}>
+                    <div style={{ fontSize: '14px', color: 'rgba(0,0,0,0.65)' }}>根据当前选定的测试循环没有查询到循环信息</div>
+                    <div style={{ fontSize: '20px', fontWeight: 'bold', marginTop: 10 }}>尝试在您的树状图中选择测试循环</div>
                   </div>
-                )}
+                </div>
+              )}
             </div>
           </Spin>
         </Content>

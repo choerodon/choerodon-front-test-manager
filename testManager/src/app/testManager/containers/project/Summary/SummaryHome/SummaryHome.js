@@ -1,14 +1,22 @@
 import React, { Component } from 'react';
 
-import { Table, Radio, Button, Icon, Spin, Popover } from 'choerodon-ui';
+import {
+  Table, Radio, Button, Icon, Spin, Popover,
+} from 'choerodon-ui';
 import { Page, Header, stores } from 'choerodon-front-boot';
-import { Chart, Axis, Geom, Tooltip } from 'bizcharts';
+import {
+  Chart, Axis, Geom, Tooltip,
+} from 'bizcharts';
 import { FormattedMessage } from 'react-intl';
 import moment from 'moment';
 import _ from 'lodash';
-
-import { getCaseNotPlain, getCaseNotRun, getCaseNum, getCycleRange, getCreateRange, getIssueStatistic } from '../../../../api/summaryApi';
-import { getProjectVersion, getLabels, getModules, getIssueCount } from '../../../../api/agileApi';
+import ReactEcharts from 'echarts-for-react';
+import {
+  getCaseNotPlain, getCaseNotRun, getCaseNum, getCycleRange, getCreateRange, getIssueStatistic,
+} from '../../../../api/summaryApi';
+import {
+  getProjectVersion, getLabels, getModules, getIssueCount,
+} from '../../../../api/agileApi';
 import './SummaryHome.less';
 
 
@@ -20,16 +28,12 @@ class SummaryHome extends Component {
       range: '7',
       excuteList: [],
       createList: [],
-      totalIssue: 0,
       totalTest: 0,
       notPlan: 0,
       notRun: 0,
       caseNum: 0,
       totalExcute: 0,
       totalCreate: 0,
-      versionList: [],
-      componentList: [],
-      labelList: [],
       versionTable: [],
       componentTable: [],
       labelTable: [],
@@ -68,15 +72,12 @@ class SummaryHome extends Component {
           totalExcute: _.sum(excuteList),
           createList: this.createTransform(createList, range),
           totalCreate: _.sumBy(createList, 'issueCount'),
-          versionList,
-          componentList,
-          labelList,
         });
         Promise.all([
           this.getVersionTable(versionList),
           this.getLabelTable(labelList),
           this.getComponentTable(componentList),
-        ]).then(([versionTable, labelTable, componentTable]) => {         
+        ]).then(([versionTable, labelTable, componentTable]) => {
           this.setState({
             versionTable,
             labelTable,
@@ -88,6 +89,7 @@ class SummaryHome extends Component {
         Choerodon.prompt('网络异常');
       });
   }
+
   getVersionTable = versionList => new Promise((resolve) => {
     getIssueStatistic('version').then((data) => {
       const versionTable = versionList.map((version) => {
@@ -107,13 +109,14 @@ class SummaryHome extends Component {
       resolve(versionTable);
     });
   })
+
   getLabelTable = labelList => new Promise((resolve) => {
     getIssueStatistic('label').then((data) => {
       const labelTable = labelList.map((label) => {
         let num = 0;
         if (_.find(data, { typeName: label.labelId.toString() })) {
           num = _.find(data, { typeName: label.labelId.toString() }).value;
-        } 
+        }
         return { name: label.labelName, id: label.labelId, num };
       });
       // 加入无标签项
@@ -127,6 +130,7 @@ class SummaryHome extends Component {
       resolve(labelTable);
     });
   })
+
   getComponentTable = componentList => new Promise((resolve) => {
     getIssueStatistic('component').then((data) => {
       const componentTable = componentList.map((component) => {
@@ -162,6 +166,7 @@ class SummaryHome extends Component {
       });
     });
   }
+
   createTransform = (source, range) => Array(Number(range)).fill(0).map((item, i) => {
     const time = moment().subtract(range - i - 1, 'days').format('YYYY-MM-DD');
     if (_.find(source, { creationDay: time })) {
@@ -183,10 +188,169 @@ class SummaryHome extends Component {
     value: item,
   }))
 
+  getCreateOption = () => ({
+    // title: {
+    //   text: '折线图堆叠',
+    // },
+    tooltip: {
+      trigger: 'axis',
+    },
+    grid: {
+      top: '5%',
+      left: 26,
+      right: '5%',
+      bottom: '28%',
+      // containLabel: true,
+    },
+    xAxis: {
+      type: 'category',
+      boundaryGap: false,
+      axisLine: {
+        lineStyle: {
+          color: '#EEEEEE',
+          // width: 8, // 这里是为了突出显示加上的
+        }, 
+      },
+      axisLabel: {
+        show: true,
+        textStyle: {
+          color: 'rgba(0,0,0,0.65)',
+        },
+      },
+      splitLine: {
+        show: true, 
+        //  改变轴线颜色
+        lineStyle: {
+          // 使用深浅的间隔色
+          color: ['#EEEEEE'],
+        },                            
+      },
+      // data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
+      data: this.state.createList.map(execute => execute.time),
+    },
+    yAxis: {
+      type: 'value',
+      axisLine: {
+        lineStyle: {
+          color: '#EEEEEE',
+          // width: 8, // 这里是为了突出显示加上的
+        }, 
+      },
+      axisLabel: {
+        show: true,
+        textStyle: {
+          color: 'rgba(0,0,0,0.65)',
+        },
+      },
+      splitLine: {
+        show: true, 
+        //  改变轴线颜色
+        lineStyle: {
+          // 使用深浅的间隔色
+          color: ['#EEEEEE'],
+        },                            
+      },
+      minInterval: 1,
+    },
+    series: [
+      {
+        name: '创建数',
+        type: 'line',
+        stack: '总量',
+        data: this.state.createList.map(execute => execute.value),
+      },
+    ],
+    color: ['#00BFA5'],
+  })
+
+  getExecuteOption = () => ({
+    // title: {
+    //   text: '折线图堆叠',
+    // },
+    tooltip: {
+      trigger: 'axis',
+    },
+    grid: {
+      top: '5%',
+      left: 26,
+      right: '5%',
+      bottom: '28%',
+      // containLabel: true,
+    },
+    xAxis: {
+      type: 'category',      
+      // name: '日期',
+      nameGap: 28,
+      nameTextStyle: {
+        color: 'black',
+      },
+      nameLocation: 'middle',
+      boundaryGap: false,
+      axisLine: {
+        lineStyle: {
+          color: '#EEEEEE',
+          // width: 8, // 这里是为了突出显示加上的
+        }, 
+      },
+      axisLabel: {
+        show: true,
+        textStyle: {
+          color: 'rgba(0,0,0,0.65)',
+        },
+      },
+      splitLine: {
+        show: true, 
+        //  改变轴线颜色
+        lineStyle: {
+          // 使用深浅的间隔色
+          color: ['#EEEEEE'],
+        },                            
+      },
+      // data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
+      data: this.state.excuteList.map(execute => execute.time),
+    },
+    yAxis: {
+      type: 'value',
+      name: '数值',
+      axisLine: {
+        lineStyle: {
+          color: '#EEEEEE',
+          // width: 8, // 这里是为了突出显示加上的
+        }, 
+      },
+      axisLabel: {
+        show: true,
+        textStyle: {
+          color: 'rgba(0,0,0,0.65)',
+        },
+      },
+      splitLine: {
+        show: true, 
+        //  改变轴线颜色
+        lineStyle: {
+          // 使用深浅的间隔色
+          color: ['#EEEEEE'],
+        },                            
+      },
+      minInterval: 1,
+    },
+    series: [
+      {
+        name: '执行数',
+        type: 'line',
+        stack: '总量',
+        data: this.state.excuteList.map(execute => execute.value),
+      },
+    ],
+    color: ['#00BFA5'],
+  })
+
   render() {
-    const { loading, range, excuteList, createList, totalExcute,
+    const {
+      loading, range, excuteList, createList, totalExcute,
       totalCreate, totalTest, notPlan, notRun, caseNum, versionTable,
-      labelTable, componentTable } = this.state;
+      labelTable, componentTable,
+    } = this.state;
     // window.console.log(labelTable);
     const versionColumns = [{
       title: <FormattedMessage id="summary_version" />,
@@ -316,7 +480,9 @@ class SummaryHome extends Component {
               <div className="c7n-table-container">
                 <div className="c7n-table-title">
                   <FormattedMessage id="summary_testSummary" />
-                  （<FormattedMessage id="summary_summaryByVersion" />）
+                  （
+                  <FormattedMessage id="summary_summaryByVersion" />
+                  ）
                 </div>
                 <Table
                   // rowKey="name"
@@ -330,7 +496,9 @@ class SummaryHome extends Component {
               <div className="c7n-table-container" style={{ margin: '0 15px' }}>
                 <div className="c7n-table-title">
                   <FormattedMessage id="summary_testSummary" />
-                  （<FormattedMessage id="summary_summaryByComponent" />）
+                  （
+                  <FormattedMessage id="summary_summaryByComponent" />
+                  ）
                 </div>
                 <Table
                   // rowKey="name"
@@ -344,7 +512,9 @@ class SummaryHome extends Component {
               <div className="c7n-table-container">
                 <div className="c7n-table-title">
                   <FormattedMessage id="summary_testSummary" />
-                  （<FormattedMessage id="summary_summaryByLabel" />）
+                  （
+                  <FormattedMessage id="summary_summaryByLabel" />
+                  ）
                 </div>
                 <Table
                   // rowKey="name"
@@ -357,19 +527,37 @@ class SummaryHome extends Component {
               </div>
             </div>
             <div style={{ margin: '30px 20px 18px 20px', display: 'flex', alignItems: 'center' }}>
-              <div><FormattedMessage id="summary_summaryTimeLeap" />：</div>
+              <div>
+                <FormattedMessage id="summary_summaryTimeLeap" />
+                ：
+              </div>
               <Radio.Group value={range} onChange={this.handleRangeChange}>
                 {/* <Radio.Button value="1">1天</Radio.Button> */}
-                <Radio.Button value="7">7{<FormattedMessage id="day" />}</Radio.Button>
-                <Radio.Button value="15">15{<FormattedMessage id="day" />}</Radio.Button>
-                <Radio.Button value="30">30{<FormattedMessage id="day" />}</Radio.Button>
+                <Radio.Button value="7">
+                  7
+                  {<FormattedMessage id="day" />}
+                </Radio.Button>
+                <Radio.Button value="15">
+                  15
+                  {<FormattedMessage id="day" />}
+                </Radio.Button>
+                <Radio.Button value="30">
+                  30
+                  {<FormattedMessage id="day" />}
+                </Radio.Button>
               </Radio.Group>
             </div>
             <div className="c7n-chartArea-container">
 
               <div className="c7n-chart-container">
                 <div style={{ fontWeight: 'bold', margin: 12 }}><FormattedMessage id="summary_testCreate" /></div>
-                <Chart height={240} scale={createScale} width={width} data={createList} padding="auto" >
+                <div style={{ height: 245 }}>
+                  <ReactEcharts
+                    option={this.getCreateOption()}
+                  />
+                </div>
+                {/* <Chart height={240} scale={createScale} 
+                width={width} data={createList} padding="auto">
                   <Axis name="creationDay" />
                   <Axis name="issueCount" />
                   <Tooltip crosshairs={{ type: 'y' }} />
@@ -378,19 +566,33 @@ class SummaryHome extends Component {
                     position="time*value"
                     size={2}
                   />
-                  <Geom type="point" position="time*value" size={4} shape={'circle'} style={{ stroke: '#fff', lineWidth: 1 }} />
-                </Chart>
-                <div style={{ color: 'rgba(0,0,0,0.65)', margin: 10 }}>
-                  <FormattedMessage id="summary_testCreated" />：
-                  <span style={{ color: 'black', fontWeight: 'bold' }}>{totalCreate}</span>，
+                  <Geom type="point" position="time*value" size={4} shape="circle"
+                   style={{ stroke: '#fff', lineWidth: 1 }} />
+                </Chart> */}
+                <div style={{ color: 'rgba(0,0,0,0.65)', marginLeft: 26 }}>
+                  <FormattedMessage id="summary_testCreated" />
+                  ：
+                  <span style={{ color: 'black', fontWeight: 'bold' }}>{totalCreate}</span>
+                  ，
                   <FormattedMessage id="summary_testLast" />
-                  <span style={{ color: 'black', fontWeight: 'bold' }}> {range} </span>
+                  <span style={{ color: 'black', fontWeight: 'bold' }}>
+                    {' '}
+                    {range}
+                    {' '}
+                  </span>
                   <FormattedMessage id="day" />
                 </div>
               </div>
               <div className="c7n-chart-container" style={{ marginLeft: 16 }}>
                 <div style={{ fontWeight: 'bold', margin: 12 }}><FormattedMessage id="summary_testExecute" /></div>
-                <Chart height={240} scale={executeScale} width={parseInt((window.innerWidth - 320) / 2, 10)} data={excuteList} padding="auto" >
+                <div style={{ height: 245 }}>
+                  <ReactEcharts
+                    option={this.getExecuteOption()}
+                  />
+                </div>
+                {/* <Chart height={240} scale={executeScale}
+                 width={parseInt((window.innerWidth - 320) / 2, 10)} 
+                 data={excuteList} padding="auto">
                   <Axis name="time" />
                   <Axis name="value" />
                   <Tooltip crosshairs={{ type: 'y' }} />
@@ -403,15 +605,21 @@ class SummaryHome extends Component {
                     type="point"
                     position="time*value"
                     size={4}
-                    shape={'circle'}
+                    shape="circle"
                     style={{ stroke: '#fff', lineWidth: 1 }}
                   />
-                </Chart>
-                <div style={{ color: 'rgba(0,0,0,0.65)', margin: 10 }}>
+                </Chart> */}
+                <div style={{ color: 'rgba(0,0,0,0.65)', marginLeft: 26 }}>
                   <FormattedMessage id="summary_testExecuted" />
-                  ：<span style={{ color: 'black', fontWeight: 'bold' }}>{totalExcute}</span>，
+                  ：
+                  <span style={{ color: 'black', fontWeight: 'bold' }}>{totalExcute}</span>
+                  ，
                   <FormattedMessage id="summary_testLast" />
-                  <span style={{ color: 'black', fontWeight: 'bold' }}> {range} </span>
+                  <span style={{ color: 'black', fontWeight: 'bold' }}>
+                    {' '}
+                    {range}
+                    {' '}
+                  </span>
                   <FormattedMessage id="day" />
                 </div>
               </div>
