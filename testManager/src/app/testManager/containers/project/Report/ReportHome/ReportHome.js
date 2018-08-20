@@ -35,7 +35,7 @@ const styles = {
     color: 'black',
     width: '100%', 
     margin: '18px 0', 
-    fontWeight: 'bold', 
+    fontWeight: 500, 
   },
 };
 class ReportHome extends Component {
