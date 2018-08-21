@@ -244,7 +244,7 @@ class CreateIssue extends Component {
           style={{
             padding: '0 0 10px 0',
           }}
-          title={<FormattedMessage id="status_side_content_title" />}
+          title={<FormattedMessage id="issue_create_title" />}
           description={<FormattedMessage id="issue_create_content_description" />}
           link="http://v0-8.choerodon.io/zh/docs/user-guide/agile/issue/create-issue/"
         >
