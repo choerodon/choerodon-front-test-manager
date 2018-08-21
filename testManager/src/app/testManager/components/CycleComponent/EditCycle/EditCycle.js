@@ -55,9 +55,13 @@ class EditCycle extends Component {
             fromDate: fromDate ? fromDate.format('YYYY-MM-DD HH:mm:ss') : null,
             toDate: toDate ? toDate.format('YYYY-MM-DD HH:mm:ss') : null,
           }, 
-        }).then((data) => {
+        }).then((res) => {
+          if (res.failed) {
+            Choerodon.prompt('同名循环已存在');
+          } else {
+            this.props.onOk();
+          }
           this.setState({ loading: false });
-          this.props.onOk();
         }).catch(() => {
           Choerodon.prompt('网络异常');
           this.setState({ loading: false });
