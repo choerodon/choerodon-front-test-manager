@@ -34,8 +34,8 @@ const { AppState } = stores;
 const { confirm } = Modal;
 const styles = {
   statusOption: {
-    lineHeight: '22px',
-    height: 22,
+    lineHeight: '20px',
+    height: 20,
     width: 60,
     textAlign: 'center',
     borderRadius: '2px',
