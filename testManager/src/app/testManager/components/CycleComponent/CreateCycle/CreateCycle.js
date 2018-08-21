@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-  Form, Input, Select, Button, Icon, Modal, Upload, Spin, DatePicker, 
+  Form, Input, Select, Button, Icon, Modal, Upload, Spin, DatePicker,
 } from 'choerodon-ui';
 import { Content, stores } from 'choerodon-front-boot';
 // import './CreateCycle.less';
@@ -56,7 +56,7 @@ class CreateCycle extends Component {
       }
     });
   }
-
+  
   loadVersions = () => {
     this.setState({
       selectLoading: true,
@@ -71,7 +71,7 @@ class CreateCycle extends Component {
 
   render() {
     const {
-      visible, onOk, onCancel, type, 
+      visible, onOk, onCancel, type,
     } = this.props;
     const { getFieldDecorator } = this.props.form;
     const { versions, loading, selectLoading } = this.state;
