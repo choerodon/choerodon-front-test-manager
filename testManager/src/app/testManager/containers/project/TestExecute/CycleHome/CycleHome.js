@@ -156,22 +156,22 @@ class CycleHome extends Component {
         page: executePagination.current - 1,
         size: executePagination.pageSize,
       }, data.cycleId,
-        {
-          ...filters,
-          lastUpdatedBy: [Number(this.lastUpdatedBy)],
-          assignedTo: [Number(this.assignedTo)],
-        }).then((cycle) => {
-          this.setState({
-            rightLoading: false,
-            testList: cycle.content,
-            executePagination: {
-              current: executePagination.current,
-              pageSize: executePagination.pageSize,
-              total: cycle.totalElements,
-            },
-          });
-          // window.console.log(cycle);
+      {
+        ...filters,
+        lastUpdatedBy: [Number(this.lastUpdatedBy)],
+        assignedTo: [Number(this.assignedTo)],
+      }).then((cycle) => {
+        this.setState({
+          rightLoading: false,
+          testList: cycle.content,
+          executePagination: {
+            current: executePagination.current,
+            pageSize: executePagination.pageSize,
+            total: cycle.totalElements,
+          },
         });
+        // window.console.log(cycle);
+      });
     }
   }
 
@@ -303,18 +303,18 @@ class CycleHome extends Component {
         page: executePagination.current - 1,
         size: executePagination.pageSize,
       }, defaultExpandKeyItem.cycleId,
-        {}).then((cycle) => {
-          this.setState({
-            rightLoading: false,
-            testList: cycle.content,
-            executePagination: {
-              current: executePagination.current,
-              pageSize: executePagination.pageSize,
-              total: cycle.totalElements,
-            },
-          });
-          // window.console.log(cycle);
+      {}).then((cycle) => {
+        this.setState({
+          rightLoading: false,
+          testList: cycle.content,
+          executePagination: {
+            current: executePagination.current,
+            pageSize: executePagination.pageSize,
+            total: cycle.totalElements,
+          },
         });
+        // window.console.log(cycle);
+      });
     }
   }
 
@@ -442,22 +442,22 @@ class CycleHome extends Component {
         size: pagination.pageSize,
         page: pagination.current - 1,
       }, currentCycle.cycleId,
-        {
-          ...filters,
-          lastUpdatedBy: [Number(this.lastUpdatedBy)],
-          assignedTo: [Number(this.assignedTo)],
-        }).then((cycle) => {
-          this.setState({
-            rightLoading: false,
-            testList: cycle.content,
-            executePagination: {
-              current: pagination.current,
-              pageSize: pagination.pageSize,
-              total: cycle.totalElements,
-            },
-          });
-          // window.console.log(cycle);
+      {
+        ...filters,
+        lastUpdatedBy: [Number(this.lastUpdatedBy)],
+        assignedTo: [Number(this.assignedTo)],
+      }).then((cycle) => {
+        this.setState({
+          rightLoading: false,
+          testList: cycle.content,
+          executePagination: {
+            current: pagination.current,
+            pageSize: pagination.pageSize,
+            total: cycle.totalElements,
+          },
         });
+        // window.console.log(cycle);
+      });
     }
   }
 
@@ -1039,10 +1039,11 @@ class CycleHome extends Component {
                 >
                   <img src={noRight} alt="" />
                   <div style={{ marginLeft: 40 }}>
-                    <div style={{ fontSize: '14px', color: 'rgba(0,0,0,0.65)' }}>根据当前选定的测试循环没有查询到循环信息</div>
-                    <div style={{ fontSize: '20px', marginTop: 10 }}>尝试在您的树状图中选择测试循环</div>
-                  </div>
-                )}
+                      <div style={{ fontSize: '14px', color: 'rgba(0,0,0,0.65)' }}>根据当前选定的测试循环没有查询到循环信息</div>
+                      <div style={{ fontSize: '20px', marginTop: 10 }}>尝试在您的树状图中选择测试循环</div>
+                    </div>
+                </div>
+              )}
             </div>
           </Spin>
         </Content>
