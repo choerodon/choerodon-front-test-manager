@@ -57,20 +57,20 @@ export function loadSprints(arr = []) {
   return axios.post(`/agile/v1/projects/${projectId}/sprint/names`, arr);
 }
 
-export function loadSprint(sprintId) {
-  const projectId = AppState.currentMenuType.id;
-  return axios.get(`/agile/v1/projects/${projectId}/sprint/${sprintId}`);
-}
+// export function loadSprint(sprintId) {
+//   const projectId = AppState.currentMenuType.id;
+//   return axios.get(`/agile/v1/projects/${projectId}/sprint/${sprintId}`);
+// }
 
-export function loadSprintIssues(sprintId, status, page = 0, size = 99999) {
-  const projectId = AppState.currentMenuType.id;
-  return axios.get(`/agile/v1/projects/${projectId}/sprint/${sprintId}/issues?status=${status}&page=${page}&size=${size}`);
-}
+// export function loadSprintIssues(sprintId, status, page = 0, size = 99999) {
+//   const projectId = AppState.currentMenuType.id;
+//   return axios.get(`/agile/v1/projects/${projectId}/sprint/${sprintId}/issues?status=${status}&page=${page}&size=${size}`);
+// }
 
-export function loadChartData(id, type) {
-  const projectId = AppState.currentMenuType.id;
-  return axios.get(`/agile/v1/projects/${projectId}/reports/${id}/burn_down_report?type=${type}`);
-}
+// export function loadChartData(id, type) {
+//   const projectId = AppState.currentMenuType.id;
+//   return axios.get(`/agile/v1/projects/${projectId}/reports/${id}/burn_down_report?type=${type}`);
+// }
 
 export function loadStatus() {
   const projectId = AppState.currentMenuType.id;
@@ -90,9 +90,9 @@ export function loadIssue(issueId, projectId = AppState.currentMenuType.id) {
   return axios.get(`/agile/v1/projects/${projectId}/issues/${issueId}`);
 }
 
-export function loadSubtask(issueId, projectId = AppState.currentMenuType.id) {
-  return axios.get(`agile/v1/projects/${projectId}/issues/sub_issue/${issueId}`);
-}
+// export function loadSubtask(issueId, projectId = AppState.currentMenuType.id) {
+//   return axios.get(`agile/v1/projects/${projectId}/issues/sub_issue/${issueId}`);
+// }
 
 export function updateIssue(data, projectId = AppState.currentMenuType.id) {
   // if (type === 'sub_task') {
@@ -101,13 +101,13 @@ export function updateIssue(data, projectId = AppState.currentMenuType.id) {
   return axios.put(`/agile/v1/projects/${projectId}/issues`, data);
 }
 
-export function createSubIssue(issueId, obj, projectId = AppState.currentMenuType.id) {
-  const subIssueObj = {
-    ...obj,
-    parentIssueId: issueId,
-  };
-  return axios.post(`/agile/v1/projects/${projectId}/issues/sub_issue`, subIssueObj);
-}
+// export function createSubIssue(issueId, obj, projectId = AppState.currentMenuType.id) {
+//   const subIssueObj = {
+//     ...obj,
+//     parentIssueId: issueId,
+//   };
+//   return axios.post(`/agile/v1/projects/${projectId}/issues/sub_issue`, subIssueObj);
+// }
 
 export function deleteIssue(issueId, projectId = AppState.currentMenuType.id) {
   return axios.delete(`/agile/v1/projects/${projectId}/issues/${issueId}`);
@@ -129,11 +129,6 @@ export function loadDatalogs(issueId, projectId = AppState.currentMenuType.id) {
   return axios.get(`agile/v1/projects/${projectId}/data_log?issueId=${issueId}`);
 }
 
-export function loadBranchs(issueId, projectId = AppState.currentMenuType.id) {
-  return axios.get(`/devops/v1/project/${projectId}/issue/${issueId}/commit_and_merge_request/count`);
-}
-
-
 export function updateWorklog(logId, worklog, projectId = AppState.currentMenuType.id) {
   return axios.patch(`agile/v1/projects/${projectId}/work_log/${logId}`, worklog);
 }
@@ -142,13 +137,13 @@ export function deleteWorklog(logId, projectId = AppState.currentMenuType.id) {
   return axios.delete(`agile/v1/projects/${projectId}/work_log/${logId}`);
 }
 
-export function updateIssueType(data, projectId = AppState.currentMenuType.id) {
-  const issueUpdateTypeDTO = {
-    projectId,
-    ...data,
-  };
-  return axios.post(`/agile/v1/projects/${projectId}/issues/update_type`, issueUpdateTypeDTO);
-}
+// export function updateIssueType(data, projectId = AppState.currentMenuType.id) {
+//   const issueUpdateTypeDTO = {
+//     projectId,
+//     ...data,
+//   };
+//   return axios.post(`/agile/v1/projects/${projectId}/issues/update_type`, issueUpdateTypeDTO);
+// }
 
 export function loadIssues(page = 0, size = 10, search, orderField, orderType) {
   const searchDTO = { ...search };
