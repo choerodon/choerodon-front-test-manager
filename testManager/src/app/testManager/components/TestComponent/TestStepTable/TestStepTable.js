@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-  Input, Icon, Modal, Tooltip, 
+  Input, Icon, Modal, Tooltip,
 } from 'choerodon-ui';
 import { stores, axios } from 'choerodon-front-boot';
 import _ from 'lodash';
@@ -13,7 +13,7 @@ import './TestStepTable.scss';
 const { confirm } = Modal;
 const { Text, Edit } = TextEditToggle;
 const { AppState } = stores;
-
+const { TextArea } = Input;
 // function uploadFile(data, config) {
 //   const { bucketName, attachmentLinkId } = config;
 //   const projectId = AppState.currentMenuType.id;
@@ -38,7 +38,7 @@ class TestStepTable extends Component {
     super(props);
     this.state = {
       data: [],
-      expand: [],   
+      expand: [],
       editTestStepShow: false,
       currentTestStepId: undefined,
       currentAttments: [],
@@ -114,7 +114,7 @@ class TestStepTable extends Component {
       // this.setState({ createLoading: true });
       axios.put(`/test/v1/projects/${projectId}/case/step/change`, record)
         .then((res) => {
-          this.setState({ createLoading: false });
+          // this.setState({ createLoading: false });
           this.props.onOk();
         });
     } else {
@@ -139,10 +139,11 @@ class TestStepTable extends Component {
     confirm({
       width: 560,
       title: Choerodon.getMessage('确认删除吗？', 'Confirm delete'),
-      content: <div style={{ marginBottom: 32 }}>
-        {Choerodon.getMessage('当你点击删除后，该条数据将被永久删除，不可恢复!', 'When you click delete, after which the data will be permanently deleted and irreversible!')
-        }
-      </div>,
+      content:
+  <div style={{ marginBottom: 32 }}>
+    {Choerodon.getMessage('当你点击删除后，该条数据将被永久删除，不可恢复!', 'When you click delete, after which the data will be permanently deleted and irreversible!')
+          }
+  </div>,
       onOk() {
         return axios.delete(`/test/v1/projects/${AppState.currentMenuType.id}/case/step`, { data: { stepId } })
           .then((res) => {
@@ -172,7 +173,7 @@ class TestStepTable extends Component {
   }
 
 
-  render() {    
+  render() {
     const that = this;
     const { onOk, enterLoad, leaveLoad } = this.props;
     // const menus = (
@@ -209,12 +210,14 @@ class TestStepTable extends Component {
               originData={testStep}
             >
               <Text>
-                <div className="c7n-text-dot" style={{ minHeight: 34 }}>
-                  {testStep}
-                </div>
+                <Tooltip title={testStep}>
+                  <div className="c7n-text-dot" style={{ minHeight: 34 }}>
+                    {testStep}
+                  </div>
+                </Tooltip>
               </Text>
               <Edit>
-                <Input autoFocus />
+                <TextArea autoFocus autosize />
               </Edit>
             </TextEditToggle>
           </Tooltip>
@@ -233,12 +236,14 @@ class TestStepTable extends Component {
               originData={testData}
             >
               <Text>
-                <div className="c7n-text-dot" style={{ minHeight: 34 }}>
-                  {testData}
-                </div>
+                <Tooltip title={testData}>
+                  <div className="c7n-text-dot" style={{ minHeight: 34 }}>
+                    {testData}
+                  </div>
+                </Tooltip>
               </Text>
               <Edit>
-                <Input autoFocus />
+                <TextArea autoFocus autosize />
               </Edit>
             </TextEditToggle>
           </Tooltip>
@@ -257,12 +262,14 @@ class TestStepTable extends Component {
               originData={expectedResult}
             >
               <Text>
-                <div className="c7n-text-dot" style={{ minHeight: 34 }}>
-                  {expectedResult}
-                </div>
+                <Tooltip title={expectedResult}>
+                  <div className="c7n-text-dot" style={{ minHeight: 34 }}>
+                    {expectedResult}
+                  </div>
+                </Tooltip>
               </Text>
               <Edit>
-                <Input autoFocus />
+                <TextArea autoFocus autosize />
               </Edit>
             </TextEditToggle>
           </Tooltip>
@@ -352,7 +359,7 @@ class TestStepTable extends Component {
     }];
     return (
       <div className="c7n-TestStepTable">
-       
+
         <DragTable
           pagination={false}
           filterBar={false}
@@ -362,24 +369,24 @@ class TestStepTable extends Component {
           dragKey="stepId"
         />
         {
-            this.state.editTestStepShow ? (
-              <EditTestStep
-                attachments={this.state.currentAttments}
-                issueId={this.props.issueId}
-                stepId={this.state.currentTestStepId}
-                visible={this.state.editTestStepShow}
-                onCancel={() => {
-                  this.setState({ editTestStepShow: false });
-                  this.props.onOk();
-                }}
-                onOk={() => {
-                  this.setState({ editTestStepShow: false });
-                  this.props.onOk();
-                }}
-              />
-            ) : null
-          }
-    
+          this.state.editTestStepShow ? (
+            <EditTestStep
+              attachments={this.state.currentAttments}
+              issueId={this.props.issueId}
+              stepId={this.state.currentTestStepId}
+              visible={this.state.editTestStepShow}
+              onCancel={() => {
+                this.setState({ editTestStepShow: false });
+                this.props.onOk();
+              }}
+              onOk={() => {
+                this.setState({ editTestStepShow: false });
+                this.props.onOk();
+              }}
+            />
+          ) : null
+        }
+
       </div>
     );
   }
