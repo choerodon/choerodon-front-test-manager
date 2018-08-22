@@ -201,84 +201,83 @@ class TestStepTable extends Component {
       title: <FormattedMessage id="execute_testStep" />,
       dataIndex: 'testStep',
       key: 'testStep',
+      flex: 3,
       render(testStep, record) {
-        return (
-          <Tooltip title={testStep}>
-            <TextEditToggle
-              formKey="testStep"
-              onSubmit={value => that.editStep({ ...record, testStep: value })}
-              originData={testStep}
-            >
-              <Text>
-                <Tooltip title={testStep}>
-                  <div className="c7n-text-dot" style={{ minHeight: 34 }}>
-                    {testStep}
-                  </div>
-                </Tooltip>
-              </Text>
-              <Edit>
-                <TextArea autoFocus autosize />
-              </Edit>
-            </TextEditToggle>
-          </Tooltip>
+        return (       
+          <TextEditToggle
+            formKey="testStep"
+            onSubmit={value => that.editStep({ ...record, testStep: value })}
+            originData={testStep}
+          >
+            <Text>
+              <Tooltip title={testStep}>
+                <div className="c7n-text-dot" style={{ minHeight: 34 }}>
+                  {testStep}
+                </div>
+              </Tooltip>
+            </Text>
+            <Edit>
+              <TextArea autoFocus autosize />
+            </Edit>
+          </TextEditToggle>        
         );
       },
     }, {
       title: <FormattedMessage id="execute_testData" />,
       dataIndex: 'testData',
       key: 'testData',
+      flex: 3,
       render(testData, record) {
         return (
-          <Tooltip title={testData}>
-            <TextEditToggle
-              formKey="testData"
-              onSubmit={value => that.editStep({ ...record, testData: value })}
-              originData={testData}
-            >
-              <Text>
-                <Tooltip title={testData}>
-                  <div className="c7n-text-dot" style={{ minHeight: 34 }}>
-                    {testData}
-                  </div>
-                </Tooltip>
-              </Text>
-              <Edit>
-                <TextArea autoFocus autosize />
-              </Edit>
-            </TextEditToggle>
-          </Tooltip>
+        
+          <TextEditToggle
+            formKey="testData"
+            onSubmit={value => that.editStep({ ...record, testData: value })}
+            originData={testData}
+          >
+            <Text>
+              <Tooltip title={testData}>
+                <div className="c7n-text-dot" style={{ minHeight: 34 }}>
+                  {testData}
+                </div>
+              </Tooltip>
+            </Text>
+            <Edit>
+              <TextArea autoFocus autosize />
+            </Edit>
+          </TextEditToggle>         
         );
       },
     }, {
       title: <FormattedMessage id="execute_expectedOutcome" />,
       dataIndex: 'expectedResult',
       key: 'expectedResult',
+      flex: 3,
       render(expectedResult, record) {
-        return (
-          <Tooltip title={expectedResult}>
-            <TextEditToggle
-              formKey="expectedResult"
-              onSubmit={value => that.editStep({ ...record, expectedResult: value })}
-              originData={expectedResult}
-            >
-              <Text>
-                <Tooltip title={expectedResult}>
-                  <div className="c7n-text-dot" style={{ minHeight: 34 }}>
-                    {expectedResult}
-                  </div>
-                </Tooltip>
-              </Text>
-              <Edit>
-                <TextArea autoFocus autosize />
-              </Edit>
-            </TextEditToggle>
-          </Tooltip>
+        return (         
+          <TextEditToggle
+            formKey="expectedResult"
+            onSubmit={value => that.editStep({ ...record, expectedResult: value })}
+            originData={expectedResult}
+          >
+            <Text>
+              <Tooltip title={expectedResult}>
+                <div className="c7n-text-dot" style={{ minHeight: 34 }}>
+                  {expectedResult}
+                </div>
+              </Tooltip>
+            </Text>
+            <Edit>
+              <TextArea autoFocus autosize />
+            </Edit>
+          </TextEditToggle>          
         );
       },
     }, {
       title: <FormattedMessage id="execute_stepAttachment" />,
       dataIndex: 'attachments',
       key: 'attachments',
+      flex: 3,
       render(attachments, record) {
         return (
           <TextEditToggle
