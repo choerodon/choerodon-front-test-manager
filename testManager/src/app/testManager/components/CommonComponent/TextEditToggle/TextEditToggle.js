@@ -2,39 +2,59 @@ import React, { Component } from 'react';
 import { Icon } from 'choerodon-ui';
 import { Form } from 'choerodon-ui';
 import PropTypes from 'prop-types';
+import { observer } from 'mobx-react';
+
+import TextEditToggleStore from './TextEditToggleStore';
 import './TextEditToggle.scss';
 
 const Text = props => props.children;
 const Edit = props => props.children;
 const FormItem = Form.Item;
+@observer
 class TextEditToggle extends Component {
   state = {
     editing: false,
     originData: null,
   }
 
+  componentDidMount() {
+    this.key = Math.random();
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('click', this.onSubmit);
+  }
+
+  // componentWillReact(nextProps) {
+  //   console.log('will');
+  // }
 
   // 提交编辑
-  onSubmit = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
+  onSubmit = () => {
     // e.nativeEvent.stopImmediatePropagation(); 
     document.removeEventListener('click', this.onSubmit);
     const { getFieldValue } = this.props.form;
-
-    const newValue = getFieldValue(this.props.formKey);
-    // console.log(newValue);
-    if (this.props.onSubmit && newValue !== this.props.originData) {
-      // console.log(this.props.formKey, getFieldValue(this.props.formKey));      
-      this.props.onSubmit(this.props.formKey ? newValue : null);
+    try {
+      const newValue = getFieldValue(this.props.formKey);
+      // console.log(newValue);
+      if (this.props.onSubmit && newValue !== this.props.originData) {
+        // console.log(this.props.formKey, getFieldValue(this.props.formKey));      
+        this.props.onSubmit(this.props.formKey ? newValue : null);
+      }
+      this.setState({
+        editing: false,
+      });
+    } catch (err) {
+      this.setState({
+        editing: false,
+      });
     }
-    this.setState({
-      editing: false,
-    });
   }
 
   // 进入编辑状态
   enterEditing = () => {
+    // console.log('enter');
+    TextEditToggleStore.setCurrentToggle(this.key);
     document.addEventListener('click', this.onSubmit);
     this.setState({
       editing: true,
@@ -78,6 +98,7 @@ class TextEditToggle extends Component {
     const { editing } = this.state;
     const { children, originData, formKey } = this.props;
     const { getFieldDecorator } = this.props.form;
+
     let child = null;
     if (editing) {
       child = children.filter(current => current.type === Edit);
@@ -118,18 +139,21 @@ class TextEditToggle extends Component {
     const { editing } = this.state;
     const child = this.renderChild();
     // console.log(child);
-
+    const currentToggle = TextEditToggleStore.getCurrentToggle;
+    
     return (
       <div
         onClick={(event) => {
-          event.preventDefault();
-          event.stopPropagation();
-          event.nativeEvent.stopImmediatePropagation(); 
+          // console.log(currentToggle, this.key);
+          if (currentToggle === this.key) {
+            event.nativeEvent.stopImmediatePropagation();
+          }
+          // event.preventDefault();
+          // event.stopPropagation();
         }}
         role="none"
       >
         {child}
-
       </div>
     );
   }
