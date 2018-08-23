@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
-import {
- Button, Table, Spin, Popover, Tooltip, Icon, Avatar 
-} from 'choerodon-ui';
+import { Icon } from 'choerodon-ui';
 
 const ICON = {
   story: 'turned_in',

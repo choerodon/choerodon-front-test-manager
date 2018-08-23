@@ -55,6 +55,8 @@
     "react/sort-comp": "off",
     "react/destructuring-assignment": "off",
     "react/no-access-state-in-setstate": "off",
+    "prefer-destructuring":"off",
+    "max-len":"warn",
     "jsx-a11y/anchor-is-valid": [
       "warn",
       {

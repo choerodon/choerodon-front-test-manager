@@ -9,7 +9,7 @@ import {
 import {
   STATUS, COLOR, TYPE, ICON, TYPE_NAME,
 } from '../../../common/Constant';
-import './EditIssueNarrow.scss';
+import './EditIssue.scss';
 import '../../../assets/main.scss';
 import {
   UploadButtonNow, NumericInput, ReadAndEdit, IssueDescription,
@@ -770,20 +770,20 @@ class EditIssueNarrow extends Component {
       width: 560,
       title: `删除问题${this.state.issueNum}`,
       content:
-  <div style={{ marginBottom: 32 }}>
-    <p style={{ marginBottom: 10 }}>请确认您要删除这个问题。</p>
-    <p style={{ marginBottom: 10 }}>这个问题将会被彻底删除。包括所有附件和评论。</p>
-    <p style={{ marginBottom: 10 }}>如果您完成了这个问题，通常是已解决或者已关闭，而不是删除。</p>
-    {
-   this.state.subIssueDTOList.length 
-     ? (
-       <p>
-         {`注意：问题的 ${this.state.subIssueDTOList.length} 个子任务将被删除。`}
-       </p>
-     ) 
-     : null
-    }
-  </div>,
+        <div style={{ marginBottom: 32 }}>
+          <p style={{ marginBottom: 10 }}>请确认您要删除这个问题。</p>
+          <p style={{ marginBottom: 10 }}>这个问题将会被彻底删除。包括所有附件和评论。</p>
+          <p style={{ marginBottom: 10 }}>如果您完成了这个问题，通常是已解决或者已关闭，而不是删除。</p>
+          {
+            this.state.subIssueDTOList.length
+              ? (
+                <p>
+                  {`注意：问题的 ${this.state.subIssueDTOList.length} 个子任务将被删除。`}
+                </p>
+              )
+              : null
+          }
+        </div>,
       onOk() {
         return deleteIssue(issueId)
           .then((res) => {
@@ -1010,7 +1010,7 @@ class EditIssueNarrow extends Component {
       type, id: projectId, organizationId: orgId, name,
     } = menu;
     const {
-      initValue, visible, onCancel, onOk,
+      initValue, visible, onCancel, onOk, mode,
     } = this.props;
     const getMenu = () => (
       <Menu onClick={this.handleClickMenu.bind(this)}>
@@ -1275,272 +1275,312 @@ class EditIssueNarrow extends Component {
                     </Dropdown>
                   </div>
                 </div>
-                <div className="line-start" style={{ alignItems: 'center' }}>
-                  <div style={{ display: 'flex', flex: 1 }}>
-                    <span
-                      style={{
-                        width: 30,
-                        height: 30,
-                        borderRadius: '50%',
-                        // background: 'rgba(255, 177, 0, 0.2)',
-                        marginRight: 12,
-                        flexShrink: 0,
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                      }}
-                    >
-                      <Icon
-                        type={STATUS_ICON[this.state.statusCode] ? STATUS_ICON[this.state.statusCode].icon : 'timelapse'}
-                        style={{
-                          fontSize: '33px',
-                          color: this.state.statusColor || '#ffae02',
-                        }}
-                      />
-                    </span>
+                {mode === 'narrow' && this.state.issueId && this.state.typeCode !== 'issue_epic' ? (
+                  <div style={{ display: 'flex' }}>
+                    <span>预估时间：</span>
                     <div>
-                      <div style={{ fontSize: '12px', color: 'rgba(0, 0, 0, 0.54)', marginBottom: 4 }}>
-                        <FormattedMessage id="issue_issueFilterByStatus" />
-                      </div>
-                      <div>
-                        <ReadAndEdit
-                          callback={this.changeRae.bind(this)}
-                          thisType="statusId"
-                          current={this.state.currentRae}
-                          origin={this.state.statusId}
-                          onOk={this.updateIssue.bind(this, 'statusId')}
-                          onCancel={this.resetStatusId.bind(this)}
-                          onInit={() => {
-                            this.setAnIssueToState();
-                            loadStatus().then((res) => {
-                              this.setState({
-                                originStatus: res,
-                              });
+                      <ReadAndEdit
+                        callback={this.changeRae.bind(this)}
+                        thisType="remainingTime"
+                        current={this.state.currentRae}
+                        handleEnter
+                        origin={this.state.remainingTime}
+                        onInit={() => this.setAnIssueToState(this.state.origin)}
+                        onOk={this.updateIssue.bind(this, 'remainingTime')}
+                        onCancel={this.resetRemainingTime.bind(this)}
+                        readModeContent={(
+                          <span>
+                            {this.state.remainingTime === undefined || this.state.remainingTime === null ? '无' : `${this.state.remainingTime} 小时`}
+                          </span>
+                        )}
+                      >
+                        <NumericInput
+                          maxLength="3"
+                          value={this.state.remainingTime}
+                          // size="large"
+                          autoFocus
+                          onChange={this.handleRemainingTimeChange.bind(this)}
+                          onPressEnter={() => {
+                            this.updateIssue('remainingTime');
+                            this.setState({
+                              currentRae: undefined,
                             });
                           }}
-                          readModeContent={(
-                            <div>
-                              {
-                                this.state.statusId ? (
-                                  <div
-                                    style={{
-                                      color: this.state.statusColor,
-                                      fontSize: '16px',
-                                      lineHeight: '18px',
-                                    }}
-                                  >
-                                    {this.state.statusName}
-                                  </div>
-                                ) : '无'
-                              }
-                            </div>
-                          )}
-                        >
-                          <Select
-                            value={this.state.originStatus.length
-                              ? this.state.statusId : this.state.statusName}
-                            style={{ width: 150 }}
-                            loading={this.state.selectLoading}
-                            autoFocus
-                            // getPopupContainer={triggerNode => triggerNode.parentNode}
-                            onFocus={() => {
-                              this.setState({
-                                selectLoading: true,
-                              });
+                        />
+                      </ReadAndEdit>
+                    </div>
+                  </div>
+                ) : null
+                }
+                {mode === 'wide' && (
+                  <div className="line-start" style={{ alignItems: 'center' }}>
+                    <div style={{ display: 'flex', flex: 1 }}>
+                      <span
+                        style={{
+                          width: 30,
+                          height: 30,
+                          borderRadius: '50%',
+                          // background: 'rgba(255, 177, 0, 0.2)',
+                          marginRight: 12,
+                          flexShrink: 0,
+                          display: 'flex',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                        }}
+                      >
+                        <Icon
+                          type={STATUS_ICON[this.state.statusCode] ? STATUS_ICON[this.state.statusCode].icon : 'timelapse'}
+                          style={{
+                            fontSize: '33px',
+                            color: this.state.statusColor || '#ffae02',
+                          }}
+                        />
+                      </span>
+                      <div>
+                        <div style={{ fontSize: '12px', color: 'rgba(0, 0, 0, 0.54)', marginBottom: 4 }}>
+                          <FormattedMessage id="issue_issueFilterByStatus" />
+                        </div>
+                        <div>
+                          <ReadAndEdit
+                            callback={this.changeRae.bind(this)}
+                            thisType="statusId"
+                            current={this.state.currentRae}
+                            origin={this.state.statusId}
+                            onOk={this.updateIssue.bind(this, 'statusId')}
+                            onCancel={this.resetStatusId.bind(this)}
+                            onInit={() => {
+                              this.setAnIssueToState();
                               loadStatus().then((res) => {
                                 this.setState({
                                   originStatus: res,
-                                  selectLoading: false,
                                 });
                               });
                             }}
-                            onChange={(value) => {
-                              this.setState({
-                                statusId: value,
-                              });
-                            }}
+                            readModeContent={(
+                              <div>
+                                {
+                                  this.state.statusId ? (
+                                    <div
+                                      style={{
+                                        color: this.state.statusColor,
+                                        fontSize: '16px',
+                                        lineHeight: '18px',
+                                      }}
+                                    >
+                                      {this.state.statusName}
+                                    </div>
+                                  ) : '无'
+                                }
+                              </div>
+                            )}
                           >
-                            {
-                              this.state.originStatus.map(status => (
-                                <Option key={status.id} value={status.id}>
-                                  {status.name}
-                                </Option>
-                              ))
-                            }
-                          </Select>
-                        </ReadAndEdit>
+                            <Select
+                              value={this.state.originStatus.length
+                                ? this.state.statusId : this.state.statusName}
+                              style={{ width: 150 }}
+                              loading={this.state.selectLoading}
+                              autoFocus
+                              // getPopupContainer={triggerNode => triggerNode.parentNode}
+                              onFocus={() => {
+                                this.setState({
+                                  selectLoading: true,
+                                });
+                                loadStatus().then((res) => {
+                                  this.setState({
+                                    originStatus: res,
+                                    selectLoading: false,
+                                  });
+                                });
+                              }}
+                              onChange={(value) => {
+                                this.setState({
+                                  statusId: value,
+                                });
+                              }}
+                            >
+                              {
+                                this.state.originStatus.map(status => (
+                                  <Option key={status.id} value={status.id}>
+                                    {status.name}
+                                  </Option>
+                                ))
+                              }
+                            </Select>
+                          </ReadAndEdit>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div style={{ display: 'flex', flex: 1 }}>
-                    <span
-                      style={{
-                        width: 30, height: 30, borderRadius: '50%', background: COLOR[this.state.priorityCode] ? COLOR[this.state.priorityCode].bgColor : 'rgba(77, 144, 254, 0.2)', marginRight: 12, flexShrink: 0, display: 'flex', justifyContent: 'center', alignItems: 'center',
-                      }}
-                    >
-                      <Icon type="flag" style={{ fontSize: '24px', color: COLOR[this.state.priorityCode] ? COLOR[this.state.priorityCode].color : '#3575df' }} />
-                    </span>
-                    <div>
-                      <div style={{ fontSize: '12px', color: 'rgba(0, 0, 0, 0.54)', marginBottom: 4 }}>
-                        <FormattedMessage id="issue_issueFilterByPriority" />
-                      </div>
+                    <div style={{ display: 'flex', flex: 1 }}>
+                      <span
+                        style={{
+                          width: 30, height: 30, borderRadius: '50%', background: COLOR[this.state.priorityCode] ? COLOR[this.state.priorityCode].bgColor : 'rgba(77, 144, 254, 0.2)', marginRight: 12, flexShrink: 0, display: 'flex', justifyContent: 'center', alignItems: 'center',
+                        }}
+                      >
+                        <Icon type="flag" style={{ fontSize: '24px', color: COLOR[this.state.priorityCode] ? COLOR[this.state.priorityCode].color : '#3575df' }} />
+                      </span>
                       <div>
-                        <ReadAndEdit
-                          callback={this.changeRae.bind(this)}
-                          thisType="priorityCode"
-                          current={this.state.currentRae}
-                          origin={this.state.priorityCode}
-                          onOk={this.updateIssue.bind(this, 'priorityCode')}
-                          onCancel={this.resetPriorityCode.bind(this)}
-                          onInit={() => {
-                            this.setAnIssueToState();
-                            loadPriorities().then((res) => {
-                              this.setState({
-                                originpriorities: res.lookupValues,
-                              });
-                            });
-                          }}
-                          readModeContent={(
-                            <div>
-                              {
-                                this.state.priorityCode ? (
-                                  <div
-                                    className="c7n-level"
-                                    style={{
-                                      // backgroundColor: COLOR[this.state.priorityCode].bgColor,
-                                      color: COLOR[this.state.priorityCode].color,
-                                      // borderRadius: '2px',
-                                      // padding: '0 8px',
-                                      // display: 'inline-block',
-                                      fontSize: '16px',
-                                      lineHeight: '18px',
-                                    }}
-                                  >
-                                    {this.state.priorityName}
-                                  </div>
-                                ) : '无'
-                              }
-                            </div>
-                          )}
-                        >
-                          <Select
-                            value={this.state.originpriorities.length
-                              ? this.state.priorityCode : this.state.priorityName}
-                            style={{ width: '150px' }}
-                            loading={this.state.selectLoading}
-                            autoFocus
-                            // getPopupContainer={triggerNode => triggerNode.parentNode}
-                            onFocus={() => {
-                              this.setState({
-                                selectLoading: true,
-                              });
+                        <div style={{ fontSize: '12px', color: 'rgba(0, 0, 0, 0.54)', marginBottom: 4 }}>
+                          <FormattedMessage id="issue_issueFilterByPriority" />
+                        </div>
+                        <div>
+                          <ReadAndEdit
+                            callback={this.changeRae.bind(this)}
+                            thisType="priorityCode"
+                            current={this.state.currentRae}
+                            origin={this.state.priorityCode}
+                            onOk={this.updateIssue.bind(this, 'priorityCode')}
+                            onCancel={this.resetPriorityCode.bind(this)}
+                            onInit={() => {
+                              this.setAnIssueToState();
                               loadPriorities().then((res) => {
                                 this.setState({
                                   originpriorities: res.lookupValues,
-                                  selectLoading: false,
                                 });
                               });
                             }}
-                            onChange={(value) => {
-                              const priority = _.find(this.state.originpriorities,
-                                { valueCode: value });
-                              this.setState({
-                                priorityCode: value,
-                                priorityName: priority.name,
-                              });
-                            }}
-                          >
-                            {
-                              this.transformPriorityCode(this.state.originpriorities)
-                                .map(onetype => (
-                                  <Option key={onetype.valueCode} value={onetype.valueCode}>
-                                    <div style={{ display: 'inline-flex', alignItems: 'center', padding: '2px' }}>
-                                      <div
-                                        className="c7n-level"
-                                        style={{
-                                          // backgroundColor: COLOR[type.valueCode].bgColor,
-                                          color: COLOR[onetype.valueCode].color,
-                                          // borderRadius: '2px',
-                                          // padding: '0 8px',
-                                          // display: 'inline-block',
-                                          fontSize: '16px',
-                                          lineHeight: '18px',
-                                        }}
-                                      >
-                                        {onetype.name}
-                                      </div>
+                            readModeContent={(
+                              <div>
+                                {
+                                  this.state.priorityCode ? (
+                                    <div
+                                      className="c7n-level"
+                                      style={{
+                                        // backgroundColor: COLOR[this.state.priorityCode].bgColor,
+                                        color: COLOR[this.state.priorityCode].color,
+                                        // borderRadius: '2px',
+                                        // padding: '0 8px',
+                                        // display: 'inline-block',
+                                        fontSize: '16px',
+                                        lineHeight: '18px',
+                                      }}
+                                    >
+                                      {this.state.priorityName}
                                     </div>
-                                  </Option>
-                                ))
-                            }
-                          </Select>
-                        </ReadAndEdit>
-                      </div>
-                    </div>
-                  </div>
-                  {
-                    this.state.issueId && this.state.typeCode !== 'issue_epic' ? (
-                      <div style={{ display: 'flex', flex: 1 }}>
-                        <span
-                          style={{
-                            width: 30, height: 30, borderRadius: '50%', background: '#d8d8d8', marginRight: 12, flexShrink: 0, display: 'flex', justifyContent: 'center', alignItems: 'center',
-                          }}
-                        >
-                          <Icon type="event_note" style={{ fontSize: '24px' }} />
-                        </span>
-                        <div>
-                          <div style={{ fontSize: '12px', color: 'rgba(0, 0, 0, 0.54)', marginBottom: 4 }}>
-                            <FormattedMessage id="issue_edit_planTime" />
-                          </div>
-                          <div>
-                            <ReadAndEdit
-                              callback={this.changeRae.bind(this)}
-                              thisType="remainingTime"
-                              current={this.state.currentRae}
-                              handleEnter
-                              origin={this.state.remainingTime}
-                              onInit={() => this.setAnIssueToState(this.state.origin)}
-                              onOk={this.updateIssue.bind(this, 'remainingTime')}
-                              onCancel={this.resetRemainingTime.bind(this)}
-                              readModeContent={(
-                                <span>
-                                  {this.state.remainingTime === undefined || this.state.remainingTime === null ? '无' : `${this.state.remainingTime} 小时`}
-                                </span>
-                              )}
-                            >
-                              <NumericInput
-                                maxLength="3"
-                                value={this.state.remainingTime}
-                                // size="large"
-                                autoFocus
-                                onChange={this.handleRemainingTimeChange.bind(this)}
-                                onPressEnter={() => {
-                                  this.updateIssue('remainingTime');
+                                  ) : '无'
+                                }
+                              </div>
+                            )}
+                          >
+                            <Select
+                              value={this.state.originpriorities.length
+                                ? this.state.priorityCode : this.state.priorityName}
+                              style={{ width: '150px' }}
+                              loading={this.state.selectLoading}
+                              autoFocus
+                              // getPopupContainer={triggerNode => triggerNode.parentNode}
+                              onFocus={() => {
+                                this.setState({
+                                  selectLoading: true,
+                                });
+                                loadPriorities().then((res) => {
                                   this.setState({
-                                    currentRae: undefined,
+                                    originpriorities: res.lookupValues,
+                                    selectLoading: false,
                                   });
-                                }}
-                              />
-                            </ReadAndEdit>
-                          </div>
+                                });
+                              }}
+                              onChange={(value) => {
+                                const priority = _.find(this.state.originpriorities,
+                                  { valueCode: value });
+                                this.setState({
+                                  priorityCode: value,
+                                  priorityName: priority.name,
+                                });
+                              }}
+                            >
+                              {
+                                this.transformPriorityCode(this.state.originpriorities)
+                                  .map(onetype => (
+                                    <Option key={onetype.valueCode} value={onetype.valueCode}>
+                                      <div style={{ display: 'inline-flex', alignItems: 'center', padding: '2px' }}>
+                                        <div
+                                          className="c7n-level"
+                                          style={{
+                                            // backgroundColor: COLOR[type.valueCode].bgColor,
+                                            color: COLOR[onetype.valueCode].color,
+                                            // borderRadius: '2px',
+                                            // padding: '0 8px',
+                                            // display: 'inline-block',
+                                            fontSize: '16px',
+                                            lineHeight: '18px',
+                                          }}
+                                        >
+                                          {onetype.name}
+                                        </div>
+                                      </div>
+                                    </Option>
+                                  ))
+                              }
+                            </Select>
+                          </ReadAndEdit>
                         </div>
                       </div>
-                    ) : null
-                  }
-                  {
-                    this.state.issueId && this.state.typeCode === 'issue_test' ? (
-                      <div style={{
-                        display: 'flex', flex: 1, justifyContent: 'center', borderLeft: '1px solid rgba(0, 0, 0, 0.26)',
-                      }}
-                      >
-                        <Button funcType="flat" style={{ color: '#000' }} onClick={() => this.setState({ executeTestShow: true })}>
-                          <Icon type="explicit-outline" />
-                          <span style={{ paddingLeft: 12 }}><FormattedMessage id="issue_edit_executeTest" /></span>
-                        </Button>
-                      </div>
-                    ) : null
-                  }
-                </div>
+                    </div>
+                    {
+                      this.state.issueId && this.state.typeCode !== 'issue_epic' ? (
+                        <div style={{ display: 'flex', flex: 1 }}>
+                          <span
+                            style={{
+                              width: 30, height: 30, borderRadius: '50%', background: '#d8d8d8', marginRight: 12, flexShrink: 0, display: 'flex', justifyContent: 'center', alignItems: 'center',
+                            }}
+                          >
+                            <Icon type="event_note" style={{ fontSize: '24px' }} />
+                          </span>
+                          <div>
+                            <div style={{ fontSize: '12px', color: 'rgba(0, 0, 0, 0.54)', marginBottom: 4 }}>
+                              <FormattedMessage id="issue_edit_planTime" />
+                            </div>
+                            <div>
+                              <ReadAndEdit
+                                callback={this.changeRae.bind(this)}
+                                thisType="remainingTime"
+                                current={this.state.currentRae}
+                                handleEnter
+                                origin={this.state.remainingTime}
+                                onInit={() => this.setAnIssueToState(this.state.origin)}
+                                onOk={this.updateIssue.bind(this, 'remainingTime')}
+                                onCancel={this.resetRemainingTime.bind(this)}
+                                readModeContent={(
+                                  <span>
+                                    {this.state.remainingTime === undefined || this.state.remainingTime === null ? '无' : `${this.state.remainingTime} 小时`}
+                                  </span>
+                                )}
+                              >
+                                <NumericInput
+                                  maxLength="3"
+                                  value={this.state.remainingTime}
+                                  // size="large"
+                                  autoFocus
+                                  onChange={this.handleRemainingTimeChange.bind(this)}
+                                  onPressEnter={() => {
+                                    this.updateIssue('remainingTime');
+                                    this.setState({
+                                      currentRae: undefined,
+                                    });
+                                  }}
+                                />
+                              </ReadAndEdit>
+                            </div>
+                          </div>
+                        </div>
+                      ) : null
+                    }
+                    {
+                      this.state.issueId && this.state.typeCode === 'issue_test' ? (
+                        <div style={{
+                          display: 'flex', flex: 1, justifyContent: 'center', borderLeft: '1px solid rgba(0, 0, 0, 0.26)',
+                        }}
+                        >
+                          <Button funcType="flat" style={{ color: '#000' }} onClick={() => this.setState({ executeTestShow: true })}>
+                            <Icon type="explicit-outline" />
+                            <span style={{ paddingLeft: 12 }}><FormattedMessage id="issue_edit_executeTest" /></span>
+                          </Button>
+                        </div>
+                      ) : null
+                    }
+                  </div>
+                )
+                }
               </div>
             </div>
           </div>
@@ -1559,8 +1599,186 @@ class EditIssueNarrow extends Component {
                       }}
                       />
                     </div>
-                    <div className="c7n-content-wrapper" style={{ display: 'flex' }}>
-                      <div style={{ flex: 1, width: '50%' }}>
+                    <div className="c7n-content-wrapper" style={{ display: 'flex', flexWrap: 'wrap' }}>
+                      <div style={{ flex: 1 }}>
+                        {mode === 'narrow'
+                          && (
+                            <div>
+                              <div className="line-start mt-10">
+                                <div className="c7n-property-wrapper">
+                                  <span className="c7n-property">
+                                    状态：
+                                </span>
+                                </div>
+                                <div className="c7n-value-wrapper">
+                                  <ReadAndEdit
+                                    callback={this.changeRae.bind(this)}
+                                    thisType="statusId"
+                                    current={this.state.currentRae}
+                                    origin={this.state.statusId}
+                                    onOk={this.updateIssue.bind(this, 'statusId')}
+                                    onCancel={this.resetStatusId.bind(this)}
+                                    onInit={() => {
+                                      this.setAnIssueToState();
+                                      loadStatus().then((res) => {
+                                        this.setState({
+                                          originStatus: res,
+                                        });
+                                      });
+                                    }}
+                                    readModeContent={(
+                                      <div>
+                                        {
+                                          this.state.statusId ? (
+                                            <div
+                                              style={{
+                                                background: this.state.origin.statusColor || STATUS[this.state.statusCode],
+                                                color: '#fff',
+                                                borderRadius: '2px',
+                                                padding: '0 8px',
+                                                display: 'inline-block',
+                                                margin: '2px auto 2px 0',
+                                              }}
+                                            >
+                                              {this.state.statusName}
+                                            </div>
+                                          ) : '无'
+                                        }
+                                      </div>
+                                    )}
+                                  >
+                                    <Select
+                                      value={this.state.originStatus.length
+                                        ? this.state.statusId : this.state.statusName}
+                                      style={{ width: 150 }}
+                                      loading={this.state.selectLoading}
+                                      autoFocus
+                                      getPopupContainer={triggerNode => triggerNode.parentNode}
+                                      onFocus={() => {
+                                        this.setState({
+                                          selectLoading: true,
+                                        });
+                                        loadStatus().then((res) => {
+                                          this.setState({
+                                            originStatus: res,
+                                            selectLoading: false,
+                                          });
+                                        });
+                                      }}
+                                      onChange={(value) => {
+                                        this.setState({
+                                          statusId: value,
+                                        });
+                                      }}
+                                    >
+                                      {
+                                        this.state.originStatus.map(status => (
+                                          <Option key={status.id} value={status.id}>
+                                            {status.name}
+                                          </Option>
+                                        ))
+                                      }
+                                    </Select>
+                                  </ReadAndEdit>
+                                </div>
+                              </div>
+                              <div className="line-start mt-10">
+                                <div className="c7n-property-wrapper">
+                                  <span className="c7n-property">
+                                    优先级：
+                                </span>
+                                </div>
+                                <div className="c7n-value-wrapper">
+                                  <ReadAndEdit
+                                    callback={this.changeRae.bind(this)}
+                                    thisType="priorityCode"
+                                    current={this.state.currentRae}
+                                    origin={this.state.priorityCode}
+                                    onOk={this.updateIssue.bind(this, 'priorityCode')}
+                                    onCancel={this.resetPriorityCode.bind(this)}
+                                    onInit={() => {
+                                      this.setAnIssueToState();
+                                      loadPriorities().then((res) => {
+                                        this.setState({
+                                          originpriorities: res.lookupValues,
+                                        });
+                                      });
+                                    }}
+                                    readModeContent={(
+                                      <div>
+                                        {
+                                          this.state.priorityCode ? (
+                                            <div
+                                              className="c7n-level"
+                                              style={{
+                                                backgroundColor: COLOR[this.state.priorityCode].bgColor,
+                                                color: COLOR[this.state.priorityCode].color,
+                                                borderRadius: '2px',
+                                                padding: '0 8px',
+                                                display: 'inline-block',
+                                              }}
+                                            >
+                                              {this.state.priorityName}
+                                            </div>
+                                          ) : '无'
+                                        }
+                                      </div>
+                                    )}
+                                  >
+                                    <Select
+                                      value={this.state.originpriorities.length
+                                        ? this.state.priorityCode : this.state.priorityName}
+                                      style={{ width: '150px' }}
+                                      loading={this.state.selectLoading}
+                                      autoFocus
+                                      getPopupContainer={triggerNode => triggerNode.parentNode}
+                                      onFocus={() => {
+                                        this.setState({
+                                          selectLoading: true,
+                                        });
+                                        loadPriorities().then((res) => {
+                                          this.setState({
+                                            originpriorities: res.lookupValues,
+                                            selectLoading: false,
+                                          });
+                                        });
+                                      }}
+                                      onChange={(value) => {
+                                        const priority = _.find(this.state.originpriorities,
+                                          { valueCode: value });
+                                        this.setState({
+                                          priorityCode: value,
+                                          priorityName: priority.name,
+                                        });
+                                      }}
+                                    >
+                                      {
+                                        this.transformPriorityCode(this.state.originpriorities).map(type => (
+                                          <Option key={type.valueCode} value={type.valueCode}>
+                                            <div style={{ display: 'inline-flex', alignItems: 'center', padding: '2px' }}>
+                                              <div
+                                                className="c7n-level"
+                                                style={{
+                                                  backgroundColor: COLOR[type.valueCode].bgColor,
+                                                  color: COLOR[type.valueCode].color,
+                                                  borderRadius: '2px',
+                                                  padding: '0 8px',
+                                                  display: 'inline-block',
+                                                }}
+                                              >
+                                                {type.name}
+                                              </div>
+                                            </div>
+                                          </Option>
+                                        ))
+                                      }
+                                    </Select>
+                                  </ReadAndEdit>
+                                </div>
+                              </div>
+                            </div>
+                          )
+                        }
                         {
                           this.state.typeCode !== 'sub_task' ? (
                             <div className="line-start mt-10">
@@ -1920,7 +2138,7 @@ class EditIssueNarrow extends Component {
                         </div>
                       </div>
                       {/* --- */}
-                      <div style={{ flex: 1, width: '50%' }}>
+                      <div style={{ flex: 1 }}>
                         <div className="line-start mt-10">
                           <div className="c7n-property-wrapper">
                             <span className="c7n-subtitle">
@@ -2238,6 +2456,7 @@ class EditIssueNarrow extends Component {
                   </div>
                   <div className="c7n-content-wrapper" style={{ paddingLeft: 0 }}>
                     <TestStepTable
+                      mode={mode}
                       issueId={this.state.origin.issueId}
                       data={this.state.testStepData}
                       enterLoad={() => {
@@ -2270,6 +2489,7 @@ class EditIssueNarrow extends Component {
                   </div>
                   <div className="c7n-content-wrapper" style={{ paddingLeft: 0 }}>
                     <TestExecuteTable
+                      mode={mode}
                       issueId={this.state.origin.issueId}
                       data={this.state.testExecuteData}
                       enterLoad={() => {

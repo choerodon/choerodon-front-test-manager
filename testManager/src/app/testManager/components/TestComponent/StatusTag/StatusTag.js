@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
- Button, Table, Spin, Popover, Tooltip, Icon, Avatar 
+  Button, Table, Spin, Popover, Tooltip, Icon, 
 } from 'choerodon-ui';
 
 const COLOR = {
@@ -29,7 +29,8 @@ class UserHead extends Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    if (nextProps.status.statusName === this.props.status.statusName && nextProps.status.statusColor === this.props.status.statusColor) {
+    if (nextProps.status.statusName === this.props.status.statusName 
+      && nextProps.status.statusColor === this.props.status.statusColor) {
       return false;
     }
     return true;
