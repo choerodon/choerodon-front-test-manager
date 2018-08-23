@@ -33,7 +33,7 @@ import UserHead from '../UserHead';
 import Comment from './Component/Comment';
 import Log from './Component/Log';
 import DataLog from './Component/DataLog';
-import IssueList from './Component/IssueList';
+// import IssueList from './Component/IssueList';
 import LinkList from './Component/LinkList';
 import CopyIssue from '../CopyIssue';
 // import TransformSubIssue from '../TransformSubIssue';
@@ -808,14 +808,14 @@ class CreateSprint extends Component {
       width: 560,
       title: `删除问题${this.state.issueNum}`,
       content:
-        <div>
-          <p style={{ marginBottom: 10 }}>请确认您要删除这个问题。</p>
-          <p style={{ marginBottom: 10 }}>这个问题将会被彻底删除。包括所有附件和评论。</p>
-          <p style={{ marginBottom: 10 }}>如果您完成了这个问题，通常是已解决或者已关闭，而不是删除。</p>
-          {
+  <div>
+    <p style={{ marginBottom: 10 }}>请确认您要删除这个问题。</p>
+    <p style={{ marginBottom: 10 }}>这个问题将会被彻底删除。包括所有附件和评论。</p>
+    <p style={{ marginBottom: 10 }}>如果您完成了这个问题，通常是已解决或者已关闭，而不是删除。</p>
+    {
             this.state.subIssueDTOList.length ? <p style={{ color: '#d50000' }}>{`注意：问题的${this.state.subIssueDTOList.length}子任务将被删除。`}</p> : null
           }
-        </div>,
+  </div>,
       onOk() {
         return deleteIssue(issueId)
           .then((res) => {
@@ -893,15 +893,15 @@ class CreateSprint extends Component {
   /**
    * SubIssue
    */
-  renderSubIssues() {
-    return (
-      <div className="c7n-tasks">
-        {
-          this.state.subIssueDTOList.map((subIssue, i) => this.renderIssueList(subIssue, i))
-        }
-      </div>
-    );
-  }
+  // renderSubIssues() {
+  //   return (
+  //     <div className="c7n-tasks">
+  //       {
+  //         this.state.subIssueDTOList.map((subIssue, i) => this.renderIssueList(subIssue, i))
+  //       }
+  //     </div>
+  //   );
+  // }
 
   renderLinkIssues() {
     const group = _.groupBy(this.state.linkIssues, 'ward');
@@ -926,24 +926,24 @@ class CreateSprint extends Component {
    * @param {*} issue 
    * @param {*} i 
    */
-  renderIssueList(issue, i) {
-    return (
-      <IssueList
-        key={issue.issueId}
-        issue={{
-          ...issue,
-          typeCode: issue.typeCode || 'sub_task',
-        }}
-        i={i}
-        onOpen={() => {
-          this.reloadIssue(issue.issueId);
-        }}
-        onRefresh={() => {
-          this.reloadIssue(this.state.origin.issueId);
-        }}
-      />
-    );
-  }
+  // renderIssueList(issue, i) {
+  //   return (
+  //     <IssueList
+  //       key={issue.issueId}
+  //       issue={{
+  //         ...issue,
+  //         typeCode: issue.typeCode || 'sub_task',
+  //       }}
+  //       i={i}
+  //       onOpen={() => {
+  //         this.reloadIssue(issue.issueId);
+  //       }}
+  //       onRefresh={() => {
+  //         this.reloadIssue(this.state.origin.issueId);
+  //       }}
+  //     />
+  //   );
+  // }
 
   renderLinkList(link, i) {
     return (
@@ -953,9 +953,9 @@ class CreateSprint extends Component {
           typeCode: link.typeCode,
         }}
         i={i}
-        onOpen={(issueId, linkedIssueId) => {
-          this.reloadIssue(issueId === this.state.origin.issueId ? linkedIssueId : issueId);
-        }}
+        // onOpen={(issueId, linkedIssueId) => {
+        //   this.reloadIssue(issueId === this.state.origin.issueId ? linkedIssueId : issueId);
+        // }}
         onRefresh={() => {
           this.reloadIssue(this.state.origin.issueId);
         }}
@@ -1118,13 +1118,13 @@ class CreateSprint extends Component {
               }
             </div>
           ) : (
-              <div style={{
-                borderBottom: '1px solid rgba(0, 0, 0, 0.08)', display: 'flex', padding: '8px 26px', alignItems: 'center', justifyContent: 'space-between', fontSize: '13px',
-              }}
-              >
-                <span style={{ marginRight: 12 }}>暂无</span>
-              </div>
-            )
+            <div style={{
+              borderBottom: '1px solid rgba(0, 0, 0, 0.08)', display: 'flex', padding: '8px 26px', alignItems: 'center', justifyContent: 'space-between', fontSize: '13px',
+            }}
+            >
+              <span style={{ marginRight: 12 }}>暂无</span>
+            </div>
+          )
         }
       </div>
     );
@@ -1423,17 +1423,17 @@ class CreateSprint extends Component {
                           {this.state.issueNum}
                         </span>
                       ) : (
-                          <a
-                            role="none"
-                            onClick={() => {
+                        <a
+                          role="none"
+                          onClick={() => {
                               const backUrl = this.props.backUrl || 'backlog';
                               this.props.history.push(`/agile/issue?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}&organizationId=${urlParams.organizationId}&paramName=${this.state.origin.issueNum}&paramIssueId=${this.state.origin.issueId}&paramUrl=${backUrl}`);
                               return false;
                             }}
-                          >
-                            {this.state.issueNum}
-                          </a>
-                        )
+                        >
+                          {this.state.issueNum}
+                        </a>
+                      )
                     }
 
                   </div>
@@ -1682,8 +1682,8 @@ class CreateSprint extends Component {
                             )}
                           >
                             <Select
-                              value={this.state.originStatus.length ?
-                                this.state.statusId : this.state.statusName}
+                              value={this.state.originStatus.length
+                                ? this.state.statusId : this.state.statusName}
                               style={{ width: 150 }}
                               loading={this.state.selectLoading}
                               autoFocus
@@ -1760,8 +1760,8 @@ class CreateSprint extends Component {
                             )}
                           >
                             <Select
-                              value={this.state.originpriorities.length ?
-                                this.state.priorityCode : this.state.priorityName}
+                              value={this.state.originpriorities.length
+                                ? this.state.priorityCode : this.state.priorityName}
                               style={{ width: '150px' }}
                               loading={this.state.selectLoading}
                               autoFocus
@@ -2308,8 +2308,8 @@ class CreateSprint extends Component {
                                 </Select>
                               </ReadAndEdit>
                             ) : (
-                                <div>
-                                  {
+                              <div>
+                                {
                                     this.state.activeSprint.sprintId ? (
                                       <div
                                         style={{
@@ -2326,8 +2326,8 @@ class CreateSprint extends Component {
                                       </div>
                                     ) : '无'
                                   }
-                                </div>
-                              )
+                              </div>
+                            )
                           }
                         </div>
                       </div>

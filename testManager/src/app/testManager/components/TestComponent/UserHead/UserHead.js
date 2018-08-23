@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
-import { Button, Table, Spin, Popover, Tooltip, Icon, Avatar } from 'choerodon-ui';
+import {
+  Button, Table, Spin, Popover, Tooltip, Icon, Avatar, 
+} from 'choerodon-ui';
 import './UserHead.scss';
 
 class UserHead extends Component {
@@ -62,7 +64,10 @@ class UserHead extends Component {
                 user.avatar ? (
                   <img src={user.avatar} alt="" style={{ width: '100%' }} />
                 ) : (
-                  <span style={{ width: 40, height: 40, lineHeight: '40px', textAlign: 'center', color: '#fff', fontSize: '12px' }}>
+                  <span style={{
+                    width: 40, height: 40, lineHeight: '40px', textAlign: 'center', color: '#fff', fontSize: '12px', 
+                  }}
+                  >
                     {this.getFirst(user.realName)}
                   </span>
                 )
@@ -88,7 +93,10 @@ class UserHead extends Component {
                 user.avatar ? (
                   <img src={user.avatar} alt="" style={{ width: '100%' }} />
                 ) : (
-                  <span style={{ width: 18, height: 18, lineHeight: '18px', textAlign: 'center', color: '#6473c3' }}>
+                  <span style={{
+                    width: 18, height: 18, lineHeight: '18px', textAlign: 'center', color: '#6473c3', 
+                  }}
+                  >
                     {this.getFirst(user.realName)}
                   </span>
                 )

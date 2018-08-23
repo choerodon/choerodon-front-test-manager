@@ -687,7 +687,7 @@ class Test extends Component {
         title: 'summary',
         dataIndex: 'summary',
         render: (summary, record) => (
-          !this.state.expand ? this.renderTestIssue(record) : this.renderNarrowIssue(record)
+          !this.state.expand ? this.renderTestIssue(record) : this.renderWideIssue(record)
         ),
       },
     ];
@@ -762,7 +762,8 @@ class Test extends Component {
           <div
             className="c7n-content-issue"
             style={{
-              width: this.state.expand ? '28%' : '100%',
+              // width: this.state.expand ? '28%' : '100%',
+              flex: 1,
               display: 'block',
               overflowY: 'auto',
               overflowX: 'hidden',
@@ -946,7 +947,8 @@ class Test extends Component {
           <div
             className="c7n-sidebar"
             style={{
-              width: this.state.expand ? '72%' : 0,
+              // width: this.state.expand ? '72%' : 0,
+              width: this.state.expand ? 440 : 0,              
               display: this.state.expand ? 'block' : 'none',
               overflowY: 'hidden',
               overflowX: 'hidden',
