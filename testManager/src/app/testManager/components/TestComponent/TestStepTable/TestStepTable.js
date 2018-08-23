@@ -70,7 +70,7 @@ class TestStepTable extends Component {
   editStep = (record) => {
     const { expectedResult, testStep } = record;
     if (expectedResult !== '' && testStep !== '') {
-      window.console.log(record);
+      // window.console.log(record);
       const projectId = AppState.currentMenuType.id;
       // this.setState({ createLoading: true });
       axios.put(`/test/v1/projects/${projectId}/case/step/change`, record)
