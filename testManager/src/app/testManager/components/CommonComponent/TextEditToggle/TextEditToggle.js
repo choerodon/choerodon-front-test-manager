@@ -12,13 +12,16 @@ class TextEditToggle extends Component {
     editing: false,
     originData: null,
   }
- 
+
 
   // 提交编辑
-  onSubmit = () => {    
+  onSubmit = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    // e.nativeEvent.stopImmediatePropagation(); 
     document.removeEventListener('click', this.onSubmit);
     const { getFieldValue } = this.props.form;
- 
+
     const newValue = getFieldValue(this.props.formKey);
     // console.log(newValue);
     if (this.props.onSubmit && newValue !== this.props.originData) {
@@ -31,7 +34,7 @@ class TextEditToggle extends Component {
   }
 
   // 进入编辑状态
-  enterEditing = () => {   
+  enterEditing = () => {
     document.addEventListener('click', this.onSubmit);
     this.setState({
       editing: true,
@@ -115,8 +118,20 @@ class TextEditToggle extends Component {
     const { editing } = this.state;
     const child = this.renderChild();
     // console.log(child);
-    
-    return <div onClick={e => e.stopPropagation()} role="none">{child}</div>;
+
+    return (
+      <div
+        onClick={(event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          event.nativeEvent.stopImmediatePropagation(); 
+        }}
+        role="none"
+      >
+        {child}
+
+      </div>
+    );
   }
 }
 TextEditToggle.Text = Text;
