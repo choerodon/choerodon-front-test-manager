@@ -14,25 +14,6 @@ const { confirm } = Modal;
 const { Text, Edit } = TextEditToggle;
 const { AppState } = stores;
 const { TextArea } = Input;
-// function uploadFile(data, config) {
-//   const { bucketName, attachmentLinkId } = config;
-//   const projectId = AppState.currentMenuType.id;
-//   const axiosConfig = {
-//     headers: { 'content-type': 'multipart/form-datal' },
-//   };
-
-//   return axios.post(
-//     `/zuul/test/v1/projects/${projectId}/test/case/attachm
-// ent?bucket_name=test&attachmentLinkId=${attachmentLinkId}&attachmentType=CASE_STEP`,
-//     data,
-//     axiosConfig,
-//   );
-// }
-// function deleteAttachment(id) {
-//   const projectId = AppState.currentMenuType.id;
-//   return axios.delete(`test/v1/projects/${projectId}/t
-// est/case/attachment/delete/bucket/test/attach/${id}`);
-// }
 class TestStepTable extends Component {
   constructor(props) {
     super(props);
@@ -86,26 +67,6 @@ class TestStepTable extends Component {
   }
 
 
-  // handleClickMenu = (e) => {
-  //   const testStepId = this.state.currentTestStepId;
-  //   if (e.key === 'edit') {
-  //     this.setState({
-  //       editTestStepShow: true,
-  //     });
-  //   } else if (e.key === 'delete') {
-  //     this.handleDeleteTestStep();
-  //   } else if (e.key === 'clone') {
-  //     axios.post(`/test/v1/projects/${AppState.currentMenuType.id}/case/step/clone`, {
-  //       stepId: testStepId,
-  //       issueId: this.props.issueId,
-  //     })
-  //       .then((res) => {
-  //         this.props.onOk();
-  //       })
-  //       .catch((error) => {
-  //       });
-  //   }
-  // }
   editStep = (record) => {
     const { expectedResult, testStep } = record;
     if (expectedResult !== '' && testStep !== '') {
@@ -175,20 +136,9 @@ class TestStepTable extends Component {
 
   render() {
     const that = this;
-    const { onOk, enterLoad, leaveLoad } = this.props;
-    // const menus = (
-    //   <Menu onClick={this.handleClickMenu.bind(this)}>
-    //     <Menu.Item key="edit">
-    //       <FormattedMessage id="edit" />
-    //     </Menu.Item>
-    //     <Menu.Item key="delete">
-    //       <FormattedMessage id="delete" />
-    //     </Menu.Item>
-    //     <Menu.Item key="clone">
-    //       <FormattedMessage id="clone" />
-    //     </Menu.Item>
-    //   </Menu>
-    // );
+    const {
+      onOk, enterLoad, leaveLoad, mode, 
+    } = this.props;
 
     const columns = [{
       title: null,
@@ -203,7 +153,7 @@ class TestStepTable extends Component {
       key: 'testStep',
       flex: 3,
       render(testStep, record) {
-        return (       
+        return (
           <TextEditToggle
             formKey="testStep"
             onSubmit={value => that.editStep({ ...record, testStep: value })}
@@ -219,151 +169,122 @@ class TestStepTable extends Component {
             <Edit>
               <TextArea autoFocus autosize />
             </Edit>
-          </TextEditToggle>        
-        );
-      },
-    }, {
-      title: <FormattedMessage id="execute_testData" />,
-      dataIndex: 'testData',
-      key: 'testData',
-      flex: 3,
-      render(testData, record) {
-        return (
-        
-          <TextEditToggle
-            formKey="testData"
-            onSubmit={value => that.editStep({ ...record, testData: value })}
-            originData={testData}
-          >
-            <Text>
-              <Tooltip title={testData}>
-                <div className="c7n-text-dot" style={{ minHeight: 34 }}>
-                  {testData}
-                </div>
-              </Tooltip>
-            </Text>
-            <Edit>
-              <TextArea autoFocus autosize />
-            </Edit>
-          </TextEditToggle>         
-        );
-      },
-    }, {
-      title: <FormattedMessage id="execute_expectedOutcome" />,
-      dataIndex: 'expectedResult',
-      key: 'expectedResult',
-      flex: 3,
-      render(expectedResult, record) {
-        return (         
-          <TextEditToggle
-            formKey="expectedResult"
-            onSubmit={value => that.editStep({ ...record, expectedResult: value })}
-            originData={expectedResult}
-          >
-            <Text>
-              <Tooltip title={expectedResult}>
-                <div className="c7n-text-dot" style={{ minHeight: 34 }}>
-                  {expectedResult}
-                </div>
-              </Tooltip>
-            </Text>
-            <Edit>
-              <TextArea autoFocus autosize />
-            </Edit>
-          </TextEditToggle>          
-        );
-      },
-    }, {
-      title: <FormattedMessage id="execute_stepAttachment" />,
-      dataIndex: 'attachments',
-      key: 'attachments',
-      flex: 3,
-      render(attachments, record) {
-        return (
-          <TextEditToggle
-            // onSubmit={() => that.editStep(record)}
-            originData={attachments}
-          >
-            <Text>
-              {/* <div id={`${record.stepId}-list`} style={{ overflow: 'hidden', height: 34 }} 
-              onClick={that.handleChangeExpand.bind(this, record.stepId)} role="none">
-                <div style={{ position: 'relative', display: 'flex', flexWrap: 'wrap', 
-                paddingRight: 15 }} id={`${record.stepId}-attachment`}>
-                  {
-                    attachments.map(attachment => (
-                      <div style={{ padding: '0 12px', height: 23, 
-                      lineHeight: '23px', maxWidth: 192, borderRadius: '100px',
-                       background: 'rgba(0, 0, 0, 0.08)', margin: 5 }} className="c7n-text-dot">
-                        {attachment.attachmentName}
-                      </div>
-                    ))
-                  }
-                  {
-                    attachments && attachments.length && document.getElementById(
-                      `${record.stepId}-attachment`) && parseInt(window.getComputedSty
-                        le(document.getElementById(`${record.stepId}-attachment`)).height, 10) > 40
-                      ? <span style={{ position: 'absolute', top: 10, right: 0 }}
-                       className={_.indexOf(that.state.expand, record.stepId) 
-                        !== -1 ? 'icon icon-keyboard_arrow_up' : 'icon icon-keyboard_arrow_down'} 
-                        /> : null
-                  }
-                </div>
-              </div> */}
-              <div style={{ display: 'flex', overflow: 'hidden', minHeight: 34 }}>
-                {attachments.map(attachment => (
-                  <div style={{ fontSize: '12px', flexShrink: 0, margin: '0 2px' }} className="c7n-text-dot">
-                    <Icon type="attach_file" style={{ fontSize: '12px', color: 'rgba(0,0,0,0.65)' }} />
-                    <a href={attachment.url} target="_blank" rel="noopener noreferrer">{attachment.attachmentName}</a>
-                  </div>
-                ))
-                }
-              </div>
-            </Text>
-            <Edit>
-              <UploadInTable
-                fileList={attachments}
-                onOk={onOk}
-                enterLoad={enterLoad}
-                leaveLoad={leaveLoad}
-                config={{
-                  attachmentLinkId: record.stepId,
-                  attachmentType: 'CASE_STEP',
-                }}
-              />
-            </Edit>
           </TextEditToggle>
-
-        );
-      },
-    }, {
-      title: null,
-      dataIndex: 'action',
-      key: 'action',
-      render(attachments, record) {
-        return (
-          <div>
-            <Tooltip title={<FormattedMessage id="execute_copy" />}>
-              <Icon type="library_books" style={{ cursor: 'pointer', margin: '0 5px' }} onClick={() => that.cloneStep(record.stepId)} />
-            </Tooltip>
-            <Icon type="delete_forever" style={{ cursor: 'pointer', margin: '0 5px' }} onClick={() => that.handleDeleteTestStep(record.stepId)} />
-          </div>
-          // <Dropdown overlay={menus} trigger={['click']} onClick={() => 
-          // that.setState({ currentTestStepId: record.stepId,
-          //  currentAttments: record.attachments })}>
-          //   <Button icon="more_vert" shape="circle" />
-
-        // </Dropdown>
         );
       },
     }];
+    const wideColumns = [
+      {
+        title: <FormattedMessage id="execute_testData" />,
+        dataIndex: 'testData',
+        key: 'testData',
+        flex: 3,
+        render(testData, record) {
+          return (
+
+            <TextEditToggle
+              formKey="testData"
+              onSubmit={value => that.editStep({ ...record, testData: value })}
+              originData={testData}
+            >
+              <Text>
+                <Tooltip title={testData}>
+                  <div className="c7n-text-dot" style={{ minHeight: 34 }}>
+                    {testData}
+                  </div>
+                </Tooltip>
+              </Text>
+              <Edit>
+                <TextArea autoFocus autosize />
+              </Edit>
+            </TextEditToggle>
+          );
+        },
+      }, {
+        title: <FormattedMessage id="execute_expectedOutcome" />,
+        dataIndex: 'expectedResult',
+        key: 'expectedResult',
+        flex: 3,
+        render(expectedResult, record) {
+          return (
+            <TextEditToggle
+              formKey="expectedResult"
+              onSubmit={value => that.editStep({ ...record, expectedResult: value })}
+              originData={expectedResult}
+            >
+              <Text>
+                <Tooltip title={expectedResult}>
+                  <div className="c7n-text-dot" style={{ minHeight: 34 }}>
+                    {expectedResult}
+                  </div>
+                </Tooltip>
+              </Text>
+              <Edit>
+                <TextArea autoFocus autosize />
+              </Edit>
+            </TextEditToggle>
+          );
+        },
+      }, {
+        title: <FormattedMessage id="execute_stepAttachment" />,
+        dataIndex: 'attachments',
+        key: 'attachments',
+        flex: 3,
+        render(attachments, record) {
+          return (
+            <TextEditToggle
+              originData={attachments}
+            >
+              <Text>
+                <div style={{ display: 'flex', overflow: 'hidden', minHeight: 34 }}>
+                  {attachments.map(attachment => (
+                    <div style={{ fontSize: '12px', flexShrink: 0, margin: '0 2px' }} className="c7n-text-dot">
+                      <Icon type="attach_file" style={{ fontSize: '12px', color: 'rgba(0,0,0,0.65)' }} />
+                      <a href={attachment.url} target="_blank" rel="noopener noreferrer">{attachment.attachmentName}</a>
+                    </div>
+                  ))
+                  }
+                </div>
+              </Text>
+              <Edit>
+                <UploadInTable
+                  fileList={attachments}
+                  onOk={onOk}
+                  enterLoad={enterLoad}
+                  leaveLoad={leaveLoad}
+                  config={{
+                    attachmentLinkId: record.stepId,
+                    attachmentType: 'CASE_STEP',
+                  }}
+                />
+              </Edit>
+            </TextEditToggle>
+
+          );
+        },
+      }, {
+        title: null,
+        dataIndex: 'action',
+        key: 'action',
+        render(attachments, record) {
+          return (
+            <div>
+              <Tooltip title={<FormattedMessage id="execute_copy" />}>
+                <Icon type="library_books" style={{ cursor: 'pointer', margin: '0 5px' }} onClick={() => that.cloneStep(record.stepId)} />
+              </Tooltip>
+              <Icon type="delete_forever" style={{ cursor: 'pointer', margin: '0 5px' }} onClick={() => that.handleDeleteTestStep(record.stepId)} />
+            </div>
+          );
+        },
+      },
+    ];
     return (
       <div className="c7n-TestStepTable">
-
         <DragTable
           pagination={false}
           filterBar={false}
           dataSource={this.state.data}
-          columns={columns}
+          columns={mode === 'narrow' ? columns : columns.concat(wideColumns)}
           onDragEnd={this.onDragEnd}
           dragKey="stepId"
         />
