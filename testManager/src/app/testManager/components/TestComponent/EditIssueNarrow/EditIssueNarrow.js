@@ -1426,10 +1426,10 @@ class CreateSprint extends Component {
                         <a
                           role="none"
                           onClick={() => {
-                              const backUrl = this.props.backUrl || 'backlog';
-                              this.props.history.push(`/agile/issue?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}&organizationId=${urlParams.organizationId}&paramName=${this.state.origin.issueNum}&paramIssueId=${this.state.origin.issueId}&paramUrl=${backUrl}`);
-                              return false;
-                            }}
+                            const backUrl = this.props.backUrl || 'backlog';
+                            this.props.history.push(`/agile/issue?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}&organizationId=${urlParams.organizationId}&paramName=${this.state.origin.issueNum}&paramIssueId=${this.state.origin.issueId}&paramUrl=${backUrl}`);
+                            return false;
+                          }}
                         >
                           {this.state.issueNum}
                         </a>
@@ -2344,7 +2344,8 @@ class CreateSprint extends Component {
                             style={{ width: 100 }}
                             percent={
                               this.getWorkloads() !== 0
-                                ? (this.getWorkloads() * 100) / (this.getWorkloads() + (this.state.origin.remainingTime || 0))
+                                ? (this.getWorkloads() * 100) / (this.getWorkloads() 
+                                + (this.state.origin.remainingTime || 0))
                                 : 0
                             }
                             size="small"
@@ -2772,11 +2773,13 @@ class CreateSprint extends Component {
                           <span>子任务</span>
                         </div>
                         <div style={{
-                          flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px',
+                          flex: 1, height: 1, borderTop:
+                           '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px',
                         }}
                         />
                         <div className="c7n-title-right" style={{ marginLeft: '14px' }}>
-                          <Button className="leftBtn" funcType="flat" onClick={() => this.setState({ createSubTaskShow: true })}>
+                          <Button className="leftBtn" funcType="flat" 
+                          onClick={() => this.setState({ createSubTaskShow: true })}>
                             <Icon type="playlist_add icon" />
                             <span>创建子任务</span>
                           </Button>
@@ -2818,11 +2821,13 @@ class CreateSprint extends Component {
                       <span>开发</span>
                     </div>
                     <div style={{
-                      flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px',
+                      flex: 1, height: 1, borderTop: 
+                      '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px',
                     }}
                     />
                     <div className="c7n-title-right" style={{ marginLeft: '14px' }}>
-                      <Button className="leftBtn" funcType="flat" onClick={() => this.setState({ createBranchShow: true })}>
+                      <Button className="leftBtn" funcType="flat" 
+                      onClick={() => this.setState({ createBranchShow: true })}>
                         <Icon type="playlist_add icon" />
                         <span>创建分支</span>
                       </Button>

@@ -24,8 +24,9 @@ import StatusTag from '../../../../components/TestComponent/StatusTag';
 import TypeTag from '../../../../components/TestComponent/TypeTag';
 import EmptyBlock from '../../../../components/TestComponent/EmptyBlock';
 import CreateIssue from '../../../../components/TestComponent/CreateIssue';
-import EditIssueWide from '../../../../components/TestComponent/EditIssueWide';
-import EditIssueNarrow from '../../../../components/TestComponent/EditIssueNarrow';
+import EditIssue from '../../../../components/TestComponent/EditIssue';
+// import EditIssue from '../../../../components/TestComponent/EditIssue';
+// import EditIssueNarrow from '../../../../components/TestComponent/EditIssueNarrow';
 
 
 const { AppState } = stores;
@@ -605,6 +606,7 @@ class Test extends Component {
   }
 
   render() {    
+    const mode = 'narrow';
     const ORDER = [
       {
         code: 'summary',
@@ -747,8 +749,8 @@ class Test extends Component {
           </Button>
           <Button            
             onClick={() => {      
-              if (this.EditIssueWide) {
-                this.EditIssueWide.reloadIssue(this.state.selectedIssue.issueId);   
+              if (this.EditIssue) {
+                this.EditIssue.reloadIssue(this.state.selectedIssue.issueId);   
               }                
               const { current, pageSize } = IssueStore.pagination;
               IssueStore.loadIssues(current - 1, pageSize);
@@ -948,17 +950,19 @@ class Test extends Component {
             className="c7n-sidebar"
             style={{
               // width: this.state.expand ? '72%' : 0,
-              width: this.state.expand ? 440 : 0,              
-              display: this.state.expand ? 'block' : 'none',
+              // width: this.state.expand ? 440 : 0,              
+              display: this.state.expand ? '' : 'none',
               overflowY: 'hidden',
               overflowX: 'hidden',
+              width: mode === 'narrow' ? 440 : '72%',
             }}
           >
             {
               this.state.expand ? (
-                <EditIssueNarrow    
+                <EditIssue   
+                  mode={mode}
                   ref={(instance) => { 
-                    if (instance) { this.EditIssueWide = instance; } 
+                    if (instance) { this.EditIssue = instance; } 
                   }}             
                   issueId={this.state.selectedIssue.issueId}
                   onCancel={() => {
