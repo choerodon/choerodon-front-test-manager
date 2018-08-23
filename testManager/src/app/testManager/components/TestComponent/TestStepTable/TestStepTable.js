@@ -109,7 +109,7 @@ class TestStepTable extends Component {
   editStep = (record) => {
     const { expectedResult, testStep } = record;
     if (expectedResult !== '' && testStep !== '') {
-      window.console.log(record);
+      // window.console.log(record);
       const projectId = AppState.currentMenuType.id;
       // this.setState({ createLoading: true });
       axios.put(`/test/v1/projects/${projectId}/case/step/change`, record)
@@ -142,7 +142,7 @@ class TestStepTable extends Component {
       content: <div style={{ marginBottom: 32 }}>
         {Choerodon.getMessage('当你点击删除后，该条数据将被永久删除，不可恢复!', 'When you click delete, after which the data will be permanently deleted and irreversible!')
         }
-               </div>,
+      </div>,
       onOk() {
         return axios.delete(`/test/v1/projects/${AppState.currentMenuType.id}/case/step`, { data: { stepId } })
           .then((res) => {
