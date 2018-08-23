@@ -1,15 +1,15 @@
 import React, { Component } from 'react';
-import { Icon, Popconfirm, Button } from 'choerodon-ui';
-import { AppState } from 'choerodon-front-boot';
-import _ from 'lodash';
-import UserHead from '../../UserHead';
-import WYSIWYGEditor from '../../WYSIWYGEditor';
-import { IssueDescription } from '../../CommonComponent';
-import {
-  delta2Html, text2Delta, beforeTextUpload, formatDate, 
-} from '../../../../common/utils';
-import { deleteWorklog, updateWorklog } from '../../../../api/IssueApi';
+import { Icon, Button } from 'choerodon-ui';
+import { FormattedMessage } from 'react-intl';
 import DataLog from './DataLog';
+
+
+const PROP = {
+  Sprint: '冲刺',
+  status: '状态',
+  resolution: '',
+  'Story Points': '故事点',
+};
 
 class DataLogs extends Component {
   constructor(props, context) {
@@ -37,7 +37,6 @@ class DataLogs extends Component {
           datalogs.map((datalog, i) => (
             <DataLog
               i={i}
-              key={datalog.logId}
               datalog={datalog}
               origin={datalogs}
               expand={this.state.expand}
@@ -49,9 +48,9 @@ class DataLogs extends Component {
         {
           datalogs.length > 5 && !this.state.expand ? (
             <div style={{ marginTop: 5 }}>
-              <Button className="leftBtn" funcType="flat" onClick={() => this.setState({ expand: true })}>
+              <Button className="leftBtn" funcTyp="flat" onClick={() => this.setState({ expand: true })}>
                 <Icon type="baseline-arrow_drop_down icon" style={{ marginRight: 2 }} />
-                <span>展开</span>
+                <FormattedMessage id="expand" />
               </Button>
             </div>
           ) : null
@@ -59,9 +58,9 @@ class DataLogs extends Component {
         {
           datalogs.length > 5 && this.state.expand ? (
             <div style={{ marginTop: 5 }}>
-              <Button className="leftBtn" funcType="flat" onClick={() => this.setState({ expand: false })}>
+              <Button className="leftBtn" funcTyp="flat" onClick={() => this.setState({ expand: false })}>
                 <Icon type="baseline-arrow_drop_up icon" style={{ marginRight: 2 }} />
-                <span>折叠</span>
+                <FormattedMessage id="fold" />
               </Button>
             </div>
           ) : null

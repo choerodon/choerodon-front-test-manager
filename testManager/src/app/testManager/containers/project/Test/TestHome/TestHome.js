@@ -24,6 +24,7 @@ import StatusTag from '../../../../components/TestComponent/StatusTag';
 import TypeTag from '../../../../components/TestComponent/TypeTag';
 import EmptyBlock from '../../../../components/TestComponent/EmptyBlock';
 import CreateIssue from '../../../../components/TestComponent/CreateIssue';
+import EditIssueWide from '../../../../components/TestComponent/EditIssueWide';
 import EditIssueNarrow from '../../../../components/TestComponent/EditIssueNarrow';
 
 
@@ -746,8 +747,8 @@ class Test extends Component {
           </Button>
           <Button            
             onClick={() => {      
-              if (this.EditIssueNarrow) {
-                this.EditIssueNarrow.reloadIssue(this.state.selectedIssue.issueId);   
+              if (this.EditIssueWide) {
+                this.EditIssueWide.reloadIssue(this.state.selectedIssue.issueId);   
               }                
               const { current, pageSize } = IssueStore.pagination;
               IssueStore.loadIssues(current - 1, pageSize);
@@ -914,7 +915,7 @@ class Test extends Component {
                         });
                       }}
                     >
-                      <Icon type="playlist_add icon" style={{ marginRight: -2 }}/>
+                      <Icon type="playlist_add icon" style={{ marginRight: -2 }} />
                       <span><FormattedMessage id="issue_issueCreate" /></span>
                     </Button>
                   )}
@@ -955,7 +956,7 @@ class Test extends Component {
               this.state.expand ? (
                 <EditIssueNarrow    
                   ref={(instance) => { 
-                    if (instance) { this.EditIssueNarrow = instance; } 
+                    if (instance) { this.EditIssueWide = instance; } 
                   }}             
                   issueId={this.state.selectedIssue.issueId}
                   onCancel={() => {

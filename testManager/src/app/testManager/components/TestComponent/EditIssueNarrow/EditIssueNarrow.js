@@ -1,16 +1,16 @@
 import React, { Component } from 'react';
 import { stores, axios, Permission } from 'choerodon-front-boot';
-// import { withRouter } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import _ from 'lodash';
-import { FormattedMessage } from 'react-intl';
+import TimeAgo from 'timeago-react';
 import {
-  Select, Input, Button, Modal, Tooltip, Progress, Dropdown, Menu, Spin, Icon,
+  Select, Input, DatePicker, Button, Modal, Tabs,
+  Tooltip, Progress, Dropdown, Menu, Spin, Icon, Popover,
 } from 'choerodon-ui';
 import {
   STATUS, COLOR, TYPE, ICON, TYPE_NAME,
 } from '../../../common/Constant';
 import './EditIssueNarrow.scss';
-import '../../../assets/main.scss';
 import {
   UploadButtonNow, NumericInput, ReadAndEdit, IssueDescription,
 } from '../CommonComponent';
@@ -18,53 +18,45 @@ import {
   delta2Html, handleFileUpload, text2Delta, beforeTextUpload, formatDate, returnBeforeTextUpload,
 } from '../../../common/utils';
 import {
-  loadDatalogs, loadLinkIssues, loadLabels, loadIssue, loadWorklogs,
-  updateIssue, loadPriorities, loadComponents, loadVersions, loadEpics,
-  createCommit, deleteIssue, loadStatus,
+  loadDatalogs, loadLinkIssues, updateWorklog, deleteWorklog, createIssue,
+  loadLabels, loadIssue, loadWorklogs, updateIssue, loadPriorities,
+  loadComponents, loadVersions, loadEpics, createCommit, deleteCommit,
+  updateCommit, deleteIssue, loadSprints, loadStatus,
 } from '../../../api/IssueApi';
 import { getSelf, getUsers, getUser } from '../../../api/CommonApi';
 import WYSIWYGEditor from '../WYSIWYGEditor';
 import FullEditor from '../FullEditor';
 import DailyLog from '../DailyLog';
+// import CreateSubTask from '../CreateSubTask';
 import CreateLinkTask from '../CreateLinkTask';
 import UserHead from '../UserHead';
 import Comment from './Component/Comment';
 import Log from './Component/Log';
-import DataLogs from './Component/DataLogs';
+import DataLog from './Component/DataLog';
 import IssueList from './Component/IssueList';
 import LinkList from './Component/LinkList';
 import CopyIssue from '../CopyIssue';
-import TestStepTable from '../TestStepTable';
-import TestExecuteTable from '../TestExecuteTable';
-import CreateTestStep from '../CreateTestStep';
-import ExecuteTest from '../ExecuteTest';
-import IssueStore from '../../../store/project/IssueStore';
+// import TransformSubIssue from '../TransformSubIssue';
+// import TransformFromSubIssue from '../TransformFromSubIssue';
+// import CreateBranch from '../CreateBranch';
+// import Commits from '../Commits';
+// import MergeRequest from '../MergeRequest';
+// import Assignee from '../Assignee';
 
 const { AppState } = stores;
 const { Option } = Select;
 const { TextArea } = Input;
 const { confirm } = Modal;
 let sign = true;
+let flag;
 let filterSign = false;
-const STATUS_ICON = {
-  done: {
-    icon: 'check_circle',
-    color: '#1bb06e',
-    bgColor: '',
-  },
-  todo: {
-    icon: 'watch_later',
-    color: '#4a93fc',
-    bgColor: '',
-  },
-  doing: {
-    icon: 'timelapse',
-    color: '#ffae02',
-    bgColor: '',
-  },
+const STATUS_SHOW = {
+  opened: '开放',
+  merged: '已合并',
+  closed: '关闭',
 };
 
-class EditIssueNarrow extends Component {
+class CreateSprint extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -72,20 +64,27 @@ class EditIssueNarrow extends Component {
       flag: undefined,
       selectLoading: true,
       saveLoading: false,
-
+      rollup: false,
       edit: false,
       addCommit: false,
       addCommitDes: '',
       dailyLogShow: false,
+      createLoading: false,
+      createSubTaskShow: false,
       createLinkTaskShow: false,
-      createTestStepShow: false,
+      createBranchShow: false,
+      assigneeShow: false,
       editDesShow: false,
-      executeTestShow: false,
+      copyIssueShow: false,
+      transformSubIssueShow: false,
       origin: {},
       loading: true,
       nav: 'detail',
       editDes: undefined,
-
+      editCommentId: undefined,
+      editComment: undefined,
+      editLogId: undefined,
+      editLog: undefined,
       currentRae: undefined,
 
       issueId: undefined,
@@ -122,9 +121,6 @@ class EditIssueNarrow extends Component {
       worklogs: [],
       datalogs: [],
       fileList: [],
-      testStepData: [],
-      testExecute: [],
-      branchs: {},
       issueCommentDTOList: [],
       issueLinkDTOList: [],
       labelIssueRelDTOList: [],
@@ -134,6 +130,7 @@ class EditIssueNarrow extends Component {
       influenceVersions: [],
       fixVersionsFixed: [],
       influenceVersionsFixed: [],
+      branchs: {},
 
       originStatus: [],
       originpriorities: [],
@@ -189,20 +186,18 @@ class EditIssueNarrow extends Component {
     }
   }
 
-  getWorkloads = () => {
-    const { worklogs } = this.state;
-    if (!Array.isArray(worklogs)) {
-      return 0;
-    }
-    const workTimeArr = _.reduce(worklogs, (sum, v) => sum + (v.workTime || 0), 0);
-    return workTimeArr;
-  }
-
   /**
    * Attachment
    */
   addFileToFileList = (data) => {
     this.reloadIssue();
+  }
+
+  /**
+   * Attachment
+   */
+  setFileList = (data) => {
+    this.setState({ fileList: data });
   }
 
   setAnIssueToState = (issue = this.state.origin) => {
@@ -240,7 +235,6 @@ class EditIssueNarrow extends Component {
       statusId,
       statusCode,
       statusName,
-      statusColor,
       storyPoints,
       summary,
       typeCode,
@@ -295,7 +289,6 @@ class EditIssueNarrow extends Component {
       statusId,
       statusCode,
       statusName,
-      statusColor,
       storyPoints,
       summary,
       typeCode,
@@ -310,7 +303,12 @@ class EditIssueNarrow extends Component {
   }
 
   getCurrentNav(e) {
-    const eles = ['detail', 'des', 'test1', 'test2', 'attachment', 'commit', 'log', 'data_log', 'link_task'];
+    let eles;
+    if (this.state.typeCode !== 'sub_task') {
+      eles = ['detail', 'des', 'attachment', 'commit', 'log', 'sub_task', 'link_task', 'branch'];
+    } else {
+      eles = ['detail', 'des', 'attachment', 'commit', 'log', 'branch'];
+    }
     return _.find(eles, i => this.isInLook(document.getElementById(i)));
   }
 
@@ -353,13 +351,6 @@ class EditIssueNarrow extends Component {
     } else {
       this.debounceFilterIssues(input);
     }
-  }
-
-  /**
-   * Attachment
-   */
-  setFileList = (data) => {
-    this.setState({ fileList: data });
   }
 
   debounceFilterIssues = _.debounce((input) => {
@@ -446,6 +437,14 @@ class EditIssueNarrow extends Component {
     this.setState({ labelIssueRelDTOList: value });
   }
 
+  getWorkloads = () => {
+    const worklogs = this.state.worklogs;
+    if (!Array.isArray(worklogs)) {
+      return 0;
+    }
+    const workTimeArr = _.reduce(worklogs, (sum, v) => sum + (v.workTime || 0), 0);
+    return workTimeArr;
+  }
 
   reloadIssue(issueId = this.state.origin.issueId) {
     this.setState({
@@ -453,7 +452,10 @@ class EditIssueNarrow extends Component {
       addCommitDes: '',
       editDesShow: undefined,
       editDes: undefined,
-
+      editCommentId: undefined,
+      editComment: undefined,
+      editLogId: undefined,
+      editLog: undefined,
 
       issueLoading: true,
     }, () => {
@@ -475,22 +477,18 @@ class EditIssueNarrow extends Component {
           datalogs: res,
         });
       });
-      axios.get(`/test/v1/projects/${AppState.currentMenuType.id}/case/step/query/${issueId}`)
-        .then((res) => {
-          this.setState({ testStepData: res }, () => {
-            this.setState({ testStepData: res });
-          });
-        });
-      axios.get(`/test/v1/projects/${AppState.currentMenuType.id}/cycle/case/query/issue/${issueId}`)
-        .then((res) => {
-          this.setState({ testExecuteData: res }, () => {
-            this.setState({ testExecuteData: res });
-          });
-        });
+      // loadBranchs(issueId).then((res) => {
+      //   this.setState({
+      //     branchs: res || {},
+      //   });
+      // });
       this.setState({
         editDesShow: false,
       });
     });
+    // if (this.props.onUpdate) {
+    //   this.props.onUpdate();
+    // }
   }
 
   refresh = () => {
@@ -611,6 +609,7 @@ class EditIssueNarrow extends Component {
     const origin = this.state[originPros];
     let target;
     let transPros;
+    let newSign = false;
     if (!this.state[pros].length) {
       transPros = [];
     } else if (typeof this.state[pros][0] !== 'string') {
@@ -628,6 +627,7 @@ class EditIssueNarrow extends Component {
           relationType: pros === 'fixVersions' ? 'fix' : 'influence',
         });
       } else {
+        newSign = true;
         return ({
           name: pro,
           relationType: pros === 'fixVersions' ? 'fix' : 'influence',
@@ -635,14 +635,17 @@ class EditIssueNarrow extends Component {
         });
       }
     });
+    // obj.versionIssueRelDTOList = out.concat(this.state[pros ===
+    //  'fixVersions' ? 'influenceVersions' : 'fixVersions']);
     obj.versionIssueRelDTOList = out;
-    // obj.versionIssueRelDTOList = out.concat(this.state[pros === 'fixVersions' 
-    // ? 'influenceVersions' : 'fixVersions']);
     updateIssue(obj)
       .then((res) => {
         this.reloadIssue();
         if (this.props.onUpdate) {
           this.props.onUpdate();
+        }
+        if (newSign && this.props.onCreateVersion) {
+          this.props.onCreateVersion();
         }
       });
   }
@@ -654,7 +657,7 @@ class EditIssueNarrow extends Component {
     const extra = {
       issueId: this.state.origin.issueId,
     };
-    const { addCommitDes } = this.state;
+    const addCommitDes = this.state.addCommitDes;
     if (addCommitDes) {
       beforeTextUpload(addCommitDes, extra, this.createCommit, 'commentText');
     } else {
@@ -698,6 +701,15 @@ class EditIssueNarrow extends Component {
     }
   }
 
+  handleCreateSubIssue(subIssue) {
+    this.reloadIssue();
+    this.setState({
+      createSubTaskShow: false,
+    });
+    if (this.props.onUpdate) {
+      this.props.onUpdate();
+    }
+  }
 
   handleCreateLinkIssue() {
     this.reloadIssue();
@@ -717,27 +729,54 @@ class EditIssueNarrow extends Component {
     if (this.props.onUpdate) {
       this.props.onUpdate();
     }
-    if (this.props.onCopyAndTransformToSubIssue) {
-      this.props.onCopyAndTransformToSubIssue();
+    if (this.props.onUpdate) {
+      this.props.onUpdate();
     }
   }
 
+  handleTransformSubIssue() {
+    this.reloadIssue();
+    this.setState({
+      transformSubIssueShow: false,
+    });
+    if (this.props.onUpdate) {
+      this.props.onUpdate();
+    }
+    if (this.props.onUpdate) {
+      this.props.onUpdate();
+    }
+  }
+
+  handleTransformFromSubIssue() {
+    this.reloadIssue();
+    this.setState({
+      transformFromSubIssueShow: false,
+    });
+    if (this.props.onUpdate) {
+      this.props.onUpdate();
+    }
+    if (this.props.onUpdate) {
+      this.props.onUpdate();
+    }
+  }
 
   handleClickMenu(e) {
-    switch (e.key) {
-      case 'add_worklog': {
-        this.setState({ dailyLogShow: true });
-        break;
-      }
-      case 'copy': {
-        this.setState({ copyIssueShow: true });
-        break;
-      }
-      case 'item_2': {
-        this.handleDeleteIssue(this.state.origin.issueId);
-        break;
-      }
-      default: break;
+    if (e.key === '0') {
+      this.setState({ dailyLogShow: true });
+    } else if (e.key === 'item_1') {
+      this.handleDeleteIssue(this.state.origin.issueId);
+    } else if (e.key === '2') {
+      this.setState({ createSubTaskShow: true });
+    } else if (e.key === '3') {
+      this.setState({ copyIssueShow: true });
+    } else if (e.key === '4') {
+      this.setState({ transformSubIssueShow: true });
+    } else if (e.key === '5') {
+      this.setState({ transformFromSubIssueShow: true });
+    } else if (e.key === '6') {
+      this.setState({ createBranchShow: true });
+    } else if (e.key === '7') {
+      this.setState({ assigneeShow: true });
     }
   }
 
@@ -764,26 +803,19 @@ class EditIssueNarrow extends Component {
   }
 
   handleDeleteIssue = (issueId) => {
-    // console.log(issueId);
     const that = this;
     confirm({
       width: 560,
       title: `删除问题${this.state.issueNum}`,
       content:
-  <div style={{ marginBottom: 32 }}>
-    <p style={{ marginBottom: 10 }}>请确认您要删除这个问题。</p>
-    <p style={{ marginBottom: 10 }}>这个问题将会被彻底删除。包括所有附件和评论。</p>
-    <p style={{ marginBottom: 10 }}>如果您完成了这个问题，通常是已解决或者已关闭，而不是删除。</p>
-    {
-   this.state.subIssueDTOList.length 
-     ? (
-       <p>
-         {`注意：问题的 ${this.state.subIssueDTOList.length} 个子任务将被删除。`}
-       </p>
-     ) 
-     : null
-    }
-  </div>,
+        <div>
+          <p style={{ marginBottom: 10 }}>请确认您要删除这个问题。</p>
+          <p style={{ marginBottom: 10 }}>这个问题将会被彻底删除。包括所有附件和评论。</p>
+          <p style={{ marginBottom: 10 }}>如果您完成了这个问题，通常是已解决或者已关闭，而不是删除。</p>
+          {
+            this.state.subIssueDTOList.length ? <p style={{ color: '#d50000' }}>{`注意：问题的${this.state.subIssueDTOList.length}子任务将被删除。`}</p> : null
+          }
+        </div>,
       onOk() {
         return deleteIssue(issueId)
           .then((res) => {
@@ -859,17 +891,6 @@ class EditIssueNarrow extends Component {
   }
 
   /**
-   * DataLog
-   */
-  renderDataLogs() {
-    return (
-      <DataLogs
-        datalogs={this.state.datalogs}
-      />
-    );
-  }
-
-  /**
    * SubIssue
    */
   renderSubIssues() {
@@ -887,11 +908,11 @@ class EditIssueNarrow extends Component {
     return (
       <div className="c7n-tasks">
         {
-          _.map(group, (issues, ward) => (
-            <div key={ward}>
-              <div style={{ margin: '7px auto' }}>{ward}</div>
+          _.map(group, (v, k) => (
+            <div key={k}>
+              <div style={{ margin: '7px auto' }}>{k}</div>
               {
-                _.map(issues, (linkIssue, i) => this.renderLinkList(linkIssue, i))
+                _.map(v, (linkIssue, i) => this.renderLinkList(linkIssue, i))
               }
             </div>
           ))
@@ -914,7 +935,7 @@ class EditIssueNarrow extends Component {
           typeCode: issue.typeCode || 'sub_task',
         }}
         i={i}
-        onOpen={(issueId, linkedIssueId) => {
+        onOpen={() => {
           this.reloadIssue(issue.issueId);
         }}
         onRefresh={() => {
@@ -927,19 +948,14 @@ class EditIssueNarrow extends Component {
   renderLinkList(link, i) {
     return (
       <LinkList
-        key={link.linkId}
         issue={{
           ...link,
           typeCode: link.typeCode,
         }}
         i={i}
-        // onOpen={(issueId, linkedIssueId) => {
-        //   const menu = AppState.currentMenuType;
-        //   const { type, id: projectId, name } = menu;
-        //   this.props.history.push(`/agile/issue?
-        // type=${type}&id=${projectId}&name=${name}&paramIssueId=${linkedIssueId}`);
-        //   // this.reloadIssue(issueId === this.state.origin.issueId ? linkedIssueId : issueId);
-        // }}
+        onOpen={(issueId, linkedIssueId) => {
+          this.reloadIssue(issueId === this.state.origin.issueId ? linkedIssueId : issueId);
+        }}
         onRefresh={() => {
           this.reloadIssue(this.state.origin.issueId);
         }}
@@ -1004,27 +1020,162 @@ class EditIssueNarrow extends Component {
     }
   }
 
+  renderBranchs() {
+    return (
+      <div>
+        {
+          this.state.branchs.branchCount ? (
+            <div>
+              {
+                [].length === 0 ? (
+                  <div style={{
+                    borderBottom: '1px solid rgba(0, 0, 0, 0.08)', display: 'flex', padding: '8px 26px', alignItems: 'center', justifyContent: 'space-between', fontSize: '13px',
+                  }}
+                  >
+                    <div style={{ display: 'inline-flex', justifyContent: 'space-between', flex: 1 }}>
+                      <span
+                        style={{ color: '#3f51b5', cursor: 'pointer' }}
+                        role="none"
+                        onClick={() => {
+                          this.setState({
+                            commitShow: true,
+                          });
+                        }}
+                      >
+                        {this.state.branchs.totalCommit || '0'}
+                        提交
+                      </span>
+                    </div>
+                    <div style={{ display: 'inline-flex', justifyContent: 'space-between' }}>
+                      <span style={{ marginRight: 12, marginLeft: 63 }}>已更新</span>
+                      <span style={{ width: 60, display: 'inline-block' }}>
+                        {
+                          this.state.branchs.commitUpdateTime ? (
+                            <Popover
+                              title="提交修改时间"
+                              content={this.state.branchs.commitUpdateTime}
+                              placement="left"
+                            >
+                              <TimeAgo
+                                datetime={this.state.branchs.commitUpdateTime}
+                                locale={Choerodon.getMessage('zh_CN', 'en')}
+                              />
+                            </Popover>
+                          ) : ''
+                        }
+                      </span>
+                    </div>
+                  </div>
+                ) : null
+              }
+              {
+                this.state.branchs.totalMergeRequest ? (
+                  <div style={{
+                    borderBottom: '1px solid rgba(0, 0, 0, 0.08)', display: 'flex', padding: '8px 26px', alignItems: 'center', justifyContent: 'space-between', fontSize: '13px',
+                  }}
+                  >
+                    <div style={{ display: 'inline-flex', justifyContent: 'space-between', flex: 1 }}>
+                      <span
+                        style={{ color: '#3f51b5', cursor: 'pointer' }}
+                        role="none"
+                        onClick={() => {
+                          this.setState({
+                            mergeRequestShow: true,
+                          });
+                        }}
+                      >
+                        {this.state.branchs.totalMergeRequest}
+                        合并请求
+                      </span>
+                      <span style={{
+                        width: 36, height: 20, borderRadius: '2px', color: '#fff', background: '#4d90fe', textAlign: 'center',
+                      }}
+                      >
+                        {['opened', 'merged', 'closed'].includes(this.state.branchs.mergeRequestStatus) ? STATUS_SHOW[this.state.branchs.mergeRequestStatus] : ''}
+                      </span>
+                    </div>
+                    <div style={{ display: 'inline-flex', justifyContent: 'space-between' }}>
+                      <span style={{ marginRight: 12, marginLeft: 63 }}>已更新</span>
+                      <span style={{ width: 60, display: 'inline-block' }}>
+                        {
+                          this.state.branchs.mergeRequestUpdateTime ? (
+                            <Popover
+                              title="合并请求修改时间"
+                              content={this.state.branchs.mergeRequestUpdateTime}
+                              placement="left"
+                            >
+                              <TimeAgo
+                                datetime={this.state.branchs.mergeRequestUpdateTime}
+                                locale={Choerodon.getMessage('zh_CN', 'en')}
+                              />
+                            </Popover>
+                          ) : ''
+                        }
+                      </span>
+                    </div>
+                  </div>
+                ) : null
+              }
+            </div>
+          ) : (
+              <div style={{
+                borderBottom: '1px solid rgba(0, 0, 0, 0.08)', display: 'flex', padding: '8px 26px', alignItems: 'center', justifyContent: 'space-between', fontSize: '13px',
+              }}
+              >
+                <span style={{ marginRight: 12 }}>暂无</span>
+              </div>
+            )
+        }
+      </div>
+    );
+  }
+
   render() {
     const menu = AppState.currentMenuType;
-    const {
-      type, id: projectId, organizationId: orgId, name,
-    } = menu;
+    const { type, id: projectId, organizationId: orgId } = menu;
     const {
       initValue, visible, onCancel, onOk,
     } = this.props;
     const getMenu = () => (
       <Menu onClick={this.handleClickMenu.bind(this)}>
-        <Menu.Item key="add_worklog">
-          <FormattedMessage id="issue_edit_addWworkLog" />
-        </Menu.Item>
-        <Menu.Item key="copy">
-          <FormattedMessage id="issue_edit_copyIssue" />
+        <Menu.Item key="0">
+          登记工作日志
         </Menu.Item>
         <Permission type={type} projectId={projectId} organizationId={orgId} service={['agile-service.issue.deleteIssue']}>
-          <Menu.Item key="item_2">
-            <FormattedMessage id="delete" />
+          <Menu.Item key="1">
+            删除
           </Menu.Item>
         </Permission>
+        {
+          this.state.typeCode !== 'sub_task' && (
+            <Menu.Item key="2">
+              创建子任务
+            </Menu.Item>
+          )
+        }
+        <Menu.Item key="3">
+          复制问题
+        </Menu.Item>
+        {
+          this.state.typeCode !== 'sub_task' && this.state.origin.subIssueDTOList && this.state.origin.subIssueDTOList.length === 0 && (
+            <Menu.Item key="4">
+              转化为子任务
+            </Menu.Item>
+          )
+        }
+        {
+          this.state.typeCode === 'sub_task' && (
+            <Menu.Item key="5">
+              转化为任务
+            </Menu.Item>
+          )
+        }
+        <Menu.Item key="6">
+          创建分支
+        </Menu.Item>
+        <Menu.Item key="7">
+          分配问题
+        </Menu.Item>
       </Menu>
     );
     const callback = (value) => {
@@ -1035,7 +1186,53 @@ class EditIssueNarrow extends Component {
         this.updateIssue('description');
       });
     };
-
+    const callbackUpload = (newFileList) => {
+      this.setState({ fileList: newFileList });
+    };
+    const typeList = (
+      <Menu
+        style={{
+          background: '#fff',
+          boxShadow: '0 5px 5px -3px rgba(0, 0, 0, 0.20), 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12)',
+          borderRadius: '2px',
+          // marginTop: 50,
+        }}
+      // onClick={this.handleChangeType.bind(this)}
+      >
+        {
+          _.remove(['story', 'task', 'bug', 'issue_epic'], n => n !== this.state.typeCode).map(type => (
+            <Menu.Item key={type}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div
+                  style={{
+                    backgroundColor: TYPE[type],
+                    marginRight: 8,
+                    display: 'inline-flex',
+                    width: 20,
+                    height: 20,
+                    borderRadius: '50%',
+                    textAlign: 'center',
+                    color: '#fff',
+                    fontSize: '14px',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}
+                >
+                  <Icon
+                    style={{ fontSize: '14px' }}
+                    type={ICON[type]}
+                  />
+                </div>
+                <span>
+                  {TYPE_NAME[type]}
+                </span>
+              </div>
+            </Menu.Item>
+          ))
+        }
+      </Menu>
+    );
+    const urlParams = AppState.currentMenuType;
     return (
       <div className="choerodon-modal-editIssue">
         {
@@ -1060,24 +1257,30 @@ class EditIssueNarrow extends Component {
         }
         <div className="c7n-nav">
           <div>
-            <div style={{
-              height: 44, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', borderBottom: '1px solid rgba(0,0,0,0.26)',
-            }}
-            >
-              <div
-                className="radius"
-                style={{
-                  background: TYPE[this.state.typeCode], color: '#fff', width: '20px', height: '20px', textAlign: 'center', fontSize: '14px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                }}
+            <Dropdown overlay={typeList} trigger={['click']} disabled={this.state.typeCode === 'sub_task'}>
+              <div style={{
+                height: 50, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+              }}
               >
+                <div
+                  className="radius"
+                  style={{
+                    background: TYPE[this.state.typeCode], color: '#fff', width: '20px', height: '20px', textAlign: 'center', fontSize: '14px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }}
+                >
+                  <Icon
+                    style={{ fontSize: '14px' }}
+                    type={ICON[this.state.typeCode]}
+                  />
+                </div>
                 <Icon
-                  style={{ fontSize: '14px' }}
-                  type={ICON[this.state.typeCode]}
+                  type="arrow_drop_down"
+                  style={{ fontSize: 16 }}
                 />
               </div>
-            </div>
+            </Dropdown>
           </div>
-          <ul className="c7n-nav-ul">
+          <ul className="c7n-nav-ul" style={{ padding: 0 }}>
             <Tooltip placement="right" title="详情">
               <li id="DETAILS-nav" className={`c7n-li ${this.state.nav === 'detail' ? 'c7n-li-active' : ''}`}>
                 <Icon
@@ -1098,30 +1301,6 @@ class EditIssueNarrow extends Component {
                   onClick={() => {
                     this.setState({ nav: 'des' });
                     this.scrollToAnchor('des');
-                  }}
-                />
-              </li>
-            </Tooltip>
-            <Tooltip placement="right" title="测试详细信息">
-              <li id="DESCRIPTION-test1" className={`c7n-li ${this.state.nav === 'test1' ? 'c7n-li-active' : ''}`}>
-                <Icon
-                  type="compass c7n-icon-li"
-                  role="none"
-                  onClick={() => {
-                    this.setState({ nav: 'test1' });
-                    this.scrollToAnchor('test1');
-                  }}
-                />
-              </li>
-            </Tooltip>
-            <Tooltip placement="right" title="测试执行">
-              <li id="DESCRIPTION-test2" className={`c7n-li ${this.state.nav === 'test2' ? 'c7n-li-active' : ''}`}>
-                <Icon
-                  type="explicit2 c7n-icon-li"
-                  role="none"
-                  onClick={() => {
-                    this.setState({ nav: 'test2' });
-                    this.scrollToAnchor('test2');
                   }}
                 />
               </li>
@@ -1162,26 +1341,46 @@ class EditIssueNarrow extends Component {
                 />
               </li>
             </Tooltip>
-            <Tooltip placement="right" title="活动日志">
-              <li id="DATA_LOG-nav" className={`c7n-li ${this.state.nav === 'data_log' ? 'c7n-li-active' : ''}`}>
+            {
+              this.state.typeCode !== 'sub_task' && (
+                <Tooltip placement="right" title="子任务">
+                  <li id="SUB_TASKS-nav" className={`c7n-li ${this.state.nav === 'sub_task' ? 'c7n-li-active' : ''}`}>
+                    <Icon
+                      type="filter_none c7n-icon-li"
+                      role="none"
+                      onClick={() => {
+                        this.setState({ nav: 'sub_task' });
+                        this.scrollToAnchor('sub_task');
+                      }}
+                    />
+                  </li>
+                </Tooltip>
+              )
+            }
+            {
+              this.state.typeCode !== 'sub_task' && (
+                <Tooltip placement="right" title="问题链接">
+                  <li id="LINK_TASKS-nav" className={`c7n-li ${this.state.nav === 'link_task' ? 'c7n-li-active' : ''}`}>
+                    <Icon
+                      type="link c7n-icon-li"
+                      role="none"
+                      onClick={() => {
+                        this.setState({ nav: 'link_task' });
+                        this.scrollToAnchor('link_task');
+                      }}
+                    />
+                  </li>
+                </Tooltip>
+              )
+            }
+            <Tooltip placement="right" title="开发">
+              <li id="BRANCH-nav" className={`c7n-li ${this.state.nav === 'branch' ? 'c7n-li-active' : ''}`}>
                 <Icon
-                  type="insert_invitation c7n-icon-li"
+                  type="branch c7n-icon-li"
                   role="none"
                   onClick={() => {
-                    this.setState({ nav: 'data_log' });
-                    this.scrollToAnchor('data_log');
-                  }}
-                />
-              </li>
-            </Tooltip>
-            <Tooltip placement="right" title="相关任务">
-              <li id="LINK_TASKS-nav" className={`c7n-li ${this.state.nav === 'link_task' ? 'c7n-li-active' : ''}`}>
-                <Icon
-                  type="link c7n-icon-li"
-                  role="none"
-                  onClick={() => {
-                    this.setState({ nav: 'link_task' });
-                    this.scrollToAnchor('link_task');
+                    this.setState({ nav: 'branch' });
+                    this.scrollToAnchor('branch');
                   }}
                 />
               </li>
@@ -1195,13 +1394,10 @@ class EditIssueNarrow extends Component {
                 <div
                   className="line-justify"
                   style={{
+                    height: '28px',
                     alignItems: 'center',
-                    paddingLeft: '20px',
-                    paddingRight: '20px',
-                    marginLeft: '-20px',
-                    marginRight: '-20px',
-                    borderBottom: '1px solid rgba(0, 0, 0, 0.26)',
-                    height: 44,
+                    marginTop: '10px',
+                    marginBottom: '3px',
                   }}
                 >
                   <div style={{ fontSize: 16, lineHeight: '28px', fontWeight: 500 }}>
@@ -1221,7 +1417,25 @@ class EditIssueNarrow extends Component {
                         </span>
                       ) : null
                     }
-                    <span>{this.state.issueNum}</span>
+                    {
+                      this.state.typeCode === 'sub_task' ? (
+                        <span>
+                          {this.state.issueNum}
+                        </span>
+                      ) : (
+                          <a
+                            role="none"
+                            onClick={() => {
+                              const backUrl = this.props.backUrl || 'backlog';
+                              this.props.history.push(`/agile/issue?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}&organizationId=${urlParams.organizationId}&paramName=${this.state.origin.issueNum}&paramIssueId=${this.state.origin.issueId}&paramUrl=${backUrl}`);
+                              return false;
+                            }}
+                          >
+                            {this.state.issueNum}
+                          </a>
+                        )
+                    }
+
                   </div>
 
 
@@ -1233,10 +1447,13 @@ class EditIssueNarrow extends Component {
                     onClick={() => this.props.onCancel()}
                   >
                     <Icon type="last_page" style={{ fontSize: '18px', fontWeight: '500' }} />
-                    <FormattedMessage id="issue_edit_hide" />
+                    <span>隐藏详情</span>
                   </div>
                 </div>
-                <div className="line-justify" style={{ marginBottom: 5, alignItems: 'center', marginTop: 10 }}>
+                <div className="line-justify" style={{ marginBottom: 5, alignItems: 'flex-start' }}>
+                  {/* <div style={{ fontSize: 13, lineHeight: '20px', fontWeight: 600 }}>
+                    {this.state.org.name} - {AppState.currentMenuType.name}
+                  </div> */}
                   <ReadAndEdit
                     callback={this.changeRae.bind(this)}
                     thisType="summary"
@@ -1253,6 +1470,14 @@ class EditIssueNarrow extends Component {
                       </div>
                     )}
                   >
+                    {/* <Input
+                      // maxLength="30"
+                      style={{ width: 250 }}
+                      defaultValue={this.state.summary}
+                      size="small"
+                      autoFocus
+                      onChange={this.handleTitleChange.bind(this)}
+                    /> */}
                     <TextArea
                       // style={{ width: 290 }}
                       maxLength={44}
@@ -1275,268 +1500,121 @@ class EditIssueNarrow extends Component {
                     </Dropdown>
                   </div>
                 </div>
-                <div className="line-start" style={{ alignItems: 'center' }}>
-                  <div style={{ display: 'flex', flex: 1 }}>
-                    <span
-                      style={{
-                        width: 30,
-                        height: 30,
-                        borderRadius: '50%',
-                        // background: 'rgba(255, 177, 0, 0.2)',
-                        marginRight: 12,
-                        flexShrink: 0,
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                      }}
-                    >
-                      <Icon
-                        type={STATUS_ICON[this.state.statusCode] ? STATUS_ICON[this.state.statusCode].icon : 'timelapse'}
-                        style={{
-                          fontSize: '33px',
-                          color: this.state.statusColor || '#ffae02',
-                        }}
-                      />
-                    </span>
-                    <div>
-                      <div style={{ fontSize: '12px', color: 'rgba(0, 0, 0, 0.54)', marginBottom: 4 }}>
-                        <FormattedMessage id="issue_issueFilterByStatus" />
-                      </div>
-                      <div>
-                        <ReadAndEdit
-                          callback={this.changeRae.bind(this)}
-                          thisType="statusId"
-                          current={this.state.currentRae}
-                          origin={this.state.statusId}
-                          onOk={this.updateIssue.bind(this, 'statusId')}
-                          onCancel={this.resetStatusId.bind(this)}
-                          onInit={() => {
-                            this.setAnIssueToState();
-                            loadStatus().then((res) => {
-                              this.setState({
-                                originStatus: res,
-                              });
+                {/* {
+                  this.state.typeCode === 'issue_epic' ? (
+                    <div className="line-justify" style={{ marginBottom: 5, alignItems: 'flex-start' }}>
+                      <span style={{ flexShrink: 0 }}>名称：</span>
+                      <ReadAndEdit
+                        callback={this.changeRae.bind(this)}
+                        thisType="epicName"
+                        current={this.state.currentRae}
+                        handleEnter
+                        line
+                        origin={this.state.epicName}
+                        onInit={() => this.setAnIssueToState()}
+                        onOk={this.updateIssue.bind(this, 'epicName')}
+                        onCancel={this.resetEpicName.bind(this)}
+                        readModeContent={<div className="c7n-summary">
+                          {this.state.epicName}
+                        </div>}
+                      >
+                        <TextArea
+                          maxLength={44}
+                          value={this.state.epicName}
+                          size="small"
+                          autoFocus
+                          onChange={this.handleEpicNameChange.bind(this)}
+                          onPressEnter={() => {
+                            this.updateIssue('epicName');
+                            this.setState({
+                              currentRae: undefined,
                             });
                           }}
-                          readModeContent={(
-                            <div>
-                              {
-                                this.state.statusId ? (
-                                  <div
-                                    style={{
-                                      color: this.state.statusColor,
-                                      fontSize: '16px',
-                                      lineHeight: '18px',
-                                    }}
-                                  >
-                                    {this.state.statusName}
-                                  </div>
-                                ) : '无'
-                              }
-                            </div>
-                          )}
-                        >
-                          <Select
-                            value={this.state.originStatus.length
-                              ? this.state.statusId : this.state.statusName}
-                            style={{ width: 150 }}
-                            loading={this.state.selectLoading}
-                            autoFocus
-                            // getPopupContainer={triggerNode => triggerNode.parentNode}
-                            onFocus={() => {
-                              this.setState({
-                                selectLoading: true,
-                              });
-                              loadStatus().then((res) => {
-                                this.setState({
-                                  originStatus: res,
-                                  selectLoading: false,
-                                });
-                              });
-                            }}
-                            onChange={(value) => {
-                              this.setState({
-                                statusId: value,
-                              });
-                            }}
-                          >
-                            {
-                              this.state.originStatus.map(status => (
-                                <Option key={status.id} value={status.id}>
-                                  {status.name}
-                                </Option>
-                              ))
-                            }
-                          </Select>
-                        </ReadAndEdit>
-                      </div>
+                        />
+                      </ReadAndEdit>
                     </div>
-                  </div>
-                  <div style={{ display: 'flex', flex: 1 }}>
-                    <span
-                      style={{
-                        width: 30, height: 30, borderRadius: '50%', background: COLOR[this.state.priorityCode] ? COLOR[this.state.priorityCode].bgColor : 'rgba(77, 144, 254, 0.2)', marginRight: 12, flexShrink: 0, display: 'flex', justifyContent: 'center', alignItems: 'center',
-                      }}
-                    >
-                      <Icon type="flag" style={{ fontSize: '24px', color: COLOR[this.state.priorityCode] ? COLOR[this.state.priorityCode].color : '#3575df' }} />
-                    </span>
-                    <div>
-                      <div style={{ fontSize: '12px', color: 'rgba(0, 0, 0, 0.54)', marginBottom: 4 }}>
-                        <FormattedMessage id="issue_issueFilterByPriority" />
-                      </div>
-                      <div>
-                        <ReadAndEdit
-                          callback={this.changeRae.bind(this)}
-                          thisType="priorityCode"
-                          current={this.state.currentRae}
-                          origin={this.state.priorityCode}
-                          onOk={this.updateIssue.bind(this, 'priorityCode')}
-                          onCancel={this.resetPriorityCode.bind(this)}
-                          onInit={() => {
-                            this.setAnIssueToState();
-                            loadPriorities().then((res) => {
-                              this.setState({
-                                originpriorities: res.lookupValues,
-                              });
-                            });
-                          }}
-                          readModeContent={(
-                            <div>
-                              {
-                                this.state.priorityCode ? (
-                                  <div
-                                    className="c7n-level"
-                                    style={{
-                                      // backgroundColor: COLOR[this.state.priorityCode].bgColor,
-                                      color: COLOR[this.state.priorityCode].color,
-                                      // borderRadius: '2px',
-                                      // padding: '0 8px',
-                                      // display: 'inline-block',
-                                      fontSize: '16px',
-                                      lineHeight: '18px',
-                                    }}
-                                  >
-                                    {this.state.priorityName}
-                                  </div>
-                                ) : '无'
-                              }
-                            </div>
-                          )}
-                        >
-                          <Select
-                            value={this.state.originpriorities.length
-                              ? this.state.priorityCode : this.state.priorityName}
-                            style={{ width: '150px' }}
-                            loading={this.state.selectLoading}
-                            autoFocus
-                            // getPopupContainer={triggerNode => triggerNode.parentNode}
-                            onFocus={() => {
-                              this.setState({
-                                selectLoading: true,
-                              });
-                              loadPriorities().then((res) => {
-                                this.setState({
-                                  originpriorities: res.lookupValues,
-                                  selectLoading: false,
-                                });
-                              });
-                            }}
-                            onChange={(value) => {
-                              const priority = _.find(this.state.originpriorities,
-                                { valueCode: value });
-                              this.setState({
-                                priorityCode: value,
-                                priorityName: priority.name,
-                              });
-                            }}
-                          >
-                            {
-                              this.transformPriorityCode(this.state.originpriorities)
-                                .map(onetype => (
-                                  <Option key={onetype.valueCode} value={onetype.valueCode}>
-                                    <div style={{ display: 'inline-flex', alignItems: 'center', padding: '2px' }}>
-                                      <div
-                                        className="c7n-level"
-                                        style={{
-                                          // backgroundColor: COLOR[type.valueCode].bgColor,
-                                          color: COLOR[onetype.valueCode].color,
-                                          // borderRadius: '2px',
-                                          // padding: '0 8px',
-                                          // display: 'inline-block',
-                                          fontSize: '16px',
-                                          lineHeight: '18px',
-                                        }}
-                                      >
-                                        {onetype.name}
-                                      </div>
-                                    </div>
-                                  </Option>
-                                ))
-                            }
-                          </Select>
-                        </ReadAndEdit>
-                      </div>
-                    </div>
-                  </div>
+                  ) : null
+                } */}
+                <div className="line-start">
                   {
-                    this.state.issueId && this.state.typeCode !== 'issue_epic' ? (
-                      <div style={{ display: 'flex', flex: 1 }}>
-                        <span
-                          style={{
-                            width: 30, height: 30, borderRadius: '50%', background: '#d8d8d8', marginRight: 12, flexShrink: 0, display: 'flex', justifyContent: 'center', alignItems: 'center',
-                          }}
-                        >
-                          <Icon type="event_note" style={{ fontSize: '24px' }} />
-                        </span>
+                    this.state.issueId && this.state.typeCode === 'story' ? (
+                      <div style={{ display: 'flex', marginRight: 25 }}>
+                        <span>故事点：</span>
                         <div>
-                          <div style={{ fontSize: '12px', color: 'rgba(0, 0, 0, 0.54)', marginBottom: 4 }}>
-                            <FormattedMessage id="issue_edit_planTime" />
-                          </div>
-                          <div>
-                            <ReadAndEdit
-                              callback={this.changeRae.bind(this)}
-                              thisType="remainingTime"
-                              current={this.state.currentRae}
-                              handleEnter
-                              origin={this.state.remainingTime}
-                              onInit={() => this.setAnIssueToState(this.state.origin)}
-                              onOk={this.updateIssue.bind(this, 'remainingTime')}
-                              onCancel={this.resetRemainingTime.bind(this)}
-                              readModeContent={(
-                                <span>
-                                  {this.state.remainingTime === undefined || this.state.remainingTime === null ? '无' : `${this.state.remainingTime} 小时`}
-                                </span>
-                              )}
-                            >
-                              <NumericInput
-                                maxLength="3"
-                                value={this.state.remainingTime}
-                                // size="large"
-                                autoFocus
-                                onChange={this.handleRemainingTimeChange.bind(this)}
-                                onPressEnter={() => {
-                                  this.updateIssue('remainingTime');
-                                  this.setState({
-                                    currentRae: undefined,
-                                  });
-                                }}
-                              />
-                            </ReadAndEdit>
-                          </div>
+                          <ReadAndEdit
+                            callback={this.changeRae.bind(this)}
+                            thisType="storyPoints"
+                            current={this.state.currentRae}
+                            handleEnter
+                            origin={this.state.storyPoints}
+                            onInit={() => this.setAnIssueToState(this.state.origin)}
+                            onOk={this.updateIssue.bind(this, 'storyPoints')}
+                            onCancel={this.resetStoryPoints.bind(this)}
+                            readModeContent={(
+                              <span>
+                                {this.state.storyPoints === undefined || this.state.storyPoints === null ? '无' : `${this.state.storyPoints} 点`}
+                              </span>
+                            )}
+                          >
+                            {/* <Input
+                              defaultValue={this.state.storyPoints}
+                              size="small"
+                              autoFocus
+                              onChange={this.handleStoryPointsChange.bind(this)}
+                            /> */}
+                            <NumericInput
+                              maxLength="3"
+                              value={this.state.storyPoints}
+                              // size="large"
+                              autoFocus
+                              onChange={this.handleStoryPointsChange.bind(this)}
+                              onPressEnter={() => {
+                                this.updateIssue('storyPoints');
+                                this.setState({
+                                  currentRae: undefined,
+                                });
+                              }}
+                            />
+                          </ReadAndEdit>
                         </div>
                       </div>
                     ) : null
                   }
                   {
-                    this.state.issueId && this.state.typeCode === 'issue_test' ? (
-                      <div style={{
-                        display: 'flex', flex: 1, justifyContent: 'center', borderLeft: '1px solid rgba(0, 0, 0, 0.26)',
-                      }}
-                      >
-                        <Button funcType="flat" style={{ color: '#000' }} onClick={() => this.setState({ executeTestShow: true })}>
-                          <Icon type="explicit-outline" />
-                          <span style={{ paddingLeft: 12 }}><FormattedMessage id="issue_edit_executeTest" /></span>
-                        </Button>
+                    this.state.issueId && this.state.typeCode !== 'issue_epic' ? (
+                      <div style={{ display: 'flex' }}>
+                        <span>预估时间：</span>
+                        <div>
+                          <ReadAndEdit
+                            callback={this.changeRae.bind(this)}
+                            thisType="remainingTime"
+                            current={this.state.currentRae}
+                            handleEnter
+                            origin={this.state.remainingTime}
+                            onInit={() => this.setAnIssueToState(this.state.origin)}
+                            onOk={this.updateIssue.bind(this, 'remainingTime')}
+                            onCancel={this.resetRemainingTime.bind(this)}
+                            readModeContent={(
+                              <span>
+                                {this.state.remainingTime === undefined || this.state.remainingTime === null ? '无' : `${this.state.remainingTime} 小时`}
+                              </span>
+                            )}
+                          >
+                            <NumericInput
+                              maxLength="3"
+                              value={this.state.remainingTime}
+                              // size="large"
+                              autoFocus
+                              onChange={this.handleRemainingTimeChange.bind(this)}
+                              onPressEnter={() => {
+                                this.updateIssue('remainingTime');
+                                this.setState({
+                                  currentRae: undefined,
+                                });
+                              }}
+                            />
+                          </ReadAndEdit>
+                        </div>
                       </div>
                     ) : null
                   }
@@ -1552,634 +1630,1039 @@ class EditIssueNarrow extends Component {
                     <div className="c7n-title-wrapper" style={{ marginTop: 0 }}>
                       <div className="c7n-title-left">
                         <Icon type="error_outline c7n-icon-title" />
-                        <FormattedMessage id="detail" />
+                        <span>详情</span>
                       </div>
                       <div style={{
                         flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px',
                       }}
                       />
                     </div>
-                    <div className="c7n-content-wrapper" style={{ display: 'flex' }}>
-                      <div style={{ flex: 1, width: '50%' }}>
-                        {
-                          this.state.typeCode !== 'sub_task' ? (
-                            <div className="line-start mt-10">
-                              <div className="c7n-property-wrapper">
-                                <span className="c7n-property">
-                                  <FormattedMessage id="summary_component" />
-                                  ：
-                                </span>
-                              </div>
-                              <div className="c7n-value-wrapper">
-                                <ReadAndEdit
-                                  callback={this.changeRae.bind(this)}
-                                  thisType="componentIssueRelDTOList"
-                                  current={this.state.currentRae}
-                                  origin={this.state.componentIssueRelDTOList}
-                                  onInit={() => this.setAnIssueToState(this.state.origin)}
-                                  onOk={this.updateIssueSelect.bind(this, 'originComponents', 'componentIssueRelDTOList')}
-                                  onCancel={this.resetComponentIssueRelDTOList.bind(this)}
-                                  readModeContent={(
-                                    <div style={{ color: '#3f51b5' }}>
-                                      <p style={{ color: '#3f51b5', wordBreak: 'break-word', marginBottom: 0 }}>
-                                        {this.transToArr(this.state.componentIssueRelDTOList, 'name')}
-                                      </p>
-                                    </div>
-                                  )}
-                                >
-                                  <Select
-                                    value={this.transToArr(this.state.componentIssueRelDTOList, 'name', 'array')}
-                                    loading={this.state.selectLoading}
-                                    mode="tags"
-                                    autoFocus
-                                    getPopupContainer={triggerNode => triggerNode.parentNode}
-                                    tokenSeparators={[',']}
-                                    style={{ width: '200px', marginTop: 0, paddingTop: 0 }}
-                                    onFocus={() => {
-                                      this.setState({
-                                        selectLoading: true,
-                                      });
-                                      loadComponents().then((res) => {
-                                        this.setState({
-                                          originComponents: res,
-                                          selectLoading: false,
-                                        });
-                                      });
-                                    }}
-                                    onChange={value => this.setState({
-                                      componentIssueRelDTOList: value,
-                                    })}
-                                  >
-                                    {this.state.originComponents.map(component => (
-                                      <Option
-                                        key={component.name}
-                                        value={component.name}
-                                      >
-                                        {component.name}
-                                      </Option>
-                                    ))}
-                                  </Select>
-                                </ReadAndEdit>
-                              </div>
-                            </div>
-                          ) : null
-                        }
-
-                        <div className="line-start mt-10">
-                          <div className="c7n-property-wrapper">
-                            <span className="c7n-property">
-                              <FormattedMessage id="summary_label" />
-                              ：
-                            </span>
-                          </div>
-                          <div className="c7n-value-wrapper">
-
-                            <ReadAndEdit
-                              callback={this.changeRae.bind(this)}
-                              thisType="labelIssueRelDTOList"
-                              current={this.state.currentRae}
-                              origin={this.state.labelIssueRelDTOList}
-                              onInit={() => this.setAnIssueToState(this.state.origin)}
-                              onOk={this.updateIssueSelect.bind(this, 'originLabels', 'labelIssueRelDTOList')}
-                              onCancel={this.resetlabelIssueRelDTOList.bind(this)}
-                              readModeContent={(
-                                <div>
-                                  {
-                                    this.state.labelIssueRelDTOList.length > 0 ? (
-                                      <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-                                        {
-                                          this.transToArr(this.state.labelIssueRelDTOList, 'labelName', 'array').map(label => (
-                                            <div
-                                              key={label}
-                                              style={{
-                                                color: '#000',
-                                                borderRadius: '100px',
-                                                fontSize: '13px',
-                                                lineHeight: '24px',
-                                                padding: '2px 12px',
-                                                background: 'rgba(0, 0, 0, 0.08)',
-                                                marginRight: '8px',
-                                                marginBottom: 3,
-                                              }}
-                                            >
-                                              {label}
-                                            </div>
-                                          ))
-                                        }
-                                      </div>
-                                    ) : '无'
-                                  }
-                                </div>
-                              )}
-                            >
-                              <Select
-                                value={this.transToArr(this.state.labelIssueRelDTOList, 'labelName', 'array')}
-                                mode="tags"
-                                autoFocus
-                                loading={this.state.selectLoading}
-                                tokenSeparators={[',']}
-                                getPopupContainer={triggerNode => triggerNode.parentNode}
-                                style={{ width: '200px', marginTop: 0, paddingTop: 0 }}
-                                onFocus={() => {
-                                  this.setState({
-                                    selectLoading: true,
-                                  });
-                                  loadLabels().then((res) => {
-                                    this.setState({
-                                      originLabels: res,
-                                      selectLoading: false,
-                                    });
-                                  });
-                                }}
-                                onChange={value => this.setState({ labelIssueRelDTOList: value })}
-                              >
-                                {this.state.originLabels.map(label => (
-                                  <Option
-                                    key={label.labelName}
-                                    value={label.labelName}
-                                  >
-                                    {label.labelName}
-                                  </Option>
-                                ))}
-                              </Select>
-                            </ReadAndEdit>
-                          </div>
+                    <div className="c7n-content-wrapper">
+                      <div className="line-start mt-10">
+                        <div className="c7n-property-wrapper">
+                          <span className="c7n-property">
+                            状态：
+                          </span>
                         </div>
-
-                        <div className="line-start mt-10">
-                          <div className="c7n-property-wrapper">
-                            <span className="c7n-property">
-                              <FormattedMessage id="issue_create_content_version" />
-                              ：
-                            </span>
-                          </div>
-                          <div className="c7n-value-wrapper">
-                            <ReadAndEdit
-                              callback={this.changeRae.bind(this)}
-                              thisType="fixVersions"
-                              current={this.state.currentRae}
-                              origin={this.state.fixVersions}
-                              onInit={() => this.setAnIssueToState(this.state.origin)}
-                              onOk={this.updateVersionSelect.bind(this, 'originVersions', 'fixVersions')}
-                              onCancel={this.resetFixVersions.bind(this)}
-                              readModeContent={(
-                                <div style={{ color: '#3f51b5' }}>
-                                  {
-                                    !this.state.fixVersionsFixed.length && !this.state.fixVersions.length ? '无' : (
-                                      <div>
-                                        <div style={{ color: '#000' }}>
-                                          {_.map(this.state.fixVersionsFixed, 'name').join(' , ')}
-                                        </div>
-                                        <p style={{ color: '#3f51b5', wordBreak: 'break-word', marginBottom: 0 }}>
-                                          {_.map(this.state.fixVersions, 'name').join(' , ')}
-                                        </p>
-                                      </div>
-                                    )
-                                  }
-                                </div>
-                              )}
+                        <div className="c7n-value-wrapper">
+                          <ReadAndEdit
+                            callback={this.changeRae.bind(this)}
+                            thisType="statusId"
+                            current={this.state.currentRae}
+                            origin={this.state.statusId}
+                            onOk={this.updateIssue.bind(this, 'statusId')}
+                            onCancel={this.resetStatusId.bind(this)}
+                            onInit={() => {
+                              this.setAnIssueToState();
+                              loadStatus().then((res) => {
+                                this.setState({
+                                  originStatus: res,
+                                });
+                              });
+                            }}
+                            readModeContent={(
+                              <div>
+                                {
+                                  this.state.statusId ? (
+                                    <div
+                                      style={{
+                                        background: this.state.origin.statusColor || STATUS[this.state.statusCode],
+                                        color: '#fff',
+                                        borderRadius: '2px',
+                                        padding: '0 8px',
+                                        display: 'inline-block',
+                                        margin: '2px auto 2px 0',
+                                      }}
+                                    >
+                                      {this.state.statusName}
+                                    </div>
+                                  ) : '无'
+                                }
+                              </div>
+                            )}
+                          >
+                            <Select
+                              value={this.state.originStatus.length ?
+                                this.state.statusId : this.state.statusName}
+                              style={{ width: 150 }}
+                              loading={this.state.selectLoading}
+                              autoFocus
+                              getPopupContainer={triggerNode => triggerNode.parentNode}
+                              onFocus={() => {
+                                this.setState({
+                                  selectLoading: true,
+                                });
+                                loadStatus().then((res) => {
+                                  this.setState({
+                                    originStatus: res,
+                                    selectLoading: false,
+                                  });
+                                });
+                              }}
+                              onChange={(value) => {
+                                this.setState({
+                                  statusId: value,
+                                });
+                              }}
                             >
                               {
-                                this.state.fixVersionsFixed.length ? (
-                                  <div>
-                                    <span>已归档版本：</span>
-                                    <span>
-                                      {_.map(this.state.fixVersionsFixed, 'name').join(' , ')}
-                                    </span>
-                                  </div>
-                                ) : null
-                              }
-                              <Select
-                                label="未归档版本"
-                                value={this.transToArr(this.state.fixVersions, 'name', 'array')}
-                                mode="tags"
-                                autoFocus
-                                loading={this.state.selectLoading}
-                                tokenSeparators={[',']}
-                                getPopupContainer={triggerNode => triggerNode.parentNode}
-                                style={{ width: '200px', marginTop: 0, paddingTop: 0 }}
-                                onFocus={() => {
-                                  this.setState({
-                                    selectLoading: true,
-                                  });
-                                  loadVersions(['version_planning', 'released']).then((res) => {
-                                    this.setState({
-                                      originVersions: res,
-                                      selectLoading: false,
-                                    });
-                                  });
-                                }}
-                                onChange={value => this.setState({ fixVersions: value })}
-                              >
-                                {this.state.originVersions.map(version => (
-                                  <Option
-                                    key={version.name}
-                                    value={version.name}
-                                  >
-                                    {version.name}
+                                this.state.originStatus.map(status => (
+                                  <Option key={status.id} value={status.id}>
+                                    {status.name}
                                   </Option>
-                                ))}
-                              </Select>
-                            </ReadAndEdit>
-                          </div>
+                                ))
+                              }
+                            </Select>
+                          </ReadAndEdit>
                         </div>
-                        {
-                          this.state.typeCode !== 'issue_epic' && this.state.typeCode !== 'sub_task' ? (
-                            <div className="line-start mt-10">
-                              <div className="c7n-property-wrapper">
-                                <span className="c7n-property">
-                                  <FormattedMessage id="issue_create_content_epic" />
-                                  ：
-                                </span>
+                      </div>
+                      <div className="line-start mt-10">
+                        <div className="c7n-property-wrapper">
+                          <span className="c7n-property">
+                            优先级：
+                          </span>
+                        </div>
+                        <div className="c7n-value-wrapper">
+                          <ReadAndEdit
+                            callback={this.changeRae.bind(this)}
+                            thisType="priorityCode"
+                            current={this.state.currentRae}
+                            origin={this.state.priorityCode}
+                            onOk={this.updateIssue.bind(this, 'priorityCode')}
+                            onCancel={this.resetPriorityCode.bind(this)}
+                            onInit={() => {
+                              this.setAnIssueToState();
+                              loadPriorities().then((res) => {
+                                this.setState({
+                                  originpriorities: res.lookupValues,
+                                });
+                              });
+                            }}
+                            readModeContent={(
+                              <div>
+                                {
+                                  this.state.priorityCode ? (
+                                    <div
+                                      className="c7n-level"
+                                      style={{
+                                        backgroundColor: COLOR[this.state.priorityCode].bgColor,
+                                        color: COLOR[this.state.priorityCode].color,
+                                        borderRadius: '2px',
+                                        padding: '0 8px',
+                                        display: 'inline-block',
+                                      }}
+                                    >
+                                      {this.state.priorityName}
+                                    </div>
+                                  ) : '无'
+                                }
                               </div>
-                              <div className="c7n-value-wrapper">
-                                <ReadAndEdit
-                                  callback={this.changeRae.bind(this)}
-                                  thisType="epicId"
-                                  current={this.state.currentRae}
-                                  origin={this.state.epicId}
-                                  onOk={this.updateIssue.bind(this, 'epicId')}
-                                  onCancel={this.resetEpicId.bind(this)}
-                                  onInit={() => {
-                                    this.setAnIssueToState(this.state.origin);
-                                    loadEpics().then((res) => {
+                            )}
+                          >
+                            <Select
+                              value={this.state.originpriorities.length ?
+                                this.state.priorityCode : this.state.priorityName}
+                              style={{ width: '150px' }}
+                              loading={this.state.selectLoading}
+                              autoFocus
+                              getPopupContainer={triggerNode => triggerNode.parentNode}
+                              onFocus={() => {
+                                this.setState({
+                                  selectLoading: true,
+                                });
+                                loadPriorities().then((res) => {
+                                  this.setState({
+                                    originpriorities: res.lookupValues,
+                                    selectLoading: false,
+                                  });
+                                });
+                              }}
+                              onChange={(value) => {
+                                const priority = _.find(this.state.originpriorities,
+                                  { valueCode: value });
+                                this.setState({
+                                  priorityCode: value,
+                                  priorityName: priority.name,
+                                });
+                              }}
+                            >
+                              {
+                                this.transformPriorityCode(this.state.originpriorities).map(type => (
+                                  <Option key={type.valueCode} value={type.valueCode}>
+                                    <div style={{ display: 'inline-flex', alignItems: 'center', padding: '2px' }}>
+                                      <div
+                                        className="c7n-level"
+                                        style={{
+                                          backgroundColor: COLOR[type.valueCode].bgColor,
+                                          color: COLOR[type.valueCode].color,
+                                          borderRadius: '2px',
+                                          padding: '0 8px',
+                                          display: 'inline-block',
+                                        }}
+                                      >
+                                        {type.name}
+                                      </div>
+                                    </div>
+                                  </Option>
+                                ))
+                              }
+                            </Select>
+                          </ReadAndEdit>
+                        </div>
+                      </div>
+                      {
+                        this.state.typeCode !== 'sub_task' ? (
+                          <div className="line-start mt-10">
+                            <div className="c7n-property-wrapper">
+                              <span className="c7n-property">
+                                模块：
+                              </span>
+                            </div>
+                            <div className="c7n-value-wrapper">
+                              <ReadAndEdit
+                                callback={this.changeRae.bind(this)}
+                                thisType="componentIssueRelDTOList"
+                                current={this.state.currentRae}
+                                origin={this.state.componentIssueRelDTOList}
+                                onInit={() => this.setAnIssueToState(this.state.origin)}
+                                onOk={this.updateIssueSelect.bind(this, 'originComponents', 'componentIssueRelDTOList')}
+                                onCancel={this.resetComponentIssueRelDTOList.bind(this)}
+                                readModeContent={(
+                                  <div style={{ color: '#3f51b5' }}>
+                                    <p style={{ color: '#3f51b5', wordBreak: 'break-word' }}>
+                                      {this.transToArr(this.state.componentIssueRelDTOList, 'name')}
+                                    </p>
+                                  </div>
+                                )}
+                              >
+                                <Select
+                                  value={this.transToArr(this.state.componentIssueRelDTOList, 'name', 'array')}
+                                  loading={this.state.selectLoading}
+                                  mode="tags"
+                                  autoFocus
+                                  getPopupContainer={triggerNode => triggerNode.parentNode}
+                                  tokenSeparators={[',']}
+                                  style={{ width: '200px', marginTop: 0, paddingTop: 0 }}
+                                  onFocus={() => {
+                                    this.setState({
+                                      selectLoading: true,
+                                    });
+                                    loadComponents().then((res) => {
                                       this.setState({
-                                        originEpics: res,
+                                        originComponents: res,
+                                        selectLoading: false,
                                       });
                                     });
                                   }}
-                                  readModeContent={(
-                                    <div>
+                                  onChange={value => this.setState({ componentIssueRelDTOList: value })}
+                                >
+                                  {this.state.originComponents.map(component => (
+                                    <Option
+                                      key={component.name}
+                                      value={component.name}
+                                    >
+                                      {component.name}
+                                    </Option>
+                                  ))}
+                                </Select>
+                              </ReadAndEdit>
+                            </div>
+                          </div>
+                        ) : null
+                      }
+
+                      <div className="line-start mt-10">
+                        <div className="c7n-property-wrapper">
+                          <span className="c7n-property">
+                            标签：
+                          </span>
+                        </div>
+                        <div className="c7n-value-wrapper">
+
+                          <ReadAndEdit
+                            callback={this.changeRae.bind(this)}
+                            thisType="labelIssueRelDTOList"
+                            current={this.state.currentRae}
+                            origin={this.state.labelIssueRelDTOList}
+                            onInit={() => this.setAnIssueToState(this.state.origin)}
+                            onOk={this.updateIssueSelect.bind(this, 'originLabels', 'labelIssueRelDTOList')}
+                            onCancel={this.resetlabelIssueRelDTOList.bind(this)}
+                            readModeContent={(
+                              <div>
+                                {
+                                  this.state.labelIssueRelDTOList.length > 0 ? (
+                                    <div style={{ display: 'flex', flexWrap: 'wrap' }}>
                                       {
-                                        this.state.epicId ? (
+                                        this.transToArr(this.state.labelIssueRelDTOList, 'labelName', 'array').map(label => (
                                           <div
+                                            key={label}
                                             style={{
-                                              color: this.state.epicColor,
-                                              borderWidth: '1px',
-                                              borderStyle: 'solid',
-                                              borderColor: this.state.epicColor,
-                                              borderRadius: '2px',
+                                              color: '#000',
+                                              borderRadius: '100px',
                                               fontSize: '13px',
-                                              lineHeight: '20px',
-                                              padding: '0 8px',
-                                              display: 'inline-block',
+                                              lineHeight: '24px',
+                                              padding: '2px 12px',
+                                              background: 'rgba(0, 0, 0, 0.08)',
+                                              marginRight: '8px',
+                                              marginBottom: 3,
                                             }}
                                           >
-                                            {this.state.epicName}
+                                            {label}
                                           </div>
-                                        ) : '无'
+                                        ))
                                       }
                                     </div>
-                                  )}
-                                >
-                                  <Select
-                                    value={this.state.originEpics.length
-                                      ? this.state.epicId || undefined
-                                      : this.state.epicName || undefined}
-                                    getPopupContainer={triggerNode => triggerNode.parentNode}
-                                    style={{ width: '150px' }}
-                                    autoFocus
-                                    allowClear
-                                    loading={this.state.selectLoading}
-                                    onFocus={() => {
-                                      this.setState({
-                                        selectLoading: true,
-                                      });
-                                      loadEpics().then((res) => {
-                                        this.setState({
-                                          originEpics: res,
-                                          selectLoading: false,
-                                        });
-                                      });
-                                    }}
-                                    onChange={(value) => {
-                                      const epic = _.find(this.state.originEpics,
-                                        { issueId: value * 1 });
-                                      this.setState({
-                                        epicId: value,
-                                        // epicName: epic.epicName,
-                                      });
-                                    }}
-                                  >
-                                    {this.state.originEpics.map(epic => (
-                                      <Option key={`${epic.issueId}`} value={epic.issueId}>
-                                        <Tooltip title={epic.epicName}>
-                                          {epic.epicName}
-                                        </Tooltip>
-                                      </Option>
-                                    ))}
-                                  </Select>
-                                </ReadAndEdit>
-
+                                  ) : '无'
+                                }
                               </div>
-                            </div>
-                          ) : null
-                        }
-
-                        <div className="line-start mt-10">
-                          <div className="c7n-property-wrapper">
-                            <span className="c7n-property">
-                              <FormattedMessage id="issue_edit_timeFollow" />
-                              ：
-                            </span>
-                          </div>
-                          <div className="c7n-value-wrapper" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
-                            <Progress
-                              style={{ width: 100 }}
-                              percent={
-                                this.getWorkloads() !== 0
-                                  ? (this.getWorkloads() * 100)
-                                  / (this.getWorkloads() + (this.state.origin.remainingTime || 0))
-                                  : 0
-                              }
-                              size="small"
-                              status="success"
-                            />
-                            <span>
-                              {this.getWorkloads()}
-                              h/
-                              {this.getWorkloads() + (this.state.origin.remainingTime || 0)}
-                              h
-                            </span>
-                            <span
-                              role="none"
-                              style={{
-                                marginLeft: '8px',
-                                color: '#3f51b5',
-                                cursor: 'pointer',
-                              }}
-                              onClick={() => {
+                            )}
+                          >
+                            <Select
+                              value={this.transToArr(this.state.labelIssueRelDTOList, 'labelName', 'array')}
+                              mode="tags"
+                              autoFocus
+                              loading={this.state.selectLoading}
+                              tokenSeparators={[',']}
+                              getPopupContainer={triggerNode => triggerNode.parentNode}
+                              style={{ width: '200px', marginTop: 0, paddingTop: 0 }}
+                              onFocus={() => {
                                 this.setState({
-                                  dailyLogShow: true,
+                                  selectLoading: true,
+                                });
+                                loadLabels().then((res) => {
+                                  this.setState({
+                                    originLabels: res,
+                                    selectLoading: false,
+                                  });
                                 });
                               }}
+                              onChange={value => this.setState({ labelIssueRelDTOList: value })}
                             >
-                              <FormattedMessage id="issue_edit_registrationWork" />
-                            </span>
-                          </div>
+                              {this.state.originLabels.map(label => (
+                                <Option
+                                  key={label.labelName}
+                                  value={label.labelName}
+                                >
+                                  {label.labelName}
+                                </Option>
+                              ))}
+                            </Select>
+                          </ReadAndEdit>
                         </div>
                       </div>
-                      {/* --- */}
-                      <div style={{ flex: 1, width: '50%' }}>
-                        <div className="line-start mt-10">
-                          <div className="c7n-property-wrapper">
-                            <span className="c7n-subtitle">
-                              <FormattedMessage id="issue_edit_person" />
-                            </span>
-                          </div>
-                        </div>
-                        <div className="line-start mt-10 assignee">
-                          <div className="c7n-property-wrapper">
-                            <span className="c7n-property">
-                              <FormattedMessage id="issue_edit_reporter" />
-                              ：
-
-                            </span>
-                          </div>
-                          <div className="c7n-value-wrapper" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
-                            <ReadAndEdit
-                              style={{ marginBottom: 5 }}
-                              callback={this.changeRae.bind(this)}
-                              thisType="reporterId"
-                              current={this.state.currentRae}
-                              origin={this.state.reporterId}
-                              onOk={this.updateIssue.bind(this, 'reporterId')}
-                              onCancel={this.resetReporterId.bind(this)}
-                              onInit={() => {
-                                this.setAnIssueToState(this.state.origin);
-                                if (this.state.reporterId) {
-                                  this.setState({
-                                    flag: 'loading',
-                                  });
-                                  getUser(this.state.reporterId).then((res) => {
+                      {
+                        this.state.typeCode === 'bug' ? (
+                          <div className="line-start mt-10">
+                            <div className="c7n-property-wrapper">
+                              <span className="c7n-property">
+                                影响的版本：
+                              </span>
+                            </div>
+                            <div className="c7n-value-wrapper">
+                              <ReadAndEdit
+                                callback={this.changeRae.bind(this)}
+                                thisType="influenceVersions"
+                                current={this.state.currentRae}
+                                origin={this.state.influenceVersions}
+                                onInit={() => this.setAnIssueToState(this.state.origin)}
+                                onOk={this.updateVersionSelect.bind(this, 'originVersions', 'influenceVersions')}
+                                onCancel={this.resetInfluenceVersions.bind(this)}
+                                readModeContent={(
+                                  <div style={{ color: '#3f51b5' }}>
+                                    {
+                                      !this.state.influenceVersionsFixed.length && !this.state.influenceVersions.length ? '无' : (
+                                        <div>
+                                          <div style={{ color: '#000' }}>
+                                            {_.map(this.state.influenceVersionsFixed, 'name').join(' , ')}
+                                          </div>
+                                          <p style={{ color: '#3f51b5', wordBreak: 'break-word' }}>
+                                            {_.map(this.state.influenceVersions, 'name').join(' , ')}
+                                          </p>
+                                        </div>
+                                      )
+                                    }
+                                  </div>
+                                )}
+                              >
+                                {
+                                  this.state.influenceVersionsFixed.length ? (
+                                    <div>
+                                      <span>已归档版本：</span>
+                                      <span>
+                                        {_.map(this.state.influenceVersionsFixed, 'name').join(' , ')}
+                                      </span>
+                                    </div>
+                                  ) : null
+                                }
+                                <Select
+                                  label="未归档版本"
+                                  value={this.transToArr(this.state.influenceVersions, 'name', 'array')}
+                                  mode="tags"
+                                  autoFocus
+                                  loading={this.state.selectLoading}
+                                  getPopupContainer={triggerNode => triggerNode.parentNode}
+                                  tokenSeparators={[',']}
+                                  style={{ width: '200px', marginTop: 0, paddingTop: 0 }}
+                                  onFocus={() => {
                                     this.setState({
-                                      reporterId: JSON.stringify(res.content[0]),
-                                      originUsers: res.content,
-                                      flag: 'finish',
+                                      selectLoading: true,
+                                    });
+                                    loadVersions(['version_planning', 'released']).then((res) => {
+                                      this.setState({
+                                        originVersions: res,
+                                        selectLoading: false,
+                                      });
+                                    });
+                                  }}
+                                  onChange={value => this.setState({ influenceVersions: value })}
+                                >
+                                  {this.state.originVersions.map(version => (
+                                    <Option
+                                      key={version.name}
+                                      value={version.name}
+                                    >
+                                      {version.name}
+                                    </Option>
+                                  ))}
+                                </Select>
+                              </ReadAndEdit>
+                            </div>
+                          </div>
+                        ) : null
+                      }
+
+                      <div className="line-start mt-10">
+                        <div className="c7n-property-wrapper">
+                          <span className="c7n-property">
+                            修复的版本：
+                          </span>
+                        </div>
+                        <div className="c7n-value-wrapper">
+                          <ReadAndEdit
+                            callback={this.changeRae.bind(this)}
+                            thisType="fixVersions"
+                            current={this.state.currentRae}
+                            origin={this.state.fixVersions}
+                            onInit={() => this.setAnIssueToState(this.state.origin)}
+                            onOk={this.updateVersionSelect.bind(this, 'originVersions', 'fixVersions')}
+                            onCancel={this.resetFixVersions.bind(this)}
+                            readModeContent={(
+                              <div style={{ color: '#3f51b5' }}>
+                                {
+                                  !this.state.fixVersionsFixed.length && !this.state.fixVersions.length ? '无' : (
+                                    <div>
+                                      <div style={{ color: '#000' }}>
+                                        {_.map(this.state.fixVersionsFixed, 'name').join(' , ')}
+                                      </div>
+                                      <p style={{ color: '#3f51b5', wordBreak: 'break-word' }}>
+                                        {_.map(this.state.fixVersions, 'name').join(' , ')}
+                                      </p>
+                                    </div>
+                                  )
+                                }
+                              </div>
+                            )}
+                          >
+                            {
+                              this.state.fixVersionsFixed.length ? (
+                                <div>
+                                  <span>已归档版本：</span>
+                                  <span>
+                                    {_.map(this.state.fixVersionsFixed, 'name').join(' , ')}
+                                  </span>
+                                </div>
+                              ) : null
+                            }
+                            <Select
+                              label="未归档版本"
+                              value={this.transToArr(this.state.fixVersions, 'name', 'array')}
+                              mode="tags"
+                              autoFocus
+                              loading={this.state.selectLoading}
+                              tokenSeparators={[',']}
+                              getPopupContainer={triggerNode => triggerNode.parentNode}
+                              style={{ width: '200px', marginTop: 0, paddingTop: 0 }}
+                              onFocus={() => {
+                                this.setState({
+                                  selectLoading: true,
+                                });
+                                loadVersions(['version_planning', 'released']).then((res) => {
+                                  this.setState({
+                                    originVersions: res,
+                                    selectLoading: false,
+                                  });
+                                });
+                              }}
+                              onChange={value => this.setState({ fixVersions: value })}
+                            >
+                              {this.state.originVersions.map(version => (
+                                <Option
+                                  key={version.name}
+                                  value={version.name}
+                                >
+                                  {version.name}
+                                </Option>
+                              ))}
+                            </Select>
+                          </ReadAndEdit>
+                        </div>
+                      </div>
+                      {
+                        this.state.typeCode !== 'issue_epic' && this.state.typeCode !== 'sub_task' ? (
+                          <div className="line-start mt-10">
+                            <div className="c7n-property-wrapper">
+                              <span className="c7n-property">
+                                史诗：
+                              </span>
+                            </div>
+                            <div className="c7n-value-wrapper">
+                              <ReadAndEdit
+                                callback={this.changeRae.bind(this)}
+                                thisType="epicId"
+                                current={this.state.currentRae}
+                                origin={this.state.epicId}
+                                onOk={this.updateIssue.bind(this, 'epicId')}
+                                onCancel={this.resetEpicId.bind(this)}
+                                onInit={() => {
+                                  this.setAnIssueToState(this.state.origin);
+                                  loadEpics().then((res) => {
+                                    this.setState({
+                                      originEpics: res,
                                     });
                                   });
-                                } else {
-                                  this.setState({
-                                    reporterId: undefined,
-                                    originUsers: [],
+                                }}
+                                readModeContent={(
+                                  <div>
+                                    {
+                                      this.state.epicId ? (
+                                        <div
+                                          style={{
+                                            color: this.state.epicColor,
+                                            borderWidth: '1px',
+                                            borderStyle: 'solid',
+                                            borderColor: this.state.epicColor,
+                                            borderRadius: '2px',
+                                            fontSize: '13px',
+                                            lineHeight: '20px',
+                                            padding: '0 8px',
+                                            display: 'inline-block',
+                                          }}
+                                        >
+                                          {this.state.epicName}
+                                        </div>
+                                      ) : '无'
+                                    }
+                                  </div>
+                                )}
+                              >
+                                <Select
+                                  value={this.state.originEpics.length ? this.state.epicId || undefined : this.state.epicName || undefined}
+                                  getPopupContainer={triggerNode => triggerNode.parentNode}
+                                  style={{ width: '150px' }}
+                                  autoFocus
+                                  allowClear
+                                  loading={this.state.selectLoading}
+                                  onFocus={() => {
+                                    this.setState({
+                                      selectLoading: true,
+                                    });
+                                    loadEpics().then((res) => {
+                                      this.setState({
+                                        originEpics: res,
+                                        selectLoading: false,
+                                      });
+                                    });
+                                  }}
+                                  onChange={(value) => {
+                                    const epic = _.find(this.state.originEpics,
+                                      { issueId: value * 1 });
+                                    this.setState({
+                                      epicId: value,
+                                      // epicName: epic.epicName,
+                                    });
+                                  }}
+                                >
+                                  {this.state.originEpics.map(epic => <Option key={`${epic.issueId}`} value={epic.issueId}>{epic.epicName}</Option>)}
+                                </Select>
+                              </ReadAndEdit>
+
+                            </div>
+                          </div>
+                        ) : null
+                      }
+
+                      <div className="line-start mt-10">
+                        <div className="c7n-property-wrapper">
+                          <span className="c7n-property">
+                            冲刺：
+                          </span>
+                        </div>
+                        <div className="c7n-value-wrapper">
+                          {
+                            this.state.typeCode !== 'sub_task' ? (
+                              <ReadAndEdit
+                                callback={this.changeRae.bind(this)}
+                                thisType="sprintId"
+                                current={this.state.currentRae}
+                                origin={this.state.activeSprint.sprintId}
+                                onOk={this.updateIssue.bind(this, 'sprintId')}
+                                onCancel={this.resetSprintId.bind(this)}
+                                onInit={() => {
+                                  this.setAnIssueToState(this.state.origin);
+                                  loadSprints(['sprint_planning', 'started']).then((res) => {
+                                    this.setState({
+                                      originSprints: res,
+                                      sprintId: this.state.activeSprint.sprintId,
+                                    });
                                   });
+                                }}
+                                readModeContent={(
+                                  <div>
+                                    {
+                                      !this.state.closeSprint.length && !this.state.activeSprint.sprintId ? '无' : (
+                                        <div>
+                                          {/* {
+                                          this.state.closeSprint.map(v => (
+                                            <div 
+                                              style={{
+                                                color: 'rgba(0, 0, 0, 0.5)',
+                                                border: '1px solid rgba(0, 0, 0, 0.5)',
+                                                borderRadius: '2px',
+                                                fontSize: '13px',
+                                                lineHeight: '20px',
+                                                padding: '0 8px',
+                                                display: 'inline-block',
+                                                marginRight: 5,
+                                              }}
+                                            >
+                                              {v.sprintName}
+                                            </div>
+                                          ))
+                                        } */}
+                                          <div>
+                                            {_.map(this.state.closeSprint, 'sprintName').join(' , ')}
+                                          </div>
+                                          {
+                                            this.state.activeSprint.sprintId && (
+                                              <div
+                                                style={{
+                                                  color: '#4d90fe',
+                                                  // border: '1px solid #4d90fe',
+                                                  // borderRadius: '2px',
+                                                  fontSize: '13px',
+                                                  lineHeight: '20px',
+                                                  // padding: '0 8px',
+                                                  display: 'inline-block',
+                                                  marginTop: 5,
+                                                }}
+                                              >
+                                                {this.state.activeSprint.sprintName}
+                                              </div>
+                                            )
+                                          }
+                                        </div>
+                                      )
+                                    }
+                                  </div>
+                                )}
+                              >
+                                {
+                                  this.state.closeSprint.length ? (
+                                    <div>
+                                      <span>已结束冲刺：</span>
+                                      <span>
+                                        {_.map(this.state.closeSprint, 'sprintName').join(' , ')}
+                                      </span>
+                                    </div>
+                                  ) : null
                                 }
-                              }}
-                              readModeContent={(
+                                <Select
+                                  label="活跃冲刺"
+                                  value={this.state.sprintId || undefined}
+                                  getPopupContainer={triggerNode => triggerNode.parentNode}
+                                  style={{ width: '150px' }}
+                                  autoFocus
+                                  allowClear
+                                  loading={this.state.selectLoading}
+                                  onFocus={() => {
+                                    this.setState({
+                                      selectLoading: true,
+                                    });
+                                    loadSprints(['sprint_planning', 'started']).then((res) => {
+                                      this.setState({
+                                        originSprints: res,
+                                        selectLoading: false,
+                                      });
+                                    });
+                                  }}
+                                  onChange={(value) => {
+                                    const sprint = _.find(this.state.originSprints,
+                                      { sprintId: value * 1 });
+                                    this.setState({
+                                      sprintId: value,
+                                      // sprintName: sprint.sprintName,
+                                    });
+                                  }}
+                                >
+                                  {this.state.originSprints.map(sprint => <Option key={`${sprint.sprintId}`} value={sprint.sprintId}>{sprint.sprintName}</Option>)}
+                                </Select>
+                              </ReadAndEdit>
+                            ) : (
                                 <div>
                                   {
-                                    this.state.reporterId && this.state.reporterName ? (
-                                      <UserHead
-                                        user={{
-                                          id: this.state.reporterId,
-                                          loginName: '',
-                                          realName: this.state.reporterName,
-                                          avatar: this.state.reporterImageUrl,
+                                    this.state.activeSprint.sprintId ? (
+                                      <div
+                                        style={{
+                                          color: '#4d90fe',
+                                          // border: '1px solid #4d90fe',
+                                          // borderRadius: '2px',
+                                          fontSize: '13px',
+                                          lineHeight: '20px',
+                                          // padding: '0 8px',
+                                          display: 'inline-block',
                                         }}
-                                      />
+                                      >
+                                        {this.state.activeSprint.sprintName}
+                                      </div>
                                     ) : '无'
                                   }
                                 </div>
-                              )}
-                            >
-                              <Select
-                                value={this.state.flag === 'loading' ? undefined : this.state.reporterId || undefined}
-                                style={{ width: 150 }}
-                                loading={this.state.selectLoading}
-                                allowClear
-                                autoFocus
-                                filter
-                                onFilterChange={this.onFilterChange.bind(this)}
-                                getPopupContainer={triggerNode => triggerNode.parentNode}
-                                onChange={(value) => {
-                                  this.setState({ reporterId: value });
-                                }}
+                              )
+                          }
+                        </div>
+                      </div>
+
+
+                      <div className="line-start mt-10">
+                        <div className="c7n-property-wrapper">
+                          <span className="c7n-property">
+                            时间跟踪：
+                          </span>
+                        </div>
+                        <div className="c7n-value-wrapper" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
+                          <Progress
+                            style={{ width: 100 }}
+                            percent={
+                              this.getWorkloads() !== 0
+                                ? (this.getWorkloads() * 100) / (this.getWorkloads() + (this.state.origin.remainingTime || 0))
+                                : 0
+                            }
+                            size="small"
+                            status="success"
+                          />
+                          <span>
+                            {this.getWorkloads()}
+                            h/
+                            {this.getWorkloads() + (this.state.origin.remainingTime || 0)}
+                            h
+                          </span>
+                          <span
+                            role="none"
+                            style={{
+                              marginLeft: '8px',
+                              color: '#3f51b5',
+                              cursor: 'pointer',
+                            }}
+                            onClick={() => {
+                              this.setState({
+                                dailyLogShow: true,
+                              });
+                            }}
+                          >
+                            登记工作
+                          </span>
+                        </div>
+                      </div>
+
+                      {
+                        this.state.typeCode === 'issue_epic' ? (
+                          <div className="line-start mt-10">
+                            <div className="c7n-property-wrapper">
+                              <span className="c7n-property">
+                                Epic名：
+                              </span>
+                            </div>
+                            <div className="c7n-value-wrapper" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
+                              <ReadAndEdit
+                                callback={this.changeRae.bind(this)}
+                                thisType="epicName"
+                                current={this.state.currentRae}
+                                handleEnter
+                                line
+                                origin={this.state.epicName}
+                                onInit={() => this.setAnIssueToState()}
+                                onOk={this.updateIssue.bind(this, 'epicName')}
+                                onCancel={this.resetEpicName.bind(this)}
+                                readModeContent={(
+                                  <div>
+                                    <p style={{ wordBreak: 'break-word', marginBottom: 0 }}>
+                                      {this.state.epicName}
+                                    </p>
+                                  </div>
+                                )}
                               >
-                                {this.state.originUsers.map(user => (
-                                  <Option key={JSON.stringify(user)} value={JSON.stringify(user)}>
-                                    <div style={{ display: 'inline-flex', alignItems: 'center', padding: '2px' }}>
-                                      <UserHead
-                                        user={{
-                                          id: user.id,
-                                          loginName: user.loginName,
-                                          realName: user.realName,
-                                          avatar: user.imageUrl,
-                                        }}
-                                      />
-                                    </div>
-                                  </Option>
-                                ))}
-                              </Select>
-                            </ReadAndEdit>
-                            <span
-                              role="none"
-                              style={{
-                                color: '#3f51b5',
-                                cursor: 'pointer',
-                                marginTop: '-5px',
-                                display: 'inline-block',
-                                marginBottom: 5,
-                              }}
-                              onClick={() => {
-                                getSelf().then((res) => {
-                                  if (res.id !== this.state.reporterId) {
+                                <TextArea
+                                  maxLength={44}
+                                  style={{ width: '200px' }}
+                                  value={this.state.epicName}
+                                  size="small"
+                                  autoFocus={{ minRows: 2, maxRows: 6 }}
+                                  onChange={this.handleEpicNameChange.bind(this)}
+                                  onPressEnter={() => {
+                                    this.updateIssue('epicName');
                                     this.setState({
                                       currentRae: undefined,
-                                      reporterId: JSON.stringify(res),
-                                      reporterName: `${res.loginName}${res.realName}`,
-                                      reporterImageUrl: res.imageUrl,
-                                    }, () => {
-                                      this.updateIssue('reporterId');
                                     });
-                                  }
+                                  }}
+                                />
+                              </ReadAndEdit>
+                            </div>
+                          </div>
+                        ) : null
+                      }
+
+                      <div className="line-start mt-10">
+                        <div className="c7n-property-wrapper">
+                          <span className="c7n-subtitle">
+                            人员
+                          </span>
+                        </div>
+                      </div>
+                      <div className="line-start mt-10 assignee">
+                        <div className="c7n-property-wrapper">
+                          <span className="c7n-property">报告人：</span>
+                        </div>
+                        <div className="c7n-value-wrapper" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
+                          <ReadAndEdit
+                            style={{ marginBottom: 5 }}
+                            callback={this.changeRae.bind(this)}
+                            thisType="reporterId"
+                            current={this.state.currentRae}
+                            origin={this.state.reporterId}
+                            onOk={this.updateIssue.bind(this, 'reporterId')}
+                            onCancel={this.resetReporterId.bind(this)}
+                            onInit={() => {
+                              this.setAnIssueToState(this.state.origin);
+                              if (this.state.reporterId) {
+                                this.setState({
+                                  flag: 'loading',
                                 });
+                                getUser(this.state.reporterId).then((res) => {
+                                  this.setState({
+                                    reporterId: JSON.stringify(res.content[0]),
+                                    originUsers: [res.content[0]],
+                                    flag: 'finish',
+                                  });
+                                });
+                              } else {
+                                this.setState({
+                                  reporterId: undefined,
+                                  originUsers: [],
+                                });
+                              }
+                            }}
+                            readModeContent={(
+                              <div>
+                                {
+                                  this.state.reporterId && this.state.reporterName ? (
+                                    <UserHead
+                                      user={{
+                                        id: this.state.reporterId,
+                                        loginName: '',
+                                        realName: this.state.reporterName,
+                                        avatar: this.state.reporterImageUrl,
+                                      }}
+                                    />
+                                  ) : '无'
+                                }
+                              </div>
+                            )}
+                          >
+                            <Select
+                              value={this.state.flag === 'loading' ? undefined : this.state.reporterId || undefined}
+                              style={{ width: 150 }}
+                              loading={this.state.selectLoading}
+                              allowClear
+                              autoFocus
+                              filter
+                              onFilterChange={this.onFilterChange.bind(this)}
+                              getPopupContainer={triggerNode => triggerNode.parentNode}
+                              onChange={(value) => {
+                                this.setState({ reporterId: value });
                               }}
                             >
-                              <FormattedMessage id="issue_edit_assignToMe" />
-                            </span>
-                          </div>
-                        </div>
-                        <div className="line-start mt-10 assignee">
-                          <div className="c7n-property-wrapper">
-                            <span className="c7n-property">
-                              <FormattedMessage id="issue_edit_manager" />
-                              ：
-
-                            </span>
-                          </div>
-                          <div className="c7n-value-wrapper" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
-                            <ReadAndEdit
-                              style={{ marginBottom: 5 }}
-                              callback={this.changeRae.bind(this)}
-                              thisType="assigneeId"
-                              current={this.state.currentRae}
-                              origin={this.state.assigneeId}
-                              onOk={this.updateIssue.bind(this, 'assigneeId')}
-                              onCancel={this.resetAssigneeId.bind(this)}
-                              onInit={() => {
-                                this.setAnIssueToState(this.state.origin);
-                                if (this.state.assigneeId) {
+                              {this.state.originUsers.map(user => (
+                                <Option key={JSON.stringify(user)} value={JSON.stringify(user)}>
+                                  <div style={{ display: 'inline-flex', alignItems: 'center', padding: '2px' }}>
+                                    <UserHead
+                                      user={{
+                                        id: user && user.id,
+                                        loginName: user && user.loginName,
+                                        realName: user && user.realName,
+                                        avatar: user && user.imageUrl,
+                                      }}
+                                    />
+                                  </div>
+                                </Option>
+                              ))}
+                            </Select>
+                          </ReadAndEdit>
+                          <span
+                            role="none"
+                            style={{
+                              color: '#3f51b5',
+                              cursor: 'pointer',
+                              marginTop: '-5px',
+                              display: 'inline-block',
+                              marginBottom: 5,
+                            }}
+                            onClick={() => {
+                              getSelf().then((res) => {
+                                if (res.id !== this.state.reporterId) {
                                   this.setState({
-                                    flag: 'loading',
-                                  });
-                                  getUser(this.state.assigneeId).then((res) => {
-                                    this.setState({
-                                      assigneeId: JSON.stringify(res.content[0]),
-                                      originUsers: [res.content[0]],
-                                      flag: 'finish',
-                                    });
-                                  });
-                                } else {
-                                  this.setState({
-                                    assigneeId: undefined,
-                                    originUsers: [],
+                                    currentRae: undefined,
+                                    reporterId: JSON.stringify(res),
+                                    reporterName: `${res.loginName}${res.realName}`,
+                                    reporterImageUrl: res.imageUrl,
+                                  }, () => {
+                                    this.updateIssue('reporterId');
                                   });
                                 }
-                              }}
-                              readModeContent={(
-                                <div>
-                                  {
-                                    this.state.assigneeId && this.state.assigneeName ? (
-                                      <UserHead
-                                        user={{
-                                          id: this.state.assigneeId,
-                                          loginName: '',
-                                          realName: this.state.assigneeName,
-                                          avatar: this.state.assigneeImageUrl,
-                                        }}
-                                      />
-                                    ) : '无'
-                                  }
-                                </div>
-                              )}
-                            >
-                              <Select
-                                value={this.state.flag === 'loading' ? undefined : this.state.assigneeId || undefined}
-                                style={{ width: 150 }}
-                                loading={this.state.selectLoading}
-                                allowClear
-                                autoFocus
-                                filter
-                                onFilterChange={this.onFilterChange.bind(this)}
-                                getPopupContainer={triggerNode => triggerNode.parentNode}
-                                onChange={(value) => {
-                                  this.setState({ assigneeId: value });
-                                }}
-                              >
-                                {this.state.originUsers.map(user => (
-                                  <Option key={JSON.stringify(user)} value={JSON.stringify(user)}>
-                                    <div style={{ display: 'inline-flex', alignItems: 'center', padding: '2px' }}>
-                                      <UserHead
-                                        user={{
-                                          id: user.id,
-                                          loginName: user.loginName,
-                                          realName: user.realName,
-                                          avatar: user.imageUrl,
-                                        }}
-                                      />
-                                    </div>
-                                  </Option>
-                                ))}
-                              </Select>
-                            </ReadAndEdit>
-                            <span
-                              role="none"
-                              style={{
-                                color: '#3f51b5',
-                                cursor: 'pointer',
-                                marginTop: '-5px',
-                                display: 'inline-block',
-                                marginBottom: 5,
-                              }}
-                              onClick={() => {
-                                getSelf().then((res) => {
-                                  if (res.id !== this.state.assigneeId) {
-                                    this.setState({
-                                      currentRae: undefined,
-                                      assigneeId: JSON.stringify(res),
-                                      assigneeName: `${res.loginName}${res.realName}`,
-                                      assigneeImageUrl: res.imageUrl,
-                                    }, () => {
-                                      this.updateIssue('assigneeId');
-                                    });
-                                  }
+                              });
+                            }}
+                          >
+                            分配给我
+                          </span>
+                        </div>
+                      </div>
+                      <div className="line-start mt-10 assignee">
+                        <div className="c7n-property-wrapper">
+                          <span className="c7n-property">经办人：</span>
+                        </div>
+                        <div className="c7n-value-wrapper" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
+                          <ReadAndEdit
+                            style={{ marginBottom: 5 }}
+                            callback={this.changeRae.bind(this)}
+                            thisType="assigneeId"
+                            current={this.state.currentRae}
+                            origin={this.state.assigneeId}
+                            onOk={this.updateIssue.bind(this, 'assigneeId')}
+                            onCancel={this.resetAssigneeId.bind(this)}
+                            onInit={() => {
+                              this.setAnIssueToState(this.state.origin);
+                              if (this.state.assigneeId) {
+                                this.setState({
+                                  flag: 'loading',
                                 });
+                                getUser(this.state.assigneeId).then((res) => {
+                                  this.setState({
+                                    assigneeId: JSON.stringify(res.content[0]),
+                                    originUsers: [res.content[0]],
+                                    flag: 'finish',
+                                  });
+                                });
+                              } else {
+                                this.setState({
+                                  assigneeId: undefined,
+                                  originUsers: [],
+                                });
+                              }
+                            }}
+                            readModeContent={(
+                              <div>
+                                {
+                                  this.state.assigneeId && this.state.assigneeName ? (
+                                    <UserHead
+                                      user={{
+                                        id: this.state.assigneeId,
+                                        loginName: '',
+                                        realName: this.state.assigneeName,
+                                        avatar: this.state.assigneeImageUrl,
+                                      }}
+                                    />
+                                  ) : '无'
+                                }
+                              </div>
+                            )}
+                          >
+                            <Select
+                              value={this.state.flag === 'loading' ? undefined : this.state.assigneeId || undefined}
+                              style={{ width: 150 }}
+                              loading={this.state.selectLoading}
+                              allowClear
+                              autoFocus
+                              filter
+                              onFilterChange={this.onFilterChange.bind(this)}
+                              getPopupContainer={triggerNode => triggerNode.parentNode}
+                              onChange={(value) => {
+                                this.setState({ assigneeId: value });
                               }}
                             >
-                              <FormattedMessage id="issue_edit_assignToMe" />
-                            </span>
-                          </div>
+                              {this.state.originUsers.map(user => (
+                                <Option key={JSON.stringify(user)} value={JSON.stringify(user)}>
+                                  <div style={{ display: 'inline-flex', alignItems: 'center', padding: '2px' }}>
+                                    <UserHead
+                                      user={{
+                                        id: user && user.id,
+                                        loginName: user && user.loginName,
+                                        realName: user && user.realName,
+                                        avatar: user && user.imageUrl,
+                                      }}
+                                    />
+                                  </div>
+                                </Option>
+                              ))}
+                            </Select>
+                          </ReadAndEdit>
+                          <span
+                            role="none"
+                            style={{
+                              color: '#3f51b5',
+                              cursor: 'pointer',
+                              marginTop: '-5px',
+                              display: 'inline-block',
+                              marginBottom: 5,
+                            }}
+                            onClick={() => {
+                              getSelf().then((res) => {
+                                if (res.id !== this.state.assigneeId) {
+                                  this.setState({
+                                    currentRae: undefined,
+                                    assigneeId: JSON.stringify(res),
+                                    assigneeName: `${res.loginName}${res.realName}`,
+                                    assigneeImageUrl: res.imageUrl,
+                                  }, () => {
+                                    this.updateIssue('assigneeId');
+                                  });
+                                }
+                              });
+                            }}
+                          >
+                            分配给我
+                          </span>
                         </div>
+                      </div>
 
-                        <div className="line-start mt-10">
-                          <div className="c7n-property-wrapper">
-                            <span className="c7n-subtitle">
-                              <FormattedMessage id="issue_edit_date" />
-                            </span>
-                          </div>
+                      <div className="line-start mt-10">
+                        <div className="c7n-property-wrapper">
+                          <span className="c7n-subtitle">日期</span>
                         </div>
+                      </div>
 
-                        <div className="line-start mt-10">
-                          <div className="c7n-property-wrapper">
-                            <span className="c7n-property">
-                              <FormattedMessage id="issue_edit_createDate" />
-                              ：
-                            </span>
-                          </div>
-                          <div className="c7n-value-wrapper">
-                            {formatDate(this.state.creationDate)}
-                          </div>
+                      <div className="line-start mt-10">
+                        <div className="c7n-property-wrapper">
+                          <span className="c7n-property">创建时间：</span>
                         </div>
-                        <div className="line-start mt-10">
-                          <div className="c7n-property-wrapper">
-                            <span className="c7n-property">
-                              <FormattedMessage id="issue_edit_updateDate" />
-                              ：
-                            </span>
-                          </div>
-                          <div className="c7n-value-wrapper">
-                            {formatDate(this.state.lastUpdateDate)}
-                          </div>
+                        <div className="c7n-value-wrapper">
+                          {formatDate(this.state.creationDate)}
+                        </div>
+                      </div>
+                      <div className="line-start mt-10">
+                        <div className="c7n-property-wrapper">
+                          <span className="c7n-property">更新时间：</span>
+                        </div>
+                        <div className="c7n-value-wrapper">
+                          {formatDate(this.state.lastUpdateDate)}
                         </div>
                       </div>
                     </div>
@@ -2189,7 +2672,7 @@ class EditIssueNarrow extends Component {
                     <div className="c7n-title-wrapper">
                       <div className="c7n-title-left">
                         <Icon type="subject c7n-icon-title" />
-                        <span><FormattedMessage id="execute_description" /></span>
+                        <span>描述</span>
                       </div>
                       <div style={{
                         flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px',
@@ -2198,7 +2681,7 @@ class EditIssueNarrow extends Component {
                       <div className="c7n-title-right" style={{ marginLeft: '14px', position: 'relative' }}>
                         <Button className="leftBtn" funcType="flat" onClick={() => this.setState({ edit: true })}>
                           <Icon type="zoom_out_map icon" style={{ marginRight: 2 }} />
-                          <span><FormattedMessage id="execute_edit_fullScreen" /></span>
+                          <span>全屏编辑</span>
                         </Button>
                         <Icon
                           className="c7n-des-edit"
@@ -2219,82 +2702,11 @@ class EditIssueNarrow extends Component {
 
                 </div>
 
-                <div id="test1">
-                  <div className="c7n-title-wrapper">
-                    <div className="c7n-title-left">
-                      <Icon type="compass c7n-icon-title" />
-                      <FormattedMessage id="issue_edit_testDetail" />
-                    </div>
-                    <div style={{
-                      flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px',
-                    }}
-                    />
-                    <div className="c7n-title-right" style={{ marginLeft: '14px', position: 'relative' }}>
-                      <Button className="leftBtn" funcTyp="flat" onClick={() => this.setState({ createTestStepShow: true })}>
-                        <Icon type="playlist_add icon" style={{ marginRight: 2 }} />
-                        <FormattedMessage id="issue_edit_addTestDetail" />
-                      </Button>
-                    </div>
-                  </div>
-                  <div className="c7n-content-wrapper" style={{ paddingLeft: 0 }}>
-                    <TestStepTable
-                      issueId={this.state.origin.issueId}
-                      data={this.state.testStepData}
-                      enterLoad={() => {
-                        this.setState({
-                          issueLoading: true,
-                        });
-                      }}
-                      leaveLoad={() => {
-                        this.setState({
-                          issueLoading: false,
-                        });
-                      }}
-                      onOk={() => {
-                        this.reloadIssue();
-                      }}
-                    />
-                  </div>
-                </div>
-
-                <div id="test2">
-                  <div className="c7n-title-wrapper">
-                    <div className="c7n-title-left">
-                      <Icon type="explicit2 c7n-icon-title" />
-                      <FormattedMessage id="execute_cycle_execute" />
-                    </div>
-                    <div style={{
-                      flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px',
-                    }}
-                    />
-                  </div>
-                  <div className="c7n-content-wrapper" style={{ paddingLeft: 0 }}>
-                    <TestExecuteTable
-                      issueId={this.state.origin.issueId}
-                      data={this.state.testExecuteData}
-                      enterLoad={() => {
-                        this.setState({
-                          issueLoading: true,
-                        });
-                      }}
-                      leaveLoad={() => {
-                        this.setState({
-                          issueLoading: false,
-                        });
-                      }}
-                      onOk={() => {
-                        this.reloadIssue();
-                      }}
-                    />
-                  </div>
-                </div>
-
-
                 <div id="attachment">
                   <div className="c7n-title-wrapper">
                     <div className="c7n-title-left">
                       <Icon type="attach_file c7n-icon-title" />
-                      <FormattedMessage id="attachment" />
+                      <span>附件</span>
                     </div>
                     <div style={{
                       flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px', marginRight: '114.67px',
@@ -2315,7 +2727,7 @@ class EditIssueNarrow extends Component {
                   <div className="c7n-title-wrapper">
                     <div className="c7n-title-left">
                       <Icon type="sms_outline c7n-icon-title" />
-                      <FormattedMessage id="issue_edit_comment" />
+                      <span>评论</span>
                     </div>
                     <div style={{
                       flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px',
@@ -2324,7 +2736,7 @@ class EditIssueNarrow extends Component {
                     <div className="c7n-title-right" style={{ marginLeft: '14px' }}>
                       <Button className="leftBtn" funcType="flat" onClick={() => this.setState({ addCommit: true })}>
                         <Icon type="playlist_add icon" />
-                        <FormattedMessage id="issue_edit_addComment" />
+                        <span>添加评论</span>
                       </Button>
                     </div>
                   </div>
@@ -2335,7 +2747,7 @@ class EditIssueNarrow extends Component {
                   <div className="c7n-title-wrapper">
                     <div className="c7n-title-left">
                       <Icon type="work_log c7n-icon-title" />
-                      <FormattedMessage id="issue_edit_workLog" />
+                      <span>工作日志</span>
                     </div>
                     <div style={{
                       flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px',
@@ -2344,26 +2756,36 @@ class EditIssueNarrow extends Component {
                     <div className="c7n-title-right" style={{ marginLeft: '14px' }}>
                       <Button className="leftBtn" funcType="flat" onClick={() => this.setState({ dailyLogShow: true })}>
                         <Icon type="playlist_add icon" />
-                        <FormattedMessage id="issue_edit_registrationWork" />
+                        <span>登记工作</span>
                       </Button>
                     </div>
                   </div>
                   {this.renderLogs()}
                 </div>
 
-                <div id="data_log">
-                  <div className="c7n-title-wrapper">
-                    <div className="c7n-title-left">
-                      <Icon type="insert_invitation c7n-icon-title" />
-                      <FormattedMessage id="issue_edit_activeLog" />
+                {/* {
+                  this.state.origin.typeCode !== 'sub_task' && (
+                    <div id="sub_task">
+                      <div className="c7n-title-wrapper">
+                        <div className="c7n-title-left">
+                          <Icon type="filter_none c7n-icon-title" />
+                          <span>子任务</span>
+                        </div>
+                        <div style={{
+                          flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px',
+                        }}
+                        />
+                        <div className="c7n-title-right" style={{ marginLeft: '14px' }}>
+                          <Button className="leftBtn" funcType="flat" onClick={() => this.setState({ createSubTaskShow: true })}>
+                            <Icon type="playlist_add icon" />
+                            <span>创建子任务</span>
+                          </Button>
+                        </div>
+                      </div>
+                      {this.renderSubIssues()}
                     </div>
-                    <div style={{
-                      flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px',
-                    }}
-                    />
-                  </div>
-                  {this.renderDataLogs()}
-                </div>
+                  )
+                } */}
 
                 {
                   this.state.origin.typeCode !== 'sub_task' && (
@@ -2371,7 +2793,7 @@ class EditIssueNarrow extends Component {
                       <div className="c7n-title-wrapper">
                         <div className="c7n-title-left">
                           <Icon type="link c7n-icon-title" />
-                          <FormattedMessage id="issue_edit_linkIssue" />
+                          <span>问题链接</span>
                         </div>
                         <div style={{
                           flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px',
@@ -2379,8 +2801,8 @@ class EditIssueNarrow extends Component {
                         />
                         <div className="c7n-title-right" style={{ marginLeft: '14px' }}>
                           <Button className="leftBtn" funcType="flat" onClick={() => this.setState({ createLinkTaskShow: true })}>
-                            <Icon type="playlist_add icon" />
-                            <FormattedMessage id="issue_edit_addLinkIssue" />
+                            <Icon type="relate icon" />
+                            <span>创建链接</span>
                           </Button>
                         </div>
                       </div>
@@ -2388,6 +2810,27 @@ class EditIssueNarrow extends Component {
                     </div>
                   )
                 }
+
+                {/* <div id="branch">
+                  <div className="c7n-title-wrapper">
+                    <div className="c7n-title-left">
+                      <Icon type="branch c7n-icon-title" />
+                      <span>开发</span>
+                    </div>
+                    <div style={{
+                      flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px',
+                    }}
+                    />
+                    <div className="c7n-title-right" style={{ marginLeft: '14px' }}>
+                      <Button className="leftBtn" funcType="flat" onClick={() => this.setState({ createBranchShow: true })}>
+                        <Icon type="playlist_add icon" />
+                        <span>创建分支</span>
+                      </Button>
+                    </div>
+                  </div>
+                  {this.renderBranchs()}
+                </div> */}
+
               </div>
             </section>
           </div>
@@ -2410,20 +2853,22 @@ class EditIssueNarrow extends Component {
               visible={this.state.dailyLogShow}
               onCancel={() => this.setState({ dailyLogShow: false })}
               onOk={() => {
-                loadWorklogs(this.state.issueId).then((res) => {
-                  this.setState({
-                    worklogs: res,
-                  });
-                });
-                loadIssue(this.state.issueId).then((res) => {
-                  this.setAnIssueToState(res);
-                });
+                this.reloadIssue(this.state.origin.issueId);
                 this.setState({ dailyLogShow: false });
               }}
             />
           ) : null
         }
-
+        {/* {
+          this.state.createSubTaskShow ? (
+            <CreateSubTask
+              issueId={this.state.origin.issueId}
+              visible={this.state.createSubTaskShow}
+              onCancel={() => this.setState({ createSubTaskShow: false })}
+              onOk={this.handleCreateSubIssue.bind(this)}
+            />
+          ) : null
+        } */}
         {
           this.state.createLinkTaskShow ? (
             <CreateLinkTask
@@ -2448,40 +2893,91 @@ class EditIssueNarrow extends Component {
             />
           ) : null
         }
-        {
-          this.state.createTestStepShow ? (
-            <CreateTestStep
+        {/* {
+          this.state.transformSubIssueShow ? (
+            <TransformSubIssue
+              visible={this.state.transformSubIssueShow}
               issueId={this.state.origin.issueId}
-              issueName={this.state.origin.issueNum}
-              visible={this.state.createTestStepShow}
-              lastRank={this.state.testStepData.length
-                ? this.state.testStepData[this.state.testStepData.length - 1].rank : null}
-              onCancel={() => this.setState({ createTestStepShow: false })}
-              onOk={() => {
-                this.setState({ createTestStepShow: false });
-                this.reloadIssue();
-              }}
+              issueNum={this.state.origin.issueNum}
+              ovn={this.state.origin.objectVersionNumber}
+              onCancel={() => this.setState({ transformSubIssueShow: false })}
+              onOk={this.handleTransformSubIssue.bind(this)}
             />
           ) : null
         }
         {
-          this.state.executeTestShow ? (
-            <ExecuteTest
+          this.state.transformFromSubIssueShow ? (
+            <TransformFromSubIssue
+              visible={this.state.transformFromSubIssueShow}
               issueId={this.state.origin.issueId}
-              issueName={this.state.origin.issueNum}
-              visible={this.state.executeTestShow}
-              lastRank={this.state.testExecuteData.length
-                ? this.state.testExecuteData[this.state.testExecuteData.length - 1].rank : null}
-              onCancel={() => this.setState({ executeTestShow: false })}
-              onOk={() => {
-                this.setState({ executeTestShow: false });
-                this.reloadIssue();
-              }}
+              issueNum={this.state.origin.issueNum}
+              ovn={this.state.origin.objectVersionNumber}
+              onCancel={() => this.setState({ transformFromSubIssueShow: false })}
+              onOk={this.handleTransformFromSubIssue.bind(this)}
             />
           ) : null
         }
+        {
+          this.state.createBranchShow ? (
+            <CreateBranch
+              issueId={this.state.origin.issueId}
+              typeCode={this.state.origin.typeCode}
+              issueNum={this.state.origin.issueNum}
+              onOk={() => {
+                this.setState({ createBranchShow: false });
+                this.reloadIssue();
+              }}
+              onCancel={() => this.setState({ createBranchShow: false })}
+              visible={this.state.createBranchShow}
+            />
+          ) : null
+        }
+        {
+          this.state.commitShow ? (
+            <Commits
+              issueId={this.state.origin.issueId}
+              issueNum={this.state.origin.issueNum}
+              time={this.state.branchs.commitUpdateTime}
+              onCancel={() => {
+                this.setState({ commitShow: false });
+              }}
+              visible={this.state.commitShow}
+            />
+          ) : null
+        }
+        {
+          this.state.mergeRequestShow ? (
+            <MergeRequest
+              issueId={this.state.origin.issueId}
+              issueNum={this.state.origin.issueNum}
+              num={this.state.branchs.totalMergeRequest}
+              onCancel={() => {
+                this.setState({ mergeRequestShow: false });
+              }}
+              visible={this.state.mergeRequestShow}
+            />
+          ) : null
+        }
+        {
+          this.state.assigneeShow ? (
+            <Assignee
+              issueId={this.state.origin.issueId}
+              issueNum={this.state.origin.issueNum}
+              visible={this.state.assigneeShow}
+              assigneeId={this.state.assigneeId}
+              objectVersionNumber={this.state.origin.objectVersionNumber}
+              onOk={() => {
+                this.setState({ assigneeShow: false });
+                this.reloadIssue();
+              }}
+              onCancel={() => {
+                this.setState({ assigneeShow: false });
+              }}
+            />
+          ) : null
+        } */}
       </div>
     );
   }
 }
-export default EditIssueNarrow;
+export default withRouter(CreateSprint);

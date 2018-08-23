@@ -5,9 +5,7 @@ import _ from 'lodash';
 import UserHead from '../../UserHead';
 import WYSIWYGEditor from '../../WYSIWYGEditor';
 import { IssueDescription } from '../../CommonComponent';
-import {
-  delta2Html, text2Delta, beforeTextUpload, formatDate, 
-} from '../../../../common/utils';
+import { delta2Html, text2Delta, beforeTextUpload, formatDate } from '../../../../common/utils';
 import { deleteCommit, updateCommit } from '../../../../api/IssueApi';
 import './Comment.scss';
 
@@ -108,17 +106,19 @@ class Comment extends Component {
               />
             ) : null
           }
-          <div className="c7n-title-commit" style={{ flex: 1 }}>
-            <UserHead
-              user={{
-                id: commit.userId,
-                loginName: '',
-                realName: commit.userName,
-                avatar: commit.imageUrl,
-              }}
-              color="#3f51b5"
-            />
-            <span style={{ color: 'rgba(0, 0, 0, 0.65)', flexShrink: 0, marginLeft: 15 }}>添加了评论</span>
+          <div className="c7n-title-commit">
+            <div style={{ marginRight: 19 }}>
+              <UserHead
+                user={{
+                  id: commit.userId,
+                  loginName: '',
+                  realName: commit.userName,
+                  avatar: commit.imageUrl,
+                }}
+                color={'#3f51b5'}
+              />
+            </div>
+            <span style={{ color: 'rgba(0, 0, 0, 0.65)' }}>添加了评论</span>
           </div>
           <div className="c7n-action">
             <Icon
@@ -155,9 +155,7 @@ class Comment extends Component {
           </div>
         </div>
         <div className="line-start" style={{ color: 'rgba(0, 0, 0, 0.65)', marginTop: 2 }}>
-          - 
-          {' '}
-          {formatDate(commit.lastUpdateDate)}
+          - {formatDate(commit.lastUpdateDate)}
         </div>
         {
           this.state.expand && (

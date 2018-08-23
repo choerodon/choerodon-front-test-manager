@@ -85,12 +85,6 @@ class DataLog extends Component {
       }
     } else {
       // null -> null
-      if (field === 'description') {
-        if (oldString && !newString) {
-          return '移除';
-        }
-        return '更新';
-      }
       if (field === 'priority') {
         return '将';
       }
@@ -202,7 +196,7 @@ class DataLog extends Component {
       // yyy -> null
       if (['Story Points', 'timeestimate'].includes(field)) {
         return ` 【${oldString}】 `;
-      } else if (['Attachment', 'timespent', 'Comment'].includes(field)) {
+      } else if (['Attachment', 'timespent'].includes(field)) {
         return '';
       } else {
         return ` 【${oldString}】 `;

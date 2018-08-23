@@ -5,19 +5,17 @@ import _ from 'lodash';
 import UserHead from '../../UserHead';
 import WYSIWYGEditor from '../../WYSIWYGEditor';
 import { IssueDescription } from '../../CommonComponent';
-import {
-  delta2Html, text2Delta, beforeTextUpload, formatDate, 
-} from '../../../../common/utils';
-import { deleteCommit, updateCommit } from '../../../../api/IssueApi';
-import './Comment.scss';
+import { delta2Html, text2Delta, beforeTextUpload, formatDate } from '../../../../common/utils';
+import { deleteWorklog, updateWorklog } from '../../../../api/IssueApi';
+import './Log.scss';
 
 
-class Comment extends Component {
+class Log extends Component {
   constructor(props, context) {
     super(props, context);
     this.state = {
-      editCommentId: undefined,
-      editComment: undefined,
+      editLogId: undefined,
+      editLog: undefined,
       expand: false,
     };
   }
@@ -25,51 +23,51 @@ class Comment extends Component {
   componentDidMount() {
   }
 
-  confirm(commentId, e) {
-    this.handleDeleteCommit(commentId);
+  confirm(logId, e) {
+    this.handleDeleteLog(logId);
   }
 
   cancel(e) {
   }
 
-  handleDeleteCommit(commentId) {
-    deleteCommit(commentId)
+  handleDeleteLog(logId) {
+    deleteWorklog(logId)
       .then((res) => {
-        this.props.onDeleteComment();
+        this.props.onDeleteLog();
       });
   }
 
-  handleUpdateComment(comment) {
-    const { commentId, objectVersionNumber } = comment;
+  handleUpdateLog(log) {
+    const { logId, objectVersionNumber } = log;
     const extra = {
-      commentId,
+      logId,
       objectVersionNumber,
     };
-    const updateCommentDes = this.state.editComment;
-    if (updateCommentDes) {
-      beforeTextUpload(updateCommentDes, extra, this.updateComment, 'commentText');
+    const updateLogDes = this.state.editLog;
+    if (updateLogDes) {
+      beforeTextUpload(updateLogDes, extra, this.updateLog, 'description');
     } else {
-      extra.commentText = '';
-      this.updateComment(extra);
+      extra.description = '';
+      this.updateLog(extra);
     }
   }
 
-  updateComment = (comment) => {
-    updateCommit(comment).then((res) => {
+  updateLog = (log) => {
+    updateWorklog(log.logId, log).then((res) => {
       this.setState({
-        editCommentId: undefined,
-        editComment: undefined,
+        editLogId: undefined,
+        editLog: undefined,
       });
-      this.props.onUpdateComment();
+      this.props.onUpdateLog();
     });
   }
 
   render() {
-    const commit = this.props.comment;
-    const deltaEdit = text2Delta(this.state.editComment);
+    const { worklog } = this.props;
+    const deltaEdit = text2Delta(this.state.editLog);
     return (
       <div
-        className={`c7n-comment ${commit.commentId === this.state.editCommentId ? 'c7n-comment-focus' : ''}`}
+        className={`c7n-log ${worklog.logId === this.state.editLogId ? 'c7n-log-focus' : ''}`}
       >
         <div className="line-justify">
           {
@@ -108,17 +106,19 @@ class Comment extends Component {
               />
             ) : null
           }
-          <div className="c7n-title-commit" style={{ flex: 1 }}>
-            <UserHead
-              user={{
-                id: commit.userId,
-                loginName: '',
-                realName: commit.userName,
-                avatar: commit.imageUrl,
-              }}
-              color="#3f51b5"
-            />
-            <span style={{ color: 'rgba(0, 0, 0, 0.65)', flexShrink: 0, marginLeft: 15 }}>添加了评论</span>
+          <div className="c7n-title-log">
+            <div style={{ marginRight: 19 }}>
+              <UserHead
+                user={{
+                  id: worklog.userId,
+                  loginName: '',
+                  realName: worklog.userName,
+                  avatar: worklog.imageUrl,
+                }}
+                color={'#3f51b5'}
+              />
+            </div>
+            <span style={{ color: 'rgba(0, 0, 0, 0.65)' }}>记录了工作日志</span>
           </div>
           <div className="c7n-action">
             <Icon
@@ -126,62 +126,65 @@ class Comment extends Component {
               type="mode_edit mlr-3 pointer"
               onClick={() => {
                 this.setState({
-                  editCommentId: commit.commentId,
-                  editComment: commit.commentText,
+                  editLogId: worklog.logId,
+                  editLog: worklog.description,
                   expand: true,
                 });
               }}
             />
             <Popconfirm
-              title="确认要删除该评论吗?"
+              title="确认要删除该工作日志吗?"
               placement="left"
-              onConfirm={this.confirm.bind(this, commit.commentId)}
+              onConfirm={this.confirm.bind(this, worklog.logId)}
               onCancel={this.cancel}
               okText="删除"
               cancelText="取消"
               okType="danger"
             >
               <Icon
-                // role="none"
                 type="delete_forever mlr-3 pointer"
-                // onClick={() => this.handleDeleteCommit(commit.commentId)}
               />
             </Popconfirm>
-            {/* <Icon
-              role="none"
-              type="delete_forever mlr-3 pointer"
-              onClick={() => this.handleDeleteCommit(commit.commentId)}
-            /> */}
           </div>
         </div>
         <div className="line-start" style={{ color: 'rgba(0, 0, 0, 0.65)', marginTop: 2 }}>
-          - 
-          {' '}
-          {formatDate(commit.lastUpdateDate)}
+          - {formatDate(worklog.lastUpdateDate)}
+        </div>
+        <div className="line-start" style={{ color: 'rgba(0, 0, 0, 0.65)', marginTop: '10px', marginBottom: '10px' }}>
+          <span style={{ width: 70 }}>耗费时间:</span>
+          <span style={{ color: '#000', fontWeight: '500' }}>{`${worklog.workTime}h` || '无'}</span>
         </div>
         {
           this.state.expand && (
-            <div className="c7n-conent-commit" style={{ marginTop: 10 }}>
+            <div>
+              <div className="c7n-conent-log" style={{ marginTop: 10, display: 'flex' }}>
+                <span style={{ width: 70, flexShrink: 0, color: 'rgba(0, 0, 0, 0.65)' }}>备注:</span>
+                <span style={{ flex: 1 }}>
+                  {
+                    worklog.logId !== this.state.editLogId ? (
+                      <IssueDescription data={delta2Html(worklog.description)} />
+                    ) : null
+                  }
+                </span>
+              </div>
               {
-                commit.commentId === this.state.editCommentId ? (
+                worklog.logId === this.state.editLogId ? (
                   <WYSIWYGEditor
                     bottomBar
                     value={deltaEdit}
                     style={{ height: 200, width: '100%' }}
                     onChange={(value) => {
-                      this.setState({ editComment: value });
+                      this.setState({ editLog: value });
                     }}
                     handleDelete={() => {
                       this.setState({
-                        editCommentId: undefined,
-                        editComment: undefined,
+                        editLogId: undefined,
+                        editLog: undefined,
                       });
                     }}
-                    handleSave={this.handleUpdateComment.bind(this, commit)}
+                    handleSave={this.handleUpdateLog.bind(this, worklog)}
                   />
-                ) : (
-                  <IssueDescription data={delta2Html(commit.commentText)} />
-                )
+                ) : null
               }
             </div>
           )
@@ -192,4 +195,4 @@ class Comment extends Component {
   }
 }
 
-export default Comment;
+export default Log;

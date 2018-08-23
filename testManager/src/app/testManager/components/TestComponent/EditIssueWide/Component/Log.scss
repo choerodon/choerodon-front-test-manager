@@ -1,8 +1,7 @@
-.c7n-comment {
+.c7n-log {
   padding: 14px 10px 14px 27px;
   border-left: 3px solid transparent;
   border-bottom: 1px solid rgba(0, 0, 0, 0.12);
-  margin-left: 26px;
   position: relative;
 
   .line-justify {
@@ -10,7 +9,7 @@
     justify-content: space-between;
     align-items: center;
 
-    .c7n-title-commit {
+    .c7n-title-log {
       display: flex;
       align-items: center;
     }
@@ -37,7 +36,7 @@
     align-items: flex-start;
   }
 
-  .c7n-conent-commit {
+  .c7n-conent-log {
     p {
       margin-bottom: 0;
     }
@@ -60,7 +59,7 @@
   }
 }
 
-.c7n-comment-focus {
+.c7n-log-focus {
   background: rgba(0, 0, 0, 0.03);
   border-left-color: #303f9f;
 }
