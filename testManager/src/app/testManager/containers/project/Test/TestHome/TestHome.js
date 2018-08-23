@@ -2,10 +2,10 @@ import React, { Component } from 'react';
 import { observer } from 'mobx-react';
 import _ from 'lodash';
 import {
-  Page, Header, Content, stores, axios, 
+  Page, Header, Content, stores, axios,
 } from 'choerodon-front-boot';
 import {
-  Table, Button, Tooltip, Input, Dropdown, Menu, Pagination, Spin, Icon, 
+  Table, Button, Tooltip, Input, Dropdown, Menu, Pagination, Spin, Icon,
 } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 import moment from 'moment';
@@ -14,7 +14,7 @@ import '../../../../assets/main.scss';
 import './TestHome.scss';
 import IssueStore from '../../../../store/project/IssueStore';
 import {
-  STATUS, COLOR, TYPE, ICON, TYPE_NAME, 
+  STATUS, COLOR, TYPE, ICON, TYPE_NAME,
 } from '../../../../common/Constant';
 import pic from '../../../../assets/问题管理－空.png';
 import { loadIssue, createIssue } from '../../../../api/IssueApi';
@@ -36,6 +36,7 @@ class Test extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      mode: 'narrow',
       expand: false,
       create: false,
       selectedIssue: {},
@@ -53,7 +54,7 @@ class Test extends Component {
   getInit() {
     const Request = this.GetRequest(this.props.location.search);
     const {
-      paramType, paramId, paramName, paramStatus, paramIssueId, paramUrl, 
+      paramType, paramId, paramName, paramStatus, paramIssueId, paramUrl,
     } = Request;
     IssueStore.setParamId(paramId);
     IssueStore.setParamType(paramType);
@@ -67,7 +68,7 @@ class Test extends Component {
     }
     if (paramStatus) {
       const obj = {
-        advancedSearchArgs: { },
+        advancedSearchArgs: {},
         searchArgs: {},
       };
       const a = [paramStatus];
@@ -248,16 +249,16 @@ class Test extends Component {
     const {
       typeCode, issueNum, summary, assigneeId, assigneeName, assigneeImageUrl, reporterId,
       reporterName, reporterImageUrl, statusName, statusColor, priorityName, priorityCode,
-      epicName, epicColor, componentIssueRelDTOList, labelIssueRelDTOList, 
-      versionIssueRelDTOList, creationDate, lastUpdateDate, 
+      epicName, epicColor, componentIssueRelDTOList, labelIssueRelDTOList,
+      versionIssueRelDTOList, creationDate, lastUpdateDate,
     } = issue;
     return (
       <div style={{
-        display: 'flex', flex: 1, marginTop: '3px', flexDirection: 'column', marginBottom: '3px', cursor: 'pointer', 
+        display: 'flex', flex: 1, marginTop: '3px', flexDirection: 'column', marginBottom: '3px', cursor: 'pointer',
       }}
       >
         <div style={{
-          display: 'flex', flex: 1, marginTop: '3px', marginBottom: '3px', cursor: 'pointer', 
+          display: 'flex', flex: 1, marginTop: '3px', marginBottom: '3px', cursor: 'pointer',
         }}
         >
           <Tooltip mouseEnterDelay={0.5} title={<FormattedMessage id="issue_issueType" values={{ type: TYPE_NAME[typeCode] }} />}>
@@ -271,7 +272,7 @@ class Test extends Component {
           </Tooltip>
           <Tooltip mouseEnterDelay={0.5} title={<FormattedMessage id="issue_issueNum" values={{ num: issueNum }} />}>
             <a style={{
-              paddingLeft: 12, paddingRight: 12, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', 
+              paddingLeft: 12, paddingRight: 12, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
             }}
             >
               {issueNum}
@@ -280,16 +281,16 @@ class Test extends Component {
           <div style={{ overflow: 'hidden' }}>
             <Tooltip mouseEnterDelay={0.5} placement="topLeft" title={<FormattedMessage id="issue_issueSummary" values={{ summary }} />}>
               <p style={{
-                paddingRight: '25px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 0, maxWidth: 'unset', 
+                paddingRight: '25px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 0, maxWidth: 'unset',
               }}
               >
                 {summary}
               </p>
             </Tooltip>
           </div>
-          <div className="c7n-flex-space" />          
+          <div className="c7n-flex-space" />
           {
-            assigneeId && reporterName ? (            
+            assigneeId && reporterName ? (
               <Tooltip mouseEnterDelay={0.5} title={<FormattedMessage id="issue_issueReport" values={{ report: reporterName }} />}>
                 <div style={{ margin: '0 5px' }}>
                   <UserHead
@@ -308,12 +309,12 @@ class Test extends Component {
             assigneeId && reporterName
               ? (
                 <div style={{ margin: '0 5px' }}>
-                  <FormattedMessage id="issue_issueReportTo" />              
+                  <FormattedMessage id="issue_issueReportTo" />
                 </div>
               ) : null
           }
           {
-            assigneeId ? (            
+            assigneeId ? (
               <Tooltip mouseEnterDelay={0.5} title={<FormattedMessage id="issue_issueAssign" values={{ assign: assigneeName }} />}>
                 <div style={{ margin: '0 5px' }}>
                   <UserHead
@@ -327,14 +328,14 @@ class Test extends Component {
                 </div>
               </Tooltip>
             ) : null
-          }          
+          }
           <div style={{ margin: '0 5px' }}>
-            <FormattedMessage id="issue_issueUpdateOn" />    
+            <FormattedMessage id="issue_issueUpdateOn" />
           </div>
           <Icon type="today" style={{ margin: '0 5px' }} />
           <div style={{ marginRight: 12 }}>
             {moment(lastUpdateDate).format('LL')}
-          </div>   
+          </div>
           <div style={{ flexShrink: '0', display: 'flex', justifyContent: 'flex-end' }}>
             <Tooltip mouseEnterDelay={0.5} title={<FormattedMessage id="issue_issueStatus" values={{ status: statusName }} />}>
               <div>
@@ -350,7 +351,7 @@ class Test extends Component {
         </div>
         {/* 第二行 */}
         <div style={{
-          display: 'flex', flex: 1, marginTop: '3px', alignItems: 'center', marginBottom: '3px', cursor: 'pointer', 
+          display: 'flex', flex: 1, marginTop: '3px', alignItems: 'center', marginBottom: '3px', cursor: 'pointer',
         }}
         >
           <div style={{ flexShrink: '0' }}>
@@ -367,7 +368,7 @@ class Test extends Component {
           </div>
           {
             versionIssueRelDTOList.map(version => (
-              <div 
+              <div
                 style={{
                   color: 'rgba(0,0,0,0.36)',
                   height: 22,
@@ -377,8 +378,8 @@ class Test extends Component {
                   borderRadius: '2px',
                   fontSize: '13px',
                   lineHeight: '20px',
-                  padding: '0 8px', 
-                  margin: '0 5px',   
+                  padding: '0 8px',
+                  margin: '0 5px',
                 }}
               >
                 {version.name}
@@ -387,7 +388,7 @@ class Test extends Component {
           }
           {
             epicName ? (
-              <div 
+              <div
                 style={{
                   color: epicColor,
                   height: 22,
@@ -398,7 +399,7 @@ class Test extends Component {
                   fontSize: '13px',
                   lineHeight: '20px',
                   padding: '0 8px',
-                  margin: '0 5px',    
+                  margin: '0 5px',
                 }}
               >
                 {epicName}
@@ -408,8 +409,8 @@ class Test extends Component {
           {componentIssueRelDTOList.length > 0 ? (
             <div style={{ margin: '0 5px', color: '#3F51B5', fontWeight: 500 }}>
               {
-              componentIssueRelDTOList.map(component => component.name).join(',')
-            }
+                componentIssueRelDTOList.map(component => component.name).join(',')
+              }
             </div>
           ) : null}
           <div style={{ margin: '0 5px', fontSize: '13px', color: 'rgba(0,0,0,0.65)' }}>
@@ -423,7 +424,7 @@ class Test extends Component {
             labelIssueRelDTOList.map(label => (
               <div
                 style={{
-                  color: '#000',              
+                  color: '#000',
                   borderRadius: '100px',
                   fontSize: '13px',
                   lineHeight: '20px',
@@ -436,7 +437,7 @@ class Test extends Component {
                 {label.labelName}
               </div>
             ))
-          }          
+          }
         </div>
       </div>
     );
@@ -445,7 +446,7 @@ class Test extends Component {
   renderWideIssue(issue) {
     return (
       <div style={{
-        display: 'flex', flex: 1, marginTop: '3px', marginBottom: '3px', cursor: 'pointer', 
+        display: 'flex', flex: 1, marginTop: '3px', marginBottom: '3px', cursor: 'pointer',
       }}
       >
         <Tooltip mouseEnterDelay={0.5} title={`任务类型： ${TYPE_NAME[issue.typeCode]}`}>
@@ -459,7 +460,7 @@ class Test extends Component {
         </Tooltip>
         <Tooltip mouseEnterDelay={0.5} title={`任务编号： ${issue.issueNum}`}>
           <a style={{
-            paddingLeft: 12, paddingRight: 12, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', 
+            paddingLeft: 12, paddingRight: 12, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
           }}
           >
             {issue.issueNum}
@@ -468,7 +469,7 @@ class Test extends Component {
         <div style={{ overflow: 'hidden', flex: 1 }}>
           <Tooltip mouseEnterDelay={0.5} placement="topLeft" title={`任务概要： ${issue.summary}`}>
             <p style={{
-              paddingRight: '25px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 0, maxWidth: 'unset', 
+              paddingRight: '25px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 0, maxWidth: 'unset',
             }}
             >
               {issue.summary}
@@ -526,7 +527,7 @@ class Test extends Component {
     return (
       <div style={{ marginTop: '5px', marginBottom: '5px', cursor: 'pointer' }}>
         <div style={{
-          display: 'flex', marginBottom: '5px', width: '100%', flex: 1, 
+          display: 'flex', marginBottom: '5px', width: '100%', flex: 1,
         }}
         >
           <Tooltip mouseEnterDelay={0.5} title={`任务类型： ${TYPE_NAME[issue.typeCode]}`}>
@@ -540,7 +541,7 @@ class Test extends Component {
           </Tooltip>
           <Tooltip mouseEnterDelay={0.5} title={`任务编号： ${issue.issueNum}`}>
             <a style={{
-              paddingLeft: 12, paddingRight: 12, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', 
+              paddingLeft: 12, paddingRight: 12, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
             }}
             >
               {issue.issueNum}
@@ -549,7 +550,7 @@ class Test extends Component {
           <div style={{ overflow: 'hidden', flex: 1 }}>
             <Tooltip mouseEnterDelay={0.5} placement="topLeft" title={`任务概要： ${issue.summary}`}>
               <p style={{
-                paddingRight: '25px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 0, maxWidth: 'unset', 
+                paddingRight: '25px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 0, maxWidth: 'unset',
               }}
               >
                 {issue.summary}
@@ -605,8 +606,8 @@ class Test extends Component {
     );
   }
 
-  render() {    
-    const mode = 'narrow';
+  render() {
+    const { expand, mode } = this.state;
     const ORDER = [
       {
         code: 'summary',
@@ -689,7 +690,7 @@ class Test extends Component {
         title: 'summary',
         dataIndex: 'summary',
         render: (summary, record) => (
-          !this.state.expand ? this.renderTestIssue(record) : this.renderWideIssue(record)
+          !expand || mode === 'narrow' ? this.renderTestIssue(record) : this.renderNarrowIssue(record)
         ),
       },
     ];
@@ -741,23 +742,23 @@ class Test extends Component {
         >
           <Button className="leftBtn" onClick={() => this.setState({ create: true })}>
             <Icon type="playlist_add icon" />
-            <FormattedMessage id="issue_createTestIssue" />       
+            <FormattedMessage id="issue_createTestIssue" />
           </Button>
           <Button className="leftBtn" onClick={() => this.exportExcel()}>
             <Icon type="file_upload icon" />
-            <FormattedMessage id="export" />        
+            <FormattedMessage id="export" />
           </Button>
-          <Button            
-            onClick={() => {      
+          <Button
+            onClick={() => {
               if (this.EditIssue) {
-                this.EditIssue.reloadIssue(this.state.selectedIssue.issueId);   
-              }                
+                this.EditIssue.reloadIssue(this.state.selectedIssue.issueId);
+              }
               const { current, pageSize } = IssueStore.pagination;
               IssueStore.loadIssues(current - 1, pageSize);
             }}
           >
             <Icon type="autorenew icon" />
-            <FormattedMessage id="refresh" />    
+            <FormattedMessage id="refresh" />
           </Button>
         </Header>
         <Content style={{ display: 'flex', padding: '0' }}>
@@ -788,7 +789,7 @@ class Test extends Component {
               <span className="c7n-span-count"><FormattedMessage id="issue_issueTotal" values={{ total: IssueStore.pagination.total }} /></span>
               <Dropdown overlay={sort} trigger={['click']}>
                 <div style={{
-                  display: 'flex', alignItems: 'center', fontSize: '13px', lineHeight: '20px', cursor: 'pointer', position: 'absolute', right: 25, bottom: 28, 
+                  display: 'flex', alignItems: 'center', fontSize: '13px', lineHeight: '20px', cursor: 'pointer', position: 'absolute', right: 25, bottom: 28,
                 }}
                 >
                   <Icon type="swap_vert" style={{ fontSize: '16px', marginRight: '5px' }} />
@@ -829,10 +830,11 @@ class Test extends Component {
                         this.setState({
                           selectedIssue: record,
                           expand: true,
+                          mode: mode === 'wide' ? 'narrow' : 'wide',
                         });
                       },
                     })
-                    }
+                      }
                     rowClassName={(record, index) => (
                       record.issueId === this.state.selectedIssue.issueId ? 'c7n-border-visible' : 'c7n-border')}
                   />
@@ -884,7 +886,7 @@ class Test extends Component {
                         </div>
                       </div>
                       <div style={{
-                        marginTop: 10, display: 'flex', marginLeft: 50, paddingRight: 70, 
+                        marginTop: 10, display: 'flex', marginLeft: 50, paddingRight: 70,
                       }}
                       >
                         <Button
@@ -927,7 +929,7 @@ class Test extends Component {
               {
                 IssueStore.issues.length !== 0 ? (
                   <div style={{
-                    display: 'flex', justifyContent: 'flex-end', marginTop: 16, marginBottom: 16, 
+                    display: 'flex', justifyContent: 'flex-end', marginTop: 16, marginBottom: 16,
                   }}
                   >
                     <Pagination
@@ -959,11 +961,11 @@ class Test extends Component {
           >
             {
               this.state.expand ? (
-                <EditIssue   
+                <EditIssue
                   mode={mode}
-                  ref={(instance) => { 
-                    if (instance) { this.EditIssue = instance; } 
-                  }}             
+                  ref={(instance) => {
+                    if (instance) { this.EditIssue = instance; }
+                  }}
                   issueId={this.state.selectedIssue.issueId}
                   onCancel={() => {
                     this.setState({

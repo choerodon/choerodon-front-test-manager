@@ -102,9 +102,9 @@ class TestStepTable extends Component {
       title: Choerodon.getMessage('确认删除吗？', 'Confirm delete'),
       content:
   <div style={{ marginBottom: 32 }}>
-    {Choerodon.getMessage('当你点击删除后，该条数据将被永久删除，不可恢复!', 'When you click delete, after which the data will be permanently deleted and irreversible!')
+          {Choerodon.getMessage('当你点击删除后，该条数据将被永久删除，不可恢复!', 'When you click delete, after which the data will be permanently deleted and irreversible!')
           }
-  </div>,
+        </div>,
       onOk() {
         return axios.delete(`/test/v1/projects/${AppState.currentMenuType.id}/case/step`, { data: { stepId } })
           .then((res) => {
@@ -137,7 +137,7 @@ class TestStepTable extends Component {
   render() {
     const that = this;
     const {
-      onOk, enterLoad, leaveLoad, mode, 
+      onOk, enterLoad, leaveLoad, mode,
     } = this.props;
 
     const columns = [{
@@ -172,35 +172,35 @@ class TestStepTable extends Component {
           </TextEditToggle>
         );
       },
+    }, {
+      title: <FormattedMessage id="execute_testData" />,
+      dataIndex: 'testData',
+      key: 'testData',
+      flex: 3,
+      render(testData, record) {
+        return (
+
+          <TextEditToggle
+            formKey="testData"
+            onSubmit={value => that.editStep({ ...record, testData: value })}
+            originData={testData}
+          >
+            <Text>
+              <Tooltip title={testData}>
+                <div className="c7n-text-dot" style={{ minHeight: 34 }}>
+                  {testData}
+                </div>
+              </Tooltip>
+            </Text>
+            <Edit>
+              <TextArea autoFocus autosize />
+            </Edit>
+          </TextEditToggle>
+        );
+      },
     }];
     const wideColumns = [
       {
-        title: <FormattedMessage id="execute_testData" />,
-        dataIndex: 'testData',
-        key: 'testData',
-        flex: 3,
-        render(testData, record) {
-          return (
-
-            <TextEditToggle
-              formKey="testData"
-              onSubmit={value => that.editStep({ ...record, testData: value })}
-              originData={testData}
-            >
-              <Text>
-                <Tooltip title={testData}>
-                  <div className="c7n-text-dot" style={{ minHeight: 34 }}>
-                    {testData}
-                  </div>
-                </Tooltip>
-              </Text>
-              <Edit>
-                <TextArea autoFocus autosize />
-              </Edit>
-            </TextEditToggle>
-          );
-        },
-      }, {
         title: <FormattedMessage id="execute_expectedOutcome" />,
         dataIndex: 'expectedResult',
         key: 'expectedResult',
