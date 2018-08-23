@@ -16,7 +16,10 @@ import {
 import FullEditor from '../../FullEditor';
 import CycleExecuteStore from '../../../store/project/cycle/CycleExecuteStore';
 import './TestExecuteInfo.scss';
+<<<<<<< HEAD
 
+=======
+>>>>>>> [FIX]修复执行数据展示布局
 
 function beforeUpload(file) {
   const isLt2M = file.size / 1024 / 1024 < 30;
