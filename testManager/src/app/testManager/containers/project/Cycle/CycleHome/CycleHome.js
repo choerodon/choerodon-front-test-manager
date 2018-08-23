@@ -15,7 +15,7 @@ import moment from 'moment';
 import './CycleHome.scss';
 import { getUsers } from '../../../../api/CommonApi';
 import {
-  getCycles, deleteExecute, getCycleById, editCycleExecute, 
+  getCycles, deleteExecute, getCycleById, editCycleExecute,
   clone, addFolder, getStatusList, exportCycle,
 } from '../../../../api/cycleApi';
 import { editCycle } from '../../../../api/CycleExecuteApi';
@@ -34,8 +34,8 @@ const { AppState } = stores;
 const { confirm } = Modal;
 const styles = {
   statusOption: {
-    lineHeight: '22px',
-    height: 22,
+    lineHeight: '20px',
+    height: 20,
     width: 60,
     textAlign: 'center',
     borderRadius: '2px',
@@ -156,22 +156,22 @@ class CycleHome extends Component {
         page: executePagination.current - 1,
         size: executePagination.pageSize,
       }, data.cycleId,
-      {
-        ...filters,
-        lastUpdatedBy: [Number(this.lastUpdatedBy)],
-        assignedTo: [Number(this.assignedTo)],
-      }).then((cycle) => {
-        this.setState({
-          rightLoading: false,
-          testList: cycle.content,
-          executePagination: {
-            current: executePagination.current,
-            pageSize: executePagination.pageSize,
-            total: cycle.totalElements,
-          },
+        {
+          ...filters,
+          lastUpdatedBy: [Number(this.lastUpdatedBy)],
+          assignedTo: [Number(this.assignedTo)],
+        }).then((cycle) => {
+          this.setState({
+            rightLoading: false,
+            testList: cycle.content,
+            executePagination: {
+              current: executePagination.current,
+              pageSize: executePagination.pageSize,
+              total: cycle.totalElements,
+            },
+          });
+          // window.console.log(cycle);
         });
-        // window.console.log(cycle);
-      });
     }
   }
 
@@ -212,26 +212,25 @@ class CycleHome extends Component {
   }
 
   deleteExecute = (record) => {
-    const that = this;
     const { executeId, cycleId } = record;
     const { executePagination } = this.state;
     confirm({
       width: 560,
       title: Choerodon.getMessage('确认删除吗?', 'Confirm delete'),
-      content: 
-  <div style={{ marginBottom: 32 }}>
-    {Choerodon.getMessage('当你点击删除后，该条数据将被永久删除，不可恢复!', 'When you click delete, after which the data will be permanently deleted and irreversible!')}
-  </div>,
-      onOk() {
+      content:
+        <div style={{ marginBottom: 32 }}>
+          {Choerodon.getMessage('当你点击删除后，该条数据将被永久删除，不可恢复!', 'When you click delete, after which the data will be permanently deleted and irreversible!')}
+        </div>,
+      onOk: () => {
         // that.setState({
         //   rightLoading: true,
         // });
         deleteExecute(executeId)
           .then((res) => {
-            that.refresh();
+            this.refresh();
           }).catch(() => {
             Choerodon.prompt('网络异常');
-            that.setState({
+            this.setState({
               rightLoading: false,
             });
           });
@@ -304,18 +303,18 @@ class CycleHome extends Component {
         page: executePagination.current - 1,
         size: executePagination.pageSize,
       }, defaultExpandKeyItem.cycleId,
-      {}).then((cycle) => {
-        this.setState({
-          rightLoading: false,
-          testList: cycle.content,
-          executePagination: {
-            current: executePagination.current,
-            pageSize: executePagination.pageSize,
-            total: cycle.totalElements,
-          },
+        {}).then((cycle) => {
+          this.setState({
+            rightLoading: false,
+            testList: cycle.content,
+            executePagination: {
+              current: executePagination.current,
+              pageSize: executePagination.pageSize,
+              total: cycle.totalElements,
+            },
+          });
+          // window.console.log(cycle);
         });
-        // window.console.log(cycle);
-      });
     }
   }
 
@@ -443,22 +442,22 @@ class CycleHome extends Component {
         size: pagination.pageSize,
         page: pagination.current - 1,
       }, currentCycle.cycleId,
-      {
-        ...filters,
-        lastUpdatedBy: [Number(this.lastUpdatedBy)],
-        assignedTo: [Number(this.assignedTo)],
-      }).then((cycle) => {
-        this.setState({
-          rightLoading: false,
-          testList: cycle.content,
-          executePagination: {
-            current: pagination.current,
-            pageSize: pagination.pageSize,
-            total: cycle.totalElements,
-          },
+        {
+          ...filters,
+          lastUpdatedBy: [Number(this.lastUpdatedBy)],
+          assignedTo: [Number(this.assignedTo)],
+        }).then((cycle) => {
+          this.setState({
+            rightLoading: false,
+            testList: cycle.content,
+            executePagination: {
+              current: pagination.current,
+              pageSize: pagination.pageSize,
+              total: cycle.totalElements,
+            },
+          });
+          // window.console.log(cycle);
         });
-        // window.console.log(cycle);
-      });
     }
   }
 
@@ -592,8 +591,6 @@ class CycleHome extends Component {
     const currentCycle = CycleStore.getCurrentCycle;
     const { cycleId, title } = currentCycle;
     const prefix = <Icon type="filter_list" />;
-    const that = this;
-
     const columns = [{
       title: 'ID',
       dataIndex: 'issueName',
@@ -746,19 +743,19 @@ class CycleHome extends Component {
       title: '',
       key: 'action',
       flex: 1,
-      render(text, record) {
+      render: (text, record) => {
         return (
           record.projectId !== 0
           && (
             <div style={{ display: 'flex' }}>
               <Tooltip title={<FormattedMessage id="execute_quickPass" />}>
-                <Icon type="pass" onClick={that.quickPass.bind(that, record)} style={{ cursor: 'pointer' }} />
+                <Icon type="pass" onClick={this.quickPass.bind(this, record)} style={{ cursor: 'pointer' }} />
               </Tooltip>
               <Icon
                 type="explicit2"
                 style={{ cursor: 'pointer', margin: '0 10px' }}
                 onClick={() => {
-                  const { history } = that.props;
+                  const { history } = this.props;
                   const urlParams = AppState.currentMenuType;
                   history.push(`/testManager/Cycle/execute/${record.executeId}?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`);
                 }}
@@ -767,7 +764,7 @@ class CycleHome extends Component {
                 type="delete_forever"
                 style={{ cursor: 'pointer' }}
                 onClick={() => {
-                  that.deleteExecute(record);
+                  this.deleteExecute(record);
                 }}
               />
             </div>
@@ -1038,17 +1035,17 @@ class CycleHome extends Component {
                   />
                 </div>
               ) : (
-                <div style={{
-                  display: 'flex', alignItems: 'center', height: 250, margin: '88px auto', padding: '50px 75px', border: '1px dashed rgba(0,0,0,0.54)',
-                }}
-                >
-                  <img src={noRight} alt="" />
-                  <div style={{ marginLeft: 40 }}>
-                    <div style={{ fontSize: '14px', color: 'rgba(0,0,0,0.65)' }}>根据当前选定的测试循环没有查询到循环信息</div>
-                    <div style={{ fontSize: '20px', fontWeight: 'bold', marginTop: 10 }}>尝试在您的树状图中选择测试循环</div>
+                  <div style={{
+                    display: 'flex', alignItems: 'center', height: 250, margin: '88px auto', padding: '50px 75px', border: '1px dashed rgba(0,0,0,0.54)',
+                  }}
+                  >
+                    <img src={noRight} alt="" />
+                    <div style={{ marginLeft: 40 }}>
+                      <div style={{ fontSize: '14px', color: 'rgba(0,0,0,0.65)' }}>根据当前选定的测试循环没有查询到循环信息</div>
+                      <div style={{ fontSize: '20px', marginTop: 10 }}>尝试在您的树状图中选择测试循环</div>
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
             </div>
           </Spin>
         </Content>

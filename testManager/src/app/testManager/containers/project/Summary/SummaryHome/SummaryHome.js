@@ -197,7 +197,7 @@ class SummaryHome extends Component {
     },
     grid: {
       top: '13%',
-      left: 26,
+      left: 38,
       right: '8%',
       bottom: '23%',
       // containLabel: true,
@@ -281,7 +281,7 @@ class SummaryHome extends Component {
     },
     grid: {
       top: '13%',
-      left: 26,
+      left: 38,
       right: '8%',
       bottom: '23%',
       // containLabel: true,
@@ -562,7 +562,7 @@ class SummaryHome extends Component {
             <div className="c7n-chartArea-container">
 
               <div className="c7n-chart-container">
-                <div style={{ fontWeight: 'bold', margin: '12px 12px 0 12px' }}><FormattedMessage id="summary_testCreate" /></div>
+                <div style={{ fontWeight: 500, margin: '12px 12px 0 12px' }}><FormattedMessage id="summary_testCreate" /></div>
                 <div style={{ height: 260 }}>
                   <ReactEcharts
                     option={this.getCreateOption()}
@@ -581,13 +581,13 @@ class SummaryHome extends Component {
                   <Geom type="point" position="time*value" size={4} shape="circle"
                    style={{ stroke: '#fff', lineWidth: 1 }} />
                 </Chart> */}
-                <div style={{ color: 'rgba(0,0,0,0.65)', marginLeft: 26 }}>
+                <div style={{ color: 'rgba(0,0,0,0.65)', marginLeft: 38 }}>
                   <FormattedMessage id="summary_testCreated" />
                   ：
-                  <span style={{ color: 'black', fontWeight: 'bold' }}>{totalCreate}</span>
+                  <span style={{ color: 'black', fontWeight: 500 }}>{totalCreate}</span>
                   ，
                   <FormattedMessage id="summary_testLast" />
-                  <span style={{ color: 'black', fontWeight: 'bold' }}>
+                  <span style={{ color: 'black', fontWeight: 500 }}>
                     {' '}
                     {range}
                     {' '}
@@ -596,7 +596,7 @@ class SummaryHome extends Component {
                 </div>
               </div>
               <div className="c7n-chart-container" style={{ marginLeft: 16 }}>
-                <div style={{ fontWeight: 'bold', margin: '12px 12px 0 12px' }}><FormattedMessage id="summary_testExecute" /></div>
+                <div style={{ fontWeight: 500, margin: '12px 12px 0 12px' }}><FormattedMessage id="summary_testExecute" /></div>
                 <div style={{ height: 260 }}>
                   <ReactEcharts
                     option={this.getExecuteOption()}
@@ -621,13 +621,13 @@ class SummaryHome extends Component {
                     style={{ stroke: '#fff', lineWidth: 1 }}
                   />
                 </Chart> */}
-                <div style={{ color: 'rgba(0,0,0,0.65)', marginLeft: 26 }}>
+                <div style={{ color: 'rgba(0,0,0,0.65)', marginLeft: 38 }}>
                   <FormattedMessage id="summary_testExecuted" />
                   ：
-                  <span style={{ color: 'black', fontWeight: 'bold' }}>{totalExcute}</span>
+                  <span style={{ color: 'black', fontWeight: 500 }}>{totalExcute}</span>
                   ，
                   <FormattedMessage id="summary_testLast" />
-                  <span style={{ color: 'black', fontWeight: 'bold' }}>
+                  <span style={{ color: 'black', fontWeight: 500 }}>
                     {' '}
                     {range}
                     {' '}

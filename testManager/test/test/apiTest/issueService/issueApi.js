@@ -5,6 +5,7 @@ const utils = require('../../../Utils');
 const projectId = utils.config.projectId;
 // const { getIssuesSearch, getProjectVersion, getModules, getLabels, getPrioritys, getIssueStatus,  } = issueFunction;
 const issueId = 9058;
+let issue = {};
 describe("Issue Api-GET", () => {
   it("[GET] 根据筛选条件查询issue", () => {
     const search = {
@@ -82,14 +83,61 @@ describe("Issue Api-GET", () => {
   // it("[GET] 查询项目的图片", () => {
   //   return issueFunction.getIssues(page = 0, size = 10, search, orderField, orderType);
   // });
-  
+
   it("[GET] 创建链接时查询issues", () => {
     let page = 0, size = 10, content;
     return issueFunction.getIssuesInLink(page, size, issueId, content);
   });
-  
+
   it("[GET] 查询关联的issues", () => {
     return issueFunction.getLinkIssues(issueId);
   });
-  
+
 });
+describe("Issue Api-POST", () => {
+  it("[POST] 创建测试用例", (done) => {
+    const data = {
+      componentIssueRelDTOList: [],
+      description: "",
+      epicId: 0,
+      labelIssueRelDTOList: [],
+      parentIssueId: 0,
+      priorityCode: "high",
+      projectId,
+      sprintId: 0,
+      summary: "创建测试" + Math.random(),
+      typeCode: "issue_test",
+      versionIssueRelDTOList: []
+    }
+    issueFunction.createTestIssue(data).then(res => {
+      issue = res.body;
+      // console.log(issue)
+      done();
+    });
+  });
+  it("[POST] 编辑测试用例", () => {
+    const data = {
+      issueId: issue.issueId,
+      objectVersionNumber: issue.objectVersionNumber,
+      // componentIssueRelDTOList: [],
+      description: "",
+      epicId: 0,
+
+      // labelIssueRelDTOList: [],
+      // parentIssueId: 0,
+      priorityCode: "high",
+      // projectId,
+      // sprintId: 0,
+      summary: "编辑测试" + Math.random(),
+      // typeCode: "issue_test",
+      // versionIssueRelDTOList: []
+    }
+    return issueFunction.updateIssue(data)
+  });
+  it("[DELETE] 删除测试用例", () => {
+    const issueId = issue.issueId;
+    return issueFunction.deleteIssue(issueId)
+  });
+
+});
+

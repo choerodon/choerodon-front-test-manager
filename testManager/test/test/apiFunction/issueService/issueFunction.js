@@ -29,13 +29,13 @@ const issueFunction = {
    */
   getModules() {
     return chai.request(utils.config.gateway)
-      .get(`/agile/v1/projects/${projectId}/component`)     
+      .get(`/agile/v1/projects/${projectId}/component`)
       .set('Authorization', global.user.token)
       .then((res) => {
         res.should.have.status(200);
         return res;
       })
-  },   
+  },
   /**
    *查询所有的版本
    *
@@ -43,13 +43,13 @@ const issueFunction = {
    */
   getProjectVersion() {
     return chai.request(utils.config.gateway)
-      .get(`/agile/v1/projects/${projectId}/product_version/versions`)     
+      .get(`/agile/v1/projects/${projectId}/product_version/versions`)
       .set('Authorization', global.user.token)
       .then((res) => {
         res.should.have.status(200);
         return res;
       })
-  },   
+  },
   /**
    *获取所有标签
    *
@@ -57,13 +57,13 @@ const issueFunction = {
    */
   getLabels() {
     return chai.request(utils.config.gateway)
-      .get(`/agile/v1/projects/${projectId}/issue_labels`)     
+      .get(`/agile/v1/projects/${projectId}/issue_labels`)
       .set('Authorization', global.user.token)
       .then((res) => {
         res.should.have.status(200);
         return res;
       })
-  }, 
+  },
   /**
    *获取所有优先级
    *
@@ -71,13 +71,13 @@ const issueFunction = {
    */
   getPrioritys() {
     return chai.request(utils.config.gateway)
-      .get(`/agile/v1/projects/${projectId}/lookup_values/priority`)     
+      .get(`/agile/v1/projects/${projectId}/lookup_values/priority`)
       .set('Authorization', global.user.token)
       .then((res) => {
         res.should.have.status(200);
         return res;
       })
-  },  
+  },
   /**
    *获取所有issue状态
    *
@@ -85,7 +85,7 @@ const issueFunction = {
    */
   getIssueStatus() {
     return chai.request(utils.config.gateway)
-      .get(`/agile/v1/projects/${projectId}/issue_status/list`)     
+      .get(`/agile/v1/projects/${projectId}/issue_status/list`)
       .set('Authorization', global.user.token)
       .then((res) => {
         res.should.have.status(200);
@@ -109,7 +109,7 @@ const issueFunction = {
    */
   getEpics() {
     return chai.request(utils.config.gateway)
-      .get(`/agile/v1/projects/${projectId}/issues/epics/select_data`)     
+      .get(`/agile/v1/projects/${projectId}/issues/epics/select_data`)
       .set('Authorization', global.user.token)
       .then((res) => {
         res.should.have.status(200);
@@ -135,7 +135,7 @@ const issueFunction = {
    */
   getSprint(sprintId) {
     return chai.request(utils.config.gateway)
-      .get(`/agile/v1/projects/${projectId}/sprint/${sprintId}`)     
+      .get(`/agile/v1/projects/${projectId}/sprint/${sprintId}`)
       .set('Authorization', global.user.token)
       .then((res) => {
         res.should.have.status(200);
@@ -152,7 +152,7 @@ const issueFunction = {
    */
   getSprintIssues(sprintId, status, page, size) {
     return chai.request(utils.config.gateway)
-      .get(`/agile/v1/projects/${projectId}/sprint/${sprintId}/issues?status=${status}&page=${page}&size=${size}`)     
+      .get(`/agile/v1/projects/${projectId}/sprint/${sprintId}/issues?status=${status}&page=${page}&size=${size}`)
       .set('Authorization', global.user.token)
       .then((res) => {
         res.should.have.status(200);
@@ -176,7 +176,7 @@ const issueFunction = {
    */
   getIssue(issueId) {
     return chai.request(utils.config.gateway)
-      .get(`/agile/v1/projects/${projectId}/issues/${issueId}`)     
+      .get(`/agile/v1/projects/${projectId}/issues/${issueId}`)
       .set('Authorization', global.user.token)
       .then((res) => {
         res.should.have.status(200);
@@ -189,7 +189,7 @@ const issueFunction = {
    */
   getSubtask(issueId) {
     return chai.request(utils.config.gateway)
-      .get(`/agile/v1/projects/${projectId}/issues/sub_issue/${issueId}`)     
+      .get(`/agile/v1/projects/${projectId}/issues/sub_issue/${issueId}`)
       .set('Authorization', global.user.token)
       .then((res) => {
         res.should.have.status(200);
@@ -202,7 +202,7 @@ const issueFunction = {
    */
   getWorklogs(issueId) {
     return chai.request(utils.config.gateway)
-      .get(`/agile/v1/projects/${projectId}/work_log/issue/${issueId}`)     
+      .get(`/agile/v1/projects/${projectId}/work_log/issue/${issueId}`)
       .set('Authorization', global.user.token)
       .then((res) => {
         res.should.have.status(200);
@@ -216,7 +216,7 @@ const issueFunction = {
    */
   getDatalogs(issueId) {
     return chai.request(utils.config.gateway)
-      .get(`/agile/v1/projects/${projectId}/data_log?issueId=${issueId}`)     
+      .get(`/agile/v1/projects/${projectId}/data_log?issueId=${issueId}`)
       .set('Authorization', global.user.token)
       .then((res) => {
         res.should.have.status(200);
@@ -230,7 +230,7 @@ const issueFunction = {
    */
   getBranchs(issueId) {
     return chai.request(utils.config.gateway)
-      .get(`/devops/v1/project/${projectId}/issue/${issueId}/commit_and_merge_request/count`)     
+      .get(`/devops/v1/project/${projectId}/issue/${issueId}/commit_and_merge_request/count`)
       .set('Authorization', global.user.token)
       .then((res) => {
         res.should.have.status(200);
@@ -258,12 +258,11 @@ const issueFunction = {
    * @param {*} content 
    */
   getIssuesInLink(page, size, issueId, content) {
-    console.log('en '+ page);
     let url = content ? `/agile/v1/projects/${projectId}/issues/summary?issueId=${issueId}&self=false&content=${content}&page=${page}&size=${size}&onlyActiveSprint=false`
       : `/agile/v1/projects/${projectId}/issues/summary?issueId=${issueId}&self=false&page=${page}&size=${size}&onlyActiveSprint=false`;
 
-      return chai.request(utils.config.gateway)
-      .get(url)     
+    return chai.request(utils.config.gateway)
+      .get(url)
       .set('Authorization', global.user.token)
       .then((res) => {
         res.should.have.status(200);
@@ -277,13 +276,77 @@ const issueFunction = {
    */
   getLinkIssues(issueId) {
     return chai.request(utils.config.gateway)
-      .get(`/agile/v1/projects/${projectId}/issue_links/${issueId}`)     
+      .get(`/agile/v1/projects/${projectId}/issue_links/${issueId}`)
       .set('Authorization', global.user.token)
       .then((res) => {
         res.should.have.status(200);
         return res;
       })
   },
-   
+  /**
+   *创建测试用例
+   *
+   * @param {*} issue
+   * @returns
+   */
+  createTestIssue(issue) {
+    // console.log('token', global.user.token);
+    return chai.request(utils.config.gateway)
+      .post(`/agile/v1/projects/${projectId}/issues`)
+      .send(issue)
+      .set('Authorization', global.user.token)
+      .set('Content-Type', 'application/json')
+      .then((res) => {
+        res.should.have.status(201);
+        return res;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  },
+    /**
+   *编辑测试用例
+   *
+   * @param {*} issue
+   * @returns
+   */
+  updateIssue(issue) {
+    // console.log('token', global.user.token);
+    return chai.request(utils.config.gateway)
+      .put(`/agile/v1/projects/${projectId}/issues`)
+      .send(issue)
+      .set('Authorization', global.user.token)
+      .set('Content-Type', 'application/json')
+      .then((res) => {
+        // console.log(res.body)
+        res.should.have.status(201);
+        return res;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  },
+  /**
+   *删除issue
+   *
+   * @param {*} issueId
+   * @returns
+   */
+  deleteIssue(issueId) {
+    // console.log('token', global.user.token);
+    return chai.request(utils.config.gateway)
+      .delete(`/agile/v1/projects/${projectId}/issues/${issueId}`)     
+      .set('Authorization', global.user.token)
+      .set('Content-Type', 'application/json')
+      .then((res) => {
+        // console.log(res.body)
+        res.should.have.status(204);
+        return res;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  },
+  
 };
 module.exports = issueFunction;

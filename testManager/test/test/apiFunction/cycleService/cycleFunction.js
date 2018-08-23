@@ -48,6 +48,133 @@ const cycleFunction = {
       });
   },
   /**
+   *获取循环下的文件夹
+   *
+   * @param {*} cycleId
+   * @returns
+   */
+  getFoldersByCycleId(cycleId) {
+    // console.log('token', global.user.token);
+    return chai.request(utils.config.gateway)
+      .post(`/test/v1/projects/${projectId}/cycle/query/folder/cycleId/${cycleId}`)    
+      .set('Authorization', global.user.token)
+      .set('Content-Type', 'application/json')
+      .then((res) => {
+        res.should.have.status(200);
+        return res;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  },
+  /**
+   *指定一个version添加cycle
+   *
+   * @param {*} data
+   * @returns
+   */
+  addCycle(data) {
+    // console.log('token', global.user.token);
+    return chai.request(utils.config.gateway)
+      .post(`/test/v1/projects/${projectId}/cycle`)
+      .send(data)
+      .set('Authorization', global.user.token)
+      .set('Content-Type', 'application/json')
+      .then((res) => {
+        res.should.have.status(200);
+        return res;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  },
+  /**
+   *编辑指定循环
+   *
+   * @param {*} data
+   * @returns
+   */
+  editCycle(data) {
+    // console.log('token', global.user.token);
+    return chai.request(utils.config.gateway)
+      .put(`/test/v1/projects/${projectId}/cycle`)
+      .send(data)
+      .set('Authorization', global.user.token)
+      .set('Content-Type', 'application/json')
+      .then((res) => {
+        // console.log(res.body)
+        // console.log(res)
+        res.should.have.status(200);
+        return res;
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+  },
+  /**
+   *克隆循环
+   *
+   * @param {*} data
+   * @returns
+   */
+  cloneCycle(cycleId, data) {
+    // console.log('token', global.user.token);
+    return chai.request(utils.config.gateway)
+      .post(`/test/v1/projects/${projectId}/cycle/clone/cycle/${cycleId}`)
+      .send(data)
+      .set('Authorization', global.user.token)
+      .set('Content-Type', 'application/json')
+      .then((res) => {
+        res.should.have.status(201);
+        return res;
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+  },
+  /**
+   *克隆文件夹
+   *
+   * @param {*} cycleId
+   * @param {*} data
+   * @returns
+   */
+  cloneFolder(cycleId, data) {
+    // console.log('token', global.user.token);
+    return chai.request(utils.config.gateway)
+      .post(`/test/v1/projects/${projectId}/cycle/clone/folder/${cycleId}`)
+      .send(data)
+      .set('Authorization', global.user.token)
+      .set('Content-Type', 'application/json')
+      .then((res) => {
+        res.should.have.status(200);
+        return res;
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+  },
+  /**
+   *删除循环或文件夹
+   *
+   * @param {*} cycleId
+   * @returns
+   */
+  deleteCycle(cycleId) {
+    // console.log('token', global.user.token);
+    return chai.request(utils.config.gateway)
+      .delete(`/test/v1/projects/${projectId}/cycle/delete/${cycleId}`)
+      .set('Authorization', global.user.token)
+      .set('Content-Type', 'application/json')
+      .then((res) => {
+        res.should.have.status(204);
+        return res;
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+  },
+  /**
    *
    *
    * @param {*} executeId
@@ -56,7 +183,7 @@ const cycleFunction = {
   getCycleExecute(executeId) {
     // console.log('token', global.user.token);
     return chai.request(utils.config.gateway)
-      .get(`/test/v1/projects/${projectId}/cycle/case/query/one/${executeId}`)   
+      .get(`/test/v1/projects/${projectId}/cycle/case/query/one/${executeId}`)
       .set('Authorization', global.user.token)
       .set('Content-Type', 'application/json')
       .then((res) => {
@@ -75,7 +202,7 @@ const cycleFunction = {
    */
   getExecuteSteps(executeId) {
     return chai.request(utils.config.gateway)
-      .get(`/test/v1/projects/${projectId}/cycle/case/step/query/${executeId}?size=${5}&page=${0}`)   
+      .get(`/test/v1/projects/${projectId}/cycle/case/step/query/${executeId}?size=${5}&page=${0}`)
       .set('Authorization', global.user.token)
       .set('Content-Type', 'application/json')
       .then((res) => {
@@ -94,7 +221,7 @@ const cycleFunction = {
    */
   getExecuteHistiorys(executeId) {
     return chai.request(utils.config.gateway)
-      .get(`/test/v1/projects/${projectId}/cycle/case/history/${executeId}?size=${5}&page=${0}`)   
+      .get(`/test/v1/projects/${projectId}/cycle/case/history/${executeId}?size=${5}&page=${0}`)
       .set('Authorization', global.user.token)
       .set('Content-Type', 'application/json')
       .then((res) => {
@@ -105,6 +232,6 @@ const cycleFunction = {
         console.log(err);
       });
   },
-  
+
 };
 module.exports = cycleFunction;

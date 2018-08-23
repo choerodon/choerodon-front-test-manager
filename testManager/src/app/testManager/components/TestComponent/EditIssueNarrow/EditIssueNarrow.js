@@ -18,7 +18,9 @@ import {
   delta2Html, handleFileUpload, text2Delta, beforeTextUpload, formatDate, returnBeforeTextUpload,
 } from '../../../common/utils';
 import {
-  loadDatalogs, loadLinkIssues, loadLabels, loadIssue, loadWorklogs, updateIssue, loadPriorities, loadComponents, loadVersions, loadEpics, createCommit, deleteIssue, updateIssueType, loadStatus,
+  loadDatalogs, loadLinkIssues, loadLabels, loadIssue, loadWorklogs,
+  updateIssue, loadPriorities, loadComponents, loadVersions, loadEpics,
+  createCommit, deleteIssue, loadStatus,
 } from '../../../api/IssueApi';
 import { getSelf, getUsers, getUser } from '../../../api/CommonApi';
 import WYSIWYGEditor from '../WYSIWYGEditor';
@@ -188,7 +190,7 @@ class EditIssueNarrow extends Component {
   }
 
   getWorkloads = () => {
-    const worklogs = this.state.worklogs;
+    const { worklogs } = this.state;
     if (!Array.isArray(worklogs)) {
       return 0;
     }
@@ -652,7 +654,7 @@ class EditIssueNarrow extends Component {
     const extra = {
       issueId: this.state.origin.issueId,
     };
-    const addCommitDes = this.state.addCommitDes;
+    const { addCommitDes } = this.state;
     if (addCommitDes) {
       beforeTextUpload(addCommitDes, extra, this.createCommit, 'commentText');
     } else {
@@ -739,21 +741,21 @@ class EditIssueNarrow extends Component {
     }
   }
 
-  handleChangeType({ key }) {
-    const issueupdateTypeDTO = {
-      epicName: key === 'issue_epic' ? this.state.summary : undefined,
-      issueId: this.state.origin.issueId,
-      objectVersionNumber: this.state.origin.objectVersionNumber,
-      typeCode: key,
-    };
-    updateIssueType(issueupdateTypeDTO)
-      .then((res) => {
-        loadIssue(this.props.issueId).then((response) => {
-          this.reloadIssue(this.state.origin.issueId);
-          this.props.onUpdate();
-        });
-      });
-  }
+  // handleChangeType({ key }) {
+  //   const issueupdateTypeDTO = {
+  //     epicName: key === 'issue_epic' ? this.state.summary : undefined,
+  //     issueId: this.state.origin.issueId,
+  //     objectVersionNumber: this.state.origin.objectVersionNumber,
+  //     typeCode: key,
+  //   };
+  //   updateIssueType(issueupdateTypeDTO)
+  //     .then((res) => {
+  //       loadIssue(this.props.issueId).then((response) => {
+  //         this.reloadIssue(this.state.origin.issueId);
+  //         this.props.onUpdate();
+  //       });
+  //     });
+  // }
 
   changeRae(currentRae) {
     this.setState({
@@ -762,19 +764,26 @@ class EditIssueNarrow extends Component {
   }
 
   handleDeleteIssue = (issueId) => {
-    console.log(issueId);
+    // console.log(issueId);
     const that = this;
     confirm({
       width: 560,
       title: `删除问题${this.state.issueNum}`,
-      content: <div style={{ marginBottom: 32 }}>
-        <p style={{ marginBottom: 10 }}>请确认您要删除这个问题。</p>
-        <p style={{ marginBottom: 10 }}>这个问题将会被彻底删除。包括所有附件和评论。</p>
-        <p style={{ marginBottom: 10 }}>如果您完成了这个问题，通常是已解决或者已关闭，而不是删除。</p>
-        {
-          this.state.subIssueDTOList.length ? <p>{`注意：问题的 ${this.state.subIssueDTOList.length} 个子任务将被删除。`}</p> : null
-        }
-               </div>,
+      content:
+  <div style={{ marginBottom: 32 }}>
+    <p style={{ marginBottom: 10 }}>请确认您要删除这个问题。</p>
+    <p style={{ marginBottom: 10 }}>这个问题将会被彻底删除。包括所有附件和评论。</p>
+    <p style={{ marginBottom: 10 }}>如果您完成了这个问题，通常是已解决或者已关闭，而不是删除。</p>
+    {
+   this.state.subIssueDTOList.length 
+     ? (
+       <p>
+         {`注意：问题的 ${this.state.subIssueDTOList.length} 个子任务将被删除。`}
+       </p>
+     ) 
+     : null
+    }
+  </div>,
       onOk() {
         return deleteIssue(issueId)
           .then((res) => {
@@ -1597,7 +1606,9 @@ class EditIssueNarrow extends Component {
                                         });
                                       });
                                     }}
-                                    onChange={value => this.setState({ componentIssueRelDTOList: value })}
+                                    onChange={value => this.setState({
+                                      componentIssueRelDTOList: value,
+                                    })}
                                   >
                                     {this.state.originComponents.map(component => (
                                       <Option

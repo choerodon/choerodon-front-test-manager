@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import {
-  Table, Tabs, Button, Icon, Spin, 
+  Table, Tabs, Button, Icon, Spin,
 } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 import {
-  Page, Header, Content, stores, 
+  Page, Header, Content, stores,
 } from 'choerodon-front-boot';
 import CreateStatus from '../../../../components/CreateStatus';
 import EditStatusSide from '../../../../components/EditStatusSide';
@@ -97,7 +97,7 @@ class CustomStatusHome extends Component {
     });
   }
 
-  refresh=() => {
+  refresh = () => {
     this.getList(this.state.statusType);
   }
 
@@ -112,7 +112,7 @@ class CustomStatusHome extends Component {
     this.getList(key);
   }
 
-  deleteStatus=(data) => {
+  deleteStatus = (data) => {
     this.setState({
       loading: true,
     });
@@ -133,24 +133,23 @@ class CustomStatusHome extends Component {
   }
 
   render() {
-    const { 
-      loading, statusType, 
-      createVisible, editVisible, statusPagination, statusList, 
+    const {
+      loading, statusType,
+      createVisible, editVisible, statusPagination, statusList,
       editing,
     } = this.state;
-    const that = this;
     const columns = [{
       title: <FormattedMessage id="status_type" />,
       dataIndex: 'statusName',
       key: 'statusName',
       filters: [],
-      onFilter: (value, record) => record.statusName.indexOf(value) === 0,  
+      onFilter: (value, record) => record.statusName.indexOf(value) === 0,
     }, {
       title: <FormattedMessage id="status_comment" />,
       dataIndex: 'description',
       key: 'description',
       filters: [],
-      onFilter: (value, record) => record.description && record.description.indexOf(value) === 0,  
+      onFilter: (value, record) => record.description && record.description.indexOf(value) === 0,
     }, {
       title: <FormattedMessage id="status_color" />,
       dataIndex: 'statusColor',
@@ -163,35 +162,35 @@ class CustomStatusHome extends Component {
     }, {
       title: '',
       key: 'action',
-      render(text, record) {
+      render: (text, record) => {
         return (
           record.projectId !== 0
-            && (
+          && (
             <div>
               <Icon
                 type="mode_edit"
                 style={{ cursor: 'pointer' }}
                 onClick={() => {
-      // window.console.log(record);
-      that.setState({
-        editVisible: true,
-        editing: record,
-      });
-    }}
+                  // window.console.log(record);
+                  this.setState({
+                    editVisible: true,
+                    editing: record,
+                  });
+                }}
               />
-              <Icon 
-                type="delete_forever" 
-                style={{ cursor: 'pointer', marginLeft: 10 }} 
-                onClick={() => { that.deleteStatus(record); }}
+              <Icon
+                type="delete_forever"
+                style={{ cursor: 'pointer', marginLeft: 10 }}
+                onClick={() => { this.deleteStatus(record); }}
               />
             </div>
-            )
+          )
         );
       },
     }];
     return (
       <div>
-        <CreateStatus        
+        <CreateStatus
           visible={createVisible}
           onCancel={() => { this.setState({ createVisible: false }); }}
           onOk={() => { this.setState({ createVisible: false }); this.getList(statusType); }}
@@ -216,9 +215,9 @@ class CustomStatusHome extends Component {
         </Header>
         <Spin spinning={loading}>
           <Content
-          // style={{
-          //   padding: '0 0 10px 0',
-          // }}
+            // style={{
+            //   padding: '0 0 10px 0',
+            // }}
             title={<FormattedMessage id="status_custom_home_title" />}
             description={<FormattedMessage id="status_custom_home_description" />}
             link="http://choerodon.io/zh/docs/user-guide/test-management/setting/status/"
@@ -230,7 +229,7 @@ class CustomStatusHome extends Component {
                   // pagination={statusPagination}
                   columns={columns}
                   dataSource={statusList}
-                  // onChange={this.handleStatusTableChange}
+                // onChange={this.handleStatusTableChange}
                 />
               </TabPane>
               <TabPane tab={<FormattedMessage id="status_steptatus" />} key="CASE_STEP">
@@ -239,7 +238,7 @@ class CustomStatusHome extends Component {
                   // pagination={statusPagination}
                   columns={columns}
                   dataSource={statusList}
-                  // onChange={this.handleStatusTableChange}
+                // onChange={this.handleStatusTableChange}
                 />
               </TabPane>
             </Tabs>

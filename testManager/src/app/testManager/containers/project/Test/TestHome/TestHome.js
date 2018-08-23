@@ -404,7 +404,7 @@ class Test extends Component {
             ) : null
           }
           {componentIssueRelDTOList.length > 0 ? (
-            <div style={{ margin: '0 5px', color: '#3F51B5', fontWeight: 'bold' }}>
+            <div style={{ margin: '0 5px', color: '#3F51B5', fontWeight: 500 }}>
               {
               componentIssueRelDTOList.map(component => component.name).join(',')
             }
