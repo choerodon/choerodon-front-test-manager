@@ -266,6 +266,7 @@ class TestStepTable extends Component {
         title: null,
         dataIndex: 'action',
         key: 'action',
+        flex:2,
         render(attachments, record) {
           return (
             <div>

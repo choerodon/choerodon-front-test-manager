@@ -180,37 +180,38 @@ class TestExecuteTable extends Component {
       dataIndex: 'defects',
       key: 'defects',
       render: (defects, item) => (
-        <div className="c7n-text-dot">
+        <div>        
           {
-            item.defects.length ? (
-              <div>
-                <Tooltip
-                  placement="topLeft"
-                  title={(
-                    <div>
-                      {item.defects.map((defect, i) => (
-                        <div>
-                          <Link
-                            style={{
-                              color: 'white',
-                            }}
-                            to={issueLink(defect.issueInfosDTO.issueId,
-                              defect.issueInfosDTO.typeCode)}
-                            target="_blank"
-                          >
-                            {defect.issueInfosDTO.issueName}
-                          </Link>
-                          <div>{defect.issueInfosDTO.summary}</div>
-                        </div>
-                      ))}
-                    </div>
+            item.defects.length ? (              
+              <Tooltip
+                placement="topLeft"
+                title={(
+                  <div>
+                    {item.defects.map((defect, i) => (
+                      <div>
+                        <Link
+                          style={{
+                            color: 'white',
+                          }}
+                          to={issueLink(defect.issueInfosDTO.issueId,
+                            defect.issueInfosDTO.typeCode)}
+                          target="_blank"
+                        >
+                          {defect.issueInfosDTO.issueName}
+                        </Link>
+                        <div>{defect.issueInfosDTO.summary}</div>
+                      </div>
+                    ))}
+                  </div>
                   )}
-                >
+              >
+                <div className="c7n-text-dot">
                   {item.defects.map((defect, i) => defect.issueInfosDTO.issueName).join(',')}
-                </Tooltip>
-              </div>
+                </div>
+              </Tooltip>
+             
             ) : '-'
-          }
+          }        
         </div>
       ),
     }, {
