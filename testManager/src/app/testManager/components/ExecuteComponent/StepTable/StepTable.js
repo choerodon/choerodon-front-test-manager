@@ -1,9 +1,13 @@
 import React, { Component } from 'react';
-import { Table, Button, Input, Icon, Card, Select, Spin, Upload, Tooltip } from 'choerodon-ui';
+import {
+  Table, Button, Input, Icon, Card, Select, Spin, Upload, Tooltip, 
+} from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 import _ from 'lodash';
 import { editCycleStep, deleteAttachment, addDefects } from '../../../api/CycleExecuteApi';
-import { TextEditToggle, RichTextShow, UploadInTable, DefectSelect } from '../../CommonComponent';
+import {
+  TextEditToggle, RichTextShow, UploadInTable, DefectSelect, 
+} from '../../CommonComponent';
 import { delta2Html, delta2Text } from '../../../common/utils';
 import { uploadFile } from '../../../api/CommonApi';
 import { getIssueList } from '../../../api/agileApi';
@@ -11,6 +15,7 @@ import EditTestDetail from '../EditTestDetail';
 import './StepTable.scss';
 import CycleExecuteStore from '../../../store/project/cycle/CycleExecuteStore';
 
+const { TextArea } = Input;
 const Option = Select.Option;
 const styles = {
   cardTitle: {
@@ -71,6 +76,7 @@ class StepTable extends Component {
     editing: null,
     // issueList: [],
   }
+
   editCycleStep = (values) => {
     // this.setState({ loading: true });
 
@@ -95,7 +101,8 @@ class StepTable extends Component {
       // });
       Choerodon.prompt('网络错误');
     });
-  }; 
+  };
+ 
   render() {
     const that = this;
     // const { onOk, enterLoad, leaveLoad } = this.props;
@@ -106,11 +113,13 @@ class StepTable extends Component {
     const { editVisible, editing } = this.state;
     const options = stepStatusList.map((status) => {
       const { statusName, statusId, statusColor } = status;
-      return (<Option value={statusId} key={statusId}>
-        <div style={{ ...styles.statusOption, ...{ background: statusColor } }}>
-          {statusName}
-        </div>
-      </Option>);
+      return (
+        <Option value={statusId} key={statusId}>
+          <div style={{ ...styles.statusOption, ...{ background: statusColor } }}>
+            {statusName}
+          </div>
+        </Option>
+      );
     });
     // const defectsOptions =
     //   issueList.map(issue => (<Option key={issue.issueId} value={issue.issueId.toString()}>
@@ -121,61 +130,67 @@ class StepTable extends Component {
       dataIndex: 'testStep',
       key: 'testStep',
       width: '10%',
-      render: testStep =>
-        (<Tooltip title={testStep}>
+      render: testStep => (
+        <Tooltip title={testStep}>
           <div className="c7n-text-dot">
             {testStep}
           </div>
-        </Tooltip>),
+        </Tooltip>
+      ),
     }, {
       title: <FormattedMessage id="execute_testData" />,
       dataIndex: 'testData',
       key: 'testData',
-      render: testData =>
-        (<Tooltip title={testData}>
+      render: testData => (
+        <Tooltip title={testData}>
           <div
             className="c7n-text-dot"
           >
             {testData}
           </div>
-        </Tooltip>),
+        </Tooltip>
+      ),
     }, {
       title: <FormattedMessage id="execute_expectedOutcome" />,
       dataIndex: 'expectedResult',
       key: 'expectedResult',
-      render: expectedResult =>
-        (<Tooltip title={expectedResult}>
+      render: expectedResult => (
+        <Tooltip title={expectedResult}>
           <div
 
             className="c7n-text-dot"
           >
             {expectedResult}
           </div>
-        </Tooltip>),
+        </Tooltip>
+      ),
     },
     {
       title: <FormattedMessage id="execute_stepAttachment" />,
       dataIndex: 'stepAttachment',
       key: 'stepAttachment',
       render(stepAttachment) {
-        return (<Tooltip title={
-          <div>
-            {stepAttachment.filter(attachment => attachment.attachmentType === 'CASE_STEP').map((attachment, i) => (
-              <div style={{
-                fontSize: '13px',
-                color: 'white',
-              }}
-              >
-                {attachment.attachmentName}
-              </div>))}
-          </div>}
-        >
-          <div
-            className="c7n-text-dot"
+        return (
+          <Tooltip title={(
+            <div>
+              {stepAttachment.filter(attachment => attachment.attachmentType === 'CASE_STEP').map((attachment, i) => (
+                <div style={{
+                  fontSize: '13px',
+                  color: 'white',
+                }}
+                >
+                  {attachment.attachmentName}
+                </div>))}
+            </div>
+)}
           >
-            {stepAttachment.filter(attachment => attachment.attachmentType === 'CASE_STEP').map((attachment, i) => attachment.attachmentName).join(',')}
-          </div>
-        </Tooltip>);
+            <div
+              className="c7n-text-dot"
+            >
+              {stepAttachment.filter(attachment => attachment.attachmentType === 'CASE_STEP').map((attachment, i) => attachment.attachmentName).join(',')}
+            </div>
+          </Tooltip>
+        );
       },
     },
     {
@@ -184,10 +199,10 @@ class StepTable extends Component {
       key: 'stepStatus',
       // width: 120,
       render(stepStatus, record) {
-        const statusColor = _.find(stepStatusList, { statusId: stepStatus }) ?
-          _.find(stepStatusList, { statusId: stepStatus }).statusColor : '';
-        const statusName = _.find(stepStatusList, { statusId: stepStatus }) &&
-          _.find(stepStatusList, { statusId: stepStatus }).statusName;
+        const statusColor = _.find(stepStatusList, { statusId: stepStatus })
+          ? _.find(stepStatusList, { statusId: stepStatus }).statusColor : '';
+        const statusName = _.find(stepStatusList, { statusId: stepStatus })
+          && _.find(stepStatusList, { statusId: stepStatus }).statusName;
         return (
           <div style={{ width: 85 }}>
             <TextEditToggle
@@ -234,7 +249,7 @@ class StepTable extends Component {
                 </div>
               </Text>
               <Edit>
-                <Input autoFocus />,ss
+                <TextArea autosize autoFocus />
               </Edit>
             </TextEditToggle>
           </Tooltip>
@@ -268,63 +283,41 @@ class StepTable extends Component {
         //     {caseAttachment.map((attachment, i) => attachment.attachmentName).join(',')}
         //   </div>
         // </Tooltip>);
-        return (<TextEditToggle>
-          <Text>
-            <div style={{ display: 'flex', overflow: 'hidden', height: 20 }}>
-              {stepAttachment.filter(attachment => attachment.attachmentType === 'CYCLE_STEP').map(attachment => (
-                <div style={{ fontSize: '12px', flexShrink: 0, margin: '0 2px' }} className="c7n-text-dot">
-                  <Icon type="attach_file" style={{ fontSize: '12px', color: 'rgba(0,0,0,0.65)' }} />
-                  <a href={attachment.url} target="_blank" rel="noopener noreferrer">{attachment.attachmentName}</a>
-                </div>
-              ))
+        return (
+          <TextEditToggle>
+            <Text>
+              <div style={{ display: 'flex', overflow: 'hidden', height: 20 }}>
+                {stepAttachment.filter(attachment => attachment.attachmentType === 'CYCLE_STEP').map(attachment => (
+                  <div style={{ fontSize: '12px', flexShrink: 0, margin: '0 2px' }} className="c7n-text-dot">
+                    <Icon type="attach_file" style={{ fontSize: '12px', color: 'rgba(0,0,0,0.65)' }} />
+                    <a href={attachment.url} target="_blank" rel="noopener noreferrer">{attachment.attachmentName}</a>
+                  </div>
+                ))
               }
-            </div>
-          </Text>
-          <Edit>
-            <UploadInTable
-              fileList={stepAttachment.filter(attachment => attachment.attachmentType === 'CYCLE_STEP')}
-              onOk={CycleExecuteStore.loadDetailList}
-              enterLoad={CycleExecuteStore.enterloading}
-              leaveLoad={CycleExecuteStore.unloading}
-              config={{
-                attachmentLinkId: record.executeStepId,
-                attachmentType: 'CYCLE_STEP',
-              }}
-            />
-          </Edit>
-        </TextEditToggle>);
+              </div>
+            </Text>
+            <Edit>
+              <UploadInTable
+                fileList={stepAttachment.filter(attachment => attachment.attachmentType === 'CYCLE_STEP')}
+                onOk={CycleExecuteStore.loadDetailList}
+                enterLoad={CycleExecuteStore.enterloading}
+                leaveLoad={CycleExecuteStore.unloading}
+                config={{
+                  attachmentLinkId: record.executeStepId,
+                  attachmentType: 'CYCLE_STEP',
+                }}
+              />
+            </Edit>
+          </TextEditToggle>
+        );
       },
     },
     {
       title: <FormattedMessage id="bug" />,
       dataIndex: 'defects',
       key: 'defects',
-      render: (defects, record) =>
-        // (<Tooltip title={
-        //   <div>
-        //     {defects.map((defect, i) => (
-        //       <div style={{
-        //         fontSize: '13px',
-        //         color: 'white',
-        //       }}
-        //       >
-        //         {defect.issueInfosDTO && defect.issueInfosDTO.issueName}
-        //       </div>))}
-        //   </div>}
-        // >
-        //   <div
-        //     style={{
-        //       width: 100,
-        //       overflow: 'hidden',
-        //       textOverflow: 'ellipsis',
-        //       whiteSpace: 'nowrap',
-        //     }}
-        //   >
-        //     {defects.map((defect, i) => defect.issueInfosDTO &&
-        //  defect.issueInfosDTO.issueName).join(',')}
-        //   </div>
-        // </Tooltip>),
-        (<TextEditToggle
+      render: (defects, record) => (
+        <TextEditToggle
           onSubmit={() => {
             if (that.needAdd.length > 0) {
               CycleExecuteStore.enterloading();
@@ -340,33 +333,38 @@ class StepTable extends Component {
         >
           <Text>
             {
-              defects.length > 0 ? <Tooltip title={
-                <div>
-                  {defects.map((defect, i) => (
-                    <div style={{
-                      fontSize: '13px',
-                      color: 'white',
+              defects.length > 0 ? (
+                <Tooltip title={(
+                  <div>
+                    {defects.map((defect, i) => (
+                      <div style={{
+                        fontSize: '13px',
+                        color: 'white',
+                      }}
+                      >
+                        {defect.issueInfosDTO && defect.issueInfosDTO.issueName}
+                      </div>))}
+                  </div>
+)}
+                >
+                  <div
+                    style={{
+                      width: 100,
+                      height: 20,
                     }}
-                    >
-                      {defect.issueInfosDTO && defect.issueInfosDTO.issueName}
-                    </div>))}
-                </div>}
-              >
+                    className="c7n-text-dot"
+                  >
+                    {defects.map((defect, i) => defect.issueInfosDTO && defect.issueInfosDTO.issueName).join(',')}
+                  </div>
+                </Tooltip>
+              ) : (
                 <div
                   style={{
                     width: 100,
                     height: 20,
                   }}
-                  className="c7n-text-dot"
-                >
-                  {defects.map((defect, i) => defect.issueInfosDTO && defect.issueInfosDTO.issueName).join(',')}
-                </div>
-              </Tooltip> : <div
-                style={{
-                  width: 100,
-                  height: 20,
-                }}
-              />
+                />
+              )
             }
           </Text>
           <Edit>
@@ -376,7 +374,8 @@ class StepTable extends Component {
               executeStepId={record.executeStepId}
             />
           </Edit>
-        </TextEditToggle>),
+        </TextEditToggle>
+      ),
     },
     // {
     //   title: null,
