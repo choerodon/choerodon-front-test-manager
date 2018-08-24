@@ -16,6 +16,7 @@ import './StepTable.scss';
 import CycleExecuteStore from '../../../store/project/cycle/CycleExecuteStore';
 
 const { Option } = Select;
+const { TextArea } = Input;
 const styles = {
   cardTitle: {
     fontWeight: 500,
@@ -156,7 +157,6 @@ class StepTable extends Component {
       render: expectedResult => (
         <Tooltip title={expectedResult}>
           <div
-
             className="c7n-text-dot"
           >
             {expectedResult}
@@ -249,7 +249,7 @@ class StepTable extends Component {
               </Tooltip>
             </Text>
             <Edit>
-              <Input autoFocus />
+              <TextArea autoFocus autosize={{ minRows: 1, maxRows: 6 }} />
             </Edit>
           </TextEditToggle>       
         );
