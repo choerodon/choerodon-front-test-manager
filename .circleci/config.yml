@@ -12,9 +12,11 @@ jobs:
     steps:
       - checkout
       - run: |
+            pip install pymysql
             export CI_COMMIT_TAG=$CIRCLE_TAG
             cd testManager && npm install -registry https://nexus.choerodon.com.cn/repository/choerodon-npm/ && cd ..
             python ./testManager/node_modules/choerodon-front-boot/structure/configAuto.py testManager
+            python ./testManager/node_modules/choerodon-front-boot/structure/dashboard.py -o yml -m testManager
             cd testManager
             chmod -R 777 node_modules
             npm run build
@@ -23,6 +25,7 @@ jobs:
           root: .
           paths:
             - config.yml
+            - dashboard.yml
             - testManager/dist
             - testManager/node_modules/choerodon-front-boot/structure
   docker_build:
