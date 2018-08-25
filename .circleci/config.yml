@@ -25,6 +25,7 @@ jobs:
           root: .
           paths:
             - config.yml
+            - dashboard.yml
             - testManager/dist
             - testManager/node_modules/choerodon-front-boot/structure
   docker_build:
