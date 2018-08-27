@@ -1,0 +1,51 @@
+.c7n-EventCalendar {
+  position: relative;
+  height: 600px;
+  flex: 1;
+  margin: 0 20px;
+  &-header {
+    display: flex;
+    margin-bottom: 20px;
+    &-radio {
+      margin-left: 10px;
+    }
+    &-page {
+      i {
+        margin-left: 15px;
+      }
+    }
+  }
+  &-content {
+    height: 100%;
+  }
+  &-BackItems {
+    height: 100%;
+    display: flex;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    border-right: none;
+  }
+  &-eventContainer {
+    display: flex;
+    position: absolute;
+    top: 90px;
+  }
+  .ant-radio-button-wrapper {
+    padding: 0 9px;
+    height: 26px;
+    line-height: 26px;
+    border: none !important;
+    color: #3f51b5;
+    margin: 0 5px;
+  }
+  .ant-radio-button-wrapper:not(:first-child)::before {
+    border: none;
+    width: 0;
+    display: none;
+  }
+  .ant-radio-button-wrapper-checked {
+    color: white;
+    background: #3F51B5;
+    box-shadow: none;
+    border-radius: 2px;
+  }
+}

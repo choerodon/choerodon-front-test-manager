@@ -51,6 +51,8 @@ const enUS = {
   comment: 'Description',
   name: 'Name',
   day: 'days',
+  week: 'week',
+  month: 'month',
   export: 'export',
   high: 'high',
   medium: 'medium',

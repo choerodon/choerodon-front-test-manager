@@ -157,6 +157,7 @@ class StepTable extends Component {
       render: expectedResult => (
         <Tooltip title={expectedResult}>
           <div
+
             className="c7n-text-dot"
           >
             {expectedResult}

@@ -63,7 +63,7 @@ class RichTextShow extends Component {
                 <Lightbox
                   mainSrc={item.insert.image}
                   onCloseRequest={() => this.onOpenLightboxChange(`${index}`)}
-                  imageTitle="images"
+                  imageTitle={'images'}
                 />
               ) : (
                 ''
@@ -86,7 +86,7 @@ class RichTextShow extends Component {
     return replyContents;
   };
 
-  escape = str => str && str.replace(/<\/script/g, '<\\/script').replace(/<!--/g, '<\\!--');
+  escape = str => str.replace(/<\/script/g, '<\\/script').replace(/<!--/g, '<\\!--');
 
   render() {
     return (
@@ -97,7 +97,7 @@ class RichTextShow extends Component {
             <Lightbox
               mainSrc={this.state.src}
               // onCloseRequest={() => this.setState({ open: false })}
-              imageTitle="images"
+              imageTitle={'images'}
             />
           ) : null
         }

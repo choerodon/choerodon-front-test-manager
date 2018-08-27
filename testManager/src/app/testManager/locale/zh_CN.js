@@ -54,6 +54,8 @@ const zhCN = {
   comment: '说明',
   name: '名称',
   day: '天',
+  week: '周',
+  month: '月',
   export: '导出',
   high: '高',
   medium: '中',
