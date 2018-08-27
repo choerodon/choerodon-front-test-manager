@@ -277,77 +277,6 @@ class ReportStory extends Component {
             {linkedTestIssues.map((testIssue) => {
               const { testCycleCaseES, issueId } = testIssue;
 
-<<<<<<< HEAD
-          // console.log()
-          const totalExecute = testCycleCaseES.length;
-          // const todoExecute = 0;
-          // let doneExecute = 0;
-          const executeStatus = {};
-          const caseShow = testCycleCaseES.map((execute) => {
-            // 执行的颜色
-            const { executionStatus } = execute;
-            const statusColor = _.find(statusList, { statusId: executionStatus }) ?
-              _.find(statusList, { statusId: executionStatus }).statusColor : '';
-            const statusName = _.find(statusList, { statusId: executionStatus }) &&
-              _.find(statusList, { statusId: executionStatus }).statusName;
-            // if (statusColor !== 'gray') {
-            //   doneExecute += 1;
-            // }
-            if (!executeStatus[statusName]) {
-              executeStatus[statusName] = 1;
-            } else {
-              executeStatus[statusName] += 1;
-            }
-            const marginBottom =
-              Math.max((execute.defects.length + execute.subStepDefects.length) - 1, 0) * 30;
-            return (
-              <div className="c7n-cycle-show-container" style={{ marginBottom }}>
-                <div                 
-                  style={{ width: 80, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}
-                >
-                  <Tooltip title={`${execute.cycleName}${execute.folderName ? `/${execute.folderName}` : ''}`}>
-                    <Link className="c7n-showId" to={cycleLink(execute.cycleId)} target="_blank">
-                      {execute.cycleName}{execute.folderName ? `/${execute.folderName}` : ''}
-                    </Link>  
-                  </Tooltip>                
-                </div>
-                <div
-                  className="c7n-collapse-text-icon"
-                  style={{ color: statusColor, borderColor: statusColor }}
-                >
-                  {statusName}
-                </div>
-                <Link
-                  style={{ lineHeight: '13px' }}
-                  to={`/testManager/TestExecute/execute/${execute.executeId}?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}
-                >
-                  <Icon type="explicit2" style={{ marginLeft: 10, color: 'black' }} />
-                </Link>
-              </div>);
-          });
-          // window.console.log(executeStatus);
-          return openId[record.defectInfo.issueId] && openId[record.defectInfo.issueId]
-            .includes(issueId.toString()) ? <div
-              style={{ minHeight: totalExecute === 0 ? 50 : 30 }}
-            >
-              {caseShow} </div>
-            :
-            (
-              <div style={{ height: 50 }}>
-                <div><FormattedMessage id="report_total" />：{totalExecute}</div>
-                <div style={{ display: 'flex' }}>
-                  {
-                    Object.keys(executeStatus).map(key => (<div>
-                      <span>{key}：</span>
-                      <span>{executeStatus[key]}</span>
-                    </div>))
-                  }
-                </div>
-              </div>
-            );
-        })}
-        </div>);
-=======
               // console.log()
               const totalExecute = testCycleCaseES.length;
               // const todoExecute = 0;
@@ -371,9 +300,13 @@ class ReportStory extends Component {
                 const marginBottom = Math.max((execute.defects.length + execute.subStepDefects.length) - 1, 0) * 30;
                 return (
                   <div className="c7n-cycle-show-container" style={{ marginBottom }}>
-                    <div>
+                    <div
+                      style={{
+                        width: 80, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+                      }}
+                    >
                       <Tooltip title={`${execute.cycleName}${execute.folderName ? `/${execute.folderName}` : ''}`}>
-                        <Link className="c7n-showId " style={{ display: 'inline-block' }} to={cycleLink(execute.cycleId)} target="_blank">
+                        <Link className="c7n-showId" to={cycleLink(execute.cycleId)} target="_blank">
                           {execute.cycleName}
                           {execute.folderName ? `/${execute.folderName}` : ''}
                         </Link>
@@ -387,7 +320,7 @@ class ReportStory extends Component {
                     </div>
                     <Link
                       style={{ lineHeight: '13px' }}
-                      to={`/testManager/Cycle/execute/${execute.executeId}?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}
+                      to={`/testManager/TestExecute/execute/${execute.executeId}?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}
                     >
                       <Icon type="explicit2" style={{ marginLeft: 10, color: 'black' }} />
                     </Link>
@@ -427,9 +360,7 @@ class ReportStory extends Component {
                   </div>
                 );
             })}
-          </div>
-        );
->>>>>>> [FIX]修改样式
+          </div>);
       },
     }, {
       className: 'c7n-table-white',

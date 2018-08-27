@@ -156,22 +156,22 @@ class CycleHome extends Component {
         page: executePagination.current - 1,
         size: executePagination.pageSize,
       }, data.cycleId,
-        {
-          ...filters,
-          lastUpdatedBy: [Number(this.lastUpdatedBy)],
-          assignedTo: [Number(this.assignedTo)],
-        }).then((cycle) => {
-          this.setState({
-            rightLoading: false,
-            testList: cycle.content,
-            executePagination: {
-              current: executePagination.current,
-              pageSize: executePagination.pageSize,
-              total: cycle.totalElements,
-            },
-          });
-          // window.console.log(cycle);
+      {
+        ...filters,
+        lastUpdatedBy: [Number(this.lastUpdatedBy)],
+        assignedTo: [Number(this.assignedTo)],
+      }).then((cycle) => {
+        this.setState({
+          rightLoading: false,
+          testList: cycle.content,
+          executePagination: {
+            current: executePagination.current,
+            pageSize: executePagination.pageSize,
+            total: cycle.totalElements,
+          },
         });
+        // window.console.log(cycle);
+      });
     }
   }
 
@@ -303,18 +303,18 @@ class CycleHome extends Component {
         page: executePagination.current - 1,
         size: executePagination.pageSize,
       }, defaultExpandKeyItem.cycleId,
-        {}).then((cycle) => {
-          this.setState({
-            rightLoading: false,
-            testList: cycle.content,
-            executePagination: {
-              current: executePagination.current,
-              pageSize: executePagination.pageSize,
-              total: cycle.totalElements,
-            },
-          });
-          // window.console.log(cycle);
+      {}).then((cycle) => {
+        this.setState({
+          rightLoading: false,
+          testList: cycle.content,
+          executePagination: {
+            current: executePagination.current,
+            pageSize: executePagination.pageSize,
+            total: cycle.totalElements,
+          },
         });
+        // window.console.log(cycle);
+      });
     }
   }
 
@@ -442,22 +442,22 @@ class CycleHome extends Component {
         size: pagination.pageSize,
         page: pagination.current - 1,
       }, currentCycle.cycleId,
-        {
-          ...filters,
-          lastUpdatedBy: [Number(this.lastUpdatedBy)],
-          assignedTo: [Number(this.assignedTo)],
-        }).then((cycle) => {
-          this.setState({
-            rightLoading: false,
-            testList: cycle.content,
-            executePagination: {
-              current: pagination.current,
-              pageSize: pagination.pageSize,
-              total: cycle.totalElements,
-            },
-          });
-          // window.console.log(cycle);
+      {
+        ...filters,
+        lastUpdatedBy: [Number(this.lastUpdatedBy)],
+        assignedTo: [Number(this.assignedTo)],
+      }).then((cycle) => {
+        this.setState({
+          rightLoading: false,
+          testList: cycle.content,
+          executePagination: {
+            current: pagination.current,
+            pageSize: pagination.pageSize,
+            total: cycle.totalElements,
+          },
         });
+        // window.console.log(cycle);
+      });
     }
   }
 
@@ -993,20 +993,10 @@ class CycleHome extends Component {
                           this.setState({ CreateCycleExecuteVisible: true });
                         }}
                       >
-<<<<<<< HEAD:testManager/src/app/testManager/containers/project/TestExecute/CycleHome/CycleHome.js
-<<<<<<< HEAD:testManager/src/app/testManager/containers/project/TestExecute/CycleHome/CycleHome.js
                         <Icon type="playlist_add" style={{ marginRight: -2 }} />
                         <span>
                           <FormattedMessage id="cycle_addCycle" />
                         </span>
-=======
-                        <Icon type="playlist_add" style={{ marginRight: -2 }} />                       
-                        <FormattedMessage id="cycle_addCycle" />                      
->>>>>>> [FIX]修改样式:testManager/src/app/testManager/containers/project/Cycle/CycleHome/CycleHome.js
-=======
-                        <Icon type="playlist_add" style={{ marginRight: -2 }} />
-                        <FormattedMessage id="cycle_addCycle" />
->>>>>>> [FIX]修复一些样式问题:testManager/src/app/testManager/containers/project/Cycle/CycleHome/CycleHome.js
                       </Button>
                     </div>
                   </div>
@@ -1043,37 +1033,17 @@ class CycleHome extends Component {
                   />
                 </div>
               ) : (
-<<<<<<< HEAD:testManager/src/app/testManager/containers/project/TestExecute/CycleHome/CycleHome.js
                 <div style={{
                   display: 'flex', alignItems: 'center', height: 250, margin: '88px auto', padding: '50px 75px', border: '1px dashed rgba(0,0,0,0.54)',
                 }}
                 >
                   <img src={noRight} alt="" />
                   <div style={{ marginLeft: 40 }}>
-<<<<<<< HEAD:testManager/src/app/testManager/containers/project/TestExecute/CycleHome/CycleHome.js
-                      <div style={{ fontSize: '14px', color: 'rgba(0,0,0,0.65)' }}>根据当前选定的测试循环没有查询到循环信息</div>
-                      <div style={{ fontSize: '20px', marginTop: 10 }}>尝试在您的树状图中选择测试循环</div>
-                    </div>
-=======
                     <div style={{ fontSize: '14px', color: 'rgba(0,0,0,0.65)' }}>根据当前选定的测试循环没有查询到循环信息</div>
-                    <div style={{ fontSize: '20px', fontWeight: 500, marginTop: 10 }}>尝试在您的树状图中选择测试循环</div>
+                    <div style={{ fontSize: '20px', marginTop: 10 }}>尝试在您的树状图中选择测试循环</div>
                   </div>
->>>>>>> [FIX]修改样式:testManager/src/app/testManager/containers/project/Cycle/CycleHome/CycleHome.js
                 </div>
               )}
-=======
-                  <div style={{
-                    display: 'flex', alignItems: 'center', height: 250, margin: '88px auto', padding: '50px 75px', border: '1px dashed rgba(0,0,0,0.54)',
-                  }}
-                  >
-                    <img src={noRight} alt="" />
-                    <div style={{ marginLeft: 40 }}>
-                      <div style={{ fontSize: '14px', color: 'rgba(0,0,0,0.65)' }}>根据当前选定的测试循环没有查询到循环信息</div>
-                      <div style={{ fontSize: '20px', marginTop: 10 }}>尝试在您的树状图中选择测试循环</div>
-                    </div>
-                  </div>
-                )}
->>>>>>> [FIX]修复一些样式问题:testManager/src/app/testManager/containers/project/Cycle/CycleHome/CycleHome.js
             </div>
           </Spin>
         </Content>

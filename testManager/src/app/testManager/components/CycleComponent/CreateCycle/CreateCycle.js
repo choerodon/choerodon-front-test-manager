@@ -49,10 +49,6 @@ class CreateCycle extends Component {
             this.props.onOk();
           }
           this.setState({ loading: false });
-<<<<<<< HEAD
-=======
-
->>>>>>> [FIX]修复一些样式问题
         }).catch(() => {
           Choerodon.prompt('网络异常');
           this.setState({ loading: false });
@@ -60,10 +56,7 @@ class CreateCycle extends Component {
       }
     });
   }
-<<<<<<< HEAD
 
-=======
->>>>>>> [FIX]修复一些样式问题
   loadVersions = () => {
     this.setState({
       selectLoading: true,
