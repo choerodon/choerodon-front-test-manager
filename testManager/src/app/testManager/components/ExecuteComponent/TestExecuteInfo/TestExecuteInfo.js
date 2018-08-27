@@ -1,14 +1,22 @@
 import React, { Component } from 'react';
-import { Button, Icon, Card, Select, Upload } from 'choerodon-ui';
+import {
+  Button, Icon, Card, Select, Upload, 
+} from 'choerodon-ui';
 import _ from 'lodash';
 import { observer } from 'mobx-react';
 import { FormattedMessage } from 'react-intl';
-import { TextEditToggle, RichTextShow, User, SelectCreateIssueFooter } from '../../CommonComponent';
+import {
+  TextEditToggle, RichTextShow, User, SelectCreateIssueFooter, 
+} from '../../CommonComponent';
 import { uploadFile } from '../../../api/CommonApi';
 import { delta2Html } from '../../../common/utils';
-import { addDefects, editCycle, deleteAttachment, removeDefect } from '../../../api/CycleExecuteApi';
-import FullEditor from '../../../components/FullEditor';
+import {
+  addDefects, editCycle, deleteAttachment, removeDefect, 
+} from '../../../api/CycleExecuteApi';
+import FullEditor from '../../FullEditor';
 import CycleExecuteStore from '../../../store/project/cycle/CycleExecuteStore';
+import './TestExecuteInfo.scss';
+
 
 function beforeUpload(file) {
   const isLt2M = file.size / 1024 / 1024 < 30;
@@ -25,14 +33,6 @@ const styles = {
   cardTitleText: {
     lineHeight: '20px',
     marginLeft: '5px',
-  },
-  cardBodyStyle: {
-    // maxHeight: '100%',
-    padding: 12,
-    overflow: 'hidden',
-  },
-  cardContent: {
-
   },
   carsContentItemPrefix: {
     width: 105,
@@ -76,6 +76,7 @@ class TestExecuteInfo extends Component {
   state = {
     edit: false,
   }
+
   handleUpload = (e) => {
     if (beforeUpload(e.target.files[0])) {
       const formData = new FormData();
@@ -120,6 +121,7 @@ class TestExecuteInfo extends Component {
       });
     }
   }
+
   handleDefectsChange = (List) => {
     // const { originDefects, defectIds, cycleData } = this.state;
     const cycleData = CycleExecuteStore.getCycleData;
@@ -145,6 +147,7 @@ class TestExecuteInfo extends Component {
       window.console.log('add', List.filter(item => !oldList.includes(item)));
     }
   }
+
   submit = (updateData) => {
     // window.console.log('submit', originData);
     const cycleData = CycleExecuteStore.getCycleData;
@@ -165,6 +168,7 @@ class TestExecuteInfo extends Component {
       Choerodon.prompt('网络异常');
     });
   }
+
   render() {
     const statusList = CycleExecuteStore.getStatusList;
     const issueList = CycleExecuteStore.getIssueList;
@@ -172,8 +176,10 @@ class TestExecuteInfo extends Component {
     const cycleData = CycleExecuteStore.getCycleData;
     // debugger;
     const selectLoading = CycleExecuteStore.selectLoading;
-    const { executionStatus, assigneeUser, lastUpdateUser,
-      lastUpdateDate, comment, defects } = cycleData;
+    const {
+      executionStatus, assigneeUser, lastUpdateUser,
+      lastUpdateDate, comment, defects, 
+    } = cycleData;
     const fileList = CycleExecuteStore.getFileList;
     const defectIds = CycleExecuteStore.getDefectIds;
     const { statusColor, statusName } = CycleExecuteStore.getStatusById(executionStatus);
@@ -189,221 +195,253 @@ class TestExecuteInfo extends Component {
         }
       },
     };
-    const options = statusList.map(status => (<Option value={status.statusId} key={status.statusId}>
-      <div style={{ ...styles.statusOption, ...{ background: status.statusColor } }}>
-        {status.statusName}
-      </div>
-    </Option>));
-    const defectsOptions =
-      issueList.map(issue => (<Option key={issue.issueId} value={issue.issueId.toString()}>
-        {issue.issueNum} {issue.summary}
-      </Option>));
-    const userOptions = userList.map(user =>
-      (<Option key={user.id} value={user.id}>
+    const options = statusList.map(status => (
+      <Option value={status.statusId} key={status.statusId}>
+        <div style={{ ...styles.statusOption, ...{ background: status.statusColor } }}>
+          {status.statusName}
+        </div>
+      </Option>
+    ));
+    const defectsOptions = issueList.map(issue => (
+      <Option key={issue.issueId} value={issue.issueId.toString()}>
+        {issue.issueNum} 
+        {' '}
+        {issue.summary}
+      </Option>
+    ));
+    const userOptions = userList.map(user => (
+      <Option key={user.id} value={user.id}>
         <div style={{ display: 'inline-flex', alignItems: 'center', padding: '2px' }}>
-          {user.imageUrl ?
-            <img src={user.imageUrl} alt="" style={{ width: 20, height: 20, borderRadius: '50%', marginRight: '8px' }} /> :
-            <div style={styles.userOption}>{user.realName.slice(0, 1)}
-            </div>
+          {user.imageUrl
+            ? (
+              <img
+                src={user.imageUrl}
+                alt=""
+                style={{
+                  width: 20, height: 20, borderRadius: '50%', marginRight: '8px', 
+                }}
+              />
+            )
+            : (
+              <div style={styles.userOption}>
+                {user.realName.slice(0, 1)}
+              </div>
+            )
           }
           <span>{`${user.loginName} ${user.realName}`}</span>
         </div>
-      </Option>),
-    );
-    return (<div style={{ display: 'flex', marginBottom: 24 }}>
-      <Card
-        title={null}
-        style={{ flex: 1, minHeight: 236 }}
-        bodyStyle={styles.cardBodyStyle}
-      >
-        <div style={styles.cardTitle}>
-          <Icon type="expand_more" />
-          <span style={styles.cardTitleText}><FormattedMessage id="execute_cycle_execute" /></span>
-        </div>
-        <div style={styles.cardContent}>
-          <div style={styles.cardContentItem}>
-            <div style={styles.carsContentItemPrefix}>
-              <FormattedMessage id="execute_status" />:
-            </div>
-            <TextEditToggle
-              formKey="executionStatus"
-              onSubmit={(id) => { this.submit({ executionStatus: id }); }}
-              originData={executionStatus}
-            // onCancel={this.cancelEdit}
-            >
-              <Text>
-                <div style={{ background: statusColor, width: 60, textAlign: 'center', borderRadius: '2px', display: 'inline-block', color: 'white' }}>
-                  {statusName}
-                </div>
-              </Text>
-              <Edit>
-                <Select
-                  autoFocus
-                  // defaultValue={executionStatus}
-                  style={{ width: 200 }}
-                // onSelect={this.handleStatusChange}
-                >
-                  {options}
-                </Select>
-              </Edit>
-            </TextEditToggle>
-          </div>
-          <div style={styles.cardContentItem}>
-            <div style={styles.carsContentItemPrefix}>
-              <FormattedMessage id="execute_assignedTo" />：
-            </div>
-            <TextEditToggle
-              formKey="assignedTo"
-              onSubmit={(id) => { this.submit({ assignedTo: id || 0 }); }}
-              originData={assigneeUser ? assigneeUser.id : null}
-              onCancel={this.cancelEdit}
-            >
-              <Text>
-                {assigneeUser ? <User user={assigneeUser} />
-                  : '无'}
-              </Text>
-              <Edit>
-                <Select
-                  filter
-                  allowClear
-                  autoFocus
-                  filterOption={false}
-                  onFilterChange={(value) => { CycleExecuteStore.loadUserList(value); }}
-                  loading={selectLoading}
-                  style={{ width: 200 }}
-                  onFocus={() => { CycleExecuteStore.loadUserList(); }}
-                >
-                  {userOptions}
-                </Select>
-              </Edit>
-            </TextEditToggle>
-          </div>
-          <div style={styles.cardContentItem}>
-            <div style={styles.carsContentItemPrefix}>
-              <FormattedMessage id="execute_executive" />：
-            </div>
-            {lastUpdateUser ? <User user={lastUpdateUser} /> : '无'}
-          </div>
-          <div style={styles.cardContentItem}>
-            <div style={styles.carsContentItemPrefix}>
-              <FormattedMessage id="execute_executeTime" />：
-            </div>
-            <div>
-              {lastUpdateDate}
-            </div>
-          </div>
-          <div style={styles.cardContentItem}>
-            <div style={styles.carsContentItemPrefix}>
-              <FormattedMessage id="bug" />：
-            </div>
-
-            <TextEditToggle
-              formKey="defects"
-              onSubmit={this.addDefects}
-              originData={defectIds}
-              onCancel={this.cancelEdit}
-            >
-              <Text>
-                {defects.length > 0 ? (
-                  <div
-                    style={{
-                      maxWidth: 300,
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      whiteSpace: 'nowrap',
-                    }}
-                  >
-                    {defects.map((defect, i) => defect.issueInfosDTO.issueName).join('，')}
-                  </div>
-                ) : '无'}
-              </Text>
-              <Edit>
-                <Select
-                  // filter
-                  // allowClear
-                  autoFocus
-                  filter
-                  mode="multiple"
-                  filterOption={false}
-                  loading={selectLoading}
-                  footer={<SelectCreateIssueFooter />}
-                  // value={defectIds}
-                  style={{ minWidth: 250 }}
-                  onChange={this.handleDefectsChange}
-                  onFilterChange={(value) => { CycleExecuteStore.loadIssueList(value); }}
-                  onFocus={() => { CycleExecuteStore.loadIssueList(); }}
-                >
-                  {defectsOptions}
-                </Select>
-              </Edit>
-            </TextEditToggle>
-          </div>
-          {/* <CreateIssueTiny    
-            typeCode="bug"       
-            // onOk={CycleExecuteStore.getInfo}
-          /> */}
-        </div>
-      </Card>
-      <div style={{ marginLeft: 20, flex: 1 }}>
-        {/* 描述 */}
-        <Card
-          title={null}
-          style={{ width: '100%', height: '60%' }}
-          bodyStyle={{ ...styles.cardBodyStyle, ...{ display: 'flex', flexDirection: 'column' } }}
+      </Option>
+    ));
+    return (
+      <div style={{ display: 'flex', marginBottom: 24 }} className="c7n-TestExecuteinfo">
+        {/* 基本信息 */}
+        <div
+          className="c7n-card"        
+          style={{ flex: 1, minHeight: 236 }}         
         >
           <div style={styles.cardTitle}>
             <Icon type="expand_more" />
-            <span style={styles.cardTitleText}><FormattedMessage id="execute_description" /></span>
-            <div style={{ flex: 1, visibility: 'hidden' }} />
-            <Button className="c7n-upload-button" onClick={() => { this.setState({ edit: true }); }}>
-              <Icon type="zoom_out_map" /> <FormattedMessage id="execute_edit_fullScreen" />
-            </Button>
-            <FullEditor
-              initValue={comment}
-              visible={this.state.edit}
-              onCancel={() => this.setState({ edit: false })}
-              onOk={(value) => { this.submit({ comment: JSON.stringify(value) }); }}
-            />
+            <span style={styles.cardTitleText}><FormattedMessage id="execute_cycle_execute" /></span>
           </div>
-          <div style={{ fontSize: 13, color: 'rgba(0,0,0,0.65)', lineHeight: '20px', padding: '0 20px', flex: 1, overflow: 'auto' }}>
-            <RichTextShow data={delta2Html(comment)} />
-          </div>
-        </Card>
-        <Card
-          title={null}
-          style={{ width: '100%', height: 'calc(40% - 20px)', marginTop: 20 }}
-          bodyStyle={styles.cardBodyStyle}
-        >
-          <div style={styles.cardTitle}>
-            <div>
-              <Icon type="expand_more" />
-              <span style={styles.cardTitleText}><FormattedMessage id="attachment" /></span>
+          <div style={styles.cardContent}>
+            <div style={styles.cardContentItem}>
+              <div style={styles.carsContentItemPrefix}>
+                <FormattedMessage id="execute_status" />
+:
+              </div>
+              <TextEditToggle
+                formKey="executionStatus"
+                onSubmit={(id) => { this.submit({ executionStatus: id }); }}
+                originData={executionStatus}
+              >
+                <Text>
+                  <div style={{
+                    background: statusColor, width: 60, textAlign: 'center', borderRadius: '2px', display: 'inline-block', color: 'white', 
+                  }}
+                  >
+                    {statusName}
+                  </div>
+                </Text>
+                <Edit>
+                  <Select
+                    autoFocus
+                  // defaultValue={executionStatus}
+                    style={{ width: 200 }}
+                  >
+                    {options}
+                  </Select>
+                </Edit>
+              </TextEditToggle>
             </div>
-            <div style={{ flex: 1, visibility: 'hidden' }} />
-            <Button className="c7n-upload-button" onClick={() => this.uploadInput.click()}>
-              <Icon type="file_upload" /> <FormattedMessage id="upload_attachment" />
-              <input
-                ref={
+            <div style={styles.cardContentItem}>
+              <div style={styles.carsContentItemPrefix}>
+                <FormattedMessage id="execute_assignedTo" />
+：
+              </div>
+              <TextEditToggle
+                formKey="assignedTo"
+                onSubmit={(id) => { this.submit({ assignedTo: id || 0 }); }}
+                originData={assigneeUser ? assigneeUser.id : null}
+                onCancel={this.cancelEdit}
+              >
+                <Text>
+                  {assigneeUser ? <User user={assigneeUser} />
+                    : '无'}
+                </Text>
+                <Edit>
+                  <Select
+                    filter
+                    allowClear
+                    autoFocus
+                    filterOption={false}
+                    onFilterChange={(value) => { CycleExecuteStore.loadUserList(value); }}
+                    loading={selectLoading}
+                    style={{ width: 200 }}
+                    onFocus={() => { CycleExecuteStore.loadUserList(); }}
+                  >
+                    {userOptions}
+                  </Select>
+                </Edit>
+              </TextEditToggle>
+            </div>
+            <div style={styles.cardContentItem}>
+              <div style={styles.carsContentItemPrefix}>
+                <FormattedMessage id="execute_executive" />
+：
+              </div>
+              {lastUpdateUser ? <User user={lastUpdateUser} /> : '无'}
+            </div>
+            <div style={styles.cardContentItem}>
+              <div style={styles.carsContentItemPrefix}>
+                <FormattedMessage id="execute_executeTime" />
+：
+              </div>
+              <div>
+                {lastUpdateDate}
+              </div>
+            </div>
+            <div style={styles.cardContentItem}>
+              <div style={styles.carsContentItemPrefix}>
+                <FormattedMessage id="bug" />
+：
+              </div>
+
+              <TextEditToggle
+                formKey="defects"
+                onSubmit={this.addDefects}
+                originData={defectIds}
+                onCancel={this.cancelEdit}
+              >
+                <Text>
+                  {defects.length > 0 ? (
+                    <div
+                      style={{
+                        maxWidth: 300,
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
+                      }}
+                    >
+                      {defects.map((defect, i) => defect.issueInfosDTO.issueName).join('，')}
+                    </div>
+                  ) : '无'}
+                </Text>
+                <Edit>
+                  <Select
+                  // filter
+                  // allowClear
+                    autoFocus
+                    filter
+                    mode="multiple"
+                    filterOption={false}
+                    loading={selectLoading}
+                    footer={<SelectCreateIssueFooter />}
+                  // value={defectIds}
+                    style={{ minWidth: 250 }}
+                    onChange={this.handleDefectsChange}
+                    onFilterChange={(value) => { CycleExecuteStore.loadIssueList(value); }}
+                    onFocus={() => { CycleExecuteStore.loadIssueList(); }}
+                  >
+                    {defectsOptions}
+                  </Select>
+                </Edit>
+              </TextEditToggle>
+            </div>
+            {/* <CreateIssueTiny    
+            typeCode="bug"       
+            // onOk={CycleExecuteStore.getInfo}
+          /> */}
+          </div>
+        </div>
+        <div style={{ marginLeft: 20, flex: 1 }}>
+          {/* 描述 */}
+          <div
+            className="c7n-card"          
+            style={{
+              width: '100%', height: '60%', display: 'flex', flexDirection: 'column',
+            }}      
+          >
+            <div style={styles.cardTitle}>
+              <Icon type="expand_more" />
+              <span style={styles.cardTitleText}><FormattedMessage id="execute_description" /></span>
+              <div style={{ flex: 1, visibility: 'hidden' }} />
+              <Button className="c7n-upload-button" onClick={() => { this.setState({ edit: true }); }}>
+                <Icon type="zoom_out_map" /> 
+                {' '}
+                <FormattedMessage id="execute_edit_fullScreen" />
+              </Button>
+              <FullEditor
+                initValue={comment}
+                visible={this.state.edit}
+                onCancel={() => this.setState({ edit: false })}
+                onOk={(value) => { this.submit({ comment: JSON.stringify(value) }); }}
+              />
+            </div>
+            <div style={{
+              fontSize: 13, color: 'rgba(0,0,0,0.65)', lineHeight: '20px', padding: '0 20px', height: 80, overflow: 'auto', 
+            }}
+            >
+              <RichTextShow data={delta2Html(comment)} />
+            </div>
+          </div>
+          {/* 附件 */}
+          <div
+            className="c7n-card"      
+            style={{ width: '100%', height: 'calc(40% - 20px)', marginTop: 20 }}           
+          >
+            <div style={styles.cardTitle}>
+              <div>
+                <Icon type="expand_more" />
+                <span style={styles.cardTitleText}><FormattedMessage id="attachment" /></span>
+              </div>
+              <div style={{ flex: 1, visibility: 'hidden' }} />
+              <Button className="c7n-upload-button" onClick={() => this.uploadInput.click()}>
+                <Icon type="file_upload" /> 
+                {' '}
+                <FormattedMessage id="upload_attachment" />
+                <input
+                  ref={
                   (uploadInput) => { if (uploadInput) { this.uploadInput = uploadInput; } }
                 }
-                type="file"
-                multiple
-                onChange={this.handleUpload}
-                style={{ display: 'none' }}
+                  type="file"
+                  multiple
+                  onChange={this.handleUpload}
+                  style={{ display: 'none' }}
+                />
+              </Button>
+            </div>
+            <div style={{ marginTop: -10 }}>
+              {/* {caseAttachment} */}
+              <Upload
+                {...props}
+                fileList={fileList}
+                className="upload-button"
               />
-            </Button>
+            </div>
           </div>
-          <div style={{ marginTop: -10 }}>
-            {/* {caseAttachment} */}
-            <Upload
-              {...props}
-              fileList={fileList}
-              className="upload-button"
-            />
-          </div>
-        </Card>
+        </div>
       </div>
-    </div>);
+    );
   }
 }
 

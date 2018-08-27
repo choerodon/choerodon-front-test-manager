@@ -242,5 +242,5 @@ export function cycleLink(cycleId) {
   const menu = AppState.currentMenuType;
   const { type, id: projectId, name } = menu;
  
-  return `/testManager/Cycle?type=${type}&id=${projectId}&name=${name}&cycleId=${cycleId}`;
+  return `/testManager/TestExecute?type=${type}&id=${projectId}&name=${name}&cycleId=${cycleId}`;
 }

@@ -134,18 +134,27 @@ class TestExecuteTable extends Component {
       title: <FormattedMessage id="cycle_name" />,
       dataIndex: 'cycleName',
       key: 'cycleName',
+      render: (cycleName, item) => (
+        <div className="c7n-text-dot">
+          <Tooltip title={cycleName} placement="topLeft">
+            <Link className="c7n-showId" to={cycleLink(item.cycleId)} target="_blank">
+              {cycleName || ''}
+            </Link>
+          </Tooltip>
+        </div>
+      ),
     }, {
       title: <FormattedMessage id="cycle_createExecute_folder" />,
       dataIndex: 'folderName',
       key: 'folderName',
       render: (folderName, item) => (
-        <span style={{ flex: 2, lineHeight: '34px', paddingLeft: 4 }} className="c7n-text-dot">
-          <Tooltip title={item.folderName}>
+        <div className="c7n-text-dot">
+          <Tooltip title={item.folderName} placement="topLeft">
             <Link className="c7n-showId" to={cycleLink(item.cycleId)} target="_blank">
               {item.folderName || ''}
             </Link>
           </Tooltip>
-        </span>
+        </div>
       ),
     }];
     const wideColumns = [{
@@ -156,14 +165,14 @@ class TestExecuteTable extends Component {
         const urlParams = AppState.currentMenuType;
         const status = _.find(this.state.status, { statusId: item.executionStatus }) || {};
         return (
-          <span style={{ flex: 2, lineHeight: '34px' }} className="c7n-text-dot">
-            <span style={{
+          <div className="c7n-text-dot">
+            <div style={{
               width: 60, height: 20, borderRadius: '2px', background: status.statusColor, display: 'inline-block', lineHeight: '20px', textAlign: 'center', color: '#fff',
             }}
             >
               {status && status.statusName}
-            </span>
-          </span>
+            </div>
+          </div>
         );
       },
     }, {
@@ -171,38 +180,39 @@ class TestExecuteTable extends Component {
       dataIndex: 'defects',
       key: 'defects',
       render: (defects, item) => (
-        <span style={{ flex: 2, lineHeight: '34px' }} className="c7n-text-dot">
+        <div>        
           {
-            item.defects.length ? (
-              <span>
-                <Tooltip
-                  placement="topLeft"
-                  title={(
-                    <div>
-                      {item.defects.map((defect, i) => (
-                        <div>
-                          <Link
-                            style={{
-                              color: 'white',
-                            }}
-                            to={issueLink(defect.issueInfosDTO.issueId,
-                              defect.issueInfosDTO.typeCode)}
-                            target="_blank"
-                          >
-                            {defect.issueInfosDTO.issueName}
-                          </Link>
-                          <div>{defect.issueInfosDTO.summary}</div>
-                        </div>
-                      ))}
-                    </div>
+            item.defects.length ? (              
+              <Tooltip
+                placement="topLeft"
+                title={(
+                  <div>
+                    {item.defects.map((defect, i) => (
+                      <div>
+                        <Link
+                          style={{
+                            color: 'white',
+                          }}
+                          to={issueLink(defect.issueInfosDTO.issueId,
+                            defect.issueInfosDTO.typeCode)}
+                          target="_blank"
+                        >
+                          {defect.issueInfosDTO.issueName}
+                        </Link>
+                        <div>{defect.issueInfosDTO.summary}</div>
+                      </div>
+                    ))}
+                  </div>
                   )}
-                >
+              >
+                <div className="c7n-text-dot">
                   {item.defects.map((defect, i) => defect.issueInfosDTO.issueName).join(',')}
-                </Tooltip>
-              </span>
+                </div>
+              </Tooltip>
+             
             ) : '-'
-          }
-        </span>
+          }        
+        </div>
       ),
     }, {
       title: <FormattedMessage id="execute_executive" />,
@@ -213,12 +223,12 @@ class TestExecuteTable extends Component {
       dataIndex: 'executeTime',
       key: 'executeTime',
       render: (a, item) => (
-        <span style={{ flex: 2, lineHeight: '34px' }} className="c7n-text-dot">
+        <div style={{ flex: 2, lineHeight: '34px' }} className="c7n-text-dot">
           <TimeAgo
             datetime={item.lastUpdateDate}
             locale={Choerodon.getMessage('zh_CN', 'en')}
           />
-        </span>
+        </div>
       ),
     }, {
       title: null,
@@ -227,12 +237,12 @@ class TestExecuteTable extends Component {
       render: (caction, item) => {
         const urlParams = AppState.currentMenuType;
         return (
-          <span style={{ width: 80, lineHeight: '34px' }}>
+          <div style={{ width: 80, lineHeight: '34px' }}>
             <Tooltip title={<FormattedMessage id="execute_quickPass" />}>
               <Icon type="pass mlr-3 pointer" onClick={this.quickPass.bind(this, item)} />
             </Tooltip>
 
-            <Link to={`/testManager/Cycle/execute/${item.executeId}?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}>
+            <Link to={`/testManager/TestExecute/execute/${item.executeId}?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}>
               <Icon
                 type="explicit2 mlr-3 pointer"
                 style={{ color: 'black' }}
@@ -249,7 +259,7 @@ class TestExecuteTable extends Component {
             >
               <Icon type="delete_forever mlr-3 pointer" />
             </Popconfirm>
-          </span>
+          </div>
         );
       },
     }];
