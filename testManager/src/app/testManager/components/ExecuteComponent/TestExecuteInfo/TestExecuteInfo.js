@@ -17,7 +17,6 @@ import FullEditor from '../../FullEditor';
 import CycleExecuteStore from '../../../store/project/cycle/CycleExecuteStore';
 import './TestExecuteInfo.scss';
 
-
 function beforeUpload(file) {
   const isLt2M = file.size / 1024 / 1024 < 30;
   if (!isLt2M) {
