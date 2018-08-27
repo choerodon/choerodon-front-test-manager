@@ -242,7 +242,7 @@ class TestExecuteTable extends Component {
               <Icon type="pass mlr-3 pointer" onClick={this.quickPass.bind(this, item)} />
             </Tooltip>
 
-            <Link to={`/testManager/Cycle/execute/${item.executeId}?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}>
+            <Link to={`/testManager/TestExecute/execute/${item.executeId}?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}>
               <Icon
                 type="explicit2 mlr-3 pointer"
                 style={{ color: 'black' }}
