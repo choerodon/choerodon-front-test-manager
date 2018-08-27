@@ -13,14 +13,14 @@ const moment = extendMoment(Moment);
 class TestPlanHome extends Component {
   state = {
     loading: false,
-    treeShow: false,
+    treeShow: true,
   }
 
   render() {
     const { loading, treeShow } = this.state;
     return (
       <Page className="c7n-TestPlan">
-        <Header title={<FormattedMessage id="cycle_name" />}>
+        <Header title={<FormattedMessage id="testPlan_name" />}>
           <Button onClick={this.refresh}>
             <Icon type="autorenew icon" />
             <span>
@@ -55,7 +55,7 @@ class TestPlanHome extends Component {
                     });
                   }}
                 >
-                  <FormattedMessage id="issue_repository" />
+                  <FormattedMessage id="testPlan_name" />
                 </p>
               </div>
             )}

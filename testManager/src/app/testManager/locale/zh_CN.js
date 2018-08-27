@@ -156,7 +156,8 @@ const zhCN = {
   report_select_allVersion: '所有版本',
   report_select_questionId: '测试问题ID',
   report_select_summary: '摘要',
-
+  // 测试加胡
+  testPlan_name: '测试计划',
   // 测试循环
   cycle_name: '测试循环',
   cycle_cycleName: '循环名称',

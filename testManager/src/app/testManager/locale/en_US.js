@@ -153,7 +153,8 @@ const enUS = {
   report_select_allVersion: 'All versions',
   report_select_questionId: 'test question ID',
   report_select_summary: 'summary',
-
+  // 测试加胡
+  testPlan_name: 'test plan',
   // 测试循环
   cycle_name: 'Test cycle',
   cycle_cycleName: 'Cycle name',
