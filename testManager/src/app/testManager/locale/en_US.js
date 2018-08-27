@@ -234,6 +234,7 @@ const enUS = {
   issue_issueReportTo: 'Report to',
   issue_issueUpdateOn: 'Update on',
   issue_issueCreateAt: 'Create on',
+  issue_repository: 'issue repository',
   // 创建测试用例侧边栏
   issue_create_name: 'Create test issue',
   issue_create_title: `Create test issue in project “${projectName}”`,

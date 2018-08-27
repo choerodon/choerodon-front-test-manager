@@ -25,6 +25,7 @@ import TypeTag from '../../../../components/TestComponent/TypeTag';
 import EmptyBlock from '../../../../components/TestComponent/EmptyBlock';
 import CreateIssue from '../../../../components/TestComponent/CreateIssue';
 import EditIssue from '../../../../components/TestComponent/EditIssue';
+import SearchTree from '../../../../components/TestComponent/SearchTree';
 // import EditIssue from '../../../../components/TestComponent/EditIssue';
 // import EditIssueNarrow from '../../../../components/TestComponent/EditIssueNarrow';
 
@@ -35,8 +36,8 @@ const { AppState } = stores;
 class Test extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      mode: 'narrow',
+    this.state = {    
+      treeShow: false,
       expand: false,
       create: false,
       selectedIssue: {},
@@ -607,7 +608,7 @@ class Test extends Component {
   }
 
   render() {
-    const { expand, mode } = this.state;
+    const { expand, treeShow } = this.state;
     const ORDER = [
       {
         code: 'summary',
@@ -690,7 +691,7 @@ class Test extends Component {
         title: 'summary',
         dataIndex: 'summary',
         render: (summary, record) => (
-          !expand || mode === 'narrow' ? this.renderTestIssue(record) : this.renderNarrowIssue(record)
+          expand ? this.renderNarrowIssue(record) : this.renderTestIssue(record)
         ),
       },
     ];
@@ -762,6 +763,30 @@ class Test extends Component {
           </Button>
         </Header>
         <Content style={{ display: 'flex', padding: '0' }}>
+          <div className="c7n-chs-bar">
+            {!treeShow && (
+              <p
+                role="none"
+                onClick={() => {
+                  this.setState({
+                    treeShow: true,
+                  });
+                }}
+              >
+                <FormattedMessage id="issue_repository" />
+              </p>
+            )}
+          </div>
+          <div className="c7n-issue-tree">
+            {treeShow && (              
+            <SearchTree onClose={() => {
+              this.setState({
+                treeShow: false,
+              });
+            }}
+            />            
+            )}
+          </div>
           <div
             className="c7n-content-issue"
             style={{
@@ -829,8 +854,7 @@ class Test extends Component {
                       onClick: () => {
                         this.setState({
                           selectedIssue: record,
-                          expand: true,
-                          mode: mode === 'wide' ? 'narrow' : 'wide',
+                          expand: true,                          
                         });
                       },
                     })
@@ -956,13 +980,13 @@ class Test extends Component {
               display: this.state.expand ? '' : 'none',
               overflowY: 'hidden',
               overflowX: 'hidden',
-              width: mode === 'narrow' ? 440 : '72%',
+              width: treeShow ? 440 : '72%',
             }}
           >
             {
               this.state.expand ? (
                 <EditIssue
-                  mode={mode}
+                  mode={treeShow ? 'narrow' : 'wide'}
                   ref={(instance) => {
                     if (instance) { this.EditIssue = instance; }
                   }}

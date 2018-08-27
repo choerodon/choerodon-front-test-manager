@@ -3,7 +3,9 @@
     white-space: nowrap;
     text-overflow: ellipsis;
 }
-
+.c7n-pointer{
+  cursor: pointer;
+}
 .c7n-flex-space {
     flex: 1;
     visibility: hidden;

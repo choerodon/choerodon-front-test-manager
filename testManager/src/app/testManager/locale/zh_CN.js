@@ -239,6 +239,7 @@ const zhCN = {
   issue_issueReportTo: '报告给',
   issue_issueUpdateOn: '更新于',
   issue_issueCreateAt: '创建于',
+  issue_repository: '用例仓库',
   // 创建测试用例侧边栏
   issue_create_name: '创建测试用例',
   issue_create_title: `在项目“${projectName}”中创建测试用例`,
