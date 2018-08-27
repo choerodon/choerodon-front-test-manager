@@ -7,11 +7,14 @@
     .ant-input-underline {
       display: none;
     }
+    .ant-input-content{
+      margin-bottom: 0;
+    }
   }
   .c7n-treeTop {
-    padding: 0 10px;
+    padding: 0 16px;
     font-size: 13px;
-    height: 40px;
+    height: 44px;
     display: flex;
     align-items: center;
     border-bottom: 1px solid rgba(0, 0, 0, 0.12);

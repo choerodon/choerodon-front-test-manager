@@ -73,6 +73,9 @@
     .ant-table-columns-chooser {
       display: none;
     }
+    .ant-dropdown-trigger{
+      bottom:30;
+    }
   }
 
   .c7n-count {
@@ -311,6 +314,8 @@
 
   .ant-table-filter-bar {
     padding-right: 90px;
+    padding-top: 8px;
+    padding-bottom: 7px;
   }
 }
 
