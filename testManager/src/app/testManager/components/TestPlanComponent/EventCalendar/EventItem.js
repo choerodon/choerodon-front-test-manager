@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Moment from 'moment';
 import { extendMoment } from 'moment-range';
 import './EventItem.scss';
+import { Tooltip } from 'choerodon-ui';
 
 const moment = extendMoment(Moment);
 class EventItem extends Component {
@@ -35,8 +36,12 @@ class EventItem extends Component {
     }
     return [
       <div style={{ flex: preFlex }} />,
-      <div className="c7n-EventItem-event c7n-text-dot" style={{ flex, display: flex === 0 && 'none' }}>
-        组织管理
+      <div className="c7n-EventItem-event" style={{ flex, display: flex === 0 && 'none' }}>
+        <Tooltip title="组织管理" placement="topLeft">
+          <div className="c7n-EventItem-event-title c7n-text-dot">
+          组织管理
+          </div>
+        </Tooltip>        
       </div>,
       <div style={{ flex: lastFlex }} />,
     ];
@@ -47,9 +52,6 @@ class EventItem extends Component {
     return (
       <div style={{ width: '100%', display: 'flex' }} className="c7n-EventItem">
         {this.renderItems()}
-        {/* <div style={{ flex: 1 }}>
-          组织管理
-        </div> */}
       </div>
 
     );

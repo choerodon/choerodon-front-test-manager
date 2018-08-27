@@ -1,5 +1,4 @@
 .c7n-EventCalendar {
-  position: relative;
   height: 600px;
   flex: 1;
   margin: 0 20px;
@@ -14,8 +13,26 @@
         margin-left: 15px;
       }
     }
+    &-skip {
+      .ant-input-wrapper {
+        margin-bottom: 0;
+      }
+      .ant-input-content {
+        padding-top: 2px;
+      }
+      .ant-input-underline {
+        display: none;
+      }
+      .ant-input-rendered {
+        visibility: hidden;
+      }
+      .ant-calendar-picker-clear {
+        display: none;
+      }
+    }
   }
   &-content {
+    position: relative;
     height: 100%;
   }
   &-BackItems {
@@ -27,7 +44,7 @@
   &-eventContainer {
     width: 100%;
     position: absolute;
-    top: 90px;
+    top: 60px;
   }
   .ant-radio-button-wrapper {
     padding: 0 9px;
