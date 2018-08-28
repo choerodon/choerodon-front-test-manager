@@ -1,0 +1,57 @@
+.c7n-EventCalendar {
+  height: 600px;
+  flex: 1;
+  margin: 0 20px;
+  &-header {
+    height: 26px;
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    &-radio {
+      margin-left: 10px;
+    }
+    &-page {
+      i {
+        margin-left: 15px;
+      }
+    }
+    &-skip {
+      .ant-btn {
+        padding: 0 8px;
+        margin-right: 8px;
+      }
+      .ant-input-wrapper {
+        margin-bottom: 0;
+      }
+      .ant-input-content {
+        // padding-top: 2px;
+        margin-top: -2px;
+      }
+      .ant-input-underline {
+        display: none;
+      }
+      .ant-input-rendered {
+        width: 0 !important;
+        visibility: hidden;
+      }
+      .ant-calendar-picker-clear {
+        display: none;
+      }
+    }
+  }
+  &-content {
+    position: relative;
+    height: 100%;
+  }
+  &-BackItems {
+    height: 100%;
+    display: flex;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    border-right: none;
+  }
+  &-eventContainer {
+    width: 100%;
+    position: absolute;
+    top: 60px;
+  }
+}

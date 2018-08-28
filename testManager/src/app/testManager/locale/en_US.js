@@ -51,6 +51,9 @@ const enUS = {
   comment: 'Description',
   name: 'Name',
   day: 'days',
+  today: 'today',
+  week: 'week',
+  month: 'month',
   export: 'export',
   high: 'high',
   medium: 'medium',
@@ -151,9 +154,12 @@ const enUS = {
   report_select_allVersion: 'All versions',
   report_select_questionId: 'test question ID',
   report_select_summary: 'summary',
-
+  // 测试计划
+  testPlan_name: 'test plan',
   // 测试循环
   cycle_name: 'Test cycle',
+  cycle_my: 'my cycles',
+  cycle_all: 'all cycles',
   cycle_cycleName: 'Cycle name',
   cycle_addCycle: 'create execute',
   cycle_build: 'Build',

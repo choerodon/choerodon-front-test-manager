@@ -23,7 +23,7 @@ import {
   TreeTitle, CreateCycle, EditCycle, CreateCycleExecute, ShowCycleData, CloneCycle,
 } from '../../../../components/CycleComponent';
 import DragTable from '../../../../components/DragTable';
-import { RichTextShow, SelectFocusLoad } from '../../../../components/CommonComponent';
+import { RichTextShow, SelectFocusLoad, RadioButton } from '../../../../components/CommonComponent';
 import {
   delta2Html, delta2Text, issueLink, getParams,
 } from '../../../../common/utils';
@@ -430,7 +430,7 @@ class CycleHome extends Component {
   }
 
   handleExecuteTableChange = (pagination, filters, sorter) => {
-    window.console.log(pagination, filters, sorter);
+    // window.console.log(pagination, filters, sorter);
     if (pagination.current) {
       this.setState({
         rightLoading: true,
@@ -745,29 +745,29 @@ class CycleHome extends Component {
       flex: 1,
       render: (text, record) => (
         record.projectId !== 0
-          && (
-            <div style={{ display: 'flex' }}>
-              <Tooltip title={<FormattedMessage id="execute_quickPass" />}>
-                <Icon type="pass" onClick={this.quickPass.bind(this, record)} style={{ cursor: 'pointer' }} />
-              </Tooltip>
-              <Icon
-                type="explicit2"
-                style={{ cursor: 'pointer', margin: '0 10px' }}
-                onClick={() => {
-                  const { history } = this.props;
-                  const urlParams = AppState.currentMenuType;
-                  history.push(`/testManager/TestExecute/execute/${record.executeId}?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`);
-                }}
-              />
-              <Icon
-                type="delete_forever"
-                style={{ cursor: 'pointer' }}
-                onClick={() => {
-                  this.deleteExecute(record);
-                }}
-              />
-            </div>
-          )
+        && (
+          <div style={{ display: 'flex' }}>
+            <Tooltip title={<FormattedMessage id="execute_quickPass" />}>
+              <Icon type="pass" onClick={this.quickPass.bind(this, record)} style={{ cursor: 'pointer' }} />
+            </Tooltip>
+            <Icon
+              type="explicit2"
+              style={{ cursor: 'pointer', margin: '0 10px' }}
+              onClick={() => {
+                const { history } = this.props;
+                const urlParams = AppState.currentMenuType;
+                history.push(`/testManager/TestExecute/execute/${record.executeId}?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`);
+              }}
+            />
+            <Icon
+              type="delete_forever"
+              style={{ cursor: 'pointer' }}
+              onClick={() => {
+                this.deleteExecute(record);
+              }}
+            />
+          </div>
+        )
       ),
     }];
     const otherColumns = [
@@ -862,8 +862,8 @@ class CycleHome extends Component {
           </Button>
         </Header>
         <Content
-          title={<FormattedMessage id="cycle_title" />}
-          description={<FormattedMessage id="cycle_description" />}
+          // title={<FormattedMessage id="cycle_title" />}
+          // description={<FormattedMessage id="cycle_description" />}
           style={{ paddingBottom: 0, paddingRight: 0 }}
         >
           <Spin spinning={loading}>
@@ -899,7 +899,9 @@ class CycleHome extends Component {
               onOk={() => { this.setState({ CloneCycleVisible: false }); this.refresh(); }}
             />
             <div className="c7n-cycleHome">
-              <div className={this.state.sideVisible ? 'c7n-ch-side' : 'c7n-ch-hidden'}>
+
+              <div className={this.state.sideVisible ? 'c7n-ch-side' : 'c7n-ch-hidden'} style={{ minHeight: window.innerHeight - 128 }}>
+
                 <div className="c7n-chs-button">
                   <div
                     role="none"
@@ -931,6 +933,18 @@ class CycleHome extends Component {
                 </div>
               </div>
               <div className={leftVisible ? 'c7n-ch-left' : 'c7n-ch-hidden'}>
+                <RadioButton
+                  style={{ marginBottom: 20 }}
+                  onChange={() => { }}
+                  defaultValue="all"
+                  data={[{
+                    value: 'my',
+                    text: 'cycle_my',
+                  }, {
+                    value: 'all',
+                    text: 'cycle_all',
+                  }]}
+                />
                 <div className="c7n-chl-head">
                   <div className="c7n-chlh-search">
                     <Input prefix={prefix} placeholder="过滤" onChange={e => _.debounce(this.filterCycle, 200).call(null, e.target.value)} />
@@ -963,7 +977,7 @@ class CycleHome extends Component {
                     </div>
                   </div>
                 </div>
-                <div className="c7n-chlh-tree" style={{ height: window.innerHeight - 234 }}>
+                <div className="c7n-chlh-tree" style={{ height: window.innerHeight - 200 }}>
                   <Tree
                     selectedKeys={selectedKeys}
                     expandedKeys={expandedKeys}
@@ -1039,9 +1053,9 @@ class CycleHome extends Component {
                 >
                   <img src={noRight} alt="" />
                   <div style={{ marginLeft: 40 }}>
-                      <div style={{ fontSize: '14px', color: 'rgba(0,0,0,0.65)' }}>根据当前选定的测试循环没有查询到循环信息</div>
-                      <div style={{ fontSize: '20px', marginTop: 10 }}>尝试在您的树状图中选择测试循环</div>
-                    </div>
+                    <div style={{ fontSize: '14px', color: 'rgba(0,0,0,0.65)' }}>根据当前选定的测试循环没有查询到循环信息</div>
+                    <div style={{ fontSize: '20px', marginTop: 10 }}>尝试在您的树状图中选择测试循环</div>
+                  </div>
                 </div>
               )}
             </div>

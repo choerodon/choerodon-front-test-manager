@@ -1,0 +1,15 @@
+.c7n-EventItem {  
+  border-radius: 2px;
+  height: 30px;
+  line-height: 30px;
+  color: white;
+  margin-top: 5px;
+  &-event{
+    cursor: pointer;
+    background: #5094FF;
+    overflow: hidden;
+    &-title{
+      margin-left: 10px;
+    }
+  }
+}

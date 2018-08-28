@@ -23,19 +23,19 @@
     - "TestExecute":
         icon: repeat
         Routes: /testManager/TestExecute
-        sort: 3
+        sort: 4
         permission:
           - 'test-manager-service.test-cycle.getTestCycle'
 
     - "report":
         icon: description
         Routes: /testManager/report
-        sort: 4
+        sort: 5
         permission:
           - 'test-manager-service.test-cycle.getTestCycle'
     - "status":
         icon: filter_vintage
         Routes: /testManager/status
-        sort: 5
+        sort: 6
         permission:
           - 'test-manager-service.test-cycle.getTestCycle'
