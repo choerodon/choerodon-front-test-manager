@@ -158,6 +158,8 @@ const enUS = {
   testPlan_name: 'test plan',
   // 测试循环
   cycle_name: 'Test cycle',
+  cycle_my: 'my cycles',
+  cycle_all: 'all cycles',
   cycle_cycleName: 'Cycle name',
   cycle_addCycle: 'create execute',
   cycle_build: 'Build',

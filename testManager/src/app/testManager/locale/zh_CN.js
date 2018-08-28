@@ -161,6 +161,8 @@ const zhCN = {
   testPlan_name: '测试计划',
   // 测试循环
   cycle_name: '测试循环',
+  cycle_my: '我的执行',
+  cycle_all: '所有执行',
   cycle_cycleName: '循环名称',
   cycle_addCycle: '添加执行',
   cycle_build: '构建号',

@@ -4,6 +4,7 @@ import { extendMoment } from 'moment-range';
 import { Icon, Radio } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 import { DatePicker, Button } from 'choerodon-ui';
+import { RadioButton } from '../../CommonComponent';
 import './EventCalendar.scss';
 import CalendarBackItem from './CalendarBackItem';
 import EventItem from './EventItem';
@@ -77,15 +78,17 @@ class EventCalendar extends Component {
             <DatePicker onChange={this.handleBaseChange} />
           </div>
           <div className="c7n-EventCalendar-header-radio">
-            <Radio.Group value={mode} onChange={this.handleModeChange}>
-              {/* <Radio.Button value="1">1天</Radio.Button> */}
-              <Radio.Button value="week">
-                <FormattedMessage id="week" />
-              </Radio.Button>
-              <Radio.Button value="month">
-                <FormattedMessage id="month" />
-              </Radio.Button>
-            </Radio.Group>
+            <RadioButton       
+              defaultValue={mode} 
+              onChange={this.handleModeChange}
+              data={[{
+                value: 'week',
+                text: 'week',
+              }, {
+                value: 'month',
+                text: 'month',
+              }]}
+            />            
           </div>
           <div className="c7n-EventCalendar-header-page">
             <Icon
