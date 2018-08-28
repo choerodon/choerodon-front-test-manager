@@ -156,26 +156,24 @@ class TestExecuteTable extends Component {
           </Tooltip>
         </div>
       ),
-    }];
-    const wideColumns = [{
+    }, {
       title: <FormattedMessage id="status" />,
       dataIndex: 'statusName',
       key: 'statusName',
       render: (statusName, item) => {
         const urlParams = AppState.currentMenuType;
         const status = _.find(this.state.status, { statusId: item.executionStatus }) || {};
-        return (
-          <div className="c7n-text-dot">
-            <div style={{
-              width: 60, height: 20, borderRadius: '2px', background: status.statusColor, display: 'inline-block', lineHeight: '20px', textAlign: 'center', color: '#fff',
-            }}
-            >
-              {status && status.statusName}
-            </div>
-          </div>
+        return (         
+          <div style={{
+            width: 60, height: 20, borderRadius: '2px', background: status.statusColor, display: 'inline-block', lineHeight: '20px', textAlign: 'center', color: '#fff',
+          }}
+          >
+            {status && status.statusName}
+          </div>       
         );
       },
-    }, {
+    }];
+    const wideColumns = [{
       title: <FormattedMessage id="bug" />,
       dataIndex: 'defects',
       key: 'defects',

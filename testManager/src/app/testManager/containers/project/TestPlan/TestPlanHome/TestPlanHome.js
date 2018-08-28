@@ -61,8 +61,7 @@ class TestPlanHome extends Component {
             )}
             <div className="c7n-TestPlan-tree">
               {treeShow && (
-                <PlanTree onClose={() => {
-                  console.log(this, treeShow);
+                <PlanTree onClose={() => {                  
                   this.setState({
                     treeShow: false,
                   });
