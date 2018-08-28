@@ -19,4 +19,15 @@
     align-items: center;
     border-bottom: 1px solid rgba(0, 0, 0, 0.12);
   }
+  .ant-tree-icon__customize {
+    i.icon {
+        float: left;
+        line-height: 22px;
+        margin-right: 5px;
+    }
+  }  
+  .ant-tree-title {
+    display: inline-block;
+    float: right;
+  }
 }

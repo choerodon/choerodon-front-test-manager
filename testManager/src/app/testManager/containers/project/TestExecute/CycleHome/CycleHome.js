@@ -900,7 +900,7 @@ class CycleHome extends Component {
             />
             <div className="c7n-cycleHome">
 
-              <div className={this.state.sideVisible ? 'c7n-ch-side' : 'c7n-ch-hidden'}>
+              <div className={this.state.sideVisible ? 'c7n-ch-side' : 'c7n-ch-hidden'} style={{ minHeight: window.innerHeight - 128 }}>
 
                 <div className="c7n-chs-button">
                   <div
@@ -977,7 +977,7 @@ class CycleHome extends Component {
                     </div>
                   </div>
                 </div>
-                <div className="c7n-chlh-tree" style={{ height: window.innerHeight - 234 }}>
+                <div className="c7n-chlh-tree" style={{ height: window.innerHeight - 200 }}>
                   <Tree
                     selectedKeys={selectedKeys}
                     expandedKeys={expandedKeys}
