@@ -31,7 +31,7 @@ class TestPlanHome extends Component {
         <Content
           title={null}
           description={null}
-          style={{ paddingBottom: 0, paddingRight: 0, paddingLeft: 0 }}
+          style={{ padding: 0 }}
         >
           <div className="c7n-TestPlan-content">
             {!treeShow && (

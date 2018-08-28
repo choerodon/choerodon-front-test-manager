@@ -1,5 +1,5 @@
 .c7n-EventCalendar {
-  height: 600px;
+  // height: 600px;
   flex: 1;
   margin: 0 20px;
   &-header {
@@ -11,6 +11,7 @@
       margin-left: 10px;
     }
     &-page {
+      margin-top: -1px;
       i {
         margin-left: 15px;
       }
@@ -41,7 +42,7 @@
   }
   &-content {
     position: relative;
-    height: 100%;
+    height: calc(100% - 41px);
   }
   &-BackItems {
     height: 100%;
