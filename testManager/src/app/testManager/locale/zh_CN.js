@@ -54,6 +54,7 @@ const zhCN = {
   comment: '说明',
   name: '名称',
   day: '天',
+  today: '今日',
   week: '周',
   month: '月',
   export: '导出',
@@ -156,7 +157,7 @@ const zhCN = {
   report_select_allVersion: '所有版本',
   report_select_questionId: '测试问题ID',
   report_select_summary: '摘要',
-  // 测试加胡
+  // 测试计划
   testPlan_name: '测试计划',
   // 测试循环
   cycle_name: '测试循环',

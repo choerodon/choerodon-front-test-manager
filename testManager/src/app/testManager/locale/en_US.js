@@ -51,6 +51,7 @@ const enUS = {
   comment: 'Description',
   name: 'Name',
   day: 'days',
+  today: 'today',
   week: 'week',
   month: 'month',
   export: 'export',
@@ -153,7 +154,7 @@ const enUS = {
   report_select_allVersion: 'All versions',
   report_select_questionId: 'test question ID',
   report_select_summary: 'summary',
-  // 测试加胡
+  // 测试计划
   testPlan_name: 'test plan',
   // 测试循环
   cycle_name: 'Test cycle',

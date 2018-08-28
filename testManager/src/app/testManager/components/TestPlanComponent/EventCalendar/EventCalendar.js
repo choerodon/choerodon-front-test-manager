@@ -3,25 +3,24 @@ import Moment from 'moment';
 import { extendMoment } from 'moment-range';
 import { Icon, Radio } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
-import { DatePicker } from 'choerodon-ui';
+import { DatePicker, Button } from 'choerodon-ui';
 import './EventCalendar.scss';
 import CalendarBackItem from './CalendarBackItem';
 import EventItem from './EventItem';
 
-function onChange(date, dateString) {
-  console.log(date, dateString);
-}
+
 const moment = extendMoment(Moment);
 class EventCalendar extends Component {
   state = {
+    baseDate: moment(),
     mode: 'month',
     pos: 0,
   }
 
   calculateTime = () => {
-    const { mode, pos } = this.state;
-    const start = moment().startOf(mode).add(pos, mode);
-    const end = moment().endOf(mode).add(pos, mode);
+    const { mode, pos, baseDate } = this.state;
+    const start = moment(baseDate).startOf(mode).add(pos, mode);
+    const end = moment(baseDate).endOf(mode).add(pos, mode);
     return { start, end };
   }
 
@@ -29,6 +28,12 @@ class EventCalendar extends Component {
     this.setState({
       pos: 0,
       mode: e.target.value,
+    });
+  }
+
+  handleBaseChange = (date) => {
+    this.setState({
+      baseDate: date,
     });
   }
 
@@ -53,17 +58,23 @@ class EventCalendar extends Component {
       start: moment().startOf('month').add(0, 'day'),
       end: moment().endOf('month').add(-30, 'day'),
     }, {
-      start: moment().startOf('month').add(0, 'day'),
-      end: moment().endOf('month').add(-29, 'day'),
+      start: moment().startOf('month').add(-10, 'day'),
+      end: moment().endOf('month').add(-33, 'day'),
     }];
     return (
       <div className="c7n-EventCalendar">
         <div className="c7n-EventCalendar-header">
-          {moment(start).format('YYYY年M月')}
+          <div style={{ fontWeight: 500 }}>{moment(start).format('YYYY年M月')}</div>
           <div className="c7n-flex-space" />
           <div className="c7n-EventCalendar-header-skip">
             <span style={{ color: 'rgba(0,0,0,0.65)' }}>跳转到</span>
-            <DatePicker onChange={onChange} style={{ marginLeft: -80 }} />
+            <Button
+              onClick={() => { this.handleBaseChange(moment()); }}
+              style={{ fontWeight: 500 }}
+            >
+              今天
+            </Button>
+            <DatePicker onChange={this.handleBaseChange} />
           </div>
           <div className="c7n-EventCalendar-header-radio">
             <Radio.Group value={mode} onChange={this.handleModeChange}>
@@ -106,7 +117,7 @@ class EventCalendar extends Component {
           <div className="c7n-EventCalendar-eventContainer">
             {fake.map(event => (
               <EventItem
-                itemRange={event}
+                itemRange={moment.range(event.start, event.end)}
                 totalRange={timeArray.length}
                 range={range}
               />

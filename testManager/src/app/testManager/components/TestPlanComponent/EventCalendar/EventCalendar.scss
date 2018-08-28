@@ -3,8 +3,10 @@
   flex: 1;
   margin: 0 20px;
   &-header {
+    height: 26px;
     display: flex;
-    margin-bottom: 20px;
+    align-items: center;
+    margin-bottom: 15px;
     &-radio {
       margin-left: 10px;
     }
@@ -14,16 +16,22 @@
       }
     }
     &-skip {
+      .ant-btn {
+        padding: 0 8px;
+        margin-right: 8px;
+      }
       .ant-input-wrapper {
         margin-bottom: 0;
       }
       .ant-input-content {
-        padding-top: 2px;
+        // padding-top: 2px;
+        margin-top: -2px;
       }
       .ant-input-underline {
         display: none;
       }
       .ant-input-rendered {
+        width: 0 !important;
         visibility: hidden;
       }
       .ant-calendar-picker-clear {
