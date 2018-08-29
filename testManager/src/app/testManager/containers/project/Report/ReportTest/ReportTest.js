@@ -151,6 +151,34 @@ class ReportTest extends Component {
     }
   }
 
+  handleFilterChange = (pagination, filters, sorter, barFilters) => {   
+    console.log({ 
+      pagination, filters, sorter, barFilters, 
+    });
+ 
+    const { statusCode, priorityCode, typeCode } = filters;
+    const {
+      issueNum, summary, assignee, sprint, version, component, epic, 
+    } = filters;
+    const search = {
+      advancedSearchArgs: {
+        statusCode: statusCode || [],
+        priorityCode: priorityCode || [],
+        typeCode: typeCode || [],
+      },
+      searchArgs: {
+        issueNum: issueNum ? issueNum[0] : '',
+        summary: summary ? summary[0] : '',
+        assignee: assignee ? assignee[0] : '',
+        sprint: sprint ? sprint[0] : '',
+        version: version ? version[0] : '',
+        component: component ? component[0] : '',
+        epic: epic ? epic[0] : '',
+      },
+    };   
+    console.log(search); 
+  }
+
   render() {
     const {
       selectVisible, reportList, loading, pagination,
@@ -427,7 +455,115 @@ class ReportTest extends Component {
         return openId.includes(issueId.toString()) ? caseShow : '-';
       },
     }];
-
+    const filterColumns = [
+      {
+        title: '类型',
+        dataIndex: 'typeCode',
+        key: 'typeCode',
+        filters: [
+          {
+            text: '故事',
+            value: 'story',
+          },
+          {
+            text: '任务',
+            value: 'task',
+          },
+          {
+            text: '故障',
+            value: 'bug',
+          },
+          {
+            text: '史诗',
+            value: 'issue_epic',
+          },
+        ],
+        filterMultiple: true,
+      },
+      {
+        title: '经办人',
+        dataIndex: 'assignee',
+        key: 'assignee',
+        filters: [],
+      },
+      {
+        title: '编号',
+        dataIndex: 'issueNum',
+        key: 'issueNum',
+        filters: [],
+      },
+      {
+        title: '概要',
+        dataIndex: 'summary',
+        key: 'summary',
+        filters: [],
+      },
+      {
+        title: '优先级',
+        dataIndex: 'priorityCode',
+        key: 'priorityCode',
+        filters: [
+          {
+            text: '高',
+            value: 'high',
+          },
+          {
+            text: '中',
+            value: 'medium',
+          },
+          {
+            text: '低',
+            value: 'low',
+          },
+        ],
+        filterMultiple: true,
+      },
+      {
+        title: '状态',
+        dataIndex: 'statusCode',
+        key: 'statusCode',
+        filters: [
+          {
+            text: '待处理',
+            value: 'todo',
+          },
+          {
+            text: '进行中',
+            value: 'doing',
+          },
+          {
+            text: '已完成',
+            value: 'done',
+          },
+        ],
+        filterMultiple: true,
+        // filteredValue: IssueStore.filteredInfo.statusCode || null,
+      },
+      {
+        title: '冲刺',
+        dataIndex: 'sprint',
+        key: 'sprint',
+        filters: [],
+      },
+      {
+        title: '模块',
+        dataIndex: 'component',
+        key: 'component',
+        filters: [],
+      },
+      {
+        title: '版本',
+        dataIndex: 'version',
+        key: 'version',
+        filters: [],
+      },
+      {
+        title: '史诗',
+        dataIndex: 'epic',
+        key: 'epic',
+        filters: [],
+      },
+    ];
     return (
       <Page className="c7n-report-test">
         <Header
@@ -494,6 +630,20 @@ class ReportTest extends Component {
               }, issueIds);
             }}
           />
+          <div className="c7n-report-test-filter-table">
+            <Table
+              rowKey={record => record.id}
+              columns={filterColumns}
+              dataSource={[]}
+              filterBar
+              showHeader={false}
+              onChange={this.handleFilterChange}
+              pagination={false}
+              // 设置筛选input内默认文本
+              // filters={IssueStore.barFilters || []}
+              filterBarPlaceholder="过滤表"
+            />
+          </div>
           <Table
             filterBar={false}
             loading={loading}

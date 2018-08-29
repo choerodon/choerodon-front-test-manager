@@ -170,6 +170,9 @@ class CreateCycleExecute extends Component {
 
         // {
         //     "advancedSearchArgs": {
+        //      'typeCode': [
+        //      'issue_test'
+        //          ],
         //         "priorityCode": [
         //             "high"
         //         ],
@@ -178,6 +181,9 @@ class CreateCycleExecute extends Component {
         //         ]
         //     }, 
         //     "otherArgs": {
+        //         "issueNum":"aa",
+        //         "summary":"",
+        //         "version": [version.versionId],
         //         "issueIds": [
         //             "7023"
         //         ],
