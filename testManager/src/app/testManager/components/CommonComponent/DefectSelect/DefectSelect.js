@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
-import { Button, Select, Icon, Modal, Upload, Spin } from 'choerodon-ui';
+import {
+  Button, Select, Icon, Modal, Upload, Spin, 
+} from 'choerodon-ui';
 import _ from 'lodash';
 import { removeDefect, addDefects } from '../../../api/CycleExecuteApi';
 import { getIssueList } from '../../../api/agileApi';
@@ -19,9 +21,11 @@ class DefectSelect extends Component {
       originDefects: defects ? defects.map(defect => defect.issueId.toString()) : [],
     };
   }
+
   componentDidMount() {
     this.getIssueList();
   }
+
   getIssueList = () => {
     this.setState({
       selectLoading: true,
@@ -33,8 +37,11 @@ class DefectSelect extends Component {
       });
     });
   }
+
   handleDefectsChange = (List) => {
-    const { originDefects, defects, defectIds, issueList } = this.state;
+    const {
+      originDefects, defects, defectIds, issueList, 
+    } = this.state;
     const oldList = [...defectIds];
     // window.console.log('old', oldList, 'new', List);
     // 删除元素
@@ -51,27 +58,32 @@ class DefectSelect extends Component {
       window.console.log('add', List.filter(item => !oldList.includes(item)));
     }
     // 收集需要添加的缺陷
-    const needAdd =
-      issueList
-        .filter(issue => List.includes(issue.issueId.toString()))// 取到选中的issueList
-        .filter(issue => !originDefects.includes(issue.issueId.toString()))// 去掉之前已有的
-        .map(item => ({
-          defectType: 'CASE_STEP',
-          defectLinkId: this.props.executeStepId,
-          issueId: item.issueId,
-          defectName: item.issueNum,
-        }));
+    const needAdd = issueList
+      .filter(issue => List.includes(issue.issueId.toString()))// 取到选中的issueList
+      .filter(issue => !originDefects.includes(issue.issueId.toString()))// 去掉之前已有的
+      .map(item => ({
+        defectType: 'CASE_STEP',
+        defectLinkId: this.props.executeStepId,
+        issueId: item.issueId,
+        defectName: item.issueNum,
+      }));
     this.props.setNeedAdd(needAdd);
     this.setState({
       defectIds: List,
     });
   }
+
   render() {
-    const { defects, selectLoading, defectIds, issueList, originDefects } = this.state;
-    const defectsOptions =
-      issueList.map(issue => (<Option key={issue.issueId} value={issue.issueId.toString()}>
-        {issue.issueNum} {issue.summary}
-      </Option>));
+    const {
+      defects, selectLoading, defectIds, issueList, originDefects, 
+    } = this.state;
+    const defectsOptions = issueList.map(issue => (
+      <Option key={issue.issueId} value={issue.issueId.toString()}>
+        {issue.issueNum} 
+        {' '}
+        {issue.summary}
+      </Option>
+    ));
     return (     
       <Select          
         dropdownStyle={{

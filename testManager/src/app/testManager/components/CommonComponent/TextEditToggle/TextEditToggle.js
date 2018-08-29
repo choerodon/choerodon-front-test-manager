@@ -34,17 +34,21 @@ class TextEditToggle extends Component {
     // e.nativeEvent.stopImmediatePropagation(); 
     document.removeEventListener('click', this.onSubmit);
     const { getFieldValue } = this.props.form;
-    try {
-      const newValue = getFieldValue(this.props.formKey);
-      // console.log(newValue);
-      if (this.props.onSubmit && newValue !== this.props.originData) {
-        // console.log(this.props.formKey, getFieldValue(this.props.formKey));      
-        this.props.onSubmit(this.props.formKey ? newValue : null);
-      }
+    try {      
+      if (this.props.formKey) {
+        const newValue = getFieldValue(this.props.formKey);
+        // console.log(newValue);
+        if (this.props.onSubmit && newValue !== this.props.originData) {
+          // console.log(this.props.formKey, getFieldValue(this.props.formKey));      
+          this.props.onSubmit(this.props.formKey ? newValue : null);
+        }
+      } else {
+        this.props.onSubmit();
+      }      
       this.setState({
         editing: false,
       });
-    } catch (err) {
+    } catch (err) {     
       this.setState({
         editing: false,
       });
