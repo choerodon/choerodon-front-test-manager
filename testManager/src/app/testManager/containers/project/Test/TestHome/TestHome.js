@@ -25,7 +25,7 @@ import TypeTag from '../../../../components/TestComponent/TypeTag';
 import EmptyBlock from '../../../../components/TestComponent/EmptyBlock';
 import CreateIssue from '../../../../components/TestComponent/CreateIssue';
 import EditIssue from '../../../../components/TestComponent/EditIssue';
-import SearchTree from '../../../../components/TestComponent/SearchTree';
+import IssueTree from '../../../../components/TestComponent/IssueTree';
 // import EditIssue from '../../../../components/TestComponent/EditIssue';
 // import EditIssueNarrow from '../../../../components/TestComponent/EditIssueNarrow';
 
@@ -785,7 +785,7 @@ class Test extends Component {
             }}
           >
             {treeShow && (              
-            <SearchTree onClose={() => {
+            <IssueTree onClose={() => {
               this.setState({
                 treeShow: false,
               });

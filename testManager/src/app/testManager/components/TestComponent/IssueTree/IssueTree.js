@@ -3,14 +3,14 @@ import {
   Tree, Input, Icon, Spin, 
 } from 'choerodon-ui';
 import _ from 'lodash';
-import './SearchTree.scss';
-import TestPlanStore from '../../../store/project/TestPlan/TestPlanStore';
+import './IssueTree.scss';
+import { IssueTreeStore } from '../../../store/project/treeStore';
 // import { TreeTitle } from '../../CycleComponent';
 import { getCycles, getStatusList } from '../../../api/cycleApi';
 
 const { TreeNode } = Tree;
 const dataList = [];
-class SearchTree extends Component {
+class IssueTree extends Component {
   state = {
     loading: false,
     autoExpandParent: false,
@@ -27,11 +27,9 @@ class SearchTree extends Component {
     this.setState({
       loading: true,
     });
-    getStatusList('CYCLE_CASE').then((statusList) => {
-      this.setState({ statusList });
-    });
+
     getCycles().then((data) => {
-      TestPlanStore.setTreeData([{ title: '所有版本', key: '0', children: data.versions }]);
+      IssueTreeStore.setTreeData([{ title: '所有版本', key: '0', children: data.versions }]);
       this.setState({
         // treeData: [
         //   { title: '所有版本', key: '0', children: data.versions },
@@ -52,7 +50,7 @@ class SearchTree extends Component {
     } = item;
     // debugger;
     const { searchValue } = this.state;
-    const expandedKeys = TestPlanStore.getExpandedKeys;
+    const expandedKeys = IssueTreeStore.getExpandedKeys;
     const index = item.title.indexOf(searchValue);
     const beforeStr = item.title.substr(0, index);
     const afterStr = item.title.substr(index + searchValue.length);
@@ -135,11 +133,11 @@ class SearchTree extends Component {
       const { key, title } = node;
       // 找出url上的cycleId
       // const { cycleId } = getParams(window.location.href);
-      // const currentCycle = TestPlanStore.getCurrentCycle;
+      // const currentCycle = IssueTreeStore.getCurrentCycle;
       // if (!currentCycle.cycleId && Number(cycleId) === node.cycleId) {
       //   this.setExpandDefault(node);
       // } else if (currentCycle.cycleId === node.cycleId) {
-      //   TestPlanStore.setCurrentCycle(node);
+      //   IssueTreeStore.setCurrentCycle(node);
       // }
       dataList.push({ key, title });
       if (node.children) {
@@ -149,7 +147,7 @@ class SearchTree extends Component {
   }
 
   onExpand = (expandedKeys) => {
-    TestPlanStore.setExpandedKeys(expandedKeys);
+    IssueTreeStore.setExpandedKeys(expandedKeys);
     this.setState({
       autoExpandParent: false,
     });
@@ -160,11 +158,11 @@ class SearchTree extends Component {
     if (value !== '') {
       const expandedKeys = dataList.map((item) => {
         if (item.title.indexOf(value) > -1) {
-          return this.getParentKey(item.key, TestPlanStore.getTreeData);
+          return this.getParentKey(item.key, IssueTreeStore.getTreeData);
         }
         return null;
       }).filter((item, i, self) => item && self.indexOf(item) === i);
-      TestPlanStore.setExpandedKeys(expandedKeys);
+      IssueTreeStore.setExpandedKeys(expandedKeys);
     }
     this.setState({
       searchValue: value,
@@ -175,13 +173,13 @@ class SearchTree extends Component {
   render() {
     const { onClose } = this.props;
     const { autoExpandParent, loading } = this.state;
-    const treeData = TestPlanStore.getTreeData;
-    const expandedKeys = TestPlanStore.getExpandedKeys;
-    const selectedKeys = TestPlanStore.getSelectedKeys;
-    const currentCycle = TestPlanStore.getCurrentCycle;
+    const treeData = IssueTreeStore.getTreeData;
+    const expandedKeys = IssueTreeStore.getExpandedKeys;
+    const selectedKeys = IssueTreeStore.getSelectedKeys;
+    const currentCycle = IssueTreeStore.getCurrentCycle;
     return (
       <Spin spinning={loading}>      
-        <div className="c7n-SearchTree">
+        <div className="c7n-IssueTree">
           <div className="c7n-treeTop">
             <Input
               prefix={<Icon type="filter_list" style={{ color: 'black' }} />} 
@@ -207,8 +205,8 @@ class SearchTree extends Component {
   }
 }
 
-SearchTree.propTypes = {
+IssueTree.propTypes = {
 
 };
 
-export default SearchTree;
+export default IssueTree;
