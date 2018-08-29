@@ -5,7 +5,7 @@ import {
 import _ from 'lodash';
 import './SearchTree.scss';
 import TestPlanStore from '../../../store/project/TestPlan/TestPlanStore';
-import { TreeTitle } from '../../CycleComponent';
+// import { TreeTitle } from '../../CycleComponent';
 import { getCycles, getStatusList } from '../../../api/cycleApi';
 
 const { TreeNode } = Tree;
@@ -106,19 +106,7 @@ class SearchTree extends Component {
       ) : <span>{item.title}</span>;
       return (
         <TreeNode
-          title={item.cycleId
-            ? (
-              <TreeTitle
-                statusList={this.state.statusList}
-                refresh={this.refresh}
-                callback={this.callback}
-                text={item.title}
-                key={key}
-                data={item}
-                title={title}
-                processBar={cycleCaseList}
-              />
-            ) : title}
+          title={title}           
           key={key}
           data={item}
           showIcon

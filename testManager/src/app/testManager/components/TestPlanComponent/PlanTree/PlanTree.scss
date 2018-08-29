@@ -1,7 +1,12 @@
 .c7n-PlanTree {
-  border-right: 1px solid rgba(0, 0, 0, 0.12);
   height: 100%;
+  .ant-spin-nested-loading,
+  .ant-spin-container {
+    height: 100%;
+  }
+  border-right: 1px solid rgba(0, 0, 0, 0.12);
   width: 233px;
+  overflow: auto;
   &-treeTop {
     padding: 0 0 0 16px;
     font-size: 13px;

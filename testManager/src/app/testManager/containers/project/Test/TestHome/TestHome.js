@@ -777,7 +777,13 @@ class Test extends Component {
               </p>
             )}
           </div>
-          <div className="c7n-issue-tree">
+          <div
+            className="c7n-issue-tree"
+            style={{     
+              overflowY: 'auto',
+              overflowX: 'hidden',
+            }}
+          >
             {treeShow && (              
             <SearchTree onClose={() => {
               this.setState({
