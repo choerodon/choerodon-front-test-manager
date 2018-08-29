@@ -318,8 +318,7 @@ class StepTable extends Component {
       key: 'defects',
       render: (defects, record) => (
         <TextEditToggle
-          onSubmit={() => {
-            console.log(that.needAdd);
+          onSubmit={() => {   
             if (that.needAdd.length > 0) {
               CycleExecuteStore.enterloading();
               addDefects(that.needAdd).then((res) => {
@@ -361,9 +360,9 @@ class StepTable extends Component {
               ) : (
                 <div
                   style={{
-                      width: 100,
-                      height: 20,
-                    }}
+                    width: 100,
+                    height: 20,
+                  }}
                 />
               )
             }
