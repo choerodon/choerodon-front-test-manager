@@ -48,7 +48,7 @@ jobs:
       - run: |
           CHART_PATH=`find . -name Chart.yaml`
           yq w -i ${CHART_PATH%/*}/Chart.yaml appVersion ${CIRCLE_TAG}
-          sed -i "s,repository:.*$,repository: ${DOCKER_REGISTRY}/${GROUP_NAME}/${PROJECT_NAME},g" ${CHART_PATH%/*}/values.yaml
+          yq w -i ${CHART_PATH%/*}/values.yaml image.repository ${DOCKER_GROUP_NAME}/${CIRCLE_PROJECT_REPONAME}
           helm repo add choerodon "${CHART_REPOSITORY}/${CHART_ORGANIZATION}/${CHART_PROJECT}/"
           helm push --username ${HELM_USER} --password ${HELM_PASSWORD} ${CHART_PATH%/*} --version ${CIRCLE_TAG} choerodon
 workflows:
