@@ -2,13 +2,17 @@ import React, { Component } from 'react';
 import { stores, axios, Content } from 'choerodon-front-boot';
 import { withRouter } from 'react-router-dom';
 import _ from 'lodash';
-import { Select, Form, Input, Button, Modal, Icon, Tooltip } from 'choerodon-ui';
+import {
+  Select, Form, Input, Button, Modal, Icon, Tooltip,
+} from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 import './CreateIssue.scss';
 import '../../../assets/main.scss';
 import { UploadButton } from '../CommonComponent';
 import { handleFileUpload, beforeTextUpload } from '../../../common/utils';
-import { createIssue, loadLabels, loadPriorities, loadVersions, loadSprints, loadComponents, loadEpics } from '../../../api/IssueApi';
+import {
+  createIssue, loadLabels, loadPriorities, loadVersions, loadSprints, loadComponents, loadEpics,
+} from '../../../api/IssueApi';
 import { getUsers } from '../../../api/CommonApi';
 import { COLOR } from '../../../common/Constant';
 import WYSIWYGEditor from '../WYSIWYGEditor';
@@ -221,7 +225,9 @@ class CreateIssue extends Component {
 
   render() {
     const { getFieldDecorator } = this.props.form;
-    const { initValue, visible, onCancel, onOk } = this.props;
+    const {
+      initValue, visible, onCancel, onOk,
+    } = this.props;
     const callback = (value) => {
       this.setState({
         delta: value,
@@ -266,11 +272,13 @@ class CreateIssue extends Component {
                   label={<FormattedMessage id="issue_issueFilterByPriority" />}
                   getPopupContainer={triggerNode => triggerNode.parentNode}
                 >
-                  {this.transformPriorityCode(this.state.originPriorities).map(type =>
-                    (<Option key={type.valueCode} value={type.valueCode}>
+                  {this.transformPriorityCode(this.state.originPriorities).map(type => (
+                    <Option key={type.valueCode} value={type.valueCode}>
                       <div style={{ display: 'inline-flex', alignItems: 'center', padding: 2 }}>
                         <div
-                          style={{ color: COLOR[type.valueCode].color, width: 20, height: 20, textAlign: 'center', lineHeight: '20px', borderRadius: '50%', marginRight: 8 }}
+                          style={{
+                            color: COLOR[type.valueCode].color, width: 20, height: 20, textAlign: 'center', lineHeight: '20px', borderRadius: '50%', marginRight: 8,
+                          }}
                         >
                           <Icon
                             type="flag"
@@ -279,8 +287,8 @@ class CreateIssue extends Component {
                         </div>
                         <span>{type.name}</span>
                       </div>
-                    </Option>),
-                  )}
+                    </Option>
+                  ))}
                 </Select>,
               )}
             </FormItem>
@@ -321,8 +329,8 @@ class CreateIssue extends Component {
                   allowClear
                   onFilterChange={this.onFilterChange.bind(this)}
                 >
-                  {this.state.originUsers.map(user =>
-                    (<Option key={user.id} value={user.id}>
+                  {this.state.originUsers.map(user => (
+                    <Option key={user.id} value={user.id}>
                       <div style={{ display: 'inline-flex', alignItems: 'center', padding: 2 }}>
                         <UserHead
                           user={{
@@ -333,12 +341,12 @@ class CreateIssue extends Component {
                           }}
                         />
                       </div>
-                    </Option>),
-                  )}
+                    </Option>
+                  ))}
                 </Select>,
               )}
             </FormItem>
-            <Tooltip title={'可自行选择经办人，如不选择，会应用模块的默认经办人逻辑和项目的默认经办人策略'}>
+            <Tooltip title="可自行选择经办人，如不选择，会应用模块的默认经办人逻辑和项目的默认经办人策略">
               <Icon
                 type="error"
                 style={{
@@ -358,8 +366,7 @@ class CreateIssue extends Component {
                       label={<FormattedMessage id="issue_create_content_epic" />}
                       allowClear
                       filter
-                      filterOption={(input, option) => 
-                        option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                      filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
                       getPopupContainer={triggerNode => triggerNode.parentNode}
                       loading={this.state.selectLoading}
                       onFocus={() => {
@@ -374,9 +381,7 @@ class CreateIssue extends Component {
                         });
                       }}
                     >
-                      {this.state.originEpics.map(epic =>
-                        <Option key={epic.issueId} value={epic.issueId}>{epic.epicName}</Option>,
-                      )}
+                      {this.state.originEpics.map(epic => <Option key={epic.issueId} value={epic.issueId}>{epic.epicName}</Option>)}
                     </Select>,
                   )}
                 </FormItem>
@@ -389,8 +394,7 @@ class CreateIssue extends Component {
                   label={<FormattedMessage id="issue_create_content_sprint" />}
                   allowClear
                   filter
-                  filterOption={(input, option) => 
-                    option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                  filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
                   getPopupContainer={triggerNode => triggerNode.parentNode}
                   loading={this.state.selectLoading}
                   onFocus={() => {
@@ -405,19 +409,28 @@ class CreateIssue extends Component {
                     });
                   }}
                 >
-                  {this.state.originSprints.map(sprint =>
-                    (<Option
-                      key={sprint.sprintId} 
+                  {this.state.originSprints.map(sprint => (
+                    <Option
+                      key={sprint.sprintId}
                       value={sprint.sprintId}
-                    >{sprint.sprintName}</Option>),
-                  )}
+                    >
+                      {sprint.sprintName}
+
+                    </Option>
+                  ))}
                 </Select>,
               )}
             </FormItem>
 
             <FormItem style={{ width: 520 }}>
               {getFieldDecorator('fixVersionIssueRel', {
-                rules: [{ transform: value => (value ? value.toString() : value) }],
+                rules: [
+                  {
+                    required: true,
+                    message: '请选择版本',
+                  }, {
+                    transform: value => (value ? value.toString() : value),
+                  }],
               })(
                 <Select
                   label={<FormattedMessage id="issue_create_content_version" />}
@@ -437,9 +450,7 @@ class CreateIssue extends Component {
                     });
                   }}
                 >
-                  {this.state.originFixVersions.map(version =>
-                    <Option key={version.name} value={version.name}>{version.name}</Option>,
-                  )}
+                  {this.state.originFixVersions.map(version => <Option key={version.name} value={version.name}>{version.name}</Option>)}
                 </Select>,
               )}
             </FormItem>
@@ -466,9 +477,7 @@ class CreateIssue extends Component {
                     });
                   }}
                 >
-                  {this.state.originComponents.map(component =>
-                    <Option key={component.name} value={component.name}>{component.name}</Option>,
-                  )}
+                  {this.state.originComponents.map(component => <Option key={component.name} value={component.name}>{component.name}</Option>)}
                 </Select>,
               )}
             </FormItem>
@@ -495,17 +504,20 @@ class CreateIssue extends Component {
                     });
                   }}
                 >
-                  {this.state.originLabels.map(label =>
-                    (<Option 
+                  {this.state.originLabels.map(label => (
+                    <Option
                       key={label.labelName}
                       value={label.labelName}
-                    >{label.labelName}</Option>),
-                  )}
+                    >
+                      {label.labelName}
+
+                    </Option>
+                  ))}
                 </Select>,
               )}
             </FormItem>
           </Form>
-          
+
           <div className="sign-upload" style={{ marginTop: 38 }}>
             <div style={{ display: 'flex', marginBottom: '13px', alignItems: 'center' }}>
               <div style={{ fontWeight: 500 }}><FormattedMessage id="attachment" /></div>
@@ -517,7 +529,7 @@ class CreateIssue extends Component {
                 fileList={this.state.fileList}
               />
             </div>
-          </div>       
+          </div>
           {
             this.state.edit ? (
               <FullEditor

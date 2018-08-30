@@ -5,7 +5,8 @@ import {
   Page, Header, Content, stores, axios,
 } from 'choerodon-front-boot';
 import {
-  Table, Button, Tooltip, Input, Dropdown, Menu, Pagination, Spin, Icon,
+  Table, Button, Tooltip, Input, Dropdown, Menu, Pagination,
+  Spin, Icon, Select,
 } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 import moment from 'moment';
@@ -31,18 +32,18 @@ import IssueTree from '../../../../components/TestComponent/IssueTree';
 
 
 const { AppState } = stores;
-
+const { Option } = Select;
 @observer
 class Test extends Component {
   constructor(props) {
     super(props);
-    this.state = {    
+    this.state = {
       treeShow: false,
       expand: false,
       create: false,
       selectedIssue: {},
       createIssue: false,
-      selectIssueType: 'issue_test',
+      // selectIssueType: 'issue_test',
       createIssueValue: '',
       createLoading: false,
     };
@@ -153,6 +154,17 @@ class Test extends Component {
 
   handleBlurCreateIssue() {
     if (this.state.createIssueValue !== '') {
+      const versionIssueRelDTOList = [];
+      const selectedVersion = IssueStore.getSeletedVersion;
+      // 判断是否选择版本
+      if (!selectedVersion) {
+        Choerodon.prompt('请选择版本');
+        return;
+      }
+      versionIssueRelDTOList.push({
+        versionId: selectedVersion,
+        relationType: 'fix',
+      });
       const data = {
         priorityCode: 'medium',
         projectId: AppState.currentMenuType.id,
@@ -161,6 +173,7 @@ class Test extends Component {
         typeCode: 'issue_test',
         epicId: 0,
         parentIssueId: 0,
+        versionIssueRelDTOList,
       };
       this.setState({
         createLoading: true,
@@ -179,11 +192,6 @@ class Test extends Component {
     }
   }
 
-  handleChangeType({ key }) {
-    this.setState({
-      selectIssueType: key,
-    });
-  }
 
   handleSort({ key }) {
     const currentSort = IssueStore.order;
@@ -609,6 +617,8 @@ class Test extends Component {
 
   render() {
     const { expand, treeShow } = this.state;
+    const versions = IssueStore.getVersions;
+    const selectedVersion = IssueStore.getSeletedVersion;
     const ORDER = [
       {
         code: 'summary',
@@ -779,18 +789,18 @@ class Test extends Component {
           </div>
           <div
             className="c7n-issue-tree"
-            style={{     
+            style={{
               overflowY: 'auto',
               overflowX: 'hidden',
             }}
           >
-            {treeShow && (              
-            <IssueTree onClose={() => {
-              this.setState({
-                treeShow: false,
-              });
-            }}
-            />            
+            {treeShow && (
+              <IssueTree onClose={() => {
+                this.setState({
+                  treeShow: false,
+                });
+              }}
+              />
             )}
           </div>
           <div
@@ -847,27 +857,27 @@ class Test extends Component {
                   />
                 ) : (
                   <Table
-                    rowKey={record => record.issueId}
-                    columns={columns}
-                    dataSource={_.slice(IssueStore.issues)}
-                    filterBar={false}
-                    showHeader={false}
-                    scroll={{ x: true }}
-                    loading={IssueStore.loading}
-                    onChange={this.handleTableChange}
-                    pagination={false}
-                    onRow={record => ({
-                      onClick: () => {
-                        this.setState({
-                          selectedIssue: record,
-                          expand: true,                          
-                        });
-                      },
-                    })
+                      rowKey={record => record.issueId}
+                      columns={columns}
+                      dataSource={_.slice(IssueStore.issues)}
+                      filterBar={false}
+                      showHeader={false}
+                      scroll={{ x: true }}
+                      loading={IssueStore.loading}
+                      onChange={this.handleTableChange}
+                      pagination={false}
+                      onRow={record => ({
+                        onClick: () => {
+                          this.setState({
+                            selectedIssue: record,
+                            expand: true,
+                          });
+                        },
+                      })
                       }
-                    rowClassName={(record, index) => (
-                      record.issueId === this.state.selectedIssue.issueId ? 'c7n-border-visible' : 'c7n-border')}
-                  />
+                      rowClassName={(record, index) => (
+                        record.issueId === this.state.selectedIssue.issueId ? 'c7n-border-visible' : 'c7n-border')}
+                    />
                 )
               }
 
@@ -885,21 +895,21 @@ class Test extends Component {
                 >
                   {this.state.createIssue ? (
                     <div className="c7n-add" style={{ display: 'block', width: '100%' }}>
-                      <div style={{ display: 'flex' }}>
-                        <div style={{ display: 'flex', alignItem: 'center' }}>
-                          <div
-                            className="c7n-sign"
-                            style={{
-                              backgroundColor: TYPE[this.state.selectIssueType],
-                              marginRight: 2,
-                            }}
-                          >
-                            <Icon
-                              style={{ fontSize: '14px' }}
-                              type={ICON[this.state.selectIssueType]}
-                            />
-                          </div>
-                        </div>
+                      <div className="c7n-add-select-version">
+                        {/* 创建issue选择版本 */}
+                        <span className="c7n-add-select-version-prefix">V</span>
+                        <Select
+                          onChange={(value) => {
+                            IssueStore.selectVersion(value);
+                          }}
+                          value={selectedVersion}
+                          style={{ width: 50 }}
+                          dropdownMatchSelectWidth={false}
+                        >
+                          {
+                            versions.map(version => <Option value={version.versionId}>{version.name}</Option>)
+                          }
+                        </Select>
                         <div style={{ marginLeft: 8, flexGrow: 1 }}>
                           <Input
                             autoFocus
@@ -940,19 +950,19 @@ class Test extends Component {
                     </div>
                   ) : (
                     <Button
-                      className="leftBtn"
-                      style={{ color: '#3f51b5' }}
-                      funcType="flat"
-                      onClick={() => {
-                        this.setState({
-                          createIssue: true,
-                          createIssueValue: '',
-                        });
-                      }}
-                    >
-                      <Icon type="playlist_add icon" style={{ marginRight: -2 }} />
-                      <span><FormattedMessage id="issue_issueCreate" /></span>
-                    </Button>
+                        className="leftBtn"
+                        style={{ color: '#3f51b5' }}
+                        funcType="flat"
+                        onClick={() => {
+                          this.setState({
+                            createIssue: true,
+                            createIssueValue: '',
+                          });
+                        }}
+                      >
+                        <Icon type="playlist_add icon" style={{ marginRight: -2 }} />
+                        <span><FormattedMessage id="issue_issueCreate" /></span>
+                      </Button>
                   )}
                 </div>
               </div>

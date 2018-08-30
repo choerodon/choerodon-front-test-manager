@@ -252,7 +252,7 @@ const zhCN = {
   issue_create_content_description: '请在下面输入测试用例的详细信息，包含详细描述、人员信息、版本信息、进度预估、优先级等等。您可以通过丰富的任务描述帮助相关人员更快更全面的理解任务，同时更好的把控问题进度。',
   issue_create_content_epic: '史诗',
   issue_create_content_sprint: '冲刺',
-  issue_create_content_version: '修复版本',
+  issue_create_content_version: '版本',
   // 编辑详情侧边栏
   issue_edit_hide: '隐藏详情',
   issue_edit_planTime: '预估时间',

@@ -34,6 +34,17 @@
   }
 
   .c7n-add {
+    &-select-version {
+      .ant-select-underline {
+        display: none;
+      }
+      display: flex;
+      align-items: center;
+      &-prefix {
+        margin-top: -1px;
+        margin-right: 6px;
+      }
+    }
     .ant-input-length-info {
       display: none;
     }

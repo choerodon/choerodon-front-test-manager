@@ -1,15 +1,18 @@
 import React, { Component } from 'react';
+import { observer } from 'mobx-react';
 import {
-  Tree, Input, Icon, Spin, 
+  Tree, Input, Icon, Spin,
 } from 'choerodon-ui';
 import _ from 'lodash';
 import './IssueTree.scss';
 import { IssueTreeStore } from '../../../store/project/treeStore';
 // import { TreeTitle } from '../../CycleComponent';
 import { getCycles, getStatusList } from '../../../api/cycleApi';
+import IssueTreeTitle from './IssueTreeTitle';
 
 const { TreeNode } = Tree;
 const dataList = [];
+@observer
 class IssueTree extends Component {
   state = {
     loading: false,
@@ -19,6 +22,28 @@ class IssueTree extends Component {
 
   componentDidMount() {
     this.getTree();
+  }
+
+  callback = (item, code) => {  
+    switch (code) {
+      case 'CLONE_FOLDER': {
+        const parentKey = this.getParentKey(item.key, IssueTreeStore.getTreeData);
+        IssueTreeStore.addItemByParentKey(parentKey, { ...item, ...{ key: `${parentKey}-CLONE_FOLDER`, type: 'CLONE_FOLDER' } });
+        break;
+      }
+      
+      case 'ADD_FOLDER': {
+        IssueTreeStore.addItemByParentKey(item.key, { ...item, ...{ title: Choerodon.getMessage('新文件夹', 'New folder'), key: `${item.key}-ADD_FOLDER`, type: 'ADD_FOLDER' } });
+        // 自动展开当前项
+        const expandedKeys = IssueTreeStore.getExpandedKeys;
+        if (expandedKeys.indexOf(item.key) === -1) {
+          expandedKeys.push(item.key);
+        }
+        IssueTreeStore.setExpandedKeys(expandedKeys);
+        break;
+      }
+      default: break;
+    }
   }
 
   getParentKey = (key, tree) => key.split('-').slice(0, -1).join('-')
@@ -48,7 +73,6 @@ class IssueTree extends Component {
     const {
       children, key, cycleCaseList, type,
     } = item;
-    // debugger;
     const { searchValue } = this.state;
     const expandedKeys = IssueTreeStore.getExpandedKeys;
     const index = item.title.indexOf(searchValue);
@@ -60,41 +84,7 @@ class IssueTree extends Component {
         type={expandedKeys.includes(item.key) ? 'folder_open2' : 'folder_open'}
       />
     );
-    if (type === 'CLONE_FOLDER' || type === 'CLONE_CYCLE') {
-      return (
-        <TreeNode
-          title={(
-            <div onClick={e => e.stopPropagation()} role="none">
-              <Input
-                defaultValue={item.title}
-                autoFocus
-                onBlur={(e) => {
-                  this.Clone(item, e, type);
-                }}
-              />
-            </div>
-          )}
-          icon={icon}
-          data={item}
-        />);
-    } else if (type === 'ADD_FOLDER') {
-      return (
-        <TreeNode
-          title={(
-            <div onClick={e => e.stopPropagation()} role="none">
-              <Input
-                defaultValue={item.title}
-                autoFocus
-                onBlur={(e) => {
-                  this.addFolder(item, e, type);
-                }}
-              />
-            </div>
-          )}
-          icon={icon}
-          data={item}
-        />);
-    } else if (children) {
+    if (children) {
       const title = index > -1 ? (
         <span>
           {beforeStr}
@@ -104,11 +94,20 @@ class IssueTree extends Component {
       ) : <span>{item.title}</span>;
       return (
         <TreeNode
-          title={title}           
+          title={item.cycleId 
+            ? (
+              <IssueTreeTitle 
+                title={title}
+                data={item}
+                refresh={this.getTree}
+                callback={this.callback}
+              />
+            ) 
+            : title}
           key={key}
           data={item}
           showIcon
-          icon={icon}
+          icon={icon}          
         >
           {this.renderTreeNodes(children)}
         </TreeNode>
@@ -178,27 +177,29 @@ class IssueTree extends Component {
     const selectedKeys = IssueTreeStore.getSelectedKeys;
     const currentCycle = IssueTreeStore.getCurrentCycle;
     return (
-      <Spin spinning={loading}>      
+      <Spin spinning={loading}>
         <div className="c7n-IssueTree">
           <div className="c7n-treeTop">
             <Input
-              prefix={<Icon type="filter_list" style={{ color: 'black' }} />} 
+              prefix={<Icon type="filter_list" style={{ color: 'black' }} />}
               placeholder="过滤"
-              style={{ marginTop: 2 }} 
+              style={{ marginTop: 2 }}
               onChange={e => _.debounce(this.filterCycle, 200).call(null, e.target.value)}
             />
             <Icon type="close" className="c7n-pointer" onClick={onClose} />
           </div>
-          <Tree
-            selectedKeys={selectedKeys}
-            expandedKeys={expandedKeys}
-            showIcon
-            onExpand={this.onExpand}
-            onSelect={this.loadCycle}
-            autoExpandParent={autoExpandParent}
-          >
-            {this.renderTreeNodes(treeData)}
-          </Tree>
+          <div className="c7n-IssueTree-tree">
+            <Tree
+              selectedKeys={selectedKeys}
+              expandedKeys={expandedKeys}
+              showIcon
+              onExpand={this.onExpand}
+              onSelect={this.loadCycle}
+              autoExpandParent={autoExpandParent}
+            >
+              {this.renderTreeNodes(treeData)}
+            </Tree>
+          </div>
         </div>
       </Spin>
     );

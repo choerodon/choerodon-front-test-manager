@@ -256,7 +256,7 @@ class TestStepTable extends Component {
                     attachmentLinkId: record.stepId,
                     attachmentType: 'CASE_STEP',
                   }}
-                />
+                />                
               </Edit>
             </TextEditToggle>
 

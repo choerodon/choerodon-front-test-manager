@@ -57,6 +57,7 @@
     "react/no-access-state-in-setstate": "off",
     "prefer-destructuring":"off",
     "max-len":"warn",
+    "react/forbid-prop-types":"off",
     "jsx-a11y/anchor-is-valid": [
       "warn",
       {

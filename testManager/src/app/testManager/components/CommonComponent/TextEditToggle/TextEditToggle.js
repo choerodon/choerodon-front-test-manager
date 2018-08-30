@@ -166,9 +166,9 @@ TextEditToggle.Text = Text;
 TextEditToggle.Edit = Edit;
 
 Text.propTypes = {
-  children: PropTypes.node,
+  children: PropTypes.element.isRequired,
 };
 Edit.propTypes = {
-  children: PropTypes.node,
+  children: PropTypes.element.isRequired,
 };
 export default Form.create({})(TextEditToggle);

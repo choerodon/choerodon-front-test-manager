@@ -7,14 +7,7 @@
   .ant-spin-container {
     height: 100%;
   }
-  .ant-input-wrapper {
-    .ant-input-underline {
-      display: none;
-    }
-    .ant-input-content {
-      margin-bottom: 0;
-    }
-  }
+
   .c7n-treeTop {
     padding: 0 16px;
     font-size: 13px;
@@ -22,6 +15,18 @@
     display: flex;
     align-items: center;
     border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+    .ant-input-wrapper {
+      .ant-input-underline {
+        display: none;
+      }
+      .ant-input-content {
+        margin-bottom: 0;
+      }
+    }
+  }
+  &-tree {
+    height: calc(100% - 44px);
+    overflow: auto;
   }
   .ant-tree-icon__customize {
     i.icon {
