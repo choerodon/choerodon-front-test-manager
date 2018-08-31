@@ -312,7 +312,11 @@ const zhCN = {
   issue_edit_step_content_description: '您可以编辑测试步骤的详细信息。',
   // 
   issue_create_bug: '新建缺陷',
-
+  // issue树
+  issue_tree_rename: '重命名',
+  issue_tree_delete: '删除',
+  issue_tree_copy: '复制',
+  issue_tree_paste: '粘贴',
   // dashboard
   dashboard_issue: '测试用例管理',
   dashboard_cycle: '测试循环',

@@ -1,6 +1,6 @@
 import axios from 'axios';
 import {
-  observable, action, computed, toJS, 
+  observable, action, computed, toJS,
 } from 'mobx';
 import { store, stores } from 'choerodon-front-boot';
 import { getCycles } from '../../../api/cycleApi';
@@ -10,16 +10,44 @@ const { AppState } = stores;
 @store('IssueTreeStore')
 class IssueTreeStore {
   @observable treeData = [
-    { title: '所有版本', key: '0' },
+    {
+      title: '所有版本',
+      key: '0',
+      children: [
+        {
+          title: '1.0.1',
+          key: '0-0',
+          versionId: 1,
+          children: [{
+            cycleId: 1,
+            versionId: 1,
+            type: 'cycle',
+            title: '1.0.1',
+            key: '0-0-0',
+          }],
+        }, {
+          title: '1.1.0',
+          key: '0-1',
+          versionId: 1,
+          children: [{
+            cycleId: 2,
+            versionId: 1,
+            type: 'cycle',
+            title: '1.0.1',
+            key: '0-1-0',
+          }],
+        },
+      ],
+    },
   ]
 
-  @observable expandedKeys=['0'];
+  @observable expandedKeys = ['0'];
 
-  @observable selectedKeys=[];
+  @observable selectedKeys = [];
 
   @observable addingParent = null;
 
-  @observable currentCycle={};
+  @observable currentCycle = {};
 
   @computed get getTreeData() {
     return toJS(this.treeData);
@@ -42,7 +70,7 @@ class IssueTreeStore {
     this.expandedKeys = expandedKeys;
   }
 
-  @action setSelectedKeys(selectedKeys) { 
+  @action setSelectedKeys(selectedKeys) {
     this.selectedKeys = selectedKeys;
   }
 

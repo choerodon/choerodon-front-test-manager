@@ -174,3 +174,19 @@ export function loadLinkIssues(issueId) {
   const projectId = AppState.currentMenuType.id;
   return axios.get(`/agile/v1/projects/${projectId}/issue_links/${issueId}`);
 }
+export function getIssueTree() {
+  const projectId = AppState.currentMenuType.id;
+  return axios.get(`/test/v1/projects/${projectId}/issueFolder/query`);
+}
+export function addFolder(data) {
+  const projectId = AppState.currentMenuType.id;
+  return axios.post(`/test/v1/projects/${projectId}/issueFolder`, data);
+}
+export function editFolder(data) {
+  const projectId = AppState.currentMenuType.id;
+  return axios.put(`/test/v1/projects/${projectId}/issueFolder/update`, data);
+}
+export function deleteFolder(folderId) {
+  const projectId = AppState.currentMenuType.id;
+  return axios.delete(`/test/v1/projects/${projectId}/issueFolder/${folderId}`);
+}

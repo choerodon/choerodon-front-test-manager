@@ -1,63 +1,62 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {
-  Menu, Input, Dropdown, Button, Popover, Tooltip, 
+  Menu, Input, Dropdown, Button, Popover, Tooltip, Icon,
 } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 import { IssueTreeStore } from '../../../store/project/treeStore';
-import { editFolder, deleteCycleOrFolder } from '../../../api/cycleApi';
+import { editFolder, deleteFolder } from '../../../api/IssueApi';
 import './IssueTreeTitle.scss';
 
 class IssueTreeTitle extends Component {
   state = {
     editing: false,
+    over: false,
+  }
+
+  addFolder = (data) => {
+    this.props.callback(data, 'ADD_FOLDER');
   }
 
   handleItemClick = ({ item, key, keyPath }) => {
     const { data, refresh } = this.props;
     const { type, cycleId } = data;
     switch (key) {
-      case 'add': {        
-        this.props.callback(data, 'ADD_FOLDER');
-        break;
-      }
-      case 'edit': {
-        if (type === 'folder') {
-          this.setState({
-            editing: true,
-          });
-        } else {
-          this.props.callback(data, 'EDIT_CYCLE');
-        }
-        break;
-      }
-      case 'delete': {
-        deleteCycleOrFolder(cycleId).then((res) => {
-          if (res.failed) {
-            Choerodon.prompt('删除失败');
-          } else {
-            IssueTreeStore.setCurrentCycle({});
-            refresh();
-          }
-        }).catch((err) => {
-
+      case 'rename': {
+        this.setState({
+          editing: true,
         });
         break;
       }
-      case 'clone': {
-        if (type === 'folder') {
-          this.props.callback(data, 'CLONE_FOLDER');
-          // cloneFolder(cycleId, data).then((data) => {
-
-          // });
-        } else if (type === 'cycle') {
-          this.props.callback(data, 'CLONE_CYCLE');
-        }
-        // this.props.refresh();
+      case 'delete': {
+        deleteFolder(cycleId).then((res) => {
+          if (res.failed) {
+            Choerodon.prompt('删除失败');
+          } else {            
+            refresh();
+          }
+        }).catch((err) => {
+          Choerodon.prompt('网络异常');
+        });
         break;
       }
-      case 'export': {
-        this.props.callback(data, 'EXPORT_CYCLE');
+      case 'copy': {
+        // deleteCycleOrFolder(cycleId).then((res) => {
+        //   if (res.failed) {
+        //     Choerodon.prompt('删除失败');
+        //   } else {
+        //     IssueTreeStore.setCurrentCycle({});
+        //     refresh();
+        //   }
+        // }).catch((err) => {
+
+        // });
+        break;
+      }
+      case 'paste': {
+        // this.props.callback(data, 'CLONE_FOLDER');
+        // cloneFolder(cycleId, data).then((data) => {
+        // this.props.refresh();
         break;
       }
       default: break;
@@ -77,52 +76,89 @@ class IssueTreeTitle extends Component {
     });
   }
 
+  onDragEnter=() => {
+    this.setState({
+      over: true,
+    });
+  }
+
   render() {
     const getMenu = (type) => {
       let items = [];
-      if (type === 'temp') {
-        items.push(
-          <Menu.Item key="export">
-          导出循环
-          </Menu.Item>,
-        );
-      } else if (type === 'folder' || type === 'cycle') {
-        if (type === 'cycle') {
-          items.push(
-            <Menu.Item key="add">
-              <FormattedMessage id="cycle_addFolder" />
-            </Menu.Item>,
-          );
-        }
-        items = items.concat([
-          <Menu.Item key="edit">
-            {type === 'folder' ? <FormattedMessage id="cycle_editFolder" /> : <FormattedMessage id="cycle_editCycle" />}
-          </Menu.Item>,
-          <Menu.Item key="delete">
-            {type === 'folder' ? <FormattedMessage id="cycle_deleteFolder" /> : <FormattedMessage id="cycle_deleteCycle" />}
-          </Menu.Item>,
-          <Menu.Item key="clone">
-            {type === 'folder' ? <FormattedMessage id="cycle_cloneFolder" /> : <FormattedMessage id="cycle_cloneCycle" />}
-          </Menu.Item>,
-          <Menu.Item key="export">
-            {type === 'folder' ? <FormattedMessage id="cycle_exportFolder" /> : <FormattedMessage id="cycle_exportCycle" />}
-          </Menu.Item>,
-        ]);
-      }
+      // if (type === 'temp') {
+      items.push(
+        <Menu.Item key="rename">
+          <FormattedMessage id="issue_tree_rename" />
+        </Menu.Item>,
+      );
+      // } else {
+      // if (type === 'cycle') {         
+      items = items.concat([
+        <Menu.Item key="delete">
+          <FormattedMessage id="issue_tree_delete" />
+        </Menu.Item>,
+        <Menu.Item key="copy">
+          <FormattedMessage id="issue_tree_copy" />
+        </Menu.Item>,
+        <Menu.Item key="paste">
+          <FormattedMessage id="issue_tree_paste" />
+        </Menu.Item>,
+      ]);
+      // }
       return <Menu onClick={this.handleItemClick} style={{ margin: '10px 0 0 28px' }}>{items}</Menu>;
     };
-    const { editing } = this.state;
+    const { editing, over } = this.state;
     const { data, title } = this.props;
     // const { title } = data;
+    let type = null;
+    if (data.versionId && data.type !== 'cycle') {
+      type = 'version';
+    } else if (data.type === 'cycle') {
+      type = 'cycle';
+    }
     return (
-      <div className="c7n-issue-tree-title">
+      <div
+        className="c7n-issue-tree-title"
+        // ref={instance => this.instance = instance}
+        style={{
+          background: over && 'green',
+        }}
+        // draggable={type === 'cycle'}
+        // draggable
+        // onDragStart={() => {
+        //   console.log('start');
+        // }}
+        // onDrop={() => {
+        //   console.log('drop');
+        // }}
+        // onDragEnter={() => {
+        //   console.log('enter');
+        //   this.instance.style.background = 'green';
+        //   // this.setState({
+        //   //   over: true,
+        //   // });
+        // }}
+        // onDragLeave={() => {
+        //   console.log('leave');
+        //   // this.setState({
+        //   //   over: false,
+        //   // });
+        //   this.instance.style.background = 'red';
+        // }}
+      >
         {editing
           ? (
             <Input
-              style={{ width: 78 }}
+              style={{ width: 100 }}
               defaultValue={data.title}
               autoFocus
               onBlur={(e) => {
+                if (e.target.value === data.title) {
+                  this.setState({
+                    editing: false,
+                  });
+                  return;
+                }
                 this.handleEdit({
                   cycleId: data.cycleId,
                   cycleName: e.target.value,
@@ -142,10 +178,19 @@ class IssueTreeTitle extends Component {
         <div role="none" className="c7n-issue-tree-title-actionButton" onClick={e => e.stopPropagation()}>
           {/* {data.type === 'temp'
             ? null : */}
-          <Dropdown overlay={getMenu(data.type)} trigger={['click']}>
-            <Button shape="circle" icon="more_vert" />
-          </Dropdown>
-          {/* } */}
+          {
+            type === 'version'
+              ? <Icon type="folder_special" className="c7n-add-folder" onClick={this.addFolder.bind(this, data)} />
+              : null
+          }
+          {
+            type === 'cycle'
+            && (
+              <Dropdown overlay={getMenu(data.type)} trigger={['click']}>
+                <Button shape="circle" icon="more_vert" />
+              </Dropdown>
+            )
+          }
         </div>
       </div>
     );
