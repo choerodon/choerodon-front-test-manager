@@ -46,9 +46,17 @@ class DragTable extends Component {
     }
   }
 
+  onDragStart=() => {
+    document.addEventListener('keydown', (e) => { 
+      e.preventDefault();  
+      e.stopImmediatePropagation();
+      console.log(e.keyCode);
+    });
+  }
+
   components = {
     table: () => (
-      <DragDropContext onDragEnd={this.onDragEnd.bind(this)}>
+      <DragDropContext onDragEnd={this.onDragEnd.bind(this)} onDragStart={this.onDragStart}>
         <table>
           <thead>
             {this.renderThead()}

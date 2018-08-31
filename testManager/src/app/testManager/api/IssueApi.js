@@ -7,7 +7,13 @@ export function createIssue(issueObj, projectId = AppState.currentMenuType.id) {
     projectId,
     ...issueObj,
   };
-  return axios.post(`/agile/v1/projects/${projectId}/issues`, issue);
+  // return axios.post(`/agile/v1/projects/${projectId}/issues`, issue);
+  return axios.post(`/test/v1/projects/${projectId}/issueFolderRel`, {
+    folder_id: 19,
+    project_id: projectId,
+    version_id: issue.versionIssueRelDTOList[0].versionId,
+    issueCreateDTO: issue,
+  });
 }
 
 export function loadLabels() {

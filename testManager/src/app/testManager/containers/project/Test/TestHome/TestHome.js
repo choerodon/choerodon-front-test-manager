@@ -857,27 +857,27 @@ class Test extends Component {
                   />
                 ) : (
                   <Table
-                      rowKey={record => record.issueId}
-                      columns={columns}
-                      dataSource={_.slice(IssueStore.issues)}
-                      filterBar={false}
-                      showHeader={false}
-                      scroll={{ x: true }}
-                      loading={IssueStore.loading}
-                      onChange={this.handleTableChange}
-                      pagination={false}
-                      onRow={record => ({
-                        onClick: () => {
-                          this.setState({
-                            selectedIssue: record,
-                            expand: true,
-                          });
-                        },
-                      })
+                    rowKey={record => record.issueId}
+                    columns={columns}
+                    dataSource={_.slice(IssueStore.issues)}
+                    filterBar={false}
+                    showHeader={false}
+                    scroll={{ x: true }}
+                    loading={IssueStore.loading}
+                    onChange={this.handleTableChange}
+                    pagination={false}
+                    onRow={record => ({
+                      onClick: () => {
+                        this.setState({
+                          selectedIssue: record,
+                          expand: true,
+                        });
+                      },
+                    })
                       }
-                      rowClassName={(record, index) => (
-                        record.issueId === this.state.selectedIssue.issueId ? 'c7n-border-visible' : 'c7n-border')}
-                    />
+                    rowClassName={(record, index) => (
+                      record.issueId === this.state.selectedIssue.issueId ? 'c7n-border-visible' : 'c7n-border')}
+                  />
                 )
               }
 
@@ -950,19 +950,19 @@ class Test extends Component {
                     </div>
                   ) : (
                     <Button
-                        className="leftBtn"
-                        style={{ color: '#3f51b5' }}
-                        funcType="flat"
-                        onClick={() => {
-                          this.setState({
-                            createIssue: true,
-                            createIssueValue: '',
-                          });
-                        }}
-                      >
-                        <Icon type="playlist_add icon" style={{ marginRight: -2 }} />
-                        <span><FormattedMessage id="issue_issueCreate" /></span>
-                      </Button>
+                      className="leftBtn"
+                      style={{ color: '#3f51b5' }}
+                      funcType="flat"
+                      onClick={() => {
+                        this.setState({
+                          createIssue: true,
+                          createIssueValue: '',
+                        });
+                      }}
+                    >
+                      <Icon type="playlist_add icon" style={{ marginRight: -2 }} />
+                      <span><FormattedMessage id="issue_issueCreate" /></span>
+                    </Button>
                   )}
                 </div>
               </div>

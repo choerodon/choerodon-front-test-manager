@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { observer } from 'mobx-react';
 import {
-  Tree, Input, Icon, Spin,
+  Input, Icon, Spin,
 } from 'choerodon-ui';
 import _ from 'lodash';
 import './IssueTree.scss';
@@ -10,6 +10,7 @@ import { IssueTreeStore } from '../../../store/project/treeStore';
 import { getIssueTree, addFolder } from '../../../api/IssueApi';
 import IssueTreeTitle from './IssueTreeTitle';
 import pic from '../../../assets/问题管理－空.png';
+import { Tree } from '../../CommonComponent';
 
 const { TreeNode } = Tree;
 const dataList = [];
