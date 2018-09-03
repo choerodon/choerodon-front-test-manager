@@ -1,12 +1,18 @@
-import { observable, action, computed } from 'mobx';
+import {
+  observable, action, computed, toJS,
+} from 'mobx';
 import { store, stores, axios } from 'choerodon-front-boot';
-import { loadIssues } from '../../../api/IssueApi';
+import { loadIssues, loadVersions } from '../../../api/IssueApi';
 
 const { AppState } = stores;
 
 @store('SprintCommonStore')
 class SprintCommonStore {
   @observable issues = [];
+
+  @observable versions = [];
+
+  @observable selectedVersion = null;
 
   @observable pagination = {};
 
@@ -38,6 +44,15 @@ class SprintCommonStore {
 
   @observable barFilters = undefined;
 
+  @observable draggingTableItems = [];
+
+  @observable copy = false;
+
+  @observable tableDraging = false;
+  // @observable expand = false;
+
+  // @observable selectedIssue={};
+
   init() {
     this.setOrder({
       orderField: '',
@@ -51,20 +66,26 @@ class SprintCommonStore {
     // this.loadIssues();
   }
 
-  loadIssues(page = 0, size = 10) {
+  loadIssues = (page = 0, size = 10) => {
     this.setLoading(true);
     const { orderField, orderType } = this.order;
-    return loadIssues(page, size, this.getFilter, orderField, orderType)
-      .then((res) => {
-        this.setIssues(res.content);
-        this.setPagination({
-          current: res.number + 1,
-          pageSize: res.size,
-          total: res.totalElements,
-        });
-        this.setLoading(false);
-        return Promise.resolve(res);
+    Promise.all([
+      loadVersions(),
+      loadIssues(page, size, this.getFilter, orderField, orderType),
+    ]).then(([versions, res]) => {
+      this.setVersions(versions);
+      if (versions && versions.length > 0) {
+        this.selectVersion(versions[0].versionId);
+      }
+      this.setIssues(res.content);
+      this.setPagination({
+        current: res.number + 1,
+        pageSize: res.size,
+        total: res.totalElements,
       });
+      this.setLoading(false);
+      return Promise.resolve(res);
+    });
   }
 
   createIssue(issueObj, projectId = AppState.currentMenuType.id) {
@@ -77,6 +98,14 @@ class SprintCommonStore {
 
   @action setIssues(data) {
     this.issues = data;
+  }
+
+  @action setVersions(versions) {
+    this.versions = versions;
+  }
+
+  @action selectVersion(selectedVersion) {
+    this.selectedVersion = selectedVersion;
   }
 
   @action setPagination(data) {
@@ -127,6 +156,39 @@ class SprintCommonStore {
     this.barFilters = data;
   }
 
+  @action setCopy(flag) {
+    this.copy = flag;
+  }
+
+  @action setExpand(flag) {
+    this.expand = this.expand;
+  }
+
+  @action setSelectedIssue(selectedIssue) {
+    this.selectedIssue = selectedIssue;
+  }
+
+  @action setDraggingTableItems(draggingTableItems) {
+    console.log('set', draggingTableItems);
+    this.draggingTableItems = draggingTableItems;
+  }
+
+  @action setTableDraging(flag) {
+    this.tableDraging = flag;
+  }
+
+  @computed get getIssues() {
+    return toJS(this.issues);
+  }
+
+  @computed get getVersions() {
+    return toJS(this.versions);
+  }
+
+  @computed get getSeletedVersion() {
+    return toJS(this.selectedVersion);
+  }
+
   @computed get getBackUrl() {
     const urlParams = AppState.currentMenuType;
     if (!this.paramUrl) {
@@ -147,6 +209,10 @@ class SprintCommonStore {
       ...filter,
       otherArgs: this.barFilters ? otherArgs : undefined,
     };
+  }
+
+  @computed get getDraggingTableItems() {
+    return toJS(this.draggingTableItems);
   }
 }
 const sprintCommonStore = new SprintCommonStore();

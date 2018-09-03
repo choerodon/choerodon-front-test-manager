@@ -10,7 +10,7 @@ import {
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import ReportSelectIssue from '../../../../components/ReportSelectIssue';
-import { getReportsFromDefect } from '../../../../api/reportApi';
+import { getReportsFromDefect, getReportsFromDefectByIssueIds } from '../../../../api/reportApi';
 import { getIssueStatus } from '../../../../api/agileApi';
 import { getStatusList } from '../../../../api/cycleApi';
 import { issueLink, cycleLink } from '../../../../common/utils';
@@ -50,7 +50,7 @@ class ReportTest extends Component {
     selectVisible: false,
     loading: false,
     reportList: [],
-    issueStatusList: [],
+    // issueStatusList: [],
     statusList: [],
     stepStatusList: [],
     pagination: {
@@ -60,6 +60,12 @@ class ReportTest extends Component {
     },
     openId: [],
     issueIds: [],
+    search: {
+      advancedSearchArgs: {
+      },
+      searchArgs: {
+      },
+    },
   }
 
   componentDidMount() {
@@ -71,13 +77,17 @@ class ReportTest extends Component {
       loading: true,
     });
     Promise.all([
-      getIssueStatus(),
+      // getIssueStatus(),
       getStatusList('CYCLE_CASE'),
       getStatusList('CASE_STEP'),
       this.getReportsFromDefect(),
-    ]).then(([issueStatusList, statusList, stepStatusList]) => {
+    ]).then(([
+      // issueStatusList, 
+      statusList,
+      stepStatusList,
+    ]) => {
       this.setState({
-        issueStatusList,
+        // issueStatusList,
         statusList,
         stepStatusList,
         // loading: false,
@@ -91,37 +101,65 @@ class ReportTest extends Component {
     return arr.slice(pageSize * (current - 1), pageSize * current);
   }
 
-  getReportsFromDefect = (pagination, issueIds = this.state.issueIds) => {
-    const Pagination = pagination || this.state.pagination;
-    this.setState({ loading: true });
+  /**
+   *根据搜索条件获取报表，取得数据以及所有issueid，在筛选条件和刷新时调用
+   *
+   * @memberof ReportTest
+   */
+  getReportsFromDefect = (pagination, search) => {
+    const Pagination = pagination || this.state.pagination;   
+    const Search = search || this.state.search;
     getReportsFromDefect({
       page: Pagination.current - 1,
       size: Pagination.pageSize,
-    }, this.sliceIssueIds(issueIds, Pagination)).then((reportData) => {
-      if (reportData.totalElements) {
+    }, Search).then((reportData) => {
+      if (!reportData.failed) {
         this.setState({
           loading: false,
-          // reportList: reportData.content,
           reportList: reportData.content,
+          issueIds: reportData.ids || [],
           pagination: {
             current: Pagination.current,
             pageSize: Pagination.pageSize,
-            // total: reportData.totalElements,
-            total: reportData.totalElements,
+            total: reportData.ids ? reportData.ids.length : 0,
           },
         });
       } else {
+        this.setState({ loading: false });
+        Choerodon.prompt(reportData.message);
+      }
+    }).catch((error) => {
+      window.console.log(error);
+      this.setState({
+        loading: false,
+      });
+      Choerodon.prompt('网络异常');
+    });
+  }
+
+  /**
+   *通过issueid取报表，当分页改变时调用
+   *
+   * @memberof ReportTest
+   */
+  getReportsFromDefectByIssueIds = (pagination) => {
+    const Pagination = pagination || this.state.pagination;
+    const { issueIds } = this.state;
+    this.setState({ loading: true });
+    getReportsFromDefectByIssueIds(this.sliceIssueIds(issueIds, Pagination)).then((reportData) => {
+      if (!reportData.failed) {
         this.setState({
-          loading: false,
-          // reportList: reportData.content,
+          loading: false,       
           reportList: reportData,
           pagination: {
             current: Pagination.current,
-            pageSize: Pagination.pageSize,
-            // total: reportData.totalElements,
+            pageSize: Pagination.pageSize,          
             total: issueIds.length,
           },
         });
+      } else {
+        this.setState({ loading: false });
+        Choerodon.prompt(reportData.message);
       }
     }).catch((error) => {
       window.console.log(error);
@@ -133,7 +171,7 @@ class ReportTest extends Component {
   }
 
   handleTableChange = (pagination, filters, sorter) => {
-    this.getReportsFromDefect(pagination);
+    this.getReportsFromDefectByIssueIds(pagination);
   }
 
   handleOpen = (issueId) => {
@@ -151,10 +189,39 @@ class ReportTest extends Component {
     }
   }
 
+  handleFilterChange = (pagination, filters, sorter, barFilters) => {
+    const { statusCode, priorityCode, typeCode } = filters;
+    const {
+      issueNum, summary, assignee, sprint, version, component, epic,
+    } = filters;
+    const search = {
+      advancedSearchArgs: {
+        statusCode: statusCode || [],
+        // priorityCode: priorityCode || [],
+        typeCode: typeCode || [],
+      },
+      otherArgs: {
+        issueNum: issueNum ? issueNum[0] : '',
+        summary: summary ? summary[0] : '',
+        // assignee: assignee ? assignee[0] : '',
+        // sprint: sprint ? sprint[0] : '',
+        // version: version ? version[0] : '',
+        // component: component ? component[0] : '',
+        // epic: epic ? epic[0] : '',
+      },
+    };
+    const Pagination = this.state.pagination;
+    Pagination.current = 1;
+    this.setState({
+      search,      
+    });
+    this.getReportsFromDefect(Pagination, search);
+  }
+
   render() {
     const {
       selectVisible, reportList, loading, pagination,
-      issueStatusList, statusList, stepStatusList, openId,
+      statusList, stepStatusList, openId,
     } = this.state;
     const urlParams = AppState.currentMenuType;
     const that = this;
@@ -427,7 +494,119 @@ class ReportTest extends Component {
         return openId.includes(issueId.toString()) ? caseShow : '-';
       },
     }];
-
+    const filterColumns = [
+      {
+        title: '类型',
+        dataIndex: 'typeCode',
+        key: 'typeCode',
+        filters: [
+          {
+            text: '故事',
+            value: 'story',
+          },
+          {
+            text: '测试',
+            value: 'issue_test',
+          },
+          {
+            text: '任务',
+            value: 'task',
+          },
+          {
+            text: '故障',
+            value: 'bug',
+          },
+          {
+            text: '史诗',
+            value: 'issue_epic',
+          },
+        ],
+        filterMultiple: true,
+      },
+      // {
+      //   title: '经办人',
+      //   dataIndex: 'assignee',
+      //   key: 'assignee',
+      //   filters: [],
+      // },
+      {
+        title: '编号',
+        dataIndex: 'issueNum',
+        key: 'issueNum',
+        filters: [],
+      },
+      {
+        title: '概要',
+        dataIndex: 'summary',
+        key: 'summary',
+        filters: [],
+      },
+      // {
+      //   title: '优先级',
+      //   dataIndex: 'priorityCode',
+      //   key: 'priorityCode',
+      //   filters: [
+      //     {
+      //       text: '高',
+      //       value: 'high',
+      //     },
+      //     {
+      //       text: '中',
+      //       value: 'medium',
+      //     },
+      //     {
+      //       text: '低',
+      //       value: 'low',
+      //     },
+      //   ],
+      //   filterMultiple: true,
+      // },
+      {
+        title: '状态',
+        dataIndex: 'statusCode',
+        key: 'statusCode',
+        filters: [
+          {
+            text: '待处理',
+            value: 'todo',
+          },
+          {
+            text: '进行中',
+            value: 'doing',
+          },
+          {
+            text: '已完成',
+            value: 'done',
+          },
+        ],
+        filterMultiple: true,
+        // filteredValue: IssueStore.filteredInfo.statusCode || null,
+      },
+      // {
+      //   title: '冲刺',
+      //   dataIndex: 'sprint',
+      //   key: 'sprint',
+      //   filters: [],
+      // },
+      // {
+      //   title: '模块',
+      //   dataIndex: 'component',
+      //   key: 'component',
+      //   filters: [],
+      // },
+      // {
+      //   title: '版本',
+      //   dataIndex: 'version',
+      //   key: 'version',
+      //   filters: [],
+      // },
+      // {
+      //   title: '史诗',
+      //   dataIndex: 'epic',
+      //   key: 'epic',
+      //   filters: [],
+      // },
+    ];
     return (
       <Page className="c7n-report-test">
         <Header
@@ -440,7 +619,7 @@ class ReportTest extends Component {
               <Icon type="arrow_drop_down" />
             </a>
           </Dropdown>
-          <Button
+          {/* <Button
             style={{ marginLeft: 30 }}
             onClick={() => {
               this.setState({
@@ -452,7 +631,7 @@ class ReportTest extends Component {
             <span>
               <FormattedMessage id="report_chooseQuestion" />
             </span>
-          </Button>
+          </Button> */}
           {/* <Dropdown overlay={menu} trigger="click">
             <a className="ant-dropdown-link" href="#">
           导出 <Icon type="arrow_drop_down" />
@@ -474,7 +653,7 @@ class ReportTest extends Component {
           link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management/test-report/report/"
         >
           <div style={{ display: 'flex' }} />
-          <ReportSelectIssue
+          {/* <ReportSelectIssue
             visible={selectVisible}
             onCancel={() => { this.setState({ selectVisible: false }); }}
             onOk={(issueIds) => {
@@ -493,7 +672,21 @@ class ReportTest extends Component {
                 pageSize: 10,
               }, issueIds);
             }}
-          />
+          /> */}
+          <div className="c7n-report-test-filter-table">
+            <Table
+              rowKey={record => record.id}
+              columns={filterColumns}
+              dataSource={[]}
+              filterBar
+              showHeader={false}
+              onChange={this.handleFilterChange}
+              pagination={false}
+              // 设置筛选input内默认文本
+              // filters={IssueStore.barFilters || []}
+              filterBarPlaceholder="过滤表"
+            />
+          </div>
           <Table
             filterBar={false}
             loading={loading}

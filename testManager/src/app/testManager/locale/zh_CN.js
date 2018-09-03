@@ -252,7 +252,7 @@ const zhCN = {
   issue_create_content_description: '请在下面输入测试用例的详细信息，包含详细描述、人员信息、版本信息、进度预估、优先级等等。您可以通过丰富的任务描述帮助相关人员更快更全面的理解任务，同时更好的把控问题进度。',
   issue_create_content_epic: '史诗',
   issue_create_content_sprint: '冲刺',
-  issue_create_content_version: '修复版本',
+  issue_create_content_version: '版本',
   // 编辑详情侧边栏
   issue_edit_hide: '隐藏详情',
   issue_edit_planTime: '预估时间',
@@ -312,7 +312,11 @@ const zhCN = {
   issue_edit_step_content_description: '您可以编辑测试步骤的详细信息。',
   // 
   issue_create_bug: '新建缺陷',
-
+  // issue树
+  issue_tree_rename: '重命名',
+  issue_tree_delete: '删除',
+  issue_tree_copy: '复制',
+  issue_tree_paste: '粘贴',
   // dashboard
   dashboard_issue: '测试用例管理',
   dashboard_cycle: '测试循环',

@@ -67,7 +67,6 @@ class EventItem extends Component {
       <div style={{ width: '100%', display: 'flex' }} className="c7n-EventItem">
         {this.renderItems()}
       </div>
-
     );
   }
 }

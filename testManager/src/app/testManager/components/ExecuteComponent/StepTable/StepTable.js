@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import {
-  Table, Button, Input, Icon, Card, Select, Spin, Upload, Tooltip, 
+  Table, Button, Input, Icon, Card, Select, Spin, Upload, Tooltip,
 } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 import _ from 'lodash';
 import { editCycleStep, deleteAttachment, addDefects } from '../../../api/CycleExecuteApi';
 import {
-  TextEditToggle, RichTextShow, UploadInTable, DefectSelect, 
+  TextEditToggle, RichTextShow, UploadInTable, DefectSelect,
 } from '../../CommonComponent';
 import { delta2Html, delta2Text } from '../../../common/utils';
 import { uploadFile } from '../../../api/CommonApi';
@@ -71,7 +71,7 @@ const styles = {
 const { Text, Edit } = TextEditToggle;
 // const FormItem = Form.Item;
 class StepTable extends Component {
-  state = {   
+  state = {
     editVisible: false,
     editing: null,
     // issueList: [],
@@ -102,7 +102,7 @@ class StepTable extends Component {
       Choerodon.prompt('网络错误');
     });
   };
- 
+
   render() {
     const that = this;
     // const { onOk, enterLoad, leaveLoad } = this.props;
@@ -182,7 +182,7 @@ class StepTable extends Component {
                   {attachment.attachmentName}
                 </div>))}
             </div>
-)}
+          )}
           >
             <div
               className="c7n-text-dot"
@@ -259,7 +259,7 @@ class StepTable extends Component {
       title: <FormattedMessage id="attachment" />,
       dataIndex: 'stepAttachment',
       key: 'caseAttachment',
-      render(stepAttachment, record) {       
+      render(stepAttachment, record) {
         // return (<Tooltip title={
         //   <div>
         //     {caseAttachment.map((attachment, i) => (
@@ -293,7 +293,7 @@ class StepTable extends Component {
                     <a href={attachment.url} target="_blank" rel="noopener noreferrer">{attachment.attachmentName}</a>
                   </div>
                 ))
-              }
+                }
               </div>
             </Text>
             <Edit>
@@ -318,7 +318,7 @@ class StepTable extends Component {
       key: 'defects',
       render: (defects, record) => (
         <TextEditToggle
-          onSubmit={() => {
+          onSubmit={() => {   
             if (that.needAdd.length > 0) {
               CycleExecuteStore.enterloading();
               addDefects(that.needAdd).then((res) => {
@@ -345,7 +345,7 @@ class StepTable extends Component {
                         {defect.issueInfosDTO && defect.issueInfosDTO.issueName}
                       </div>))}
                   </div>
-)}
+                )}
                 >
                   <div
                     style={{
@@ -377,36 +377,36 @@ class StepTable extends Component {
         </TextEditToggle>
       ),
     },
-    // {
-    //   title: null,
-    //   dataIndex: 'executeId',
-    //   key: 'executeId',
-    //   render(executeId, recorder) {
-    //     return (<Icon
-    //       type="mode_edit"
-    //       style={{ cursor: 'pointer' }}
-    //       onClick={() => {
-    //         that.setState({
-    //           editVisible: true,
-    //           editing: { ...recorder, ...{ stepStatusList:
-    //  CycleExecuteStore.getStepStatusList } },
-    //         });
-    //       }}
-    //     />);
-    //   },
-    // },
+      // {
+      //   title: null,
+      //   dataIndex: 'executeId',
+      //   key: 'executeId',
+      //   render(executeId, recorder) {
+      //     return (<Icon
+      //       type="mode_edit"
+      //       style={{ cursor: 'pointer' }}
+      //       onClick={() => {
+      //         that.setState({
+      //           editVisible: true,
+      //           editing: { ...recorder, ...{ stepStatusList:
+      //  CycleExecuteStore.getStepStatusList } },
+      //         });
+      //       }}
+      //     />);
+      //   },
+      // },
     ];
     return (
       <div className="StepTable">
         <EditTestDetail
           visible={editVisible}
-          onCancel={() => { 
+          onCancel={() => {
             this.setState({ editVisible: false });
-            CycleExecuteStore.loadDetailList(); 
+            CycleExecuteStore.loadDetailList();
           }}
-          onOk={(data) => { 
+          onOk={(data) => {
             this.setState({ editVisible: false });
-            CycleExecuteStore.loadDetailList(); 
+            CycleExecuteStore.loadDetailList();
           }}
           editing={editing}
         />

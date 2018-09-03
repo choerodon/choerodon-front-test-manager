@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Moment from 'moment';
 import { extendMoment } from 'moment-range';
-import { Icon, Radio } from 'choerodon-ui';
+import { Icon } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 import { DatePicker, Button } from 'choerodon-ui';
 import { RadioButton } from '../../CommonComponent';
@@ -34,6 +34,7 @@ class EventCalendar extends Component {
 
   handleBaseChange = (date) => {
     this.setState({
+      pos: 0,
       baseDate: date,
     });
   }

@@ -1,0 +1,58 @@
+.c7n-IssueTree {
+  border-left: 1px solid rgba(0, 0, 0, 0.12);
+  border-right: 1px solid rgba(0, 0, 0, 0.12);
+  height: 100%;
+  width: 250px;
+  .ant-spin-nested-loading,
+  .ant-spin-container {
+    height: 100%;
+  }
+
+  .c7n-treeTop {
+    padding: 0 16px;
+    font-size: 13px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+    .ant-input-wrapper {
+      .ant-input-underline {
+        display: none;
+      }
+      .ant-input-content {
+        margin-bottom: 0;
+      }
+    }
+  }
+  &-tree {
+    height: calc(100% - 44px);
+    overflow: auto;
+  }
+  .ant-tree-icon__customize {
+    i.icon {
+      float: left;
+      line-height: 22px;
+      margin-right: 5px;
+    }
+  }
+  .ant-tree-title {
+    display: inline-block;
+    float: right;
+  }
+  .ant-tree-switcher {
+    margin-top: 3px;
+  }
+  .icon-folder_open,
+  .icon-folder_open2 {
+    // margin-top: -3px;
+  }
+  .ant-tree-child-tree li {
+    // display: flex;
+    // align-items: center;
+  }
+  .ant-tree li .ant-tree-node-content-wrapper {
+    display: inline-flex;
+    align-items: center;
+    height: 30px;
+  }
+}

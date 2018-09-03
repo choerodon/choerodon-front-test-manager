@@ -305,6 +305,17 @@ const enUS = {
   issue_edit_step_title: 'Test detail',
   issue_edit_step_content_title: 'Edit detail of test step“{testStep}”',
   issue_edit_step_content_description: 'You can edit the details of the test steps.',
+  // 
   issue_create_bug: 'Create bug',
+  // issue树
+  issue_tree_rename: 'rename',
+  issue_tree_delete: 'delete',
+  issue_tree_copy: 'copy',
+  issue_tree_paste: 'paste',
+  // dashboard
+  dashboard_issue: '测试用例管理',
+  dashboard_cycle: '测试循环',
+  dashboard_execute: '执行测试',
+  dashboard_report: '测试报告',
 };
 export default enUS;

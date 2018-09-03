@@ -1,4 +1,5 @@
 .c7n-Issue {
+  user-select: none;
   .c7n-chs-bar {
     margin-top: 10px;
     width: 22.5px;
@@ -34,6 +35,17 @@
   }
 
   .c7n-add {
+    &-select-version {
+      .ant-select-underline {
+        display: none;
+      }
+      display: flex;
+      align-items: center;
+      &-prefix {
+        margin-top: -1px;
+        margin-right: 6px;
+      }
+    }
     .ant-input-length-info {
       display: none;
     }
@@ -105,13 +117,21 @@
 
     .c7n-border-visible {
       border-left: 3px solid #3f51b5;
-      background: rgba(140, 158, 255, 0.08);
+      background: rgba(140, 158, 255, 0.08) !important;
     }
 
     .c7n-border {
       border-left: 3px solid transparent;
     }
-
+    .c7n-table-item {
+      background: #fff;
+      border-bottom: 1px solid #eee;
+      padding: 5px 16px;
+      transition: all 0.3s ease-in-out;
+    }
+    .c7n-table-item:hover {
+      background: #eee;
+    }
     .c7n-avator {
       display: inline-block;
       width: 18px;

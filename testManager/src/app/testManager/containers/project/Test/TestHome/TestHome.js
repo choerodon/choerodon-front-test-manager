@@ -5,10 +5,12 @@ import {
   Page, Header, Content, stores, axios,
 } from 'choerodon-front-boot';
 import {
-  Table, Button, Tooltip, Input, Dropdown, Menu, Pagination, Spin, Icon,
+  Table, Button, Tooltip, Input, Dropdown, Menu, Pagination,
+  Spin, Icon, Select,
 } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 import moment from 'moment';
+import { Draggable, Droppable, DragDropContext } from 'react-beautiful-dnd';
 import FileSaver from 'file-saver';
 import '../../../../assets/main.scss';
 import './TestHome.scss';
@@ -25,26 +27,29 @@ import TypeTag from '../../../../components/TestComponent/TypeTag';
 import EmptyBlock from '../../../../components/TestComponent/EmptyBlock';
 import CreateIssue from '../../../../components/TestComponent/CreateIssue';
 import EditIssue from '../../../../components/TestComponent/EditIssue';
-import SearchTree from '../../../../components/TestComponent/SearchTree';
+import IssueTree from '../../../../components/TestComponent/IssueTree';
+import DragTable from '../../../../components/DragTable';
+import IssueTable from '../../../../components/TestComponent/IssueTable';
 // import EditIssue from '../../../../components/TestComponent/EditIssue';
 // import EditIssueNarrow from '../../../../components/TestComponent/EditIssueNarrow';
 
 
 const { AppState } = stores;
-
+const { Option } = Select;
 @observer
 class Test extends Component {
   constructor(props) {
     super(props);
-    this.state = {    
+    this.state = {
       treeShow: false,
       expand: false,
       create: false,
       selectedIssue: {},
       createIssue: false,
-      selectIssueType: 'issue_test',
+      // selectIssueType: 'issue_test',
       createIssueValue: '',
       createLoading: false,
+      // keyCode: 0,
     };
   }
 
@@ -153,6 +158,17 @@ class Test extends Component {
 
   handleBlurCreateIssue() {
     if (this.state.createIssueValue !== '') {
+      const versionIssueRelDTOList = [];
+      const selectedVersion = IssueStore.getSeletedVersion;
+      // 判断是否选择版本
+      if (!selectedVersion) {
+        Choerodon.prompt('请选择版本');
+        return;
+      }
+      versionIssueRelDTOList.push({
+        versionId: selectedVersion,
+        relationType: 'fix',
+      });
       const data = {
         priorityCode: 'medium',
         projectId: AppState.currentMenuType.id,
@@ -161,6 +177,7 @@ class Test extends Component {
         typeCode: 'issue_test',
         epicId: 0,
         parentIssueId: 0,
+        versionIssueRelDTOList,
       };
       this.setState({
         createLoading: true,
@@ -179,11 +196,6 @@ class Test extends Component {
     }
   }
 
-  handleChangeType({ key }) {
-    this.setState({
-      selectIssueType: key,
-    });
-  }
 
   handleSort({ key }) {
     const currentSort = IssueStore.order;
@@ -246,369 +258,11 @@ class Test extends Component {
       });
   }
 
-  renderTestIssue(issue) {
-    const {
-      typeCode, issueNum, summary, assigneeId, assigneeName, assigneeImageUrl, reporterId,
-      reporterName, reporterImageUrl, statusName, statusColor, priorityName, priorityCode,
-      epicName, epicColor, componentIssueRelDTOList, labelIssueRelDTOList,
-      versionIssueRelDTOList, creationDate, lastUpdateDate,
-    } = issue;
-    return (
-      <div style={{
-        display: 'flex', flex: 1, marginTop: '3px', flexDirection: 'column', marginBottom: '3px', cursor: 'pointer',
-      }}
-      >
-        <div style={{
-          display: 'flex', flex: 1, marginTop: '3px', marginBottom: '3px', cursor: 'pointer',
-        }}
-        >
-          <Tooltip mouseEnterDelay={0.5} title={<FormattedMessage id="issue_issueType" values={{ type: TYPE_NAME[typeCode] }} />}>
-            <div>
-              <TypeTag
-                type={{
-                  typeCode,
-                }}
-              />
-            </div>
-          </Tooltip>
-          <Tooltip mouseEnterDelay={0.5} title={<FormattedMessage id="issue_issueNum" values={{ num: issueNum }} />}>
-            <a style={{
-              paddingLeft: 12, paddingRight: 12, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-            }}
-            >
-              {issueNum}
-            </a>
-          </Tooltip>
-          <div style={{ overflow: 'hidden' }}>
-            <Tooltip mouseEnterDelay={0.5} placement="topLeft" title={<FormattedMessage id="issue_issueSummary" values={{ summary }} />}>
-              <p style={{
-                overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 0, maxWidth: 'unset',
-              }}
-              >
-                {summary}
-              </p>
-            </Tooltip>
-          </div>
-          <div className="c7n-flex-space" />
-          {
-            assigneeId && reporterName ? (
-              <Tooltip mouseEnterDelay={0.5} title={<FormattedMessage id="issue_issueReport" values={{ report: reporterName }} />}>
-                <div style={{ margin: '0 5px' }}>
-                  <UserHead
-                    user={{
-                      id: reporterId,
-                      loginName: '',
-                      realName: reporterName,
-                      avatar: reporterImageUrl,
-                    }}
-                  />
-                </div>
-              </Tooltip>
-            ) : null
-          }
-          {
-            assigneeId && reporterName
-              ? (
-                <div style={{ margin: '0 5px' }}>
-                  <FormattedMessage id="issue_issueReportTo" />
-                </div>
-              ) : null
-          }
-          {
-            assigneeId ? (
-              <Tooltip mouseEnterDelay={0.5} title={<FormattedMessage id="issue_issueAssign" values={{ assign: assigneeName }} />}>
-                <div style={{ margin: '0 5px' }}>
-                  <UserHead
-                    user={{
-                      id: assigneeId,
-                      loginName: '',
-                      realName: assigneeName,
-                      avatar: assigneeImageUrl,
-                    }}
-                  />
-                </div>
-              </Tooltip>
-            ) : null
-          }
-          <div style={{ margin: '0 5px' }}>
-            <FormattedMessage id="issue_issueUpdateOn" />
-          </div>
-          <Icon type="today" style={{ margin: '0 5px' }} />
-          <div style={{ marginRight: 12 }}>
-            {moment(lastUpdateDate).format('LL')}
-          </div>
-          <div style={{ flexShrink: '0', display: 'flex', justifyContent: 'flex-end' }}>
-            <Tooltip mouseEnterDelay={0.5} title={<FormattedMessage id="issue_issueStatus" values={{ status: statusName }} />}>
-              <div>
-                <StatusTag
-                  status={{
-                    statusColor,
-                    statusName,
-                  }}
-                />
-              </div>
-            </Tooltip>
-          </div>
-        </div>
-        {/* 第二行 */}
-        <div style={{
-          display: 'flex', flex: 1, marginTop: '3px', alignItems: 'center', marginBottom: '3px', cursor: 'pointer',
-        }}
-        >
-          <div style={{ flexShrink: '0' }}>
-            <Tooltip mouseEnterDelay={0.5} title={<FormattedMessage id="issue_issuePriority" values={{ priority: priorityName }} />}>
-              <div style={{ marginRight: 5 }}>
-                <PriorityTag
-                  priority={{
-                    priorityCode,
-                    priorityName,
-                  }}
-                />
-              </div>
-            </Tooltip>
-          </div>
-          {
-            versionIssueRelDTOList.map(version => (
-              <div
-                style={{
-                  color: 'rgba(0,0,0,0.36)',
-                  height: 22,
-                  borderWidth: '1px',
-                  borderStyle: 'solid',
-                  borderColor: 'rgba(0,0,0,0.36)',
-                  borderRadius: '2px',
-                  fontSize: '13px',
-                  lineHeight: '20px',
-                  padding: '0 8px',
-                  margin: '0 5px',
-                }}
-              >
-                {version.name}
-              </div>
-            ))
-          }
-          {
-            epicName ? (
-              <div
-                style={{
-                  color: epicColor,
-                  height: 22,
-                  borderWidth: '1px',
-                  borderStyle: 'solid',
-                  borderColor: epicColor,
-                  borderRadius: '2px',
-                  fontSize: '13px',
-                  lineHeight: '20px',
-                  padding: '0 8px',
-                  margin: '0 5px',
-                }}
-              >
-                {epicName}
-              </div>
-            ) : null
-          }
-          {componentIssueRelDTOList.length > 0 ? (
-            <div style={{ margin: '0 5px', color: '#3F51B5', fontWeight: 500 }}>
-              {
-                componentIssueRelDTOList.map(component => component.name).join(',')
-              }
-            </div>
-          ) : null}
-          <div style={{ margin: '0 5px', fontSize: '13px', color: 'rgba(0,0,0,0.65)' }}>
-            <FormattedMessage id="issue_issueCreateAt" />
-          </div>
-          <Icon type="today" style={{ margin: '0 5px' }} />
-          {moment(creationDate).format('LL')}
-          <div className="c7n-flex-space" />
-          {/* 标签 */}
-          {
-            labelIssueRelDTOList.map(label => (
-              <div
-                style={{
-                  color: '#000',
-                  borderRadius: '100px',
-                  fontSize: '13px',
-                  lineHeight: '20px',
-                  padding: '2px 12px',
-                  background: 'rgba(0, 0, 0, 0.08)',
-                  margin: '0 5px',
-                  // marginBottom: 3,
-                }}
-              >
-                {label.labelName}
-              </div>
-            ))
-          }
-        </div>
-      </div>
-    );
-  }
-
-  renderWideIssue(issue) {
-    return (
-      <div style={{
-        display: 'flex', flex: 1, marginTop: '3px', marginBottom: '3px', cursor: 'pointer',
-      }}
-      >
-        <Tooltip mouseEnterDelay={0.5} title={`任务类型： ${TYPE_NAME[issue.typeCode]}`}>
-          <div>
-            <TypeTag
-              type={{
-                typeCode: issue.typeCode,
-              }}
-            />
-          </div>
-        </Tooltip>
-        <Tooltip mouseEnterDelay={0.5} title={`任务编号： ${issue.issueNum}`}>
-          <a style={{
-            paddingLeft: 12, paddingRight: 12, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-          }}
-          >
-            {issue.issueNum}
-          </a>
-        </Tooltip>
-        <div style={{ overflow: 'hidden', flex: 1 }}>
-          <Tooltip mouseEnterDelay={0.5} placement="topLeft" title={`任务概要： ${issue.summary}`}>
-            <p style={{
-              paddingRight: '25px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 0, maxWidth: 'unset',
-            }}
-            >
-              {issue.summary}
-            </p>
-          </Tooltip>
-        </div>
-
-        <div style={{ flexShrink: '0' }}>
-          <Tooltip mouseEnterDelay={0.5} title={`优先级： ${issue.priorityName}`}>
-            <div style={{ marginRight: 12 }}>
-              <PriorityTag
-                priority={{
-                  priorityCode: issue.priorityCode,
-                  priorityName: issue.priorityName,
-                }}
-              />
-            </div>
-          </Tooltip>
-        </div>
-        <div style={{ flexShrink: '0' }}>
-          {
-            issue.assigneeId ? (
-              <Tooltip mouseEnterDelay={0.5} title={`任务经办人： ${issue.assigneeName}`}>
-                <div style={{ marginRight: 12 }}>
-                  <UserHead
-                    user={{
-                      id: issue.assigneeId,
-                      loginName: '',
-                      realName: issue.assigneeName,
-                      avatar: issue.imageUrl,
-                    }}
-                  />
-                </div>
-              </Tooltip>
-            ) : null
-          }
-        </div>
-        <div style={{ flexShrink: '0', display: 'flex', justifyContent: 'flex-end' }}>
-          <Tooltip mouseEnterDelay={0.5} title={`任务状态： ${issue.statusName}`}>
-            <div>
-              <StatusTag
-                status={{
-                  statusColor: issue.statusColor,
-                  statusName: issue.statusName,
-                }}
-              />
-            </div>
-          </Tooltip>
-        </div>
-      </div>
-    );
-  }
-
-  renderNarrowIssue(issue) {
-    return (
-      <div style={{ marginTop: '5px', marginBottom: '5px', cursor: 'pointer' }}>
-        <div style={{
-          display: 'flex', marginBottom: '5px', width: '100%', flex: 1,
-        }}
-        >
-          <Tooltip mouseEnterDelay={0.5} title={`任务类型： ${TYPE_NAME[issue.typeCode]}`}>
-            <div>
-              <TypeTag
-                type={{
-                  typeCode: issue.typeCode,
-                }}
-              />
-            </div>
-          </Tooltip>
-          <Tooltip mouseEnterDelay={0.5} title={`任务编号： ${issue.issueNum}`}>
-            <a style={{
-              paddingLeft: 12, paddingRight: 12, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-            }}
-            >
-              {issue.issueNum}
-            </a>
-          </Tooltip>
-          <div style={{ overflow: 'hidden', flex: 1 }}>
-            <Tooltip mouseEnterDelay={0.5} placement="topLeft" title={`任务概要： ${issue.summary}`}>
-              <p style={{
-                paddingRight: '25px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 0, maxWidth: 'unset',
-              }}
-              >
-                {issue.summary}
-              </p>
-            </Tooltip>
-          </div>
-        </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <div style={{ display: 'flex' }}>
-            <Tooltip mouseEnterDelay={0.5} title={`优先级： ${issue.priorityName}`}>
-              <div style={{ marginRight: 12 }}>
-                <PriorityTag
-                  priority={{
-                    priorityCode: issue.priorityCode,
-                    priorityName: issue.priorityName,
-                  }}
-                />
-              </div>
-            </Tooltip>
-            <div style={{ width: '140px', flexShrink: '0' }}>
-              {
-                issue.assigneeId ? (
-                  <Tooltip mouseEnterDelay={0.5} title={`任务经办人： ${issue.assigneeName}`}>
-                    <div style={{ marginRight: 12 }}>
-                      <UserHead
-                        user={{
-                          id: issue.assigneeId,
-                          loginName: '',
-                          realName: issue.assigneeName,
-                          avatar: issue.imageUrl,
-                        }}
-                      />
-                    </div>
-                  </Tooltip>
-                ) : null
-              }
-            </div>
-          </div>
-          <div style={{ overflow: 'hidden' }}>
-            <Tooltip mouseEnterDelay={0.5} title={`任务状态： ${issue.statusName}`}>
-              <div>
-                <StatusTag
-                  status={{
-                    statusColor: issue.statusColor,
-                    statusName: issue.statusName,
-                  }}
-                />
-              </div>
-            </Tooltip>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   render() {
     const { expand, treeShow } = this.state;
+    const versions = IssueStore.getVersions;
+    const selectedVersion = IssueStore.getSeletedVersion;
     const ORDER = [
       {
         code: 'summary',
@@ -763,28 +417,35 @@ class Test extends Component {
           </Button>
         </Header>
         <Content style={{ display: 'flex', padding: '0' }}>
+          {/* <DragDropContext onDragEnd={this.onDragEnd} onDragStart={this.onDragStart}> */}
           <div className="c7n-chs-bar">
             {!treeShow && (
-              <p
-                role="none"
-                onClick={() => {
-                  this.setState({
-                    treeShow: true,
-                  });
-                }}
-              >
-                <FormattedMessage id="issue_repository" />
-              </p>
+            <p
+              role="none"
+              onClick={() => {
+                this.setState({
+                  treeShow: true,
+                });
+              }}
+            >
+              <FormattedMessage id="issue_repository" />
+            </p>
             )}
           </div>
-          <div className="c7n-issue-tree">
-            {treeShow && (              
-            <SearchTree onClose={() => {
+          <div
+            className="c7n-issue-tree"
+            style={{
+              overflowY: 'auto',
+              overflowX: 'hidden',
+            }}
+          >
+            {treeShow && (
+            <IssueTree onClose={() => {
               this.setState({
                 treeShow: false,
               });
             }}
-            />            
+            />
             )}
           </div>
           <div
@@ -822,6 +483,7 @@ class Test extends Component {
                 </div>
               </Dropdown>
             </section>
+
             <section
               className={`c7n-table ${this.state.expand ? 'expand-sign' : ''}`}
               style={{
@@ -831,39 +493,31 @@ class Test extends Component {
               }}
             >
               {
-                IssueStore.issues.length === 0 && !IssueStore.loading ? (
-                  <EmptyBlock
-                    style={{ marginTop: 40 }}
-                    border
-                    pic={pic}
-                    title={<FormattedMessage id="issue_noIssueTitle" />}
-                    des={<FormattedMessage id="issue_noIssueDescription" />}
-                  />
-                ) : (
-                  <Table
-                    rowKey={record => record.issueId}
-                    columns={columns}
-                    dataSource={_.slice(IssueStore.issues)}
-                    filterBar={false}
-                    showHeader={false}
-                    scroll={{ x: true }}
-                    loading={IssueStore.loading}
-                    onChange={this.handleTableChange}
-                    pagination={false}
-                    onRow={record => ({
-                      onClick: () => {
+                  IssueStore.issues.length === 0 && !IssueStore.loading ? (
+                    <EmptyBlock
+                      style={{ marginTop: 40 }}
+                      border
+                      pic={pic}
+                      title={<FormattedMessage id="issue_noIssueTitle" />}
+                      des={<FormattedMessage id="issue_noIssueDescription" />}
+                    />
+                  ) : (
+                    <IssueTable
+                      setExpand={(value) => {
                         this.setState({
-                          selectedIssue: record,
-                          expand: true,                          
+                          expand: value,
                         });
-                      },
-                    })
-                      }
-                    rowClassName={(record, index) => (
-                      record.issueId === this.state.selectedIssue.issueId ? 'c7n-border-visible' : 'c7n-border')}
-                  />
-                )
-              }
+                      }}
+                      setSelectIssue={(value) => {
+                        this.setState({
+                          selectedIssue: value,
+                        });
+                      }}
+                      selectedIssue={this.state.selectedIssue}
+                      expand={this.state.expand}
+                    />
+                  )
+                }
 
               <div className="c7n-backlog-sprintIssue">
                 <div
@@ -879,21 +533,21 @@ class Test extends Component {
                 >
                   {this.state.createIssue ? (
                     <div className="c7n-add" style={{ display: 'block', width: '100%' }}>
-                      <div style={{ display: 'flex' }}>
-                        <div style={{ display: 'flex', alignItem: 'center' }}>
-                          <div
-                            className="c7n-sign"
-                            style={{
-                              backgroundColor: TYPE[this.state.selectIssueType],
-                              marginRight: 2,
-                            }}
-                          >
-                            <Icon
-                              style={{ fontSize: '14px' }}
-                              type={ICON[this.state.selectIssueType]}
-                            />
-                          </div>
-                        </div>
+                      <div className="c7n-add-select-version">
+                        {/* 创建issue选择版本 */}
+                        <span className="c7n-add-select-version-prefix">V</span>
+                        <Select
+                          onChange={(value) => {
+                            IssueStore.selectVersion(value);
+                          }}
+                          value={selectedVersion}
+                          style={{ width: 50 }}
+                          dropdownMatchSelectWidth={false}
+                        >
+                          {
+                              versions.map(version => <Option value={version.versionId}>{version.name}</Option>)
+                            }
+                        </Select>
                         <div style={{ marginLeft: 8, flexGrow: 1 }}>
                           <Input
                             autoFocus
@@ -951,25 +605,27 @@ class Test extends Component {
                 </div>
               </div>
               {
-                IssueStore.issues.length !== 0 ? (
-                  <div style={{
-                    display: 'flex', justifyContent: 'flex-end', marginTop: 16, marginBottom: 16,
-                  }}
-                  >
-                    <Pagination
-                      current={IssueStore.pagination.current}
-                      defaultCurrent={1}
-                      defaultPageSize={10}
-                      pageSize={IssueStore.pagination.pageSize}
-                      showSizeChanger
-                      total={IssueStore.pagination.total}
-                      onChange={this.handlePaginationChange.bind(this)}
-                      onShowSizeChange={this.handlePaginationShowSizeChange.bind(this)}
-                    />
-                  </div>
-                ) : null
-              }
+                  IssueStore.issues.length !== 0 ? (
+                    <div style={{
+                      display: 'flex', justifyContent: 'flex-end', marginTop: 16, marginBottom: 16,
+                    }}
+                    >
+                      <Pagination
+                        current={IssueStore.pagination.current}
+                        defaultCurrent={1}
+                        defaultPageSize={10}
+                        pageSize={IssueStore.pagination.pageSize}
+                        showSizeChanger
+                        total={IssueStore.pagination.total}
+                        onChange={this.handlePaginationChange.bind(this)}
+                        onShowSizeChange={this.handlePaginationShowSizeChange.bind(this)}
+                      />
+                    </div>
+                  ) : null
+                }
+
             </section>
+
           </div>
 
           <div
@@ -984,46 +640,47 @@ class Test extends Component {
             }}
           >
             {
-              this.state.expand ? (
-                <EditIssue
-                  mode={treeShow ? 'narrow' : 'wide'}
-                  ref={(instance) => {
-                    if (instance) { this.EditIssue = instance; }
-                  }}
-                  issueId={this.state.selectedIssue.issueId}
-                  onCancel={() => {
-                    this.setState({
-                      expand: false,
-                      selectedIssue: {},
-                    });
-                  }}
-                  onDeleteIssue={() => {
-                    this.setState({
-                      expand: false,
-                      selectedIssue: {},
-                    });
-                    IssueStore.init();
-                    IssueStore.loadIssues();
-                  }}
-                  onUpdate={this.handleIssueUpdate.bind(this)}
-                  onCopyAndTransformToSubIssue={() => {
-                    const { current, pageSize } = IssueStore.pagination;
-                    IssueStore.loadIssues(current - 1, pageSize);
-                  }}
+                this.state.expand ? (
+                  <EditIssue
+                    mode={treeShow ? 'narrow' : 'wide'}
+                    ref={(instance) => {
+                      if (instance) { this.EditIssue = instance; }
+                    }}
+                    issueId={this.state.selectedIssue.issueId}
+                    onCancel={() => {
+                      this.setState({
+                        expand: false,
+                        selectedIssue: {},
+                      });
+                    }}
+                    onDeleteIssue={() => {
+                      this.setState({
+                        expand: false,
+                        selectedIssue: {},
+                      });
+                      IssueStore.init();
+                      IssueStore.loadIssues();
+                    }}
+                    onUpdate={this.handleIssueUpdate.bind(this)}
+                    onCopyAndTransformToSubIssue={() => {
+                      const { current, pageSize } = IssueStore.pagination;
+                      IssueStore.loadIssues(current - 1, pageSize);
+                    }}
+                  />
+                ) : null
+              }
+          </div>
+          {
+              this.state.create ? (
+                <CreateIssue
+                  visible={this.state.create}
+                  onCancel={() => this.setState({ create: false })}
+                  onOk={this.handleCreateIssue.bind(this)}
+
                 />
               ) : null
             }
-          </div>
-          {
-            this.state.create ? (
-              <CreateIssue
-                visible={this.state.create}
-                onCancel={() => this.setState({ create: false })}
-                onOk={this.handleCreateIssue.bind(this)}
-
-              />
-            ) : null
-          }
+          {/* </DragDropContext> */}
         </Content>
       </Page>
     );

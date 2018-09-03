@@ -1,0 +1,27 @@
+.c7n-issue-tree-title {
+  display: flex;
+  align-items: center;
+  min-width: 132px;
+  &-text {
+    width: 100px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  &-actionButton {
+    height: 28px;
+    margin-top: -2px;
+    .c7n-add-folder {
+      transition: none;
+      margin-left: 30px;
+      padding-right: 3px;
+      visibility: hidden;
+    }
+  }
+}
+
+.c7n-issue-tree-title:hover {
+  .c7n-add-folder {
+    visibility: visible;
+  }
+}
