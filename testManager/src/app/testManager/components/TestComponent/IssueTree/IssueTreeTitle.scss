@@ -1,6 +1,7 @@
 .c7n-issue-tree-title {
   display: flex;
   align-items: center;
+  min-width: 132px;
   &-text {
     width: 100px;
     white-space: nowrap;

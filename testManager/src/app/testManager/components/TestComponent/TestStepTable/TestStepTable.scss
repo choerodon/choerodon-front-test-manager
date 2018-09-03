@@ -1,10 +1,19 @@
 .c7n-TestStepTable {
-    tbody {
-        tr {
-            align-items: flex-start !important;
-        }
-        td {
-            line-height: 34px;
-        }
+  tbody {
+    tr {
+      align-items: flex-start !important;
     }
+    td{
+      line-height: 34px;
+      
+    }
+    td .item-container {     
+      padding: 12px 0;
+      min-height: 34px;
+    } 
+    td .c7n-text-dot{
+      line-height: 19px;
+      min-height: 19px;
+    }
+  }
 }

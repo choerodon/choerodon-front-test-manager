@@ -400,11 +400,13 @@ class IssueTable extends Component {
     document.removeEventListener('keyup', this.leaveCopy);
   }
 
-  onDragStart = (monitor) => {
-    console.log(monitor.source.index);
+  onDragStart = (monitor) => { 
     const draggingTableItems = IssueStore.getDraggingTableItems;
     if (draggingTableItems.length < 1 || _.findIndex(draggingTableItems, { issueId: monitor.draggableId }) < 0) {
       const index = monitor.source.index;
+      this.setState({
+        firstIndex: index,
+      });
       IssueStore.setDraggingTableItems([IssueStore.getIssues[index]]);
     }
     IssueStore.setTableDraging(true);

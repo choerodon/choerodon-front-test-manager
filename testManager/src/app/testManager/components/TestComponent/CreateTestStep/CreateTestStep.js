@@ -2,12 +2,14 @@ import React, { Component } from 'react';
 import { stores, axios, Content } from 'choerodon-front-boot';
 import { withRouter } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
-import { Select, Form, Input, Button, Modal, Icon, Tooltip } from 'choerodon-ui';
+import {
+  Select, Form, Input, Button, Modal, Icon, Tooltip, 
+} from 'choerodon-ui';
 
 const { AppState } = stores;
 const { Sidebar } = Modal;
 const FormItem = Form.Item;
-
+const { TextArea } = Input;
 class CreateTestStep extends Component {
   constructor(props) {
     super(props);
@@ -50,7 +52,9 @@ class CreateTestStep extends Component {
 
   render() {
     const { getFieldDecorator } = this.props.form;
-    const { visible, issueName, onCancel, onOk } = this.props;
+    const {
+      visible, issueName, onCancel, onOk, 
+    } = this.props;
 
     return (
       <Sidebar        
@@ -91,7 +95,7 @@ class CreateTestStep extends Component {
               {getFieldDecorator('expectedResult', {
                 rules: [{ required: true, message: '预期结果为必输项' }],
               })(
-                <Input label={<FormattedMessage id="execute_expectedOutcome" />} maxLength={30} />,
+                <TextArea label={<FormattedMessage id="execute_expectedOutcome" />} autosize={{ minRows: 1, maxRows: 6 }} />,
               )}
             </FormItem>
           </Form>

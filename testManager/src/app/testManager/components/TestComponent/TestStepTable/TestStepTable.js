@@ -102,9 +102,9 @@ class TestStepTable extends Component {
       title: Choerodon.getMessage('确认删除吗？', 'Confirm delete'),
       content:
   <div style={{ marginBottom: 32 }}>
-          {Choerodon.getMessage('当你点击删除后，该条数据将被永久删除，不可恢复!', 'When you click delete, after which the data will be permanently deleted and irreversible!')
+    {Choerodon.getMessage('当你点击删除后，该条数据将被永久删除，不可恢复!', 'When you click delete, after which the data will be permanently deleted and irreversible!')
           }
-        </div>,
+  </div>,
       onOk() {
         return axios.delete(`/test/v1/projects/${AppState.currentMenuType.id}/case/step`, { data: { stepId } })
           .then((res) => {
@@ -154,22 +154,24 @@ class TestStepTable extends Component {
       flex: 3,
       render(testStep, record) {
         return (
-          <TextEditToggle
-            formKey="testStep"
-            onSubmit={value => that.editStep({ ...record, testStep: value })}
-            originData={testStep}
-          >
-            <Text>
-              <Tooltip title={testStep}>
-                <div className="c7n-text-dot" style={{ minHeight: 34 }}>
-                  {testStep}
-                </div>
-              </Tooltip>
-            </Text>
-            <Edit>
-              <TextArea autoFocus autosize />
-            </Edit>
-          </TextEditToggle>
+          <div className="item-container">
+            <TextEditToggle
+              formKey="testStep"
+              onSubmit={value => that.editStep({ ...record, testStep: value })}
+              originData={testStep}
+            >
+              <Text>
+                <Tooltip title={testStep}>
+                  <div className="c7n-text-dot">
+                    {testStep}
+                  </div>
+                </Tooltip>
+              </Text>
+              <Edit>
+                <TextArea autoFocus autosize />
+              </Edit>
+            </TextEditToggle>
+          </div>
         );
       },
     }, {
@@ -179,23 +181,25 @@ class TestStepTable extends Component {
       flex: 3,
       render(testData, record) {
         return (
-
-          <TextEditToggle
-            formKey="testData"
-            onSubmit={value => that.editStep({ ...record, testData: value })}
-            originData={testData}
-          >
-            <Text>
-              <Tooltip title={testData}>
-                <div className="c7n-text-dot" style={{ minHeight: 34 }}>
-                  {testData}
-                </div>
-              </Tooltip>
-            </Text>
-            <Edit>
-              <TextArea autoFocus autosize />
-            </Edit>
-          </TextEditToggle>
+          <div className="item-container">
+            <TextEditToggle
+              rules={[{ max: 30, message: '测试数据最长为30' }]}
+              formKey="testData"
+              onSubmit={value => that.editStep({ ...record, testData: value })}
+              originData={testData}
+            >
+              <Text>
+                <Tooltip title={testData}>
+                  <div className="c7n-text-dot">
+                    {testData}
+                  </div>
+                </Tooltip>
+              </Text>
+              <Edit>
+                <TextArea autoFocus autosize />
+              </Edit>
+            </TextEditToggle>
+          </div>
         );
       },
     }];
@@ -207,22 +211,24 @@ class TestStepTable extends Component {
         flex: 3,
         render(expectedResult, record) {
           return (
-            <TextEditToggle
-              formKey="expectedResult"
-              onSubmit={value => that.editStep({ ...record, expectedResult: value })}
-              originData={expectedResult}
-            >
-              <Text>
-                <Tooltip title={expectedResult}>
-                  <div className="c7n-text-dot" style={{ minHeight: 34 }}>
-                    {expectedResult}
-                  </div>
-                </Tooltip>
-              </Text>
-              <Edit>
-                <TextArea autoFocus autosize />
-              </Edit>
-            </TextEditToggle>
+            <div className="item-container">
+              <TextEditToggle
+                formKey="expectedResult"
+                onSubmit={value => that.editStep({ ...record, expectedResult: value })}
+                originData={expectedResult}
+              >
+                <Text>
+                  <Tooltip title={expectedResult}>
+                    <div className="c7n-text-dot">
+                      {expectedResult}
+                    </div>
+                  </Tooltip>
+                </Text>
+                <Edit>
+                  <TextArea autoFocus autosize />
+                </Edit>
+              </TextEditToggle>
+            </div>
           );
         },
       }, {
@@ -232,41 +238,42 @@ class TestStepTable extends Component {
         flex: 3,
         render(attachments, record) {
           return (
-            <TextEditToggle
-              originData={attachments}
-            >
-              <Text>
-                <div style={{ display: 'flex', overflow: 'hidden', minHeight: 34 }}>
-                  {attachments.map(attachment => (
-                    <div style={{ fontSize: '12px', flexShrink: 0, margin: '0 2px' }} className="c7n-text-dot">
-                      <Icon type="attach_file" style={{ fontSize: '12px', color: 'rgba(0,0,0,0.65)' }} />
-                      <a href={attachment.url} target="_blank" rel="noopener noreferrer">{attachment.attachmentName}</a>
-                    </div>
-                  ))
-                  }
-                </div>
-              </Text>
-              <Edit>
-                <UploadInTable
-                  fileList={attachments}
-                  onOk={onOk}
-                  enterLoad={enterLoad}
-                  leaveLoad={leaveLoad}
-                  config={{
-                    attachmentLinkId: record.stepId,
-                    attachmentType: 'CASE_STEP',
-                  }}
-                />                
-              </Edit>
-            </TextEditToggle>
-
+            <div className="item-container">
+              <TextEditToggle
+                originData={attachments}
+              >
+                <Text>
+                  <div style={{ display: 'flex', overflow: 'hidden', minHeight: 20 }}>
+                    {attachments.map(attachment => (
+                      <div style={{ fontSize: '12px', flexShrink: 0, margin: '0 2px' }} className="c7n-text-dot">
+                        <Icon type="attach_file" style={{ fontSize: '12px', color: 'rgba(0,0,0,0.65)' }} />
+                        <a href={attachment.url} target="_blank" rel="noopener noreferrer">{attachment.attachmentName}</a>
+                      </div>
+                    ))
+                      }
+                  </div>
+                </Text>
+                <Edit>
+                  <UploadInTable
+                    fileList={attachments}
+                    onOk={onOk}
+                    enterLoad={enterLoad}
+                    leaveLoad={leaveLoad}
+                    config={{
+                      attachmentLinkId: record.stepId,
+                      attachmentType: 'CASE_STEP',
+                    }}
+                  />
+                </Edit>
+              </TextEditToggle>
+            </div>
           );
         },
       }, {
         title: null,
         dataIndex: 'action',
         key: 'action',
-        flex:2,
+        flex: 2,
         render(attachments, record) {
           return (
             <div>
@@ -290,27 +297,27 @@ class TestStepTable extends Component {
           dragKey="stepId"
         />
         {
-          this.state.editTestStepShow ? (
-            <EditTestStep
-              attachments={this.state.currentAttments}
-              issueId={this.props.issueId}
-              stepId={this.state.currentTestStepId}
-              visible={this.state.editTestStepShow}
-              onCancel={() => {
-                this.setState({ editTestStepShow: false });
-                this.props.onOk();
-              }}
-              onOk={() => {
-                this.setState({ editTestStepShow: false });
-                this.props.onOk();
-              }}
-            />
-          ) : null
-        }
+                  this.state.editTestStepShow ? (
+                    <EditTestStep
+                      attachments={this.state.currentAttments}
+                      issueId={this.props.issueId}
+                      stepId={this.state.currentTestStepId}
+                      visible={this.state.editTestStepShow}
+                      onCancel={() => {
+                        this.setState({ editTestStepShow: false });
+                        this.props.onOk();
+                      }}
+                      onOk={() => {
+                        this.setState({ editTestStepShow: false });
+                        this.props.onOk();
+                      }}
+                    />
+                  ) : null
+                }
 
       </div>
     );
   }
 }
-
+          
 export default TestStepTable;

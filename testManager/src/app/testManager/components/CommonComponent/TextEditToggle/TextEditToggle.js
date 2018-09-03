@@ -34,19 +34,24 @@ class TextEditToggle extends Component {
     // e.nativeEvent.stopImmediatePropagation(); 
     document.removeEventListener('click', this.onSubmit);
     const { getFieldValue } = this.props.form;
-    try {      
-      if (this.props.formKey) {
-        const newValue = getFieldValue(this.props.formKey);
-        // console.log(newValue);
-        if (this.props.onSubmit && newValue !== this.props.originData) {
-          // console.log(this.props.formKey, getFieldValue(this.props.formKey));      
-          this.props.onSubmit(this.props.formKey ? newValue : null);
+    try {   
+      this.props.form.validateFields((err, values) => {
+        if (!err) {
+          // console.log('Received values of form: ', values);
+          if (this.props.formKey) {
+            const newValue = values[this.props.formKey];
+            // console.log(newValue);
+            if (this.props.onSubmit && newValue !== this.props.originData) {
+              // console.log(this.props.formKey, getFieldValue(this.props.formKey));      
+              this.props.onSubmit(this.props.formKey ? newValue : null);
+            }
+          } else {
+            this.props.onSubmit();
+          }      
+          this.setState({
+            editing: false,
+          });
         }
-      } else {
-        this.props.onSubmit();
-      }      
-      this.setState({
-        editing: false,
       });
     } catch (err) {     
       this.setState({
@@ -100,7 +105,9 @@ class TextEditToggle extends Component {
 
   renderChild = () => {
     const { editing } = this.state;
-    const { children, originData, formKey } = this.props;
+    const {
+      children, originData, formKey, rules, 
+    } = this.props;
     const { getFieldDecorator } = this.props.form;
 
     let child = null;
@@ -112,6 +119,7 @@ class TextEditToggle extends Component {
             {child.map(one => (formKey ? (
               <FormItem>
                 {getFieldDecorator(formKey, {
+                  rules,
                   // rules: [{ required: true, message: '测试步骤为必输项' }],
                   initialValue: originData,
                 })(
