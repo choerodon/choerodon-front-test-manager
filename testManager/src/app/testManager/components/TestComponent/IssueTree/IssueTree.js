@@ -94,6 +94,11 @@ class IssueTree extends Component {
       ]);
 
       // window.console.log(dataList);
+    }).catch(() => {
+      this.setState({
+        loading: false,
+      });
+      Choerodon.prompt('网络错误');
     });
   }
 
@@ -244,111 +249,6 @@ class IssueTree extends Component {
     });
   }
 
-  onDragStart = ({ event, node }) => {
-    // console.log(node.props.data);
-    // this.ctrlKey = event.ctrlKey;
-    // // event.preventDefault();
-    // const target = event.target;
-    // // const clone = target.cloneNode(true);
-    // // clone.style.display = 'flex';
-    // // const container = document.getElementById('test');
-    // // document.addEventListener('mousemove', this.handleMove);
-    // const img = new Image();
-    // img.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=';
-    // event.dataTransfer.setDragImage(img, 0, 0);
-    // console.log('start', event.clientX, event.clientY);
-    // this.status = document.getElementById('status');
-    // target.addEventListener('drag', this.onDrag);
-    // // target.ondrag = this.onDrag;
-    // // target.ondrag = () => {
-    // //   console.log('drag');
-    // // };
-    // // container.style.display = 'block';
-    // // const offset = [10, 0];
-    // // container.style.left = `${event.clientX + offset[0]}px`;
-    // // container.style.top = `${event.clientY + offset[1]}px`;
-    // // if (container.firstElementChild) {
-    // //   document.getElementById('test').replaceChild(clone, container.firstElementChild);
-    // // } else {
-    // //   document.getElementById('test').appendChild(clone);
-    // // }
-    // if (event.ctrlKey) {
-    //   console.log('按下');
-    //   this.status.innerText = '复制';
-    //   // const test = document.getElementById('test');
-    //   // test.style.display = 'block';
-    //   // const img = new Image();
-    //   // img.src = pic;
-    // } else {
-    //   console.log('松开');
-    //   this.status.innerText = '剪切';
-    // }
-    // this.setState({
-    //   dragingTreeData: [{ ...node.props.data }],
-    //   // dragingElement: target.cloneNode(true),
-    //   // dragingElement: React.cloneElement(target, {}),
-    // });
-    // document.addEventListener('mousemove', this.handleMove);
-  }
-
-  onDragEnd = (result) => {
-    console.log('end', result);
-    // const target = event.target;
-    // requestAnimationFrame((timestamp) => {
-    //   this.instance.style.display = 'none';
-    // });
-
-    // target.removeEventListener('drag', this.onDrag);
-  }
-
-  onDrag = (event) => {
-    // console.log('draging', mousePosition);   
-
-    const offset = [10, 0];
-    const mousePosition = {
-      x: event.clientX,
-      y: event.clientY,
-    };
-    requestAnimationFrame((timestamp) => {
-      this.instance.style.display = 'block';
-      this.instance.style.transform = `translate(${mousePosition.x + offset[0]}px,${mousePosition.y + offset[1]}px)`;
-      // this.container.style.transform = `translate(${mousePosition.y + offset[1]}px)`;
-    });
-    if (event.ctrlKey === this.ctrlKey) {
-      return;
-    }
-    if (event.ctrlKey) {
-      console.log('按下');
-      this.status.innerText = '复制';
-      // const test = document.getElementById('test');
-      // test.style.display = 'block';
-      // const img = new Image();
-      // img.src = pic;
-    } else {
-      console.log('松开');
-      this.status.innerText = '剪切';
-    }
-    this.ctrlKey = event.ctrlKey;
-  }
-
-  onDrop = () => {
-    console.log('drop');
-    // const container = document.getElementById('test');
-    this.container.style.display = 'none';
-  }
-
-  handleMove = (event) => {
-    const offset = [10, 0];
-    const mousePosition = {
-      x: event.clientX,
-      y: event.clientY,
-    };
-    const container = document.getElementById('test');
-    console.log(mousePosition);
-    container.style.display = 'block';
-    container.style.left = `${mousePosition.x + offset[0]}px`;
-    container.style.top = `${mousePosition.y + offset[1]}px`;
-  }
 
   render() {
     const { onClose } = this.props;
@@ -362,36 +262,6 @@ class IssueTree extends Component {
     return (
       <Spin spinning={loading}>
         <div className="c7n-IssueTree">
-          <div
-            ref={(instance) => { this.instance = instance; }}
-            id="test"
-            style={{
-              // width: 200,
-              //  height: 200,
-              top: 0,
-              left: 0,
-              // right: 100, 
-              display: 'none',
-              position: 'fixed',
-              background: 'white',
-              zIndex: 1000,
-            }}
-          >
-            <div id="status" />
-            <Tree
-              // draggable
-              // onDragStart={this.onDragStart}
-              // onDragEnd={this.onDragEnd}
-              // selectedKeys={selectedKeys}
-              expandedKeys={expandedKeys}
-              showIcon
-            // onExpand={this.onExpand}
-            // onSelect={this.loadCycle}
-            // autoExpandParent={autoExpandParent}
-            >
-              {this.renderSimpleTree(dragingTreeData)}
-            </Tree>
-          </div>
           <div className="c7n-treeTop">
             <Input
               prefix={<Icon type="filter_list" style={{ color: 'black' }} />}
@@ -403,18 +273,9 @@ class IssueTree extends Component {
           </div>
           <div
             className="c7n-IssueTree-tree"
-          // onDragStart={() => {
-          //   console.log('start');
-          // }}
           >
             <DragDropContext onDragEnd={this.onDragEnd} onDragStart={this.onDragStart}>
-              <Tree
-              // draggable
-              // onDragEnter={() => { }}
-              // onDrag={() => { console.log('drag'); }}
-              // onDrop={this.onDrop}
-              // onDragStart={this.onDragStart}
-              // onDragEnd={this.onDragEnd}
+              <Tree              
                 selectedKeys={selectedKeys}
                 expandedKeys={expandedKeys}
                 showIcon

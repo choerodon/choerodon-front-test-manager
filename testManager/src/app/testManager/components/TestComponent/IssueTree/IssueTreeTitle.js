@@ -140,7 +140,9 @@ class IssueTreeTitle extends Component {
     const { data, title } = this.props;
     // const { title } = data;
     let type = null;
-    if (data.versionId && data.type !== 'cycle') {
+    if (data.type === 'temp') {
+      type = 'temp';
+    } else if (data.versionId && data.type !== 'cycle') {
       type = 'version';
     } else if (data.type === 'cycle') {
       type = 'cycle';
@@ -259,11 +261,38 @@ class IssueTreeTitle extends Component {
                     }
                     </div>
                   );
-                }
-                  
+                }                
                 
                 }
               </Draggable>
+              {provided.placeholder}
+            </div>
+          )}
+        </Droppable>
+      );
+    } else if (type === 'temp') {
+      return (
+        <Droppable droppableId={data.key} data={data} isDropDisabled>
+          {(provided, snapshot) => (
+            <div
+              role="none"
+              ref={provided.innerRef}
+              style={{ border: IssueStore.tableDraging && enter && '2px dashed green', height: 30 }}
+              onMouseEnter={() => {
+                this.setState({
+                  enter: true,
+                });
+              }}
+              onMouseLeave={() => {
+                this.setState({
+                  enter: false,
+                });
+              }}
+              onMouseUp={() => {
+                console.log(data.cycleId, IssueStore.getDraggingTableItems);
+              }}
+            >
+              {treeTitle}
               {provided.placeholder}
             </div>
           )}
