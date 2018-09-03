@@ -1,5 +1,5 @@
 import {
-  observable, action, computed, toJS, 
+  observable, action, computed, toJS,
 } from 'mobx';
 import { store, stores, axios } from 'choerodon-front-boot';
 import { loadIssues, loadVersions } from '../../../api/IssueApi';
@@ -44,6 +44,12 @@ class SprintCommonStore {
 
   @observable barFilters = undefined;
 
+  @observable keyCode = 0;
+
+  // @observable expand = false;
+
+  // @observable selectedIssue={};
+
   init() {
     this.setOrder({
       orderField: '',
@@ -57,7 +63,7 @@ class SprintCommonStore {
     // this.loadIssues();
   }
 
-  loadIssues=(page = 0, size = 10) => {
+  loadIssues = (page = 0, size = 10) => {
     this.setLoading(true);
     const { orderField, orderType } = this.order;
     Promise.all([
@@ -67,7 +73,7 @@ class SprintCommonStore {
       this.setVersions(versions);
       if (versions && versions.length > 0) {
         this.selectVersion(versions[0].versionId);
-      }      
+      }
       this.setIssues(res.content);
       this.setPagination({
         current: res.number + 1,
@@ -145,6 +151,18 @@ class SprintCommonStore {
 
   @action setBarFilters(data) {
     this.barFilters = data;
+  }
+
+  @action setKeyCode(keyCode) {
+    this.keyCode = keyCode;
+  }
+
+  @action setExpand(flag) {
+    this.expand = this.expand;
+  }
+
+  @action setSelectedIssue(selectedIssue) {
+    this.selectedIssue = selectedIssue;
   }
 
   @computed get getVersions() {

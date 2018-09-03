@@ -47,16 +47,17 @@ class DragTable extends Component {
   }
 
   onDragStart=() => {
-    document.addEventListener('keydown', (e) => { 
-      e.preventDefault();  
-      e.stopImmediatePropagation();
-      console.log(e.keyCode);
-    });
+    // document.addEventListener('keydown', (e) => { 
+    //   e.preventDefault();  
+    //   e.stopImmediatePropagation();
+    //   console.log(e.keyCode);
+    // });
   }
 
   components = {
-    table: () => (
-      <DragDropContext onDragEnd={this.onDragEnd.bind(this)} onDragStart={this.onDragStart}>
+    table: () => {
+      const { disableContext } = this.props;
+      const table = (
         <table>
           <thead>
             {this.renderThead()}
@@ -72,8 +73,14 @@ class DragTable extends Component {
             )}
           </Droppable>
         </table>
-      </DragDropContext>
-    ),
+      );
+      return disableContext ? table : (
+        <DragDropContext onDragEnd={this.onDragEnd.bind(this)} onDragStart={this.onDragStart}>
+          {table}
+        </DragDropContext>
+      );
+    },
+ 
   }
 
   renderThead = () => {
@@ -103,7 +110,7 @@ class DragTable extends Component {
                 dataIndex, key, flex, render, 
               } = column;
               if (render) {
-                renderedItem = render(data[index][dataIndex], data[index], index);
+                renderedItem = render(data[index][dataIndex], data[index], index, snapshot);
               } else {
                 renderedItem = data[index][dataIndex];
               }

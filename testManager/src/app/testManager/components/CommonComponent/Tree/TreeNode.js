@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Icon } from 'choerodon-ui';
+import { Draggable, Droppable, DragDropContext } from 'react-beautiful-dnd';
 
 class TreeNode extends Component {
   state = {
@@ -19,13 +20,17 @@ class TreeNode extends Component {
 
   renderChildren = () => {
     const { expand } = this.state;
-    const { children, title, icon } = this.props;
+    const {
+      children, title, icon, data, 
+    } = this.props;
     return (
       children && children.length > 0 ? (
         <div>
-          <div role="none" className="menu-item" onClick={this.handleExpand}>            
+          <div role="none" className="tree-item" onClick={this.handleExpand}>
             <Icon type="baseline-arrow_right" className={expand ? 'toggler toggled' : 'toggler'} />
-            {icon}
+            <div style={{ marginRight: 5 }}>
+              {icon}
+            </div>
             {title}
           </div>
           <div className={expand ? 'collapsible-wrapper' : 'collapsible-wrapper collapsed'}>
@@ -36,13 +41,24 @@ class TreeNode extends Component {
             ) : null}
           </div>
         </div>
+      ) : (
+        <Droppable droppableId={data.key}>
+          {(provided, snapshot) => (
+            <div
+              className="tree-item"
+              ref={provided.innerRef}
+              style={{ background: snapshot.isDraggingOver && 'green' }}
+            >
+              <div style={{ marginRight: 5 }}>
+                {icon}
+              </div>
+              {title}
+              {provided.placeholder}
+            </div>
+          )
+            }
+        </Droppable>
       )
-        : (
-          <div className="menu-item">
-            {icon}
-            {title}
-          </div>
-        )
     );
   };
 
