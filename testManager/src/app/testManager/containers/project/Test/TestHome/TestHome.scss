@@ -122,7 +122,14 @@
     .c7n-border {
       border-left: 3px solid transparent;
     }
-
+    .c7n-table-item {
+      border-bottom: 1px solid #eee;
+      padding: 5px 16px;
+      transition: all 0.3s ease-in-out;
+    }
+    .c7n-table-item:hover {
+      background: #eee;
+    }
     .c7n-avator {
       display: inline-block;
       width: 18px;

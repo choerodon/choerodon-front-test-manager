@@ -418,8 +418,8 @@ class IssueTable extends Component {
                         role="none"
                         ref={provided.innerRef}
                         {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                        className={issue.issueId === selectedIssue.issueId ? 'c7n-border-visible' : 'c7n-border'}
+                        {...provided.dragHandleProps}                        
+                        className={issue.issueId === selectedIssue.issueId ? 'c7n-border-visible c7n-table-item' : 'c7n-border c7n-table-item'}
                         onClick={() => {
                           console.log('click');
                           setExpand(true);
