@@ -1,18 +1,33 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { observer } from 'mobx-react';
 import {
   Menu, Input, Dropdown, Button, Popover, Tooltip, Icon,
 } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
+import { Draggable, Droppable, DragDropContext } from 'react-beautiful-dnd';
 import { IssueTreeStore } from '../../../store/project/treeStore';
 import { editFolder, deleteFolder } from '../../../api/IssueApi';
+import IssueStore from '../../../store/project/IssueStore';
 import './IssueTreeTitle.scss';
 
+@observer
 class IssueTreeTitle extends Component {
   state = {
-    editing: false,
-    over: false,
+    editing: false,   
+    enter: false,
   }
+
+  // componentWillReact() {
+  //   if(IssueStore)
+  //   document.addEventListener('keydown', this.enterCopy);
+  //   document.addEventListener('keyup', this.leaveCopy);
+  // }
+
+  // componentWillUnmount() {
+  //   document.removeEventListener('keydown', this.enterCopy);
+  //   document.removeEventListener('keyup', this.leaveCopy);
+  // }
 
   addFolder = (data) => {
     this.props.callback(data, 'ADD_FOLDER');
@@ -32,7 +47,7 @@ class IssueTreeTitle extends Component {
         deleteFolder(cycleId).then((res) => {
           if (res.failed) {
             Choerodon.prompt('删除失败');
-          } else {            
+          } else {
             refresh();
           }
         }).catch((err) => {
@@ -76,10 +91,22 @@ class IssueTreeTitle extends Component {
     });
   }
 
-  onDragEnter=() => {
-    this.setState({
-      over: true,
-    });
+
+  enterCopy = (e) => {
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    // if (e.keyCode === 17) {
+    //   IssueStore.setCopy(true);
+    // }
+    this.instance.innerText = '复制';
+    console.log(this.state.mode);
+  }
+
+  leaveCopy = (e) => {
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    // IssueStore.setCopy(false);
+    this.instance.innerText = '移动';
   }
 
   render() {
@@ -107,7 +134,9 @@ class IssueTreeTitle extends Component {
       // }
       return <Menu onClick={this.handleItemClick} style={{ margin: '10px 0 0 28px' }}>{items}</Menu>;
     };
-    const { editing, over } = this.state;
+    const {
+      editing, enter, mode, 
+    } = this.state;
     const { data, title } = this.props;
     // const { title } = data;
     let type = null;
@@ -116,35 +145,9 @@ class IssueTreeTitle extends Component {
     } else if (data.type === 'cycle') {
       type = 'cycle';
     }
-    return (
+    const treeTitle = (
       <div
-        className="c7n-issue-tree-title"
-        // ref={instance => this.instance = instance}
-        style={{
-          background: over && 'green',
-        }}
-        // draggable={type === 'cycle'}
-        // draggable
-        // onDragStart={() => {
-        //   console.log('start');
-        // }}
-        // onDrop={() => {
-        //   console.log('drop');
-        // }}
-        // onDragEnter={() => {
-        //   console.log('enter');
-        //   this.instance.style.background = 'green';
-        //   // this.setState({
-        //   //   over: true,
-        //   // });
-        // }}
-        // onDragLeave={() => {
-        //   console.log('leave');
-        //   // this.setState({
-        //   //   over: false,
-        //   // });
-        //   this.instance.style.background = 'red';
-        // }}
+        className="c7n-issue-tree-title"    
       >
         {editing
           ? (
@@ -177,7 +180,7 @@ class IssueTreeTitle extends Component {
           )}
         <div role="none" className="c7n-issue-tree-title-actionButton" onClick={e => e.stopPropagation()}>
           {/* {data.type === 'temp'
-            ? null : */}
+        ? null : */}
           {
             type === 'version'
               ? <Icon type="folder_special" className="c7n-add-folder" onClick={this.addFolder.bind(this, data)} />
@@ -194,6 +197,81 @@ class IssueTreeTitle extends Component {
         </div>
       </div>
     );
+    if (type === 'version') {
+      return (
+        <Droppable droppableId={data.key} data={data}>
+          {(provided, snapshot) => (
+            <div
+              ref={provided.innerRef}
+              style={{ border: snapshot.isDraggingOver && '2px dashed green', height: 30 }}
+            >
+              {treeTitle}
+              {provided.placeholder}
+            </div>
+          )}
+        </Droppable>
+      );
+    } else if (type === 'cycle') {
+      return (
+        <Droppable droppableId={data.key} data={data} isDropDisabled={!IssueStore.tableDraging}>
+          {(provided, snapshot) => (
+            <div
+              role="none"
+              ref={provided.innerRef}
+              style={{ border: IssueStore.tableDraging && enter && '2px dashed green', height: 30 }}
+              onMouseEnter={() => {
+                this.setState({
+                  enter: true,
+                });
+              }}
+              onMouseLeave={() => {
+                this.setState({
+                  enter: false,
+                });
+              }}
+              onMouseUp={() => {
+                console.log(data.cycleId, IssueStore.getDraggingTableItems);
+              }}
+            >
+              <Draggable key={data.key} draggableId={data.key} data={data}>
+                {(providedinner, snapshotinner) => {
+                  if (snapshotinner.isDragging) {
+                    document.addEventListener('keydown', this.enterCopy);
+                    document.addEventListener('keyup', this.leaveCopy);
+                  } else {
+                    document.removeEventListener('keydown', this.enterCopy);
+                    document.removeEventListener('keyup', this.leaveCopy);
+                  }
+                  return (
+                    <div
+                      ref={providedinner.innerRef}
+                      {...providedinner.draggableProps}
+                      {...providedinner.dragHandleProps}
+                    >
+                      {treeTitle}
+                      {snapshotinner.isDragging && (
+                      <div
+                        ref={(instance) => { this.instance = instance; }}
+                      >
+                        移动
+                      </div>
+                      )
+                    }
+                    </div>
+                  );
+                }
+                  
+                
+                }
+              </Draggable>
+              {provided.placeholder}
+            </div>
+          )}
+        </Droppable>
+      );
+    } else {
+      return treeTitle;
+    }
   }
 }
 

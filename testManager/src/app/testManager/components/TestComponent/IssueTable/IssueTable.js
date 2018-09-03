@@ -18,6 +18,10 @@ import { TYPE_NAME } from '../../../common/Constant';
 
 @observer
 class IssueTable extends Component {
+  state = {
+    firstIndex: null,
+  }
+
   renderTestIssue(issue) {
     const {
       issueId,
@@ -40,10 +44,7 @@ class IssueTable extends Component {
         <div style={{
           display: 'flex', flex: 1, marginTop: '3px', marginBottom: '3px', cursor: 'pointer',
         }}
-        >
-          <div>
-            {IssueStore.keyCode}
-          </div>
+        >          
           <Tooltip mouseEnterDelay={0.5} title={<FormattedMessage id="issue_issueType" values={{ type: TYPE_NAME[typeCode] }} />}>
             <div>
               <TypeTag
@@ -392,53 +393,163 @@ class IssueTable extends Component {
     );
   }
 
+  onDragEnd = (result) => {
+    console.log('end', result);
+    IssueStore.setTableDraging(false);
+    document.removeEventListener('keydown', this.enterCopy);
+    document.removeEventListener('keyup', this.leaveCopy);
+  }
+
+  onDragStart = (monitor) => {
+    console.log(monitor.source.index);
+    const draggingTableItems = IssueStore.getDraggingTableItems;
+    if (draggingTableItems.length < 1 || _.findIndex(draggingTableItems, { issueId: monitor.draggableId }) < 0) {
+      const index = monitor.source.index;
+      IssueStore.setDraggingTableItems([IssueStore.getIssues[index]]);
+    }
+    IssueStore.setTableDraging(true);
+    document.addEventListener('keydown', this.enterCopy);
+    document.addEventListener('keyup', this.leaveCopy);
+  }
+
+  enterCopy=(e) => {
+    e.preventDefault();
+    e.stopImmediatePropagation();   
+    if (e.keyCode === 17) {
+      IssueStore.setCopy(true);
+      this.instance.innerText = '复制';
+    }
+  }
+
+  leaveCopy=(e) => {
+    e.preventDefault();
+    e.stopImmediatePropagation();  
+    IssueStore.setCopy(false);
+    this.instance.innerText = '移动';
+  }
+  
+  handleClickIssue(issue, index, e) {
+    const { setSelectIssue, setExpand } = this.props;
+    const { firstIndex } = this.state;
+    console.log(e.shiftKey, e.ctrlKey, issue, index, firstIndex);
+    if (e.shiftKey || e.ctrlKey) {
+      if (e.shiftKey) {
+        if (firstIndex !== null) {
+          const start = Math.min(firstIndex, index);
+          const end = Math.max(firstIndex, index);
+          // debugger;
+          const draggingTableItems = IssueStore.getIssues.slice(start, end + 1);
+          console.log(draggingTableItems);
+          IssueStore.setDraggingTableItems(draggingTableItems);
+        }
+      } else {
+        // 是否已经选择
+        const old = IssueStore.getDraggingTableItems;
+        const hasSelected = _.findIndex(old, { issueId: issue.issueId });
+
+        // 已选择就去除
+        if (hasSelected >= 0) {
+          old.splice(hasSelected, 1);
+        } else {
+          old.push(issue);
+        }
+        console.log(hasSelected, old);
+        IssueStore.setDraggingTableItems(old);
+      }
+    } else {
+      IssueStore.setDraggingTableItems([]);
+      setExpand(true);
+      setSelectIssue(issue);
+    }
+    this.setState({
+      firstIndex: index,
+    });
+  }
+
   render() {
     const {
       expand, selectedIssue, setSelectIssue, setExpand,
     } = this.props;
-    const columns = [
-      {
-        title: 'summary',
-        dataIndex: 'summary',
-        render: (summary, record) => (
-          expand ? this.renderNarrowIssue(record) : this.renderTestIssue(record)
-        ),
-      },
-    ];
+    const draggingTableItems = IssueStore.getDraggingTableItems;
+    console.log('render', draggingTableItems);
+    // const columns = [
+    //   {
+    //     title: 'summary',
+    //     dataIndex: 'summary',
+    //     render: (summary, record) => (
+    //       expand ? this.renderNarrowIssue(record) : this.renderTestIssue(record)
+    //     ),
+    //   },
+    // ];
     return (
-      <Droppable droppableId="dropTable">
-        {(provided, snapshot) => (
-          <div ref={provided.innerRef}>
-            {
-              _.slice(IssueStore.issues).map((issue, i) => (
-                <Draggable key={issue.issueId} draggableId={issue.issueId} index={i}>
-                  {
-                    (provided, snapshot) => (
-                      <div
-                        role="none"
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}                        
-                        className={issue.issueId === selectedIssue.issueId ? 'c7n-border-visible c7n-table-item' : 'c7n-border c7n-table-item'}
-                        onClick={() => {
-                          console.log('click');
-                          setExpand(true);
-                          setSelectIssue(issue);                
-                        }}
-                      >
-                        {expand
-                          ? this.renderNarrowIssue(issue)
-                          : this.renderTestIssue(issue)}
-                      </div>
-                    )
-                  }
-                </Draggable>
-              ))
-            }
-            {provided.placeholder}
-          </div>
-        )}
-      </Droppable>
+      <Spin spinning={IssueStore.loading}>
+        <DragDropContext onDragEnd={this.onDragEnd} onDragStart={this.onDragStart}>
+          <Droppable droppableId="dropTable" isDropDisabled>
+            {(provided, snapshot) => (
+              <div ref={provided.innerRef}>
+                {
+                  _.slice(IssueStore.getIssues).map((issue, i) => (
+                    <Draggable key={issue.issueId} draggableId={issue.issueId} index={i}>
+                      {
+                        (providedinner, snapshotinner) => (
+                          <div
+                            ref={providedinner.innerRef}
+                            {...providedinner.draggableProps}
+                            {...providedinner.dragHandleProps}
+                          >
+                            <div
+                              role="none"
+                              onClick={this.handleClickIssue.bind(this, issue, i)}
+                              className={issue.issueId === selectedIssue.issueId ? 'c7n-border-visible c7n-table-item' : 'c7n-border c7n-table-item'}
+                              style={{ 
+                                background: _.find(draggingTableItems, { issueId: issue.issueId }) && 'rgb(235, 242, 249)',
+                                position: 'relative',
+                              }}
+                            >
+                              {snapshotinner.isDragging
+                                && (
+                                <div style={{
+                                  position: 'absolute',
+                                  width: 20,
+                                  height: 20,
+                                  background: 'red',
+                                  textAlign: 'center',
+                                  color: 'white',
+                                  borderRadius: '50%',
+                                  top: 0,
+                                  left: 0,
+                                }}
+                                >
+                                  {draggingTableItems.length}                                  
+                                </div>
+                                ) 
+                             }
+                              {snapshotinner.isDragging
+                               && (
+                               <div
+                                 ref={(instance) => { this.instance = instance; }}
+                               >
+                               移动
+                                 {/* {IssueStore.copy ? '复制' : '移动'} */}
+                               </div>
+                               )
+                             } 
+                              {expand
+                                ? this.renderNarrowIssue(issue)
+                                : this.renderTestIssue(issue)}
+                            </div>
+                          </div>
+                        )
+                      }
+                    </Draggable>
+                  ))
+                }
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
+      </Spin>
       // <DragTable
       //   disableContext
       //   rowKey={record => record.issueId}

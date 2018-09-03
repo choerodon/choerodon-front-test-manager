@@ -1,16 +1,17 @@
 import React, { Component } from 'react';
 import { observer } from 'mobx-react';
 import {
-  Input, Icon, Spin,
+  Input, Icon, Spin, Tree,
 } from 'choerodon-ui';
 import _ from 'lodash';
+import { Draggable, Droppable, DragDropContext } from 'react-beautiful-dnd';
 import './IssueTree.scss';
 import { IssueTreeStore } from '../../../store/project/treeStore';
 // import { TreeTitle } from '../../CycleComponent';
 import { getIssueTree, addFolder } from '../../../api/IssueApi';
 import IssueTreeTitle from './IssueTreeTitle';
 import pic from '../../../assets/问题管理－空.png';
-import { Tree } from '../../CommonComponent';
+// import { Tree } from '../../CommonComponent';
 
 const { TreeNode } = Tree;
 const dataList = [];
@@ -244,60 +245,60 @@ class IssueTree extends Component {
   }
 
   onDragStart = ({ event, node }) => {
-    console.log(node.props.data);
-    this.ctrlKey = event.ctrlKey;
-    // event.preventDefault();
-    const target = event.target;
-    // const clone = target.cloneNode(true);
-    // clone.style.display = 'flex';
-    // const container = document.getElementById('test');
-    // document.addEventListener('mousemove', this.handleMove);
-    const img = new Image();
-    img.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=';
-    event.dataTransfer.setDragImage(img, 0, 0);
-    console.log('start', event.clientX, event.clientY);
-    this.status = document.getElementById('status');
-    target.addEventListener('drag', this.onDrag);
-    // target.ondrag = this.onDrag;
-    // target.ondrag = () => {
-    //   console.log('drag');
-    // };
-    // container.style.display = 'block';
-    // const offset = [10, 0];
-    // container.style.left = `${event.clientX + offset[0]}px`;
-    // container.style.top = `${event.clientY + offset[1]}px`;
-    // if (container.firstElementChild) {
-    //   document.getElementById('test').replaceChild(clone, container.firstElementChild);
+    // console.log(node.props.data);
+    // this.ctrlKey = event.ctrlKey;
+    // // event.preventDefault();
+    // const target = event.target;
+    // // const clone = target.cloneNode(true);
+    // // clone.style.display = 'flex';
+    // // const container = document.getElementById('test');
+    // // document.addEventListener('mousemove', this.handleMove);
+    // const img = new Image();
+    // img.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=';
+    // event.dataTransfer.setDragImage(img, 0, 0);
+    // console.log('start', event.clientX, event.clientY);
+    // this.status = document.getElementById('status');
+    // target.addEventListener('drag', this.onDrag);
+    // // target.ondrag = this.onDrag;
+    // // target.ondrag = () => {
+    // //   console.log('drag');
+    // // };
+    // // container.style.display = 'block';
+    // // const offset = [10, 0];
+    // // container.style.left = `${event.clientX + offset[0]}px`;
+    // // container.style.top = `${event.clientY + offset[1]}px`;
+    // // if (container.firstElementChild) {
+    // //   document.getElementById('test').replaceChild(clone, container.firstElementChild);
+    // // } else {
+    // //   document.getElementById('test').appendChild(clone);
+    // // }
+    // if (event.ctrlKey) {
+    //   console.log('按下');
+    //   this.status.innerText = '复制';
+    //   // const test = document.getElementById('test');
+    //   // test.style.display = 'block';
+    //   // const img = new Image();
+    //   // img.src = pic;
     // } else {
-    //   document.getElementById('test').appendChild(clone);
+    //   console.log('松开');
+    //   this.status.innerText = '剪切';
     // }
-    if (event.ctrlKey) {
-      console.log('按下');
-      this.status.innerText = '复制';
-      // const test = document.getElementById('test');
-      // test.style.display = 'block';
-      // const img = new Image();
-      // img.src = pic;
-    } else {
-      console.log('松开');
-      this.status.innerText = '剪切';
-    }
-    this.setState({
-      dragingTreeData: [{ ...node.props.data }],
-      // dragingElement: target.cloneNode(true),
-      // dragingElement: React.cloneElement(target, {}),
-    });
+    // this.setState({
+    //   dragingTreeData: [{ ...node.props.data }],
+    //   // dragingElement: target.cloneNode(true),
+    //   // dragingElement: React.cloneElement(target, {}),
+    // });
     // document.addEventListener('mousemove', this.handleMove);
   }
 
-  onDragEnd = ({ event }) => {
-    console.log('end');
-    const target = event.target;
-    requestAnimationFrame((timestamp) => {
-      this.instance.style.display = 'none';
-    });
+  onDragEnd = (result) => {
+    console.log('end', result);
+    // const target = event.target;
+    // requestAnimationFrame((timestamp) => {
+    //   this.instance.style.display = 'none';
+    // });
 
-    target.removeEventListener('drag', this.onDrag);
+    // target.removeEventListener('drag', this.onDrag);
   }
 
   onDrag = (event) => {
@@ -406,22 +407,24 @@ class IssueTree extends Component {
           //   console.log('start');
           // }}
           >
-            <Tree
-              draggable
-              onDragEnter={() => { }}
-              onDrag={() => { console.log('drag'); }}
-              onDrop={this.onDrop}
-              onDragStart={this.onDragStart}
-              onDragEnd={this.onDragEnd}
-              selectedKeys={selectedKeys}
-              expandedKeys={expandedKeys}
-              showIcon
-              onExpand={this.onExpand}
-              onSelect={this.loadCycle}
-              autoExpandParent={autoExpandParent}
-            >
-              {this.renderTreeNodes(treeData)}
-            </Tree>
+            <DragDropContext onDragEnd={this.onDragEnd} onDragStart={this.onDragStart}>
+              <Tree
+              // draggable
+              // onDragEnter={() => { }}
+              // onDrag={() => { console.log('drag'); }}
+              // onDrop={this.onDrop}
+              // onDragStart={this.onDragStart}
+              // onDragEnd={this.onDragEnd}
+                selectedKeys={selectedKeys}
+                expandedKeys={expandedKeys}
+                showIcon
+                onExpand={this.onExpand}
+                onSelect={this.loadCycle}
+                autoExpandParent={autoExpandParent}
+              >
+                {this.renderTreeNodes(treeData)}
+              </Tree>
+            </DragDropContext>
           </div>
         </div>
       </Spin>

@@ -15,11 +15,11 @@ class Tree extends Component {
 
   render() {
     return (
-    // <DragDropContext onDragEnd={this.onDragEnd} onDragStart={this.onDragStart}>
-      <ul>
-        {this.props.children}
-      </ul>
-    // </DragDropContext>
+      <DragDropContext onDragEnd={this.onDragEnd} onDragStart={this.onDragStart}>
+        <ul>
+          {this.props.children}
+        </ul>
+      </DragDropContext>
     );
   }
 }

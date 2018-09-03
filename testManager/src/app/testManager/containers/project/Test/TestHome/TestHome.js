@@ -258,18 +258,6 @@ class Test extends Component {
       });
   }
 
-  onDragEnd = (result) => {
-    console.log('end', result);
-  }
-
-  onDragStart = () => {
-    document.addEventListener('keydown', (e) => {
-      e.preventDefault();
-      e.stopImmediatePropagation();
-      console.log(e.keyCode);
-      IssueStore.setKeyCode(e.keyCode);
-    });
-  }
 
   render() {
     const { expand, treeShow } = this.state;
@@ -429,82 +417,82 @@ class Test extends Component {
           </Button>
         </Header>
         <Content style={{ display: 'flex', padding: '0' }}>
-          <DragDropContext onDragEnd={this.onDragEnd} onDragStart={this.onDragStart}>
-            <div className="c7n-chs-bar">
-              {!treeShow && (
-                <p
-                  role="none"
-                  onClick={() => {
-                    this.setState({
-                      treeShow: true,
-                    });
-                  }}
+          {/* <DragDropContext onDragEnd={this.onDragEnd} onDragStart={this.onDragStart}> */}
+          <div className="c7n-chs-bar">
+            {!treeShow && (
+            <p
+              role="none"
+              onClick={() => {
+                this.setState({
+                  treeShow: true,
+                });
+              }}
+            >
+              <FormattedMessage id="issue_repository" />
+            </p>
+            )}
+          </div>
+          <div
+            className="c7n-issue-tree"
+            style={{
+              overflowY: 'auto',
+              overflowX: 'hidden',
+            }}
+          >
+            {treeShow && (
+            <IssueTree onClose={() => {
+              this.setState({
+                treeShow: false,
+              });
+            }}
+            />
+            )}
+          </div>
+          <div
+            className="c7n-content-issue"
+            style={{
+              // width: this.state.expand ? '28%' : '100%',
+              flex: 1,
+              display: 'block',
+              overflowY: 'auto',
+              overflowX: 'hidden',
+            }}
+          >
+            <section className="c7n-bar">
+              <Table
+                rowKey={record => record.id}
+                columns={filterColumns}
+                dataSource={[]}
+                filterBar
+                showHeader={false}
+                onChange={this.handleFilterChange}
+                pagination={false}
+                filters={IssueStore.barFilters || []}
+                filterBarPlaceholder={<FormattedMessage id="issue_filterTestIssue" />}
+              />
+            </section>
+            <section className="c7n-count">
+              <span className="c7n-span-count"><FormattedMessage id="issue_issueTotal" values={{ total: IssueStore.pagination.total }} /></span>
+              <Dropdown overlay={sort} trigger={['click']}>
+                <div style={{
+                  display: 'flex', alignItems: 'center', fontSize: '13px', lineHeight: '20px', cursor: 'pointer', position: 'absolute', right: 25, bottom: 28,
+                }}
                 >
-                  <FormattedMessage id="issue_repository" />
-                </p>
-              )}
-            </div>
-            <div
-              className="c7n-issue-tree"
-              style={{
-                overflowY: 'auto',
-                overflowX: 'hidden',
-              }}
-            >
-              {treeShow && (
-                <IssueTree onClose={() => {
-                  this.setState({
-                    treeShow: false,
-                  });
-                }}
-                />
-              )}
-            </div>
-            <div
-              className="c7n-content-issue"
-              style={{
-                // width: this.state.expand ? '28%' : '100%',
-                flex: 1,
-                display: 'block',
-                overflowY: 'auto',
-                overflowX: 'hidden',
-              }}
-            >
-              <section className="c7n-bar">
-                <Table
-                  rowKey={record => record.id}
-                  columns={filterColumns}
-                  dataSource={[]}
-                  filterBar
-                  showHeader={false}
-                  onChange={this.handleFilterChange}
-                  pagination={false}
-                  filters={IssueStore.barFilters || []}
-                  filterBarPlaceholder={<FormattedMessage id="issue_filterTestIssue" />}
-                />
-              </section>
-              <section className="c7n-count">
-                <span className="c7n-span-count"><FormattedMessage id="issue_issueTotal" values={{ total: IssueStore.pagination.total }} /></span>
-                <Dropdown overlay={sort} trigger={['click']}>
-                  <div style={{
-                    display: 'flex', alignItems: 'center', fontSize: '13px', lineHeight: '20px', cursor: 'pointer', position: 'absolute', right: 25, bottom: 28,
-                  }}
-                  >
-                    <Icon type="swap_vert" style={{ fontSize: '16px', marginRight: '5px' }} />
-                    <FormattedMessage id="issue_issueSort" />
-                  </div>
-                </Dropdown>
-              </section>
+                  <Icon type="swap_vert" style={{ fontSize: '16px', marginRight: '5px' }} />
+                  <FormattedMessage id="issue_issueSort" />
+                </div>
+              </Dropdown>
+            </section>
 
-              <section
-                className={`c7n-table ${this.state.expand ? 'expand-sign' : ''}`}
-                style={{
-                  paddingRight: this.state.expand ? '0' : '24px',
-                  boxSizing: 'border-box',
-                  width: '100%',
-                }}
-              >
-                {
+            <section
+              className={`c7n-table ${this.state.expand ? 'expand-sign' : ''}`}
+              style={{
+                paddingRight: this.state.expand ? '0' : '24px',
+                boxSizing: 'border-box',
+                width: '100%',
+              }}
+            >
+              {
                   IssueStore.issues.length === 0 && !IssueStore.loading ? (
                     <EmptyBlock
                       style={{ marginTop: 40 }}
@@ -515,108 +503,108 @@ class Test extends Component {
                     />
                   ) : (
                     <IssueTable
-                        setExpand={(value) => {
-                          this.setState({
-                            expand: value,
-                          });
-                        }}
-                        setSelectIssue={(value) => {
-                          this.setState({
-                            selectedIssue: value,
-                          });
-                        }}
-                        selectedIssue={this.state.selectedIssue}
-                        expand={this.state.expand}
-                      />
+                      setExpand={(value) => {
+                        this.setState({
+                          expand: value,
+                        });
+                      }}
+                      setSelectIssue={(value) => {
+                        this.setState({
+                          selectedIssue: value,
+                        });
+                      }}
+                      selectedIssue={this.state.selectedIssue}
+                      expand={this.state.expand}
+                    />
                   )
                 }
 
-                <div className="c7n-backlog-sprintIssue">
-                  <div
-                    style={{
-                      userSelect: 'none',
-                      background: 'white',
-                      padding: '12px 0 12px 20px',
-                      fontSize: 13,
-                      display: 'flex',
-                      alignItems: 'center',
-                      borderBottom: '1px solid #e8e8e8',
-                    }}
-                  >
-                    {this.state.createIssue ? (
-                      <div className="c7n-add" style={{ display: 'block', width: '100%' }}>
-                        <div className="c7n-add-select-version">
-                          {/* 创建issue选择版本 */}
-                          <span className="c7n-add-select-version-prefix">V</span>
-                          <Select
-                            onChange={(value) => {
-                              IssueStore.selectVersion(value);
-                            }}
-                            value={selectedVersion}
-                            style={{ width: 50 }}
-                            dropdownMatchSelectWidth={false}
-                          >
-                            {
+              <div className="c7n-backlog-sprintIssue">
+                <div
+                  style={{
+                    userSelect: 'none',
+                    background: 'white',
+                    padding: '12px 0 12px 20px',
+                    fontSize: 13,
+                    display: 'flex',
+                    alignItems: 'center',
+                    borderBottom: '1px solid #e8e8e8',
+                  }}
+                >
+                  {this.state.createIssue ? (
+                    <div className="c7n-add" style={{ display: 'block', width: '100%' }}>
+                      <div className="c7n-add-select-version">
+                        {/* 创建issue选择版本 */}
+                        <span className="c7n-add-select-version-prefix">V</span>
+                        <Select
+                          onChange={(value) => {
+                            IssueStore.selectVersion(value);
+                          }}
+                          value={selectedVersion}
+                          style={{ width: 50 }}
+                          dropdownMatchSelectWidth={false}
+                        >
+                          {
                               versions.map(version => <Option value={version.versionId}>{version.name}</Option>)
                             }
-                          </Select>
-                          <div style={{ marginLeft: 8, flexGrow: 1 }}>
-                            <Input
-                              autoFocus
-                              value={this.state.createIssueValue}
-                              placeholder={<FormattedMessage id="issue_whatToDo" />}
-                              onChange={(e) => {
-                                this.setState({
-                                  createIssueValue: e.target.value,
-                                });
-                              }}
-                              maxLength={44}
-                              onPressEnter={this.handleBlurCreateIssue.bind(this)}
-                            />
-                          </div>
-                        </div>
-                        <div style={{
-                          marginTop: 10, display: 'flex', marginLeft: 50, paddingRight: 70,
-                        }}
-                        >
-                          <Button
-                            type="primary"
-                            onClick={() => {
+                        </Select>
+                        <div style={{ marginLeft: 8, flexGrow: 1 }}>
+                          <Input
+                            autoFocus
+                            value={this.state.createIssueValue}
+                            placeholder={<FormattedMessage id="issue_whatToDo" />}
+                            onChange={(e) => {
                               this.setState({
-                                createIssue: false,
+                                createIssueValue: e.target.value,
                               });
                             }}
-                          >
-                            <FormattedMessage id="cancel" />
-                          </Button>
-                          <Button
-                            type="primary"
-                            loading={this.state.createLoading}
-                            onClick={this.handleBlurCreateIssue.bind(this)}
-                          >
-                            <FormattedMessage id="ok" />
-                          </Button>
+                            maxLength={44}
+                            onPressEnter={this.handleBlurCreateIssue.bind(this)}
+                          />
                         </div>
                       </div>
-                    ) : (
-                      <Button
-                          className="leftBtn"
-                          style={{ color: '#3f51b5' }}
-                          funcType="flat"
+                      <div style={{
+                        marginTop: 10, display: 'flex', marginLeft: 50, paddingRight: 70,
+                      }}
+                      >
+                        <Button
+                          type="primary"
                           onClick={() => {
                             this.setState({
-                              createIssue: true,
-                              createIssueValue: '',
+                              createIssue: false,
                             });
                           }}
                         >
-                          <Icon type="playlist_add icon" style={{ marginRight: -2 }} />
-                          <span><FormattedMessage id="issue_issueCreate" /></span>
+                          <FormattedMessage id="cancel" />
                         </Button>
-                    )}
-                  </div>
+                        <Button
+                          type="primary"
+                          loading={this.state.createLoading}
+                          onClick={this.handleBlurCreateIssue.bind(this)}
+                        >
+                          <FormattedMessage id="ok" />
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <Button
+                      className="leftBtn"
+                      style={{ color: '#3f51b5' }}
+                      funcType="flat"
+                      onClick={() => {
+                        this.setState({
+                          createIssue: true,
+                          createIssueValue: '',
+                        });
+                      }}
+                    >
+                      <Icon type="playlist_add icon" style={{ marginRight: -2 }} />
+                      <span><FormattedMessage id="issue_issueCreate" /></span>
+                    </Button>
+                  )}
                 </div>
-                {
+              </div>
+              {
                   IssueStore.issues.length !== 0 ? (
                     <div style={{
                       display: 'flex', justifyContent: 'flex-end', marginTop: 16, marginBottom: 16,
@@ -636,22 +624,22 @@ class Test extends Component {
                   ) : null
                 }
 
-              </section>
+            </section>
 
-            </div>
+          </div>
 
-            <div
-              className="c7n-sidebar"
-              style={{
-                // width: this.state.expand ? '72%' : 0,
-                // width: this.state.expand ? 440 : 0,              
-                display: this.state.expand ? '' : 'none',
-                overflowY: 'hidden',
-                overflowX: 'hidden',
-                width: treeShow ? 440 : '72%',
-              }}
-            >
-              {
+          <div
+            className="c7n-sidebar"
+            style={{
+              // width: this.state.expand ? '72%' : 0,
+              // width: this.state.expand ? 440 : 0,              
+              display: this.state.expand ? '' : 'none',
+              overflowY: 'hidden',
+              overflowX: 'hidden',
+              width: treeShow ? 440 : '72%',
+            }}
+          >
+            {
                 this.state.expand ? (
                   <EditIssue
                     mode={treeShow ? 'narrow' : 'wide'}
@@ -681,8 +669,8 @@ class Test extends Component {
                   />
                 ) : null
               }
-            </div>
-            {
+          </div>
+          {
               this.state.create ? (
                 <CreateIssue
                   visible={this.state.create}
@@ -692,7 +680,7 @@ class Test extends Component {
                 />
               ) : null
             }
-          </DragDropContext>
+          {/* </DragDropContext> */}
         </Content>
       </Page>
     );

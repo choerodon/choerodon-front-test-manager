@@ -44,8 +44,11 @@ class SprintCommonStore {
 
   @observable barFilters = undefined;
 
-  @observable keyCode = 0;
+  @observable draggingTableItems = [];
 
+  @observable copy = false;
+
+  @observable tableDraging = false;
   // @observable expand = false;
 
   // @observable selectedIssue={};
@@ -153,8 +156,8 @@ class SprintCommonStore {
     this.barFilters = data;
   }
 
-  @action setKeyCode(keyCode) {
-    this.keyCode = keyCode;
+  @action setCopy(flag) {
+    this.copy = flag;
   }
 
   @action setExpand(flag) {
@@ -163,6 +166,19 @@ class SprintCommonStore {
 
   @action setSelectedIssue(selectedIssue) {
     this.selectedIssue = selectedIssue;
+  }
+
+  @action setDraggingTableItems(draggingTableItems) {
+    console.log('set', draggingTableItems);
+    this.draggingTableItems = draggingTableItems;
+  }
+
+  @action setTableDraging(flag) {
+    this.tableDraging = flag;
+  }
+
+  @computed get getIssues() {
+    return toJS(this.issues);
   }
 
   @computed get getVersions() {
@@ -193,6 +209,10 @@ class SprintCommonStore {
       ...filter,
       otherArgs: this.barFilters ? otherArgs : undefined,
     };
+  }
+
+  @computed get getDraggingTableItems() {
+    return toJS(this.draggingTableItems);
   }
 }
 const sprintCommonStore = new SprintCommonStore();
