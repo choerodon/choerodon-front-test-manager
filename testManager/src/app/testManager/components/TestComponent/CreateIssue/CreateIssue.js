@@ -434,7 +434,7 @@ class CreateIssue extends Component {
               })(
                 <Select
                   label={<FormattedMessage id="issue_create_content_version" />}
-                  mode="tags"
+                  // mode="tags"
                   loading={this.state.selectLoading}
                   getPopupContainer={triggerNode => triggerNode.parentNode}
                   tokenSeparators={[',']}

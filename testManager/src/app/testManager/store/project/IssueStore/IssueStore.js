@@ -2,7 +2,9 @@ import {
   observable, action, computed, toJS,
 } from 'mobx';
 import { store, stores, axios } from 'choerodon-front-boot';
-import { loadIssues, loadVersions, getIssuesByFolder } from '../../../api/IssueApi';
+import {
+  loadIssues, loadVersions, getIssuesByFolder, getIssuesByIds, 
+} from '../../../api/IssueApi';
 import IssueTreeStore from '../treeStore/IssueTreeStore';
 
 const { AppState } = stores;
@@ -10,6 +12,8 @@ const { AppState } = stores;
 @store('SprintCommonStore')
 class SprintCommonStore {
   @observable issues = [];
+
+  @observable issueIds = [];
 
   @observable versions = [];
 
@@ -67,15 +71,23 @@ class SprintCommonStore {
     // this.loadIssues();
   }
 
-  loadIssues = (page = 0, size = 10) => {
+  loadIssues = (page = 0, size = 1) => {
     this.setLoading(true);
     const { orderField, orderType } = this.order;
     const funcArr = [];
     funcArr.push(loadVersions());
+    // 三种加载issue情况
+    // 1.选择文件夹
     if (IssueTreeStore.currentCycle.cycleId) {
-      funcArr.push(getIssuesByFolder(IssueTreeStore.currentCycle.cycleId, 
-        page, size, this.getFilter, orderField, orderType));
+      // 2.选择文件夹并不在第一页
+      if (page > 0) {
+        funcArr.push(getIssuesByIds(this.issueIds.slice(size * page, size * (page + 1))));
+      } else {
+        funcArr.push(getIssuesByFolder(IssueTreeStore.currentCycle.cycleId,
+          page, size, this.getFilter, orderField, orderType));
+      }
     } else {
+      // 3.直接调用敏捷接口
       funcArr.push(loadIssues(page, size, this.getFilter, orderField, orderType));
     }
     Promise.all(funcArr).then(([versions, res]) => {
@@ -84,11 +96,21 @@ class SprintCommonStore {
         this.selectVersion(versions[0].versionId);
       }
       this.setIssues(res.content);
-      this.setPagination({
-        current: res.number + 1,
-        pageSize: res.size,
-        total: res.totalElements,
-      });
+      this.setIssueIds(res.allIdValues || []);
+      if (!IssueTreeStore.currentCycle.cycleId || page === 0) {
+        this.setPagination({
+          current: res.number + 1,
+          pageSize: size,
+          total: res.totalElements,
+        });
+      } else {
+        this.setPagination({
+          current: page + 1,
+          pageSize: size,
+          total: this.pagination.total,
+        });
+      }
+     
       this.setLoading(false);
       return Promise.resolve(res);
     });
@@ -104,6 +126,10 @@ class SprintCommonStore {
 
   @action setIssues(data) {
     this.issues = data;
+  }
+
+  @action setIssueIds(issueIds) {
+    this.issueIds = issueIds;
   }
 
   @action setVersions(versions) {
@@ -175,7 +201,7 @@ class SprintCommonStore {
   }
 
   @action setDraggingTableItems(draggingTableItems) {
-    console.log('set', draggingTableItems);
+    // console.log('set', draggingTableItems);
     this.draggingTableItems = draggingTableItems;
   }
 
