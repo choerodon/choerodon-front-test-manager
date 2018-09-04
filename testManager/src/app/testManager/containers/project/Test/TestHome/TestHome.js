@@ -434,10 +434,10 @@ class Test extends Component {
           </div>
           <div
             className="c7n-issue-tree"
-            style={{
-              overflowY: 'auto',
-              overflowX: 'hidden',
-            }}
+            // style={{
+            //   overflowY: 'auto',
+            //   overflowX: 'hidden',
+            // }}
           >
             {treeShow && (
             <IssueTree onClose={() => {

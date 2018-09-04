@@ -244,18 +244,18 @@ class IssueTree extends Component {
     const expandedKeys = IssueTreeStore.getExpandedKeys;
     const selectedKeys = IssueTreeStore.getSelectedKeys;
     const currentCycle = IssueTreeStore.getCurrentCycle;
-    return (
-      <Spin spinning={loading}>
-        <div className="c7n-IssueTree">
-          <div className="c7n-treeTop">
-            <Input
-              prefix={<Icon type="filter_list" style={{ color: 'black' }} />}
-              placeholder="过滤"
-              style={{ marginTop: 2 }}
-              onChange={e => _.debounce(this.filterCycle, 200).call(null, e.target.value)}
-            />
-            <Icon type="close" className="c7n-pointer" onClick={onClose} />
-          </div>
+    return (      
+      <div className="c7n-IssueTree">        
+        <div className="c7n-treeTop">
+          <Input
+            prefix={<Icon type="filter_list" style={{ color: 'black' }} />}
+            placeholder="过滤"
+            style={{ marginTop: 2 }}
+            onChange={e => _.debounce(this.filterCycle, 200).call(null, e.target.value)}
+          />
+          <Icon type="close" className="c7n-pointer" onClick={onClose} />
+        </div>
+        <Spin spinning={loading}>
           <div
             className="c7n-IssueTree-tree"
           >
@@ -272,8 +272,8 @@ class IssueTree extends Component {
               </Tree>
             </DragDropContext>
           </div>
-        </div>
-      </Spin>
+        </Spin>
+      </div>      
     );
   }
 }
