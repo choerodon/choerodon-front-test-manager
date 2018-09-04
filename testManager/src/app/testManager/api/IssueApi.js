@@ -8,12 +8,8 @@ export function createIssue(issueObj, projectId = AppState.currentMenuType.id) {
     ...issueObj,
   };
   // return axios.post(`/agile/v1/projects/${projectId}/issues`, issue);
-  return axios.post(`/test/v1/projects/${projectId}/issueFolderRel`, {
-    folder_id: 19,
-    project_id: projectId,
-    version_id: issue.versionIssueRelDTOList[0].versionId,
-    issueCreateDTO: issue,
-  });
+  const versionId = issue.versionIssueRelDTOList[0].versionId;
+  return axios.post(`/test/v1/projects/${projectId}/issueFolderRel/testAndRelationship?version_id=${versionId}`, issue);
 }
 
 export function loadLabels() {
@@ -195,4 +191,8 @@ export function editFolder(data) {
 export function deleteFolder(folderId) {
   const projectId = AppState.currentMenuType.id;
   return axios.delete(`/test/v1/projects/${projectId}/issueFolder/${folderId}`);
+}
+export function getIssuesByFolder(folderId) {
+  const projectId = AppState.currentMenuType.id;
+  return axios.get(`/test/v1/projects/${projectId}/issueFolderRel/query?folder_id=${folderId}`);
 }

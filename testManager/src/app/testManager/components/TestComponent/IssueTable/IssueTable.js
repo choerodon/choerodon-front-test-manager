@@ -473,7 +473,7 @@ class IssueTable extends Component {
       expand, selectedIssue, setSelectIssue, setExpand,
     } = this.props;
     const draggingTableItems = IssueStore.getDraggingTableItems;
-    console.log('render', draggingTableItems);
+    // console.log('render', draggingTableItems);
     // const columns = [
     //   {
     //     title: 'summary',

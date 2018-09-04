@@ -2,7 +2,8 @@ import {
   observable, action, computed, toJS,
 } from 'mobx';
 import { store, stores, axios } from 'choerodon-front-boot';
-import { loadIssues, loadVersions } from '../../../api/IssueApi';
+import { loadIssues, loadVersions, getIssuesByFolder } from '../../../api/IssueApi';
+import IssueTreeStore from '../treeStore/IssueTreeStore';
 
 const { AppState } = stores;
 
@@ -69,10 +70,15 @@ class SprintCommonStore {
   loadIssues = (page = 0, size = 10) => {
     this.setLoading(true);
     const { orderField, orderType } = this.order;
-    Promise.all([
-      loadVersions(),
-      loadIssues(page, size, this.getFilter, orderField, orderType),
-    ]).then(([versions, res]) => {
+    const funcArr = [];
+    funcArr.push(loadVersions());
+    if (IssueTreeStore.currentCycle.cycleId) {
+      funcArr.push(getIssuesByFolder(IssueTreeStore.currentCycle.cycleId, 
+        page, size, this.getFilter, orderField, orderType));
+    } else {
+      funcArr.push(loadIssues(page, size, this.getFilter, orderField, orderType));
+    }
+    Promise.all(funcArr).then(([versions, res]) => {
       this.setVersions(versions);
       if (versions && versions.length > 0) {
         this.selectVersion(versions[0].versionId);

@@ -8,9 +8,10 @@ import { Draggable, Droppable, DragDropContext } from 'react-beautiful-dnd';
 import './IssueTree.scss';
 import { IssueTreeStore } from '../../../store/project/treeStore';
 // import { TreeTitle } from '../../CycleComponent';
-import { getIssueTree, addFolder } from '../../../api/IssueApi';
+import { getIssueTree, addFolder, getIssuesByFolder } from '../../../api/IssueApi';
 import IssueTreeTitle from './IssueTreeTitle';
 import pic from '../../../assets/问题管理－空.png';
+import IssueStore from '../../../store/project/IssueStore';
 // import { Tree } from '../../CommonComponent';
 
 const { TreeNode } = Tree;
@@ -171,36 +172,6 @@ class IssueTree extends Component {
       />);
   });
 
-  renderSimpleTree = data => data.map((item) => {
-    const { children, key, title } = item;
-    const expandedKeys = IssueTreeStore.getExpandedKeys;
-    const icon = (
-      <Icon
-        style={{ color: '#3F51B5' }}
-        type={expandedKeys.includes(item.key) ? 'folder_open2' : 'folder_open'}
-      />
-    );
-    if (children) {
-      return (
-        <TreeNode
-          title={title}
-          key={key}
-          data={item}
-          showIcon
-          icon={icon}
-        >
-          {this.renderSimpleTree(children)}
-        </TreeNode>
-      );
-    }
-    return (
-      <TreeNode
-        icon={icon}
-        {...item}
-        data={item}
-      />);
-  })
-
   generateList = (data) => {
     // const temp = data;
     // while (temp) {
@@ -249,6 +220,20 @@ class IssueTree extends Component {
     });
   }
 
+  getIssuesByFolder = (selectedKeys, {
+    selected, selectedNodes, node, event,
+  } = {}) => {   
+    if (selectedKeys) {
+      IssueTreeStore.setSelectedKeys(selectedKeys);
+    }
+    const { executePagination, filters } = this.state;
+    const data = node.props.data;
+    console.log(data);
+    if (data.cycleId) {
+      IssueTreeStore.setCurrentCycle(data);
+      IssueStore.loadIssues();
+    }
+  }
 
   render() {
     const { onClose } = this.props;
@@ -280,7 +265,7 @@ class IssueTree extends Component {
                 expandedKeys={expandedKeys}
                 showIcon
                 onExpand={this.onExpand}
-                onSelect={this.loadCycle}
+                onSelect={this.getIssuesByFolder}
                 autoExpandParent={autoExpandParent}
               >
                 {this.renderTreeNodes(treeData)}
