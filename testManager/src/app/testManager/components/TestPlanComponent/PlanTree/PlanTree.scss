@@ -1,12 +1,35 @@
 .c7n-PlanTree {
   height: 100%;
+  width: 260px;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid rgba(0, 0, 0, 0.12);
   .ant-spin-nested-loading,
   .ant-spin-container {
     height: 100%;
   }
-  border-right: 1px solid rgba(0, 0, 0, 0.12);
-  width: 233px;
-  overflow: auto;
+  .ant-tree-icon__customize {
+    i.icon {
+      float: left;
+      line-height: 22px;
+      margin-right: 5px;
+    }
+  }
+  .ant-tree-title {
+    display: inline-block;
+    float: right;
+  }
+  .ant-tree li .ant-tree-node-content-wrapper.ant-tree-node-selected {
+    background: rgba(0, 0, 0, 0.04);
+  }
+  .ant-tree li .ant-tree-node-content-wrapper {
+    display: inline-flex;
+    align-items: center;
+    height: 30px;
+  }
+  .ant-tree-switcher {
+    margin-top: 3px;
+  }
   &-treeTop {
     padding: 0 0 0 16px;
     font-size: 13px;
@@ -24,5 +47,11 @@
       margin: 0 7px;
       border-radius: 3px;
     }
+  }
+  &-tree {
+    // height: calc(100% - 44px);
+    flex: 1;
+    overflow-x: hidden;
+    overflow-y: auto;
   }
 }

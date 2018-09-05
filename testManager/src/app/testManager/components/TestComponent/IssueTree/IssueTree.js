@@ -78,6 +78,7 @@ class IssueTree extends Component {
   getParentKey = (key, tree) => key.split('-').slice(0, -1).join('-')
 
   getTree = () => {
+    // console.log(IssueTreeStore.treeData);
     this.setState({
       loading: true,
     });

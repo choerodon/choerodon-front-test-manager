@@ -101,7 +101,11 @@ class IssueTreeTitle extends Component {
   moveOrCopyIssues = (cycleId, e) => {
     console.log(e.ctrlKey, cycleId, IssueStore.getDraggingTableItems);
     const isCopy = e.ctrlKey;
-    const issueLinks = IssueStore.getDraggingTableItems.map(issue => ({ issueId: issue.issueId, summary: issue.summary }));
+    const issueLinks = IssueStore.getDraggingTableItems.map(issue => ({ 
+      issueId: issue.issueId, 
+      summary: issue.summary, 
+      objectVersionNumber: issue.objectVersionNumber,
+    }));
     moveOrCopyIssues(isCopy, cycleId, issueLinks).then((res) => {
       IssueStore.loadIssues();
     }).catch((err) => {

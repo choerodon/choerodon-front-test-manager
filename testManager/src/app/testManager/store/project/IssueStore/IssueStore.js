@@ -3,7 +3,7 @@ import {
 } from 'mobx';
 import { store, stores, axios } from 'choerodon-front-boot';
 import {
-  loadIssues, loadVersions, getIssuesByFolder, getIssuesByIds, 
+  loadIssues, loadVersions, getIssuesByFolder, getIssuesByIds,
 } from '../../../api/IssueApi';
 import IssueTreeStore from '../treeStore/IssueTreeStore';
 
@@ -80,10 +80,12 @@ class SprintCommonStore {
     // 1.选择文件夹
     if (IssueTreeStore.currentCycle.cycleId) {
       // 2.选择文件夹并不在第一页
+      const { versionId, cycleId } = IssueTreeStore.currentCycle;
       if (page > 0) {
-        funcArr.push(getIssuesByIds(this.issueIds.slice(size * page, size * (page + 1))));
+        funcArr.push(getIssuesByIds(versionId, cycleId,
+          this.issueIds.slice(size * page, size * (page + 1))));
       } else {
-        funcArr.push(getIssuesByFolder(IssueTreeStore.currentCycle.cycleId,
+        funcArr.push(getIssuesByFolder(cycleId,
           page, size, this.getFilter, orderField, orderType));
       }
     } else {
@@ -110,7 +112,7 @@ class SprintCommonStore {
           total: this.pagination.total,
         });
       }
-     
+
       this.setLoading(false);
       return Promise.resolve(res);
     });

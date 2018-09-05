@@ -228,7 +228,7 @@ const enUS = {
   issue_issueFilterBySummary: 'Summary',
   issue_issueFilterByPriority: 'Priority',
   issue_issueFilterByStatus: 'Status',
-  issue_issueCreate: 'Create issue',
+  issue_issueCreate: 'Create test issue',
   issue_whatToDo: 'What to do',
   issue_issueType: 'Issue type:   {type}',
   issue_issueNum: 'Issue Number:   {num}',

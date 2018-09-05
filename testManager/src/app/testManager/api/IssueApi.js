@@ -1,4 +1,5 @@
 import { stores, axios } from 'choerodon-front-boot';
+import { version } from 'moment';
 
 const { AppState } = stores;
 
@@ -202,9 +203,9 @@ export function getIssuesByFolder(folderId, page = 0, size = 10, search, orderFi
     },
   });
 }
-export function getIssuesByIds(ids) {
+export function getIssuesByIds(versionId, folderId, ids) {
   const projectId = AppState.currentMenuType.id;
-  return axios.post(`/test/v1/projects/${projectId}/issueFolderRel/query/by/issueId`, ids);
+  return axios.post(`/test/v1/projects/${projectId}/issueFolderRel/query/by/issueId?version_id=${versionId}&folder_id=${folderId}`, ids);
 }
 
 export function moveOrCopyIssues(copy, issueLinks) {
