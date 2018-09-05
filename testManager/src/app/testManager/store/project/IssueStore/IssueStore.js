@@ -71,7 +71,7 @@ class SprintCommonStore {
     // this.loadIssues();
   }
 
-  loadIssues = (page = 0, size = 1) => {
+  loadIssues = (page = 0, size = 10) => {
     this.setLoading(true);
     const { orderField, orderType } = this.order;
     const funcArr = [];

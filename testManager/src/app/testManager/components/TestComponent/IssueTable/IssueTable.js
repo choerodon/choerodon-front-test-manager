@@ -448,7 +448,7 @@ class IssueTable extends Component {
   handleClickIssue(issue, index, e) {
     const { setSelectIssue, setExpand } = this.props;
     const { firstIndex } = this.state;
-    console.log(e.shiftKey, e.ctrlKey, issue, index, firstIndex);
+    // console.log(e.shiftKey, e.ctrlKey, issue, index, firstIndex);
     if (e.shiftKey || e.ctrlKey) {
       if (e.shiftKey) {
         if (firstIndex !== null) {

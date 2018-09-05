@@ -228,7 +228,7 @@ class IssueTree extends Component {
     }
     const { executePagination, filters } = this.state;
     const data = node.props.data;
-    console.log(data);
+    // console.log(data);
     if (data.cycleId) {
       IssueTreeStore.setCurrentCycle(data);
       IssueStore.loadIssues();
