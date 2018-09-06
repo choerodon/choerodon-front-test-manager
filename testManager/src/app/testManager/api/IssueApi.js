@@ -203,12 +203,15 @@ export function getIssuesByFolder(folderId, page = 0, size = 10, search, orderFi
     },
   });
 }
-export function getIssuesByIds(versionId, folderId, ids) {
+export function getIssuesByIds(versionId, folderId, ids) { 
   const projectId = AppState.currentMenuType.id;
   return axios.post(`/test/v1/projects/${projectId}/issueFolderRel/query/by/issueId?version_id=${versionId}&folder_id=${folderId}`, ids);
 }
-
-export function moveOrCopyIssues(copy, issueLinks) {
+export function moveIssues(versionId, folderId, issueLinks) {
   const projectId = AppState.currentMenuType.id;
-  return axios.post(`/test/v1/projects/${projectId}/issueFolderRel`, issueLinks);
+  return axios.put(`/test/v1/projects/${projectId}/issueFolderRel/move?version_id=${versionId}&folder_id=${folderId}`, issueLinks);
+}
+export function moveFolder(data) {
+  const projectId = AppState.currentMenuType.id;
+  return axios.put(`/test/v1/projects/${projectId}/issueFolder/move`, data);
 }

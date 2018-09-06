@@ -49,6 +49,8 @@ class IssueTreeStore {
 
   @observable currentCycle = {};
 
+  @observable draggingFolder = null;
+
   @computed get getTreeData() {
     return toJS(this.treeData);
   }
@@ -102,6 +104,10 @@ class IssueTreeStore {
     temp.children.unshift(item);
     this.addingParent = temp;
     // window.console.log({ ...item, ...{ key: `${key}-add'`, type: 'add' } });
+  }
+
+  @action setDraggingFolder=(draggingFolder) => {
+    this.draggingFolder = draggingFolder;
   }
 }
 

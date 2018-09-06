@@ -8,7 +8,9 @@ import { Draggable, Droppable, DragDropContext } from 'react-beautiful-dnd';
 import './IssueTree.scss';
 import { IssueTreeStore } from '../../../store/project/treeStore';
 // import { TreeTitle } from '../../CycleComponent';
-import { getIssueTree, addFolder, getIssuesByFolder } from '../../../api/IssueApi';
+import {
+  getIssueTree, addFolder, getIssuesByFolder, moveFolder, 
+} from '../../../api/IssueApi';
 import IssueTreeTitle from './IssueTreeTitle';
 import pic from '../../../assets/问题管理－空.png';
 import IssueStore from '../../../store/project/IssueStore';
@@ -21,10 +23,7 @@ class IssueTree extends Component {
   state = {
     loading: false,
     autoExpandParent: false,
-    searchValue: '',
-    dragingElement: null,
-    dragingTreeData: [],
-    ctrlKey: false,
+    searchValue: '',   
   }
 
   componentDidMount() {
@@ -236,10 +235,30 @@ class IssueTree extends Component {
     }
   }
 
+  onDragEnd=(result) => {
+    const { destination } = result;
+    if (!destination) {
+      return;
+    }
+    const { folderId, versionId, objectVersionNumber } = JSON.parse(result.draggableId);
+    if (destination.droppableId === versionId) {
+      return;
+    }
+    console.log(folderId, '=>', destination.droppableId);
+    const data = { versionId: destination.droppableId, folderId, objectVersionNumber };
+    // debugger;
+    moveFolder(data).then((res) => {
+      this.getTree();
+    }).catch((err) => {
+      Choerodon.prompt('网络错误');
+    });
+    console.log(result);
+  }
+
   render() {
     const { onClose } = this.props;
     const {
-      autoExpandParent, loading, dragingElement, dragingTreeData, ctrlKey,
+      autoExpandParent, loading,
     } = this.state;
     const treeData = IssueTreeStore.getTreeData;
     const expandedKeys = IssueTreeStore.getExpandedKeys;
