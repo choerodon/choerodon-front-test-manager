@@ -422,7 +422,7 @@ class IssueTable extends Component {
       const templateCopy = document.getElementById('template_copy').cloneNode(true);
       templateCopy.style.display = 'block';
       // IssueStore.setCopy(true);
-      if (this.instance.firstElementChild) {      
+      if (this.instance.firstElementChild) {
         this.instance.replaceChild(templateCopy, this.instance.firstElementChild);
       } else {
         this.instance.appendChild(templateCopy);
@@ -437,8 +437,8 @@ class IssueTable extends Component {
     const templateMove = document.getElementById('template_move').cloneNode(true);
     templateMove.style.display = 'block';
     // IssueStore.setCopy(true);
-    
-    if (this.instance.firstElementChild) {     
+
+    if (this.instance.firstElementChild) {
       this.instance.replaceChild(templateMove, this.instance.firstElementChild);
     } else {
       this.instance.appendChild(templateMove);
@@ -501,10 +501,10 @@ class IssueTable extends Component {
     return (
       <Spin spinning={IssueStore.loading}>
         <div id="template_copy" style={{ display: 'none' }}>
-          copy
+        当前状态：复制
         </div>
         <div id="template_move" style={{ display: 'none' }}>
-          move
+        当前状态：移动
         </div>
         <DragDropContext onDragEnd={this.onDragEnd} onDragStart={this.onDragStart}>
           <Droppable droppableId="dropTable" isDropDisabled>
@@ -550,15 +550,18 @@ class IssueTable extends Component {
                               {snapshotinner.isDragging
                                 && (
                                   <div className="IssueTable-drag-prompt">
-                                    sss
+                                    <div>
+                                    复制或移动测试用例
+                                    </div>
+                                    <div>
+                                      按下ctrl/command复制
+                                    </div>
                                     <div
                                       ref={(instance) => { this.instance = instance; }}
                                     >
                                       <div>
-                                    移动
-                                      </div>
-                                      
-                                      {/* {IssueStore.copy ? '复制' : '移动'} */}
+                                        当前状态：移动
+                                      </div>                                      
                                     </div>
                                   </div>
                                 )

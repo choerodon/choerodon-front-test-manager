@@ -85,16 +85,30 @@ class IssueTreeTitle extends Component {
     e.preventDefault();
     e.stopImmediatePropagation();
     if (e.keyCode === 17) {
+      const templateCopy = document.getElementById('template_folder_copy').cloneNode(true);
+      templateCopy.style.display = 'block';
       // IssueStore.setCopy(true);
-      this.instance.innerText = '复制';      
+      if (this.instance.firstElementChild) {
+        this.instance.replaceChild(templateCopy, this.instance.firstElementChild);
+      } else {
+        this.instance.appendChild(templateCopy);
+      }
+      // this.instance.innerText = '复制';
     }
   }
 
   leaveCopy = (e) => {
     e.preventDefault();
     e.stopImmediatePropagation();
-    // IssueStore.setCopy(false);
-    this.instance.innerText = '移动';
+    const templateMove = document.getElementById('template_folder_move').cloneNode(true);
+    templateMove.style.display = 'block';
+    // IssueStore.setCopy(true);
+
+    if (this.instance.firstElementChild) {
+      this.instance.replaceChild(templateMove, this.instance.firstElementChild);
+    } else {
+      this.instance.appendChild(templateMove);
+    }
   }
 
   moveIssues = (cycleId, versionId, e) => {
@@ -103,9 +117,9 @@ class IssueTreeTitle extends Component {
     });
     console.log(e.ctrlKey, cycleId, IssueStore.getDraggingTableItems);
     const isCopy = e.ctrlKey;
-    const issueLinks = IssueStore.getDraggingTableItems.map(issue => ({ 
-      issueId: issue.issueId, 
-      summary: issue.summary, 
+    const issueLinks = IssueStore.getDraggingTableItems.map(issue => ({
+      issueId: issue.issueId,
+      summary: issue.summary,
       objectVersionNumber: issue.objectVersionNumber,
     }));
     // debugger;
@@ -160,7 +174,7 @@ class IssueTreeTitle extends Component {
     const treeTitle = (
       <div
         className="c7n-issue-tree-title"
-      >
+      >        
         {editing
           ? (
             <Input
@@ -231,7 +245,7 @@ class IssueTreeTitle extends Component {
               role="none"
               ref={provided.innerRef}
               style={{ border: IssueStore.tableDraging && enter && '2px dashed green', height: 30 }}
-              {...{ 
+              {...{
                 onMouseEnter: IssueStore.tableDraging ? () => {
                   this.setState({
                     enter: true,
@@ -242,8 +256,8 @@ class IssueTreeTitle extends Component {
                     enter: false,
                   });
                 } : null,
-                onMouseUp: 
-                IssueStore.tableDraging && this.moveIssues.bind(this, data.cycleId, data.versionId), 
+                onMouseUp:
+                  IssueStore.tableDraging && this.moveIssues.bind(this, data.cycleId, data.versionId),
               }}
             >
               <Draggable key={data.key} draggableId={JSON.stringify({ folderId: data.cycleId, versionId: data.versionId, objectVersionNumber: data.objectVersionNumber })}>
@@ -256,20 +270,38 @@ class IssueTreeTitle extends Component {
                     document.removeEventListener('keyup', this.leaveCopy);
                   }
                   return (
-                    <div
+                    <div                      
                       ref={providedinner.innerRef}
                       {...providedinner.draggableProps}
-                      {...providedinner.dragHandleProps}
+                      {...providedinner.dragHandleProps}                      
                     >
-                      {treeTitle}
-                      {snapshotinner.isDragging && (
-                        <div
-                          ref={(instance) => { this.instance = instance; }}
-                        >
-                          移动
-                        </div>
-                      )
+                      <div
+                        style={{
+                          position: 'relative',
+                          // background: snapshotinner.isDragging && 'white',
+                        }}
+                      >
+                        {treeTitle}
+                        {snapshotinner.isDragging
+                        && (
+                          <div className="IssueTree-drag-prompt">
+                            <div>
+                              复制或移动文件夹
+                            </div>
+                            <div>
+                              按下ctrl/command复制
+                            </div>
+                            <div
+                              ref={(instance) => { this.instance = instance; }}
+                            >
+                              <div>
+                                当前状态：移动
+                              </div>
+                            </div>
+                          </div>
+                        )
                       }
+                      </div>
                     </div>
                   );
                 }
@@ -288,9 +320,9 @@ class IssueTreeTitle extends Component {
             <div
               role="none"
               ref={provided.innerRef}
-              style={{ border: IssueStore.tableDraging && enter && '2px dashed green', height: 30 }}         
-              {...{ 
-                onMouseEnter: IssueStore.tableDraging ? (e) => {                               
+              style={{ border: IssueStore.tableDraging && enter && '2px dashed green', height: 30 }}
+              {...{
+                onMouseEnter: IssueStore.tableDraging ? (e) => {
                   this.setState({
                     enter: true,
                   });
@@ -300,8 +332,8 @@ class IssueTreeTitle extends Component {
                     enter: false,
                   });
                 } : null,
-                onMouseUp: 
-                IssueStore.tableDraging && this.moveIssues.bind(this, data.cycleId, data.versionId), 
+                onMouseUp:
+                  IssueStore.tableDraging && this.moveIssues.bind(this, data.cycleId, data.versionId),
               }}
             >
               {treeTitle}

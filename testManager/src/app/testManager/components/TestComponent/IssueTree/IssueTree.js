@@ -265,7 +265,13 @@ class IssueTree extends Component {
     const selectedKeys = IssueTreeStore.getSelectedKeys;
     const currentCycle = IssueTreeStore.getCurrentCycle;
     return (      
-      <div className="c7n-IssueTree">        
+      <div className="c7n-IssueTree">    
+        <div id="template_folder_copy" style={{ display: 'none' }}>
+          当前状态：复制
+        </div>
+        <div id="template_folder_move" style={{ display: 'none' }}>
+          当前状态：移动
+        </div>    
         <div className="c7n-treeTop">
           <Input
             prefix={<Icon type="filter_list" style={{ color: 'black' }} />}
