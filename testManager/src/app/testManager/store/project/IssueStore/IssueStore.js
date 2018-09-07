@@ -4,6 +4,7 @@ import {
 import { store, stores, axios } from 'choerodon-front-boot';
 import {
   loadIssues, loadVersions, getIssuesByFolder, getIssuesByIds,
+  getIssuesByVersion,
 } from '../../../api/IssueApi';
 import IssueTreeStore from '../treeStore/IssueTreeStore';
 
@@ -78,28 +79,31 @@ class SprintCommonStore {
     funcArr.push(loadVersions());
     // 三种加载issue情况
     // 1.选择文件夹
-    if (IssueTreeStore.currentCycle.cycleId) {
+    if (IssueTreeStore.currentCycle.versionId) {
       // 2.选择文件夹并不在第一页
       const { versionId, cycleId } = IssueTreeStore.currentCycle;
       if (page > 0) {
         funcArr.push(getIssuesByIds(versionId, cycleId,
           this.issueIds.slice(size * page, size * (page + 1))));
-      } else {
+      } else if (cycleId) {
         funcArr.push(getIssuesByFolder(cycleId,
+          page, size, this.getFilter, orderField, orderType));
+      } else {
+        funcArr.push(getIssuesByVersion(versionId,
           page, size, this.getFilter, orderField, orderType));
       }
     } else {
       // 3.直接调用敏捷接口
       funcArr.push(loadIssues(page, size, this.getFilter, orderField, orderType));
     }
-    Promise.all(funcArr).then(([versions, res]) => {
+    return Promise.all(funcArr).then(([versions, res]) => {
       this.setVersions(versions);
       if (versions && versions.length > 0) {
         this.selectVersion(versions[0].versionId);
       }
       this.setIssues(res.content);
       this.setIssueIds(res.allIdValues || []);
-      if (!IssueTreeStore.currentCycle.cycleId || page === 0) {
+      if (!IssueTreeStore.currentCycle.versionId || page === 0) {
         this.setPagination({
           current: res.number + 1,
           pageSize: size,

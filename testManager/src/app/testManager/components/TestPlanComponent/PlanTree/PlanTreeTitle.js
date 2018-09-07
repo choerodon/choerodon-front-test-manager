@@ -116,24 +116,8 @@ class PlanTreeTitle extends Component {
     };
 
     const { editing } = this.state;
-    const {
-      title, processBar, data, statusList, 
-    } = this.props;
-    const ProcessBar = {};
-    const content = [];
-    for (let i = 0; i < statusList.length; i += 1) {
-      const status = statusList[i];
-      if (processBar[status.statusColor]) {
-        ProcessBar[status.statusColor] = processBar[status.statusColor];
-        content.push(
-          <div style={{ display: 'flex', width: 100 }}>
-            <div>{status.statusName}</div>
-            <div className="c7n-flex-space" />
-            <div>{processBar[status.statusColor]}</div>
-          </div>,
-        );
-      }
-    }
+    const { title, data } = this.props;
+
 
     return (
       <div className="c7n-tree-title">

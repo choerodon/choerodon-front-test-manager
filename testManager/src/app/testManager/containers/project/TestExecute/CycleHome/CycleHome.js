@@ -606,7 +606,7 @@ class CycleHome extends Component {
             <Tooltip
               title={(
                 <div>
-                  <div>{issueInfosDTO.issueName}</div>
+                  <div>{issueInfosDTO.issueNum}</div>
                   <div>{issueInfosDTO.summary}</div>
                 </div>
               )}
@@ -619,7 +619,7 @@ class CycleHome extends Component {
                 to={issueLink(issueInfosDTO.issueId, issueInfosDTO.typeCode)}
                 target="_blank"
               >
-                {issueInfosDTO.issueName}
+                {issueInfosDTO.issueNum}
               </Link>
             </Tooltip>
           )

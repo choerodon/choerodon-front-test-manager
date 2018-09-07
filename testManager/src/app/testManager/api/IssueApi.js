@@ -203,9 +203,19 @@ export function getIssuesByFolder(folderId, page = 0, size = 10, search, orderFi
     },
   });
 }
+export function getIssuesByVersion(versionId, page = 0, size = 10, search, orderField, orderType) {
+  const searchDTO = { ...search };
+  searchDTO.advancedSearchArgs.typeCode = ['issue_test'];
+  const projectId = AppState.currentMenuType.id;
+  return axios.post(`/test/v1/projects/${projectId}/issueFolderRel/query?version_id=${versionId}&page=${page}&size=${size}`, searchDTO, {
+    params: {
+      sort: `${orderField && orderType ? `${orderField},${orderType}` : ''}`,
+    },
+  });
+}
 export function getIssuesByIds(versionId, folderId, ids) { 
   const projectId = AppState.currentMenuType.id;
-  return axios.post(`/test/v1/projects/${projectId}/issueFolderRel/query/by/issueId?version_id=${versionId}&folder_id=${folderId}`, ids);
+  return axios.post(`/test/v1/projects/${projectId}/issueFolderRel/query/by/issueId?version_id=${versionId}${folderId ? `&folderId=${folderId}` : ''}`, ids);
 }
 export function moveIssues(versionId, folderId, issueLinks) {
   const projectId = AppState.currentMenuType.id;
