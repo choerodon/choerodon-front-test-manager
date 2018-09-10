@@ -51,8 +51,7 @@ class TestPlanHome extends Component {
     statusList: [],
     filters: {},
     rightLoading: false,
-    calendarShowMode: 'single',
-    times: [],
+    calendarShowMode: 'single',    
   }
 
   componentDidMount() {
@@ -94,27 +93,28 @@ class TestPlanHome extends Component {
 
       TestPlanStore.setCurrentCycle(data);
       // window.console.log(data);
-
-      getCycleById({
-        page: executePagination.current - 1,
-        size: executePagination.pageSize,
-      }, data.cycleId,
-      {
-        ...filters,
-        lastUpdatedBy: [Number(this.lastUpdatedBy)],
-        assignedTo: [Number(this.assignedTo)],
-      }).then((cycle) => {
-        this.setState({
-          rightLoading: false,
-          testList: cycle.content,
-          executePagination: {
-            current: executePagination.current,
-            pageSize: executePagination.pageSize,
-            total: cycle.totalElements,
-          },
+      if (data.type === 'folder') {
+        getCycleById({
+          page: executePagination.current - 1,
+          size: executePagination.pageSize,
+        }, data.cycleId,
+        {
+          ...filters,
+          lastUpdatedBy: [Number(this.lastUpdatedBy)],
+          assignedTo: [Number(this.assignedTo)],
+        }).then((cycle) => {
+          this.setState({
+            rightLoading: false,
+            testList: cycle.content,
+            executePagination: {
+              current: executePagination.current,
+              pageSize: executePagination.pageSize,
+              total: cycle.totalElements,
+            },
+          });
+          // window.console.log(cycle);
         });
-        // window.console.log(cycle);
-      });
+      }
     }
   }
 

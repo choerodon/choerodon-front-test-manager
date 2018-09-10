@@ -181,16 +181,16 @@ const zhCN = {
   cycle_executeTime: '执行时间',
   cycle_assignedTo: '被指定人',
   // 循环树
-  cycle_addFolder: '增加文件夹',
+  cycle_addFolder: '增加阶段',
   cycle_editCycle: '编辑循环',
   cycle_deleteCycle: '删除循环',
   cycle_cloneCycle: '克隆循环',
-  cycle_editFolder: '编辑文件夹',
-  cycle_deleteFolder: '删除文件夹',
-  cycle_cloneFolder: '克隆文件夹',
+  cycle_editFolder: '编辑阶段',
+  cycle_deleteFolder: '删除阶段',
+  cycle_cloneFolder: '克隆阶段',
   cycle_exportCycle: '导出循环',
-  cycle_exportFolder: '导出文件夹',
-  cycle_newFolder: '新文件夹',
+  cycle_exportFolder: '导出阶段',
+  cycle_newFolder: '新测试阶段',
   cycle_sync: '同步',
 
   // 创建测试循环侧边

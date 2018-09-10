@@ -197,9 +197,9 @@ class EditCycle extends Component {
                 </FormItem>
                 <FormItem>
                   {getFieldDecorator('fromDate', {
-                    // rules: [{
-                    //   required: true, message: '请选择日期!',
-                    // }],
+                    rules: [{
+                      required: true, message: '请选择日期!',
+                    }],
                   })(
                     <DatePicker
                       format="YYYY-MM-DD"
@@ -213,9 +213,9 @@ class EditCycle extends Component {
                 </FormItem>
                 <FormItem>
                   {getFieldDecorator('toDate', {
-                    // rules: [{
-                    //   required: true, message: '请选择日期!',
-                    // }],
+                    rules: [{
+                      required: true, message: '请选择日期!',
+                    }],
                   })(
                     <DatePicker
                       format="YYYY-MM-DD"
