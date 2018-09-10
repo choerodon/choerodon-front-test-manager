@@ -4,7 +4,7 @@ import {
 import { store, stores, axios } from 'choerodon-front-boot';
 import {
   loadIssues, loadVersions, getIssuesByFolder, getIssuesByIds,
-  getIssuesByVersion,
+  getIssuesByVersion, getAllIssues,
 } from '../../../api/IssueApi';
 import IssueTreeStore from '../treeStore/IssueTreeStore';
 
@@ -72,7 +72,8 @@ class SprintCommonStore {
     // this.loadIssues();
   }
 
-  loadIssues = (page = 0, size = 10) => {
+  loadIssues = (page, size = 10) => {
+    page = isNaN(page) ? 0 : page;
     this.setLoading(true);
     const { orderField, orderType } = this.order;
     const funcArr = [];
@@ -92,9 +93,13 @@ class SprintCommonStore {
         funcArr.push(getIssuesByVersion(versionId,
           page, size, this.getFilter, orderField, orderType));
       }
-    } else {
+    } else if (this.issueIds.length > 0 && page > 0) {
       // 3.直接调用敏捷接口
-      funcArr.push(loadIssues(page, size, this.getFilter, orderField, orderType));
+      // funcArr.push(loadIssues(page, size, this.getFilter, orderField, orderType));
+      funcArr.push(getIssuesByIds(null, null,
+        this.issueIds.slice(size * page, size * (page + 1))));
+    } else {
+      funcArr.push(getAllIssues(page, size, this.getFilter, orderField, orderType));
     }
     return Promise.all(funcArr).then(([versions, res]) => {
       this.setVersions(versions);
@@ -102,8 +107,10 @@ class SprintCommonStore {
         this.selectVersion(versions[0].versionId);
       }
       this.setIssues(res.content);
-      this.setIssueIds(res.allIdValues || []);
-      if (!IssueTreeStore.currentCycle.versionId || page === 0) {
+      if (page === 0) {
+        this.setIssueIds(res.allIdValues || []);
+      }
+      if ((!IssueTreeStore.currentCycle.versionId && this.issueIds.length === 0) || page === 0) {        
         this.setPagination({
           current: res.number + 1,
           pageSize: size,
@@ -116,7 +123,7 @@ class SprintCommonStore {
           total: this.pagination.total,
         });
       }
-
+      
       this.setLoading(false);
       return Promise.resolve(res);
     });
