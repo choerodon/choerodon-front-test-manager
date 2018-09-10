@@ -7,7 +7,9 @@ import {
 import { FormattedMessage } from 'react-intl';
 import { Draggable, Droppable, DragDropContext } from 'react-beautiful-dnd';
 import { IssueTreeStore } from '../../../store/project/treeStore';
-import { editFolder, deleteFolder, moveIssues } from '../../../api/IssueApi';
+import {
+  editFolder, deleteFolder, moveIssues, copyIssues, 
+} from '../../../api/IssueApi';
 import IssueStore from '../../../store/project/IssueStore';
 import './IssueTreeTitle.scss';
 
@@ -87,7 +89,7 @@ class IssueTreeTitle extends Component {
     if (e.keyCode === 17) {
       const templateCopy = document.getElementById('template_folder_copy').cloneNode(true);
       templateCopy.style.display = 'block';
-      // IssueStore.setCopy(true);
+      IssueTreeStore.setCopy(true);
       if (this.instance.firstElementChild) {
         this.instance.replaceChild(templateCopy, this.instance.firstElementChild);
       } else {
@@ -102,8 +104,7 @@ class IssueTreeTitle extends Component {
     e.stopImmediatePropagation();
     const templateMove = document.getElementById('template_folder_move').cloneNode(true);
     templateMove.style.display = 'block';
-    // IssueStore.setCopy(true);
-
+    IssueTreeStore.setCopy(true);
     if (this.instance.firstElementChild) {
       this.instance.replaceChild(templateMove, this.instance.firstElementChild);
     } else {
@@ -125,6 +126,16 @@ class IssueTreeTitle extends Component {
     // debugger;
     if (!isCopy) {
       moveIssues(versionId, cycleId, issueLinks).then((res) => {
+        IssueStore.setDraggingTableItems([]);
+        IssueStore.loadIssues();
+      }).catch((err) => {
+        Choerodon.prompt('网络错误');
+      });
+    } else {
+      copyIssues(versionId, cycleId, issueLinks).then((res) => {
+        if (res.failed) {
+          Choerodon.prompt('存在同名文件夹');
+        }
         IssueStore.setDraggingTableItems([]);
         IssueStore.loadIssues();
       }).catch((err) => {

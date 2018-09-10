@@ -1,6 +1,7 @@
 .c7n-PlanTree {
   height: 100%;
   width: 260px;
+  padding-left: 16px;
   display: flex;
   flex-direction: column;
   border-right: 1px solid rgba(0, 0, 0, 0.12);
@@ -31,7 +32,6 @@
     margin-top: 3px;
   }
   &-treeTop {
-    padding: 0 0 0 16px;
     font-size: 13px;
     height: 44px;
     display: flex;

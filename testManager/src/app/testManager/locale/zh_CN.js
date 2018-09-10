@@ -159,6 +159,9 @@ const zhCN = {
   report_select_summary: '摘要',
   // 测试计划
   testPlan_name: '测试计划',
+  testPlan_createStage: '添加测试阶段',
+  testPlan_linkFolder: '关联文件夹',
+  testPlan_createStageIn: '在测试循环“{cycleName}”中添加测试阶段',
   // 测试循环
   cycle_name: '测试循环',
   cycle_my: '我的执行',

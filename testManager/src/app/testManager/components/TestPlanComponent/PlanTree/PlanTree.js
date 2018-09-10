@@ -9,6 +9,7 @@ import {
   clone, addFolder, getStatusList, exportCycle,
 } from '../../../api/cycleApi';
 import PlanTreeTitle from './PlanTreeTitle';
+import CreateStage from '../CreateStage';
 
 const { TreeNode } = Tree;
 const dataList = [];
@@ -18,6 +19,8 @@ class PlanTree extends Component {
     loading: false,
     autoExpandParent: false,
     searchValue: '',
+    CreateStageIn: {},
+    CreateStageVisible: false,
   }
 
   componentDidMount() {
@@ -67,13 +70,12 @@ class PlanTree extends Component {
       }
 
       case 'ADD_FOLDER': {
-        TestPlanTreeStore.addItemByParentKey(item.key, { ...item, ...{ title: Choerodon.getMessage('新文件夹', 'New folder'), key: `${item.key}-ADD_FOLDER`, type: 'ADD_FOLDER' } });
+        this.setState({
+          CreateStageIn: item,
+          CreateStageVisible: true,
+        });
         // 自动展开当前项
-        const expandedKeys = TestPlanTreeStore.getExpandedKeys;
-        if (expandedKeys.indexOf(item.key) === -1) {
-          expandedKeys.push(item.key);
-        }
-        TestPlanTreeStore.setExpandedKeys(expandedKeys);
+        
         break;
       }
       default: break;
@@ -266,9 +268,9 @@ class PlanTree extends Component {
   }
 
   render() {
-    const { onClose } = this.props;
+    const { onClose, onSelect } = this.props;
     const {
-      autoExpandParent, loading, dragingElement, dragingTreeData, ctrlKey,
+      autoExpandParent, loading, dragingElement, dragingTreeData, ctrlKey, CreateStageVisible, CreateStageIn,
     } = this.state;
     const treeData = TestPlanTreeStore.getTreeData;
     const expandedKeys = TestPlanTreeStore.getExpandedKeys;
@@ -276,6 +278,12 @@ class PlanTree extends Component {
     const currentCycle = TestPlanTreeStore.getCurrentCycle;
     return (
       <div className="c7n-PlanTree">
+        <CreateStage
+          visible={CreateStageVisible}
+          CreateStageIn={CreateStageIn} 
+          onCancel={() => { this.setState({ CreateStageVisible: false }); }}
+          onOk={() => { this.setState({ CreateStageVisible: false }); this.refresh(); }} 
+        />
         <div className="c7n-PlanTree-treeTop">
           <Input
             prefix={<Icon type="filter_list" style={{ color: 'black' }} />}
@@ -297,7 +305,7 @@ class PlanTree extends Component {
             expandedKeys={expandedKeys}
             showIcon
             onExpand={this.onExpand}
-            onSelect={this.loadCycle}
+            onSelect={onSelect}
             autoExpandParent={autoExpandParent}
           >
             {this.renderTreeNodes(treeData)}

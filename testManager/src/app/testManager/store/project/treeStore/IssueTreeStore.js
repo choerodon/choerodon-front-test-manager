@@ -51,6 +51,8 @@ class IssueTreeStore {
 
   @observable draggingFolder = null;
 
+  @observable isCopy = false;
+
   @computed get getTreeData() {
     return toJS(this.treeData);
   }
@@ -106,8 +108,8 @@ class IssueTreeStore {
     // window.console.log({ ...item, ...{ key: `${key}-add'`, type: 'add' } });
   }
 
-  @action setDraggingFolder=(draggingFolder) => {
-    this.draggingFolder = draggingFolder;
+  @action setCopy = (isCopy) => {
+    this.isCopy = isCopy;
   }
 }
 

@@ -525,7 +525,7 @@ class IssueTable extends Component {
                               onClick={this.handleClickIssue.bind(this, issue, i)}
                               className={issue.issueId === selectedIssue.issueId ? 'c7n-border-visible c7n-table-item' : 'c7n-border c7n-table-item'}
                               style={{
-                                background: _.find(draggingTableItems, { issueId: issue.issueId }) && 'rgb(235, 242, 249)',
+                                background: !snapshotinner.isDragging && _.find(draggingTableItems, { issueId: issue.issueId }) && 'rgb(235, 242, 249)',
                                 position: 'relative',
                               }}
                             >

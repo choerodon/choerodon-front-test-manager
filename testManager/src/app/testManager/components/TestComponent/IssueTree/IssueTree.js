@@ -9,7 +9,7 @@ import './IssueTree.scss';
 import { IssueTreeStore } from '../../../store/project/treeStore';
 // import { TreeTitle } from '../../CycleComponent';
 import {
-  getIssueTree, addFolder, getIssuesByFolder, moveFolder, 
+  getIssueTree, addFolder, getIssuesByFolder, moveFolder, copyFolder, 
 } from '../../../api/IssueApi';
 import IssueTreeTitle from './IssueTreeTitle';
 import pic from '../../../assets/问题管理－空.png';
@@ -222,20 +222,21 @@ class IssueTree extends Component {
 
   getIssuesByFolder = (selectedKeys, {
     selected, selectedNodes, node, event,
-  } = {}) => {   
-    if (selectedKeys) {
-      IssueTreeStore.setSelectedKeys(selectedKeys);
-    }
+  } = {}) => {
     const { executePagination, filters } = this.state;
     const data = node.props.data;
     // console.log(data);
     if (data.versionId) {
+      if (selectedKeys) {
+        IssueTreeStore.setSelectedKeys(selectedKeys);
+      }
       IssueTreeStore.setCurrentCycle(data);
       IssueStore.loadIssues();     
     }
   }
 
   onDragEnd=(result) => {
+    console.log(IssueTreeStore.isCopy);
     const { destination } = result;
     if (!destination) {
       return;
@@ -247,11 +248,20 @@ class IssueTree extends Component {
     console.log(folderId, '=>', destination.droppableId);
     const data = { versionId: destination.droppableId, folderId, objectVersionNumber };
     // debugger;
-    moveFolder(data).then((res) => {
-      this.getTree();
-    }).catch((err) => {
-      Choerodon.prompt('网络错误');
-    });
+    if (IssueTreeStore.isCopy) {
+      copyFolder(data).then((res) => {
+        this.getTree();
+      }).catch((err) => {
+        Choerodon.prompt('网络错误');
+      });
+    } else {
+      moveFolder(data).then((res) => {
+        this.getTree();
+      }).catch((err) => {
+        Choerodon.prompt('网络错误');
+      });
+    }
+    
     console.log(result);
   }
 

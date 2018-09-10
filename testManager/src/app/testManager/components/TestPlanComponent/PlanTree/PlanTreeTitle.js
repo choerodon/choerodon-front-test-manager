@@ -144,7 +144,7 @@ class PlanTreeTitle extends Component {
               </Tooltip>
             </div>
           )}        
-        <div role="none" className="c7n-tree-title-actionButton" onClick={e => e.stopPropagation()}>
+        <div role="none" className="c7n-tree-title-actionButton" style={{ marginLeft: data.type === 'cycle' || data.type === 'temp' ? '18px' : 0 }} onClick={e => e.stopPropagation()}>
           {/* {data.type === 'temp'
             ? null : */}
           <Dropdown overlay={getMenu(data.type)} trigger={['click']}>

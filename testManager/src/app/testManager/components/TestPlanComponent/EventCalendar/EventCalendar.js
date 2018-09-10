@@ -41,30 +41,33 @@ class EventCalendar extends Component {
 
   render() {
     const { mode } = this.state;
+    const { showMode } = this.props;
     const { start, end } = this.calculateTime();
     const range = moment.range(start, end);
     const timeArray = Array.from(range.by('day'));
     const fake = [{
       start: moment().startOf('month'),
       end: moment().endOf('month').add(-5, 'day'),
-    }, {
-      start: moment().startOf('month'),
-      end: moment().endOf('month').add(-6, 'day'),
-    }, {
-      start: moment().startOf('month').add(-5, 'day'),
-      end: moment().endOf('month').add(-5, 'day'),
-    }, {
-      start: moment().startOf('month').add(15, 'day'),
-      end: moment().endOf('month').add(5, 'day'),
-    }, {
-      start: moment().startOf('month').add(0, 'day'),
-      end: moment().endOf('month').add(-30, 'day'),
-    }, {
-      start: moment().startOf('month').add(-10, 'day'),
-      end: moment().endOf('month').add(-33, 'day'),
-    }];
+    }, 
+    // {
+    //   start: moment().startOf('month'),
+    //   end: moment().endOf('month').add(-6, 'day'),
+    // }, {
+    //   start: moment().startOf('month').add(-5, 'day'),
+    //   end: moment().endOf('month').add(-5, 'day'),
+    // }, {
+    //   start: moment().startOf('month').add(15, 'day'),
+    //   end: moment().endOf('month').add(5, 'day'),
+    // }, {
+    //   start: moment().startOf('month').add(0, 'day'),
+    //   end: moment().endOf('month').add(-30, 'day'),
+    // }, {
+    //   start: moment().startOf('month').add(-10, 'day'),
+    //   end: moment().endOf('month').add(-33, 'day'),
+    // }
+    ];
     return (
-      <div className="c7n-EventCalendar">
+      <div className="c7n-EventCalendar" style={{ height: showMode === 'multi' ? '100%' : '162px' }}>
         <div className="c7n-EventCalendar-header">
           <div style={{ fontWeight: 500 }}>{moment(start).format('YYYY年M月')}</div>
           <div className="c7n-flex-space" />

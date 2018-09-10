@@ -156,6 +156,9 @@ const enUS = {
   report_select_summary: 'summary',
   // 测试计划
   testPlan_name: 'test plan',
+  testPlan_createStage: 'add test stage',
+  testPlan_linkFolder: 'link folder',
+  testPlan_createStageIn: 'add test stage in cycle “{cycleName}”',
   // 测试循环
   cycle_name: 'Test cycle',
   cycle_my: 'my cycles',
