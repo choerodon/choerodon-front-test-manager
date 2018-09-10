@@ -1,7 +1,13 @@
 .c7n-TestPlan {
+  .ant-spin-nested-loading {
+    flex: 1;
+  }
+  .ant-spin-container {
+    height: 100%;
+  }
   &-content {
-    display: flex;
-    // position: absolute;
+    height: 100%;
+    display: flex; // position: absolute;
     // top: 0;
     // right: 0;
     // left: 0;

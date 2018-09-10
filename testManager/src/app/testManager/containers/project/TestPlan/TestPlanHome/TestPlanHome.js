@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Moment from 'moment';
+import { observer } from 'mobx-react';
 import { extendMoment } from 'moment-range';
 import {
   Page, Header, Content, stores,
@@ -36,6 +37,7 @@ const styles = {
 };
 const { AppState } = stores;
 const moment = extendMoment(Moment);
+@observer
 class TestPlanHome extends Component {
   state = {
     CreateCycleVisible: false,
@@ -64,11 +66,12 @@ class TestPlanHome extends Component {
     getStatusList('CYCLE_CASE').then((statusList) => {
       this.setState({ statusList });
     });
-    this.PlanTree.getTree().then(() => {
-      this.setState({
-        loading: false,
-      });
-    });
+    TestPlanStore.getTree();
+    // this.PlanTree.getTree().then(() => {
+    //   this.setState({
+    //     loading: false,
+    //   });
+    // });
     // 如果选中了项，就刷新table数据
     const currentCycle = TestPlanStore.getCurrentCycle;
     const selectedKeys = TestPlanStore.getSelectedKeys;
@@ -131,9 +134,10 @@ class TestPlanHome extends Component {
 
   render() {
     const {
-      loading, treeShow, CreateCycleVisible, testList, rightLoading, statusList,
+      treeShow, CreateCycleVisible, testList, rightLoading, statusList,
       executePagination, calendarShowMode,
     } = this.state;
+    const loading = TestPlanStore.loading;
     const currentCycle = TestPlanStore.getCurrentCycle;
     const { cycleId, title } = currentCycle;
     const columns = [{
@@ -416,7 +420,7 @@ class TestPlanHome extends Component {
         <Content
           title={null}
           description={null}
-          style={{ padding: 0 }}
+          style={{ padding: 0 , display: 'flex' }}
         >
           <Spin spinning={loading}>
             <div className="c7n-TestPlan-content">

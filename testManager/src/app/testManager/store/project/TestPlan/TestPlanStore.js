@@ -53,7 +53,7 @@ class TestPlanStore {
       this.setStatusList({ statusList });
     });
     getCycles().then((data) => {
-      TestPlanStore.setTreeData([{ title: '所有版本', key: '0', children: data.versions }]);
+      this.setTreeData([{ title: '所有版本', key: '0', children: data.versions }]);
       this.leaveLoading();
       this.generateList([
         { title: '所有版本', key: '0', children: data.versions },
@@ -63,8 +63,8 @@ class TestPlanStore {
     });
 
     // 如果选中了项，就刷新table数据
-    const currentCycle = TestPlanStore.getCurrentCycle;
-    const selectedKeys = TestPlanStore.getSelectedKeys;
+    const currentCycle = this.getCurrentCycle;
+    const selectedKeys = this.getSelectedKeys;
     if (currentCycle.cycleId) {
       this.props.loadCycle(selectedKeys, { node: { props: { data: currentCycle } } }, true);
     }
