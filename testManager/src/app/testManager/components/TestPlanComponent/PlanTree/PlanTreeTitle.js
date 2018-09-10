@@ -7,7 +7,7 @@ import { FormattedMessage } from 'react-intl';
 import './PlanTreeTitle.scss';
 import { editFolder, deleteCycleOrFolder } from '../../../api/cycleApi';
 import { syncFolder, syncFoldersInCycle, syncFoldersInVersion } from '../../../api/IssueApi';
-import CycleStore from '../../../store/project/cycle/CycleStore';
+import TestPlanStore from '../../../store/project/TestPlan/TestPlanStore';
 
 @observer
 class PlanTreeTitle extends Component {
@@ -19,14 +19,19 @@ class PlanTreeTitle extends Component {
     const {
       type, cycleId, folderId, versionId, 
     } = item;
-    if (type === 'folder') {
+    TestPlanStore.enterLoading();
+    if (type === 'folder') {      
       syncFolder(folderId, cycleId).then((res) => {
-
+        TestPlanStore.getTree();
       });
     } else if (type === 'cycle') {
-      syncFoldersInCycle(cycleId);
+      syncFoldersInCycle(cycleId).then(() => {
+        TestPlanStore.getTree();
+      });
     } else {
-      syncFoldersInVersion(versionId);
+      syncFoldersInVersion(versionId).then(() => {
+        TestPlanStore.getTree();
+      });
     }
   }
 
@@ -54,7 +59,7 @@ class PlanTreeTitle extends Component {
           if (res.failed) {
             Choerodon.prompt('删除失败');
           } else {
-            CycleStore.setCurrentCycle({});
+            TestPlanStore.setCurrentCycle({});
             refresh();
           }
         }).catch((err) => {
@@ -79,7 +84,7 @@ class PlanTreeTitle extends Component {
         break;
       }
       case 'sync': {
-        this.sync();
+        this.sync(data);
         break;
       }
       default: break;
