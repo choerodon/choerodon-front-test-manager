@@ -2,13 +2,19 @@ import {
   observable, action, computed, toJS,
 } from 'mobx';
 import { store, stores, axios } from 'choerodon-front-boot';
-import { loadIssues, loadVersions } from '../../../api/IssueApi';
+import {
+  loadIssues, loadVersions, getIssuesByFolder, getIssuesByIds,
+  getIssuesByVersion,
+} from '../../../api/IssueApi';
+import IssueTreeStore from '../treeStore/IssueTreeStore';
 
 const { AppState } = stores;
 
 @store('SprintCommonStore')
 class SprintCommonStore {
   @observable issues = [];
+
+  @observable issueIds = [];
 
   @observable versions = [];
 
@@ -69,20 +75,48 @@ class SprintCommonStore {
   loadIssues = (page = 0, size = 10) => {
     this.setLoading(true);
     const { orderField, orderType } = this.order;
-    Promise.all([
-      loadVersions(),
-      loadIssues(page, size, this.getFilter, orderField, orderType),
-    ]).then(([versions, res]) => {
+    const funcArr = [];
+    funcArr.push(loadVersions());
+    // 三种加载issue情况
+    // 1.选择文件夹
+    if (IssueTreeStore.currentCycle.versionId) {
+      // 2.选择文件夹并不在第一页
+      const { versionId, cycleId } = IssueTreeStore.currentCycle;
+      if (page > 0) {
+        funcArr.push(getIssuesByIds(versionId, cycleId,
+          this.issueIds.slice(size * page, size * (page + 1))));
+      } else if (cycleId) {
+        funcArr.push(getIssuesByFolder(cycleId,
+          page, size, this.getFilter, orderField, orderType));
+      } else {
+        funcArr.push(getIssuesByVersion(versionId,
+          page, size, this.getFilter, orderField, orderType));
+      }
+    } else {
+      // 3.直接调用敏捷接口
+      funcArr.push(loadIssues(page, size, this.getFilter, orderField, orderType));
+    }
+    return Promise.all(funcArr).then(([versions, res]) => {
       this.setVersions(versions);
       if (versions && versions.length > 0) {
         this.selectVersion(versions[0].versionId);
       }
       this.setIssues(res.content);
-      this.setPagination({
-        current: res.number + 1,
-        pageSize: res.size,
-        total: res.totalElements,
-      });
+      this.setIssueIds(res.allIdValues || []);
+      if (!IssueTreeStore.currentCycle.versionId || page === 0) {
+        this.setPagination({
+          current: res.number + 1,
+          pageSize: size,
+          total: res.totalElements,
+        });
+      } else {
+        this.setPagination({
+          current: page + 1,
+          pageSize: size,
+          total: this.pagination.total,
+        });
+      }
+
       this.setLoading(false);
       return Promise.resolve(res);
     });
@@ -98,6 +132,10 @@ class SprintCommonStore {
 
   @action setIssues(data) {
     this.issues = data;
+  }
+
+  @action setIssueIds(issueIds) {
+    this.issueIds = issueIds;
   }
 
   @action setVersions(versions) {
@@ -169,7 +207,7 @@ class SprintCommonStore {
   }
 
   @action setDraggingTableItems(draggingTableItems) {
-    console.log('set', draggingTableItems);
+    // console.log('set', draggingTableItems);
     this.draggingTableItems = draggingTableItems;
   }
 

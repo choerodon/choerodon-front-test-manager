@@ -1,4 +1,5 @@
 import { stores, axios } from 'choerodon-front-boot';
+import { version } from 'moment';
 
 const { AppState } = stores;
 
@@ -8,12 +9,8 @@ export function createIssue(issueObj, projectId = AppState.currentMenuType.id) {
     ...issueObj,
   };
   // return axios.post(`/agile/v1/projects/${projectId}/issues`, issue);
-  return axios.post(`/test/v1/projects/${projectId}/issueFolderRel`, {
-    folder_id: 19,
-    project_id: projectId,
-    version_id: issue.versionIssueRelDTOList[0].versionId,
-    issueCreateDTO: issue,
-  });
+  const versionId = issue.versionIssueRelDTOList[0].versionId;
+  return axios.post(`/test/v1/projects/${projectId}/issueFolderRel/testAndRelationship?version_id=${versionId}`, issue);
 }
 
 export function loadLabels() {
@@ -195,4 +192,66 @@ export function editFolder(data) {
 export function deleteFolder(folderId) {
   const projectId = AppState.currentMenuType.id;
   return axios.delete(`/test/v1/projects/${projectId}/issueFolder/${folderId}`);
+}
+export function getIssuesByFolder(folderId, page = 0, size = 10, search, orderField, orderType) {
+  const searchDTO = { ...search };
+  searchDTO.advancedSearchArgs.typeCode = ['issue_test'];
+  const projectId = AppState.currentMenuType.id;
+  return axios.post(`/test/v1/projects/${projectId}/issueFolderRel/query?folder_id=${folderId}&page=${page}&size=${size}`, searchDTO, {
+    params: {
+      sort: `${orderField && orderType ? `${orderField},${orderType}` : ''}`,
+    },
+  });
+}
+export function getIssuesByVersion(versionId, page = 0, size = 10, search, orderField, orderType) {
+  const searchDTO = { ...search };
+  searchDTO.advancedSearchArgs.typeCode = ['issue_test'];
+  const projectId = AppState.currentMenuType.id;
+  return axios.post(`/test/v1/projects/${projectId}/issueFolderRel/query?version_id=${versionId}&page=${page}&size=${size}`, searchDTO, {
+    params: {
+      sort: `${orderField && orderType ? `${orderField},${orderType}` : ''}`,
+    },
+  });
+}
+export function getIssuesByIds(versionId, folderId, ids) { 
+  const projectId = AppState.currentMenuType.id;
+  return axios.post(`/test/v1/projects/${projectId}/issueFolderRel/query/by/issueId?version_id=${versionId}${folderId ? `&folderId=${folderId}` : ''}`, ids);
+}
+export function moveIssues(versionId, folderId, issueLinks) {
+  const projectId = AppState.currentMenuType.id;
+  return axios.put(`/test/v1/projects/${projectId}/issueFolderRel/move?version_id=${versionId}&folder_id=${folderId}`, issueLinks);
+}
+export function copyIssues(versionId, folderId, issueLinks) {
+  const projectId = AppState.currentMenuType.id;
+  return axios.put(`/test/v1/projects/${projectId}/issueFolderRel/copy?version_id=${versionId}&folder_id=${folderId}`, issueLinks);
+}
+export function moveFolder(data) {
+  const projectId = AppState.currentMenuType.id;
+  return axios.put(`/test/v1/projects/${projectId}/issueFolder/move`, data);
+}
+export function copyFolder(data) {
+  const projectId = AppState.currentMenuType.id;
+  const { folderId, versionId } = data;
+  return axios.put(`/test/v1/projects/${projectId}/issueFolder/copy?folder_id=${folderId}&version_id=${versionId}`);
+}
+
+export function getFoldersByVersion(versionId) {
+  const projectId = AppState.currentMenuType.id;
+  return axios.get(`/test/v1/projects/${projectId}/issueFolder/query/${versionId}`);
+}
+
+export function syncFoldersInVersion(versionId) {
+  // cycleId || versionId
+  const projectId = AppState.currentMenuType.id;
+  return axios.post(`/test/v1/projects/${projectId}/cycle/synchro/folder/all/in/version/${versionId}`);
+}
+export function syncFoldersInCycle(cycleId) {
+  // cycleId || versionId
+  const projectId = AppState.currentMenuType.id;
+  return axios.post(`/test/v1/projects/${projectId}/cycle/synchro/folder/all/in/cycle/${cycleId}`);
+}
+
+export function syncFolder(folderId, cycleId) {
+  const projectId = AppState.currentMenuType.id;
+  return axios.post(`/test/v1/projects/${projectId}/cycle/synchro/folder/${folderId}/in/${cycleId}`);
 }

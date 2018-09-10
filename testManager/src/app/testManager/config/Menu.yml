@@ -39,3 +39,11 @@
         sort: 6
         permission:
           - 'test-manager-service.test-cycle.getTestCycle'
+    - "cycle":
+        icon: repeat
+        Routes: /testManager/Cycle
+        sort: 3
+        delete: true
+        permission:
+          - 'test-manager-service.test-cycle.getTestCycle'
+

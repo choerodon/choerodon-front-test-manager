@@ -7,15 +7,16 @@ import { Tooltip } from 'choerodon-ui';
 const moment = extendMoment(Moment);
 class EventItem extends Component {
   renderItems = () => {
-    const { range, totalRange, itemRange } = this.props;
-    const itemStart = itemRange.start;
-    const itemEnd = itemRange.end;
+    const {
+      range, itemRange, data,
+    } = this.props;
+    const { type, title } = data;
     let preFlex = 0;
     let flex = 0;
     let lastFlex = 0;
     // 日期交集
     const intersect = itemRange.intersect(range);
-    if (intersect) { 
+    if (intersect) {
       // console.log(intersect.start.format('YYYYMMDD'), intersect.end.format('YYYYMMDD')); 
       // 交集前面的区域
       const preRange = moment.range(range.start, intersect.start);
@@ -27,6 +28,8 @@ class EventItem extends Component {
       lastFlex = lastRange.diff('days');
     }
     // 旧的计算方法，太繁杂
+    // const itemStart = itemRange.start;
+    // const itemEnd = itemRange.end;
     // if (range.contains(itemStart) && range.contains(itemEnd)) {
     //   preFlex = itemStart.diff(range.start, 'days');
     //   flex = itemEnd.diff(itemStart, 'days') + 1;
@@ -50,19 +53,26 @@ class EventItem extends Component {
     // }
     return [
       <div style={{ flex: preFlex }} />,
-      <div className="c7n-EventItem-event" style={{ flex, display: flex === 0 && 'none' }}>
-        <Tooltip title="组织管理" placement="topLeft">
+      <div
+        className="c7n-EventItem-event"
+        style={{
+          flex,
+          display: flex === 0 && 'none', 
+          background: type === 'cycle' ? '#5094FF' : '#4677DD ', 
+        }}
+      >
+        <Tooltip title={title} placement="topLeft">
           <div className="c7n-EventItem-event-title c7n-text-dot">
-          组织管理
+            {title}
           </div>
-        </Tooltip>        
+        </Tooltip>
       </div>,
       <div style={{ flex: lastFlex }} />,
     ];
   }
 
   render() {
-    const { range } = this.props;
+    // const { range } = this.props;
     return (
       <div style={{ width: '100%', display: 'flex' }} className="c7n-EventItem">
         {this.renderItems()}

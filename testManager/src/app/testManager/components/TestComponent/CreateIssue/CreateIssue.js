@@ -158,21 +158,35 @@ class CreateIssue extends Component {
           }
         });
         const exitFixVersions = this.state.originFixVersions;
-        const fixVersionIssueRelDTOList = _.map(values.fixVersionIssueRel, (version) => {
-          const target = _.find(exitFixVersions, { name: version });
-          if (target) {
-            return {
-              ...target,
-              relationType: 'fix',
-            };
-          } else {
-            return ({
-              name: version,
-              relationType: 'fix',
-              projectId: AppState.currentMenuType.id,
-            });
-          }
-        });
+        const version = values.fixVersionIssueRel;       
+        const target = _.find(exitFixVersions, { name: version });
+        let fixVersionIssueRelDTOList = [];
+        if (target) {
+          fixVersionIssueRelDTOList = [{
+            ...target,
+            relationType: 'fix',
+          }];
+        } else {
+          Choerodon.prompt('版本错误');
+          return null;
+        }
+        
+        // return;
+        // const fixVersionIssueRelDTOList = _.map(values.fixVersionIssueRel, (version) => {
+        //   const target = _.find(exitFixVersions, { name: version });
+        //   if (target) {
+        //     return {
+        //       ...target,
+        //       relationType: 'fix',
+        //     };
+        //   } else {
+        //     return ({
+        //       name: version,
+        //       relationType: 'fix',
+        //       projectId: AppState.currentMenuType.id,
+        //     });
+        //   }
+        // });
         const extra = {
           typeCode: 'issue_test',
           summary: values.summary,
@@ -434,7 +448,7 @@ class CreateIssue extends Component {
               })(
                 <Select
                   label={<FormattedMessage id="issue_create_content_version" />}
-                  mode="tags"
+                  // mode="tags"
                   loading={this.state.selectLoading}
                   getPopupContainer={triggerNode => triggerNode.parentNode}
                   tokenSeparators={[',']}

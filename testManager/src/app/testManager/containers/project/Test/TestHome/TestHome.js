@@ -225,6 +225,11 @@ class Test extends Component {
   }
 
   handleFilterChange = (pagination, filters, sorter, barFilters) => {
+    IssueStore.setPagination({
+      current: 0,
+      pageSize: IssueStore.pagination.pageSize,
+      total: 0,
+    });
     IssueStore.setFilteredInfo(filters);
     IssueStore.setBarFilters(barFilters);
     // window.console.log(pagination, filters, sorter, barFilters[0]);
@@ -434,10 +439,10 @@ class Test extends Component {
           </div>
           <div
             className="c7n-issue-tree"
-            style={{
-              overflowY: 'auto',
-              overflowX: 'hidden',
-            }}
+            // style={{
+            //   overflowY: 'auto',
+            //   overflowX: 'hidden',
+            // }}
           >
             {treeShow && (
             <IssueTree onClose={() => {

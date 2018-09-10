@@ -28,7 +28,7 @@ import {
   delta2Html, delta2Text, issueLink, getParams,
 } from '../../../../common/utils';
 import CycleStore from '../../../../store/project/cycle/CycleStore';
-import noRight from './noright.svg';
+import noRight from '../../../../assets/noright.svg';
 
 const { AppState } = stores;
 const { confirm } = Modal;
@@ -606,7 +606,7 @@ class CycleHome extends Component {
             <Tooltip
               title={(
                 <div>
-                  <div>{issueInfosDTO.issueName}</div>
+                  <div>{issueInfosDTO.issueNum}</div>
                   <div>{issueInfosDTO.summary}</div>
                 </div>
               )}
@@ -619,7 +619,7 @@ class CycleHome extends Component {
                 to={issueLink(issueInfosDTO.issueId, issueInfosDTO.typeCode)}
                 target="_blank"
               >
-                {issueInfosDTO.issueName}
+                {issueInfosDTO.issueNum}
               </Link>
             </Tooltip>
           )

@@ -49,6 +49,10 @@ class IssueTreeStore {
 
   @observable currentCycle = {};
 
+  @observable draggingFolder = null;
+
+  @observable isCopy = false;
+
   @computed get getTreeData() {
     return toJS(this.treeData);
   }
@@ -102,6 +106,10 @@ class IssueTreeStore {
     temp.children.unshift(item);
     this.addingParent = temp;
     // window.console.log({ ...item, ...{ key: `${key}-add'`, type: 'add' } });
+  }
+
+  @action setCopy = (isCopy) => {
+    this.isCopy = isCopy;
   }
 }
 

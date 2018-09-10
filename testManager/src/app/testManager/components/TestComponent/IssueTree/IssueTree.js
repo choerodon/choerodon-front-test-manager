@@ -8,9 +8,12 @@ import { Draggable, Droppable, DragDropContext } from 'react-beautiful-dnd';
 import './IssueTree.scss';
 import { IssueTreeStore } from '../../../store/project/treeStore';
 // import { TreeTitle } from '../../CycleComponent';
-import { getIssueTree, addFolder } from '../../../api/IssueApi';
+import {
+  getIssueTree, addFolder, getIssuesByFolder, moveFolder, copyFolder, 
+} from '../../../api/IssueApi';
 import IssueTreeTitle from './IssueTreeTitle';
 import pic from '../../../assets/问题管理－空.png';
+import IssueStore from '../../../store/project/IssueStore';
 // import { Tree } from '../../CommonComponent';
 
 const { TreeNode } = Tree;
@@ -20,10 +23,7 @@ class IssueTree extends Component {
   state = {
     loading: false,
     autoExpandParent: false,
-    searchValue: '',
-    dragingElement: null,
-    dragingTreeData: [],
-    ctrlKey: false,
+    searchValue: '',   
   }
 
   componentDidMount() {
@@ -77,6 +77,7 @@ class IssueTree extends Component {
   getParentKey = (key, tree) => key.split('-').slice(0, -1).join('-')
 
   getTree = () => {
+    // console.log(IssueTreeStore.treeData);
     this.setState({
       loading: true,
     });
@@ -171,36 +172,6 @@ class IssueTree extends Component {
       />);
   });
 
-  renderSimpleTree = data => data.map((item) => {
-    const { children, key, title } = item;
-    const expandedKeys = IssueTreeStore.getExpandedKeys;
-    const icon = (
-      <Icon
-        style={{ color: '#3F51B5' }}
-        type={expandedKeys.includes(item.key) ? 'folder_open2' : 'folder_open'}
-      />
-    );
-    if (children) {
-      return (
-        <TreeNode
-          title={title}
-          key={key}
-          data={item}
-          showIcon
-          icon={icon}
-        >
-          {this.renderSimpleTree(children)}
-        </TreeNode>
-      );
-    }
-    return (
-      <TreeNode
-        icon={icon}
-        {...item}
-        data={item}
-      />);
-  })
-
   generateList = (data) => {
     // const temp = data;
     // while (temp) {
@@ -249,28 +220,78 @@ class IssueTree extends Component {
     });
   }
 
+  getIssuesByFolder = (selectedKeys, {
+    selected, selectedNodes, node, event,
+  } = {}) => {
+    const { executePagination, filters } = this.state;
+    const data = node.props.data;
+    // console.log(data);
+    if (data.versionId) {
+      if (selectedKeys) {
+        IssueTreeStore.setSelectedKeys(selectedKeys);
+      }
+      IssueTreeStore.setCurrentCycle(data);
+      IssueStore.loadIssues();     
+    }
+  }
+
+  onDragEnd=(result) => {
+    console.log(IssueTreeStore.isCopy);
+    const { destination } = result;
+    if (!destination) {
+      return;
+    }
+    const { folderId, versionId, objectVersionNumber } = JSON.parse(result.draggableId);
+    if (destination.droppableId === versionId) {
+      return;
+    }
+    console.log(folderId, '=>', destination.droppableId);
+    const data = { versionId: destination.droppableId, folderId, objectVersionNumber };
+    // debugger;
+    if (IssueTreeStore.isCopy) {
+      copyFolder(data).then((res) => {
+        this.getTree();
+      }).catch((err) => {
+        Choerodon.prompt('网络错误');
+      });
+    } else {
+      moveFolder(data).then((res) => {
+        this.getTree();
+      }).catch((err) => {
+        Choerodon.prompt('网络错误');
+      });
+    }
+    
+    console.log(result);
+  }
 
   render() {
     const { onClose } = this.props;
     const {
-      autoExpandParent, loading, dragingElement, dragingTreeData, ctrlKey,
+      autoExpandParent, loading,
     } = this.state;
     const treeData = IssueTreeStore.getTreeData;
     const expandedKeys = IssueTreeStore.getExpandedKeys;
     const selectedKeys = IssueTreeStore.getSelectedKeys;
     const currentCycle = IssueTreeStore.getCurrentCycle;
-    return (
-      <Spin spinning={loading}>
-        <div className="c7n-IssueTree">
-          <div className="c7n-treeTop">
-            <Input
-              prefix={<Icon type="filter_list" style={{ color: 'black' }} />}
-              placeholder="过滤"
-              style={{ marginTop: 2 }}
-              onChange={e => _.debounce(this.filterCycle, 200).call(null, e.target.value)}
-            />
-            <Icon type="close" className="c7n-pointer" onClick={onClose} />
-          </div>
+    return (      
+      <div className="c7n-IssueTree">    
+        <div id="template_folder_copy" style={{ display: 'none' }}>
+          当前状态：复制
+        </div>
+        <div id="template_folder_move" style={{ display: 'none' }}>
+          当前状态：移动
+        </div>    
+        <div className="c7n-treeTop">
+          <Input
+            prefix={<Icon type="filter_list" style={{ color: 'black' }} />}
+            placeholder="过滤"
+            style={{ marginTop: 2 }}
+            onChange={e => _.debounce(this.filterCycle, 200).call(null, e.target.value)}
+          />
+          <Icon type="close" className="c7n-pointer" onClick={onClose} />
+        </div>
+        <Spin spinning={loading}>
           <div
             className="c7n-IssueTree-tree"
           >
@@ -280,15 +301,15 @@ class IssueTree extends Component {
                 expandedKeys={expandedKeys}
                 showIcon
                 onExpand={this.onExpand}
-                onSelect={this.loadCycle}
+                onSelect={this.getIssuesByFolder}
                 autoExpandParent={autoExpandParent}
               >
                 {this.renderTreeNodes(treeData)}
               </Tree>
             </DragDropContext>
           </div>
-        </div>
-      </Spin>
+        </Spin>
+      </div>      
     );
   }
 }

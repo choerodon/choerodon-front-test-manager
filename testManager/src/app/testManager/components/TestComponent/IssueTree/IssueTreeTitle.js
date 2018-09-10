@@ -7,27 +7,18 @@ import {
 import { FormattedMessage } from 'react-intl';
 import { Draggable, Droppable, DragDropContext } from 'react-beautiful-dnd';
 import { IssueTreeStore } from '../../../store/project/treeStore';
-import { editFolder, deleteFolder } from '../../../api/IssueApi';
+import {
+  editFolder, deleteFolder, moveIssues, copyIssues, 
+} from '../../../api/IssueApi';
 import IssueStore from '../../../store/project/IssueStore';
 import './IssueTreeTitle.scss';
 
 @observer
 class IssueTreeTitle extends Component {
   state = {
-    editing: false,   
+    editing: false,
     enter: false,
   }
-
-  // componentWillReact() {
-  //   if(IssueStore)
-  //   document.addEventListener('keydown', this.enterCopy);
-  //   document.addEventListener('keyup', this.leaveCopy);
-  // }
-
-  // componentWillUnmount() {
-  //   document.removeEventListener('keydown', this.enterCopy);
-  //   document.removeEventListener('keyup', this.leaveCopy);
-  // }
 
   addFolder = (data) => {
     this.props.callback(data, 'ADD_FOLDER');
@@ -95,18 +86,62 @@ class IssueTreeTitle extends Component {
   enterCopy = (e) => {
     e.preventDefault();
     e.stopImmediatePropagation();
-    // if (e.keyCode === 17) {
-    //   IssueStore.setCopy(true);
-    // }
-    this.instance.innerText = '复制';
-    console.log(this.state.mode);
+    if (e.keyCode === 17) {
+      const templateCopy = document.getElementById('template_folder_copy').cloneNode(true);
+      templateCopy.style.display = 'block';
+      IssueTreeStore.setCopy(true);
+      if (this.instance.firstElementChild) {
+        this.instance.replaceChild(templateCopy, this.instance.firstElementChild);
+      } else {
+        this.instance.appendChild(templateCopy);
+      }
+      // this.instance.innerText = '复制';
+    }
   }
 
   leaveCopy = (e) => {
     e.preventDefault();
     e.stopImmediatePropagation();
-    // IssueStore.setCopy(false);
-    this.instance.innerText = '移动';
+    const templateMove = document.getElementById('template_folder_move').cloneNode(true);
+    templateMove.style.display = 'block';
+    IssueTreeStore.setCopy(true);
+    if (this.instance.firstElementChild) {
+      this.instance.replaceChild(templateMove, this.instance.firstElementChild);
+    } else {
+      this.instance.appendChild(templateMove);
+    }
+  }
+
+  moveIssues = (cycleId, versionId, e) => {
+    this.setState({
+      enter: false,
+    });
+    console.log(e.ctrlKey, cycleId, IssueStore.getDraggingTableItems);
+    const isCopy = e.ctrlKey;
+    const issueLinks = IssueStore.getDraggingTableItems.map(issue => ({
+      issueId: issue.issueId,
+      summary: issue.summary,
+      objectVersionNumber: issue.objectVersionNumber,
+    }));
+    // debugger;
+    if (!isCopy) {
+      moveIssues(versionId, cycleId, issueLinks).then((res) => {
+        IssueStore.setDraggingTableItems([]);
+        IssueStore.loadIssues();
+      }).catch((err) => {
+        Choerodon.prompt('网络错误');
+      });
+    } else {
+      copyIssues(versionId, cycleId, issueLinks).then((res) => {
+        if (res.failed) {
+          Choerodon.prompt('存在同名文件夹');
+        }
+        IssueStore.setDraggingTableItems([]);
+        IssueStore.loadIssues();
+      }).catch((err) => {
+        Choerodon.prompt('网络错误');
+      });
+    }
   }
 
   render() {
@@ -135,7 +170,7 @@ class IssueTreeTitle extends Component {
       return <Menu onClick={this.handleItemClick} style={{ margin: '10px 0 0 28px' }}>{items}</Menu>;
     };
     const {
-      editing, enter, mode, 
+      editing, enter, mode,
     } = this.state;
     const { data, title } = this.props;
     // const { title } = data;
@@ -149,8 +184,8 @@ class IssueTreeTitle extends Component {
     }
     const treeTitle = (
       <div
-        className="c7n-issue-tree-title"    
-      >
+        className="c7n-issue-tree-title"
+      >        
         {editing
           ? (
             <Input
@@ -165,9 +200,9 @@ class IssueTreeTitle extends Component {
                   return;
                 }
                 this.handleEdit({
-                  cycleId: data.cycleId,
-                  cycleName: e.target.value,
-                  type: 'folder',
+                  folderId: data.cycleId,
+                  name: e.target.value,
+                  type: 'cycle',
                   objectVersionNumber: data.objectVersionNumber,
                 });
               }}
@@ -201,11 +236,11 @@ class IssueTreeTitle extends Component {
     );
     if (type === 'version') {
       return (
-        <Droppable droppableId={data.key} data={data}>
+        <Droppable droppableId={data.versionId}>
           {(provided, snapshot) => (
             <div
               ref={provided.innerRef}
-              style={{ border: snapshot.isDraggingOver && '2px dashed green', height: 30 }}
+              style={{ border: snapshot.isDraggingOver && JSON.parse(snapshot.draggingOverWith).versionId !== data.versionId && '2px dashed green', height: 30 }}
             >
               {treeTitle}
               {provided.placeholder}
@@ -215,27 +250,28 @@ class IssueTreeTitle extends Component {
       );
     } else if (type === 'cycle') {
       return (
-        <Droppable droppableId={data.key} data={data} isDropDisabled={!IssueStore.tableDraging}>
+        <Droppable droppableId={data.key} isDropDisabled={!IssueStore.tableDraging}>
           {(provided, snapshot) => (
             <div
               role="none"
               ref={provided.innerRef}
               style={{ border: IssueStore.tableDraging && enter && '2px dashed green', height: 30 }}
-              onMouseEnter={() => {
-                this.setState({
-                  enter: true,
-                });
-              }}
-              onMouseLeave={() => {
-                this.setState({
-                  enter: false,
-                });
-              }}
-              onMouseUp={() => {
-                console.log(data.cycleId, IssueStore.getDraggingTableItems);
+              {...{
+                onMouseEnter: IssueStore.tableDraging ? () => {
+                  this.setState({
+                    enter: true,
+                  });
+                } : null,
+                onMouseLeave: IssueStore.tableDraging ? () => {
+                  this.setState({
+                    enter: false,
+                  });
+                } : null,
+                onMouseUp:
+                  IssueStore.tableDraging && this.moveIssues.bind(this, data.cycleId, data.versionId),
               }}
             >
-              <Draggable key={data.key} draggableId={data.key} data={data}>
+              <Draggable key={data.key} draggableId={JSON.stringify({ folderId: data.cycleId, versionId: data.versionId, objectVersionNumber: data.objectVersionNumber })}>
                 {(providedinner, snapshotinner) => {
                   if (snapshotinner.isDragging) {
                     document.addEventListener('keydown', this.enterCopy);
@@ -245,24 +281,42 @@ class IssueTreeTitle extends Component {
                     document.removeEventListener('keyup', this.leaveCopy);
                   }
                   return (
-                    <div
+                    <div                      
                       ref={providedinner.innerRef}
                       {...providedinner.draggableProps}
-                      {...providedinner.dragHandleProps}
+                      {...providedinner.dragHandleProps}                      
                     >
-                      {treeTitle}
-                      {snapshotinner.isDragging && (
                       <div
-                        ref={(instance) => { this.instance = instance; }}
+                        style={{
+                          position: 'relative',
+                          // background: snapshotinner.isDragging && 'white',
+                        }}
                       >
-                        移动
+                        {treeTitle}
+                        {snapshotinner.isDragging
+                        && (
+                          <div className="IssueTree-drag-prompt">
+                            <div>
+                              复制或移动文件夹
+                            </div>
+                            <div>
+                              按下ctrl/command复制
+                            </div>
+                            <div
+                              ref={(instance) => { this.instance = instance; }}
+                            >
+                              <div>
+                                当前状态：移动
+                              </div>
+                            </div>
+                          </div>
+                        )
+                      }
                       </div>
-                      )
-                    }
                     </div>
                   );
-                }                
-                
+                }
+
                 }
               </Draggable>
               {provided.placeholder}
@@ -272,24 +326,25 @@ class IssueTreeTitle extends Component {
       );
     } else if (type === 'temp') {
       return (
-        <Droppable droppableId={data.key} data={data} isDropDisabled>
+        <Droppable droppableId={data.key} isDropDisabled={!IssueStore.tableDraging}>
           {(provided, snapshot) => (
             <div
               role="none"
               ref={provided.innerRef}
               style={{ border: IssueStore.tableDraging && enter && '2px dashed green', height: 30 }}
-              onMouseEnter={() => {
-                this.setState({
-                  enter: true,
-                });
-              }}
-              onMouseLeave={() => {
-                this.setState({
-                  enter: false,
-                });
-              }}
-              onMouseUp={() => {
-                console.log(data.cycleId, IssueStore.getDraggingTableItems);
+              {...{
+                onMouseEnter: IssueStore.tableDraging ? (e) => {
+                  this.setState({
+                    enter: true,
+                  });
+                } : null,
+                onMouseLeave: IssueStore.tableDraging ? () => {
+                  this.setState({
+                    enter: false,
+                  });
+                } : null,
+                onMouseUp:
+                  IssueStore.tableDraging && this.moveIssues.bind(this, data.cycleId, data.versionId),
               }}
             >
               {treeTitle}

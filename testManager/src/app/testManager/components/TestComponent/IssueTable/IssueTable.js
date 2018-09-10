@@ -3,7 +3,7 @@ import _ from 'lodash';
 import { observer } from 'mobx-react';
 import {
   Table, Button, Tooltip, Input, Dropdown, Menu, Pagination,
-  Spin, Icon, Select,
+  Spin, Icon, Select, Popover,
 } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 import { Draggable, Droppable, DragDropContext } from 'react-beautiful-dnd';
@@ -15,6 +15,7 @@ import PriorityTag from '../PriorityTag';
 import StatusTag from '../StatusTag';
 import TypeTag from '../TypeTag';
 import { TYPE_NAME } from '../../../common/Constant';
+import './IssueTable.scss';
 
 @observer
 class IssueTable extends Component {
@@ -44,7 +45,7 @@ class IssueTable extends Component {
         <div style={{
           display: 'flex', flex: 1, marginTop: '3px', marginBottom: '3px', cursor: 'pointer',
         }}
-        >          
+        >
           <Tooltip mouseEnterDelay={0.5} title={<FormattedMessage id="issue_issueType" values={{ type: TYPE_NAME[typeCode] }} />}>
             <div>
               <TypeTag
@@ -394,13 +395,13 @@ class IssueTable extends Component {
   }
 
   onDragEnd = (result) => {
-    console.log('end', result);
+    // console.log('end', result);
     IssueStore.setTableDraging(false);
     document.removeEventListener('keydown', this.enterCopy);
     document.removeEventListener('keyup', this.leaveCopy);
   }
 
-  onDragStart = (monitor) => { 
+  onDragStart = (monitor) => {
     const draggingTableItems = IssueStore.getDraggingTableItems;
     if (draggingTableItems.length < 1 || _.findIndex(draggingTableItems, { issueId: monitor.draggableId }) < 0) {
       const index = monitor.source.index;
@@ -414,26 +415,40 @@ class IssueTable extends Component {
     document.addEventListener('keyup', this.leaveCopy);
   }
 
-  enterCopy=(e) => {
+  enterCopy = (e) => {
     e.preventDefault();
-    e.stopImmediatePropagation();   
+    e.stopImmediatePropagation();
     if (e.keyCode === 17) {
-      IssueStore.setCopy(true);
-      this.instance.innerText = '复制';
+      const templateCopy = document.getElementById('template_copy').cloneNode(true);
+      templateCopy.style.display = 'block';
+      // IssueStore.setCopy(true);
+      if (this.instance.firstElementChild) {
+        this.instance.replaceChild(templateCopy, this.instance.firstElementChild);
+      } else {
+        this.instance.appendChild(templateCopy);
+      }
+      // this.instance.innerText = '复制';
     }
   }
 
-  leaveCopy=(e) => {
+  leaveCopy = (e) => {
     e.preventDefault();
-    e.stopImmediatePropagation();  
-    IssueStore.setCopy(false);
-    this.instance.innerText = '移动';
+    e.stopImmediatePropagation();
+    const templateMove = document.getElementById('template_move').cloneNode(true);
+    templateMove.style.display = 'block';
+    // IssueStore.setCopy(true);
+
+    if (this.instance.firstElementChild) {
+      this.instance.replaceChild(templateMove, this.instance.firstElementChild);
+    } else {
+      this.instance.appendChild(templateMove);
+    }
   }
-  
+
   handleClickIssue(issue, index, e) {
     const { setSelectIssue, setExpand } = this.props;
     const { firstIndex } = this.state;
-    console.log(e.shiftKey, e.ctrlKey, issue, index, firstIndex);
+    // console.log(e.shiftKey, e.ctrlKey, issue, index, firstIndex);
     if (e.shiftKey || e.ctrlKey) {
       if (e.shiftKey) {
         if (firstIndex !== null) {
@@ -473,7 +488,7 @@ class IssueTable extends Component {
       expand, selectedIssue, setSelectIssue, setExpand,
     } = this.props;
     const draggingTableItems = IssueStore.getDraggingTableItems;
-    console.log('render', draggingTableItems);
+    // console.log('render', draggingTableItems);
     // const columns = [
     //   {
     //     title: 'summary',
@@ -485,6 +500,12 @@ class IssueTable extends Component {
     // ];
     return (
       <Spin spinning={IssueStore.loading}>
+        <div id="template_copy" style={{ display: 'none' }}>
+        当前状态：复制
+        </div>
+        <div id="template_move" style={{ display: 'none' }}>
+        当前状态：移动
+        </div>
         <DragDropContext onDragEnd={this.onDragEnd} onDragStart={this.onDragStart}>
           <Droppable droppableId="dropTable" isDropDisabled>
             {(provided, snapshot) => (
@@ -503,39 +524,48 @@ class IssueTable extends Component {
                               role="none"
                               onClick={this.handleClickIssue.bind(this, issue, i)}
                               className={issue.issueId === selectedIssue.issueId ? 'c7n-border-visible c7n-table-item' : 'c7n-border c7n-table-item'}
-                              style={{ 
-                                background: _.find(draggingTableItems, { issueId: issue.issueId }) && 'rgb(235, 242, 249)',
+                              style={{
+                                background: !snapshotinner.isDragging && _.find(draggingTableItems, { issueId: issue.issueId }) && 'rgb(235, 242, 249)',
                                 position: 'relative',
                               }}
                             >
                               {snapshotinner.isDragging
                                 && (
-                                <div style={{
-                                  position: 'absolute',
-                                  width: 20,
-                                  height: 20,
-                                  background: 'red',
-                                  textAlign: 'center',
-                                  color: 'white',
-                                  borderRadius: '50%',
-                                  top: 0,
-                                  left: 0,
-                                }}
-                                >
-                                  {draggingTableItems.length}                                  
-                                </div>
-                                ) 
-                             }
+                                  <div style={{
+                                    position: 'absolute',
+                                    width: 20,
+                                    height: 20,
+                                    background: 'red',
+                                    textAlign: 'center',
+                                    color: 'white',
+                                    borderRadius: '50%',
+                                    top: 0,
+                                    left: 0,
+                                  }}
+                                  >
+                                    {draggingTableItems.length}
+                                  </div>
+                                )
+                              }
                               {snapshotinner.isDragging
-                               && (
-                               <div
-                                 ref={(instance) => { this.instance = instance; }}
-                               >
-                               移动
-                                 {/* {IssueStore.copy ? '复制' : '移动'} */}
-                               </div>
-                               )
-                             } 
+                                && (
+                                  <div className="IssueTable-drag-prompt">
+                                    <div>
+                                    复制或移动测试用例
+                                    </div>
+                                    <div>
+                                      按下ctrl/command复制
+                                    </div>
+                                    <div
+                                      ref={(instance) => { this.instance = instance; }}
+                                    >
+                                      <div>
+                                        当前状态：移动
+                                      </div>                                      
+                                    </div>
+                                  </div>
+                                )
+                              }
                               {expand
                                 ? this.renderNarrowIssue(issue)
                                 : this.renderTestIssue(issue)}

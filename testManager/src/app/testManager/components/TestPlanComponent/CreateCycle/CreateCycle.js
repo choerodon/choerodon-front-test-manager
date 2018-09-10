@@ -2,17 +2,19 @@ import React, { Component } from 'react';
 import {
   Form, Input, Select, Modal, Spin, DatePicker, 
 } from 'choerodon-ui';
-import { Content, stores } from 'choerodon-front-boot';
 import moment from 'moment';
+import { Content, stores } from 'choerodon-front-boot';
+import { FormattedMessage } from 'react-intl';
 import { getProjectVersion } from '../../../api/agileApi';
-import { editFolder } from '../../../api/cycleApi';
+import { addCycle } from '../../../api/cycleApi';
 
 const { Option } = Select;
 const { AppState } = stores;
 const FormItem = Form.Item;
 const { Sidebar } = Modal;
+const { TextArea } = Input;
 
-class EditCycle extends Component {
+class CreateCycle extends Component {
   state = {
     versions: [],
     selectLoading: false,
@@ -20,26 +22,9 @@ class EditCycle extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { setFieldsValue } = this.props.form;
+    const { resetFields } = this.props.form;
     if (this.props.visible === false && nextProps.visible === true) {
-      const {
-        versionId,
-        title,
-        description,
-        build,
-        environment,
-        fromDate,
-        toDate,
-      } = nextProps.initialValue;
-      setFieldsValue({
-        versionId,
-        cycleName: title,
-        description,
-        build,
-        environment,
-        fromDate: fromDate ? moment(fromDate) : null,
-        toDate: toDate ? moment(toDate) : null,
-      });
+      resetFields();
     }
   }
 
@@ -49,11 +34,10 @@ class EditCycle extends Component {
         this.setState({ loading: true });
         window.console.log('Received values of form: ', values);
         const { fromDate, toDate } = values;
-        const { initialValue } = this.props;
-        editFolder({
+
+        addCycle({
           ...values,
           ...{
-            cycleId: initialValue.cycleId,
             type: 'cycle',
             fromDate: fromDate ? fromDate.format('YYYY-MM-DD HH:mm:ss') : null,
             toDate: toDate ? toDate.format('YYYY-MM-DD HH:mm:ss') : null,
@@ -85,13 +69,20 @@ class EditCycle extends Component {
     });
   }
 
+  disabledDate=(current) => {
+    // Can not select days before today and today
+    
+    const disabled = current < moment().startOf('day');
+    // console.log(disabled);
+    return disabled;
+  }
+
   render() {
-    const { visible, onCancel, initialValue } = this.props;
+    const {
+      visible, onOk, onCancel, type, 
+    } = this.props;
     const { getFieldDecorator } = this.props.form;
     const { versions, loading, selectLoading } = this.state;
-    const {
-      versionId, title, description, build, environment, fromDate, toDate, 
-    } = initialValue;
     const options = versions.map(version => (
       <Option value={version.versionId} key={version.versionId}>
         {version.name}
@@ -101,7 +92,7 @@ class EditCycle extends Component {
       <div>
         <Spin spinning={loading}>
           <Sidebar
-            title="修改测试循环"
+            title={<FormattedMessage id="cycle_create_title" />}
             visible={visible}
             onOk={this.onOk}
             onCancel={onCancel}
@@ -110,9 +101,9 @@ class EditCycle extends Component {
               style={{
                 padding: '0 0 10px 0',
               }}
-              title={`在项目“${AppState.currentMenuType.name}”中修改测试循环`}
-              description="您可以更改一个测试循环的具体信息。"
-              link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management/test-cycle/"
+              title={<FormattedMessage id="cycle_create_content_title" />}
+              description={<FormattedMessage id="cycle_create_content_description" />}
+              link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management/test-cycle/create-cycle/"
             >
               <Form>
                 <FormItem
@@ -128,8 +119,7 @@ class EditCycle extends Component {
                       loading={selectLoading}
                       onFocus={this.loadVersions}
                       style={{ width: 500, margin: '0 0 10px 0' }}
-                      label="版本"
-
+                      label={<FormattedMessage id="version" />}
                     >
                       {options}
                     </Select>,
@@ -144,7 +134,7 @@ class EditCycle extends Component {
                       required: true, message: '请输入名称!',
                     }],
                   })(
-                    <Input style={{ width: 500 }} maxLength={30} label="名称" />,
+                    <Input style={{ width: 500 }} maxLength={30} label={<FormattedMessage id="name" />} />,
                     // <div style={{ width: 500 }}>
                     //   <TextArea maxLength={30} label="说明" placeholder="说明" autosize />
                     // </div>
@@ -159,7 +149,7 @@ class EditCycle extends Component {
                     //   required: true, message: '请输入说明!',
                     // }],
                   })(
-                    <Input style={{ width: 500 }} maxLength={30} label="说明" />,
+                    <Input style={{ width: 500 }} maxLength={30} label={<FormattedMessage id="comment" />} />,
                     // <div style={{ width: 500 }}>
                     //   <TextArea maxLength={30} label="说明" placeholder="说明" autosize />
                     // </div>
@@ -174,7 +164,7 @@ class EditCycle extends Component {
                     //   required: true, message: '请输入构建号!',
                     // }],
                   })(
-                    <Input style={{ width: 500 }} maxLength={30} label="构建号" />,
+                    <Input style={{ width: 500 }} maxLength={30} label={<FormattedMessage id="cycle_build" />} />,
                     // <div style={{ width: 500 }}>
                     //   <TextArea maxLength={30} label="说明" placeholder="说明" autosize />
                     // </div>
@@ -189,7 +179,7 @@ class EditCycle extends Component {
                     //   required: true, message: '请输入环境!',
                     // }],
                   })(
-                    <Input style={{ width: 500 }} maxLength={30} label="环境" />,
+                    <Input style={{ width: 500 }} maxLength={30} label={<FormattedMessage id="cycle_environment" />} />,
                     // <div style={{ width: 500 }}>
                     //   <TextArea maxLength={30} label="说明" placeholder="说明" autosize />
                     // </div>
@@ -203,8 +193,9 @@ class EditCycle extends Component {
                   })(
                     <DatePicker
                       format="YYYY-MM-DD"
+                      disabledDate={this.disabledDate}
                       style={{ width: 500 }}
-                      label="开始日期"
+                      label={<FormattedMessage id="cycle_startTime" />}
                     />,
                     // <div style={{ width: 500 }}>
                     //   <TextArea maxLength={30} label="说明" placeholder="说明" autosize />
@@ -218,9 +209,9 @@ class EditCycle extends Component {
                     }],
                   })(
                     <DatePicker
+                      label={<FormattedMessage id="cycle_endTime" />}
                       format="YYYY-MM-DD"
                       style={{ width: 500 }}
-                      label="结束日期"
                     />,
                     // <div style={{ width: 500 }}>
                     //   <TextArea maxLength={30} label="说明" placeholder="说明" autosize />
@@ -236,8 +227,8 @@ class EditCycle extends Component {
   }
 }
 
-EditCycle.propTypes = {
+CreateCycle.propTypes = {
 
 };
 
-export default Form.create()(EditCycle);
+export default Form.create()(CreateCycle);
