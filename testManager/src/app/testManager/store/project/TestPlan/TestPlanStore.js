@@ -4,7 +4,7 @@ import {
 } from 'mobx';
 import moment from 'moment';
 import { store, stores } from 'choerodon-front-boot';
-import { getCycles, getStatusList } from '../../../api/cycleApi';
+import { getCycles, getStatusList, getCycleById } from '../../../api/cycleApi';
 
 const { AppState } = stores;
 
@@ -32,7 +32,21 @@ class TestPlanStore {
 
   dataList = [];
 
+  @observable testList = [];
+
+  @observable executePagination = {
+    current: 1,
+    total: 0,
+    pageSize: 5,
+  }
+
   @observable loading = false;
+
+  @observable filters = {};
+
+  @observable rightLoading = false;
+
+  @observable calendarShowMode = 'single';
 
   @computed get getTreeData() {
     return toJS(this.treeData);
@@ -57,7 +71,7 @@ class TestPlanStore {
     });
     getCycles().then((data) => {
       this.setTreeData([{ title: '所有版本', key: '0', children: data.versions }]);
-      
+
       this.generateList([
         { title: '所有版本', key: '0', children: data.versions },
       ]);
@@ -76,6 +90,52 @@ class TestPlanStore {
       this.loadCycle(selectedKeys, { node: { props: { data: currentCycle } } }, true);
     }
   })
+
+  loadCycle = (selectedKeys, {
+    selected, selectedNodes, node, event,
+  } = {}, flag) => {
+    // window.console.log(selectedNodes, node, event);
+
+    const { executePagination, filters } = this;
+    const data = node ? node.props.data : this.getCurrentCycle;
+    if (data.cycleId) {
+      if (selectedKeys) {
+        this.clearTimes();
+        this.generateTimes([data]);
+        this.setSelectedKeys(selectedKeys);
+      }
+      if (data.type === 'cycle') {
+        this.setCalendarShowMode('multi');
+      } else {
+        this.setCalendarShowMode('single');
+      }
+      if (!flag) {
+        this.rightEnterLoading();
+      }
+
+      this.setCurrentCycle(data);
+      // window.console.log(data);
+      if (data.type === 'folder') {
+        getCycleById({
+          page: executePagination.current - 1,
+          size: executePagination.pageSize,
+        }, data.cycleId,
+        {
+          ...filters,
+          lastUpdatedBy: [Number(this.lastUpdatedBy)],
+          assignedTo: [Number(this.assignedTo)],
+        }).then((cycle) => {
+          this.rightLeaveLoading();
+          this.setTestList(cycle.content);
+          this.setExecutePagination({
+            current: executePagination.current,
+            pageSize: executePagination.pageSize,
+            total: cycle.totalElements,
+          });         
+        });
+      }
+    }
+  }
 
   generateList = (data) => {
     // const temp = data;
@@ -101,7 +161,15 @@ class TestPlanStore {
     }
   }
 
-  @action clearTimes=() => {
+  @action setCalendarShowMode = (calendarShowMode) => {
+    this.calendarShowMode = calendarShowMode;
+  }
+
+  @action setFilters = (filters) => {
+    this.filters = filters;
+  }
+
+  @action clearTimes = () => {
     this.times = [];
   }
 
@@ -109,10 +177,10 @@ class TestPlanStore {
     for (let i = 0; i < data.length; i += 1) {
       const node = data[i];
       const {
-        fromDate, toDate, title, type, 
+        fromDate, toDate, title, type,
       } = node;
       this.times.push({
-        start: moment(fromDate), end: moment(toDate), title, type, 
+        start: moment(fromDate), end: moment(toDate), title, type,
       });
       if (node.children) {
         this.generateTimes(node.children);
@@ -130,6 +198,22 @@ class TestPlanStore {
 
   @action leaveLoading() {
     this.loading = false;
+  }
+
+  @action rightEnterLoading() {
+    this.rightLoading = true;
+  }
+
+  @action rightLeaveLoading() {
+    this.rightLoading = false;
+  }
+
+  @action setTestList=(testList) => {
+    this.testList = testList;
+  }
+
+  @action setExecutePagination=(executePagination) => {
+    this.executePagination = executePagination;
   }
 
   @action setExpandedKeys(expandedKeys) {

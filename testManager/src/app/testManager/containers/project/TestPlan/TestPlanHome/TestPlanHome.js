@@ -42,16 +42,16 @@ class TestPlanHome extends Component {
   state = {
     CreateCycleVisible: false,
     treeShow: true,
-    executePagination: {
-      current: 1,
-      total: 0,
-      pageSize: 5,
-    },
-    testList: [],
+    // executePagination: {
+    //   current: 1,
+    //   total: 0,
+    //   pageSize: 5,
+    // },
+    // testList: [],
     statusList: [],
-    filters: {},
-    rightLoading: false,
-    calendarShowMode: 'single',    
+    // filters: {},
+    // rightLoading: false,
+    // calendarShowMode: 'single',    
   }
 
   componentDidMount() {
@@ -62,70 +62,68 @@ class TestPlanHome extends Component {
     TestPlanStore.getTree();
   }
 
-  loadCycle = (selectedKeys, {
-    selected, selectedNodes, node, event,
-  } = {}, flag) => {
-    // window.console.log(selectedNodes, node, event);
+  // loadCycle = (selectedKeys, {
+  //   selected, selectedNodes, node, event,
+  // } = {}, flag) => {
+  //   // window.console.log(selectedNodes, node, event);
 
-    const { executePagination, filters } = this.state;
-    const data = node ? node.props.data : TestPlanStore.getCurrentCycle;
-    if (data.cycleId) {
-      if (selectedKeys) {
-        TestPlanStore.clearTimes();
-        TestPlanStore.generateTimes([data]);
-        TestPlanStore.setSelectedKeys(selectedKeys);
-      }
-      if (data.type === 'cycle') {
-        this.setState({
-          calendarShowMode: 'multi',
-        });
-      } else {
-        this.setState({
-          calendarShowMode: 'single',
-        });
-      }
-      if (!flag) {
-        this.setState({
-          rightLoading: true,
-          // currentCycle: data,
-        });
-      }
+  //   const { executePagination, filters } = this.state;
+  //   const data = node ? node.props.data : TestPlanStore.getCurrentCycle;
+  //   if (data.cycleId) {
+  //     if (selectedKeys) {
+  //       TestPlanStore.clearTimes();
+  //       TestPlanStore.generateTimes([data]);
+  //       TestPlanStore.setSelectedKeys(selectedKeys);
+  //     }
+  //     if (data.type === 'cycle') {
+  //       this.setState({
+  //         calendarShowMode: 'multi',
+  //       });
+  //     } else {
+  //       this.setState({
+  //         calendarShowMode: 'single',
+  //       });
+  //     }
+  //     if (!flag) {
+  //       this.setState({
+  //         rightLoading: true,
+  //         // currentCycle: data,
+  //       });
+  //     }
 
-      TestPlanStore.setCurrentCycle(data);
-      // window.console.log(data);
-      if (data.type === 'folder') {
-        getCycleById({
-          page: executePagination.current - 1,
-          size: executePagination.pageSize,
-        }, data.cycleId,
-        {
-          ...filters,
-          lastUpdatedBy: [Number(this.lastUpdatedBy)],
-          assignedTo: [Number(this.assignedTo)],
-        }).then((cycle) => {
-          this.setState({
-            rightLoading: false,
-            testList: cycle.content,
-            executePagination: {
-              current: executePagination.current,
-              pageSize: executePagination.pageSize,
-              total: cycle.totalElements,
-            },
-          });
-          // window.console.log(cycle);
-        });
-      }
-    }
-  }
+  //     TestPlanStore.setCurrentCycle(data);
+  //     // window.console.log(data);
+  //     if (data.type === 'folder') {
+  //       getCycleById({
+  //         page: executePagination.current - 1,
+  //         size: executePagination.pageSize,
+  //       }, data.cycleId,
+  //       {
+  //         ...filters,
+  //         lastUpdatedBy: [Number(this.lastUpdatedBy)],
+  //         assignedTo: [Number(this.assignedTo)],
+  //       }).then((cycle) => {
+  //         this.setState({
+  //           rightLoading: false,
+  //           testList: cycle.content,
+  //           executePagination: {
+  //             current: executePagination.current,
+  //             pageSize: executePagination.pageSize,
+  //             total: cycle.totalElements,
+  //           },
+  //         });
+  //         // window.console.log(cycle);
+  //       });
+  //     }
+  //   }
+  // }
 
   handleExecuteTableChange = (pagination, filters, sorter) => {
     // window.console.log(pagination, filters, sorter);
     if (pagination.current) {
-      this.setState({
-        rightLoading: true,
-        executePagination: pagination,
-        filters,
-      });
+      TestPlanStore.setFilters(filters);
+      TestPlanStore.rightEnterLoading();
+      TestPlanStore.setExecutePagination(pagination);      
       const currentCycle = TestPlanStore.getCurrentCycle;
       getCycleById({
         size: pagination.pageSize,
@@ -136,16 +134,13 @@ class TestPlanHome extends Component {
         lastUpdatedBy: [Number(this.lastUpdatedBy)],
         assignedTo: [Number(this.assignedTo)],
       }).then((cycle) => {
-        this.setState({
-          rightLoading: false,
-          testList: cycle.content,
-          executePagination: {
-            current: pagination.current,
-            pageSize: pagination.pageSize,
-            total: cycle.totalElements,
-          },
-        });
-        // window.console.log(cycle);
+        TestPlanStore.rightLeaveLoading();
+        TestPlanStore.setTestList(cycle.content);
+        TestPlanStore.setExecutePagination({
+          current: pagination.current,
+          pageSize: pagination.pageSize,
+          total: cycle.totalElements,
+        });         
       });
     }
   }
@@ -153,12 +148,13 @@ class TestPlanHome extends Component {
   render() {
     console.log('render');
     const {
-      treeShow, CreateCycleVisible, testList, rightLoading, statusList,
-      executePagination, calendarShowMode,
+      treeShow, CreateCycleVisible, statusList,
     } = this.state;
-    const loading = TestPlanStore.loading;
+    const {
+      testList, executePagination, loading, rightLoading, times, calendarShowMode,
+    } = TestPlanStore;
     const currentCycle = TestPlanStore.getCurrentCycle;
-    const times = TestPlanStore.times;
+
     const { cycleId, title } = currentCycle;
     const columns = [{
       title: 'ID',
@@ -483,7 +479,7 @@ class TestPlanHome extends Component {
                         treeShow: false,
                       });
                     }}
-                    loadCycle={this.loadCycle}
+                    loadCycle={TestPlanStore.loadCycle}
                   />
                 )}
               </div>
@@ -499,7 +495,7 @@ class TestPlanHome extends Component {
                           request={getUsers}
                           onChange={(value) => {
                             this.lastUpdatedBy = value;
-                            this.loadCycle();
+                            TestPlanStore.loadCycle();
                           }}
                         />
                         <div style={{ marginLeft: 20 }}>
@@ -508,7 +504,7 @@ class TestPlanHome extends Component {
                             request={getUsers}
                             onChange={(value) => {
                               this.assignedTo = value;
-                              this.loadCycle();
+                              TestPlanStore.loadCycle();
                             }}
                           />
                         </div>
