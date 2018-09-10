@@ -166,7 +166,7 @@ class PlanTreeTitle extends Component {
             />
           )
           : (
-            <div className="c7n-plan-tree-title-text">
+            <div className="c7n-plan-tree-title-text" style={{ width: !data.type && '120px' }}>
               <Tooltip title={title}>
                 {title}
               </Tooltip>

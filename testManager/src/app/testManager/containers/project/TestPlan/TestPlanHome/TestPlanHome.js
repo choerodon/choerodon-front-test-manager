@@ -155,7 +155,7 @@ class TestPlanHome extends Component {
     } = TestPlanStore;
     const currentCycle = TestPlanStore.getCurrentCycle;
 
-    const { cycleId, title } = currentCycle;
+    const { cycleId, title, versionId } = currentCycle;
     const columns = [{
       title: 'ID',
       dataIndex: 'issueName',
@@ -484,7 +484,7 @@ class TestPlanHome extends Component {
                 )}
               </div>
               {/* <Spin spinning={loading}> */}
-              {cycleId ? (
+              {versionId ? (
                 <div className="c7n-TestPlan-content-right">
                   <EventCalendar showMode={calendarShowMode} times={times} />
                   {calendarShowMode === 'single' && (

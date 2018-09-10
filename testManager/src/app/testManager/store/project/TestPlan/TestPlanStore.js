@@ -97,17 +97,18 @@ class TestPlanStore {
     // window.console.log(selectedNodes, node, event);
 
     const { executePagination, filters } = this;
-    const data = node ? node.props.data : this.getCurrentCycle;
-    if (data.cycleId) {
+    const data = node ? node.props.data : this.getCurrentCycle;    
+    
+    if (data.versionId) {
       if (selectedKeys) {
-        this.clearTimes();
-        this.generateTimes([data]);
         this.setSelectedKeys(selectedKeys);
       }
-      if (data.type === 'cycle') {
-        this.setCalendarShowMode('multi');
-      } else {
+      this.clearTimes();
+      this.generateTimes([data]);
+      if (data.type === 'folder') {
         this.setCalendarShowMode('single');
+      } else {
+        this.setCalendarShowMode('multi');
       }
       if (!flag) {
         this.rightEnterLoading();
@@ -179,9 +180,12 @@ class TestPlanStore {
       const {
         fromDate, toDate, title, type,
       } = node;
-      this.times.push({
-        start: moment(fromDate), end: moment(toDate), title, type,
-      });
+      if (fromDate && toDate) {
+        this.times.push({
+          start: moment(fromDate), end: moment(toDate), title, type,
+        });
+      }
+      
       if (node.children) {
         this.generateTimes(node.children);
       }
