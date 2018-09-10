@@ -41,7 +41,6 @@ const moment = extendMoment(Moment);
 class TestPlanHome extends Component {
   state = {
     CreateCycleVisible: false,
-    loading: false,
     treeShow: true,
     executePagination: {
       current: 1,
@@ -53,6 +52,7 @@ class TestPlanHome extends Component {
     filters: {},
     rightLoading: false,
     calendarShowMode: 'single',
+    times: [],
   }
 
   componentDidMount() {
@@ -60,36 +60,22 @@ class TestPlanHome extends Component {
   }
 
   refresh = () => {
-    this.setState({
-      loading: true,
-    });
-    getStatusList('CYCLE_CASE').then((statusList) => {
-      this.setState({ statusList });
-    });
     TestPlanStore.getTree();
-    // this.PlanTree.getTree().then(() => {
-    //   this.setState({
-    //     loading: false,
-    //   });
-    // });
-    // 如果选中了项，就刷新table数据
-    const currentCycle = TestPlanStore.getCurrentCycle;
-    const selectedKeys = TestPlanStore.getSelectedKeys;
-    if (currentCycle.cycleId) {
-      this.loadCycle(selectedKeys, { node: { props: { data: currentCycle } } }, true);
-    }
   }
 
   loadCycle = (selectedKeys, {
     selected, selectedNodes, node, event,
   } = {}, flag) => {
     // window.console.log(selectedNodes, node, event);
-    if (selectedKeys) {
-      TestPlanStore.setSelectedKeys(selectedKeys);
-    }
+
     const { executePagination, filters } = this.state;
     const data = node ? node.props.data : TestPlanStore.getCurrentCycle;
     if (data.cycleId) {
+      if (selectedKeys) {
+        TestPlanStore.clearTimes();
+        TestPlanStore.generateTimes([data]);
+        TestPlanStore.setSelectedKeys(selectedKeys);
+      }
       if (data.type === 'cycle') {
         this.setState({
           calendarShowMode: 'multi',
@@ -132,13 +118,47 @@ class TestPlanHome extends Component {
     }
   }
 
+  handleExecuteTableChange = (pagination, filters, sorter) => {
+    // window.console.log(pagination, filters, sorter);
+    if (pagination.current) {
+      this.setState({
+        rightLoading: true,
+        executePagination: pagination,
+        filters,
+      });
+      const currentCycle = TestPlanStore.getCurrentCycle;
+      getCycleById({
+        size: pagination.pageSize,
+        page: pagination.current - 1,
+      }, currentCycle.cycleId,
+      {
+        ...filters,
+        lastUpdatedBy: [Number(this.lastUpdatedBy)],
+        assignedTo: [Number(this.assignedTo)],
+      }).then((cycle) => {
+        this.setState({
+          rightLoading: false,
+          testList: cycle.content,
+          executePagination: {
+            current: pagination.current,
+            pageSize: pagination.pageSize,
+            total: cycle.totalElements,
+          },
+        });
+        // window.console.log(cycle);
+      });
+    }
+  }
+
   render() {
+    console.log('render');
     const {
       treeShow, CreateCycleVisible, testList, rightLoading, statusList,
       executePagination, calendarShowMode,
     } = this.state;
     const loading = TestPlanStore.loading;
     const currentCycle = TestPlanStore.getCurrentCycle;
+    const times = TestPlanStore.times;
     const { cycleId, title } = currentCycle;
     const columns = [{
       title: 'ID',
@@ -416,11 +436,11 @@ class TestPlanHome extends Component {
             </span>
           </Button>
         </Header>
-        
+
         <Content
           title={null}
           description={null}
-          style={{ padding: 0 , display: 'flex' }}
+          style={{ padding: 0, display: 'flex' }}
         >
           <Spin spinning={loading}>
             <div className="c7n-TestPlan-content">
@@ -430,80 +450,80 @@ class TestPlanHome extends Component {
                 onOk={() => { this.setState({ CreateCycleVisible: false }); this.refresh(); }}
               />
               {!treeShow && (
-              <div className="c7n-TestPlan-bar">
-                <div
-                  role="none"
-                  className="c7n-TestPlan-bar-button"
-                  onClick={() => {
-                    this.setState({
-                      treeShow: true,
-                    });
-                  }}
-                >
-                  <Icon type="navigate_next" />
+                <div className="c7n-TestPlan-bar">
+                  <div
+                    role="none"
+                    className="c7n-TestPlan-bar-button"
+                    onClick={() => {
+                      this.setState({
+                        treeShow: true,
+                      });
+                    }}
+                  >
+                    <Icon type="navigate_next" />
+                  </div>
+                  <p
+                    role="none"
+                    onClick={() => {
+                      this.setState({
+                        treeShow: true,
+                      });
+                    }}
+                  >
+                    <FormattedMessage id="testPlan_name" />
+                  </p>
                 </div>
-                <p
-                  role="none"
-                  onClick={() => {
-                    this.setState({
-                      treeShow: true,
-                    });
-                  }}
-                >
-                  <FormattedMessage id="testPlan_name" />
-                </p>
-              </div>
               )}
               <div className="c7n-TestPlan-tree">
                 {treeShow && (
-                <PlanTree
-                  ref={(tree) => { this.PlanTree = tree; }}
-                  onClose={() => {
-                    this.setState({
-                      treeShow: false,
-                    });
-                  }}
-                  loadCycle={this.loadCycle}
-                />
+                  <PlanTree
+                    ref={(tree) => { this.PlanTree = tree; }}
+                    onClose={() => {
+                      this.setState({
+                        treeShow: false,
+                      });
+                    }}
+                    loadCycle={this.loadCycle}
+                  />
                 )}
               </div>
               {/* <Spin spinning={loading}> */}
               {cycleId ? (
                 <div className="c7n-TestPlan-content-right">
-                  <EventCalendar showMode={calendarShowMode} />
+                  <EventCalendar showMode={calendarShowMode} times={times} />
                   {calendarShowMode === 'single' && (
-                  <div className="c7n-TestPlan-content-right-bottom">
-                    <div style={{ display: 'flex', marginBottom: 20 }}>
-                      <SelectFocusLoad
-                        label={<FormattedMessage id="cycle_executeBy" />}
-                        request={getUsers}
-                        onChange={(value) => {
-                          this.lastUpdatedBy = value;
-                          this.loadCycle();
-                        }}
-                      />
-                      <div style={{ marginLeft: 20 }}>
+                    <div className="c7n-TestPlan-content-right-bottom">
+                      <div style={{ display: 'flex', marginBottom: 20 }}>
                         <SelectFocusLoad
-                          label={<FormattedMessage id="cycle_assignedTo" />}
+                          label={<FormattedMessage id="cycle_executeBy" />}
                           request={getUsers}
                           onChange={(value) => {
-                            this.assignedTo = value;
+                            this.lastUpdatedBy = value;
                             this.loadCycle();
                           }}
                         />
+                        <div style={{ marginLeft: 20 }}>
+                          <SelectFocusLoad
+                            label={<FormattedMessage id="cycle_assignedTo" />}
+                            request={getUsers}
+                            onChange={(value) => {
+                              this.assignedTo = value;
+                              this.loadCycle();
+                            }}
+                          />
+                        </div>
                       </div>
+                      <DragTable
+                        pagination={executePagination}
+                        loading={rightLoading}
+                        onChange={this.handleExecuteTableChange}
+                        dataSource={testList}
+                        columns={treeShow ? columns
+                          : columns.slice(0, 4).concat(otherColumns).concat(columns.slice(4))}
+                        onDragEnd={this.onDragEnd}
+                        dragKey="executeId"
+                      />
                     </div>
-                    <DragTable
-                      pagination={executePagination}
-                      loading={rightLoading}
-                      onChange={this.handleExecuteTableChange}
-                      dataSource={testList}
-                      columns={treeShow ? columns
-                        : columns.slice(0, 4).concat(otherColumns).concat(columns.slice(4))}
-                      onDragEnd={this.onDragEnd}
-                      dragKey="executeId"
-                    />
-                  </div>
                   )}
                 </div>
               ) : (
@@ -522,7 +542,7 @@ class TestPlanHome extends Component {
             </div>
           </Spin>
         </Content>
-        
+
       </Page>
     );
   }

@@ -239,6 +239,18 @@ export function getFoldersByVersion(versionId) {
   const projectId = AppState.currentMenuType.id;
   return axios.get(`/test/v1/projects/${projectId}/issueFolder/query/${versionId}`);
 }
+
+export function syncFoldersInVersion(versionId) {
+  // cycleId || versionId
+  const projectId = AppState.currentMenuType.id;
+  return axios.post(`/test/v1/projects/${projectId}/cycle/synchro/folder/all/in/version/${versionId}`);
+}
+export function syncFoldersInCycle(cycleId) {
+  // cycleId || versionId
+  const projectId = AppState.currentMenuType.id;
+  return axios.post(`/test/v1/projects/${projectId}/cycle/synchro/folder/all/in/cycle/${cycleId}`);
+}
+
 export function syncFolder(folderId, cycleId) {
   const projectId = AppState.currentMenuType.id;
   return axios.post(`/test/v1/projects/${projectId}/cycle/synchro/folder/${folderId}/in/${cycleId}`);

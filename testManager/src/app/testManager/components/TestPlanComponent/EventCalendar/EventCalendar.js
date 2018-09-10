@@ -41,7 +41,7 @@ class EventCalendar extends Component {
 
   render() {
     const { mode } = this.state;
-    const { showMode } = this.props;
+    const { showMode, times } = this.props;
     const { start, end } = this.calculateTime();
     const range = moment.range(start, end);
     const timeArray = Array.from(range.by('day'));
@@ -122,10 +122,11 @@ class EventCalendar extends Component {
             }
           </div>
           <div className="c7n-EventCalendar-eventContainer">
-            {fake.map(event => (
+            {times.map(event => (
               <EventItem
                 itemRange={moment.range(event.start, event.end)}
-                totalRange={timeArray.length}
+                // totalRange={timeArray.length}
+                data={event}
                 range={range}
               />
             ))}

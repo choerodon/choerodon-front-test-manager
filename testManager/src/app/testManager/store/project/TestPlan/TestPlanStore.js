@@ -2,6 +2,7 @@ import axios from 'axios';
 import {
   observable, action, computed, toJS,
 } from 'mobx';
+import moment from 'moment';
 import { store, stores } from 'choerodon-front-boot';
 import { getCycles, getStatusList } from '../../../api/cycleApi';
 
@@ -26,6 +27,8 @@ class TestPlanStore {
   @observable currentCycle = {};
 
   @observable statusList = [];
+
+  @observable times = [];
 
   dataList = [];
 
@@ -66,7 +69,7 @@ class TestPlanStore {
     const currentCycle = this.getCurrentCycle;
     const selectedKeys = this.getSelectedKeys;
     if (currentCycle.cycleId) {
-      this.props.loadCycle(selectedKeys, { node: { props: { data: currentCycle } } }, true);
+      this.loadCycle(selectedKeys, { node: { props: { data: currentCycle } } }, true);
     }
   })
 
@@ -90,6 +93,25 @@ class TestPlanStore {
       this.dataList.push({ key, title });
       if (node.children) {
         this.generateList(node.children, node.key);
+      }
+    }
+  }
+
+  @action clearTimes=() => {
+    this.times = [];
+  }
+
+  @action generateTimes = (data) => {
+    for (let i = 0; i < data.length; i += 1) {
+      const node = data[i];
+      const {
+        fromDate, toDate, title, type, 
+      } = node;
+      this.times.push({
+        start: moment(fromDate), end: moment(toDate), title, type, 
+      });
+      if (node.children) {
+        this.generateTimes(node.children);
       }
     }
   }

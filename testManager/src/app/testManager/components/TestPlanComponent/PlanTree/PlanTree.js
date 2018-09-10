@@ -4,6 +4,7 @@ import { observer } from 'mobx-react';
 import _ from 'lodash';
 import './PlanTree.scss';
 import TestPlanStore from '../../../store/project/TestPlan/TestPlanStore';
+import { CreateCycle, EditCycle, CloneCycle } from '../../CycleComponent';
 import {
   getCycles, deleteExecute, getCycleById, editCycleExecute,
   clone, addFolder, getStatusList, exportCycle,
@@ -16,22 +17,27 @@ const dataList = [];
 @observer
 class PlanTree extends Component {
   state = {
-    loading: false,
     autoExpandParent: false,
     searchValue: '',
     CreateStageIn: {},
     CreateStageVisible: false,
+    currentCloneCycle: null,
+    CloneCycleVisible: false,
+    EditCycleVisible: false,
+    currentEditValue: {},
   }
 
   componentDidMount() {
     // this.getTree();
   }
 
+  refresh = () => {
+    TestPlanStore.getTree();
+  }
+
   addFolder = (item, e, type) => {
     const { value } = e.target;
-    this.setState({
-      loading: true,
-    });
+    TestPlanStore.enterLoading();
     // window.console.log(this.state.currentCycle);
 
     addFolder({
@@ -42,21 +48,15 @@ class PlanTree extends Component {
     }).then((data) => {
       if (data.failed) {
         Choerodon.prompt('名字重复');
-        this.setState({
-          loading: false,
-        });
+        TestPlanStore.leaveLoading();
         TestPlanStore.removeAdding();
       } else {
-        this.setState({
-          loading: false,
-        });
+        TestPlanStore.leaveLoading();
         this.refresh();
       }
     }).catch(() => {
       Choerodon.prompt('网络出错');
-      this.setState({
-        loading: false,
-      });
+      TestPlanStore.leaveLoading();
       TestPlanStore.removeAdding();
     });
   }
@@ -68,7 +68,23 @@ class PlanTree extends Component {
         TestPlanStore.addItemByParentKey(parentKey, { ...item, ...{ key: `${parentKey}-CLONE_FOLDER`, type: 'CLONE_FOLDER' } });
         break;
       }
-
+      case 'CLONE_CYCLE': {
+        // const parentKey = this.getParentKey(item.key, CycleStore.getTreeData);
+        // CycleStore.addItemByParentKey(parentKey, 
+        // { ...item, ...{ key: `${parentKey}-CLONE_CYCLE`, type: 'CLONE_CYCLE' } });
+        this.setState({
+          currentCloneCycle: item.cycleId,
+          CloneCycleVisible: true,
+        });
+        break;
+      }
+      case 'EDIT_CYCLE': {
+        this.setState({
+          EditCycleVisible: true,
+          currentEditValue: item,
+        });
+        break;
+      }
       case 'ADD_FOLDER': {
         this.setState({
           CreateStageIn: item,
@@ -84,35 +100,35 @@ class PlanTree extends Component {
 
   getParentKey = (key, tree) => key.split('-').slice(0, -1).join('-')
 
-  getTree = () => new Promise((resolve) => {
-    this.setState({
-      loading: true,
-    });
-    getStatusList('CYCLE_CASE').then((statusList) => {
-      this.setState({ statusList });
-    });
-    getCycles().then((data) => {
-      TestPlanStore.setTreeData([{ title: '所有版本', key: '0', children: data.versions }]);
-      this.setState({
-        // treeData: [
-        //   { title: '所有版本', key: '0', children: data.versions },
-        // ],
-        loading: false,
-      });
-      this.generateList([
-        { title: '所有版本', key: '0', children: data.versions },
-      ]);
-      resolve();
-      // window.console.log(dataList);
-    });
+  // getTree = () => new Promise((resolve) => {
+  //   this.setState({
+  //     loading: true,
+  //   });
+  //   getStatusList('CYCLE_CASE').then((statusList) => {
+  //     this.setState({ statusList });
+  //   });
+  //   getCycles().then((data) => {
+  //     TestPlanStore.setTreeData([{ title: '所有版本', key: '0', children: data.versions }]);
+  //     this.setState({
+  //       // treeData: [
+  //       //   { title: '所有版本', key: '0', children: data.versions },
+  //       // ],
+  //       loading: false,
+  //     });
+  //     this.generateList([
+  //       { title: '所有版本', key: '0', children: data.versions },
+  //     ]);
+  //     resolve();
+  //     // window.console.log(dataList);
+  //   });
 
-    // 如果选中了项，就刷新table数据
-    const currentCycle = TestPlanStore.getCurrentCycle;
-    const selectedKeys = TestPlanStore.getSelectedKeys;
-    if (currentCycle.cycleId) {
-      this.props.loadCycle(selectedKeys, { node: { props: { data: currentCycle } } }, true);
-    }
-  })
+  //   // 如果选中了项，就刷新table数据
+  //   const currentCycle = TestPlanStore.getCurrentCycle;
+  //   const selectedKeys = TestPlanStore.getSelectedKeys;
+  //   if (currentCycle.cycleId) {
+  //     this.props.loadCycle(selectedKeys, { node: { props: { data: currentCycle } } }, true);
+  //   }
+  // })
 
   renderTreeNodes = data => data.map((item) => {
     const {
@@ -174,7 +190,7 @@ class PlanTree extends Component {
       ) : <span>{item.title}</span>;
       return (
         <TreeNode
-          title={item.cycleId
+          title={item.versionId
             ? (
               <PlanTreeTitle
                 statusList={this.state.statusList}
@@ -267,10 +283,36 @@ class PlanTree extends Component {
     // }
   }
 
+  Clone = (item, e, type) => {
+    const { value } = e.target;
+    // window.console.log(item, value);
+    // e.target.focus();
+    if (value === item.title) {
+      Choerodon.prompt('请更改名字');
+      TestPlanStore.removeAdding();
+    } else {
+      TestPlanStore.enterLoading();
+      clone(item.cycleId, { cycleName: value }, type).then((data) => {
+        TestPlanStore.leaveLoading();
+        if (data.failed) {
+          Choerodon.prompt('名字重复');
+          TestPlanStore.removeAdding();
+        } else {
+          this.refresh();
+        }
+      }).catch(() => {
+        Choerodon.prompt('网络出错');
+        TestPlanStore.leaveLoading();
+        TestPlanStore.removeAdding();
+      });
+    }
+  }
+
   render() {
     const { onClose, loadCycle } = this.props;
     const {
-      autoExpandParent, loading, dragingElement, dragingTreeData, ctrlKey, CreateStageVisible, CreateStageIn,
+      autoExpandParent, CreateStageVisible, CreateStageIn,
+      CloneCycleVisible, currentCloneCycle, EditCycleVisible, currentEditValue,
     } = this.state;
     const treeData = TestPlanStore.getTreeData;
     const expandedKeys = TestPlanStore.getExpandedKeys;
@@ -278,6 +320,18 @@ class PlanTree extends Component {
     const currentCycle = TestPlanStore.getCurrentCycle;
     return (
       <div className="c7n-PlanTree">
+        <CloneCycle
+          visible={CloneCycleVisible}
+          currentCloneCycle={currentCloneCycle}
+          onCancel={() => { this.setState({ CloneCycleVisible: false }); }}
+          onOk={() => { this.setState({ CloneCycleVisible: false }); this.refresh(); }}
+        />
+        <EditCycle
+          visible={EditCycleVisible}
+          initialValue={currentEditValue}
+          onCancel={() => { this.setState({ EditCycleVisible: false }); }}
+          onOk={() => { this.setState({ EditCycleVisible: false }); this.refresh(); }}
+        />
         <CreateStage
           visible={CreateStageVisible}
           CreateStageIn={CreateStageIn}

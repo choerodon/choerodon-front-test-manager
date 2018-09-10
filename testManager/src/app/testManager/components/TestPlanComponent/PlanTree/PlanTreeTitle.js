@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import { observer } from 'mobx-react';
 import {
-  Menu, Input, Dropdown, Button, Popover, Tooltip, 
+  Menu, Input, Dropdown, Button, Popover, Tooltip, Icon,
 } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 import './PlanTreeTitle.scss';
 import { editFolder, deleteCycleOrFolder } from '../../../api/cycleApi';
-import { syncFolder } from '../../../api/IssueApi';
+import { syncFolder, syncFoldersInCycle, syncFoldersInVersion } from '../../../api/IssueApi';
 import CycleStore from '../../../store/project/cycle/CycleStore';
 
 @observer
@@ -15,7 +15,21 @@ class PlanTreeTitle extends Component {
     editing: false,
   }
 
-  
+  sync=(item) => {
+    const {
+      type, cycleId, folderId, versionId, 
+    } = item;
+    if (type === 'folder') {
+      syncFolder(folderId, cycleId).then((res) => {
+
+      });
+    } else if (type === 'cycle') {
+      syncFoldersInCycle(cycleId);
+    } else {
+      syncFoldersInVersion(versionId);
+    }
+  }
+
   handleItemClick = ({ item, key, keyPath }) => {
     const { data, refresh } = this.props;
     const { type, folderId, cycleId } = data;
@@ -65,9 +79,7 @@ class PlanTreeTitle extends Component {
         break;
       }
       case 'sync': {
-        syncFolder(folderId, cycleId).then((res) => {
-
-        });
+        this.sync();
         break;
       }
       default: break;
@@ -111,9 +123,9 @@ class PlanTreeTitle extends Component {
           <Menu.Item key="delete">
             {type === 'folder' ? <FormattedMessage id="cycle_deleteFolder" /> : <FormattedMessage id="cycle_deleteCycle" />}
           </Menu.Item>,
-          // <Menu.Item key="clone">
-          //   {type === 'folder' ? <FormattedMessage id="cycle_cloneFolder" /> : <FormattedMessage id="cycle_cloneCycle" />}
-          // </Menu.Item>,
+          <Menu.Item key="clone">
+            {type === 'folder' ? <FormattedMessage id="cycle_cloneFolder" /> : <FormattedMessage id="cycle_cloneCycle" />}
+          </Menu.Item>,
           <Menu.Item key="export">
             {type === 'folder' ? <FormattedMessage id="cycle_exportFolder" /> : <FormattedMessage id="cycle_exportCycle" />}
           </Menu.Item>,
@@ -154,15 +166,20 @@ class PlanTreeTitle extends Component {
                 {title}
               </Tooltip>
             </div>
-          )}        
-        <div role="none" className="c7n-tree-title-actionButton" style={{ marginLeft: data.type === 'cycle' || data.type === 'temp' ? '18px' : 0 }} onClick={e => e.stopPropagation()}>
-          {/* {data.type === 'temp'
-            ? null : */}
-          <Dropdown overlay={getMenu(data.type)} trigger={['click']}>
-            <Button shape="circle" icon="more_vert" />
-          </Dropdown>
-          {/* } */}
-        </div>
+          )}   
+        {
+            data.type ? (
+              <div role="none" className="c7n-tree-title-actionButton" style={{ marginLeft: data.type === 'cycle' || data.type === 'temp' ? '18px' : 0 }} onClick={e => e.stopPropagation()}>
+                {/* {data.type === 'temp'
+              ? null : */}
+                <Dropdown overlay={getMenu(data.type)} trigger={['click']}>
+                  <Button shape="circle" icon="more_vert" />
+                </Dropdown>
+                {/* } */}
+              </div>
+            ) : <Icon type="sync" style={{ marginLeft: 18 }} onClick={this.sync.bind(this, data)} />
+          }     
+        
 
       </div>
     );
