@@ -143,7 +143,7 @@ class PlanTreeTitle extends Component {
 
 
     return (
-      <div className="c7n-tree-title">
+      <div className="c7n-plan-tree-title">
         {editing
           ? (
             <Input
@@ -161,23 +161,32 @@ class PlanTreeTitle extends Component {
             />
           )
           : (
-            <div className="c7n-tree-title-text">
+            <div className="c7n-plan-tree-title-text">
               <Tooltip title={title}>
                 {title}
               </Tooltip>
             </div>
           )}   
         {
-            data.type ? (
-              <div role="none" className="c7n-tree-title-actionButton" style={{ marginLeft: data.type === 'cycle' || data.type === 'temp' ? '18px' : 0 }} onClick={e => e.stopPropagation()}>
-                {/* {data.type === 'temp'
+    
+          <div role="none" className="c7n-plan-tree-title-actionButton" style={{ marginLeft: data.type === 'cycle' || data.type === 'temp' ? '18px' : 0 }} onClick={e => e.stopPropagation()}>
+            {/* {data.type === 'temp'
               ? null : */}
+            {data.type
+              ? (
                 <Dropdown overlay={getMenu(data.type)} trigger={['click']}>
                   <Button shape="circle" icon="more_vert" />
                 </Dropdown>
-                {/* } */}
-              </div>
-            ) : <Icon type="sync" style={{ marginLeft: 18 }} onClick={this.sync.bind(this, data)} />
+              )
+              : (
+                <Tooltip title={<FormattedMessage id="cycle_sync" />}>
+                  <Icon type="sync" className="c7n-add-folder" onClick={this.sync.bind(this, data)} />
+                </Tooltip>
+              )
+                }
+            {/* } */}
+          </div>
+            
           }     
         
 
