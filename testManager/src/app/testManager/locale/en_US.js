@@ -188,6 +188,7 @@ const enUS = {
   cycle_exportCycle: 'Export cycle',
   cycle_exportFolder: 'Export folder',
   cycle_newFolder: 'New folder',
+  cycle_sync: 'sync',
   // 创建测试循环侧边
   cycle_create_title: 'Create cycle',
   cycle_create_content_title: `Create cycle in project “${projectName}”`,

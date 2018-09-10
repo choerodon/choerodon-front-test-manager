@@ -234,3 +234,12 @@ export function copyFolder(data) {
   const { folderId, versionId } = data;
   return axios.put(`/test/v1/projects/${projectId}/issueFolder/copy?folder_id=${folderId}&version_id=${versionId}`);
 }
+
+export function getFoldersByVersion(versionId) {
+  const projectId = AppState.currentMenuType.id;
+  return axios.get(`/test/v1/projects/${projectId}/issueFolder/query/${versionId}`);
+}
+export function syncFolder(folderId, cycleId) {
+  const projectId = AppState.currentMenuType.id;
+  return axios.post(`/test/v1/projects/${projectId}/cycle/synchro/folder/${folderId}/in/${cycleId}`);
+}

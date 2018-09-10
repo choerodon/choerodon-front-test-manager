@@ -6,6 +6,7 @@ import {
 import { FormattedMessage } from 'react-intl';
 import './PlanTreeTitle.scss';
 import { editFolder, deleteCycleOrFolder } from '../../../api/cycleApi';
+import { syncFolder } from '../../../api/IssueApi';
 import CycleStore from '../../../store/project/cycle/CycleStore';
 
 @observer
@@ -17,7 +18,7 @@ class PlanTreeTitle extends Component {
   
   handleItemClick = ({ item, key, keyPath }) => {
     const { data, refresh } = this.props;
-    const { type, cycleId } = data;
+    const { type, folderId, cycleId } = data;
     // window.console.log(this.props.data, { item, key, keyPath });
     switch (key) {
       case 'add': {
@@ -63,6 +64,12 @@ class PlanTreeTitle extends Component {
         this.props.callback(data, 'EXPORT_CYCLE');
         break;
       }
+      case 'sync': {
+        syncFolder(folderId, cycleId).then((res) => {
+
+        });
+        break;
+      }
       default: break;
     }
   }
@@ -104,12 +111,16 @@ class PlanTreeTitle extends Component {
           <Menu.Item key="delete">
             {type === 'folder' ? <FormattedMessage id="cycle_deleteFolder" /> : <FormattedMessage id="cycle_deleteCycle" />}
           </Menu.Item>,
-          <Menu.Item key="clone">
-            {type === 'folder' ? <FormattedMessage id="cycle_cloneFolder" /> : <FormattedMessage id="cycle_cloneCycle" />}
-          </Menu.Item>,
+          // <Menu.Item key="clone">
+          //   {type === 'folder' ? <FormattedMessage id="cycle_cloneFolder" /> : <FormattedMessage id="cycle_cloneCycle" />}
+          // </Menu.Item>,
           <Menu.Item key="export">
             {type === 'folder' ? <FormattedMessage id="cycle_exportFolder" /> : <FormattedMessage id="cycle_exportCycle" />}
           </Menu.Item>,
+          <Menu.Item key="sync">
+            <FormattedMessage id="cycle_sync" /> 
+          </Menu.Item>,
+          
         ]);
       }
       return <Menu onClick={this.handleItemClick} style={{ margin: '10px 0 0 28px' }}>{items}</Menu>;

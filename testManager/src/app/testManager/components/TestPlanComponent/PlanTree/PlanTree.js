@@ -3,7 +3,7 @@ import { Tree, Input, Icon } from 'choerodon-ui';
 import { observer } from 'mobx-react';
 import _ from 'lodash';
 import './PlanTree.scss';
-import { TestPlanTreeStore } from '../../../store/project/treeStore';
+import TestPlanStore from '../../../store/project/TestPlan/TestPlanStore';
 import {
   getCycles, deleteExecute, getCycleById, editCycleExecute,
   clone, addFolder, getStatusList, exportCycle,
@@ -24,7 +24,7 @@ class PlanTree extends Component {
   }
 
   componentDidMount() {
-    this.getTree();
+    // this.getTree();
   }
 
   addFolder = (item, e, type) => {
@@ -45,7 +45,7 @@ class PlanTree extends Component {
         this.setState({
           loading: false,
         });
-        TestPlanTreeStore.removeAdding();
+        TestPlanStore.removeAdding();
       } else {
         this.setState({
           loading: false,
@@ -57,15 +57,15 @@ class PlanTree extends Component {
       this.setState({
         loading: false,
       });
-      TestPlanTreeStore.removeAdding();
+      TestPlanStore.removeAdding();
     });
   }
 
   callback = (item, code) => {
     switch (code) {
       case 'CLONE_FOLDER': {
-        const parentKey = this.getParentKey(item.key, TestPlanTreeStore.getTreeData);
-        TestPlanTreeStore.addItemByParentKey(parentKey, { ...item, ...{ key: `${parentKey}-CLONE_FOLDER`, type: 'CLONE_FOLDER' } });
+        const parentKey = this.getParentKey(item.key, TestPlanStore.getTreeData);
+        TestPlanStore.addItemByParentKey(parentKey, { ...item, ...{ key: `${parentKey}-CLONE_FOLDER`, type: 'CLONE_FOLDER' } });
         break;
       }
 
@@ -75,7 +75,7 @@ class PlanTree extends Component {
           CreateStageVisible: true,
         });
         // 自动展开当前项
-        
+
         break;
       }
       default: break;
@@ -84,7 +84,7 @@ class PlanTree extends Component {
 
   getParentKey = (key, tree) => key.split('-').slice(0, -1).join('-')
 
-  getTree = () => {
+  getTree = () => new Promise((resolve) => {
     this.setState({
       loading: true,
     });
@@ -92,7 +92,7 @@ class PlanTree extends Component {
       this.setState({ statusList });
     });
     getCycles().then((data) => {
-      TestPlanTreeStore.setTreeData([{ title: '所有版本', key: '0', children: data.versions }]);
+      TestPlanStore.setTreeData([{ title: '所有版本', key: '0', children: data.versions }]);
       this.setState({
         // treeData: [
         //   { title: '所有版本', key: '0', children: data.versions },
@@ -102,17 +102,17 @@ class PlanTree extends Component {
       this.generateList([
         { title: '所有版本', key: '0', children: data.versions },
       ]);
-
+      resolve();
       // window.console.log(dataList);
     });
 
     // 如果选中了项，就刷新table数据
-    const currentCycle = TestPlanTreeStore.getCurrentCycle;
-    const selectedKeys = TestPlanTreeStore.getSelectedKeys;
+    const currentCycle = TestPlanStore.getCurrentCycle;
+    const selectedKeys = TestPlanStore.getSelectedKeys;
     if (currentCycle.cycleId) {
-      this.loadCycle(selectedKeys, { node: { props: { data: currentCycle } } }, true);
+      this.props.loadCycle(selectedKeys, { node: { props: { data: currentCycle } } }, true);
     }
-  }
+  })
 
   renderTreeNodes = data => data.map((item) => {
     const {
@@ -120,7 +120,7 @@ class PlanTree extends Component {
     } = item;
     // debugger;
     const { searchValue } = this.state;
-    const expandedKeys = TestPlanTreeStore.getExpandedKeys;
+    const expandedKeys = TestPlanStore.getExpandedKeys;
     const index = item.title.indexOf(searchValue);
     const beforeStr = item.title.substr(0, index);
     const afterStr = item.title.substr(index + searchValue.length);
@@ -215,11 +215,11 @@ class PlanTree extends Component {
       const { key, title } = node;
       // 找出url上的cycleId
       // const { cycleId } = getParams(window.location.href);
-      // const currentCycle = TestPlanTreeStore.getCurrentCycle;
+      // const currentCycle = TestPlanStore.getCurrentCycle;
       // if (!currentCycle.cycleId && Number(cycleId) === node.cycleId) {
       //   this.setExpandDefault(node);
       // } else if (currentCycle.cycleId === node.cycleId) {
-      //   TestPlanTreeStore.setCurrentCycle(node);
+      //   TestPlanStore.setCurrentCycle(node);
       // }
       dataList.push({ key, title });
       if (node.children) {
@@ -229,7 +229,7 @@ class PlanTree extends Component {
   }
 
   onExpand = (expandedKeys) => {
-    TestPlanTreeStore.setExpandedKeys(expandedKeys);
+    TestPlanStore.setExpandedKeys(expandedKeys);
     this.setState({
       autoExpandParent: false,
     });
@@ -240,11 +240,11 @@ class PlanTree extends Component {
     if (value !== '') {
       const expandedKeys = dataList.map((item) => {
         if (item.title.indexOf(value) > -1) {
-          return this.getParentKey(item.key, TestPlanTreeStore.getTreeData);
+          return this.getParentKey(item.key, TestPlanStore.getTreeData);
         }
         return null;
       }).filter((item, i, self) => item && self.indexOf(item) === i);
-      TestPlanTreeStore.setExpandedKeys(expandedKeys);
+      TestPlanStore.setExpandedKeys(expandedKeys);
     }
     this.setState({
       searchValue: value,
@@ -256,33 +256,33 @@ class PlanTree extends Component {
     selected, selectedNodes, node, event,
   } = {}) => {
     if (selectedKeys) {
-      TestPlanTreeStore.setSelectedKeys(selectedKeys);
+      TestPlanStore.setSelectedKeys(selectedKeys);
     }
     // const { executePagination, filters } = this.state;
     // const data = node.props.data;
     // // console.log(data);
     // if (data.cycleId) {
-    //   TestPlanTreeStore.setCurrentCycle(data);
+    //   TestPlanStore.setCurrentCycle(data);
     //   IssueStore.loadIssues();
     // }
   }
 
   render() {
-    const { onClose, onSelect } = this.props;
+    const { onClose, loadCycle } = this.props;
     const {
       autoExpandParent, loading, dragingElement, dragingTreeData, ctrlKey, CreateStageVisible, CreateStageIn,
     } = this.state;
-    const treeData = TestPlanTreeStore.getTreeData;
-    const expandedKeys = TestPlanTreeStore.getExpandedKeys;
-    const selectedKeys = TestPlanTreeStore.getSelectedKeys;
-    const currentCycle = TestPlanTreeStore.getCurrentCycle;
+    const treeData = TestPlanStore.getTreeData;
+    const expandedKeys = TestPlanStore.getExpandedKeys;
+    const selectedKeys = TestPlanStore.getSelectedKeys;
+    const currentCycle = TestPlanStore.getCurrentCycle;
     return (
       <div className="c7n-PlanTree">
         <CreateStage
           visible={CreateStageVisible}
-          CreateStageIn={CreateStageIn} 
+          CreateStageIn={CreateStageIn}
           onCancel={() => { this.setState({ CreateStageVisible: false }); }}
-          onOk={() => { this.setState({ CreateStageVisible: false }); this.refresh(); }} 
+          onOk={() => { this.setState({ CreateStageVisible: false }); this.refresh(); }}
         />
         <div className="c7n-PlanTree-treeTop">
           <Input
@@ -305,7 +305,7 @@ class PlanTree extends Component {
             expandedKeys={expandedKeys}
             showIcon
             onExpand={this.onExpand}
-            onSelect={onSelect}
+            onSelect={loadCycle}
             autoExpandParent={autoExpandParent}
           >
             {this.renderTreeNodes(treeData)}

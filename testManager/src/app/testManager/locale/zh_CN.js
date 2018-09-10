@@ -191,6 +191,7 @@ const zhCN = {
   cycle_exportCycle: '导出循环',
   cycle_exportFolder: '导出文件夹',
   cycle_newFolder: '新文件夹',
+  cycle_sync: '同步',
 
   // 创建测试循环侧边
   cycle_create_title: '创建测试循环',

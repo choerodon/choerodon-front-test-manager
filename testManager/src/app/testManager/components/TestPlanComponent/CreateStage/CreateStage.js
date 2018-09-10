@@ -5,8 +5,8 @@ import {
 import moment from 'moment';
 import { Content, stores } from 'choerodon-front-boot';
 import { FormattedMessage } from 'react-intl';
-import { getProjectVersion } from '../../../api/agileApi';
-import { addCycle } from '../../../api/cycleApi';
+import { addFolder } from '../../../api/cycleApi';
+import { getFoldersByVersion } from '../../../api/IssueApi';
 
 const { Option } = Select;
 const { AppState } = stores;
@@ -16,7 +16,7 @@ const { TextArea } = Input;
 
 class CreateStage extends Component {
   state = {
-    versions: [],
+    folders: [],
     selectLoading: false,
     loading: false,
   }
@@ -34,36 +34,44 @@ class CreateStage extends Component {
         // this.setState({ loading: true });
         window.console.log('Received values of form: ', values);
         const { fromDate, toDate } = values;
-
-        // addCycle({
-        //   ...values,
-        //   ...{
-        //     type: 'folder',
-        //     fromDate: fromDate ? fromDate.format('YYYY-MM-DD HH:mm:ss') : null,
-        //     toDate: toDate ? toDate.format('YYYY-MM-DD HH:mm:ss') : null,
-        //   },
-        // }).then((res) => {
-        //   if (res.failed) {
-        //     Choerodon.prompt('同名循环已存在');
-        //   } else {
-        //     this.props.onOk();
-        //   }
-        //   this.setState({ loading: false });
-        // }).catch(() => {
-        //   Choerodon.prompt('网络异常');
-        //   this.setState({ loading: false });
-        // });
+        const {
+          visible, onOk, onCancel, CreateStageIn, 
+        } = this.props;
+        const { cycleName, cycleId, versionId } = CreateStageIn;
+        addFolder({
+          ...values,          
+          parentCycleId: cycleId,
+          versionId,        
+          type: 'folder',
+          fromDate: fromDate ? fromDate.format('YYYY-MM-DD HH:mm:ss') : null,
+          toDate: toDate ? toDate.format('YYYY-MM-DD HH:mm:ss') : null,
+         
+        }).then((res) => {
+          if (res.failed) {
+            Choerodon.prompt('同名循环已存在');
+          } else {
+            this.props.onOk();
+          }
+          this.setState({ loading: false });
+        }).catch(() => {
+          Choerodon.prompt('网络异常');
+          this.setState({ loading: false });
+        });
       }
     });
   }
 
-  loadVersions = () => {
+  loadFolders = () => {
     this.setState({
       selectLoading: true,
     });
-    getProjectVersion().then((versions) => {
+    const {
+      visible, onOk, onCancel, CreateStageIn, 
+    } = this.props;
+    const { cycleName, versionId } = CreateStageIn;
+    getFoldersByVersion(versionId).then((folders) => {
       this.setState({
-        versions,
+        folders,
         selectLoading: false,
       });
     });
@@ -81,12 +89,12 @@ class CreateStage extends Component {
     const {
       visible, onOk, onCancel, CreateStageIn, 
     } = this.props;
-    const { cycleName } = CreateStageIn;
+    const { cycleName, versionId } = CreateStageIn;
     const { getFieldDecorator } = this.props.form;
-    const { versions, loading, selectLoading } = this.state;
-    const options = versions.map(version => (
-      <Option value={version.versionId} key={version.versionId}>
-        {version.name}
+    const { folders, loading, selectLoading } = this.state;
+    const options = folders.map(folder => (
+      <Option value={folder.folderId} key={folder.folderId}>
+        {folder.name}
       </Option>
     ));
     return (
@@ -142,7 +150,7 @@ class CreateStage extends Component {
                   })(
                     <Select
                       loading={selectLoading}
-                      onFocus={this.loadVersions}
+                      onFocus={this.loadFolders}
                       style={{ width: 500, margin: '0 0 10px 0' }}
                       label={<FormattedMessage id="testPlan_linkFolder" />}
                     >

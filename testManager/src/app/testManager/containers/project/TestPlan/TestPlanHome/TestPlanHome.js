@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Moment from 'moment';
 import { extendMoment } from 'moment-range';
 import {
-  Page, Header, Content, stores, 
+  Page, Header, Content, stores,
 } from 'choerodon-front-boot';
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
@@ -10,14 +10,15 @@ import {
   Tooltip, Table, Button, Icon, Input, Tree, Spin, Modal,
 } from 'choerodon-ui';
 import { Link } from 'react-router-dom';
-import { getCycleById } from '../../../../api/cycleApi';
+import { getCycleById, getCycles, getStatusList } from '../../../../api/cycleApi';
 import { EventCalendar, PlanTree, CreateCycle } from '../../../../components/TestPlanComponent';
 import { RichTextShow, SelectFocusLoad } from '../../../../components/CommonComponent';
 import DragTable from '../../../../components/DragTable';
+
 import { getUsers } from '../../../../api/CommonApi';
 import TestPlanStore from '../../../../store/project/TestPlan/TestPlanStore';
 import {
-  delta2Html, delta2Text, issueLink, 
+  delta2Html, delta2Text, issueLink,
 } from '../../../../common/utils';
 import './TestPlanHome.scss';
 import noRight from '../../../../assets/noright.svg';
@@ -50,6 +51,30 @@ class TestPlanHome extends Component {
     filters: {},
     rightLoading: false,
     calendarShowMode: 'single',
+  }
+
+  componentDidMount() {
+    this.refresh();
+  }
+
+  refresh = () => {
+    this.setState({
+      loading: true,
+    });
+    getStatusList('CYCLE_CASE').then((statusList) => {
+      this.setState({ statusList });
+    });
+    this.PlanTree.getTree().then(() => {
+      this.setState({
+        loading: false,
+      });
+    });
+    // 如果选中了项，就刷新table数据
+    const currentCycle = TestPlanStore.getCurrentCycle;
+    const selectedKeys = TestPlanStore.getSelectedKeys;
+    if (currentCycle.cycleId) {
+      this.loadCycle(selectedKeys, { node: { props: { data: currentCycle } } }, true);
+    }
   }
 
   loadCycle = (selectedKeys, {
@@ -106,9 +131,9 @@ class TestPlanHome extends Component {
 
   render() {
     const {
-      loading, treeShow, CreateCycleVisible, testList, rightLoading, statusList, 
+      loading, treeShow, CreateCycleVisible, testList, rightLoading, statusList,
       executePagination, calendarShowMode,
-    } = this.state;    
+    } = this.state;
     const currentCycle = TestPlanStore.getCurrentCycle;
     const { cycleId, title } = currentCycle;
     const columns = [{
@@ -126,7 +151,7 @@ class TestPlanHome extends Component {
             <Tooltip
               title={(
                 <div>
-                  <div>{issueInfosDTO.issueName}</div>
+                  <div>{issueInfosDTO.issueNum}</div>
                   <div>{issueInfosDTO.summary}</div>
                 </div>
               )}
@@ -139,7 +164,7 @@ class TestPlanHome extends Component {
                 to={issueLink(issueInfosDTO.issueId, issueInfosDTO.typeCode)}
                 target="_blank"
               >
-                {issueInfosDTO.issueName}
+                {issueInfosDTO.issueNum}
               </Link>
             </Tooltip>
           )
@@ -387,18 +412,20 @@ class TestPlanHome extends Component {
             </span>
           </Button>
         </Header>
+        
         <Content
           title={null}
           description={null}
           style={{ padding: 0 }}
         >
-          <div className="c7n-TestPlan-content">
-            <CreateCycle
-              visible={CreateCycleVisible}
-              onCancel={() => { this.setState({ CreateCycleVisible: false }); }}
-              onOk={() => { this.setState({ CreateCycleVisible: false }); this.refresh(); }}
-            />
-            {!treeShow && (
+          <Spin spinning={loading}>
+            <div className="c7n-TestPlan-content">
+              <CreateCycle
+                visible={CreateCycleVisible}
+                onCancel={() => { this.setState({ CreateCycleVisible: false }); }}
+                onOk={() => { this.setState({ CreateCycleVisible: false }); this.refresh(); }}
+              />
+              {!treeShow && (
               <div className="c7n-TestPlan-bar">
                 <div
                   role="none"
@@ -422,73 +449,76 @@ class TestPlanHome extends Component {
                   <FormattedMessage id="testPlan_name" />
                 </p>
               </div>
-            )}
-            <div className="c7n-TestPlan-tree">
-              {treeShow && (
+              )}
+              <div className="c7n-TestPlan-tree">
+                {treeShow && (
                 <PlanTree
-                  onClose={() => {                  
+                  ref={(tree) => { this.PlanTree = tree; }}
+                  onClose={() => {
                     this.setState({
                       treeShow: false,
                     });
                   }}
-                  onSelect={this.loadCycle}
+                  loadCycle={this.loadCycle}
                 />
-              )}
-            </div>
-            {/* <Spin spinning={loading}> */}
-            {cycleId ? (
-              <div className="c7n-TestPlan-content-right">
-                <EventCalendar showMode={calendarShowMode} />
-                {calendarShowMode === 'single' && (
-                <div className="c7n-TestPlan-content-right-bottom">
-                  <div style={{ display: 'flex', marginBottom: 20 }}>
-                    <SelectFocusLoad
-                      label={<FormattedMessage id="cycle_executeBy" />}
-                      request={getUsers}
-                      onChange={(value) => {
-                        this.lastUpdatedBy = value;
-                        this.loadCycle();
-                      }}
-                    />
-                    <div style={{ marginLeft: 20 }}>
+                )}
+              </div>
+              {/* <Spin spinning={loading}> */}
+              {cycleId ? (
+                <div className="c7n-TestPlan-content-right">
+                  <EventCalendar showMode={calendarShowMode} />
+                  {calendarShowMode === 'single' && (
+                  <div className="c7n-TestPlan-content-right-bottom">
+                    <div style={{ display: 'flex', marginBottom: 20 }}>
                       <SelectFocusLoad
-                        label={<FormattedMessage id="cycle_assignedTo" />}
+                        label={<FormattedMessage id="cycle_executeBy" />}
                         request={getUsers}
                         onChange={(value) => {
-                          this.assignedTo = value;
+                          this.lastUpdatedBy = value;
                           this.loadCycle();
                         }}
                       />
+                      <div style={{ marginLeft: 20 }}>
+                        <SelectFocusLoad
+                          label={<FormattedMessage id="cycle_assignedTo" />}
+                          request={getUsers}
+                          onChange={(value) => {
+                            this.assignedTo = value;
+                            this.loadCycle();
+                          }}
+                        />
+                      </div>
                     </div>
+                    <DragTable
+                      pagination={executePagination}
+                      loading={rightLoading}
+                      onChange={this.handleExecuteTableChange}
+                      dataSource={testList}
+                      columns={treeShow ? columns
+                        : columns.slice(0, 4).concat(otherColumns).concat(columns.slice(4))}
+                      onDragEnd={this.onDragEnd}
+                      dragKey="executeId"
+                    />
                   </div>
-                  <DragTable
-                    pagination={executePagination}
-                    loading={rightLoading}
-                    onChange={this.handleExecuteTableChange}
-                    dataSource={testList}
-                    columns={treeShow ? columns
-                      : columns.slice(0, 4).concat(otherColumns).concat(columns.slice(4))}
-                    onDragEnd={this.onDragEnd}
-                    dragKey="executeId"
-                  />
+                  )}
                 </div>
-                )}
-              </div>
-            ) : (
-              <div style={{
-                display: 'flex', alignItems: 'center', height: 250, margin: '88px auto', padding: '50px 75px', border: '1px dashed rgba(0,0,0,0.54)',
-              }}
-              >
-                <img src={noRight} alt="" />
-                <div style={{ marginLeft: 40 }}>
-                  <div style={{ fontSize: '14px', color: 'rgba(0,0,0,0.65)' }}>根据当前选定的测试循环没有查询到循环信息</div>
-                  <div style={{ fontSize: '20px', marginTop: 10 }}>尝试在您的树状图中选择测试循环</div>
+              ) : (
+                <div style={{
+                  display: 'flex', alignItems: 'center', height: 250, margin: '88px auto', padding: '50px 75px', border: '1px dashed rgba(0,0,0,0.54)',
+                }}
+                >
+                  <img src={noRight} alt="" />
+                  <div style={{ marginLeft: 40 }}>
+                    <div style={{ fontSize: '14px', color: 'rgba(0,0,0,0.65)' }}>根据当前选定的测试循环没有查询到循环信息</div>
+                    <div style={{ fontSize: '20px', marginTop: 10 }}>尝试在您的树状图中选择测试循环</div>
+                  </div>
                 </div>
-              </div>
-            )}
-            {/* </Spin> */}
-          </div>
+              )}
+
+            </div>
+          </Spin>
         </Content>
+        
       </Page>
     );
   }
