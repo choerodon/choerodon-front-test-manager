@@ -4,7 +4,7 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "test": " mocha ./test/apiTest/index.js --slow 250 --require babel-core/register"
+        "test": " mocha ./test/apiTest/index.js --slow 250 --reporter json --require babel-core/register"
     },
     "author": "",
     "license": "ISC",

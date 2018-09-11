@@ -159,6 +159,8 @@ const enUS = {
   testPlan_createStage: 'add test stage',
   testPlan_linkFolder: 'link folder',
   testPlan_createStageIn: 'add test stage in cycle “{cycleName}”',
+  testPlan_EditStage_title: 'EditStage',
+  testPlan_EditStage: 'edit stage “{cycleName}”',
   // 测试循环
   cycle_name: 'Test cycle',
   cycle_my: 'my cycles',

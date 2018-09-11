@@ -12,7 +12,9 @@ import {
 } from 'choerodon-ui';
 import { Link } from 'react-router-dom';
 import { getCycleById, getCycles, getStatusList } from '../../../../api/cycleApi';
-import { EventCalendar, PlanTree, CreateCycle } from '../../../../components/TestPlanComponent';
+import {
+  EventCalendar, PlanTree, CreateCycle, EditStage, EditCycle,
+} from '../../../../components/TestPlanComponent';
 import { RichTextShow, SelectFocusLoad } from '../../../../components/CommonComponent';
 import DragTable from '../../../../components/DragTable';
 
@@ -42,16 +44,7 @@ class TestPlanHome extends Component {
   state = {
     CreateCycleVisible: false,
     treeShow: true,
-    // executePagination: {
-    //   current: 1,
-    //   total: 0,
-    //   pageSize: 5,
-    // },
-    // testList: [],
     statusList: [],
-    // filters: {},
-    // rightLoading: false,
-    // calendarShowMode: 'single',    
   }
 
   componentDidMount() {
@@ -62,61 +55,14 @@ class TestPlanHome extends Component {
     TestPlanStore.getTree();
   }
 
-  // loadCycle = (selectedKeys, {
-  //   selected, selectedNodes, node, event,
-  // } = {}, flag) => {
-  //   // window.console.log(selectedNodes, node, event);
-
-  //   const { executePagination, filters } = this.state;
-  //   const data = node ? node.props.data : TestPlanStore.getCurrentCycle;
-  //   if (data.cycleId) {
-  //     if (selectedKeys) {
-  //       TestPlanStore.clearTimes();
-  //       TestPlanStore.generateTimes([data]);
-  //       TestPlanStore.setSelectedKeys(selectedKeys);
-  //     }
-  //     if (data.type === 'cycle') {
-  //       this.setState({
-  //         calendarShowMode: 'multi',
-  //       });
-  //     } else {
-  //       this.setState({
-  //         calendarShowMode: 'single',
-  //       });
-  //     }
-  //     if (!flag) {
-  //       this.setState({
-  //         rightLoading: true,
-  //         // currentCycle: data,
-  //       });
-  //     }
-
-  //     TestPlanStore.setCurrentCycle(data);
-  //     // window.console.log(data);
-  //     if (data.type === 'folder') {
-  //       getCycleById({
-  //         page: executePagination.current - 1,
-  //         size: executePagination.pageSize,
-  //       }, data.cycleId,
-  //       {
-  //         ...filters,
-  //         lastUpdatedBy: [Number(this.lastUpdatedBy)],
-  //         assignedTo: [Number(this.assignedTo)],
-  //       }).then((cycle) => {
-  //         this.setState({
-  //           rightLoading: false,
-  //           testList: cycle.content,
-  //           executePagination: {
-  //             current: executePagination.current,
-  //             pageSize: executePagination.pageSize,
-  //             total: cycle.totalElements,
-  //           },
-  //         });
-  //         // window.console.log(cycle);
-  //       });
-  //     }
-  //   }
-  // }
+  onItemClick=(item) => {
+    const { type } = item;
+    if (type === 'folder') {
+      TestPlanStore.EditStage(item);
+    } else if (type === 'cycle') {
+      TestPlanStore.EditCycle(item);
+    }
+  }
 
   handleExecuteTableChange = (pagination, filters, sorter) => {
     // window.console.log(pagination, filters, sorter);
@@ -432,7 +378,6 @@ class TestPlanHome extends Component {
             </span>
           </Button>
         </Header>
-
         <Content
           title={null}
           description={null}
@@ -440,6 +385,8 @@ class TestPlanHome extends Component {
         >
           <Spin spinning={loading}>
             <div className="c7n-TestPlan-content">
+              <EditCycle />
+              <EditStage />
               <CreateCycle
                 visible={CreateCycleVisible}
                 onCancel={() => { this.setState({ CreateCycleVisible: false }); }}
@@ -478,15 +425,14 @@ class TestPlanHome extends Component {
                       this.setState({
                         treeShow: false,
                       });
-                    }}
-                    loadCycle={TestPlanStore.loadCycle}
+                    }}                   
                   />
                 )}
               </div>
               {/* <Spin spinning={loading}> */}
               {versionId ? (
                 <div className="c7n-TestPlan-content-right">
-                  <EventCalendar showMode={calendarShowMode} times={times} />
+                  <EventCalendar showMode={calendarShowMode} times={times} onItemClick={this.onItemClick} />
                   {calendarShowMode === 'single' && (
                     <div className="c7n-TestPlan-content-right-bottom">
                       <div style={{ display: 'flex', marginBottom: 20 }}>

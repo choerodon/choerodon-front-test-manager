@@ -46,11 +46,12 @@ class PlanTreeTitle extends Component {
       }
       case 'edit': {
         if (type === 'folder') {
-          this.setState({
-            editing: true,
-          });
-        } else {
-          this.props.callback(data, 'EDIT_CYCLE');
+          TestPlanStore.EditStage(data);
+          // this.setState({
+          //   editing: true,
+          // });
+        } else if (type === 'cycle') {
+          TestPlanStore.EditCycle(data);
         }
         break;
       }

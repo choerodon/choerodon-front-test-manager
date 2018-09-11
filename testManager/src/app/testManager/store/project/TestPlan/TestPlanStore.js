@@ -5,6 +5,7 @@ import {
 import moment from 'moment';
 import { store, stores } from 'choerodon-front-boot';
 import { getCycles, getStatusList, getCycleById } from '../../../api/cycleApi';
+import { EditStage } from '../../../components/TestPlanComponent';
 
 const { AppState } = stores;
 
@@ -30,7 +31,7 @@ class TestPlanStore {
 
   @observable times = [];
 
-  dataList = [];
+  @observable dataList = [];
 
   @observable testList = [];
 
@@ -47,6 +48,14 @@ class TestPlanStore {
   @observable rightLoading = false;
 
   @observable calendarShowMode = 'single';
+
+  @observable EditCycleVisible = false;
+
+  @observable CurrentEditCycle = {};
+
+  @observable EditStageVisible = false;
+
+  @observable CurrentEditStage = {};
 
   @computed get getTreeData() {
     return toJS(this.treeData);
@@ -86,19 +95,43 @@ class TestPlanStore {
     // 如果选中了项，就刷新table数据
     const currentCycle = this.getCurrentCycle;
     const selectedKeys = this.getSelectedKeys;
-    if (currentCycle.cycleId) {
-      this.loadCycle(selectedKeys, { node: { props: { data: currentCycle } } }, true);
+
+    if (currentCycle.versionId) {
+      this.reloadCycle();
     }
   })
 
+  reloadCycle = () => {
+    const data = this.getCurrentCycle;
+    const { executePagination, filters } = this;
+    if (data.type === 'folder') {
+      getCycleById({
+        page: executePagination.current - 1,
+        size: executePagination.pageSize,
+      }, data.cycleId,
+      {
+        ...filters,
+        lastUpdatedBy: [Number(this.lastUpdatedBy)],
+        assignedTo: [Number(this.assignedTo)],
+      }).then((cycle) => {
+        this.rightLeaveLoading();
+        this.setTestList(cycle.content);
+        this.setExecutePagination({
+          current: executePagination.current,
+          pageSize: executePagination.pageSize,
+          total: cycle.totalElements,
+        });
+      });
+    }
+  }
+
+  // 点击树的一项，加载数据
   loadCycle = (selectedKeys, {
     selected, selectedNodes, node, event,
-  } = {}, flag) => {
-    // window.console.log(selectedNodes, node, event);
-
+  } = {}) => {
     const { executePagination, filters } = this;
-    const data = node ? node.props.data : this.getCurrentCycle;    
-    
+    const data = node ? node.props.data : this.getCurrentCycle;
+
     if (data.versionId) {
       if (selectedKeys) {
         this.setSelectedKeys(selectedKeys);
@@ -110,9 +143,8 @@ class TestPlanStore {
       } else {
         this.setCalendarShowMode('multi');
       }
-      if (!flag) {
-        this.rightEnterLoading();
-      }
+      this.rightEnterLoading();
+
 
       this.setCurrentCycle(data);
       // window.console.log(data);
@@ -132,7 +164,7 @@ class TestPlanStore {
             current: executePagination.current,
             pageSize: executePagination.pageSize,
             total: cycle.totalElements,
-          });         
+          });
         });
       }
     }
@@ -149,12 +181,16 @@ class TestPlanStore {
       const { key, title } = node;
       // 找出url上的cycleId
       // const { cycleId } = getParams(window.location.href);
-      // const currentCycle = TestPlanStore.getCurrentCycle;
+      const currentCycle = this.getCurrentCycle;
       // if (!currentCycle.cycleId && Number(cycleId) === node.cycleId) {
       //   this.setExpandDefault(node);
-      // } else if (currentCycle.cycleId === node.cycleId) {
-      //   TestPlanStore.setCurrentCycle(node);
-      // }
+      // } else
+      if (currentCycle.cycleId && currentCycle.cycleId === node.cycleId) {
+        this.setCurrentCycle(node);
+        this.clearTimes();
+        // debugger;
+        this.generateTimes([node]);
+      }
       this.dataList.push({ key, title });
       if (node.children) {
         this.generateList(node.children, node.key);
@@ -182,10 +218,13 @@ class TestPlanStore {
       } = node;
       if (fromDate && toDate) {
         this.times.push({
-          start: moment(fromDate), end: moment(toDate), title, type,
+          ...node,
+          children: [],
+          start: moment(fromDate),
+          end: moment(toDate),
         });
       }
-      
+
       if (node.children) {
         this.generateTimes(node.children);
       }
@@ -212,11 +251,11 @@ class TestPlanStore {
     this.rightLoading = false;
   }
 
-  @action setTestList=(testList) => {
+  @action setTestList = (testList) => {
     this.testList = testList;
   }
 
-  @action setExecutePagination=(executePagination) => {
+  @action setExecutePagination = (executePagination) => {
     this.executePagination = executePagination;
   }
 
@@ -257,6 +296,26 @@ class TestPlanStore {
     temp.children.unshift(item);
     this.addingParent = temp;
     // window.console.log({ ...item, ...{ key: `${key}-add'`, type: 'add' } });
+  }
+
+  @action EditStage(CurrentEditStage) {
+    this.CurrentEditStage = CurrentEditStage;
+    this.EditStageVisible = true;
+  }
+
+  @action ExitEditStage() {
+    this.CurrentEditStage = {};
+    this.EditStageVisible = false;
+  }
+
+  @action EditCycle(CurrentEditCycle) {
+    this.CurrentEditCycle = CurrentEditCycle;
+    this.EditCycleVisible = true;
+  }
+
+  @action ExitEditCycle() {
+    this.CurrentEditCycle = {};
+    this.EditCycleVisible = false;
   }
 }
 

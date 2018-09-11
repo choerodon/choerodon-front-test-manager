@@ -162,6 +162,8 @@ const zhCN = {
   testPlan_createStage: '添加测试阶段',
   testPlan_linkFolder: '关联文件夹',
   testPlan_createStageIn: '在测试循环“{cycleName}”中添加测试阶段',
+  testPlan_EditStage_title: '编辑测试阶段',
+  testPlan_EditStage: '编辑测试阶段“{cycleName}”',
   // 测试循环
   cycle_name: '测试循环',
   cycle_my: '我的执行',

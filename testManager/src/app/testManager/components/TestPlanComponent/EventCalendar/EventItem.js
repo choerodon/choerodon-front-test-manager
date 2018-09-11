@@ -6,6 +6,12 @@ import { Tooltip } from 'choerodon-ui';
 
 const moment = extendMoment(Moment);
 class EventItem extends Component {
+  handleItemClick=() => {
+    if (this.props.onClick) {
+      this.props.onClick(this.props.data);
+    }
+  }
+
   renderItems = () => {
     const {
       range, itemRange, data,
@@ -54,6 +60,8 @@ class EventItem extends Component {
     return [
       <div style={{ flex: preFlex }} />,
       <div
+        role="none"
+        onClick={this.handleItemClick}
         className="c7n-EventItem-event"
         style={{
           flex,
