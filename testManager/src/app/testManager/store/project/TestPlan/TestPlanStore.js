@@ -170,6 +170,23 @@ class TestPlanStore {
     }
   }
 
+  getParentKey = (key, tree) => key.split('-').slice(0, -1).join('-')
+
+  getParent=(key) => {
+    const parentKey = this.getParentKey(key);
+    const arr = parentKey.split('-');
+    let temp = this.treeData;
+    arr.forEach((index, i) => {
+      // window.console.log(temp);
+      if (i === 0) {
+        temp = temp[index];
+      } else {
+        temp = temp.children[index];
+      }
+    });
+    return temp;
+  }
+
   generateList = (data) => {
     // const temp = data;
     // while (temp) {
@@ -185,7 +202,9 @@ class TestPlanStore {
       // if (!currentCycle.cycleId && Number(cycleId) === node.cycleId) {
       //   this.setExpandDefault(node);
       // } else
-      if (currentCycle.cycleId && currentCycle.cycleId === node.cycleId) {
+      // 两种情况，version或者cycle和文件夹，version没有type
+      if ((currentCycle.versionId && !currentCycle.type && currentCycle.versionId === node.versionId) 
+      || (currentCycle.cycleId && currentCycle.cycleId === node.cycleId)) {
         this.setCurrentCycle(node);
         this.clearTimes();
         // debugger;
@@ -298,8 +317,14 @@ class TestPlanStore {
     // window.console.log({ ...item, ...{ key: `${key}-add'`, type: 'add' } });
   }
 
-  @action EditStage(CurrentEditStage) {
-    this.CurrentEditStage = CurrentEditStage;
+  @action EditStage(CurrentEditStage) {    
+    const parent = this.getParent(CurrentEditStage.key);
+    const { fromDate, toDate } = parent;
+    // 为阶段设置父元素时间段，来限制时间的选择
+    this.CurrentEditStage = {
+      ...CurrentEditStage, 
+      parentTime: { start: moment(fromDate), end: moment(toDate) }, 
+    };
     this.EditStageVisible = true;
   }
 

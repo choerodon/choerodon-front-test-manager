@@ -69,6 +69,24 @@ class EditCycle extends Component {
     });
   }
 
+  disabledStartDate = (startValue) => { 
+    const { getFieldValue } = this.props.form;
+    const endValue = getFieldValue('toDate');
+    if (!startValue || !endValue) {
+      return false;
+    }
+    return startValue.valueOf() > endValue.valueOf();   
+  }
+
+  disabledEndDate = (endValue) => {
+    const { getFieldValue } = this.props.form;
+    const startValue = getFieldValue('fromDate'); 
+    if (!endValue || !startValue) {
+      return false;
+    }
+    return endValue.valueOf() <= startValue.valueOf();
+  }
+
   render() {
     const visible = TestPlanStore.EditCycleVisible;
     const { getFieldDecorator } = this.props.form;
@@ -83,22 +101,23 @@ class EditCycle extends Component {
     ));
     return (
       <div>
-        <Spin spinning={loading}>
-          <Sidebar
-            destroyOnClose
-            title="修改测试循环"
-            visible={visible}
-            onOk={this.onOk}
-            onCancel={this.onCancel}
+        
+        <Sidebar
+          destroyOnClose
+          title="修改测试循环"
+          visible={visible}
+          onOk={this.onOk}
+          onCancel={this.onCancel}
+        >
+          <Content
+            style={{
+              padding: '0 0 10px 0',
+            }}
+            title={`在项目“${AppState.currentMenuType.name}”中修改测试循环`}
+            description="您可以更改一个测试循环的具体信息。"
+            link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management/test-cycle/"
           >
-            <Content
-              style={{
-                padding: '0 0 10px 0',
-              }}
-              title={`在项目“${AppState.currentMenuType.name}”中修改测试循环`}
-              description="您可以更改一个测试循环的具体信息。"
-              link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management/test-cycle/"
-            >
+            <Spin spinning={loading}>
               <Form>
                 {/* <FormItem
                   // {...formItemLayout}
@@ -193,6 +212,7 @@ class EditCycle extends Component {
                     }],
                   })(
                     <DatePicker
+                      disabledDate={this.disabledStartDate}
                       format="YYYY-MM-DD"
                       style={{ width: 500 }}
                       label="开始日期"
@@ -210,6 +230,7 @@ class EditCycle extends Component {
                     }],
                   })(
                     <DatePicker
+                      disabledDate={this.disabledEndDate}
                       format="YYYY-MM-DD"
                       style={{ width: 500 }}
                       label="结束日期"
@@ -220,9 +241,9 @@ class EditCycle extends Component {
                   )}
                 </FormItem>
               </Form>
-            </Content>
-          </Sidebar>
-        </Spin>
+            </Spin>
+          </Content>
+        </Sidebar>        
       </div>
     );
   }
