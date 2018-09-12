@@ -84,51 +84,51 @@ class CycleHome extends Component {
     });
   }
 
-  onDragEnd = (sourceIndex, targetIndex) => {
-    let lastRank = null;
-    let nextRank = null;
-    const { testList } = this.state;
-    if (sourceIndex < targetIndex) {
-      lastRank = testList[targetIndex].rank;
-      nextRank = testList[targetIndex + 1] ? testList[targetIndex + 1].rank : null;
-    } else if (sourceIndex > targetIndex) {
-      lastRank = testList[targetIndex - 1] ? testList[targetIndex - 1].rank : null;
-      nextRank = testList[targetIndex].rank;
-    }
-    // window.console.log(sourceIndex, targetIndex, lastRank, nextRank);
-    const source = testList[sourceIndex];
-    const temp = { ...source };
-    delete temp.defects;
-    delete temp.caseAttachment;
-    delete temp.testCycleCaseStepES;
-    delete temp.issueInfosDTO;
-    this.setState({ rightLoading: true });
-    editCycleExecute({
-      ...temp,
-      ...{
-        lastRank,
-        nextRank,
-      },
-    }).then((res) => {
-      const { executePagination } = this.state;
-      const currentCycle = CycleStore.getCurrentCycle;
-      getCycleById({
-        page: executePagination.current - 1,
-        size: executePagination.pageSize,
-      }, currentCycle.cycleId).then((cycle) => {
-        this.setState({
-          rightLoading: false,
-          testList: cycle.content,
-          executePagination: {
-            current: executePagination.current,
-            pageSize: executePagination.pageSize,
-            total: cycle.totalElements,
-          },
-        });
-        // window.console.log(cycle);
-      });
-    });
-  }
+  // onDragEnd = (sourceIndex, targetIndex) => {
+  //   let lastRank = null;
+  //   let nextRank = null;
+  //   const { testList } = this.state;
+  //   if (sourceIndex < targetIndex) {
+  //     lastRank = testList[targetIndex].rank;
+  //     nextRank = testList[targetIndex + 1] ? testList[targetIndex + 1].rank : null;
+  //   } else if (sourceIndex > targetIndex) {
+  //     lastRank = testList[targetIndex - 1] ? testList[targetIndex - 1].rank : null;
+  //     nextRank = testList[targetIndex].rank;
+  //   }
+  //   // window.console.log(sourceIndex, targetIndex, lastRank, nextRank);
+  //   const source = testList[sourceIndex];
+  //   const temp = { ...source };
+  //   delete temp.defects;
+  //   delete temp.caseAttachment;
+  //   delete temp.testCycleCaseStepES;
+  //   delete temp.issueInfosDTO;
+  //   this.setState({ rightLoading: true });
+  //   editCycleExecute({
+  //     ...temp,
+  //     ...{
+  //       lastRank,
+  //       nextRank,
+  //     },
+  //   }).then((res) => {
+  //     const { executePagination } = this.state;
+  //     const currentCycle = CycleStore.getCurrentCycle;
+  //     getCycleById({
+  //       page: executePagination.current - 1,
+  //       size: executePagination.pageSize,
+  //     }, currentCycle.cycleId).then((cycle) => {
+  //       this.setState({
+  //         rightLoading: false,
+  //         testList: cycle.content,
+  //         executePagination: {
+  //           current: executePagination.current,
+  //           pageSize: executePagination.pageSize,
+  //           total: cycle.totalElements,
+  //         },
+  //       });
+  //       // window.console.log(cycle);
+  //     });
+  //   });
+  // }
 
   getParentKey = (key, tree) => key.split('-').slice(0, -1).join('-')
 
@@ -1035,15 +1035,15 @@ class CycleHome extends Component {
                       />
                     </div>
                   </div>
-                  <DragTable
+                  <Table
                     pagination={executePagination}
                     loading={rightLoading}
                     onChange={this.handleExecuteTableChange}
                     dataSource={testList}
                     columns={leftVisible ? columns
                       : columns.slice(0, 4).concat(otherColumns).concat(columns.slice(4))}
-                    onDragEnd={this.onDragEnd}
-                    dragKey="executeId"
+                    // onDragEnd={this.onDragEnd}
+                    // dragKey="executeId"
                   />
                 </div>
               ) : (

@@ -11,7 +11,9 @@ import {
   Tooltip, Table, Button, Icon, Input, Tree, Spin, Modal,
 } from 'choerodon-ui';
 import { Link } from 'react-router-dom';
-import { getCycleById, getCycles, getStatusList } from '../../../../api/cycleApi';
+import {
+  getCycleById, getCycles, getStatusList, editCycleExecute, 
+} from '../../../../api/cycleApi';
 import {
   EventCalendar, PlanTree, CreateCycle, EditStage, EditCycle,
 } from '../../../../components/TestPlanComponent';
@@ -89,6 +91,50 @@ class TestPlanHome extends Component {
         });         
       });
     }
+  }
+
+  onDragEnd = (sourceIndex, targetIndex) => {
+    let lastRank = null;
+    let nextRank = null;
+    const { testList } = this.state;
+    if (sourceIndex < targetIndex) {
+      lastRank = testList[targetIndex].rank;
+      nextRank = testList[targetIndex + 1] ? testList[targetIndex + 1].rank : null;
+    } else if (sourceIndex > targetIndex) {
+      lastRank = testList[targetIndex - 1] ? testList[targetIndex - 1].rank : null;
+      nextRank = testList[targetIndex].rank;
+    }
+    // window.console.log(sourceIndex, targetIndex, lastRank, nextRank);
+    const source = testList[sourceIndex];
+    const temp = { ...source };
+    delete temp.defects;
+    delete temp.caseAttachment;
+    delete temp.testCycleCaseStepES;
+    delete temp.issueInfosDTO;
+    TestPlanStore.rightEnterLoading();
+    editCycleExecute({
+      ...temp,
+      ...{
+        lastRank,
+        nextRank,
+      },
+    }).then((res) => {
+      const { executePagination } = this.state;
+      const currentCycle = TestPlanStore.getCurrentCycle;
+      getCycleById({
+        page: executePagination.current - 1,
+        size: executePagination.pageSize,
+      }, currentCycle.cycleId).then((cycle) => {
+        TestPlanStore.rightLeaveLoading();
+        TestPlanStore.setTestList(cycle.content);
+        TestPlanStore.setExecutePagination({
+          current: executePagination.current,
+          pageSize: executePagination.pageSize,
+          total: cycle.totalElements,
+        });
+        // window.console.log(cycle);
+      });
+    });
   }
 
   render() {

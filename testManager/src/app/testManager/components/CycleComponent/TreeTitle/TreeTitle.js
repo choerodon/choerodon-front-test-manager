@@ -195,14 +195,11 @@ class TreeTitle extends Component {
               </div>                 
             </div>
           )}
-        <div role="none" className="c7n-tree-title-actionButton" onClick={e => e.stopPropagation()}>
-          {/* {data.type === 'temp'
-            ? null : */}
+        {/* <div role="none" className="c7n-tree-title-actionButton" onClick={e => e.stopPropagation()}>    
           <Dropdown overlay={getMenu(data.type)} trigger={['click']}>
             <Button shape="circle" icon="more_vert" />
-          </Dropdown>
-          {/* } */}
-        </div>
+          </Dropdown>   
+        </div> */}
 
       </div>
     );
