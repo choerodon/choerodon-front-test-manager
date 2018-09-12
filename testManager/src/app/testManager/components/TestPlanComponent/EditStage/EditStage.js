@@ -109,7 +109,7 @@ class EditStage extends Component {
       parentTime,
       title, description, versionId, fromDate, toDate, folderId,
     } = TestPlanStore.CurrentEditStage;
-    console.log(parentTime);
+    // console.log(parentTime);
     const { getFieldDecorator } = this.props.form;
     const { folders, loading, selectLoading } = this.state;
     const options = folders.map(folder => (

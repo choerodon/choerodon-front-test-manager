@@ -190,7 +190,6 @@ class PlanTree extends Component {
       />);
   });
 
- 
   onExpand = (expandedKeys) => {
     TestPlanStore.setExpandedKeys(expandedKeys);
     this.setState({
@@ -273,7 +272,7 @@ class PlanTree extends Component {
           onCancel={() => { this.setState({ CloneCycleVisible: false }); }}
           onOk={() => { this.setState({ CloneCycleVisible: false }); this.refresh(); }}
         />
-        
+
         <CreateStage
           visible={CreateStageVisible}
           CreateStageIn={CreateStageIn}

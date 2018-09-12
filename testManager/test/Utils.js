@@ -84,7 +84,7 @@ function encode(password) {
  * @param {string} msg 
  */
 function login(reqBody, msg) {
-  console.log('login')
+  // console.log('login')
   if (!arguments[1]) { msg = 'success'; }
   global.user = {};
   if (!reqBody.username || !reqBody.password) {
@@ -97,11 +97,11 @@ function login(reqBody, msg) {
     .get(authorize)
     .redirects(0)
     .then((res) => {
-      // console.log(res.header)
+      // console.dir(res.header)
       let cookie;
       cookie = res.header['set-cookie'][0].split(';')[0];
       if (msg == 'success') {
-        console.log('login success')
+        // console.log('login success')
         // Login success, pass token to global.user.token
         return chai.request(utils.gateway)
           .post('/oauth/login')
@@ -110,6 +110,7 @@ function login(reqBody, msg) {
           .set('content-type', 'application/x-www-form-urlencoded')
           .send(reqBody)
           .then((res) => {
+            // console.dir(res.header)
             cookie = res.header['set-cookie'][0].split(';')[0];
             return chai.request(utils.gateway)
               .get(authorize)
@@ -124,6 +125,7 @@ function login(reqBody, msg) {
                 global.user.username = reqBody.username;
                 global.user.token = 'Bearer ' + location.split('#access_token=')[1].split('&token_type')[0];
                 console.log("  [Login] User " + global.user.username + " logged in!\n");
+                return res;
               });
           });
       } else {
