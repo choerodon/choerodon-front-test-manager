@@ -62,6 +62,11 @@ class TextEditToggle extends Component {
 
   // 进入编辑状态
   enterEditing = () => {
+    // 如果禁用，将不进入编辑模式
+    const { disabled } = this.props;
+    if (disabled) {
+      return;
+    }
     // console.log('enter');
     TextEditToggleStore.setCurrentToggle(this.key);
     document.addEventListener('click', this.onSubmit);
@@ -105,6 +110,7 @@ class TextEditToggle extends Component {
 
   renderChild = () => {
     const { editing } = this.state;
+    const { disabled } = this.props;
     const {
       children, originData, formKey, rules, 
     } = this.props;
@@ -138,7 +144,11 @@ class TextEditToggle extends Component {
     } else {
       child = children.filter(current => current.type === Text);
       child = (
-        <div className="c7n-TextEditToggle-text" onClick={this.enterEditing} role="none">
+        <div
+          className={disabled ? 'c7n-TextEditToggle-text' : 'c7n-TextEditToggle-text c7n-TextEditToggle-text-active'} 
+          onClick={this.enterEditing}
+          role="none"
+        >
           {child}
           <Icon type="mode_edit" className="c7n-TextEditToggle-text-icon" />
         </div>
@@ -150,7 +160,7 @@ class TextEditToggle extends Component {
   render() {
     const { editing } = this.state;
     const child = this.renderChild();
-    // console.log(child);
+    
     const currentToggle = TextEditToggleStore.getCurrentToggle;
     
     return (

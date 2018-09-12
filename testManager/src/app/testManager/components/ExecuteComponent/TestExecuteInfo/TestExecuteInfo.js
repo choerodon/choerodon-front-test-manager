@@ -1,17 +1,17 @@
 import React, { Component } from 'react';
 import {
-  Button, Icon, Card, Select, Upload, 
+  Button, Icon, Card, Select, Upload,
 } from 'choerodon-ui';
 import _ from 'lodash';
 import { observer } from 'mobx-react';
 import { FormattedMessage } from 'react-intl';
 import {
-  TextEditToggle, RichTextShow, User, SelectCreateIssueFooter, 
+  TextEditToggle, RichTextShow, User, SelectCreateIssueFooter,
 } from '../../CommonComponent';
 import { uploadFile } from '../../../api/CommonApi';
 import { delta2Html } from '../../../common/utils';
 import {
-  addDefects, editCycle, deleteAttachment, removeDefect, 
+  addDefects, editCycle, deleteAttachment, removeDefect,
 } from '../../../api/CycleExecuteApi';
 import FullEditor from '../../FullEditor';
 import CycleExecuteStore from '../../../store/project/cycle/CycleExecuteStore';
@@ -170,6 +170,7 @@ class TestExecuteInfo extends Component {
   }
 
   render() {
+    const { disabled } = this.props;
     const statusList = CycleExecuteStore.getStatusList;
     const issueList = CycleExecuteStore.getIssueList;
     const userList = CycleExecuteStore.getUserList;
@@ -178,7 +179,7 @@ class TestExecuteInfo extends Component {
     const selectLoading = CycleExecuteStore.selectLoading;
     const {
       executionStatus, assigneeUser, lastUpdateUser,
-      lastUpdateDate, comment, defects, 
+      lastUpdateDate, comment, defects,
     } = cycleData;
     const fileList = CycleExecuteStore.getFileList;
     const defectIds = CycleExecuteStore.getDefectIds;
@@ -204,7 +205,7 @@ class TestExecuteInfo extends Component {
     ));
     const defectsOptions = issueList.map(issue => (
       <Option key={issue.issueId} value={issue.issueId.toString()}>
-        {issue.issueNum} 
+        {issue.issueNum}
         {' '}
         {issue.summary}
       </Option>
@@ -218,7 +219,7 @@ class TestExecuteInfo extends Component {
                 src={user.imageUrl}
                 alt=""
                 style={{
-                  width: 20, height: 20, borderRadius: '50%', marginRight: '8px', 
+                  width: 20, height: 20, borderRadius: '50%', marginRight: '8px',
                 }}
               />
             )
@@ -236,8 +237,8 @@ class TestExecuteInfo extends Component {
       <div style={{ display: 'flex', marginBottom: 24 }} className="c7n-TestExecuteinfo">
         {/* 基本信息 */}
         <div
-          className="c7n-card"        
-          style={{ flex: 1, minHeight: 236 }}         
+          className="c7n-card"
+          style={{ flex: 1, minHeight: 236 }}
         >
           <div style={styles.cardTitle}>
             <Icon type="expand_more" />
@@ -247,16 +248,17 @@ class TestExecuteInfo extends Component {
             <div style={styles.cardContentItem}>
               <div style={styles.carsContentItemPrefix}>
                 <FormattedMessage id="execute_status" />
-:
+                :
               </div>
               <TextEditToggle
+                disabled={disabled}
                 formKey="executionStatus"
                 onSubmit={(id) => { this.submit({ executionStatus: id }); }}
                 originData={executionStatus}
               >
                 <Text>
                   <div style={{
-                    background: statusColor, width: 60, textAlign: 'center', borderRadius: '2px', display: 'inline-block', color: 'white', 
+                    background: statusColor, width: 60, textAlign: 'center', borderRadius: '2px', display: 'inline-block', color: 'white',
                   }}
                   >
                     {statusName}
@@ -265,7 +267,7 @@ class TestExecuteInfo extends Component {
                 <Edit>
                   <Select
                     autoFocus
-                  // defaultValue={executionStatus}
+                    // defaultValue={executionStatus}
                     style={{ width: 200 }}
                   >
                     {options}
@@ -276,9 +278,10 @@ class TestExecuteInfo extends Component {
             <div style={styles.cardContentItem}>
               <div style={styles.carsContentItemPrefix}>
                 <FormattedMessage id="execute_assignedTo" />
-：
+                ：
               </div>
               <TextEditToggle
+                disabled={disabled}
                 formKey="assignedTo"
                 onSubmit={(id) => { this.submit({ assignedTo: id || 0 }); }}
                 originData={assigneeUser ? assigneeUser.id : null}
@@ -307,14 +310,14 @@ class TestExecuteInfo extends Component {
             <div style={styles.cardContentItem}>
               <div style={styles.carsContentItemPrefix}>
                 <FormattedMessage id="execute_executive" />
-：
+                ：
               </div>
               {lastUpdateUser ? <User user={lastUpdateUser} /> : '无'}
             </div>
             <div style={styles.cardContentItem}>
               <div style={styles.carsContentItemPrefix}>
                 <FormattedMessage id="execute_executeTime" />
-：
+                ：
               </div>
               <div>
                 {lastUpdateDate}
@@ -323,10 +326,11 @@ class TestExecuteInfo extends Component {
             <div style={styles.cardContentItem}>
               <div style={styles.carsContentItemPrefix}>
                 <FormattedMessage id="bug" />
-：
+                ：
               </div>
 
               <TextEditToggle
+                disabled={disabled}
                 formKey="defects"
                 onSubmit={this.addDefects}
                 originData={defectIds}
@@ -348,15 +352,15 @@ class TestExecuteInfo extends Component {
                 </Text>
                 <Edit>
                   <Select
-                  // filter
-                  // allowClear
+                    // filter
+                    // allowClear
                     autoFocus
                     filter
                     mode="multiple"
                     filterOption={false}
                     loading={selectLoading}
                     footer={<SelectCreateIssueFooter />}
-                  // value={defectIds}
+                    // value={defectIds}
                     style={{ minWidth: 250 }}
                     onChange={this.handleDefectsChange}
                     onFilterChange={(value) => { CycleExecuteStore.loadIssueList(value); }}
@@ -376,20 +380,22 @@ class TestExecuteInfo extends Component {
         <div style={{ marginLeft: 20, flex: 1 }}>
           {/* 描述 */}
           <div
-            className="c7n-card"          
+            className="c7n-card"
             style={{
               width: '100%', height: '60%', display: 'flex', flexDirection: 'column',
-            }}      
+            }}
           >
             <div style={styles.cardTitle}>
               <Icon type="expand_more" />
               <span style={styles.cardTitleText}><FormattedMessage id="execute_description" /></span>
               <div style={{ flex: 1, visibility: 'hidden' }} />
+              {!disabled && (
               <Button className="c7n-upload-button" onClick={() => { this.setState({ edit: true }); }}>
-                <Icon type="zoom_out_map" /> 
+                <Icon type="zoom_out_map" />
                 {' '}
                 <FormattedMessage id="execute_edit_fullScreen" />
               </Button>
+              )}
               <FullEditor
                 initValue={comment}
                 visible={this.state.edit}
@@ -398,7 +404,7 @@ class TestExecuteInfo extends Component {
               />
             </div>
             <div style={{
-              fontSize: 13, color: 'rgba(0,0,0,0.65)', lineHeight: '20px', padding: '0 20px', height: 80, overflow: 'auto', 
+              fontSize: 13, color: 'rgba(0,0,0,0.65)', lineHeight: '20px', padding: '0 20px', height: 80, overflow: 'auto',
             }}
             >
               <RichTextShow data={delta2Html(comment)} />
@@ -406,8 +412,8 @@ class TestExecuteInfo extends Component {
           </div>
           {/* 附件 */}
           <div
-            className="c7n-card"      
-            style={{ width: '100%', height: 'calc(40% - 20px)', marginTop: 20 }}           
+            className="c7n-card"
+            style={{ width: '100%', height: 'calc(40% - 20px)', marginTop: 20 }}
           >
             <div style={styles.cardTitle}>
               <div>
@@ -415,20 +421,22 @@ class TestExecuteInfo extends Component {
                 <span style={styles.cardTitleText}><FormattedMessage id="attachment" /></span>
               </div>
               <div style={{ flex: 1, visibility: 'hidden' }} />
+              {!disabled && (
               <Button className="c7n-upload-button" onClick={() => this.uploadInput.click()}>
-                <Icon type="file_upload" /> 
+                <Icon type="file_upload" />
                 {' '}
                 <FormattedMessage id="upload_attachment" />
                 <input
                   ref={
-                  (uploadInput) => { if (uploadInput) { this.uploadInput = uploadInput; } }
-                }
+                    (uploadInput) => { if (uploadInput) { this.uploadInput = uploadInput; } }
+                  }
                   type="file"
                   multiple
                   onChange={this.handleUpload}
                   style={{ display: 'none' }}
                 />
               </Button>
+              )}
             </div>
             <div style={{ marginTop: -10 }}>
               {/* {caseAttachment} */}
