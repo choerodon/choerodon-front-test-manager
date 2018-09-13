@@ -29,7 +29,7 @@ const styles = {
   cardBodyStyle: {
     // maxHeight: '100%',
     padding: 12,
-    overflow: 'hidden',
+    overflow: 'visible',
   },
   cardContent: {
 

@@ -1,15 +1,18 @@
 .StepTable {
-    .ant-select-selection__choice {
-        display: flex;
-        overflow: visible;
-    }
-    .ant-select-selection__choice__content {
-        width: 70px;
-    }
+  .ant-select-selection__choice {
+    display: flex;
+    overflow: visible;
+  }
+  .ant-select-selection__choice__content {
+    width: 70px;
+  }
+  .ant-select-dropdown--multiple {
+    left: calc(100% - 300px)!important;
+  }
 }
 
 .c7n-cycleExecute {
-    .ant-select-dropdown--multiple {
-        // left: calc(100% - 400px)!important;
-    }
+  .ant-select-dropdown--multiple {
+    // left: calc(100% - 400px)!important;
+  }
 }

@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
-import { Table, Button, Icon, Card, Spin, Tooltip } from 'choerodon-ui';
+import {
+  Table, Button, Icon, Card, Spin, Tooltip, 
+} from 'choerodon-ui';
 import { Page, Header, Content } from 'choerodon-front-boot';
 import { observer } from 'mobx-react';
 import { withRouter } from 'react-router-dom';
@@ -37,10 +39,12 @@ class CycleExecute extends Component {
     editVisible: false,
     editing: null,
   }
+
   componentDidMount() {
     const { id } = this.props.match.params;
     CycleExecuteStore.getInfo(id);
   }
+
   render() {
     const { editVisible, editing } = this.state;
     const loading = CycleExecuteStore.loading;
@@ -89,11 +93,13 @@ class CycleExecute extends Component {
             );
           }
           default: {
-            return (<div
-              className="c7n-text-dot"
-            >
-              {oldValue}
-            </div>);
+            return (
+              <div
+                className="c7n-text-dot"
+              >
+                {oldValue}
+              </div>
+            );
           }
         }
       },
@@ -120,39 +126,44 @@ class CycleExecute extends Component {
             );
           }
           default: {
-            return (<div
-              className="c7n-text-dot"
-            >
-              {newValue}
-            </div>);
+            return (
+              <div
+                className="c7n-text-dot"
+              >
+                {newValue}
+              </div>
+            );
           }
         }
       },
     }];
 
 
-    const { executionStatus, executionStatusName,
+    const {
+      executionStatus, executionStatusName,
       executionStatusColor, assigneeUser, lastUpdateUser,
-      lastUpdateDate, comment, defects } = cycleData;
+      lastUpdateDate, comment, defects, 
+    } = cycleData;
     return (
       <Page className="c7n-cycleExecute">
-        <Header title={<div>
-          <Tooltip
-            title={Choerodon.getMessage('返回', 'return')}
-            placement="bottom"
-          // getTooltipContainer={that => that}
-          >
-            <Button
-              type="primary"
-              onClick={() => { this.props.history.goBack(); }}
-              className="back-btn small-tooltip"
-              shape="circle"
-              size="large"
-              icon="arrow_back"
-            />
-          </Tooltip>
-          <span><FormattedMessage id="execute_detail" /></span>
-        </div>}
+        <Header title={(
+          <div>
+            <Tooltip
+              title={Choerodon.getMessage('返回', 'return')}
+              placement="bottom"
+            >
+              <Button
+                type="primary"
+                onClick={() => { this.props.history.goBack(); }}
+                className="back-btn small-tooltip"
+                shape="circle"
+                size="large"
+                icon="arrow_back"
+              />
+            </Tooltip>
+            <span><FormattedMessage id="execute_detail" /></span>
+          </div>
+)}
         >
 
           <Button onClick={() => CycleExecuteStore.getInfo()}>
@@ -167,7 +178,7 @@ class CycleExecute extends Component {
             <Card
               title={null}
               style={{ marginBottom: 24 }}
-              bodyStyle={styles.cardBodyStyle}
+              bodyStyle={{ ...styles.cardBodyStyle, overflow: 'visible' }}
             >
               <div style={{ ...styles.cardTitle, marginBottom: 10 }}>
                 <Icon type="expand_more" />

@@ -130,6 +130,7 @@ class TextEditToggle extends Component {
   // 为子元素加上getPopupContainer，因为默认getPopupContainer是body,点击时判断onDocumentClick会调用onSubmit方法
   wrapChildren = (children) => {
     const childrenArray = React.Children.toArray(children);
+    console.log(childrenArray);
     return childrenArray.map(child => React.cloneElement(child, {
       getPopupContainer: () => findDOMNode(this),
     }));
@@ -159,7 +160,7 @@ class TextEditToggle extends Component {
                 </FormItem>
               ))}
             </Form>
-          ) : children
+          ) : children.map(child => (this.wrapChildren(child.props.children)))
         }
         <div style={{ textAlign: 'right', lineHeight: '20px' }}>
           <Icon type="done" className="c7n-TextEditToggle-edit-icon" onClick={this.onSubmit} />

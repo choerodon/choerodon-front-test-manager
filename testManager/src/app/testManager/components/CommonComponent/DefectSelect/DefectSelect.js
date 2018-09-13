@@ -86,10 +86,10 @@ class DefectSelect extends Component {
     ));
     return (     
       <Select          
-        dropdownStyle={{
-          right: 0,
+        dropdownStyle={{        
+          width: 300,  
         }}
-        getPopupContainer={() => document.getElementsByClassName('c7n-cycleExecute')[0]}
+        getPopupContainer={this.props.getPopupContainer}
         autoFocus
         filter
         mode="multiple"
@@ -98,7 +98,7 @@ class DefectSelect extends Component {
         loading={selectLoading}
         defaultValue={defects.map(defect => defect.issueId.toString())}
         footer={<SelectCreateIssueFooter />}
-        // style={{ width: 140 }}
+        style={{ width: '100%' }}
         onChange={this.handleDefectsChange}
         onFilterChange={(value) => {
           this.setState({
