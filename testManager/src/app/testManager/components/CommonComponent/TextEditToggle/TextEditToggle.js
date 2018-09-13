@@ -53,13 +53,14 @@ class TextEditToggle extends Component {
     const root = findDOMNode(this);
     // 如果点击不在当前元素内，就调用submit提交数据
     if (!contains(root, target)) {
+      console.log(target);
       this.onSubmit();
     }
   }
 
   // 提交编辑
   onSubmit = () => {
-    document.removeEventListener('click', this.onDocumentClick);
+    document.removeEventListener('mousedown', this.onDocumentClick);
     try {
       this.props.form.validateFields((err, values) => {
         if (!err) {
@@ -90,7 +91,7 @@ class TextEditToggle extends Component {
     if (disabled) {
       return;
     }
-    document.addEventListener('click', this.onDocumentClick);
+    document.addEventListener('mousedown', this.onDocumentClick);
     this.setState({
       editing: true,
       originData: this.props.originData,
@@ -99,7 +100,7 @@ class TextEditToggle extends Component {
 
   // 取消编辑
   leaveEditing = () => {
-    document.removeEventListener('click', this.onDocumentClick);
+    document.removeEventListener('mousedown', this.onDocumentClick);
     this.setState({
       editing: false,
     });
