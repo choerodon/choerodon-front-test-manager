@@ -169,6 +169,7 @@ const zhCN = {
   cycle_my: '我的执行',
   cycle_all: '所有执行',
   cycle_cycleName: '循环名称',
+  cycle_stageName: '阶段名称',
   cycle_addCycle: '添加执行',
   cycle_build: '构建号',
   cycle_environment: '环境',

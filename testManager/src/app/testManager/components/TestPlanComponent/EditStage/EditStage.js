@@ -26,6 +26,13 @@ class EditStage extends Component {
     loading: false,
   }
 
+  componentWillReact() {
+    const visible = TestPlanStore.EditStageVisible;
+    if (visible) {
+      this.loadFolders();
+    }
+  }
+
   onOk = () => {
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
@@ -171,6 +178,7 @@ class EditStage extends Component {
                     }],
                   })(
                     <Select
+                      disabled
                       loading={selectLoading}
                       onFocus={this.loadFolders}
                       style={{ width: 500, margin: '0 0 10px 0' }}

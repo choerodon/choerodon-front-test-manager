@@ -166,6 +166,7 @@ const enUS = {
   cycle_my: 'my cycles',
   cycle_all: 'all cycles',
   cycle_cycleName: 'Cycle name',
+  cycle_stageName: 'Stage name',
   cycle_addCycle: 'create execute',
   cycle_build: 'Build',
   cycle_environment: 'Environment',

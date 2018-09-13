@@ -73,6 +73,8 @@ class CycleHome extends Component {
     filters: {},
   };
 
+  treeAssignedTo = 0;
+
   componentDidMount() {
     this.refresh();
   }
@@ -142,36 +144,37 @@ class CycleHome extends Component {
     const { executePagination, filters } = this.state;
     const data = node ? node.props.data : CycleStore.getCurrentCycle;
     if (data.cycleId) {
-      if (!flag) {
-        this.setState({
-          rightLoading: true,
-          // currentCycle: data,
-        });
-      }
-
       CycleStore.setCurrentCycle(data);
       // window.console.log(data);
-
-      getCycleById({
-        page: executePagination.current - 1,
-        size: executePagination.pageSize,
-      }, data.cycleId,
-      {
-        ...filters,
-        lastUpdatedBy: [Number(this.lastUpdatedBy)],
-        assignedTo: [Number(this.assignedTo)],
-      }).then((cycle) => {
-        this.setState({
-          rightLoading: false,
-          testList: cycle.content,
-          executePagination: {
-            current: executePagination.current,
-            pageSize: executePagination.pageSize,
-            total: cycle.totalElements,
-          },
+      if (data.type === 'folder') {
+        if (!flag) {
+          this.setState({
+            rightLoading: true,
+            // currentCycle: data,
+          });
+        }
+        // console.log(this.treeAssignedTo);
+        getCycleById({
+          page: executePagination.current - 1,
+          size: executePagination.pageSize,
+        }, data.cycleId,
+        {
+          ...filters,
+          lastUpdatedBy: [Number(this.lastUpdatedBy)],
+          assignedTo: [this.treeAssignedTo || Number(this.assignedTo)],
+        }).then((cycle) => {
+          this.setState({
+            rightLoading: false,
+            testList: cycle.content,
+            executePagination: {
+              current: executePagination.current,
+              pageSize: executePagination.pageSize,
+              total: cycle.totalElements,
+            },
+          });
+          // window.console.log(cycle);
         });
-        // window.console.log(cycle);
-      });
+      }
     }
   }
 
@@ -241,14 +244,14 @@ class CycleHome extends Component {
     });
   }
 
-  refresh = () => {
+  refresh = (assignedTo = this.treeAssignedTo) => {
     this.setState({
       loading: true,
     });
     getStatusList('CYCLE_CASE').then((statusList) => {
       this.setState({ statusList });
     });
-    getCycles().then((data) => {
+    getCycles(assignedTo).then((data) => {
       CycleStore.setTreeData([{ title: '所有版本', key: '0', children: data.versions }]);
       this.setState({
         // treeData: [
@@ -576,6 +579,18 @@ class CycleHome extends Component {
     }
   }
 
+  handleTreeAssignedToChange = (e) => {
+    let assignedTo = 0;
+    if (e.target.value === 'my') {
+      assignedTo = AppState.userInfo.id;
+      this.treeAssignedTo = assignedTo;
+      this.refresh(assignedTo);
+    } else {
+      this.treeAssignedTo = 0;
+      this.refresh(0);
+    }    
+  }
+
   render() {
     // window.console.log('render');
     const {
@@ -589,7 +604,7 @@ class CycleHome extends Component {
     const expandedKeys = CycleStore.getExpandedKeys;
     const selectedKeys = CycleStore.getSelectedKeys;
     const currentCycle = CycleStore.getCurrentCycle;
-    const { cycleId, title } = currentCycle;
+    const { cycleId, title, type } = currentCycle;
     const prefix = <Icon type="filter_list" />;
     const columns = [{
       title: 'ID',
@@ -854,7 +869,7 @@ class CycleHome extends Component {
     return (
       <Page className="c7n-cycle">
         <Header title={<FormattedMessage id="cycle_name" />}>
-          <Button onClick={this.refresh}>
+          <Button onClick={() => { this.refresh(); }}>
             <Icon type="autorenew icon" />
             <span>
               <FormattedMessage id="refresh" />
@@ -935,7 +950,7 @@ class CycleHome extends Component {
               <div className={leftVisible ? 'c7n-ch-left' : 'c7n-ch-hidden'}>
                 <RadioButton
                   style={{ marginBottom: 20 }}
-                  onChange={() => { }}
+                  onChange={this.handleTreeAssignedToChange}
                   defaultValue="all"
                   data={[{
                     value: 'my',
@@ -962,7 +977,7 @@ class CycleHome extends Component {
                     >
                       <Icon type="navigate_before" />
                     </div>
-                    <div
+                    {/* <div
                       role="none"
                       className="c7n-cycleHome-button"
                     >
@@ -974,7 +989,7 @@ class CycleHome extends Component {
                           });
                         }}
                       />
-                    </div>
+                    </div> */}
                   </div>
                 </div>
                 <div className="c7n-chlh-tree" style={{ height: window.innerHeight - 200 }}>
@@ -995,12 +1010,13 @@ class CycleHome extends Component {
                 <div className="c7n-ch-right">
                   <div style={{ display: 'flex', alignItems: 'center' }}>
                     <div>
-                      <FormattedMessage id="cycle_cycleName" />
+                      {type === 'folder' ? <FormattedMessage id="cycle_stageName" />
+                        : <FormattedMessage id="cycle_cycleName" />}
                       ：
                       <span>{title}</span>
                     </div>
                     <div style={{ flex: 1, visiblity: 'hidden' }} />
-                    <div>
+                    {/* <div>
                       <Button
                         style={{ color: '#3f51b5', marginRight: '-15px' }}
                         onClick={() => {
@@ -1012,39 +1028,43 @@ class CycleHome extends Component {
                           <FormattedMessage id="cycle_addCycle" />
                         </span>
                       </Button>
-                    </div>
+                    </div> */}
                   </div>
                   <ShowCycleData data={currentCycle} />
-                  <div style={{ display: 'flex', marginBottom: 20 }}>
-                    <SelectFocusLoad
-                      label={<FormattedMessage id="cycle_executeBy" />}
-                      request={getUsers}
-                      onChange={(value) => {
-                        this.lastUpdatedBy = value;
-                        this.loadCycle();
-                      }}
-                    />
-                    <div style={{ marginLeft: 20 }}>
+                  {type === 'folder' && (
+                  <div>
+                    <div style={{ display: 'flex', marginBottom: 20 }}>
                       <SelectFocusLoad
-                        label={<FormattedMessage id="cycle_assignedTo" />}
+                        label={<FormattedMessage id="cycle_executeBy" />}
                         request={getUsers}
                         onChange={(value) => {
-                          this.assignedTo = value;
+                          this.lastUpdatedBy = value;
                           this.loadCycle();
                         }}
                       />
+                      {this.treeAssignedTo === 0 && (
+                      <div style={{ marginLeft: 20 }}>
+                        <SelectFocusLoad
+                          label={<FormattedMessage id="cycle_assignedTo" />}
+                          request={getUsers}
+                          onChange={(value) => {
+                            this.assignedTo = value;
+                            this.loadCycle();
+                          }}
+                        />
+                      </div>
+                      )}
                     </div>
+                    <Table
+                      pagination={executePagination}
+                      loading={rightLoading}
+                      onChange={this.handleExecuteTableChange}
+                      dataSource={testList}
+                      columns={leftVisible ? columns
+                        : columns.slice(0, 4).concat(otherColumns).concat(columns.slice(4))}
+                    />
                   </div>
-                  <Table
-                    pagination={executePagination}
-                    loading={rightLoading}
-                    onChange={this.handleExecuteTableChange}
-                    dataSource={testList}
-                    columns={leftVisible ? columns
-                      : columns.slice(0, 4).concat(otherColumns).concat(columns.slice(4))}
-                    // onDragEnd={this.onDragEnd}
-                    // dragKey="executeId"
-                  />
+                  )}
                 </div>
               ) : (
                 <div style={{

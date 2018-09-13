@@ -77,19 +77,43 @@ class CreateStage extends Component {
     });
   }
 
-  disabledDate=(current) => {
-    // Can not select days before today and today
-    
-    const disabled = current < moment().startOf('day');
-    // console.log(disabled);
-    return disabled;
+  disabledStartDate = (startValue) => {
+    const {
+      visible, onOk, onCancel, CreateStageIn, 
+    } = this.props;
+    const { fromDate, toDate } = CreateStageIn;    
+    const { getFieldValue } = this.props.form;
+    const endValue = getFieldValue('toDate');
+    if (!startValue || !endValue) {
+      return startValue < moment(fromDate).startOf('day') 
+    || startValue > moment(toDate).endOf('day');
+    }
+    return startValue.valueOf() > endValue.valueOf() 
+    || startValue < moment(fromDate).startOf('day') 
+    || startValue > moment(toDate).endOf('day');
+  }
+
+  disabledEndDate = (endValue) => {
+    const {
+      visible, onOk, onCancel, CreateStageIn, 
+    } = this.props;    
+    const { fromDate, toDate } = CreateStageIn;    
+    const { getFieldValue } = this.props.form;
+    const startValue = getFieldValue('fromDate'); 
+    if (!endValue || !startValue) {
+      return endValue < moment(fromDate).startOf('day') 
+      || endValue > moment(toDate).endOf('day');
+    }
+    return endValue.valueOf() <= startValue.valueOf()
+    || endValue < moment(fromDate).startOf('day') 
+    || endValue > moment(toDate).endOf('day');
   }
 
   render() {
     const {
       visible, onOk, onCancel, CreateStageIn, 
     } = this.props;
-    const { cycleName, versionId } = CreateStageIn;
+    const { title, versionId } = CreateStageIn;
     const { getFieldDecorator } = this.props.form;
     const { folders, loading, selectLoading } = this.state;
     const options = folders.map(folder => (
@@ -111,7 +135,7 @@ class CreateStage extends Component {
                 padding: '0 0 10px 0',
               }}
               title={<FormattedMessage id="testPlan_createStage" />}
-              description={<FormattedMessage id="testPlan_createStageIn" values={{ cycleName }} />}
+              description={<FormattedMessage id="testPlan_createStageIn" values={{ cycleName: title }} />}
               link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management/test-cycle/create-cycle/"
             >
               <Form>                
@@ -166,7 +190,7 @@ class CreateStage extends Component {
                   })(
                     <DatePicker
                       format="YYYY-MM-DD"
-                      disabledDate={this.disabledDate}
+                      disabledDate={this.disabledStartDate}
                       style={{ width: 500 }}
                       label={<FormattedMessage id="cycle_startTime" />}
                     />,                   
@@ -179,6 +203,7 @@ class CreateStage extends Component {
                     }],
                   })(
                     <DatePicker
+                      disabledDate={this.disabledEndDate}
                       label={<FormattedMessage id="cycle_endTime" />}
                       format="YYYY-MM-DD"
                       style={{ width: 500 }}
