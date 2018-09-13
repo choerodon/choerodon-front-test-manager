@@ -96,7 +96,7 @@ class TestPlanHome extends Component {
   onDragEnd = (sourceIndex, targetIndex) => {
     let lastRank = null;
     let nextRank = null;
-    const { testList } = this.state;
+    const { testList } = TestPlanStore;
     if (sourceIndex < targetIndex) {
       lastRank = testList[targetIndex].rank;
       nextRank = testList[targetIndex + 1] ? testList[targetIndex + 1].rank : null;
@@ -111,6 +111,7 @@ class TestPlanHome extends Component {
     delete temp.caseAttachment;
     delete temp.testCycleCaseStepES;
     delete temp.issueInfosDTO;
+    temp.assignedTo = temp.assignedTo || 0;
     TestPlanStore.rightEnterLoading();
     editCycleExecute({
       ...temp,
@@ -119,7 +120,7 @@ class TestPlanHome extends Component {
         nextRank,
       },
     }).then((res) => {
-      const { executePagination } = this.state;
+      const { executePagination } = TestPlanStore;
       const currentCycle = TestPlanStore.getCurrentCycle;
       getCycleById({
         page: executePagination.current - 1,
