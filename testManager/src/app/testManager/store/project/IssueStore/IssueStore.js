@@ -98,6 +98,9 @@ class SprintCommonStore {
       // funcArr.push(loadIssues(page, size, this.getFilter, orderField, orderType));
       funcArr.push(getIssuesByIds(null, null,
         this.issueIds.slice(size * page, size * (page + 1))));
+    } else if (this.paramIssueId) {
+      // 地址栏有id的情况
+      funcArr.push(loadIssues(page, size, this.getFilter, orderField, orderType));
     } else {
       funcArr.push(getAllIssues(page, size, this.getFilter, orderField, orderType));
     }
@@ -110,7 +113,7 @@ class SprintCommonStore {
       if (page === 0) {
         this.setIssueIds(res.allIdValues || []);
       }
-      if ((!IssueTreeStore.currentCycle.versionId && this.issueIds.length === 0) || page === 0) {        
+      if ((!IssueTreeStore.currentCycle.versionId && this.issueIds.length === 0) || page === 0) {
         this.setPagination({
           current: res.number + 1,
           pageSize: size,
@@ -123,7 +126,7 @@ class SprintCommonStore {
           total: this.pagination.total,
         });
       }
-      
+
       this.setLoading(false);
       return Promise.resolve(res);
     });
