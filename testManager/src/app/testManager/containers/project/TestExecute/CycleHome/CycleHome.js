@@ -698,7 +698,7 @@ class CycleHome extends Component {
                       to={issueLink(defect.issueInfosDTO.issueId, defect.issueInfosDTO.typeCode)}
                       target="_blank"
                     >
-                      {defect.issueInfosDTO.issueName}
+                      {defect.issueInfosDTO.issueNum}
                     </Link>
                     <div>{defect.issueInfosDTO.summary}</div>
                   </div>
@@ -707,7 +707,7 @@ class CycleHome extends Component {
             </div>
           )}
         >
-          {defects.map((defect, i) => defect.issueInfosDTO && defect.issueInfosDTO.issueName).join(',')}
+          {defects.map((defect, i) => defect.issueInfosDTO && defect.issueInfosDTO.issueNum).join(',')}
         </Tooltip>
       ),
     },
