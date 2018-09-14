@@ -195,7 +195,7 @@ class TestExecuteTable extends Component {
                             defect.issueInfosDTO.typeCode)}
                           target="_blank"
                         >
-                          {defect.issueInfosDTO.issueName}
+                          {defect.issueInfosDTO.issueNum}
                         </Link>
                         <div>{defect.issueInfosDTO.summary}</div>
                       </div>
@@ -204,7 +204,7 @@ class TestExecuteTable extends Component {
                   )}
               >
                 <div className="c7n-text-dot">
-                  {item.defects.map((defect, i) => defect.issueInfosDTO.issueName).join(',')}
+                  {item.defects.map((defect, i) => defect.issueInfosDTO.issueNum).join(',')}
                 </div>
               </Tooltip>
              

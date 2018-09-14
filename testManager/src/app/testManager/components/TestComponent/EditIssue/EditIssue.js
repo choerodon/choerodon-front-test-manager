@@ -768,13 +768,12 @@ class EditIssueNarrow extends Component {
     const that = this;
     confirm({
       width: 560,
-      title: `删除问题${this.state.issueNum}`,
+      title: `删除测试用例${this.state.issueNum}`,
       content:
-        <div style={{ marginBottom: 32 }}>
-          <p style={{ marginBottom: 10 }}>请确认您要删除这个问题。</p>
-          <p style={{ marginBottom: 10 }}>这个问题将会被彻底删除。包括所有附件和评论。</p>
-          <p style={{ marginBottom: 10 }}>如果您完成了这个问题，通常是已解决或者已关闭，而不是删除。</p>
-          {
+  <div style={{ marginBottom: 32 }}>
+    <p style={{ marginBottom: 10 }}>请确认您要删除这个测试用例。</p>
+    <p style={{ marginBottom: 10 }}>这个测试用例将会被彻底删除。包括所有步骤和相关执行。</p>
+    {/* {
             this.state.subIssueDTOList.length
               ? (
                 <p>
@@ -782,8 +781,8 @@ class EditIssueNarrow extends Component {
                 </p>
               )
               : null
-          }
-        </div>,
+          } */}
+  </div>,
       onOk() {
         return deleteIssue(issueId)
           .then((res) => {
@@ -1608,7 +1607,7 @@ class EditIssueNarrow extends Component {
                                 <div className="c7n-property-wrapper">
                                   <span className="c7n-property">
                                     状态：
-                                </span>
+                                  </span>
                                 </div>
                                 <div className="c7n-value-wrapper">
                                   <ReadAndEdit
@@ -1686,7 +1685,7 @@ class EditIssueNarrow extends Component {
                                 <div className="c7n-property-wrapper">
                                   <span className="c7n-property">
                                     优先级：
-                                </span>
+                                  </span>
                                 </div>
                                 <div className="c7n-value-wrapper">
                                   <ReadAndEdit

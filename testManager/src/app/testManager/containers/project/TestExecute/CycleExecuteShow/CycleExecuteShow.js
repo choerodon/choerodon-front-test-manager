@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-  Table, Button, Icon, Card, Spin, Tooltip, 
+  Table, Button, Icon, Card, Spin, Tooltip,
 } from 'choerodon-ui';
 import { Page, Header, Content } from 'choerodon-front-boot';
 import { observer } from 'mobx-react';
@@ -9,7 +9,7 @@ import { FormattedMessage } from 'react-intl';
 import { RichTextShow, User } from '../../../../components/CommonComponent';
 // import EditTestDetail from '../../../../components/EditTestDetail';
 import { delta2Html, delta2Text } from '../../../../common/utils';
-import './CycleExecute.less';
+import './CycleExecuteShow.less';
 import { StepTable, TestExecuteInfo } from '../../../../components/ExecuteComponent';
 import CycleExecuteStore from '../../../../store/project/cycle/CycleExecuteStore';
 
@@ -34,10 +34,11 @@ const styles = {
 };
 
 @observer
-class CycleExecute extends Component {
+class CycleExecuteShow extends Component {
   state = {
     editVisible: false,
     editing: null,
+    disabled: true,
   }
 
   componentDidMount() {
@@ -46,7 +47,7 @@ class CycleExecute extends Component {
   }
 
   render() {
-    const { editVisible, editing } = this.state;
+    const { editVisible, editing, disabled } = this.state;
     const loading = CycleExecuteStore.loading;
     const cycleData = CycleExecuteStore.getCycleData;
     // const detailList = CycleExecuteStore.getDetailList;
@@ -142,7 +143,7 @@ class CycleExecute extends Component {
     const {
       executionStatus, executionStatusName,
       executionStatusColor, assigneeUser, lastUpdateUser,
-      lastUpdateDate, comment, defects, 
+      lastUpdateDate, comment, defects,
     } = cycleData;
     return (
       <Page className="c7n-cycleExecute">
@@ -163,7 +164,7 @@ class CycleExecute extends Component {
             </Tooltip>
             <span><FormattedMessage id="execute_detail" /></span>
           </div>
-)}
+        )}
         >
 
           <Button onClick={() => CycleExecuteStore.getInfo()}>
@@ -174,17 +175,17 @@ class CycleExecute extends Component {
 
         <Spin spinning={loading}>
           <Content>
-            <TestExecuteInfo />
+            <TestExecuteInfo disabled={disabled} />
             <Card
               title={null}
               style={{ marginBottom: 24 }}
-              bodyStyle={{ ...styles.cardBodyStyle, overflow: 'visible' }}
+              bodyStyle={styles.cardBodyStyle}
             >
               <div style={{ ...styles.cardTitle, marginBottom: 10 }}>
                 <Icon type="expand_more" />
                 <span style={styles.cardTitleText}><FormattedMessage id="execute_testDetail" /></span>
               </div>
-              <StepTable />
+              <StepTable disabled={disabled} />
 
             </Card>
             <Card
@@ -214,4 +215,4 @@ class CycleExecute extends Component {
 }
 
 
-export default withRouter(CycleExecute);
+export default withRouter(CycleExecuteShow);

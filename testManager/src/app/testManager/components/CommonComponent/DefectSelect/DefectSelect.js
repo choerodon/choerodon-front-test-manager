@@ -50,7 +50,7 @@ class DefectSelect extends Component {
       // 如果isse已存在，调用删除接口
       if (defectIds.includes(deleteEle[0])
         && _.find(defects, { issueId: Number(deleteEle[0]) })) {
-        window.console.log(defects);
+        // window.console.log(defects, oldList, deleteEle, List);
         removeDefect(_.find(defects, { issueId: Number(deleteEle[0]) }).id);
       }
       window.console.log('delete');
@@ -86,10 +86,10 @@ class DefectSelect extends Component {
     ));
     return (     
       <Select          
-        dropdownStyle={{
-          right: 0,
+        dropdownStyle={{        
+          width: 300,  
         }}
-        getPopupContainer={() => document.getElementsByClassName('c7n-cycleExecute')[0]}
+        getPopupContainer={this.props.getPopupContainer}
         autoFocus
         filter
         mode="multiple"
@@ -98,7 +98,7 @@ class DefectSelect extends Component {
         loading={selectLoading}
         defaultValue={defects.map(defect => defect.issueId.toString())}
         footer={<SelectCreateIssueFooter />}
-        // style={{ width: 140 }}
+        style={{ width: '100%' }}
         onChange={this.handleDefectsChange}
         onFilterChange={(value) => {
           this.setState({

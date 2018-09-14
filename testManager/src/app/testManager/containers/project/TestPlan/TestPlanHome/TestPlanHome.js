@@ -11,8 +11,12 @@ import {
   Tooltip, Table, Button, Icon, Input, Tree, Spin, Modal,
 } from 'choerodon-ui';
 import { Link } from 'react-router-dom';
-import { getCycleById, getCycles, getStatusList } from '../../../../api/cycleApi';
-import { EventCalendar, PlanTree, CreateCycle } from '../../../../components/TestPlanComponent';
+import {
+  getCycleById, getCycles, getStatusList, editCycleExecute, 
+} from '../../../../api/cycleApi';
+import {
+  EventCalendar, PlanTree, CreateCycle, EditStage, EditCycle,
+} from '../../../../components/TestPlanComponent';
 import { RichTextShow, SelectFocusLoad } from '../../../../components/CommonComponent';
 import DragTable from '../../../../components/DragTable';
 
@@ -42,16 +46,7 @@ class TestPlanHome extends Component {
   state = {
     CreateCycleVisible: false,
     treeShow: true,
-    executePagination: {
-      current: 1,
-      total: 0,
-      pageSize: 5,
-    },
-    testList: [],
     statusList: [],
-    filters: {},
-    rightLoading: false,
-    calendarShowMode: 'single',    
   }
 
   componentDidMount() {
@@ -62,70 +57,21 @@ class TestPlanHome extends Component {
     TestPlanStore.getTree();
   }
 
-  loadCycle = (selectedKeys, {
-    selected, selectedNodes, node, event,
-  } = {}, flag) => {
-    // window.console.log(selectedNodes, node, event);
-
-    const { executePagination, filters } = this.state;
-    const data = node ? node.props.data : TestPlanStore.getCurrentCycle;
-    if (data.cycleId) {
-      if (selectedKeys) {
-        TestPlanStore.clearTimes();
-        TestPlanStore.generateTimes([data]);
-        TestPlanStore.setSelectedKeys(selectedKeys);
-      }
-      if (data.type === 'cycle') {
-        this.setState({
-          calendarShowMode: 'multi',
-        });
-      } else {
-        this.setState({
-          calendarShowMode: 'single',
-        });
-      }
-      if (!flag) {
-        this.setState({
-          rightLoading: true,
-          // currentCycle: data,
-        });
-      }
-
-      TestPlanStore.setCurrentCycle(data);
-      // window.console.log(data);
-      if (data.type === 'folder') {
-        getCycleById({
-          page: executePagination.current - 1,
-          size: executePagination.pageSize,
-        }, data.cycleId,
-        {
-          ...filters,
-          lastUpdatedBy: [Number(this.lastUpdatedBy)],
-          assignedTo: [Number(this.assignedTo)],
-        }).then((cycle) => {
-          this.setState({
-            rightLoading: false,
-            testList: cycle.content,
-            executePagination: {
-              current: executePagination.current,
-              pageSize: executePagination.pageSize,
-              total: cycle.totalElements,
-            },
-          });
-          // window.console.log(cycle);
-        });
-      }
+  onItemClick=(item) => {
+    const { type } = item;
+    if (type === 'folder') {
+      TestPlanStore.EditStage(item);
+    } else if (type === 'cycle') {
+      TestPlanStore.EditCycle(item);
     }
   }
 
   handleExecuteTableChange = (pagination, filters, sorter) => {
     // window.console.log(pagination, filters, sorter);
     if (pagination.current) {
-      this.setState({
-        rightLoading: true,
-        executePagination: pagination,
-        filters,
-      });
+      TestPlanStore.setFilters(filters);
+      TestPlanStore.rightEnterLoading();
+      TestPlanStore.setExecutePagination(pagination);      
       const currentCycle = TestPlanStore.getCurrentCycle;
       getCycleById({
         size: pagination.pageSize,
@@ -136,30 +82,73 @@ class TestPlanHome extends Component {
         lastUpdatedBy: [Number(this.lastUpdatedBy)],
         assignedTo: [Number(this.assignedTo)],
       }).then((cycle) => {
-        this.setState({
-          rightLoading: false,
-          testList: cycle.content,
-          executePagination: {
-            current: pagination.current,
-            pageSize: pagination.pageSize,
-            total: cycle.totalElements,
-          },
+        TestPlanStore.rightLeaveLoading();
+        TestPlanStore.setTestList(cycle.content);
+        TestPlanStore.setExecutePagination({
+          current: pagination.current,
+          pageSize: pagination.pageSize,
+          total: cycle.totalElements,
+        });         
+      });
+    }
+  }
+
+  onDragEnd = (sourceIndex, targetIndex) => {
+    let lastRank = null;
+    let nextRank = null;
+    const { testList } = TestPlanStore;
+    if (sourceIndex < targetIndex) {
+      lastRank = testList[targetIndex].rank;
+      nextRank = testList[targetIndex + 1] ? testList[targetIndex + 1].rank : null;
+    } else if (sourceIndex > targetIndex) {
+      lastRank = testList[targetIndex - 1] ? testList[targetIndex - 1].rank : null;
+      nextRank = testList[targetIndex].rank;
+    }
+    // window.console.log(sourceIndex, targetIndex, lastRank, nextRank);
+    const source = testList[sourceIndex];
+    const temp = { ...source };
+    delete temp.defects;
+    delete temp.caseAttachment;
+    delete temp.testCycleCaseStepES;
+    delete temp.issueInfosDTO;
+    temp.assignedTo = temp.assignedTo || 0;
+    TestPlanStore.rightEnterLoading();
+    editCycleExecute({
+      ...temp,
+      ...{
+        lastRank,
+        nextRank,
+      },
+    }).then((res) => {
+      const { executePagination } = TestPlanStore;
+      const currentCycle = TestPlanStore.getCurrentCycle;
+      getCycleById({
+        page: executePagination.current - 1,
+        size: executePagination.pageSize,
+      }, currentCycle.cycleId).then((cycle) => {
+        TestPlanStore.rightLeaveLoading();
+        TestPlanStore.setTestList(cycle.content);
+        TestPlanStore.setExecutePagination({
+          current: executePagination.current,
+          pageSize: executePagination.pageSize,
+          total: cycle.totalElements,
         });
         // window.console.log(cycle);
       });
-    }
+    });
   }
 
   render() {
     console.log('render');
     const {
-      treeShow, CreateCycleVisible, testList, rightLoading, statusList,
-      executePagination, calendarShowMode,
+      treeShow, CreateCycleVisible, statusList,
     } = this.state;
-    const loading = TestPlanStore.loading;
+    const {
+      testList, executePagination, loading, rightLoading, times, calendarShowMode,
+    } = TestPlanStore;
     const currentCycle = TestPlanStore.getCurrentCycle;
-    const times = TestPlanStore.times;
-    const { cycleId, title } = currentCycle;
+
+    const { cycleId, title, versionId } = currentCycle;
     const columns = [{
       title: 'ID',
       dataIndex: 'issueName',
@@ -325,7 +314,7 @@ class TestPlanHome extends Component {
               onClick={() => {
                 const { history } = this.props;
                 const urlParams = AppState.currentMenuType;
-                history.push(`/testManager/TestExecute/execute/${record.executeId}?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`);
+                history.push(`/testManager/TestExecute/executeShow/${record.executeId}?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`);
               }}
             />
             {/* <Icon
@@ -436,7 +425,6 @@ class TestPlanHome extends Component {
             </span>
           </Button>
         </Header>
-
         <Content
           title={null}
           description={null}
@@ -444,6 +432,8 @@ class TestPlanHome extends Component {
         >
           <Spin spinning={loading}>
             <div className="c7n-TestPlan-content">
+              <EditCycle />
+              <EditStage />
               <CreateCycle
                 visible={CreateCycleVisible}
                 onCancel={() => { this.setState({ CreateCycleVisible: false }); }}
@@ -482,15 +472,14 @@ class TestPlanHome extends Component {
                       this.setState({
                         treeShow: false,
                       });
-                    }}
-                    loadCycle={this.loadCycle}
+                    }}                   
                   />
                 )}
               </div>
               {/* <Spin spinning={loading}> */}
-              {cycleId ? (
+              {versionId ? (
                 <div className="c7n-TestPlan-content-right">
-                  <EventCalendar showMode={calendarShowMode} times={times} />
+                  <EventCalendar showMode={calendarShowMode} times={times} onItemClick={this.onItemClick} />
                   {calendarShowMode === 'single' && (
                     <div className="c7n-TestPlan-content-right-bottom">
                       <div style={{ display: 'flex', marginBottom: 20 }}>
@@ -499,7 +488,7 @@ class TestPlanHome extends Component {
                           request={getUsers}
                           onChange={(value) => {
                             this.lastUpdatedBy = value;
-                            this.loadCycle();
+                            TestPlanStore.loadCycle();
                           }}
                         />
                         <div style={{ marginLeft: 20 }}>
@@ -508,7 +497,7 @@ class TestPlanHome extends Component {
                             request={getUsers}
                             onChange={(value) => {
                               this.assignedTo = value;
-                              this.loadCycle();
+                              TestPlanStore.loadCycle();
                             }}
                           />
                         </div>

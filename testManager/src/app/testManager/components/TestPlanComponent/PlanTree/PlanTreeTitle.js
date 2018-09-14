@@ -7,7 +7,7 @@ import { FormattedMessage } from 'react-intl';
 import './PlanTreeTitle.scss';
 import { editFolder, deleteCycleOrFolder } from '../../../api/cycleApi';
 import { syncFolder, syncFoldersInCycle, syncFoldersInVersion } from '../../../api/IssueApi';
-import CycleStore from '../../../store/project/cycle/CycleStore';
+import TestPlanStore from '../../../store/project/TestPlan/TestPlanStore';
 
 @observer
 class PlanTreeTitle extends Component {
@@ -19,14 +19,19 @@ class PlanTreeTitle extends Component {
     const {
       type, cycleId, folderId, versionId, 
     } = item;
-    if (type === 'folder') {
+    TestPlanStore.enterLoading();
+    if (type === 'folder') {      
       syncFolder(folderId, cycleId).then((res) => {
-
+        TestPlanStore.getTree();
       });
     } else if (type === 'cycle') {
-      syncFoldersInCycle(cycleId);
+      syncFoldersInCycle(cycleId).then(() => {
+        TestPlanStore.getTree();
+      });
     } else {
-      syncFoldersInVersion(versionId);
+      syncFoldersInVersion(versionId).then(() => {
+        TestPlanStore.getTree();
+      });
     }
   }
 
@@ -41,11 +46,12 @@ class PlanTreeTitle extends Component {
       }
       case 'edit': {
         if (type === 'folder') {
-          this.setState({
-            editing: true,
-          });
-        } else {
-          this.props.callback(data, 'EDIT_CYCLE');
+          TestPlanStore.EditStage(data);
+          // this.setState({
+          //   editing: true,
+          // });
+        } else if (type === 'cycle') {
+          TestPlanStore.EditCycle(data);
         }
         break;
       }
@@ -54,7 +60,7 @@ class PlanTreeTitle extends Component {
           if (res.failed) {
             Choerodon.prompt('删除失败');
           } else {
-            CycleStore.setCurrentCycle({});
+            TestPlanStore.setCurrentCycle({});
             refresh();
           }
         }).catch((err) => {
@@ -79,7 +85,7 @@ class PlanTreeTitle extends Component {
         break;
       }
       case 'sync': {
-        this.sync();
+        this.sync(data);
         break;
       }
       default: break;
@@ -161,7 +167,7 @@ class PlanTreeTitle extends Component {
             />
           )
           : (
-            <div className="c7n-plan-tree-title-text">
+            <div className="c7n-plan-tree-title-text" style={{ width: !data.type && '120px' }}>
               <Tooltip title={title}>
                 {title}
               </Tooltip>

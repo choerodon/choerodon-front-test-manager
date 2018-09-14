@@ -124,6 +124,7 @@ class EventCalendar extends Component {
           <div className="c7n-EventCalendar-eventContainer">
             {times.map(event => (
               <EventItem
+                onClick={this.props.onItemClick}
                 itemRange={moment.range(event.start, event.end)}
                 // totalRange={timeArray.length}
                 data={event}

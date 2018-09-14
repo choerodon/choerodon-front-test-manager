@@ -159,6 +159,9 @@ class TestStepTable extends Component {
               formKey="testStep"
               onSubmit={value => that.editStep({ ...record, testStep: value })}
               originData={testStep}
+              rules={[{
+                required: true, message: '请输入步骤名!',
+              }]}
             >
               <Text>
                 <Tooltip title={testStep}>
@@ -216,6 +219,9 @@ class TestStepTable extends Component {
                 formKey="expectedResult"
                 onSubmit={value => that.editStep({ ...record, expectedResult: value })}
                 originData={expectedResult}
+                rules={[{
+                  required: true, message: '请输入预期结果!',
+                }]}
               >
                 <Text>
                   <Tooltip title={expectedResult}>
@@ -250,7 +256,7 @@ class TestStepTable extends Component {
                         <a href={attachment.url} target="_blank" rel="noopener noreferrer">{attachment.attachmentName}</a>
                       </div>
                     ))
-                      }
+                    }
                   </div>
                 </Text>
                 <Edit>
@@ -297,27 +303,27 @@ class TestStepTable extends Component {
           dragKey="stepId"
         />
         {
-                  this.state.editTestStepShow ? (
-                    <EditTestStep
-                      attachments={this.state.currentAttments}
-                      issueId={this.props.issueId}
-                      stepId={this.state.currentTestStepId}
-                      visible={this.state.editTestStepShow}
-                      onCancel={() => {
-                        this.setState({ editTestStepShow: false });
-                        this.props.onOk();
-                      }}
-                      onOk={() => {
-                        this.setState({ editTestStepShow: false });
-                        this.props.onOk();
-                      }}
-                    />
-                  ) : null
-                }
+          this.state.editTestStepShow ? (
+            <EditTestStep
+              attachments={this.state.currentAttments}
+              issueId={this.props.issueId}
+              stepId={this.state.currentTestStepId}
+              visible={this.state.editTestStepShow}
+              onCancel={() => {
+                this.setState({ editTestStepShow: false });
+                this.props.onOk();
+              }}
+              onOk={() => {
+                this.setState({ editTestStepShow: false });
+                this.props.onOk();
+              }}
+            />
+          ) : null
+        }
 
       </div>
     );
   }
 }
-          
+
 export default TestStepTable;

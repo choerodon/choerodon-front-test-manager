@@ -4,7 +4,8 @@ import {
 } from 'mobx';
 import moment from 'moment';
 import { store, stores } from 'choerodon-front-boot';
-import { getCycles, getStatusList } from '../../../api/cycleApi';
+import { getCycles, getStatusList, getCycleById } from '../../../api/cycleApi';
+import { EditStage } from '../../../components/TestPlanComponent';
 
 const { AppState } = stores;
 
@@ -30,9 +31,31 @@ class TestPlanStore {
 
   @observable times = [];
 
-  dataList = [];
+  @observable dataList = [];
+
+  @observable testList = [];
+
+  @observable executePagination = {
+    current: 1,
+    total: 0,
+    pageSize: 5,
+  }
 
   @observable loading = false;
+
+  @observable filters = {};
+
+  @observable rightLoading = false;
+
+  @observable calendarShowMode = 'single';
+
+  @observable EditCycleVisible = false;
+
+  @observable CurrentEditCycle = {};
+
+  @observable EditStageVisible = false;
+
+  @observable CurrentEditStage = {};
 
   @computed get getTreeData() {
     return toJS(this.treeData);
@@ -57,7 +80,7 @@ class TestPlanStore {
     });
     getCycles().then((data) => {
       this.setTreeData([{ title: '所有版本', key: '0', children: data.versions }]);
-      
+
       this.generateList([
         { title: '所有版本', key: '0', children: data.versions },
       ]);
@@ -72,10 +95,97 @@ class TestPlanStore {
     // 如果选中了项，就刷新table数据
     const currentCycle = this.getCurrentCycle;
     const selectedKeys = this.getSelectedKeys;
-    if (currentCycle.cycleId) {
-      this.loadCycle(selectedKeys, { node: { props: { data: currentCycle } } }, true);
+
+    if (currentCycle.versionId) {
+      this.reloadCycle();
     }
   })
+
+  reloadCycle = () => {
+    const data = this.getCurrentCycle;
+    const { executePagination, filters } = this;
+    if (data.type === 'folder') {
+      getCycleById({
+        page: executePagination.current - 1,
+        size: executePagination.pageSize,
+      }, data.cycleId,
+      {
+        ...filters,
+        lastUpdatedBy: [Number(this.lastUpdatedBy)],
+        assignedTo: [Number(this.assignedTo)],
+      }).then((cycle) => {
+        this.rightLeaveLoading();
+        this.setTestList(cycle.content);
+        this.setExecutePagination({
+          current: executePagination.current,
+          pageSize: executePagination.pageSize,
+          total: cycle.totalElements,
+        });
+      });
+    }
+  }
+
+  // 点击树的一项，加载数据
+  loadCycle = (selectedKeys, {
+    selected, selectedNodes, node, event,
+  } = {}) => {
+    const { executePagination, filters } = this;
+    const data = node ? node.props.data : this.getCurrentCycle;
+
+    if (data.versionId) {
+      if (selectedKeys) {
+        this.setSelectedKeys(selectedKeys);
+      }
+      this.clearTimes();
+      this.generateTimes([data]);
+      if (data.type === 'folder') {
+        this.setCalendarShowMode('single');
+      } else {
+        this.setCalendarShowMode('multi');
+      }
+      this.rightEnterLoading();
+
+
+      this.setCurrentCycle(data);
+      // window.console.log(data);
+      if (data.type === 'folder') {
+        getCycleById({
+          page: executePagination.current - 1,
+          size: executePagination.pageSize,
+        }, data.cycleId,
+        {
+          ...filters,
+          lastUpdatedBy: [Number(this.lastUpdatedBy)],
+          assignedTo: [Number(this.assignedTo)],
+        }).then((cycle) => {
+          this.rightLeaveLoading();
+          this.setTestList(cycle.content);
+          this.setExecutePagination({
+            current: executePagination.current,
+            pageSize: executePagination.pageSize,
+            total: cycle.totalElements,
+          });
+        });
+      }
+    }
+  }
+
+  getParentKey = (key, tree) => key.split('-').slice(0, -1).join('-')
+
+  getParent=(key) => {
+    const parentKey = this.getParentKey(key);
+    const arr = parentKey.split('-');
+    let temp = this.treeData;
+    arr.forEach((index, i) => {
+      // window.console.log(temp);
+      if (i === 0) {
+        temp = temp[index];
+      } else {
+        temp = temp.children[index];
+      }
+    });
+    return temp;
+  }
 
   generateList = (data) => {
     // const temp = data;
@@ -88,12 +198,18 @@ class TestPlanStore {
       const { key, title } = node;
       // 找出url上的cycleId
       // const { cycleId } = getParams(window.location.href);
-      // const currentCycle = TestPlanStore.getCurrentCycle;
+      const currentCycle = this.getCurrentCycle;
       // if (!currentCycle.cycleId && Number(cycleId) === node.cycleId) {
       //   this.setExpandDefault(node);
-      // } else if (currentCycle.cycleId === node.cycleId) {
-      //   TestPlanStore.setCurrentCycle(node);
-      // }
+      // } else
+      // 两种情况，version或者cycle和文件夹，version没有type
+      if ((currentCycle.versionId && !currentCycle.type && currentCycle.versionId === node.versionId) 
+      || (currentCycle.cycleId && currentCycle.cycleId === node.cycleId)) {
+        this.setCurrentCycle(node);
+        this.clearTimes();
+        // debugger;
+        this.generateTimes([node]);
+      }
       this.dataList.push({ key, title });
       if (node.children) {
         this.generateList(node.children, node.key);
@@ -101,7 +217,15 @@ class TestPlanStore {
     }
   }
 
-  @action clearTimes=() => {
+  @action setCalendarShowMode = (calendarShowMode) => {
+    this.calendarShowMode = calendarShowMode;
+  }
+
+  @action setFilters = (filters) => {
+    this.filters = filters;
+  }
+
+  @action clearTimes = () => {
     this.times = [];
   }
 
@@ -109,11 +233,17 @@ class TestPlanStore {
     for (let i = 0; i < data.length; i += 1) {
       const node = data[i];
       const {
-        fromDate, toDate, title, type, 
+        fromDate, toDate, title, type,
       } = node;
-      this.times.push({
-        start: moment(fromDate), end: moment(toDate), title, type, 
-      });
+      if (fromDate && toDate) {
+        this.times.push({
+          ...node,
+          children: [],
+          start: moment(fromDate),
+          end: moment(toDate),
+        });
+      }
+
       if (node.children) {
         this.generateTimes(node.children);
       }
@@ -130,6 +260,22 @@ class TestPlanStore {
 
   @action leaveLoading() {
     this.loading = false;
+  }
+
+  @action rightEnterLoading() {
+    this.rightLoading = true;
+  }
+
+  @action rightLeaveLoading() {
+    this.rightLoading = false;
+  }
+
+  @action setTestList = (testList) => {
+    this.testList = testList;
+  }
+
+  @action setExecutePagination = (executePagination) => {
+    this.executePagination = executePagination;
   }
 
   @action setExpandedKeys(expandedKeys) {
@@ -169,6 +315,32 @@ class TestPlanStore {
     temp.children.unshift(item);
     this.addingParent = temp;
     // window.console.log({ ...item, ...{ key: `${key}-add'`, type: 'add' } });
+  }
+
+  @action EditStage(CurrentEditStage) {    
+    const parent = this.getParent(CurrentEditStage.key);
+    const { fromDate, toDate } = parent;
+    // 为阶段设置父元素时间段，来限制时间的选择
+    this.CurrentEditStage = {
+      ...CurrentEditStage, 
+      parentTime: { start: moment(fromDate), end: moment(toDate) }, 
+    };
+    this.EditStageVisible = true;
+  }
+
+  @action ExitEditStage() {
+    this.CurrentEditStage = {};
+    this.EditStageVisible = false;
+  }
+
+  @action EditCycle(CurrentEditCycle) {
+    this.CurrentEditCycle = CurrentEditCycle;
+    this.EditCycleVisible = true;
+  }
+
+  @action ExitEditCycle() {
+    this.CurrentEditCycle = {};
+    this.EditCycleVisible = false;
   }
 }
 

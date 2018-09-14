@@ -29,7 +29,7 @@ const styles = {
   cardBodyStyle: {
     // maxHeight: '100%',
     padding: 12,
-    overflow: 'hidden',
+    overflow: 'visible',
   },
   cardContent: {
 
@@ -106,6 +106,7 @@ class StepTable extends Component {
   render() {
     const that = this;
     // const { onOk, enterLoad, leaveLoad } = this.props;
+    const { disabled } = this.props;
     const stepStatusList = CycleExecuteStore.getStepStatusList;
     const detailList = CycleExecuteStore.getDetailList;
     const detailPagination = CycleExecuteStore.getDetailPagination;
@@ -206,6 +207,7 @@ class StepTable extends Component {
         return (
           <div style={{ width: 85 }}>
             <TextEditToggle
+              disabled={disabled}
               formKey="stepStatus"
               onSubmit={value => that.editCycleStep({ ...record, stepStatus: value })}
               originData={stepStatus}
@@ -233,6 +235,7 @@ class StepTable extends Component {
         return (
           <Tooltip title={<RichTextShow data={comment} />}>
             <TextEditToggle
+              disabled={disabled}
               formKey="comment"
               onSubmit={(value) => { that.editCycleStep({ ...record, comment: value }); }}
               originData={delta2Text(comment)}
@@ -284,7 +287,9 @@ class StepTable extends Component {
         //   </div>
         // </Tooltip>);
         return (
-          <TextEditToggle>
+          <TextEditToggle
+            disabled={disabled}
+          >
             <Text>
               <div style={{ display: 'flex', overflow: 'hidden', height: 20 }}>
                 {stepAttachment.filter(attachment => attachment.attachmentType === 'CYCLE_STEP').map(attachment => (
@@ -318,6 +323,7 @@ class StepTable extends Component {
       key: 'defects',
       render: (defects, record) => (
         <TextEditToggle
+          disabled={disabled}
           onSubmit={() => {   
             if (that.needAdd.length > 0) {
               CycleExecuteStore.enterloading();

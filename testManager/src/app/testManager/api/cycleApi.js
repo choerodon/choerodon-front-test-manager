@@ -1,9 +1,9 @@
 import { axios, stores } from 'choerodon-front-boot';
 
 const { AppState } = stores;
-export function getCycles() {
+export function getCycles(assignedTo) {
   const projectId = AppState.currentMenuType.id;
-  return axios.get(`/test/v1/projects/${projectId}/cycle/query`);
+  return axios.get(`/test/v1/projects/${projectId}/cycle/query${assignedTo ? `?assignedTo=${assignedTo}` : ''}`);
 }
 export function getStatusList(statusType) {
   const projectId = AppState.currentMenuType.id;

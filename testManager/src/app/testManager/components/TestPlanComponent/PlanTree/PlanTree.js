@@ -100,36 +100,6 @@ class PlanTree extends Component {
 
   getParentKey = (key, tree) => key.split('-').slice(0, -1).join('-')
 
-  // getTree = () => new Promise((resolve) => {
-  //   this.setState({
-  //     loading: true,
-  //   });
-  //   getStatusList('CYCLE_CASE').then((statusList) => {
-  //     this.setState({ statusList });
-  //   });
-  //   getCycles().then((data) => {
-  //     TestPlanStore.setTreeData([{ title: '所有版本', key: '0', children: data.versions }]);
-  //     this.setState({
-  //       // treeData: [
-  //       //   { title: '所有版本', key: '0', children: data.versions },
-  //       // ],
-  //       loading: false,
-  //     });
-  //     this.generateList([
-  //       { title: '所有版本', key: '0', children: data.versions },
-  //     ]);
-  //     resolve();
-  //     // window.console.log(dataList);
-  //   });
-
-  //   // 如果选中了项，就刷新table数据
-  //   const currentCycle = TestPlanStore.getCurrentCycle;
-  //   const selectedKeys = TestPlanStore.getSelectedKeys;
-  //   if (currentCycle.cycleId) {
-  //     this.props.loadCycle(selectedKeys, { node: { props: { data: currentCycle } } }, true);
-  //   }
-  // })
-
   renderTreeNodes = data => data.map((item) => {
     const {
       children, key, cycleCaseList, type,
@@ -220,30 +190,6 @@ class PlanTree extends Component {
       />);
   });
 
-  generateList = (data) => {
-    // const temp = data;
-    // while (temp) {
-    //   dataList = dataList.concat(temp.children);
-    //   if()
-    // }
-    for (let i = 0; i < data.length; i += 1) {
-      const node = data[i];
-      const { key, title } = node;
-      // 找出url上的cycleId
-      // const { cycleId } = getParams(window.location.href);
-      // const currentCycle = TestPlanStore.getCurrentCycle;
-      // if (!currentCycle.cycleId && Number(cycleId) === node.cycleId) {
-      //   this.setExpandDefault(node);
-      // } else if (currentCycle.cycleId === node.cycleId) {
-      //   TestPlanStore.setCurrentCycle(node);
-      // }
-      dataList.push({ key, title });
-      if (node.children) {
-        this.generateList(node.children, node.key);
-      }
-    }
-  }
-
   onExpand = (expandedKeys) => {
     TestPlanStore.setExpandedKeys(expandedKeys);
     this.setState({
@@ -309,7 +255,7 @@ class PlanTree extends Component {
   }
 
   render() {
-    const { onClose, loadCycle } = this.props;
+    const { onClose } = this.props;
     const {
       autoExpandParent, CreateStageVisible, CreateStageIn,
       CloneCycleVisible, currentCloneCycle, EditCycleVisible, currentEditValue,
@@ -326,12 +272,7 @@ class PlanTree extends Component {
           onCancel={() => { this.setState({ CloneCycleVisible: false }); }}
           onOk={() => { this.setState({ CloneCycleVisible: false }); this.refresh(); }}
         />
-        <EditCycle
-          visible={EditCycleVisible}
-          initialValue={currentEditValue}
-          onCancel={() => { this.setState({ EditCycleVisible: false }); }}
-          onOk={() => { this.setState({ EditCycleVisible: false }); this.refresh(); }}
-        />
+
         <CreateStage
           visible={CreateStageVisible}
           CreateStageIn={CreateStageIn}
@@ -359,7 +300,7 @@ class PlanTree extends Component {
             expandedKeys={expandedKeys}
             showIcon
             onExpand={this.onExpand}
-            onSelect={loadCycle}
+            onSelect={TestPlanStore.loadCycle}
             autoExpandParent={autoExpandParent}
           >
             {this.renderTreeNodes(treeData)}
