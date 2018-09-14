@@ -97,7 +97,7 @@ class EditIssueNarrow extends Component {
       remainingTime: undefined,
       epicName: '',
       issueNum: undefined,
-      typeCode: 'story',
+      typeCode: 'issue_test',
       parentIssueId: undefined,
       priorityCode: undefined,
       reporterId: undefined,
@@ -1016,9 +1016,9 @@ class EditIssueNarrow extends Component {
         <Menu.Item key="add_worklog">
           <FormattedMessage id="issue_edit_addWworkLog" />
         </Menu.Item>
-        <Menu.Item key="copy">
+        {/* <Menu.Item key="copy">
           <FormattedMessage id="issue_edit_copyIssue" />
-        </Menu.Item>
+        </Menu.Item> */}
         <Permission type={type} projectId={projectId} organizationId={orgId} service={['agile-service.issue.deleteIssue']}>
           <Menu.Item key="item_2">
             <FormattedMessage id="delete" />
@@ -1422,6 +1422,7 @@ class EditIssueNarrow extends Component {
                           <FormattedMessage id="issue_issueFilterByPriority" />
                         </div>
                         <div>
+                          {/* 优先级 */}
                           <ReadAndEdit
                             callback={this.changeRae.bind(this)}
                             thisType="priorityCode"
@@ -1530,6 +1531,7 @@ class EditIssueNarrow extends Component {
                               <FormattedMessage id="issue_edit_planTime" />
                             </div>
                             <div>
+                              {/* 预估时间 */}
                               <ReadAndEdit
                                 callback={this.changeRae.bind(this)}
                                 thisType="remainingTime"
@@ -1564,7 +1566,8 @@ class EditIssueNarrow extends Component {
                         </div>
                       ) : null
                     }
-                    {
+                    {/* 执行测试 */}
+                    {/* {
                       this.state.issueId && this.state.typeCode === 'issue_test' ? (
                         <div style={{
                           display: 'flex', flex: 1, justifyContent: 'center', borderLeft: '1px solid rgba(0, 0, 0, 0.26)',
@@ -1576,7 +1579,7 @@ class EditIssueNarrow extends Component {
                           </Button>
                         </div>
                       ) : null
-                    }
+                    } */}
                   </div>
                 )
                 }
@@ -2100,6 +2103,7 @@ class EditIssueNarrow extends Component {
                               ：
                             </span>
                           </div>
+                          {/* 预估时间 */}
                           <div className="c7n-value-wrapper" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
                             <Progress
                               style={{ width: 100 }}
