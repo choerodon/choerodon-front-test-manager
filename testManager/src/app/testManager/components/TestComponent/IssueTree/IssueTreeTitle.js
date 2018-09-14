@@ -226,9 +226,9 @@ class IssueTreeTitle extends Component {
           {
             type === 'cycle'
             && (
-              <Dropdown overlay={getMenu(data.type)} trigger={['click']}>
-                <Button shape="circle" icon="more_vert" />
-              </Dropdown>
+            <Dropdown overlay={getMenu(data.type)} trigger={['click']}>
+              <Button shape="circle" icon="more_vert" />
+            </Dropdown>
             )
           }
         </div>

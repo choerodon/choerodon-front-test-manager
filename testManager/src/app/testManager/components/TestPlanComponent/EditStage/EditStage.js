@@ -26,9 +26,8 @@ class EditStage extends Component {
     loading: false,
   }
 
-  componentWillReact() {
-    const visible = TestPlanStore.EditStageVisible;
-    if (visible) {
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.visible && !this.props.visible) {
       this.loadFolders();
     }
   }
@@ -111,7 +110,7 @@ class EditStage extends Component {
 
 
   render() {
-    const visible = TestPlanStore.EditStageVisible;
+    const { visible } = this.props;
     const { 
       parentTime,
       title, description, versionId, fromDate, toDate, folderId,
