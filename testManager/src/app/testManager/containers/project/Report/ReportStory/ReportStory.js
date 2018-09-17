@@ -472,7 +472,7 @@ class ReportStory extends Component {
                     </div>
                     <Link
                       style={{ lineHeight: '13px' }}
-                      to={`/testManager/TestExecute/execute/${execute.executeId}?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}
+                      to={`/testManager/TestExecute/executeShow/${execute.executeId}?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}
                     >
                       <Icon type="explicit2" style={{ marginLeft: 10, color: 'black' }} />
                     </Link>
