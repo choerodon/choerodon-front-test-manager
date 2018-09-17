@@ -3,7 +3,7 @@ import {
   Form, Input, Select, Modal, Spin, DatePicker,
 } from 'choerodon-ui';
 import { observer } from 'mobx-react';
-
+import { toJS } from 'mobx';
 import moment from 'moment';
 import { Content, stores } from 'choerodon-front-boot';
 import { FormattedMessage } from 'react-intl';
@@ -38,12 +38,13 @@ class EditStage extends Component {
         this.setState({ loading: true });
         // window.console.log('Received values of form: ', values);
         const { fromDate, toDate } = values;       
-        const initialValue = TestPlanStore.CurrentEditCycle;
+        const initialValue = TestPlanStore.CurrentEditStage;
+        // console.log(toJS(initialValue));
         editFolder({
           ...values,
           ...{
             cycleId: initialValue.cycleId,
-            type: 'cycle',
+            type: 'folder',
             fromDate: fromDate ? fromDate.format('YYYY-MM-DD HH:mm:ss') : null,
             toDate: toDate ? toDate.format('YYYY-MM-DD HH:mm:ss') : null,
           },

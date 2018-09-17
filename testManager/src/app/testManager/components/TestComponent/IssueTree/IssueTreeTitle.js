@@ -220,7 +220,7 @@ class IssueTreeTitle extends Component {
         ? null : */}
           {
             type === 'version'
-              ? <Icon type="folder_special" className="c7n-add-folder" onClick={this.addFolder.bind(this, data)} />
+              ? <Icon type="create_new_folder" className="c7n-add-folder" onClick={this.addFolder.bind(this, data)} />
               : null
           }
           {
