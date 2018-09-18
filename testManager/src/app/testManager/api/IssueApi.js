@@ -11,7 +11,7 @@ export function createIssue(issueObj, folderId) {
   };
   // return axios.post(`/agile/v1/projects/${projectId}/issues`, issue);
   const versionId = issue.versionIssueRelDTOList[0].versionId;
-  return axios.post(`/test/v1/projects/${projectId}/issueFolderRel/testAndRelationship?version_id=${versionId}${folderId ? `&folderId=${folderId}` : ''}`, issue);
+  return axios.post(`/test/v1/projects/${projectId}/issueFolderRel/testAndRelationship?version_id=${versionId}${folderId ? `&folder_id=${folderId}` : ''}`, issue);
 }
 
 export function loadLabels() {
