@@ -72,19 +72,36 @@ class EditCycle extends Component {
   disabledStartDate = (startValue) => { 
     const { getFieldValue } = this.props.form;
     const endValue = getFieldValue('toDate');
+    const children = TestPlanStore.CurrentEditCycle.children || [];
+    // 子元素最小的时间
+    const starts = children.map(child => moment(child.fromDate));
+    // console.log(starts, moment.min(starts), endValue.format('YYYYMMDD'));
+    // console.log(startValue, endValue);
+    // moment.max(a, b);
     if (!startValue || !endValue) {
       return false;
     }
-    return startValue.valueOf() > endValue.valueOf();   
+    if (children.length > 0) {
+      return startValue.valueOf() > endValue.valueOf() || startValue > moment.min(starts);   
+    } else {
+      return startValue.valueOf() > endValue.valueOf();
+    }
   }
 
   disabledEndDate = (endValue) => {
     const { getFieldValue } = this.props.form;
     const startValue = getFieldValue('fromDate'); 
+    const children = TestPlanStore.CurrentEditCycle.children || [];
+    // 子元素最小的时间
+    const ends = children.map(child => moment(child.toDate));
     if (!endValue || !startValue) {
       return false;
     }
-    return endValue.valueOf() <= startValue.valueOf();
+    if (children.length > 0) {
+      return endValue.valueOf() <= startValue.valueOf() || endValue < moment.max(ends);
+    } else {
+      return endValue.valueOf() <= startValue.valueOf();
+    }   
   }
 
   render() {

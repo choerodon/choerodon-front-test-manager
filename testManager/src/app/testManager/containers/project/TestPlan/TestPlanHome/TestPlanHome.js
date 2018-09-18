@@ -54,6 +54,9 @@ class TestPlanHome extends Component {
   }
 
   refresh = () => {
+    getStatusList('CYCLE_CASE').then((statusList) => {
+      this.setState({ statusList });
+    });
     TestPlanStore.getTree();
   }
 
@@ -135,6 +138,9 @@ class TestPlanHome extends Component {
         });
         // window.console.log(cycle);
       });
+    }).catch((err) => {
+      Choerodon.prompt('网络错误');
+      TestPlanStore.rightLeaveLoading();
     });
   }
 
