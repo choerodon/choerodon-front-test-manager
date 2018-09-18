@@ -12,10 +12,21 @@ import EventItem from './EventItem';
 
 const moment = extendMoment(Moment);
 class EventCalendar extends Component {
-  state = {
+  state={
     baseDate: moment(),
     mode: 'month',
     pos: 0,
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { times } = nextProps;
+    const { mode } = this.state;
+    // 使事件始终可以显示在当前范围
+    if (times && times.length > 0) {
+      this.setState({
+        baseDate: moment(times[0].start).startOf(mode),
+      });
+    }
   }
 
   calculateTime = () => {

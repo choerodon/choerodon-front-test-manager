@@ -69,12 +69,22 @@ class CreateCycle extends Component {
     });
   }
 
-  disabledDate=(current) => {
-    // Can not select days before today and today
-    
-    const disabled = current < moment().startOf('day');
-    // console.log(disabled);
-    return disabled;
+  disabledStartDate = (startValue) => { 
+    const { getFieldValue } = this.props.form;
+    const endValue = getFieldValue('toDate');
+    if (!startValue || !endValue) {
+      return false;
+    }
+    return startValue.valueOf() > endValue.valueOf();   
+  }
+
+  disabledEndDate = (endValue) => {
+    const { getFieldValue } = this.props.form;
+    const startValue = getFieldValue('fromDate'); 
+    if (!endValue || !startValue) {
+      return false;
+    }
+    return endValue.valueOf() <= startValue.valueOf();
   }
 
   render() {
@@ -193,7 +203,7 @@ class CreateCycle extends Component {
                   })(
                     <DatePicker
                       format="YYYY-MM-DD"
-                      disabledDate={this.disabledDate}
+                      disabledDate={this.disabledStartDate}
                       style={{ width: 500 }}
                       label={<FormattedMessage id="cycle_startTime" />}
                     />,
@@ -209,6 +219,7 @@ class CreateCycle extends Component {
                     }],
                   })(
                     <DatePicker
+                      disabledDate={this.disabledEndDate}
                       label={<FormattedMessage id="cycle_endTime" />}
                       format="YYYY-MM-DD"
                       style={{ width: 500 }}

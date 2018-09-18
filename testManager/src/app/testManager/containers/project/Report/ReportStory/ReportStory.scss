@@ -109,4 +109,12 @@
     tr {
         vertical-align: top;
     }
+    &-filter-table {
+        .ant-table {
+          display: none;
+        }
+        .ant-table-columns-chooser {
+          display: none;
+        }
+      }
 }

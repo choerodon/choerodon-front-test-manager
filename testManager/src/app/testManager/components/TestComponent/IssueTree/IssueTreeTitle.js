@@ -86,7 +86,9 @@ class IssueTreeTitle extends Component {
   enterCopy = (e) => {
     e.preventDefault();
     e.stopImmediatePropagation();
-    if (e.keyCode === 17) {
+    console.log(e.keyCode);
+    // 17 ctrl 91 左command 93 右command 224 其他浏览器（firefox）command
+    if (e.keyCode === 17 || e.keyCode === 93 || e.keyCode === 91 || e.keyCode === 224) {
       const templateCopy = document.getElementById('template_folder_copy').cloneNode(true);
       templateCopy.style.display = 'block';
       IssueTreeStore.setCopy(true);
@@ -104,7 +106,7 @@ class IssueTreeTitle extends Component {
     e.stopImmediatePropagation();
     const templateMove = document.getElementById('template_folder_move').cloneNode(true);
     templateMove.style.display = 'block';
-    IssueTreeStore.setCopy(true);
+    IssueTreeStore.setCopy(false);
     if (this.instance.firstElementChild) {
       this.instance.replaceChild(templateMove, this.instance.firstElementChild);
     } else {
@@ -117,7 +119,7 @@ class IssueTreeTitle extends Component {
       enter: false,
     });
     console.log(e.ctrlKey, cycleId, IssueStore.getDraggingTableItems);
-    const isCopy = e.ctrlKey;
+    const isCopy = e.ctrlKey || e.metaKey;
     const issueLinks = IssueStore.getDraggingTableItems.map(issue => ({
       issueId: issue.issueId,
       summary: issue.summary,
@@ -220,15 +222,15 @@ class IssueTreeTitle extends Component {
         ? null : */}
           {
             type === 'version'
-              ? <Icon type="folder_special" className="c7n-add-folder" onClick={this.addFolder.bind(this, data)} />
+              ? <Icon type="create_new_folder" className="c7n-add-folder" onClick={this.addFolder.bind(this, data)} />
               : null
           }
           {
             type === 'cycle'
             && (
-              <Dropdown overlay={getMenu(data.type)} trigger={['click']}>
-                <Button shape="circle" icon="more_vert" />
-              </Dropdown>
+            <Dropdown overlay={getMenu(data.type)} trigger={['click']}>
+              <Button shape="circle" icon="more_vert" />
+            </Dropdown>
             )
           }
         </div>

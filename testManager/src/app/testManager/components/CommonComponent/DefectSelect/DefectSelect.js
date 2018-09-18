@@ -4,7 +4,7 @@ import {
 } from 'choerodon-ui';
 import _ from 'lodash';
 import { removeDefect, addDefects } from '../../../api/CycleExecuteApi';
-import { getIssueList } from '../../../api/agileApi';
+import { getIssuesForDefects } from '../../../api/agileApi';
 import './DefectSelect.scss';
 import SelectCreateIssueFooter from '../SelectCreateIssueFooter';
 
@@ -23,14 +23,14 @@ class DefectSelect extends Component {
   }
 
   componentDidMount() {
-    this.getIssueList();
+    this.getIssuesForDefects();
   }
 
-  getIssueList = () => {
+  getIssuesForDefects = () => {
     this.setState({
       selectLoading: true,
     });
-    getIssueList().then((issueData) => {
+    getIssuesForDefects().then((issueData) => {
       this.setState({
         issueList: issueData.content,
         selectLoading: false,
@@ -104,7 +104,7 @@ class DefectSelect extends Component {
           this.setState({
             selectLoading: true,
           });
-          getIssueList(value).then((issueData) => {
+          getIssuesForDefects(value).then((issueData) => {
             this.setState({
               issueList: issueData.content,
               selectLoading: false,

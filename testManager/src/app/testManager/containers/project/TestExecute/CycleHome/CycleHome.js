@@ -774,13 +774,13 @@ class CycleHome extends Component {
                 history.push(`/testManager/TestExecute/execute/${record.executeId}?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`);
               }}
             />
-            <Icon
+            {/* <Icon
               type="delete_forever"
               style={{ cursor: 'pointer' }}
               onClick={() => {
                 this.deleteExecute(record);
               }}
-            />
+            /> */}
           </div>
         )
       ),

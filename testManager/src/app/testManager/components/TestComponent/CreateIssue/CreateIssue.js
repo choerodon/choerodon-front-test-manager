@@ -12,6 +12,7 @@ import { UploadButton } from '../CommonComponent';
 import { handleFileUpload, beforeTextUpload } from '../../../common/utils';
 import {
   createIssue, loadLabels, loadPriorities, loadVersions, loadSprints, loadComponents, loadEpics,
+  getFoldersByVersion,
 } from '../../../api/IssueApi';
 import { getUsers } from '../../../api/CommonApi';
 import { COLOR } from '../../../common/Constant';
@@ -42,7 +43,7 @@ class CreateIssue extends Component {
       edit: false,
       createLoading: false,
       fileList: [],
-      selectLoading: true,
+      selectLoading: false,
 
       originLabels: [],
       originComponents: [],
@@ -53,6 +54,7 @@ class CreateIssue extends Component {
       originUsers: [],
 
       origin: {},
+      folders: [],
     };
   }
 
@@ -111,6 +113,21 @@ class CreateIssue extends Component {
     });
   }
 
+  loadFolders = () => {
+    const { getFieldValue } = this.props.form;
+    if (getFieldValue('versionId')) {
+      this.setState({
+        selectLoading: true,
+      });
+      getFoldersByVersion(getFieldValue('versionId')).then((folders) => {
+        this.setState({
+          folders,
+          selectLoading: false,
+        });
+      });
+    }
+  }
+
   handleFullEdit = (delta) => {
     this.setState({
       delta,
@@ -158,8 +175,8 @@ class CreateIssue extends Component {
           }
         });
         const exitFixVersions = this.state.originFixVersions;
-        const version = values.fixVersionIssueRel;       
-        const target = _.find(exitFixVersions, { name: version });
+        const version = values.versionId;       
+        const target = _.find(exitFixVersions, { versionId: version });
         let fixVersionIssueRelDTOList = [];
         if (target) {
           fixVersionIssueRelDTOList = [{
@@ -206,19 +223,19 @@ class CreateIssue extends Component {
           beforeTextUpload(deltaOps, extra, this.handleSave);
         } else {
           extra.description = '';
-          this.handleSave(extra);
+          this.handleSave(extra, values.folderId);
         }
         this.props.onOk(extra);
       }
     });
   };
 
-  handleSave = (data) => {
+  handleSave = (data, folderId) => {
     const fileList = this.state.fileList;
     const callback = (newFileList) => {
       this.setState({ fileList: newFileList });
     };
-    createIssue(data)
+    createIssue(data, folderId)
       .then((res) => {
         if (fileList.length > 0) {
           const config = {
@@ -242,6 +259,12 @@ class CreateIssue extends Component {
     const {
       initValue, visible, onCancel, onOk,
     } = this.props;
+    const { folders, selectLoading } = this.state;
+    const folderOptions = folders.map(folder => (
+      <Option value={folder.folderId} key={folder.folderId}>
+        {folder.name}
+      </Option>
+    ));
     const callback = (value) => {
       this.setState({
         delta: value,
@@ -437,7 +460,7 @@ class CreateIssue extends Component {
             </FormItem>
 
             <FormItem style={{ width: 520 }}>
-              {getFieldDecorator('fixVersionIssueRel', {
+              {getFieldDecorator('versionId', {
                 rules: [
                   {
                     required: true,
@@ -452,6 +475,10 @@ class CreateIssue extends Component {
                   loading={this.state.selectLoading}
                   getPopupContainer={triggerNode => triggerNode.parentNode}
                   tokenSeparators={[',']}
+                  onChange={() => {
+                    const { resetFields } = this.props.form;
+                    resetFields(['folderId']);
+                  }}
                   onFocus={() => {
                     this.setState({
                       selectLoading: true,
@@ -464,11 +491,29 @@ class CreateIssue extends Component {
                     });
                   }}
                 >
-                  {this.state.originFixVersions.map(version => <Option key={version.name} value={version.name}>{version.name}</Option>)}
+                  {this.state.originFixVersions.map(version => <Option key={version.name} value={version.versionId}>{version.name}</Option>)}
                 </Select>,
               )}
             </FormItem>
-
+            <FormItem
+              style={{ width: 520 }}
+                  // {...formItemLayout}
+              label={null}
+            >
+              {getFieldDecorator('folderId', {
+                // rules: [{
+                //   required: true, message: '请选择文件夹!',
+                // }],
+              })(
+                <Select
+                  loading={selectLoading}
+                  onFocus={this.loadFolders}                 
+                  label={<FormattedMessage id="testPlan_linkFolder" />}
+                >
+                  {folderOptions}
+                </Select>,                    
+              )}
+            </FormItem>
             <FormItem style={{ width: 520 }}>
               {getFieldDecorator('componentIssueRel', {
                 rules: [{ transform: value => (value ? value.toString() : value) }],

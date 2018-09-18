@@ -233,12 +233,12 @@ class TestPlanStore {
     for (let i = 0; i < data.length; i += 1) {
       const node = data[i];
       const {
-        fromDate, toDate, title, type,
+        fromDate, toDate, title, type, children,
       } = node;
       if (fromDate && toDate) {
         this.times.push({
           ...node,
-          children: [],
+          children,
           start: moment(fromDate),
           end: moment(toDate),
         });

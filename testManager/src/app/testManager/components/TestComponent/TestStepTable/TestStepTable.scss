@@ -3,17 +3,21 @@
     tr {
       align-items: flex-start !important;
     }
-    td{
+    td {
       line-height: 34px;
-      
     }
-    td .item-container {     
+    td .item-container {
       padding: 5px 0;
       min-height: 34px;
-    } 
-    td .c7n-text-dot{
+    }
+    td .c7n-text-dot {
       line-height: 19px;
       min-height: 19px;
+    }
+    td .c7n-text-wrap {
+      line-height: 19px;
+      white-space: pre-wrap;
+      word-break: break-all;
     }
   }
 }

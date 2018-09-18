@@ -339,7 +339,7 @@ class ReportTest extends Component {
               </div>
               <Link
                 style={{ lineHeight: '13px' }}
-                to={`/testManager/TestExecute/execute/${execute.executeId}?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}
+                to={`/testManager/TestExecute/executeShow/${execute.executeId}?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}
               >
                 <Icon type="explicit2" style={{ marginLeft: 10, color: 'black' }} />
               </Link>
@@ -377,8 +377,9 @@ class ReportTest extends Component {
             <div>
               <div>
                 <FormattedMessage id="report_total" />
+
                 ：
-                {totalExecute}
+{totalExecute}
               </div>
               <div style={{ display: 'flex' }}>
                 {
@@ -386,8 +387,9 @@ class ReportTest extends Component {
                     <div>
                       <span>
                         {key}
+
                         ：
-                      </span>
+</span>
                       <span>{executeStatus[key]}</span>
                     </div>
                   ))
@@ -441,8 +443,9 @@ class ReportTest extends Component {
             <div>
               {' '}
               <FormattedMessage id="report_total" />
+
               ：
-              {testCycleCaseES.concat(testCycleCaseStepES).length}
+{testCycleCaseES.concat(testCycleCaseStepES).length}
             </div>
           );
       },

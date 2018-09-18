@@ -15,6 +15,7 @@ import FileSaver from 'file-saver';
 import '../../../../assets/main.scss';
 import './TestHome.scss';
 import IssueStore from '../../../../store/project/IssueStore';
+import IssueTreeStore from '../../../../store/project/treeStore/IssueTreeStore';
 import {
   STATUS, COLOR, TYPE, ICON, TYPE_NAME,
 } from '../../../../common/Constant';
@@ -159,7 +160,8 @@ class Test extends Component {
   handleBlurCreateIssue() {
     if (this.state.createIssueValue !== '') {
       const versionIssueRelDTOList = [];
-      const selectedVersion = IssueStore.getSeletedVersion;
+      const selectedVersion = IssueTreeStore.currentCycle.versionId || IssueStore.getSeletedVersion;
+      const folderId = IssueTreeStore.currentCycle.cycleId;
       // 判断是否选择版本
       if (!selectedVersion) {
         Choerodon.prompt('请选择版本');
@@ -182,7 +184,7 @@ class Test extends Component {
       this.setState({
         createLoading: true,
       });
-      createIssue(data)
+      createIssue(data, folderId)
         .then((res) => {
           IssueStore.init();
           IssueStore.loadIssues();
@@ -267,7 +269,8 @@ class Test extends Component {
   render() {
     const { expand, treeShow } = this.state;
     const versions = IssueStore.getVersions;
-    const selectedVersion = IssueStore.getSeletedVersion;
+    const selectedVersion = IssueTreeStore.currentCycle.versionId || IssueStore.getSeletedVersion;
+
     const ORDER = [
       {
         code: 'summary',
@@ -542,6 +545,7 @@ class Test extends Component {
                         {/* 创建issue选择版本 */}
                         <span className="c7n-add-select-version-prefix">V</span>
                         <Select
+                          disabled={IssueTreeStore.currentCycle.versionId}
                           onChange={(value) => {
                             IssueStore.selectVersion(value);
                           }}

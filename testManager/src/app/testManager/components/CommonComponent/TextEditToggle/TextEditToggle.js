@@ -53,7 +53,7 @@ class TextEditToggle extends Component {
     const root = findDOMNode(this);
     // 如果点击不在当前元素内，就调用submit提交数据
     if (!contains(root, target)) {
-      console.log(target);
+      // console.log(target);
       this.onSubmit();
     }
   }
