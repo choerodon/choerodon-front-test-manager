@@ -131,7 +131,7 @@ class TextEditToggle extends Component {
   // 为子元素加上getPopupContainer，因为默认getPopupContainer是body,点击时判断onDocumentClick会调用onSubmit方法
   wrapChildren = (children) => {
     const childrenArray = React.Children.toArray(children);
-    console.log(childrenArray);
+    // console.log(childrenArray);
     return childrenArray.map(child => React.cloneElement(child, {
       getPopupContainer: () => findDOMNode(this),
     }));

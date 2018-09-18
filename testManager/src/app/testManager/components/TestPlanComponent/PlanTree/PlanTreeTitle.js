@@ -38,7 +38,7 @@ class PlanTreeTitle extends Component {
   handleItemClick = ({ item, key, keyPath }) => {
     const { data, refresh } = this.props;
     const { type, folderId, cycleId } = data;
-    // window.console.log(this.props.data, { item, key, keyPath });
+    window.console.log(this.props.data, { item, key, keyPath });
     switch (key) {
       case 'add': {
         this.props.callback(data, 'ADD_FOLDER');

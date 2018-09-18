@@ -478,7 +478,7 @@ class TestPlanHome extends Component {
         >
           <Spin spinning={loading}>
             <div className="c7n-TestPlan-content">
-              <EditCycle />
+              <EditCycle visible ={TestPlanStore.EditCycleVisible} />
               <EditStage visible={TestPlanStore.EditStageVisible} />
               <CreateCycle
                 visible={CreateCycleVisible}
