@@ -9,7 +9,7 @@ import './IssueTree.scss';
 import { IssueTreeStore } from '../../../store/project/treeStore';
 // import { TreeTitle } from '../../CycleComponent';
 import {
-  getIssueTree, addFolder, getIssuesByFolder, moveFolder, copyFolder, 
+  getIssueTree, addFolder, getIssuesByFolder, moveFolder, copyFolder,
 } from '../../../api/IssueApi';
 import IssueTreeTitle from './IssueTreeTitle';
 import pic from '../../../assets/问题管理－空.png';
@@ -23,7 +23,7 @@ class IssueTree extends Component {
   state = {
     loading: false,
     autoExpandParent: false,
-    searchValue: '',   
+    searchValue: '',
   }
 
   componentDidMount() {
@@ -36,7 +36,7 @@ class IssueTree extends Component {
       loading: true,
     });
     addFolder({
-      name: e.target.value,    
+      name: e.target.value,
       type: 'cycle',
       versionId: item.versionId,
     }).then((res) => {
@@ -231,11 +231,11 @@ class IssueTree extends Component {
         IssueTreeStore.setSelectedKeys(selectedKeys);
       }
       IssueTreeStore.setCurrentCycle(data);
-      IssueStore.loadIssues();     
+      IssueStore.loadIssues();
     }
   }
 
-  onDragEnd=(result) => {
+  onDragEnd = (result) => {
     console.log(IssueTreeStore.isCopy);
     const { destination } = result;
     if (!destination) {
@@ -250,18 +250,26 @@ class IssueTree extends Component {
     // debugger;
     if (IssueTreeStore.isCopy) {
       copyFolder(data).then((res) => {
+        if (res.failed) {
+          Choerodon.prompt('存在同名文件夹');
+          return;
+        }
         this.getTree();
       }).catch((err) => {
         Choerodon.prompt('网络错误');
       });
     } else {
       moveFolder(data).then((res) => {
+        if (res.failed) {
+          Choerodon.prompt('存在同名文件夹');
+          return;
+        }
         this.getTree();
       }).catch((err) => {
         Choerodon.prompt('网络错误');
       });
     }
-    
+
     console.log(result);
   }
 
@@ -274,14 +282,14 @@ class IssueTree extends Component {
     const expandedKeys = IssueTreeStore.getExpandedKeys;
     const selectedKeys = IssueTreeStore.getSelectedKeys;
     const currentCycle = IssueTreeStore.getCurrentCycle;
-    return (      
-      <div className="c7n-IssueTree">    
+    return (
+      <div className="c7n-IssueTree">
         <div id="template_folder_copy" style={{ display: 'none' }}>
           当前状态：复制
         </div>
         <div id="template_folder_move" style={{ display: 'none' }}>
           当前状态：移动
-        </div>    
+        </div>
         <div className="c7n-treeTop">
           <Input
             prefix={<Icon type="filter_list" style={{ color: 'black' }} />}
@@ -296,7 +304,7 @@ class IssueTree extends Component {
             className="c7n-IssueTree-tree"
           >
             <DragDropContext onDragEnd={this.onDragEnd} onDragStart={this.onDragStart}>
-              <Tree              
+              <Tree
                 selectedKeys={selectedKeys}
                 expandedKeys={expandedKeys}
                 showIcon
@@ -309,7 +317,7 @@ class IssueTree extends Component {
             </DragDropContext>
           </div>
         </Spin>
-      </div>      
+      </div>
     );
   }
 }

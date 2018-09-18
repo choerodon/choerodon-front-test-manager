@@ -418,7 +418,7 @@ class IssueTable extends Component {
   enterCopy = (e) => {
     e.preventDefault();
     e.stopImmediatePropagation();
-    if (e.keyCode === 17) {
+    if (e.keyCode === 17 || e.keyCode === 93 || e.keyCode === 91 || e.keyCode === 224) {
       const templateCopy = document.getElementById('template_copy').cloneNode(true);
       templateCopy.style.display = 'block';
       // IssueStore.setCopy(true);
