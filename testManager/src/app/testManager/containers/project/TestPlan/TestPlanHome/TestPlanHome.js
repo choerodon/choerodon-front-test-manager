@@ -12,7 +12,7 @@ import {
 } from 'choerodon-ui';
 import { Link } from 'react-router-dom';
 import {
-  getCycleById, getCycles, getStatusList, editCycleExecute, 
+  getCycleById, getCycles, getStatusList, editCycleExecute, deleteExecute,
 } from '../../../../api/cycleApi';
 import {
   EventCalendar, PlanTree, CreateCycle, EditStage, EditCycle,
@@ -28,6 +28,7 @@ import {
 import './TestPlanHome.scss';
 import noRight from '../../../../assets/noright.svg';
 
+const { confirm } = Modal;
 const styles = {
   statusOption: {
     lineHeight: '20px',
@@ -60,7 +61,7 @@ class TestPlanHome extends Component {
     TestPlanStore.getTree();
   }
 
-  onItemClick=(item) => {
+  onItemClick = (item) => {
     const { type } = item;
     if (type === 'folder') {
       TestPlanStore.EditStage(item);
@@ -74,7 +75,7 @@ class TestPlanHome extends Component {
     if (pagination.current) {
       TestPlanStore.setFilters(filters);
       TestPlanStore.rightEnterLoading();
-      TestPlanStore.setExecutePagination(pagination);      
+      TestPlanStore.setExecutePagination(pagination);
       const currentCycle = TestPlanStore.getCurrentCycle;
       getCycleById({
         size: pagination.pageSize,
@@ -91,7 +92,7 @@ class TestPlanHome extends Component {
           current: pagination.current,
           pageSize: pagination.pageSize,
           total: cycle.totalElements,
-        });         
+        });
       });
     }
   }
@@ -141,6 +142,45 @@ class TestPlanHome extends Component {
     }).catch((err) => {
       Choerodon.prompt('网络错误');
       TestPlanStore.rightLeaveLoading();
+    });
+  }
+
+  deleteExecute = (record) => {
+    const { executeId, cycleId } = record;
+    confirm({
+      width: 560,
+      title: Choerodon.getMessage('确认删除吗?', 'Confirm delete'),
+      content:
+  <div style={{ marginBottom: 32 }}>
+    {Choerodon.getMessage('当你点击删除后，该条数据将被永久删除，不可恢复!', 'When you click delete, after which the data will be permanently deleted and irreversible!')}
+  </div>,
+      onOk: () => {
+        TestPlanStore.rightEnterLoading();
+        deleteExecute(executeId)
+          .then((res) => {
+            const { executePagination } = TestPlanStore;
+            const currentCycle = TestPlanStore.getCurrentCycle;
+            getCycleById({
+              page: executePagination.current - 1,
+              size: executePagination.pageSize,
+            }, currentCycle.cycleId).then((cycle) => {
+              TestPlanStore.rightLeaveLoading();
+              TestPlanStore.setTestList(cycle.content);
+              TestPlanStore.setExecutePagination({
+                current: executePagination.current,
+                pageSize: executePagination.pageSize,
+                total: cycle.totalElements,
+              });
+              // window.console.log(cycle);
+            });
+          }).catch(() => {
+            Choerodon.prompt('网络异常');
+            TestPlanStore.rightLeaveLoading();
+          });
+      },
+      onCancel() { },
+      okText: '删除',
+      okType: 'danger',
     });
   }
 
@@ -323,13 +363,13 @@ class TestPlanHome extends Component {
                 history.push(`/testManager/TestExecute/executeShow/${record.executeId}?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`);
               }}
             />
-            {/* <Icon
+            <Icon
               type="delete_forever"
               style={{ cursor: 'pointer' }}
               onClick={() => {
                 this.deleteExecute(record);
               }}
-            /> */}
+            />
           </div>
         )
       ),
@@ -478,7 +518,7 @@ class TestPlanHome extends Component {
                       this.setState({
                         treeShow: false,
                       });
-                    }}                   
+                    }}
                   />
                 )}
               </div>
