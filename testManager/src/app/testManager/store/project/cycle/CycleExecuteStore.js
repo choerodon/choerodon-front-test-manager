@@ -73,9 +73,9 @@ class CycleExecuteStore {
         page: historyPagination.current - 1,
         size: historyPagination.pageSize,
       }, id),
-      // getIssuesForDefects(),
+      getIssuesForDefects(),
     ])
-      .then(([cycleData, statusList, detailData, stepStatusList, historyData]) => {      
+      .then(([cycleData, statusList, detailData, stepStatusList, historyData, issueData]) => {      
         this.setCycleData(cycleData);
         this.setStatusList(statusList);
         this.setDetailList(detailData.content);
@@ -91,7 +91,7 @@ class CycleExecuteStore {
           total: historyData.totalElements,
         });
         this.setHistoryList(historyData.content);
-        // this.setIssueList(issueData.content);
+        this.setIssueList(issueData.content);
         this.unloading();   
       }).catch((error) => {
         Choerodon.prompt('网络异常');

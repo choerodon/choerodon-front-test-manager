@@ -152,6 +152,7 @@ class TestExecuteInfo extends Component {
     // window.console.log('submit', originData);
     const cycleData = CycleExecuteStore.getCycleData;
     const newData = { ...cycleData, ...updateData };
+    newData.assignedTo = newData.assignedTo || 0;
     // 删除一些不必要字段
     delete newData.defects;
     delete newData.caseAttachment;
