@@ -769,14 +769,17 @@ class CreateCycleExecute extends Component {
                                   label={<FormattedMessage id="cycle_createExecute_defectStatus" />}
                                 >
                                   <Option value="todo" key="todo">
+
                                   待处理
-                                  </Option>
+</Option>
                                   <Option value="doing" key="doing">
+
                                   处理中
-                                  </Option>
+</Option>
                                   <Option value="done" key="done">
+
                                   已完成
-                                  </Option>
+</Option>
                                   {/* {issueStatusOptions} */}
                                 </Select>,
                               )}

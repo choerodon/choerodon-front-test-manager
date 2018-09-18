@@ -3,14 +3,15 @@ import { version } from 'moment';
 
 const { AppState } = stores;
 
-export function createIssue(issueObj, projectId = AppState.currentMenuType.id) {
+export function createIssue(issueObj, folderId) {
+  const projectId = AppState.currentMenuType.id;
   const issue = {
     projectId,
     ...issueObj,
   };
   // return axios.post(`/agile/v1/projects/${projectId}/issues`, issue);
   const versionId = issue.versionIssueRelDTOList[0].versionId;
-  return axios.post(`/test/v1/projects/${projectId}/issueFolderRel/testAndRelationship?version_id=${versionId}`, issue);
+  return axios.post(`/test/v1/projects/${projectId}/issueFolderRel/testAndRelationship?version_id=${versionId}${folderId ? `&folderId=${folderId}` : ''}`, issue);
 }
 
 export function loadLabels() {
