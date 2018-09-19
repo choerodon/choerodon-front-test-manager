@@ -143,8 +143,8 @@ class TestPlanStore {
     if (selectedKeys) {
       this.setSelectedKeys(selectedKeys);
     }
-      
-      
+
+
     this.rightEnterLoading();
 
 
@@ -174,7 +174,7 @@ class TestPlanStore {
 
   getParentKey = (key, tree) => key.split('-').slice(0, -1).join('-')
 
-  getParent=(key) => {
+  getParent = (key) => {
     const parentKey = this.getParentKey(key);
     const arr = parentKey.split('-');
     let temp = this.treeData;
@@ -205,8 +205,8 @@ class TestPlanStore {
       //   this.setExpandDefault(node);
       // } else
       // 两种情况，version或者cycle和文件夹，version没有type
-      if ((currentCycle.versionId && !currentCycle.type && currentCycle.versionId === node.versionId) 
-      || (currentCycle.cycleId && currentCycle.cycleId === node.cycleId)) {
+      if ((currentCycle.versionId && !currentCycle.type && currentCycle.versionId === node.versionId)
+        || (currentCycle.cycleId && currentCycle.cycleId === node.cycleId)) {
         this.setCurrentCycle(node);
         this.clearTimes();
         // debugger;
@@ -237,8 +237,26 @@ class TestPlanStore {
       const {
         fromDate, toDate, title, type, children, versionId, cycleId,
       } = node;
-      // 版本 0.1.1
-      if (versionId && !cycleId && children.length > 0) {
+
+      if (!versionId && !cycleId && children.length > 0) {
+        // 版本 规划中
+        let stepChildren = [];
+        children.forEach((child) => {
+          stepChildren = [...stepChildren, ...child.children];
+        });
+        const starts = stepChildren.filter(child => child.fromDate && child.toDate).map(child => moment(child.fromDate));
+        const ends = stepChildren.filter(child => child.fromDate && child.toDate).map(child => moment(child.toDate));
+        if (starts.length > 0 && ends.length > 0) {
+          this.times.push({
+            ...node,
+            children,
+            type: 'topversion',
+            start: moment.min(starts),
+            end: moment.max(ends),
+          });
+        }
+      } else if (versionId && !cycleId && children.length > 0) {
+        // 版本 0.1.1
         // console.log(children);
         const starts = children.filter(child => child.fromDate && child.toDate).map(child => moment(child.fromDate));
         const ends = children.filter(child => child.fromDate && child.toDate).map(child => moment(child.toDate));
@@ -246,6 +264,7 @@ class TestPlanStore {
           this.times.push({
             ...node,
             children,
+            type: 'version',
             start: moment.min(starts),
             end: moment.max(ends),
           });
@@ -332,13 +351,13 @@ class TestPlanStore {
     // window.console.log({ ...item, ...{ key: `${key}-add'`, type: 'add' } });
   }
 
-  @action EditStage(CurrentEditStage) {    
+  @action EditStage(CurrentEditStage) {
     const parent = this.getParent(CurrentEditStage.key);
     const { fromDate, toDate } = parent;
     // 为阶段设置父元素时间段，来限制时间的选择
     this.CurrentEditStage = {
-      ...CurrentEditStage, 
-      parentTime: { start: moment(fromDate), end: moment(toDate) }, 
+      ...CurrentEditStage,
+      parentTime: { start: moment(fromDate), end: moment(toDate) },
     };
     this.EditStageVisible = true;
   }

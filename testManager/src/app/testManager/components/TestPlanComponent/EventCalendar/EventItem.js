@@ -4,6 +4,12 @@ import { extendMoment } from 'moment-range';
 import './EventItem.scss';
 import { Tooltip } from 'choerodon-ui';
 
+const background = {
+  topversion: '#A1C4FD',
+  version: '#78A9F7',
+  cycle: '#5094FF',
+  folder: '#4677DD',
+};
 const moment = extendMoment(Moment);
 class EventItem extends Component {
   handleItemClick=() => {
@@ -66,7 +72,7 @@ class EventItem extends Component {
         style={{
           flex,
           display: flex === 0 && 'none', 
-          background: type === 'cycle' ? '#5094FF' : '#4677DD ', 
+          background: background[type], 
         }}
       >
         <Tooltip title={title} placement="topLeft">
