@@ -59,6 +59,7 @@
     "max-len": "warn",
     "react/forbid-prop-types": "off",
     "no-console": "warn",
+    "react/jsx-one-expression-per-line":"warn",
     "jsx-a11y/anchor-is-valid": [
       "warn",
       {

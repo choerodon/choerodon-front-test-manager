@@ -41,8 +41,7 @@ const { Option } = Select;
 class Test extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      treeShow: false,
+    this.state = {     
       expand: false,
       create: false,
       selectedIssue: {},
@@ -267,7 +266,8 @@ class Test extends Component {
 
 
   render() {
-    const { expand, treeShow } = this.state;
+    const { expand } = this.state;
+    const treeShow = IssueStore.treeShow;
     const versions = IssueStore.getVersions;
     const selectedVersion = IssueTreeStore.currentCycle.versionId || IssueStore.getSeletedVersion;
 
@@ -431,9 +431,7 @@ class Test extends Component {
             <p
               role="none"
               onClick={() => {
-                this.setState({
-                  treeShow: true,
-                });
+                IssueStore.setTreeShow(true);
               }}
             >
               <FormattedMessage id="issue_repository" />
@@ -449,9 +447,7 @@ class Test extends Component {
           >
             {treeShow && (
             <IssueTree onClose={() => {
-              this.setState({
-                treeShow: false,
-              });
+              IssueStore.setTreeShow(false);
             }}
             />
             )}

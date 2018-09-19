@@ -55,6 +55,8 @@ class SprintCommonStore {
   @observable copy = false;
 
   @observable tableDraging = false;
+
+  @observable treeShow = false;
   // @observable expand = false;
 
   // @observable selectedIssue={};
@@ -223,6 +225,10 @@ class SprintCommonStore {
 
   @action setTableDraging(flag) {
     this.tableDraging = flag;
+  }
+
+  @action setTreeShow(flag) {
+    this.treeShow = flag;
   }
 
   @computed get getIssues() {

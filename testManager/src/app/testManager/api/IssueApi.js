@@ -267,3 +267,7 @@ export function syncFolder(folderId, cycleId) {
   const projectId = AppState.currentMenuType.id;
   return axios.post(`/test/v1/projects/${projectId}/cycle/synchro/folder/${folderId}/in/${cycleId}`);
 }
+export function cloneIssue(issueId, copyConditionDTO) {
+  const projectId = AppState.currentMenuType.id;
+  return axios.put(`/test/v1/projects/${projectId}/issueFolderRel/copy/issue/${issueId}`, copyConditionDTO);
+}

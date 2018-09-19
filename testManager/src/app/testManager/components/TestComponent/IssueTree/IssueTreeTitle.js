@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { observer } from 'mobx-react';
 import {
-  Menu, Input, Dropdown, Button, Popover, Tooltip, Icon, Popconfirm,
+  Menu, Input, Dropdown, Button, Popover, Tooltip, Icon, Modal,
 } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 import { Draggable, Droppable, DragDropContext } from 'react-beautiful-dnd';
@@ -13,6 +13,7 @@ import {
 import IssueStore from '../../../store/project/IssueStore';
 import './IssueTreeTitle.scss';
 
+const confirm = Modal.confirm;
 @observer
 class IssueTreeTitle extends Component {
   state = {
@@ -34,17 +35,26 @@ class IssueTreeTitle extends Component {
         });
         break;
       }
-      case 'delete': {
-        confirm();
-        deleteFolder(cycleId).then((res) => {
-          if (res.failed) {
-            Choerodon.prompt('删除失败');
-          } else {
-            refresh();
-          }
-        }).catch((err) => {
-          Choerodon.prompt('网络异常');
-        });
+      case 'delete': {    
+        confirm({
+          title: '确定删除文件夹?',
+          content: '删除文件夹后将删除文件夹内所有测试用例，以及相关的测试阶段和执行',
+          onOk() {
+            deleteFolder(cycleId).then((res) => {
+              if (res.failed) {
+                Choerodon.prompt('删除失败');
+              } else {
+                refresh();
+              }
+            }).catch((err) => {
+              Choerodon.prompt('网络异常');
+            });
+          },
+          onCancel() {
+            console.log('Cancel');
+          },
+        });   
+        
         break;
       }
       case 'copy': {
@@ -299,21 +309,12 @@ class IssueTreeTitle extends Component {
                         {snapshotinner.isDragging
                         && (
                           <div className="IssueTree-drag-prompt">
-                            <div>
-
-                              复制或移动文件夹
-</div>
-                            <div>
-
-                              按下ctrl/command复制
-</div>
+                            <div>复制或移动文件夹</div>
+                            <div>按下ctrl/command复制</div>
                             <div
                               ref={(instance) => { this.instance = instance; }}
                             >
-                              <div>
-
-                                当前状态：移动
-</div>
+                              <div>当前状态：移动</div>
                             </div>
                           </div>
                         )

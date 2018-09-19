@@ -106,7 +106,7 @@ class EditCycle extends Component {
       return false;
     }
     if (children.length > 0) {
-      return endValue.valueOf() <= startValue.valueOf() || endValue < moment.max(ends);
+      return endValue.valueOf() <= startValue.valueOf() || endValue < moment(moment.max(ends)).startOf('day');
     } else {
       return endValue.valueOf() <= startValue.valueOf();
     }   

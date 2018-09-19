@@ -24,6 +24,7 @@ class EventCalendar extends Component {
     // 使事件始终可以显示在当前范围
     if (times && times.length > 0) {
       this.setState({
+        pos: 0,
         baseDate: moment(times[0].start).startOf(mode),
       });
     }
@@ -83,13 +84,14 @@ class EventCalendar extends Component {
           <div style={{ fontWeight: 500 }}>{moment(start).format('YYYY年M月')}</div>
           <div className="c7n-flex-space" />
           <div className="c7n-EventCalendar-header-skip">
-            <span style={{ color: 'rgba(0,0,0,0.65)' }}>跳转到</span>
-            <Button
+            <span style={{ color: 'rgba(0,0,0,0.65)', marginRight: 10 }}>跳转到</span>
+            {/* <Button
               onClick={() => { this.handleBaseChange(moment()); }}
               style={{ fontWeight: 500 }}
             >
-              今天
-            </Button>
+今天
+
+            </Button> */}
             <DatePicker onChange={this.handleBaseChange} />
           </div>
           <div className="c7n-EventCalendar-header-radio">
