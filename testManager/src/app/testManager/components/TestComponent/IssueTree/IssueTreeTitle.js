@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { observer } from 'mobx-react';
 import {
-  Menu, Input, Dropdown, Button, Popover, Tooltip, Icon,
+  Menu, Input, Dropdown, Button, Popover, Tooltip, Icon, Popconfirm,
 } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 import { Draggable, Droppable, DragDropContext } from 'react-beautiful-dnd';
@@ -35,6 +35,7 @@ class IssueTreeTitle extends Component {
         break;
       }
       case 'delete': {
+        confirm();
         deleteFolder(cycleId).then((res) => {
           if (res.failed) {
             Choerodon.prompt('删除失败');
@@ -299,17 +300,20 @@ class IssueTreeTitle extends Component {
                         && (
                           <div className="IssueTree-drag-prompt">
                             <div>
+
                               复制或移动文件夹
-                            </div>
+</div>
                             <div>
+
                               按下ctrl/command复制
-                            </div>
+</div>
                             <div
                               ref={(instance) => { this.instance = instance; }}
                             >
                               <div>
+
                                 当前状态：移动
-                              </div>
+</div>
                             </div>
                           </div>
                         )

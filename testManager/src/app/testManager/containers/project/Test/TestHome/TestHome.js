@@ -522,7 +522,8 @@ class Test extends Component {
                         });
                       }}
                       selectedIssue={this.state.selectedIssue}
-                      expand={this.state.expand}
+                      expand={expand}
+                      treeShow={treeShow}
                     />
                   )
                 }

@@ -14,29 +14,29 @@ class IssueTreeStore {
       title: '所有版本',
       key: '0',
       children: [
-        {
-          title: '1.0.1',
-          key: '0-0',
-          versionId: 1,
-          children: [{
-            cycleId: 1,
-            versionId: 1,
-            type: 'cycle',
-            title: '1.0.1',
-            key: '0-0-0',
-          }],
-        }, {
-          title: '1.1.0',
-          key: '0-1',
-          versionId: 1,
-          children: [{
-            cycleId: 2,
-            versionId: 1,
-            type: 'cycle',
-            title: '1.0.1',
-            key: '0-1-0',
-          }],
-        },
+        // {
+        //   title: '1.0.1',
+        //   key: '0-0',
+        //   versionId: 1,
+        //   children: [{
+        //     cycleId: 1,
+        //     versionId: 1,
+        //     type: 'cycle',
+        //     title: '1.0.1',
+        //     key: '0-0-0',
+        //   }],
+        // }, {
+        //   title: '1.1.0',
+        //   key: '0-1',
+        //   versionId: 1,
+        //   children: [{
+        //     cycleId: 2,
+        //     versionId: 1,
+        //     type: 'cycle',
+        //     title: '1.0.1',
+        //     key: '0-1-0',
+        //   }],
+        // },
       ],
     },
   ]

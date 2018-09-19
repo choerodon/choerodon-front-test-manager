@@ -38,7 +38,7 @@ class UserHead extends Component {
           backgroundColor: COLOR[priority.priorityCode].bgColor,
           color: COLOR[priority.priorityCode].color,
           borderRadius: '2px',
-          padding: '0 4px',
+          padding: '0 8px',
           display: 'inline-block',
           lineHeight: '20px',
           fontSize: '13px',
