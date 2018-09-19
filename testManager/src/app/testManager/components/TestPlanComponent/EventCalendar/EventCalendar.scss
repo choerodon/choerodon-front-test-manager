@@ -51,6 +51,8 @@
     border-right: none;
   }
   &-eventContainer {
+    height:calc(100% - 65px);
+    overflow: auto;
     width: 100%;
     position: absolute;
     top: 60px;
