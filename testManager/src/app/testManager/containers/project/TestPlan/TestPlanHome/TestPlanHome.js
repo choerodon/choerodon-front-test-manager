@@ -194,7 +194,9 @@ class TestPlanHome extends Component {
     } = TestPlanStore;
     const currentCycle = TestPlanStore.getCurrentCycle;
 
-    const { cycleId, title, versionId } = currentCycle;
+    const {
+      cycleId, title, versionId, key, 
+    } = currentCycle;
     const columns = [{
       title: 'ID',
       dataIndex: 'issueName',
@@ -478,7 +480,7 @@ class TestPlanHome extends Component {
         >
           <Spin spinning={loading}>
             <div className="c7n-TestPlan-content">
-              <EditCycle visible ={TestPlanStore.EditCycleVisible} />
+              <EditCycle visible={TestPlanStore.EditCycleVisible} />
               <EditStage visible={TestPlanStore.EditStageVisible} />
               <CreateCycle
                 visible={CreateCycleVisible}
@@ -523,7 +525,7 @@ class TestPlanHome extends Component {
                 )}
               </div>
               {/* <Spin spinning={loading}> */}
-              {versionId ? (
+              {key ? (
                 <div className="c7n-TestPlan-content-right">
                   <EventCalendar showMode={calendarShowMode} times={times} onItemClick={this.onItemClick} />
                   {calendarShowMode === 'single' && (

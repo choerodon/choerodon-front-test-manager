@@ -131,43 +131,45 @@ class TestPlanStore {
   } = {}) => {
     const { executePagination, filters } = this;
     const data = node ? node.props.data : this.getCurrentCycle;
-
-    if (data.versionId) {
-      if (selectedKeys) {
-        this.setSelectedKeys(selectedKeys);
-      }
-      this.clearTimes();
-      this.generateTimes([data]);
-      if (data.type === 'folder') {
-        this.setCalendarShowMode('single');
-      } else {
-        this.setCalendarShowMode('multi');
-      }
-      this.rightEnterLoading();
-
-
-      this.setCurrentCycle(data);
-      // window.console.log(data);
-      if (data.type === 'folder') {
-        getCycleById({
-          page: executePagination.current - 1,
-          size: executePagination.pageSize,
-        }, data.cycleId,
-        {
-          ...filters,
-          lastUpdatedBy: [Number(this.lastUpdatedBy)],
-          assignedTo: [Number(this.assignedTo)],
-        }).then((cycle) => {
-          this.rightLeaveLoading();
-          this.setTestList(cycle.content);
-          this.setExecutePagination({
-            current: executePagination.current,
-            pageSize: executePagination.pageSize,
-            total: cycle.totalElements,
-          });
-        });
-      }
+    // 点所有的都生成事件日历
+    this.clearTimes();
+    this.generateTimes([data]);
+    if (data.type === 'folder') {
+      this.setCalendarShowMode('single');
+    } else {
+      this.setCalendarShowMode('multi');
     }
+    // if (data.versionId) {
+    if (selectedKeys) {
+      this.setSelectedKeys(selectedKeys);
+    }
+      
+      
+    this.rightEnterLoading();
+
+
+    this.setCurrentCycle(data);
+    // window.console.log(data);
+    if (data.type === 'folder') {
+      getCycleById({
+        page: executePagination.current - 1,
+        size: executePagination.pageSize,
+      }, data.cycleId,
+      {
+        ...filters,
+        lastUpdatedBy: [Number(this.lastUpdatedBy)],
+        assignedTo: [Number(this.assignedTo)],
+      }).then((cycle) => {
+        this.rightLeaveLoading();
+        this.setTestList(cycle.content);
+        this.setExecutePagination({
+          current: executePagination.current,
+          pageSize: executePagination.pageSize,
+          total: cycle.totalElements,
+        });
+      });
+    }
+    // }
   }
 
   getParentKey = (key, tree) => key.split('-').slice(0, -1).join('-')
@@ -233,9 +235,18 @@ class TestPlanStore {
     for (let i = 0; i < data.length; i += 1) {
       const node = data[i];
       const {
-        fromDate, toDate, title, type, children,
+        fromDate, toDate, title, type, children, versionId, cycleId,
       } = node;
-      if (fromDate && toDate) {
+      // 版本 0.1.1
+      if (versionId && !cycleId && children.length > 0) {
+        // console.log(children);
+        this.times.push({
+          ...node,
+          children,
+          start: moment.min(children.map(child => moment(child.fromDate))),
+          end: moment.max(children.map(child => moment(child.toDate))),
+        });
+      } else if (fromDate && toDate) {
         this.times.push({
           ...node,
           children,

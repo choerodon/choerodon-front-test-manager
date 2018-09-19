@@ -281,7 +281,7 @@ class IssueTreeTitle extends Component {
                   });
                 } : null,
                 onMouseUp:
-                  IssueStore.tableDraging && this.moveIssues.bind(this, data.cycleId, data.versionId),
+                  IssueStore.tableDraging ? this.moveIssues.bind(this, data.cycleId, data.versionId) : null,
               }}
             >
               <Draggable key={data.key} draggableId={JSON.stringify({ folderId: data.cycleId, versionId: data.versionId, objectVersionNumber: data.objectVersionNumber })}>
@@ -351,7 +351,7 @@ class IssueTreeTitle extends Component {
                   });
                 } : null,
                 onMouseUp:
-                  IssueStore.tableDraging && this.moveIssues.bind(this, data.cycleId, data.versionId),
+                  IssueStore.tableDraging ? this.moveIssues.bind(this, data.cycleId, data.versionId) : null,
               }}
             >
               {treeTitle}
