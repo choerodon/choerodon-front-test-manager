@@ -25,7 +25,7 @@ class EventCalendar extends Component {
     if (times && times.length > 0) {
       this.setState({
         pos: 0,
-        baseDate: moment(times[0].start).startOf(mode),
+        baseDate: times[0].start ? moment(times[0].start).startOf(mode) : moment(),
       });
     }
   }

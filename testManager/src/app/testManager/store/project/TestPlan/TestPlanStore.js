@@ -240,12 +240,16 @@ class TestPlanStore {
       // 版本 0.1.1
       if (versionId && !cycleId && children.length > 0) {
         // console.log(children);
-        this.times.push({
-          ...node,
-          children,
-          start: moment.min(children.map(child => moment(child.fromDate))),
-          end: moment.max(children.map(child => moment(child.toDate))),
-        });
+        const starts = children.filter(child => child.fromDate && child.toDate).map(child => moment(child.fromDate));
+        const ends = children.filter(child => child.fromDate && child.toDate).map(child => moment(child.toDate));
+        if (starts.length > 0 && ends.length > 0) {
+          this.times.push({
+            ...node,
+            children,
+            start: moment.min(starts),
+            end: moment.max(ends),
+          });
+        }
       } else if (fromDate && toDate) {
         this.times.push({
           ...node,
