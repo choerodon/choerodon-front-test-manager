@@ -205,8 +205,7 @@ class TestPlanStore {
       //   this.setExpandDefault(node);
       // } else
       // 两种情况，version或者cycle和文件夹，version没有type
-      if ((currentCycle.versionId && !currentCycle.type && currentCycle.versionId === node.versionId)
-        || (currentCycle.cycleId && currentCycle.cycleId === node.cycleId)) {
+      if (currentCycle.key === node.key) {
         this.setCurrentCycle(node);
         this.clearTimes();
         // debugger;
@@ -244,12 +243,13 @@ class TestPlanStore {
         children.forEach((child) => {
           stepChildren = [...stepChildren, ...child.children];
         });
+        // 进行过滤，防止时间为空
         const starts = stepChildren.filter(child => child.fromDate && child.toDate).map(child => moment(child.fromDate));
         const ends = stepChildren.filter(child => child.fromDate && child.toDate).map(child => moment(child.toDate));
         if (starts.length > 0 && ends.length > 0) {
           this.times.push({
             ...node,
-            children,
+            // children, 不需要编辑，不用限制时间的选择，所有不用传children
             type: 'topversion',
             start: moment.min(starts),
             end: moment.max(ends),
@@ -263,7 +263,7 @@ class TestPlanStore {
         if (starts.length > 0 && ends.length > 0) {
           this.times.push({
             ...node,
-            children,
+            // children,
             type: 'version',
             start: moment.min(starts),
             end: moment.max(ends),
