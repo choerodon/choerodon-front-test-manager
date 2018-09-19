@@ -152,7 +152,7 @@ class TestPlanStore {
     // window.console.log(data);
     if (data.type === 'folder') {
       getCycleById({
-        page: executePagination.current - 1,
+        page: 0,
         size: executePagination.pageSize,
       }, data.cycleId,
       {
@@ -163,7 +163,7 @@ class TestPlanStore {
         this.rightLeaveLoading();
         this.setTestList(cycle.content);
         this.setExecutePagination({
-          current: executePagination.current,
+          current: 1,
           pageSize: executePagination.pageSize,
           total: cycle.totalElements,
         });

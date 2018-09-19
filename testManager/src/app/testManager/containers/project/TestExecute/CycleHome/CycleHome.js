@@ -146,7 +146,7 @@ class CycleHome extends Component {
     if (data.cycleId) {
       CycleStore.setCurrentCycle(data);
       // window.console.log(data);
-      if (data.type === 'folder') {
+      if (data.type === 'folder' || data.type === 'cycle') {
         if (!flag) {
           this.setState({
             rightLoading: true,
@@ -155,7 +155,7 @@ class CycleHome extends Component {
         }
         // console.log(this.treeAssignedTo);
         getCycleById({
-          page: executePagination.current - 1,
+          page: 0,
           size: executePagination.pageSize,
         }, data.cycleId,
         {
@@ -167,7 +167,7 @@ class CycleHome extends Component {
             rightLoading: false,
             testList: cycle.content,
             executePagination: {
-              current: executePagination.current,
+              current: 1,
               pageSize: executePagination.pageSize,
               total: cycle.totalElements,
             },
@@ -1012,8 +1012,10 @@ class CycleHome extends Component {
                     <div>
                       {type === 'folder' ? <FormattedMessage id="cycle_stageName" />
                         : <FormattedMessage id="cycle_cycleName" />}
-                      ：
-                      <span>{title}</span>
+
+
+：
+<span>{title}</span>
                     </div>
                     <div style={{ flex: 1, visiblity: 'hidden' }} />
                     {/* <div>
@@ -1030,8 +1032,7 @@ class CycleHome extends Component {
                       </Button>
                     </div> */}
                   </div>
-                  <ShowCycleData data={currentCycle} />
-                  {type === 'folder' && (
+                  <ShowCycleData data={currentCycle} />                  
                   <div>
                     <div style={{ display: 'flex', marginBottom: 20 }}>
                       <SelectFocusLoad
@@ -1063,8 +1064,7 @@ class CycleHome extends Component {
                       columns={leftVisible ? columns
                         : columns.slice(0, 4).concat(otherColumns).concat(columns.slice(4))}
                     />
-                  </div>
-                  )}
+                  </div>               
                 </div>
               ) : (
                 <div style={{
