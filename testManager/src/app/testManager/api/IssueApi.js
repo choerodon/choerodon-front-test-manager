@@ -199,7 +199,7 @@ export function getAllIssues(page = 0, size = 10, search, orderField, orderType)
   const searchDTO = { ...search };
   searchDTO.advancedSearchArgs.typeCode = ['issue_test'];
   const projectId = AppState.currentMenuType.id;
-  return axios.post(`/test/v1/projects/${projectId}/issueFolderRel/query?page=${page}&size=${size}`, searchDTO, {
+  return axios.post(`/test/v1/projects/${projectId}/issueFolderRel/query?page=${page}&size=${size}`, { versionIds: [], searchDTO }, {
     params: {
       sort: `${orderField && orderType ? `${orderField},${orderType}` : ''}`,
     },
@@ -209,17 +209,17 @@ export function getIssuesByFolder(folderId, page = 0, size = 10, search, orderFi
   const searchDTO = { ...search };
   searchDTO.advancedSearchArgs.typeCode = ['issue_test'];
   const projectId = AppState.currentMenuType.id;
-  return axios.post(`/test/v1/projects/${projectId}/issueFolderRel/query?folder_id=${folderId}&page=${page}&size=${size}`, searchDTO, {
+  return axios.post(`/test/v1/projects/${projectId}/issueFolderRel/query?folder_id=${folderId}&page=${page}&size=${size}`, { versionIds: [], searchDTO }, {
     params: {
       sort: `${orderField && orderType ? `${orderField},${orderType}` : ''}`,
     },
   });
 }
-export function getIssuesByVersion(versionId, page = 0, size = 10, search, orderField, orderType) {
+export function getIssuesByVersion(versionIds, page = 0, size = 10, search, orderField, orderType) {
   const searchDTO = { ...search };
   searchDTO.advancedSearchArgs.typeCode = ['issue_test'];
   const projectId = AppState.currentMenuType.id;
-  return axios.post(`/test/v1/projects/${projectId}/issueFolderRel/query?version_id=${versionId}&page=${page}&size=${size}`, searchDTO, {
+  return axios.post(`/test/v1/projects/${projectId}/issueFolderRel/query?page=${page}&size=${size}`, { versionIds, searchDTO }, {
     params: {
       sort: `${orderField && orderType ? `${orderField},${orderType}` : ''}`,
     },

@@ -162,7 +162,7 @@ class CycleHome extends Component {
           ...filters,
           lastUpdatedBy: [Number(this.lastUpdatedBy)],
           assignedTo: [this.treeAssignedTo || Number(this.assignedTo)],
-        }).then((cycle) => {
+        }, data.type).then((cycle) => {
           this.setState({
             rightLoading: false,
             testList: cycle.content,
@@ -306,7 +306,7 @@ class CycleHome extends Component {
         page: executePagination.current - 1,
         size: executePagination.pageSize,
       }, defaultExpandKeyItem.cycleId,
-      {}).then((cycle) => {
+      {}, defaultExpandKeyItem.type).then((cycle) => {
         this.setState({
           rightLoading: false,
           testList: cycle.content,
@@ -449,7 +449,7 @@ class CycleHome extends Component {
         ...filters,
         lastUpdatedBy: [Number(this.lastUpdatedBy)],
         assignedTo: [Number(this.assignedTo)],
-      }).then((cycle) => {
+      }, currentCycle.type).then((cycle) => {
         this.setState({
           rightLoading: false,
           testList: cycle.content,
@@ -866,6 +866,24 @@ class CycleHome extends Component {
         },
       },
     ];
+    const nameColumn = {
+      title: <FormattedMessage id="cycle_stageName" />,
+      dataIndex: 'cycleName',
+      key: 'cycleName',
+      flex: 1,
+      render(cycleName) {
+        return (
+          <div
+            className="c7n-text-dot"
+          >
+            {cycleName}
+          </div>
+        );
+      },
+    };
+    if (type === 'cycle') {
+      columns.splice(2, 0, nameColumn);
+    }
     return (
       <Page className="c7n-cycle">
         <Header title={<FormattedMessage id="cycle_name" />}>
@@ -1014,8 +1032,12 @@ class CycleHome extends Component {
                         : <FormattedMessage id="cycle_cycleName" />}
 
 
-：
-<span>{title}</span>
+
+
+
+
+                      ：
+                      <span>{title}</span>
                     </div>
                     <div style={{ flex: 1, visiblity: 'hidden' }} />
                     {/* <div>

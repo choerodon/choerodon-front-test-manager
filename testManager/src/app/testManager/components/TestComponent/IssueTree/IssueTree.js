@@ -226,13 +226,13 @@ class IssueTree extends Component {
     const { executePagination, filters } = this.state;
     const data = node.props.data;
     // console.log(data);
-    if (data.versionId) {
-      if (selectedKeys) {
-        IssueTreeStore.setSelectedKeys(selectedKeys);
-      }
-      IssueTreeStore.setCurrentCycle(data);
-      IssueStore.loadIssues();
+    // if (data.versionId) {
+    if (selectedKeys) {
+      IssueTreeStore.setSelectedKeys(selectedKeys);
     }
+    IssueTreeStore.setCurrentCycle(data);
+    IssueStore.loadIssues();
+    // }
   }
 
   onDragEnd = (result) => {
@@ -285,11 +285,33 @@ class IssueTree extends Component {
     return (
       <div className="c7n-IssueTree">
         <div id="template_folder_copy" style={{ display: 'none' }}>
+
+
+
+
+
+
+
+
+
+
+
           当前状态：复制
-        </div>
+</div>
         <div id="template_folder_move" style={{ display: 'none' }}>
+
+
+
+
+
+
+
+
+
+
+
           当前状态：移动
-        </div>
+</div>
         <div className="c7n-treeTop">
           <Input
             prefix={<Icon type="filter_list" style={{ color: 'black' }} />}
