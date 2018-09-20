@@ -314,7 +314,10 @@ class IssueTreeTitle extends Component {
                             <div
                               ref={(instance) => { this.instance = instance; }}
                             >
-                              <div>当前状态：移动</div>
+                              <div>
+                                {'当前状态：'}
+                                <span style={{ fontWeight: 500 }}>移动</span>
+                              </div>
                             </div>
                           </div>
                         )

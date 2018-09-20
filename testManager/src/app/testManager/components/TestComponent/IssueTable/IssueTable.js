@@ -235,10 +235,10 @@ class IssueTable extends Component {
     return (
       <Spin spinning={IssueStore.loading}>
         <div id="template_copy" style={{ display: 'none' }}>
-          当前状态：复制
+          当前状态：<span style={{fontWeight:500}}>复制</span>
         </div>
         <div id="template_move" style={{ display: 'none' }}>
-          当前状态：移动
+          当前状态：<span style={{fontWeight:500}}>移动</span>
         </div>
         <DragDropContext onDragEnd={this.onDragEnd} onDragStart={this.onDragStart}>
           <Droppable droppableId="dropTable" isDropDisabled>
@@ -291,7 +291,7 @@ class IssueTable extends Component {
                                     <div
                                       ref={(instance) => { this.instance = instance; }}
                                     >
-                                      <div>当前状态：移动</div>
+                                      <div>当前状态：<span style={{fontWeight:500}}>移动</span></div>
                                     </div>
                                   </div>
                                 )
