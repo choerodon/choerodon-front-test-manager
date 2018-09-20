@@ -200,7 +200,7 @@ class PlanTree extends Component {
   filterCycle = (value) => {
     // window.console.log(value);
     if (value !== '') {
-      const expandedKeys = dataList.map((item) => {
+      const expandedKeys = TestPlanStore.dataList.map((item) => {
         if (item.title.indexOf(value) > -1) {
           return this.getParentKey(item.key, TestPlanStore.getTreeData);
         }
