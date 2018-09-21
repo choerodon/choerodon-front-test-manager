@@ -21,6 +21,7 @@ class EventCalendar extends Component {
   componentWillReceiveProps(nextProps) {
     const { times } = nextProps;
     const { mode } = this.state;
+    console.log(times);
     // 使事件始终可以显示在当前范围
     if (times && times.length > 0) {
       this.setState({
@@ -28,6 +29,10 @@ class EventCalendar extends Component {
         baseDate: times[0].start ? moment(times[0].start).startOf(mode) : moment(),
       });
     }
+  }
+
+  getSnapshotBeforeUpdate() {
+    console.log('ss');
   }
 
   calculateTime = () => {
@@ -38,9 +43,11 @@ class EventCalendar extends Component {
   }
 
   handleModeChange = (e) => {
+    const { times } = this.props;
     this.setState({
       pos: 0,
       mode: e.target.value,
+      baseDate: times[0].start ? moment(times[0].start).startOf(e.target.value) : moment(),
     });
   }
 
