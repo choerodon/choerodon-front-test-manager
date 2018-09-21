@@ -12,7 +12,7 @@ import EventItem from './EventItem';
 
 const moment = extendMoment(Moment);
 class EventCalendar extends Component {
-  state={
+  state = {
     baseDate: moment(),
     mode: 'month',
     pos: 0,
@@ -21,10 +21,12 @@ class EventCalendar extends Component {
   componentWillReceiveProps(nextProps) {
     const { times } = nextProps;
     const { mode } = this.state;
+    console.log(times);
     // 使事件始终可以显示在当前范围
     if (times && times.length > 0) {
       this.setState({
-        baseDate: moment(times[0].start).startOf(mode),
+        pos: 0,
+        baseDate: times[0].start ? moment(times[0].start).startOf(mode) : moment(),
       });
     }
   }
@@ -37,9 +39,11 @@ class EventCalendar extends Component {
   }
 
   handleModeChange = (e) => {
+    const { times } = this.props;
     this.setState({
       pos: 0,
       mode: e.target.value,
+      baseDate: times[0].start ? moment(times[0].start).startOf(e.target.value) : moment(),
     });
   }
 
@@ -59,23 +63,23 @@ class EventCalendar extends Component {
     const fake = [{
       start: moment().startOf('month'),
       end: moment().endOf('month').add(-5, 'day'),
-    }, 
-    // {
-    //   start: moment().startOf('month'),
-    //   end: moment().endOf('month').add(-6, 'day'),
-    // }, {
-    //   start: moment().startOf('month').add(-5, 'day'),
-    //   end: moment().endOf('month').add(-5, 'day'),
-    // }, {
-    //   start: moment().startOf('month').add(15, 'day'),
-    //   end: moment().endOf('month').add(5, 'day'),
-    // }, {
-    //   start: moment().startOf('month').add(0, 'day'),
-    //   end: moment().endOf('month').add(-30, 'day'),
-    // }, {
-    //   start: moment().startOf('month').add(-10, 'day'),
-    //   end: moment().endOf('month').add(-33, 'day'),
-    // }
+    },
+      // {
+      //   start: moment().startOf('month'),
+      //   end: moment().endOf('month').add(-6, 'day'),
+      // }, {
+      //   start: moment().startOf('month').add(-5, 'day'),
+      //   end: moment().endOf('month').add(-5, 'day'),
+      // }, {
+      //   start: moment().startOf('month').add(15, 'day'),
+      //   end: moment().endOf('month').add(5, 'day'),
+      // }, {
+      //   start: moment().startOf('month').add(0, 'day'),
+      //   end: moment().endOf('month').add(-30, 'day'),
+      // }, {
+      //   start: moment().startOf('month').add(-10, 'day'),
+      //   end: moment().endOf('month').add(-33, 'day'),
+      // }
     ];
     return (
       <div className="c7n-EventCalendar" style={{ height: showMode === 'multi' ? '100%' : '162px' }}>
@@ -83,18 +87,19 @@ class EventCalendar extends Component {
           <div style={{ fontWeight: 500 }}>{moment(start).format('YYYY年M月')}</div>
           <div className="c7n-flex-space" />
           <div className="c7n-EventCalendar-header-skip">
-            <span style={{ color: 'rgba(0,0,0,0.65)' }}>跳转到</span>
-            <Button
+            <span style={{ color: 'rgba(0,0,0,0.65)', marginRight: 7 }}>跳转到</span>
+            {/* <Button
               onClick={() => { this.handleBaseChange(moment()); }}
               style={{ fontWeight: 500 }}
             >
-              今天
-            </Button>
+今天
+
+            </Button> */}
             <DatePicker onChange={this.handleBaseChange} />
           </div>
           <div className="c7n-EventCalendar-header-radio">
-            <RadioButton       
-              defaultValue={mode} 
+            <RadioButton
+              defaultValue={mode}
               onChange={this.handleModeChange}
               data={[{
                 value: 'week',
@@ -103,7 +108,7 @@ class EventCalendar extends Component {
                 value: 'month',
                 text: 'month',
               }]}
-            />            
+            />
           </div>
           <div className="c7n-EventCalendar-header-page">
             <Icon

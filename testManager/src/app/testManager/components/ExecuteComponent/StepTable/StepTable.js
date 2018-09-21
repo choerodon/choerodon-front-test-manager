@@ -231,31 +231,31 @@ class StepTable extends Component {
       dataIndex: 'comment',
       key: 'comment',
       render(comment, record) {
-        // window.console.log(delta2Text(comment));
+        // window.console.log(comment, delta2Text(comment));
         return (
-          <Tooltip title={<RichTextShow data={comment} />}>
-            <TextEditToggle
-              disabled={disabled}
-              formKey="comment"
-              onSubmit={(value) => { that.editCycleStep({ ...record, comment: value }); }}
-              originData={delta2Text(comment)}
-            >
-              <Text>
-                <div
-                  style={{
-                    width: 100,
-                    height: 20,
-                  }}
-                  className="c7n-text-dot"
-                >
-                  {delta2Text(comment)}
-                </div>
-              </Text>
-              <Edit>
-                <TextArea autosize autoFocus />
-              </Edit>
-            </TextEditToggle>
-          </Tooltip>
+        // <Tooltip title={<RichTextShow data={comment} />}>
+          <TextEditToggle
+            disabled={disabled}
+            formKey="comment"
+            onSubmit={(value) => { that.editCycleStep({ ...record, comment: value }); }}
+            originData={delta2Text(comment)}
+          >
+            <Text>
+              <div
+                style={{
+                  width: 100,
+                  height: 20,
+                }}
+                className="c7n-text-dot"
+              >
+                {delta2Text(comment)}
+              </div>
+            </Text>
+            <Edit>
+              <TextArea autosize autoFocus />
+            </Edit>
+          </TextEditToggle>
+        // </Tooltip>
         );
       },
     }, {

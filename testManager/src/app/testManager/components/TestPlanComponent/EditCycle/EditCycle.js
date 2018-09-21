@@ -22,6 +22,13 @@ class EditCycle extends Component {
     loading: false,
   }
 
+  componentWillReceiveProps(nextProps) {
+    const { resetFields } = this.props.form;
+    if (nextProps.visible && !this.props.visible) {
+      resetFields();
+    }
+  }
+
   onCancel=() => {
     TestPlanStore.ExitEditCycle();
   }
@@ -37,6 +44,7 @@ class EditCycle extends Component {
           ...values,
           ...{
             cycleId: initialValue.cycleId,
+            objectVersionNumber: initialValue.objectVersionNumber,
             type: 'cycle',
             fromDate: fromDate ? fromDate.format('YYYY-MM-DD HH:mm:ss') : null,
             toDate: toDate ? toDate.format('YYYY-MM-DD HH:mm:ss') : null,
@@ -98,14 +106,14 @@ class EditCycle extends Component {
       return false;
     }
     if (children.length > 0) {
-      return endValue.valueOf() <= startValue.valueOf() || endValue < moment.max(ends);
+      return endValue.valueOf() <= startValue.valueOf() || endValue < moment(moment.max(ends)).startOf('day');
     } else {
       return endValue.valueOf() <= startValue.valueOf();
     }   
   }
 
   render() {
-    const visible = TestPlanStore.EditCycleVisible;
+    const visible = this.props.visible;
     const { getFieldDecorator } = this.props.form;
     const { versions, loading, selectLoading } = this.state;
     const {

@@ -131,48 +131,50 @@ class TestPlanStore {
   } = {}) => {
     const { executePagination, filters } = this;
     const data = node ? node.props.data : this.getCurrentCycle;
-
-    if (data.versionId) {
-      if (selectedKeys) {
-        this.setSelectedKeys(selectedKeys);
-      }
-      this.clearTimes();
-      this.generateTimes([data]);
-      if (data.type === 'folder') {
-        this.setCalendarShowMode('single');
-      } else {
-        this.setCalendarShowMode('multi');
-      }
-      this.rightEnterLoading();
-
-
-      this.setCurrentCycle(data);
-      // window.console.log(data);
-      if (data.type === 'folder') {
-        getCycleById({
-          page: executePagination.current - 1,
-          size: executePagination.pageSize,
-        }, data.cycleId,
-        {
-          ...filters,
-          lastUpdatedBy: [Number(this.lastUpdatedBy)],
-          assignedTo: [Number(this.assignedTo)],
-        }).then((cycle) => {
-          this.rightLeaveLoading();
-          this.setTestList(cycle.content);
-          this.setExecutePagination({
-            current: executePagination.current,
-            pageSize: executePagination.pageSize,
-            total: cycle.totalElements,
-          });
-        });
-      }
+    // 点所有的都生成事件日历
+    this.clearTimes();
+    this.generateTimes([data]);
+    if (data.type === 'folder') {
+      this.setCalendarShowMode('single');
+    } else {
+      this.setCalendarShowMode('multi');
     }
+    // if (data.versionId) {
+    if (selectedKeys) {
+      this.setSelectedKeys(selectedKeys);
+    }
+
+
+    this.rightEnterLoading();
+
+
+    this.setCurrentCycle(data);
+    // window.console.log(data);
+    if (data.type === 'folder') {
+      getCycleById({
+        page: 0,
+        size: executePagination.pageSize,
+      }, data.cycleId,
+      {
+        ...filters,
+        lastUpdatedBy: [Number(this.lastUpdatedBy)],
+        assignedTo: [Number(this.assignedTo)],
+      }).then((cycle) => {
+        this.rightLeaveLoading();
+        this.setTestList(cycle.content);
+        this.setExecutePagination({
+          current: 1,
+          pageSize: executePagination.pageSize,
+          total: cycle.totalElements,
+        });
+      });
+    }
+    // }
   }
 
   getParentKey = (key, tree) => key.split('-').slice(0, -1).join('-')
 
-  getParent=(key) => {
+  getParent = (key) => {
     const parentKey = this.getParentKey(key);
     const arr = parentKey.split('-');
     let temp = this.treeData;
@@ -203,8 +205,7 @@ class TestPlanStore {
       //   this.setExpandDefault(node);
       // } else
       // 两种情况，version或者cycle和文件夹，version没有type
-      if ((currentCycle.versionId && !currentCycle.type && currentCycle.versionId === node.versionId) 
-      || (currentCycle.cycleId && currentCycle.cycleId === node.cycleId)) {
+      if (currentCycle.key === node.key) {
         this.setCurrentCycle(node);
         this.clearTimes();
         // debugger;
@@ -233,9 +234,42 @@ class TestPlanStore {
     for (let i = 0; i < data.length; i += 1) {
       const node = data[i];
       const {
-        fromDate, toDate, title, type, children,
+        fromDate, toDate, title, type, children, versionId, cycleId,
       } = node;
-      if (fromDate && toDate) {
+
+      if (!versionId && !cycleId && children.length > 0) {
+        // 版本 规划中
+        let stepChildren = [];
+        children.forEach((child) => {
+          stepChildren = [...stepChildren, ...child.children];
+        });
+        // 进行过滤，防止时间为空
+        const starts = stepChildren.filter(child => child.fromDate && child.toDate).map(child => moment(child.fromDate));
+        const ends = stepChildren.filter(child => child.fromDate && child.toDate).map(child => moment(child.toDate));
+        if (starts.length > 0 && ends.length > 0) {
+          this.times.push({
+            ...node,
+            // children, 不需要编辑，不用限制时间的选择，所有不用传children
+            type: 'topversion',
+            start: moment.min(starts),
+            end: moment.max(ends),
+          });
+        }
+      } else if (versionId && !cycleId && children.length > 0) {
+        // 版本 0.1.1
+        // console.log(children);
+        const starts = children.filter(child => child.fromDate && child.toDate).map(child => moment(child.fromDate));
+        const ends = children.filter(child => child.fromDate && child.toDate).map(child => moment(child.toDate));
+        if (starts.length > 0 && ends.length > 0) {
+          this.times.push({
+            ...node,
+            // children,
+            type: 'version',
+            start: moment.min(starts),
+            end: moment.max(ends),
+          });
+        }
+      } else if (fromDate && toDate) {
         this.times.push({
           ...node,
           children,
@@ -317,13 +351,13 @@ class TestPlanStore {
     // window.console.log({ ...item, ...{ key: `${key}-add'`, type: 'add' } });
   }
 
-  @action EditStage(CurrentEditStage) {    
+  @action EditStage(CurrentEditStage) {
     const parent = this.getParent(CurrentEditStage.key);
     const { fromDate, toDate } = parent;
     // 为阶段设置父元素时间段，来限制时间的选择
     this.CurrentEditStage = {
-      ...CurrentEditStage, 
-      parentTime: { start: moment(fromDate), end: moment(toDate) }, 
+      ...CurrentEditStage,
+      parentTime: { start: moment(fromDate), end: moment(toDate) },
     };
     this.EditStageVisible = true;
   }

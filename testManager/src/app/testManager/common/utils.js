@@ -23,7 +23,12 @@ export function delta2Html(description, config) {
   let temp = description;
   try {
     JSON.parse(description);
+    const obj = JSON.parse(description);
+    if (typeof obj !== 'object' || !obj) {
+      throw new Error('不是JSON格式');
+    }
   } catch (error) {
+    // console.log(description, error);
     temp = JSON.stringify([{ insert: description }]);
   }
   
@@ -33,7 +38,7 @@ export function delta2Html(description, config) {
   // if (text.substring(0, 3) === '<p>') {
   //   return text.substring(3);
   // } else {
-  // console.log(text);
+  // console.log(description, text);
   return text;
   // }
 }

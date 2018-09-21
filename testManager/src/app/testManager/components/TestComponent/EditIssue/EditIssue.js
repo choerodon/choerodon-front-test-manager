@@ -724,6 +724,7 @@ class EditIssueNarrow extends Component {
 
 
   handleClickMenu(e) {
+    console.log(e.key);
     switch (e.key) {
       case 'add_worklog': {
         this.setState({ dailyLogShow: true });
@@ -770,10 +771,10 @@ class EditIssueNarrow extends Component {
       width: 560,
       title: `删除测试用例${this.state.issueNum}`,
       content:
-  <div style={{ marginBottom: 32 }}>
-    <p style={{ marginBottom: 10 }}>请确认您要删除这个测试用例。</p>
-    <p style={{ marginBottom: 10 }}>这个测试用例将会被彻底删除。包括所有步骤和相关执行。</p>
-    {/* {
+        <div style={{ marginBottom: 32 }}>
+          <p style={{ marginBottom: 10 }}>请确认您要删除这个测试用例。</p>
+          <p style={{ marginBottom: 10 }}>这个测试用例将会被彻底删除。包括所有步骤和相关执行。</p>
+          {/* {
             this.state.subIssueDTOList.length
               ? (
                 <p>
@@ -782,7 +783,7 @@ class EditIssueNarrow extends Component {
               )
               : null
           } */}
-  </div>,
+        </div>,
       onOk() {
         return deleteIssue(issueId)
           .then((res) => {
@@ -1016,11 +1017,11 @@ class EditIssueNarrow extends Component {
         <Menu.Item key="add_worklog">
           <FormattedMessage id="issue_edit_addWworkLog" />
         </Menu.Item>
-        {/* <Menu.Item key="copy">
+        <Menu.Item key="copy">
           <FormattedMessage id="issue_edit_copyIssue" />
-        </Menu.Item> */}
+        </Menu.Item>
         <Permission type={type} projectId={projectId} organizationId={orgId} service={['agile-service.issue.deleteIssue']}>
-          <Menu.Item key="item_2">
+          <Menu.Item key="2">
             <FormattedMessage id="delete" />
           </Menu.Item>
         </Permission>
@@ -1609,8 +1610,10 @@ class EditIssueNarrow extends Component {
                               <div className="line-start mt-10">
                                 <div className="c7n-property-wrapper">
                                   <span className="c7n-property">
+
+
                                     状态：
-                                  </span>
+                                                                    </span>
                                 </div>
                                 <div className="c7n-value-wrapper">
                                   <ReadAndEdit
@@ -1686,9 +1689,7 @@ class EditIssueNarrow extends Component {
                               </div>
                               <div className="line-start mt-10">
                                 <div className="c7n-property-wrapper">
-                                  <span className="c7n-property">
-                                    优先级：
-                                  </span>
+                                  <span className="c7n-property">                                   优先级：</span>
                                 </div>
                                 <div className="c7n-value-wrapper">
                                   <ReadAndEdit
@@ -1787,8 +1788,7 @@ class EditIssueNarrow extends Component {
                               <div className="c7n-property-wrapper">
                                 <span className="c7n-property">
                                   <FormattedMessage id="summary_component" />
-                                  ：
-                                </span>
+                                  ：</span>
                               </div>
                               <div className="c7n-value-wrapper">
                                 <ReadAndEdit
@@ -2009,8 +2009,10 @@ class EditIssueNarrow extends Component {
                               <div className="c7n-property-wrapper">
                                 <span className="c7n-property">
                                   <FormattedMessage id="issue_create_content_epic" />
+
+
                                   ：
-                                </span>
+                                                                </span>
                               </div>
                               <div className="c7n-value-wrapper">
                                 <ReadAndEdit
@@ -2100,8 +2102,10 @@ class EditIssueNarrow extends Component {
                           <div className="c7n-property-wrapper">
                             <span className="c7n-property">
                               <FormattedMessage id="issue_edit_timeFollow" />
+
+
                               ：
-                            </span>
+                                                        </span>
                           </div>
                           {/* 预估时间 */}
                           <div className="c7n-value-wrapper" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
@@ -2118,10 +2122,14 @@ class EditIssueNarrow extends Component {
                             />
                             <span>
                               {this.getWorkloads()}
+
+
                               h/
                               {this.getWorkloads() + (this.state.origin.remainingTime || 0)}
+
+
                               h
-                            </span>
+                                                        </span>
                             <span
                               role="none"
                               style={{
@@ -2153,9 +2161,11 @@ class EditIssueNarrow extends Component {
                           <div className="c7n-property-wrapper">
                             <span className="c7n-property">
                               <FormattedMessage id="issue_edit_reporter" />
+
+
                               ：
 
-                            </span>
+                                                        </span>
                           </div>
                           <div className="c7n-value-wrapper" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
                             <ReadAndEdit
@@ -2264,9 +2274,11 @@ class EditIssueNarrow extends Component {
                           <div className="c7n-property-wrapper">
                             <span className="c7n-property">
                               <FormattedMessage id="issue_edit_manager" />
+
+
                               ：
 
-                            </span>
+                                                        </span>
                           </div>
                           <div className="c7n-value-wrapper" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
                             <ReadAndEdit
@@ -2384,8 +2396,10 @@ class EditIssueNarrow extends Component {
                           <div className="c7n-property-wrapper">
                             <span className="c7n-property">
                               <FormattedMessage id="issue_edit_createDate" />
+
+
                               ：
-                            </span>
+                                                        </span>
                           </div>
                           <div className="c7n-value-wrapper">
                             {formatDate(this.state.creationDate)}
@@ -2395,8 +2409,10 @@ class EditIssueNarrow extends Component {
                           <div className="c7n-property-wrapper">
                             <span className="c7n-property">
                               <FormattedMessage id="issue_edit_updateDate" />
+
+
                               ：
-                            </span>
+                                                        </span>
                           </div>
                           <div className="c7n-value-wrapper">
                             {formatDate(this.state.lastUpdateDate)}

@@ -27,7 +27,9 @@ class EditStage extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    const { resetFields } = this.props.form;
     if (nextProps.visible && !this.props.visible) {
+      resetFields();
       this.loadFolders();
     }
   }
@@ -44,6 +46,7 @@ class EditStage extends Component {
           ...values,
           ...{
             cycleId: initialValue.cycleId,
+            objectVersionNumber: initialValue.objectVersionNumber,
             type: 'folder',
             fromDate: fromDate ? fromDate.format('YYYY-MM-DD HH:mm:ss') : null,
             toDate: toDate ? toDate.format('YYYY-MM-DD HH:mm:ss') : null,

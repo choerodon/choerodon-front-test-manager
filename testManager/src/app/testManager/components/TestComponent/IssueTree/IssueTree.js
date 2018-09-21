@@ -1,3 +1,4 @@
+/*eslint-disable */
 import React, { Component } from 'react';
 import { observer } from 'mobx-react';
 import {
@@ -226,13 +227,13 @@ class IssueTree extends Component {
     const { executePagination, filters } = this.state;
     const data = node.props.data;
     // console.log(data);
-    if (data.versionId) {
-      if (selectedKeys) {
-        IssueTreeStore.setSelectedKeys(selectedKeys);
-      }
-      IssueTreeStore.setCurrentCycle(data);
-      IssueStore.loadIssues();
+    // if (data.versionId) {
+    if (selectedKeys) {
+      IssueTreeStore.setSelectedKeys(selectedKeys);
     }
+    IssueTreeStore.setCurrentCycle(data);
+    IssueStore.loadIssues();
+    // }
   }
 
   onDragEnd = (result) => {
@@ -248,29 +249,44 @@ class IssueTree extends Component {
     console.log(folderId, '=>', destination.droppableId);
     const data = { versionId: destination.droppableId, folderId, objectVersionNumber };
     // debugger;
+    this.setState({
+      loading: true,
+    });
     if (IssueTreeStore.isCopy) {
       copyFolder(data).then((res) => {
         if (res.failed) {
+          this.setState({
+            loading: false,
+          });
           Choerodon.prompt('存在同名文件夹');
           return;
         }
         this.getTree();
       }).catch((err) => {
+        this.setState({
+          loading: false,
+        });
         Choerodon.prompt('网络错误');
       });
     } else {
       moveFolder(data).then((res) => {
         if (res.failed) {
+          this.setState({
+            loading: false,
+          });
           Choerodon.prompt('存在同名文件夹');
           return;
         }
         this.getTree();
       }).catch((err) => {
+        this.setState({
+          loading: false,
+        });
         Choerodon.prompt('网络错误');
       });
     }
 
-    console.log(result);
+    // console.log(result);
   }
 
   render() {
@@ -285,11 +301,11 @@ class IssueTree extends Component {
     return (
       <div className="c7n-IssueTree">
         <div id="template_folder_copy" style={{ display: 'none' }}>
-          当前状态：复制
-        </div>
+          当前状态：<span style={{fontWeight:500}}>复制</span>
+</div>
         <div id="template_folder_move" style={{ display: 'none' }}>
-          当前状态：移动
-        </div>
+          当前状态：<span style={{fontWeight:500}}>移动</span>
+</div>
         <div className="c7n-treeTop">
           <Input
             prefix={<Icon type="filter_list" style={{ color: 'black' }} />}

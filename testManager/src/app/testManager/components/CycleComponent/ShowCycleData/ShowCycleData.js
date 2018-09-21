@@ -66,16 +66,7 @@ class ShowCycleData extends Component {
                   {allExectueNum}
                 </div>
               </div>
-              <div className="c7n-right-card-item">
-                <div className="c7n-right-card-item-label">
-                  <FormattedMessage id="cycle_comment" />
-                  {' '}
-：
-                </div>
-                <div className="c7n-right-card-item-text">
-                  {description}
-                </div>
-              </div>
+              
             </div>
             <div className="c7n-right-card-column">
               <div className="c7n-right-card-item">
@@ -89,13 +80,23 @@ class ShowCycleData extends Component {
               </div>
               <div className="c7n-right-card-item">
                 <div className="c7n-right-card-item-label">
+                  <FormattedMessage id="cycle_comment" />
+                  {' '}
+：
+                </div>
+                <div className="c7n-right-card-item-text">
+                  {description}
+                </div>
+              </div>
+              {/* <div className="c7n-right-card-item">
+                <div className="c7n-right-card-item-label">
                   <FormattedMessage id="cycle_cycleExecute" />
 ：
                 </div>
                 <div className="c7n-right-card-item-text">
                   {CycleExectueNum}
                 </div>
-              </div>
+              </div> */}
             </div>
             <div className="c7n-right-card-column">
               <div className="c7n-right-card-item">
@@ -136,6 +137,16 @@ class ShowCycleData extends Component {
             <div className="c7n-right-card-column">
               <div className="c7n-right-card-item">
                 <div className="c7n-right-card-item-label">
+                  <FormattedMessage id="cycle_startTime" />
+                  {' '}
+：
+                </div>
+                <div className="c7n-right-card-item-text">
+                  {fromDate && moment(fromDate).format('D/MMMM/YY')}
+                </div>
+              </div>
+              <div className="c7n-right-card-item">
+                <div className="c7n-right-card-item-label">
                   <FormattedMessage id="cycle_totalExecute" />
 ：
                 </div>
@@ -144,7 +155,16 @@ class ShowCycleData extends Component {
                 </div>
               </div>
             </div> 
-            <div className="c7n-right-card-column">            
+            <div className="c7n-right-card-column">      
+              <div className="c7n-right-card-item">
+                <div className="c7n-right-card-item-label">
+                  <FormattedMessage id="cycle_endTime" />
+：
+                </div>
+                <div className="c7n-right-card-item-text">
+                  {toDate && moment(toDate).format('D/MMMM/YY')} 
+                </div>
+              </div>      
               <div className="c7n-right-card-item">
                 <div className="c7n-right-card-item-label">
                   <FormattedMessage id="cycle_totalExecuted" />

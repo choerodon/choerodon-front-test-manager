@@ -9,7 +9,7 @@ export function getStatusList(statusType) {
   const projectId = AppState.currentMenuType.id;
   return axios.post(`/test/v1/projects/${projectId}/status/query`, { statusType, projectId });
 }
-export function getCycleById(pagination, cycleId, filters) {
+export function getCycleById(pagination, cycleId, filters, type) {
   const projectId = AppState.currentMenuType.id;
   const { size, page } = pagination;
   //   return axios.get(`/test/v1/cycle/case/query/${cycleId}`);
@@ -19,7 +19,11 @@ export function getCycleById(pagination, cycleId, filters) {
       Filters[filter] = Filters[filter][0]; 
     });
   }
+  // if (type === 'cycle') {
+  //   return axios.post(`/test/v1/projects/${projectId}/cycle/case/query/folderCycleId?size=${size}&page=${page}`, { cycleId, ...Filters });
+  // } else {
   return axios.post(`/test/v1/projects/${projectId}/cycle/case/query/cycleId?size=${size}&page=${page}`, { cycleId, ...Filters });
+  // }
 }
 export function addCycle(data) {
   const projectId = AppState.currentMenuType.id;

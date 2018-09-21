@@ -2,8 +2,10 @@ import React, { Component } from 'react';
 import { stores, axios, Content } from 'choerodon-front-boot';
 import { withRouter } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
-import { Modal, Form, Input, Checkbox } from 'choerodon-ui';
-
+import {
+  Modal, Form, Input, Checkbox, 
+} from 'choerodon-ui';
+import { cloneIssue } from '../../../api/IssueApi';
 import './CopyIssue.scss';
 
 const { AppState } = stores;
@@ -24,8 +26,12 @@ class CopyIssue extends Component {
     this.props.form.validateFields((err, values) => {
       if (!err) {
         const projectId = AppState.currentMenuType.id;
-        const { visible, onCancel, onOk, issueId, issueNum } = this.props;
-        const { issueSummary, copySubIssue, copyLinkIssue, sprint } = values;
+        const {
+          visible, onCancel, onOk, issueId, issueNum, 
+        } = this.props;
+        const {
+          issueSummary, copySubIssue, copyLinkIssue, sprint, 
+        } = values;
         const copyConditionDTO = {
           issueLink: copyLinkIssue || false,
           sprintValues: sprint || false,
@@ -36,19 +42,20 @@ class CopyIssue extends Component {
         this.setState({
           loading: true,
         });
-        axios.post(`/agile/v1/projects/${projectId}/issues/${issueId}/clone_issue`, copyConditionDTO)
-          .then((res) => {
-            this.setState({
-              loading: false,
-            });
-            this.props.onOk();
+        cloneIssue(issueId, copyConditionDTO).then((res) => {
+          this.setState({
+            loading: false,
           });
+          this.props.onOk();
+        });
       }
     });
   };
 
   render() {
-    const { visible, onCancel, onOk, issueId, issueNum, issueSummary } = this.props;
+    const {
+      visible, onCancel, onOk, issueId, issueNum, issueSummary, 
+    } = this.props;
     const { getFieldDecorator } = this.props.form;
   
     return (

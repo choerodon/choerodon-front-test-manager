@@ -11,7 +11,7 @@ export function createIssue(issueObj, folderId) {
   };
   // return axios.post(`/agile/v1/projects/${projectId}/issues`, issue);
   const versionId = issue.versionIssueRelDTOList[0].versionId;
-  return axios.post(`/test/v1/projects/${projectId}/issueFolderRel/testAndRelationship?version_id=${versionId}${folderId ? `&folderId=${folderId}` : ''}`, issue);
+  return axios.post(`/test/v1/projects/${projectId}/issueFolderRel/testAndRelationship?version_id=${versionId}${folderId ? `&folder_id=${folderId}` : ''}`, issue);
 }
 
 export function loadLabels() {
@@ -199,7 +199,7 @@ export function getAllIssues(page = 0, size = 10, search, orderField, orderType)
   const searchDTO = { ...search };
   searchDTO.advancedSearchArgs.typeCode = ['issue_test'];
   const projectId = AppState.currentMenuType.id;
-  return axios.post(`/test/v1/projects/${projectId}/issueFolderRel/query?page=${page}&size=${size}`, searchDTO, {
+  return axios.post(`/test/v1/projects/${projectId}/issueFolderRel/query?page=${page}&size=${size}`, { versionIds: [], searchDTO }, {
     params: {
       sort: `${orderField && orderType ? `${orderField},${orderType}` : ''}`,
     },
@@ -209,17 +209,17 @@ export function getIssuesByFolder(folderId, page = 0, size = 10, search, orderFi
   const searchDTO = { ...search };
   searchDTO.advancedSearchArgs.typeCode = ['issue_test'];
   const projectId = AppState.currentMenuType.id;
-  return axios.post(`/test/v1/projects/${projectId}/issueFolderRel/query?folder_id=${folderId}&page=${page}&size=${size}`, searchDTO, {
+  return axios.post(`/test/v1/projects/${projectId}/issueFolderRel/query?folder_id=${folderId}&page=${page}&size=${size}`, { versionIds: [], searchDTO }, {
     params: {
       sort: `${orderField && orderType ? `${orderField},${orderType}` : ''}`,
     },
   });
 }
-export function getIssuesByVersion(versionId, page = 0, size = 10, search, orderField, orderType) {
+export function getIssuesByVersion(versionIds, page = 0, size = 10, search, orderField, orderType) {
   const searchDTO = { ...search };
   searchDTO.advancedSearchArgs.typeCode = ['issue_test'];
   const projectId = AppState.currentMenuType.id;
-  return axios.post(`/test/v1/projects/${projectId}/issueFolderRel/query?version_id=${versionId}&page=${page}&size=${size}`, searchDTO, {
+  return axios.post(`/test/v1/projects/${projectId}/issueFolderRel/query?page=${page}&size=${size}`, { versionIds, searchDTO }, {
     params: {
       sort: `${orderField && orderType ? `${orderField},${orderType}` : ''}`,
     },
@@ -266,4 +266,8 @@ export function syncFoldersInCycle(cycleId) {
 export function syncFolder(folderId, cycleId) {
   const projectId = AppState.currentMenuType.id;
   return axios.post(`/test/v1/projects/${projectId}/cycle/synchro/folder/${folderId}/in/${cycleId}`);
+}
+export function cloneIssue(issueId, copyConditionDTO) {
+  const projectId = AppState.currentMenuType.id;
+  return axios.put(`/test/v1/projects/${projectId}/issueFolderRel/copy/issue/${issueId}`, copyConditionDTO);
 }

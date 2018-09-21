@@ -11,6 +11,7 @@ import { FormattedMessage } from 'react-intl';
 import moment from 'moment';
 import _ from 'lodash';
 import ReactEcharts from 'echarts-for-react';
+import { RadioButton } from '../../../../components/CommonComponent';
 import {
   getCaseNotPlain, getCaseNotRun, getCaseNum, getCycleRange, getCreateRange, getIssueStatistic,
 } from '../../../../api/summaryApi';
@@ -542,8 +543,22 @@ class SummaryHome extends Component {
                 <FormattedMessage id="summary_summaryTimeLeap" />
                 ：
               </div>
-              <Radio.Group value={range} onChange={this.handleRangeChange}>
-                {/* <Radio.Button value="1">1天</Radio.Button> */}
+              <RadioButton       
+                defaultValue={range} 
+                onChange={this.handleRangeChange}
+                data={[{
+                  value: '7',
+                  text: [7, <FormattedMessage id="day" />],
+                }, {
+                  value: '15',
+                  text: [15, <FormattedMessage id="day" />],
+                },
+                {
+                  value: '30',
+                  text: [30, <FormattedMessage id="day" />],
+                }]}
+              />
+              {/* <Radio.Group value={range} onChange={this.handleRangeChange}>          
                 <Radio.Button value="7">
                   7
                   {<FormattedMessage id="day" />}
@@ -556,7 +571,7 @@ class SummaryHome extends Component {
                   30
                   {<FormattedMessage id="day" />}
                 </Radio.Button>
-              </Radio.Group>
+              </Radio.Group> */}
             </div>
             <div className="c7n-chartArea-container">
 

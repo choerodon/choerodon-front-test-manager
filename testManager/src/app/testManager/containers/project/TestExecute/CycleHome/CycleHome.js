@@ -146,7 +146,7 @@ class CycleHome extends Component {
     if (data.cycleId) {
       CycleStore.setCurrentCycle(data);
       // window.console.log(data);
-      if (data.type === 'folder') {
+      if (data.type === 'folder' || data.type === 'cycle') {
         if (!flag) {
           this.setState({
             rightLoading: true,
@@ -155,19 +155,19 @@ class CycleHome extends Component {
         }
         // console.log(this.treeAssignedTo);
         getCycleById({
-          page: executePagination.current - 1,
+          page: 0,
           size: executePagination.pageSize,
         }, data.cycleId,
         {
           ...filters,
           lastUpdatedBy: [Number(this.lastUpdatedBy)],
           assignedTo: [this.treeAssignedTo || Number(this.assignedTo)],
-        }).then((cycle) => {
+        }, data.type).then((cycle) => {
           this.setState({
             rightLoading: false,
             testList: cycle.content,
             executePagination: {
-              current: executePagination.current,
+              current: 1,
               pageSize: executePagination.pageSize,
               total: cycle.totalElements,
             },
@@ -306,7 +306,7 @@ class CycleHome extends Component {
         page: executePagination.current - 1,
         size: executePagination.pageSize,
       }, defaultExpandKeyItem.cycleId,
-      {}).then((cycle) => {
+      {}, defaultExpandKeyItem.type).then((cycle) => {
         this.setState({
           rightLoading: false,
           testList: cycle.content,
@@ -449,7 +449,7 @@ class CycleHome extends Component {
         ...filters,
         lastUpdatedBy: [Number(this.lastUpdatedBy)],
         assignedTo: [Number(this.assignedTo)],
-      }).then((cycle) => {
+      }, currentCycle.type).then((cycle) => {
         this.setState({
           rightLoading: false,
           testList: cycle.content,
@@ -866,6 +866,24 @@ class CycleHome extends Component {
         },
       },
     ];
+    const nameColumn = {
+      title: <FormattedMessage id="cycle_stageName" />,
+      dataIndex: 'cycleName',
+      key: 'cycleName',
+      flex: 1,
+      render(cycleName) {
+        return (
+          <div
+            className="c7n-text-dot"
+          >
+            {cycleName}
+          </div>
+        );
+      },
+    };
+    if (type === 'cycle') {
+      columns.splice(2, 0, nameColumn);
+    }
     return (
       <Page className="c7n-cycle">
         <Header title={<FormattedMessage id="cycle_name" />}>
@@ -1012,6 +1030,12 @@ class CycleHome extends Component {
                     <div>
                       {type === 'folder' ? <FormattedMessage id="cycle_stageName" />
                         : <FormattedMessage id="cycle_cycleName" />}
+
+
+
+
+
+
                       ：
                       <span>{title}</span>
                     </div>
@@ -1030,8 +1054,7 @@ class CycleHome extends Component {
                       </Button>
                     </div> */}
                   </div>
-                  <ShowCycleData data={currentCycle} />
-                  {type === 'folder' && (
+                  <ShowCycleData data={currentCycle} />                  
                   <div>
                     <div style={{ display: 'flex', marginBottom: 20 }}>
                       <SelectFocusLoad
@@ -1063,8 +1086,7 @@ class CycleHome extends Component {
                       columns={leftVisible ? columns
                         : columns.slice(0, 4).concat(otherColumns).concat(columns.slice(4))}
                     />
-                  </div>
-                  )}
+                  </div>               
                 </div>
               ) : (
                 <div style={{
