@@ -235,18 +235,18 @@ class TestExecuteTable extends Component {
       render: (caction, item) => {
         const urlParams = AppState.currentMenuType;
         return (
-          <div style={{ width: 80, lineHeight: '34px' }}>
-            <Tooltip title={<FormattedMessage id="execute_quickPass" />}>
+          <div style={{ lineHeight: '34px', textAlign: 'center' }}>
+            {/* <Tooltip title={<FormattedMessage id="execute_quickPass" />}>
               <Icon type="pass mlr-3 pointer" onClick={this.quickPass.bind(this, item)} />
-            </Tooltip>
+            </Tooltip> */}
 
-            <Link to={`/testManager/TestExecute/execute/${item.executeId}?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}>
+            <Link to={`/testManager/TestExecute/executeShow/${item.executeId}?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}>
               <Icon
-                type="explicit2 mlr-3 pointer"
+                type="explicit2 pointer"
                 style={{ color: 'black' }}
               />
             </Link>
-            <Popconfirm
+            {/* <Popconfirm
               title={Choerodon.getMessage('确认删除吗?', 'Confirm delete')}
               placement="left"
               onConfirm={this.confirm.bind(this, item.executeId)}
@@ -256,7 +256,7 @@ class TestExecuteTable extends Component {
               okType="danger"
             >
               <Icon type="delete_forever mlr-3 pointer" />
-            </Popconfirm>
+            </Popconfirm> */}
           </div>
         );
       },

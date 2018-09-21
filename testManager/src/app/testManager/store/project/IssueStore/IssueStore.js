@@ -82,7 +82,7 @@ class SprintCommonStore {
     funcArr.push(loadVersions());
     const currentCycle = IssueTreeStore.currentCycle;
     const types = ['all', 'topversion', 'version', 'folder'];
-    const type = currentCycle.key ? types[currentCycle.key.split('-').length - 1] : 'all';
+    const type = currentCycle.key ? types[currentCycle.key.split('-').length - 1] : '';
     const { versionId, cycleId, children } = currentCycle;
     // 不是第一页情况
     if (page > 0) {
