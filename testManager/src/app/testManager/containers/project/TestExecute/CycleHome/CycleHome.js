@@ -563,6 +563,7 @@ class CycleHome extends Component {
       delete cycleData.testCycleCaseStepES;
       delete cycleData.lastRank;
       delete cycleData.nextRank;
+      cycleData.assignedTo = cycleData.assignedTo || 0;
       this.setState({
         loading: true,
       });
@@ -1036,8 +1037,9 @@ class CycleHome extends Component {
 
 
 
+
                       ：
-                      <span>{title}</span>
+<span>{title}</span>
                     </div>
                     <div style={{ flex: 1, visiblity: 'hidden' }} />
                     {/* <div>
