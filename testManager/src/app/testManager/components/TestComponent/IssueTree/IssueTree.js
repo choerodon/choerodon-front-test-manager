@@ -235,7 +235,9 @@ class IssueTree extends Component {
     IssueStore.loadIssues();
     // }
   }
-
+  onDragStart=()=>{
+    IssueTreeStore.setCopy(false)
+  }
   onDragEnd = (result) => {
     console.log(IssueTreeStore.isCopy);
     const { destination } = result;
