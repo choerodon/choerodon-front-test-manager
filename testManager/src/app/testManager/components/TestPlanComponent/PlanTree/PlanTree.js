@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import { Tree, Input, Icon } from 'choerodon-ui';
 import { observer } from 'mobx-react';
+import { stores } from 'choerodon-front-boot';
 import _ from 'lodash';
 import './PlanTree.scss';
+import FileSaver from 'file-saver';
 import TestPlanStore from '../../../store/project/TestPlan/TestPlanStore';
 import { CreateCycle, EditCycle, CloneCycle } from '../../CycleComponent';
 import {
@@ -12,6 +14,7 @@ import {
 import PlanTreeTitle from './PlanTreeTitle';
 import CreateStage from '../CreateStage';
 
+const { AppState } = stores;
 const { TreeNode } = Tree;
 const dataList = [];
 @observer
@@ -92,6 +95,14 @@ class PlanTree extends Component {
         });
         // 自动展开当前项
 
+        break;
+      }
+      case 'EXPORT_CYCLE': {
+        exportCycle(item.cycleId).then((data) => {
+          const blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+          const fileName = `${AppState.currentMenuType.name}.xls`;
+          FileSaver.saveAs(blob, fileName);
+        });
         break;
       }
       default: break;
