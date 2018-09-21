@@ -82,7 +82,7 @@ class SprintCommonStore {
     funcArr.push(loadVersions());
     const currentCycle = IssueTreeStore.currentCycle;
     const types = ['all', 'topversion', 'version', 'folder'];
-    const type = currentCycle.key ? types[currentCycle.key.split('-').length - 1] : '';
+    const type = currentCycle.key ? types[currentCycle.key.split('-').length - 1] : 'all';
     const { versionId, cycleId, children } = currentCycle;
     // 不是第一页情况
     if (page > 0) {
@@ -92,7 +92,7 @@ class SprintCommonStore {
     } else {
       // 第一页 五种情况
       // 1.加载全部数据
-      if (type === 'all') {
+      if (type === 'all' && !this.paramIssueId) {
         funcArr.push(getAllIssues(page, size, this.getFilter, orderField, orderType));
       } else if (type === 'topversion') {
         // 2.加载某一类versions

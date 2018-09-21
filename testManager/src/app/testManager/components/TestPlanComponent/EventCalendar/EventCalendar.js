@@ -12,7 +12,7 @@ import EventItem from './EventItem';
 
 const moment = extendMoment(Moment);
 class EventCalendar extends Component {
-  state={
+  state = {
     baseDate: moment(),
     mode: 'month',
     pos: 0,
@@ -29,10 +29,6 @@ class EventCalendar extends Component {
         baseDate: times[0].start ? moment(times[0].start).startOf(mode) : moment(),
       });
     }
-  }
-
-  getSnapshotBeforeUpdate() {
-    console.log('ss');
   }
 
   calculateTime = () => {
@@ -67,23 +63,23 @@ class EventCalendar extends Component {
     const fake = [{
       start: moment().startOf('month'),
       end: moment().endOf('month').add(-5, 'day'),
-    }, 
-    // {
-    //   start: moment().startOf('month'),
-    //   end: moment().endOf('month').add(-6, 'day'),
-    // }, {
-    //   start: moment().startOf('month').add(-5, 'day'),
-    //   end: moment().endOf('month').add(-5, 'day'),
-    // }, {
-    //   start: moment().startOf('month').add(15, 'day'),
-    //   end: moment().endOf('month').add(5, 'day'),
-    // }, {
-    //   start: moment().startOf('month').add(0, 'day'),
-    //   end: moment().endOf('month').add(-30, 'day'),
-    // }, {
-    //   start: moment().startOf('month').add(-10, 'day'),
-    //   end: moment().endOf('month').add(-33, 'day'),
-    // }
+    },
+      // {
+      //   start: moment().startOf('month'),
+      //   end: moment().endOf('month').add(-6, 'day'),
+      // }, {
+      //   start: moment().startOf('month').add(-5, 'day'),
+      //   end: moment().endOf('month').add(-5, 'day'),
+      // }, {
+      //   start: moment().startOf('month').add(15, 'day'),
+      //   end: moment().endOf('month').add(5, 'day'),
+      // }, {
+      //   start: moment().startOf('month').add(0, 'day'),
+      //   end: moment().endOf('month').add(-30, 'day'),
+      // }, {
+      //   start: moment().startOf('month').add(-10, 'day'),
+      //   end: moment().endOf('month').add(-33, 'day'),
+      // }
     ];
     return (
       <div className="c7n-EventCalendar" style={{ height: showMode === 'multi' ? '100%' : '162px' }}>
@@ -102,8 +98,8 @@ class EventCalendar extends Component {
             <DatePicker onChange={this.handleBaseChange} />
           </div>
           <div className="c7n-EventCalendar-header-radio">
-            <RadioButton       
-              defaultValue={mode} 
+            <RadioButton
+              defaultValue={mode}
               onChange={this.handleModeChange}
               data={[{
                 value: 'week',
@@ -112,7 +108,7 @@ class EventCalendar extends Component {
                 value: 'month',
                 text: 'month',
               }]}
-            />            
+            />
           </div>
           <div className="c7n-EventCalendar-header-page">
             <Icon
