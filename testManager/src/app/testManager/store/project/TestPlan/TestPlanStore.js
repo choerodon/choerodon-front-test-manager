@@ -57,6 +57,10 @@ class TestPlanStore {
 
   @observable CurrentEditStage = {};
 
+  @observable assignedTo = null;
+
+  @observable lastUpdatedBy = null;
+
   @computed get getTreeData() {
     return toJS(this.treeData);
   }
@@ -111,8 +115,8 @@ class TestPlanStore {
       }, data.cycleId,
       {
         ...filters,
-        lastUpdatedBy: [Number(this.lastUpdatedBy)],
-        assignedTo: [Number(this.assignedTo)],
+        lastUpdatedBy: [Number(this.lastUpdatedBy) || null],
+        assignedTo: [Number(this.assignedTo) || null],
       }).then((cycle) => {
         this.rightLeaveLoading();
         this.setTestList(cycle.content);
@@ -157,8 +161,8 @@ class TestPlanStore {
       }, data.cycleId,
       {
         ...filters,
-        lastUpdatedBy: [Number(this.lastUpdatedBy)],
-        assignedTo: [Number(this.assignedTo)],
+        lastUpdatedBy: [Number(this.lastUpdatedBy) || null],
+        assignedTo: [Number(this.assignedTo) || null],
       }).then((cycle) => {
         this.rightLeaveLoading();
         this.setTestList(cycle.content);
@@ -216,6 +220,14 @@ class TestPlanStore {
         this.generateList(node.children, node.key);
       }
     }
+  }
+
+  @action setAssignedTo(assignedTo) {
+    this.assignedTo = assignedTo;
+  }
+
+  @action setLastUpdatedBy(lastUpdatedBy) {
+    this.lastUpdatedBy = lastUpdatedBy;
   }
 
   @action setCalendarShowMode = (calendarShowMode) => {

@@ -51,6 +51,8 @@ class TestPlanHome extends Component {
   }
 
   componentDidMount() {
+    TestPlanStore.setAssignedTo(null);
+    TestPlanStore.setLastUpdatedBy(null);
     this.refresh();
   }
 
@@ -535,7 +537,8 @@ class TestPlanHome extends Component {
                           label={<FormattedMessage id="cycle_executeBy" />}
                           request={getUsers}
                           onChange={(value) => {
-                            this.lastUpdatedBy = value;
+                            TestPlanStore.setLastUpdatedBy(value);
+                            // this.lastUpdatedBy = value;
                             TestPlanStore.loadCycle();
                           }}
                         />
@@ -544,7 +547,8 @@ class TestPlanHome extends Component {
                             label={<FormattedMessage id="cycle_assignedTo" />}
                             request={getUsers}
                             onChange={(value) => {
-                              this.assignedTo = value;
+                              TestPlanStore.setAssignedTo(value);
+                              // this.assignedTo = value;
                               TestPlanStore.loadCycle();
                             }}
                           />
