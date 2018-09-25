@@ -32,7 +32,7 @@ class IssueTree extends Component {
   }
 
   addFolder = (item, e, type) => {
-    console.log(item, e.target.value, type);
+    // console.log(item, e.target.value, type);
     this.setState({
       loading: true,
     });
@@ -239,7 +239,7 @@ class IssueTree extends Component {
     IssueTreeStore.setCopy(false)
   }
   onDragEnd = (result) => {
-    console.log(IssueTreeStore.isCopy);
+    // console.log(IssueTreeStore.isCopy);
     const { destination } = result;
     if (!destination) {
       return;
@@ -248,7 +248,7 @@ class IssueTree extends Component {
     if (destination.droppableId === versionId) {
       return;
     }
-    console.log(folderId, '=>', destination.droppableId);
+    // console.log(folderId, '=>', destination.droppableId);
     const data = { versionId: destination.droppableId, folderId, objectVersionNumber };
     // debugger;
     this.setState({
