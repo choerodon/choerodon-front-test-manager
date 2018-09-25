@@ -250,7 +250,7 @@ export function copyFolder(data) {
 
 export function getFoldersByVersion(versionId) {
   const projectId = AppState.currentMenuType.id;
-  return axios.get(`/test/v1/projects/${projectId}/issueFolder/query/${versionId}`);
+  return axios.get(`/test/v1/projects/${projectId}/issueFolder/query/all${versionId ? `?versionId=${versionId}` : ''}`);
 }
 
 export function syncFoldersInVersion(versionId) {
