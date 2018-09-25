@@ -138,13 +138,16 @@ class IssueTreeTitle extends Component {
     }));
     // debugger;
     if (!isCopy) {
+      IssueStore.setLoading(true);
       moveIssues(versionId, cycleId, issueLinks).then((res) => {
         IssueStore.setDraggingTableItems([]);
         IssueStore.loadIssues();
       }).catch((err) => {
+        IssueStore.setLoading(false);
         Choerodon.prompt('网络错误');
       });
     } else {
+      IssueStore.setLoading(true);
       copyIssues(versionId, cycleId, issueLinks).then((res) => {
         if (res.failed) {
           Choerodon.prompt('存在同名文件夹');
@@ -152,6 +155,7 @@ class IssueTreeTitle extends Component {
         IssueStore.setDraggingTableItems([]);
         IssueStore.loadIssues();
       }).catch((err) => {
+        IssueStore.setLoading(false);
         Choerodon.prompt('网络错误');
       });
     }
