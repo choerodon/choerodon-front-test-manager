@@ -196,7 +196,8 @@ export function deleteFolder(folderId) {
 }
 
 export function getAllIssues(page = 0, size = 10, search, orderField, orderType) {
-  const searchDTO = { ...search };
+  console.log(search);
+  const searchDTO = { ...search, otherArgs: search.searchArgs };
   searchDTO.advancedSearchArgs.typeCode = ['issue_test'];
   const projectId = AppState.currentMenuType.id;
   return axios.post(`/test/v1/projects/${projectId}/issueFolderRel/query?page=${page}&size=${size}`, { versionIds: [], searchDTO }, {
@@ -206,7 +207,7 @@ export function getAllIssues(page = 0, size = 10, search, orderField, orderType)
   });
 }
 export function getIssuesByFolder(folderId, page = 0, size = 10, search, orderField, orderType) {
-  const searchDTO = { ...search };
+  const searchDTO = { ...search, otherArgs: search.searchArgs };
   searchDTO.advancedSearchArgs.typeCode = ['issue_test'];
   const projectId = AppState.currentMenuType.id;
   return axios.post(`/test/v1/projects/${projectId}/issueFolderRel/query?folder_id=${folderId}&page=${page}&size=${size}`, { versionIds: [], searchDTO }, {
@@ -216,7 +217,7 @@ export function getIssuesByFolder(folderId, page = 0, size = 10, search, orderFi
   });
 }
 export function getIssuesByVersion(versionIds, page = 0, size = 10, search, orderField, orderType) {
-  const searchDTO = { ...search };
+  const searchDTO = { ...search, otherArgs: search.searchArgs };
   searchDTO.advancedSearchArgs.typeCode = ['issue_test'];
   const projectId = AppState.currentMenuType.id;
   return axios.post(`/test/v1/projects/${projectId}/issueFolderRel/query?page=${page}&size=${size}`, { versionIds, searchDTO }, {

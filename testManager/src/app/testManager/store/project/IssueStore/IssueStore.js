@@ -97,7 +97,7 @@ class SprintCommonStore {
       } else if (type === 'topversion') {
         // 2.加载某一类versions
         const versions = children.map(child => child.versionId);
-        console.log(versions);
+        // console.log(versions);
         funcArr.push(getIssuesByVersion(versions,
           page, size, this.getFilter, orderField, orderType));
       } else if (type === 'version') {
