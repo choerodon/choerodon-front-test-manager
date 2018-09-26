@@ -57,7 +57,7 @@
     // align-items: center;
   }
   .ant-tree li .ant-tree-node-content-wrapper {
-    width: 100%;
+    width: calc(100% - 22px);
     display: inline-flex;
     align-items: center;
     height: 30px;

@@ -44,6 +44,9 @@ class IssueTreeTitle extends Component {
               if (res.failed) {
                 Choerodon.prompt('删除失败');
               } else {
+                // 删除文件夹后，清空现有文件夹信息
+                IssueTreeStore.setCurrentCycle({});
+                IssueStore.loadIssues();
                 refresh();
               }
             }).catch((err) => {
@@ -138,13 +141,16 @@ class IssueTreeTitle extends Component {
     }));
     // debugger;
     if (!isCopy) {
+      IssueStore.setLoading(true);
       moveIssues(versionId, cycleId, issueLinks).then((res) => {
         IssueStore.setDraggingTableItems([]);
         IssueStore.loadIssues();
       }).catch((err) => {
+        IssueStore.setLoading(false);
         Choerodon.prompt('网络错误');
       });
     } else {
+      IssueStore.setLoading(true);
       copyIssues(versionId, cycleId, issueLinks).then((res) => {
         if (res.failed) {
           Choerodon.prompt('存在同名文件夹');
@@ -152,6 +158,7 @@ class IssueTreeTitle extends Component {
         IssueStore.setDraggingTableItems([]);
         IssueStore.loadIssues();
       }).catch((err) => {
+        IssueStore.setLoading(false);
         Choerodon.prompt('网络错误');
       });
     }
@@ -172,12 +179,12 @@ class IssueTreeTitle extends Component {
         <Menu.Item key="delete">
           <FormattedMessage id="issue_tree_delete" />
         </Menu.Item>,
-        <Menu.Item key="copy">
-          <FormattedMessage id="issue_tree_copy" />
-        </Menu.Item>,
-        <Menu.Item key="paste">
-          <FormattedMessage id="issue_tree_paste" />
-        </Menu.Item>,
+        // <Menu.Item key="copy">
+        //   <FormattedMessage id="issue_tree_copy" />
+        // </Menu.Item>,
+        // <Menu.Item key="paste">
+        //   <FormattedMessage id="issue_tree_paste" />
+        // </Menu.Item>,
       ]);
       // }
       return <Menu onClick={this.handleItemClick} style={{ margin: '10px 0 0 28px' }}>{items}</Menu>;

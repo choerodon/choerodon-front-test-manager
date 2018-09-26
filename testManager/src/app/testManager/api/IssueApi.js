@@ -11,7 +11,7 @@ export function createIssue(issueObj, folderId) {
   };
   // return axios.post(`/agile/v1/projects/${projectId}/issues`, issue);
   const versionId = issue.versionIssueRelDTOList[0].versionId;
-  return axios.post(`/test/v1/projects/${projectId}/issueFolderRel/testAndRelationship?version_id=${versionId}${folderId ? `&folder_id=${folderId}` : ''}`, issue);
+  return axios.post(`/test/v1/projects/${projectId}/issueFolderRel/testAndRelationship?versionId=${versionId}${folderId ? `&folderId=${folderId}` : ''}`, issue);
 }
 
 export function loadLabels() {
@@ -196,7 +196,8 @@ export function deleteFolder(folderId) {
 }
 
 export function getAllIssues(page = 0, size = 10, search, orderField, orderType) {
-  const searchDTO = { ...search };
+  console.log(search);
+  const searchDTO = { ...search, otherArgs: search.searchArgs };
   searchDTO.advancedSearchArgs.typeCode = ['issue_test'];
   const projectId = AppState.currentMenuType.id;
   return axios.post(`/test/v1/projects/${projectId}/issueFolderRel/query?page=${page}&size=${size}`, { versionIds: [], searchDTO }, {
@@ -206,17 +207,17 @@ export function getAllIssues(page = 0, size = 10, search, orderField, orderType)
   });
 }
 export function getIssuesByFolder(folderId, page = 0, size = 10, search, orderField, orderType) {
-  const searchDTO = { ...search };
+  const searchDTO = { ...search, otherArgs: search.searchArgs };
   searchDTO.advancedSearchArgs.typeCode = ['issue_test'];
   const projectId = AppState.currentMenuType.id;
-  return axios.post(`/test/v1/projects/${projectId}/issueFolderRel/query?folder_id=${folderId}&page=${page}&size=${size}`, { versionIds: [], searchDTO }, {
+  return axios.post(`/test/v1/projects/${projectId}/issueFolderRel/query?folderId=${folderId}&page=${page}&size=${size}`, { versionIds: [], searchDTO }, {
     params: {
       sort: `${orderField && orderType ? `${orderField},${orderType}` : ''}`,
     },
   });
 }
 export function getIssuesByVersion(versionIds, page = 0, size = 10, search, orderField, orderType) {
-  const searchDTO = { ...search };
+  const searchDTO = { ...search, otherArgs: search.searchArgs };
   searchDTO.advancedSearchArgs.typeCode = ['issue_test'];
   const projectId = AppState.currentMenuType.id;
   return axios.post(`/test/v1/projects/${projectId}/issueFolderRel/query?page=${page}&size=${size}`, { versionIds, searchDTO }, {
@@ -227,15 +228,15 @@ export function getIssuesByVersion(versionIds, page = 0, size = 10, search, orde
 }
 export function getIssuesByIds(versionId, folderId, ids) { 
   const projectId = AppState.currentMenuType.id;
-  return axios.post(`/test/v1/projects/${projectId}/issueFolderRel/query/by/issueId${versionId ? `?version_id=${versionId}` : ''}${folderId ? `&folderId=${folderId}` : ''}`, ids);
+  return axios.post(`/test/v1/projects/${projectId}/issueFolderRel/query/by/issueId${versionId ? `?versionId=${versionId}` : ''}${folderId ? `&folderId=${folderId}` : ''}`, ids);
 }
 export function moveIssues(versionId, folderId, issueLinks) {
   const projectId = AppState.currentMenuType.id;
-  return axios.put(`/test/v1/projects/${projectId}/issueFolderRel/move?version_id=${versionId}&folder_id=${folderId}`, issueLinks);
+  return axios.put(`/test/v1/projects/${projectId}/issueFolderRel/move?versionId=${versionId}&folderId=${folderId}`, issueLinks);
 }
 export function copyIssues(versionId, folderId, issueLinks) {
   const projectId = AppState.currentMenuType.id;
-  return axios.put(`/test/v1/projects/${projectId}/issueFolderRel/copy?version_id=${versionId}&folder_id=${folderId}`, issueLinks);
+  return axios.put(`/test/v1/projects/${projectId}/issueFolderRel/copy?versionId=${versionId}&folderId=${folderId}`, issueLinks);
 }
 export function moveFolder(data) {
   const projectId = AppState.currentMenuType.id;
@@ -244,12 +245,12 @@ export function moveFolder(data) {
 export function copyFolder(data) {
   const projectId = AppState.currentMenuType.id;
   const { folderId, versionId } = data;
-  return axios.put(`/test/v1/projects/${projectId}/issueFolder/copy?folder_id=${folderId}&version_id=${versionId}`);
+  return axios.put(`/test/v1/projects/${projectId}/issueFolder/copy?folderId=${folderId}&versionId=${versionId}`);
 }
 
 export function getFoldersByVersion(versionId) {
   const projectId = AppState.currentMenuType.id;
-  return axios.get(`/test/v1/projects/${projectId}/issueFolder/query/${versionId}`);
+  return axios.get(`/test/v1/projects/${projectId}/issueFolder/query/all${versionId ? `?versionId=${versionId}` : ''}`);
 }
 
 export function syncFoldersInVersion(versionId) {

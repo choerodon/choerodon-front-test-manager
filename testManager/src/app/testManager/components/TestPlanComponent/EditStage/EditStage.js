@@ -76,7 +76,7 @@ class EditStage extends Component {
       selectLoading: true,
     });
     const { versionId } = TestPlanStore.CurrentEditStage;
-    getFoldersByVersion(versionId).then((folders) => {
+    getFoldersByVersion().then((folders) => {
       this.setState({
         folders,
         selectLoading: false,

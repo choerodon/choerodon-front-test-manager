@@ -143,13 +143,19 @@ class CustomStatusHome extends Component {
       dataIndex: 'statusName',
       key: 'statusName',
       filters: [],
-      onFilter: (value, record) => record.statusName.indexOf(value) === 0,
+      onFilter: (value, record) => {
+        const reg = new RegExp(value, 'g');
+        return reg.test(record.statusName);
+      },
     }, {
       title: <FormattedMessage id="status_comment" />,
       dataIndex: 'description',
       key: 'description',
       filters: [],
-      onFilter: (value, record) => record.description && record.description.indexOf(value) === 0,
+      onFilter: (value, record) => {
+        const reg = new RegExp(value, 'g');       
+        return record.description && reg.test(record.description);
+      }, 
     }, {
       title: <FormattedMessage id="status_color" />,
       dataIndex: 'statusColor',
@@ -162,9 +168,8 @@ class CustomStatusHome extends Component {
     }, {
       title: '',
       key: 'action',
-      render: (text, record) => {
-        return (
-          record.projectId !== 0
+      render: (text, record) => (
+        record.projectId !== 0
           && (
             <div>
               <Icon
@@ -185,8 +190,7 @@ class CustomStatusHome extends Component {
               />
             </div>
           )
-        );
-      },
+      ),
     }];
     return (
       <div>

@@ -312,15 +312,15 @@ class Test extends Component {
         key: 'priorityCode',
         filters: [
           {
-            text: <FormattedMessage id="high" />,
+            text: Choerodon.getMessage('高', 'high'),
             value: 'high',
           },
           {
-            text: <FormattedMessage id="medium" />,
+            text: Choerodon.getMessage('中', 'medium'),
             value: 'medium',
           },
           {
-            text: <FormattedMessage id="low" />,
+            text: Choerodon.getMessage('低', 'low'),
             value: 'low',
           },
         ],
@@ -332,15 +332,15 @@ class Test extends Component {
         key: 'statusCode',
         filters: [
           {
-            text: <FormattedMessage id="todo" />,
+            text: Choerodon.getMessage('待处理', 'todo'),
             value: 'todo',
           },
           {
-            text: <FormattedMessage id="doing" />,
+            text: Choerodon.getMessage('进行中', 'doing'),
             value: 'doing',
           },
           {
-            text: <FormattedMessage id="done" />,
+            text: Choerodon.getMessage('已完成', 'done'),
             value: 'done',
           },
         ],

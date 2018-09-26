@@ -394,7 +394,7 @@ class ReportStory extends Component {
                     (
                       <div style={{
                         marginBottom: openId[issueId]
-                          && openId[issueId].includes(issue.issueId.toString())
+                          && openId[issueId].includes(`${issue.issueId}-${i}`)
                           && issue.testCycleCaseES.length > 1
                           ? (issue.testCycleCaseES.length * 30) - 48 : 0,
                       }}
@@ -410,7 +410,7 @@ class ReportStory extends Component {
                         <div className="c7n-report-summary">{issue.summary}</div>
                       </div>
                     )}
-                  key={issue.issueId}
+                  key={`${issue.issueId}-${i}`}
                 />
               ))
             }
@@ -426,7 +426,7 @@ class ReportStory extends Component {
         const { linkedTestIssues, defectInfo } = record;
         return (
           <div>
-            {linkedTestIssues.map((testIssue) => {
+            {linkedTestIssues.map((testIssue,i) => {
               const { testCycleCaseES, issueId } = testIssue;
 
               // console.log()
@@ -480,7 +480,7 @@ class ReportStory extends Component {
               });
               // window.console.log(executeStatus);
               return openId[record.defectInfo.issueId] && openId[record.defectInfo.issueId]
-                .includes(issueId.toString()) ? (
+                .includes(`${issueId}-${i}`) ? (
                   <div
                     style={{ minHeight: totalExecute === 0 ? 50 : 30 }}
                   >
@@ -521,13 +521,13 @@ class ReportStory extends Component {
         const { linkedTestIssues, defectInfo } = record;
         return (
           <div>
-            {linkedTestIssues.map((testIssue) => {
+            {linkedTestIssues.map((testIssue,i) => {
               const { testCycleCaseES, issueId } = testIssue;
               if (testCycleCaseES.length === 0) {
                 return <div style={{ minHeight: 50 }} />;
               }
               return (openId[record.defectInfo.issueId] && openId[record.defectInfo.issueId]
-                .includes(issueId.toString()) ? (
+                .includes(`${issueId}-${i}`) ? (
                   <div>
                     {
                       testCycleCaseES.map((item) => {

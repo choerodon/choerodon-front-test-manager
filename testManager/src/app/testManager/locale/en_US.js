@@ -206,7 +206,7 @@ const enUS = {
   cycle_createExecute_me: 'Me',
   cycle_createExecute_others: 'Others',
   cycle_createExecute_selectAssign: 'Choose assign',
-  cycle_createExecute_folder: 'Folder',
+  cycle_createExecute_folder: 'Stage',
   cycle_createExecute_assigned: 'Assigned to',
   cycle_createExecute_filter: 'Filters',
   cycle_createExecute_priority: 'Priority',

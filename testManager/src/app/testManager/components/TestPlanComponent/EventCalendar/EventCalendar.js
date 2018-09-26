@@ -21,7 +21,7 @@ class EventCalendar extends Component {
   componentWillReceiveProps(nextProps) {
     const { times } = nextProps;
     const { mode } = this.state;
-    console.log(times);
+    // console.log(times);
     // 使事件始终可以显示在当前范围
     if (times && times.length > 0) {
       this.setState({
