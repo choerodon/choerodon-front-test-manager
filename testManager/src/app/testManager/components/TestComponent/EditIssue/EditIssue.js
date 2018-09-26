@@ -732,7 +732,7 @@ class EditIssueNarrow extends Component {
         this.setState({ copyIssueShow: true });
         break;
       }
-      case 'item_2': {
+      case 'item_1': {
         this.handleDeleteIssue(this.state.origin.issueId);
         break;
       }
@@ -987,14 +987,14 @@ class EditIssueNarrow extends Component {
     } = this.props;
     const getMenu = () => (
       <Menu onClick={this.handleClickMenu.bind(this)}>
-        <Menu.Item key="add_worklog">
+        {/* <Menu.Item key="add_worklog">
           <FormattedMessage id="issue_edit_addWworkLog" />
-        </Menu.Item>
+        </Menu.Item> */}
         <Menu.Item key="copy">
           <FormattedMessage id="issue_edit_copyIssue" />
         </Menu.Item>
         <Permission type={type} projectId={projectId} organizationId={orgId} service={['agile-service.issue.deleteIssue']}>
-          <Menu.Item key="2">
+          <Menu.Item key="1">
             <FormattedMessage id="delete" />
           </Menu.Item>
         </Permission>
