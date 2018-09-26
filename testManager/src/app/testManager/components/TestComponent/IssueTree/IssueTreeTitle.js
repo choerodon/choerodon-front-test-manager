@@ -44,6 +44,9 @@ class IssueTreeTitle extends Component {
               if (res.failed) {
                 Choerodon.prompt('删除失败');
               } else {
+                // 删除文件夹后，清空现有文件夹信息
+                IssueTreeStore.setCurrentCycle({});
+                IssueStore.loadIssues();
                 refresh();
               }
             }).catch((err) => {
