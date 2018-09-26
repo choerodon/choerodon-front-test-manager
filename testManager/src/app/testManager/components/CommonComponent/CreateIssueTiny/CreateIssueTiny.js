@@ -3,7 +3,9 @@ import PropTypes from 'prop-types';
 import { FormattedMessage } from 'react-intl';
 import { stores } from 'choerodon-front-boot';
 import { Button, Input, Icon } from 'choerodon-ui';
-import { STATUS, COLOR, TYPE, ICON, TYPE_NAME } from '../../../common/Constant';
+import {
+  STATUS, COLOR, TYPE, ICON, TYPE_NAME, 
+} from '../../../common/Constant';
 import { createIssue } from '../../../api/IssueApi';
 import './CreateIssueTiny.scss';
 
@@ -14,9 +16,11 @@ class CreateIssueTiny extends Component {
     createIssueValue: '',
     createLoading: false,
   }
+
   static defaultProps = {
     typeCode: 'issue_test',
   }
+
   handleBlurCreateIssue() {
     const { createIssueValue } = this.state;
     const { typeCode, onOk } = this.props;
@@ -47,6 +51,7 @@ class CreateIssueTiny extends Component {
         });
     }
   }
+
   render() {
     const { create, createLoading, createIssueValue } = this.state;
     const { typeCode } = this.props;
@@ -82,7 +87,10 @@ class CreateIssueTiny extends Component {
             />
           </div>
         </div>
-        <div style={{ marginTop: 10, display: 'flex', marginLeft: 50, paddingRight: 70 }}>
+        <div style={{
+          marginTop: 10, display: 'flex', marginLeft: 50, paddingRight: 70, 
+        }}
+        >
           <Button
             type="primary"
             onClick={() => {

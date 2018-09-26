@@ -59,6 +59,13 @@ export function editFolder(data) {
   const projectId = AppState.currentMenuType.id;
   return axios.put(`/test/v1/projects/${projectId}/cycle`, data);
 }
+/**
+ *批量添加执行，后台接口已删
+ *
+ * @export
+ * @param {*} data
+ * @returns
+ */
 export function createCycleExecute(data) {
   const projectId = AppState.currentMenuType.id;
   return axios.post(`/test/v1/projects/${projectId}/cycle/case/insert/batch`, data);
@@ -67,7 +74,13 @@ export function createCycleExecuteFromCycle(fromCycleId, toCycleId, assignee, fi
   const projectId = AppState.currentMenuType.id;
   return axios.post(`/test/v1/projects/${projectId}/cycle/case/insert/case/filter/${fromCycleId}/to/${toCycleId}/assigneeTo/${assignee}`, filter);
 }
-
+/**
+ *获取版本下的循环，后台接口已删
+ *
+ * @export
+ * @param {*} versionId
+ * @returns
+ */
 export function getCyclesByVersionId(versionId) {
   const projectId = AppState.currentMenuType.id;
   return axios.post(`/test/v1/projects/${projectId}/cycle/query/cycle/versionId/${versionId}`);

@@ -1,16 +1,15 @@
 import React, { Component } from 'react';
 import {
-  Table, Button, Input, Icon, Card, Select, Spin, Upload, Tooltip,
+  Table, Input, Icon, Select, Tooltip,
 } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 import _ from 'lodash';
-import { editCycleStep, deleteAttachment, addDefects } from '../../../api/CycleExecuteApi';
+import { editCycleStep, addDefects } from '../../../api/CycleExecuteApi';
 import {
-  TextEditToggle, RichTextShow, UploadInTable, DefectSelect,
+  TextEditToggle, UploadInTable, DefectSelect,
 } from '../../CommonComponent';
-import { delta2Html, delta2Text } from '../../../common/utils';
-import { uploadFile } from '../../../api/CommonApi';
-import { getIssueList } from '../../../api/agileApi';
+import { delta2Text } from '../../../common/utils';
+
 import EditTestDetail from '../EditTestDetail';
 import './StepTable.scss';
 import CycleExecuteStore from '../../../store/project/cycle/CycleExecuteStore';

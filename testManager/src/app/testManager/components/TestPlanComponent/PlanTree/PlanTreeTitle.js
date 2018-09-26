@@ -38,7 +38,7 @@ class PlanTreeTitle extends Component {
   handleItemClick = ({ item, key, keyPath }) => {
     const { data, refresh } = this.props;
     const { type, folderId, cycleId } = data;
-    window.console.log(this.props.data, { item, key, keyPath });
+    // window.console.log(this.props.data, { item, key, keyPath });
     switch (key) {
       case 'add': {
         this.props.callback(data, 'ADD_FOLDER');
@@ -111,7 +111,7 @@ class PlanTreeTitle extends Component {
       if (type === 'temp') {
         items.push(
           <Menu.Item key="export">
-          导出循环
+            {'导出循环'}
           </Menu.Item>,
         );
       } else if (type === 'folder' || type === 'cycle') {

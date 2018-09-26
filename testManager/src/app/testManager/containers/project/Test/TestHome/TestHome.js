@@ -9,8 +9,6 @@ import {
   Spin, Icon, Select,
 } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
-import moment from 'moment';
-import { Draggable, Droppable, DragDropContext } from 'react-beautiful-dnd';
 import FileSaver from 'file-saver';
 import '../../../../assets/main.scss';
 import './TestHome.scss';
@@ -21,18 +19,11 @@ import {
 } from '../../../../common/Constant';
 import pic from '../../../../assets/问题管理－空.png';
 import { loadIssue, createIssue } from '../../../../api/IssueApi';
-import UserHead from '../../../../components/TestComponent/UserHead';
-import PriorityTag from '../../../../components/TestComponent/PriorityTag';
-import StatusTag from '../../../../components/TestComponent/StatusTag';
-import TypeTag from '../../../../components/TestComponent/TypeTag';
 import EmptyBlock from '../../../../components/TestComponent/EmptyBlock';
 import CreateIssue from '../../../../components/TestComponent/CreateIssue';
 import EditIssue from '../../../../components/TestComponent/EditIssue';
 import IssueTree from '../../../../components/TestComponent/IssueTree';
-import DragTable from '../../../../components/DragTable';
 import IssueTable from '../../../../components/TestComponent/IssueTable';
-// import EditIssue from '../../../../components/TestComponent/EditIssue';
-// import EditIssueNarrow from '../../../../components/TestComponent/EditIssueNarrow';
 
 
 const { AppState } = stores;
@@ -157,7 +148,7 @@ class Test extends Component {
   }
 
   handleBlurCreateIssue() {
-    if (this.state.createIssueValue !== '') {
+    if (this.state.createIssueValue === '') {
       const versionIssueRelDTOList = [];
       const selectedVersion = IssueTreeStore.currentCycle.versionId || IssueStore.getSeletedVersion;
       const folderId = IssueTreeStore.currentCycle.cycleId;

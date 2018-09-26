@@ -2,13 +2,10 @@ import React, { Component } from 'react';
 import { Select, Icon } from 'choerodon-ui';
 import './ReadAndEdit.scss';
 
-const Option = Select.Option;
-
 class ReadAndEdit extends Component {
   constructor(props, context) {
     super(props, context);
     this.state = {
-      type: 'read',
       origin: '',
     };
   }
@@ -25,9 +22,6 @@ class ReadAndEdit extends Component {
     window.removeEventListener('keyup', this.handleEnter, false);
   }
 
-  onBlur() {
-    this.setState({ type: 'read' });
-  }
 
   handleEnter = (e) => {
     // if (this.props.handleEnter && e.keyCode === 13) {
@@ -73,8 +67,7 @@ class ReadAndEdit extends Component {
             <div
               role="none"
               onClick={() => {
-                this.setState({
-                  type: 'edit',
+                this.setState({           
                   origin: this.props.origin,
                 });
                 if (this.props.onInit) {
@@ -149,8 +142,7 @@ class ReadAndEdit extends Component {
                   }}
                   role="none"
                   onClick={(e) => {
-                    e.stopPropagation();
-                    this.setState({ type: 'read' });
+                    e.stopPropagation();                   
                     this.props.onOk();
                     this.props.callback(undefined);
                   }
@@ -170,8 +162,7 @@ class ReadAndEdit extends Component {
                   onClick={(e) => {
                     e.stopPropagation();
                     this.props.onCancel(this.state.origin);
-                    this.setState({
-                      type: 'read',
+                    this.setState({              
                       origin: this.props.origin,
                     });
                     this.props.callback(undefined);

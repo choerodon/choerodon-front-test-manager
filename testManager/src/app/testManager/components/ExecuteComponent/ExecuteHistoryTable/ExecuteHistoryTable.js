@@ -1,12 +1,9 @@
 import React, { PureComponent } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { Table, Button, Icon, Card, Select, Spin, Upload, Tooltip } from 'choerodon-ui';
+import { Table, Tooltip } from 'choerodon-ui';
 import { delta2Html, delta2Text } from '../../../common/utils';
 import { RichTextShow } from '../../CommonComponent';
-import {
-  getCycle, addDefects, getCycleDetails, getStatusList,
-  editCycle, getCycleHistiorys, deleteAttachment, removeDefect,
-} from '../../../api/CycleExecuteApi';
+import { getCycleHistiorys } from '../../../api/CycleExecuteApi';
 
 class ExecuteHistoryTable extends PureComponent {
   state={
@@ -16,11 +13,12 @@ class ExecuteHistoryTable extends PureComponent {
       total: 0,
       pageSize: 5,
     },
-    loading: false,
   }
+
   componentDidMount() {
     this.getHistoryList(this.state.pagination);
   }
+
   getHistoryList = (pagination) => {
     const { id } = this.props.match.params;
     getCycleHistiorys({
@@ -45,25 +43,27 @@ class ExecuteHistoryTable extends PureComponent {
       dataIndex: 'user',
       key: 'user',
       render(user) {
-        return (<div style={{ width: 200 }}>
-          {user ? (
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-              }}
-            >
-              <span
-                className="c7n-avatar"
+        return (
+          <div style={{ width: 200 }}>
+            {user ? (
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
               >
-                {user.realName.slice(0, 1)}
-              </span>
-              <span style={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
-                {`${user.loginName} ${user.realName}`}
-              </span>
-            </div>
-          ) : '无'}
-        </div>);
+                <span
+                  className="c7n-avatar"
+                >
+                  {user.realName.slice(0, 1)}
+                </span>
+                <span style={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
+                  {`${user.loginName} ${user.realName}`}
+                </span>
+              </div>
+            ) : '无'}
+          </div>
+        );
       },
     }, {
       title: <FormattedMessage id="execute_executeTime" />,
@@ -97,16 +97,18 @@ class ExecuteHistoryTable extends PureComponent {
             );
           }
           default: {
-            return (<div
-              style={{
-                width: 100,
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-              }}
-            >
-              {oldValue}
-            </div>);
+            return (
+              <div
+                style={{
+                  width: 100,
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {oldValue}
+              </div>
+            );
           }
         }
       },
@@ -133,27 +135,31 @@ class ExecuteHistoryTable extends PureComponent {
             );
           }
           default: {
-            return (<div
-              style={{
-                width: 100,
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-              }}
-            >
-              {newValue}
-            </div>);
+            return (
+              <div
+                style={{
+                  width: 100,
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {newValue}
+              </div>
+            );
           }
         }
       },
     }];
-    return (<Table
-      filterBar={false}
-      dataSource={historyList}
-      columns={columns}
-      pagination={pagination}
-      onChange={this.getHistoryList}
-    />);
+    return (
+      <Table
+        filterBar={false}
+        dataSource={historyList}
+        columns={columns}
+        pagination={pagination}
+        onChange={this.getHistoryList}
+      />
+    );
   }
 }
 

@@ -1,18 +1,8 @@
 import React, { Component } from 'react';
-import { Input, Tooltip } from 'choerodon-ui';
-import { AppState } from 'choerodon-front-boot';
+import { Input } from 'choerodon-ui';
+
 
 class NumericInput extends Component {
-  constructor(props, context) {
-    super(props, context);
-    this.state = {
-      users: [],
-    };
-  }
-
-  componentWillMount() {
-  }
-
   onChange = (e) => {
     const { value } = e.target;
     // const reg = /^-?(0|[1-9][0-9]*)(\.[0-9]*)?$/;
@@ -21,6 +11,7 @@ class NumericInput extends Component {
       this.props.onChange(value);
     }
   }
+
   // '.' at the end or only '-' in the input box.
   onBlur = () => {
     const { value, onBlur, onChange } = this.props;

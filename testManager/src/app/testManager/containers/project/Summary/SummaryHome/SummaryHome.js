@@ -100,13 +100,13 @@ class SummaryHome extends Component {
         }
         return { name: version.name, versionId: version.versionId, num };
       });
-      const noVersionData = _.find(data, { typeName: null }) || {};
-      const noVersion = {
-        num: noVersionData.value || 0,
-        id: null,
-        name: <FormattedMessage id="summary_noVersion" />,
-      };
-      versionTable.unshift(noVersion);
+      // const noVersionData = _.find(data, { typeName: null }) || {};
+      // const noVersion = {
+      //   num: noVersionData.value || 0,
+      //   id: null,
+      //   name: <FormattedMessage id="summary_noVersion" />,
+      // };
+      // versionTable.unshift(noVersion);
       resolve(versionTable);
     });
   })
@@ -492,10 +492,12 @@ class SummaryHome extends Component {
               <div className="c7n-table-container">
                 <div className="c7n-table-title">
                   <FormattedMessage id="summary_testSummary" />
+
                   （
-                  <FormattedMessage id="summary_summaryByVersion" />
+<FormattedMessage id="summary_summaryByVersion" />
+
                   ）
-                </div>
+</div>
                 <Table
                   // rowKey="name"
                   style={{ height: 180 }}
@@ -508,10 +510,12 @@ class SummaryHome extends Component {
               <div className="c7n-table-container" style={{ margin: '0 15px' }}>
                 <div className="c7n-table-title">
                   <FormattedMessage id="summary_testSummary" />
+
                   （
-                  <FormattedMessage id="summary_summaryByComponent" />
+<FormattedMessage id="summary_summaryByComponent" />
+
                   ）
-                </div>
+</div>
                 <Table
                   // rowKey="name"
                   style={{ height: 180 }}
@@ -524,10 +528,12 @@ class SummaryHome extends Component {
               <div className="c7n-table-container">
                 <div className="c7n-table-title">
                   <FormattedMessage id="summary_testSummary" />
+
                   （
-                  <FormattedMessage id="summary_summaryByLabel" />
+<FormattedMessage id="summary_summaryByLabel" />
+
                   ）
-                </div>
+</div>
                 <Table
                   // rowKey="name"
                   style={{ height: 180 }}
@@ -541,8 +547,9 @@ class SummaryHome extends Component {
             <div style={{ margin: '30px 20px 18px 20px', display: 'flex', alignItems: 'center' }}>
               <div>
                 <FormattedMessage id="summary_summaryTimeLeap" />
+
                 ：
-              </div>
+</div>
               <RadioButton       
                 defaultValue={range} 
                 onChange={this.handleRangeChange}
@@ -603,10 +610,12 @@ class SummaryHome extends Component {
                 </Chart> */}
                 <div style={{ color: 'rgba(0,0,0,0.65)', marginLeft: 38 }}>
                   <FormattedMessage id="summary_testCreated" />
+
                   ：
-                  <span style={{ color: 'black', fontWeight: 500 }}>{totalCreate}</span>
+<span style={{ color: 'black', fontWeight: 500 }}>{totalCreate}</span>
+
                   ，
-                  <FormattedMessage id="summary_testLast" />
+<FormattedMessage id="summary_testLast" />
                   <span style={{ color: 'black', fontWeight: 500 }}>
                     {' '}
                     {range}
@@ -643,10 +652,12 @@ class SummaryHome extends Component {
                 </Chart> */}
                 <div style={{ color: 'rgba(0,0,0,0.65)', marginLeft: 38 }}>
                   <FormattedMessage id="summary_testExecuted" />
+
                   ：
-                  <span style={{ color: 'black', fontWeight: 500 }}>{totalExcute}</span>
+<span style={{ color: 'black', fontWeight: 500 }}>{totalExcute}</span>
+
                   ，
-                  <FormattedMessage id="summary_testLast" />
+<FormattedMessage id="summary_testLast" />
                   <span style={{ color: 'black', fontWeight: 500 }}>
                     {' '}
                     {range}

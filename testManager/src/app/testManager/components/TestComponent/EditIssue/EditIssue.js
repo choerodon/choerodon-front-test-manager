@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { stores, axios, Permission } from 'choerodon-front-boot';
-// import { withRouter } from 'react-router-dom';
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import {
@@ -37,8 +36,6 @@ import CopyIssue from '../CopyIssue';
 import TestStepTable from '../TestStepTable';
 import TestExecuteTable from '../TestExecuteTable';
 import CreateTestStep from '../CreateTestStep';
-import ExecuteTest from '../ExecuteTest';
-import IssueStore from '../../../store/project/IssueStore';
 
 const { AppState } = stores;
 const { Option } = Select;
@@ -80,14 +77,11 @@ class EditIssueNarrow extends Component {
       createLinkTaskShow: false,
       createTestStepShow: false,
       editDesShow: false,
-      executeTestShow: false,
       origin: {},
       loading: true,
       nav: 'detail',
       editDes: undefined,
-
       currentRae: undefined,
-
       issueId: undefined,
       assigneeId: undefined,
       assigneeName: '',
@@ -742,22 +736,6 @@ class EditIssueNarrow extends Component {
     }
   }
 
-  // handleChangeType({ key }) {
-  //   const issueupdateTypeDTO = {
-  //     epicName: key === 'issue_epic' ? this.state.summary : undefined,
-  //     issueId: this.state.origin.issueId,
-  //     objectVersionNumber: this.state.origin.objectVersionNumber,
-  //     typeCode: key,
-  //   };
-  //   updateIssueType(issueupdateTypeDTO)
-  //     .then((res) => {
-  //       loadIssue(this.props.issueId).then((response) => {
-  //         this.reloadIssue(this.state.origin.issueId);
-  //         this.props.onUpdate();
-  //       });
-  //     });
-  // }
-
   changeRae(currentRae) {
     this.setState({
       currentRae,
@@ -771,19 +749,10 @@ class EditIssueNarrow extends Component {
       width: 560,
       title: `删除测试用例${this.state.issueNum}`,
       content:
-        <div style={{ marginBottom: 32 }}>
-          <p style={{ marginBottom: 10 }}>请确认您要删除这个测试用例。</p>
-          <p style={{ marginBottom: 10 }}>这个测试用例将会被彻底删除。包括所有步骤和相关执行。</p>
-          {/* {
-            this.state.subIssueDTOList.length
-              ? (
-                <p>
-                  {`注意：问题的 ${this.state.subIssueDTOList.length} 个子任务将被删除。`}
-                </p>
-              )
-              : null
-          } */}
-        </div>,
+  <div style={{ marginBottom: 32 }}>
+    <p style={{ marginBottom: 10 }}>请确认您要删除这个测试用例。</p>
+    <p style={{ marginBottom: 10 }}>这个测试用例将会被彻底删除。包括所有步骤和相关执行。</p>
+  </div>,
       onOk() {
         return deleteIssue(issueId)
           .then((res) => {
@@ -1567,20 +1536,6 @@ class EditIssueNarrow extends Component {
                         </div>
                       ) : null
                     }
-                    {/* 执行测试 */}
-                    {/* {
-                      this.state.issueId && this.state.typeCode === 'issue_test' ? (
-                        <div style={{
-                          display: 'flex', flex: 1, justifyContent: 'center', borderLeft: '1px solid rgba(0, 0, 0, 0.26)',
-                        }}
-                        >
-                          <Button funcType="flat" style={{ color: '#000' }} onClick={() => this.setState({ executeTestShow: true })}>
-                            <Icon type="explicit-outline" />
-                            <span style={{ paddingLeft: 12 }}><FormattedMessage id="issue_edit_executeTest" /></span>
-                          </Button>
-                        </div>
-                      ) : null
-                    } */}
                   </div>
                 )
                 }
@@ -1610,10 +1565,8 @@ class EditIssueNarrow extends Component {
                               <div className="line-start mt-10">
                                 <div className="c7n-property-wrapper">
                                   <span className="c7n-property">
-
-
-                                    状态：
-                                                                    </span>
+                                    {'状态：'}
+                                  </span>
                                 </div>
                                 <div className="c7n-value-wrapper">
                                   <ReadAndEdit
@@ -1756,20 +1709,20 @@ class EditIssueNarrow extends Component {
                                       }}
                                     >
                                       {
-                                        this.transformPriorityCode(this.state.originpriorities).map(type => (
-                                          <Option key={type.valueCode} value={type.valueCode}>
+                                        this.transformPriorityCode(this.state.originpriorities).map(priorityType => (
+                                          <Option key={priorityType.valueCode} value={priorityType.valueCode}>
                                             <div style={{ display: 'inline-flex', alignItems: 'center', padding: '2px' }}>
                                               <div
                                                 className="c7n-level"
                                                 style={{
-                                                  backgroundColor: COLOR[type.valueCode].bgColor,
-                                                  color: COLOR[type.valueCode].color,
+                                                  backgroundColor: COLOR[priorityType.valueCode].bgColor,
+                                                  color: COLOR[priorityType.valueCode].color,
                                                   borderRadius: '2px',
                                                   padding: '0 8px',
                                                   display: 'inline-block',
                                                 }}
                                               >
-                                                {type.name}
+                                                {priorityType.name}
                                               </div>
                                             </div>
                                           </Option>
@@ -1788,7 +1741,8 @@ class EditIssueNarrow extends Component {
                               <div className="c7n-property-wrapper">
                                 <span className="c7n-property">
                                   <FormattedMessage id="summary_component" />
-                                  ：</span>
+                                  {'：'}
+                                </span>
                               </div>
                               <div className="c7n-value-wrapper">
                                 <ReadAndEdit
@@ -1849,7 +1803,7 @@ class EditIssueNarrow extends Component {
                           <div className="c7n-property-wrapper">
                             <span className="c7n-property">
                               <FormattedMessage id="summary_label" />
-                              ：
+                              {'：'}
                             </span>
                           </div>
                           <div className="c7n-value-wrapper">
@@ -1930,7 +1884,7 @@ class EditIssueNarrow extends Component {
                           <div className="c7n-property-wrapper">
                             <span className="c7n-property">
                               <FormattedMessage id="issue_create_content_version" />
-                              ：
+                              {'：'}
                             </span>
                           </div>
                           <div className="c7n-value-wrapper">
@@ -2009,10 +1963,8 @@ class EditIssueNarrow extends Component {
                               <div className="c7n-property-wrapper">
                                 <span className="c7n-property">
                                   <FormattedMessage id="issue_create_content_epic" />
-
-
-                                  ：
-                                                                </span>
+                                  {'：'}
+                                </span>
                               </div>
                               <div className="c7n-value-wrapper">
                                 <ReadAndEdit
@@ -2102,10 +2054,8 @@ class EditIssueNarrow extends Component {
                           <div className="c7n-property-wrapper">
                             <span className="c7n-property">
                               <FormattedMessage id="issue_edit_timeFollow" />
-
-
-                              ：
-                                                        </span>
+                              {'：'}
+                            </span>
                           </div>
                           {/* 预估时间 */}
                           <div className="c7n-value-wrapper" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
@@ -2122,14 +2072,10 @@ class EditIssueNarrow extends Component {
                             />
                             <span>
                               {this.getWorkloads()}
-
-
-                              h/
+                              {'h/'}
                               {this.getWorkloads() + (this.state.origin.remainingTime || 0)}
-
-
-                              h
-                                                        </span>
+                              {'h'}
+                            </span>
                             <span
                               role="none"
                               style={{
@@ -2161,11 +2107,8 @@ class EditIssueNarrow extends Component {
                           <div className="c7n-property-wrapper">
                             <span className="c7n-property">
                               <FormattedMessage id="issue_edit_reporter" />
-
-
-                              ：
-
-                                                        </span>
+                              {'：'}
+                            </span>
                           </div>
                           <div className="c7n-value-wrapper" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
                             <ReadAndEdit
@@ -2274,11 +2217,8 @@ class EditIssueNarrow extends Component {
                           <div className="c7n-property-wrapper">
                             <span className="c7n-property">
                               <FormattedMessage id="issue_edit_manager" />
-
-
-                              ：
-
-                                                        </span>
+                              {'：'}
+                            </span>
                           </div>
                           <div className="c7n-value-wrapper" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
                             <ReadAndEdit
@@ -2396,10 +2336,8 @@ class EditIssueNarrow extends Component {
                           <div className="c7n-property-wrapper">
                             <span className="c7n-property">
                               <FormattedMessage id="issue_edit_createDate" />
-
-
-                              ：
-                                                        </span>
+                              {'：'}
+                            </span>
                           </div>
                           <div className="c7n-value-wrapper">
                             {formatDate(this.state.creationDate)}
@@ -2409,10 +2347,8 @@ class EditIssueNarrow extends Component {
                           <div className="c7n-property-wrapper">
                             <span className="c7n-property">
                               <FormattedMessage id="issue_edit_updateDate" />
-
-
-                              ：
-                                                        </span>
+                              {'：'}
+                            </span>
                           </div>
                           <div className="c7n-value-wrapper">
                             {formatDate(this.state.lastUpdateDate)}
@@ -2698,22 +2634,6 @@ class EditIssueNarrow extends Component {
               onCancel={() => this.setState({ createTestStepShow: false })}
               onOk={() => {
                 this.setState({ createTestStepShow: false });
-                this.reloadIssue();
-              }}
-            />
-          ) : null
-        }
-        {
-          this.state.executeTestShow ? (
-            <ExecuteTest
-              issueId={this.state.origin.issueId}
-              issueName={this.state.origin.issueNum}
-              visible={this.state.executeTestShow}
-              lastRank={this.state.testExecuteData.length
-                ? this.state.testExecuteData[this.state.testExecuteData.length - 1].rank : null}
-              onCancel={() => this.setState({ executeTestShow: false })}
-              onOk={() => {
-                this.setState({ executeTestShow: false });
                 this.reloadIssue();
               }}
             />

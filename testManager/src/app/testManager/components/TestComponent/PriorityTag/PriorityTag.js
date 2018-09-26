@@ -18,7 +18,7 @@ const COLOR = {
   },
 };
 
-class UserHead extends Component {
+class PriorityTag extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -50,4 +50,4 @@ class UserHead extends Component {
     );
   }
 }
-export default UserHead;
+export default PriorityTag;

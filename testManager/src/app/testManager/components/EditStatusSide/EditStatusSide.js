@@ -1,21 +1,23 @@
 import React, { Component } from 'react';
-import { Form, Input, Modal, Spin } from 'choerodon-ui';
-import { Content, stores } from 'choerodon-front-boot';
+import {
+  Form, Input, Modal, Spin, 
+} from 'choerodon-ui';
+import { Content } from 'choerodon-front-boot';
 import { FormattedMessage } from 'react-intl';
 import { SketchPicker } from 'react-color';
 import './EditStatusSide.scss';
 import { editStatus } from '../../api/TestStatusApi';
 
-const { AppState } = stores;
 const FormItem = Form.Item;
 const { Sidebar } = Modal;
-const { TextArea } = Input;
+
 class EditStatusSide extends Component {
   state = {
     pickShow: false,
     statusColor: '',
     loading: false,
   }
+
   componentWillReceiveProps(nextProps) {
     const { setFieldsValue } = this.props.form;
     if (this.props.visible === false && nextProps.visible === true) {
@@ -48,8 +50,11 @@ class EditStatusSide extends Component {
       }
     });
   }
+
   render() {
-    const { visible, onOk, onCancel, type } = this.props;
+    const {
+      visible, onCancel, type, 
+    } = this.props;
     const { statusColor, loading, pickShow } = this.state;
     const { getFieldDecorator } = this.props.form;
     return (
@@ -99,7 +104,8 @@ class EditStatusSide extends Component {
                 </FormItem>
 
                 <div role="none" className="c7n-EditStatusSide-color-picker-container" onClick={e => e.stopPropagation()}>
-                  <FormattedMessage id="color" />：
+                  <FormattedMessage id="color" />
+                  {'：'}
                   <div
                     className="c7n-EditStatusSide-color-picker-show"
                     role="none"
@@ -113,19 +119,21 @@ class EditStatusSide extends Component {
                       <div className="c7n-EditStatusSide-color-picker-show-rec-con">
                         <div className="c7n-EditStatusSide-color-picker-show-rec" />
                       </div>
-                    </div>  
-                   
-                    
+                    </div>                                        
                   </div>
                   <div
-                    style={pickShow ?
-                      { display: 'block', position: 'absolute', bottom: 20, left: 60 } :
-                      { display: 'none' }}
+                    style={pickShow
+                      ? {
+                        display: 'block', position: 'absolute', bottom: 20, left: 60, 
+                      }
+                      : { display: 'none' }}
                   >
                     <SketchPicker
                       color={statusColor}
                       onChangeComplete={(color) => {
-                        const { r, g, b, a } = color.rgb;
+                        const {
+                          r, g, b, a, 
+                        } = color.rgb;
                         // window.console.log(color);
                         this.setState({ statusColor: `rgba(${r},${g},${b},${a})` });
                       }}

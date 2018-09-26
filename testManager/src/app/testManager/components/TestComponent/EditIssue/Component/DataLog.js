@@ -36,13 +36,6 @@ const PROP_SIMPLE = {
 };
 
 class DataLog extends Component {
-  constructor(props, context) {
-    super(props, context);
-    this.state = {
-      user: {},
-    };
-  }
-
   getMode1(datalog) {
     const {
       field, oldString, oldValue, newString, newValue, categoryCode, 
@@ -466,10 +459,9 @@ class DataLog extends Component {
 
                   </div>
                   <div style={{ marginTop: 5, fontSize: '12px' }}>
--
-                    {' '}
+                    {'-'}
                     {formatDate(datalog.lastUpdateDate)}
-                                    </div>
+                  </div>
                 </div>
               </div>
             </div>

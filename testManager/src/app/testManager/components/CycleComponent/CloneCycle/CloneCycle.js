@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
-import { Modal, Select, Form, Input, Spin } from 'choerodon-ui';
+import {
+  Modal, Select, Form, Input, Spin, 
+} from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 import { getProjectVersion } from '../../../api/agileApi';
 import { clone } from '../../../api/cycleApi';
@@ -11,6 +13,7 @@ class CloneCycle extends Component {
     versions: [],
     loading: false,
   }
+
   componentWillReceiveProps(nextProps) {
     const { resetFields } = this.props.form;
     if (this.props.visible === false && nextProps.visible === true) {
@@ -29,6 +32,7 @@ class CloneCycle extends Component {
       });
     });
   }
+
   handleOk = () => {
     // console.log(this.props.currentCloneCycle);
     this.props.form.validateFieldsAndScroll((err, values) => {
@@ -55,14 +59,15 @@ class CloneCycle extends Component {
       }
     });
   }
+
   render() {
     const { loading, selectLoading, versions } = this.state;
-    const { onCancel } = this.props;
-    const { getFieldDecorator, getFieldValue } = this.props.form;
-    const versionOptions = versions.map(version =>
-      (<Option value={version.versionId} key={version.versionId}>
+    const { getFieldDecorator } = this.props.form;
+    const versionOptions = versions.map(version => (
+      <Option value={version.versionId} key={version.versionId}>
         {version.name}
-      </Option>));
+      </Option>
+    ));
     return (
       <Modal
         title={<FormattedMessage id="cycle_cloneCycle" />}

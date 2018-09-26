@@ -1,35 +1,16 @@
 import React, { Component } from 'react';
-import { stores, axios } from 'choerodon-front-boot';
 import { withRouter } from 'react-router-dom';
-import moment from 'moment';
-import { Select, Form, Input, DatePicker, Button, Modal, Tabs, Tooltip } from 'choerodon-ui';
-
-// import './CreateIssue.scss';
+import { Form, Modal } from 'choerodon-ui';
 import '../../../assets/main.scss';
-import { UploadButton, NumericInput } from '../CommonComponent';
+
 import WYSIWYGEditor from '../WYSIWYGEditor';
 
-const { AppState } = stores;
-const { Sidebar } = Modal;
-const { Option } = Select;
-const TabPane = Tabs.TabPane;
-const FormItem = Form.Item;
-const TYPE = {
-  story: '#00bfa5',
-  bug: '#f44336',
-  task: '#4d90fe',
-};
 
 class CreateSprint extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      saveLoading: false,
-      releasePlans: [],
-      selectedIssue: {},
-      rollup: false,
-      delta: '',
-      edit: false,
+      delta: '', 
     };
   }
 
@@ -48,7 +29,7 @@ class CreateSprint extends Component {
   }
 
   render() {
-    const { visible, onCancel, onOk } = this.props;
+    const { visible } = this.props;
 
     return (
       <Modal

@@ -5,7 +5,6 @@ import {
 import { stores, axios } from 'choerodon-front-boot';
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
-import EditTestStep from '../EditTestStep';
 import DragTable from '../../DragTable';
 import { TextEditToggle, UploadInTable } from '../../CommonComponent';
 import './TestStepTable.scss';
@@ -18,15 +17,8 @@ class TestStepTable extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: [],
-      expand: [],
-      editTestStepShow: false,
-      currentTestStepId: undefined,
-      currentAttments: [],
+      data: [],    
     };
-  }
-
-  componentDidMount() {
   }
 
   componentWillReceiveProps(nextProps) {
@@ -117,23 +109,6 @@ class TestStepTable extends Component {
     });
   }
 
-  handleChangeExpand = (id) => {
-    const expand = this.state.expand.slice();
-
-    if (expand.includes(id)) {
-      // window.console.log(id, 'remove');
-      expand.splice(expand.indexOf(id), 1);
-      document.getElementById(`${id}-list`).style.height = '34px';
-    } else {
-      // window.console.log(id, 'add');
-      expand.push(id);
-      document.getElementById(`${id}-list`).style.height = 'auto';
-    }
-    // window.console.log(expand);
-    this.setState({ expand });
-  }
-
-
   render() {
     const that = this;
     const {
@@ -186,7 +161,7 @@ class TestStepTable extends Component {
         return (
           <div className="item-container">
             <TextEditToggle
-              rules={[{ max: 30, message: '测试数据最长为30' }]}
+              // rules={[{ max: 30, message: '测试数据最长为30' }]}
               formKey="testData"
               onSubmit={value => that.editStep({ ...record, testData: value })}
               originData={testData}
@@ -301,26 +276,7 @@ class TestStepTable extends Component {
           columns={mode === 'narrow' ? columns : columns.concat(wideColumns)}
           onDragEnd={this.onDragEnd}
           dragKey="stepId"
-        />
-        {
-          this.state.editTestStepShow ? (
-            <EditTestStep
-              attachments={this.state.currentAttments}
-              issueId={this.props.issueId}
-              stepId={this.state.currentTestStepId}
-              visible={this.state.editTestStepShow}
-              onCancel={() => {
-                this.setState({ editTestStepShow: false });
-                this.props.onOk();
-              }}
-              onOk={() => {
-                this.setState({ editTestStepShow: false });
-                this.props.onOk();
-              }}
-            />
-          ) : null
-        }
-
+        />    
       </div>
     );
   }

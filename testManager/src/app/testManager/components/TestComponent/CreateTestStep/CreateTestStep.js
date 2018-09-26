@@ -81,14 +81,14 @@ class CreateTestStep extends Component {
               {getFieldDecorator('testStep', {
                 rules: [{ required: true, message: '测试步骤为必输项' }],
               })(
-                <Input label={<FormattedMessage id="execute_testStep" />} maxLength={30} />,
+                <TextArea label={<FormattedMessage id="execute_testStep" />} autosize={{ minRows: 1, maxRows: 6 }} />,
               )}
             </FormItem>
             <FormItem>
               {getFieldDecorator('testData', {
                 // rules: [{ required: true, message: '测试数据为必输项' }],
               })(
-                <Input label={<FormattedMessage id="execute_testData" />} maxLength={30} />,
+                <TextArea label={<FormattedMessage id="execute_testData" />} autosize={{ minRows: 1, maxRows: 6 }} />,
               )}
             </FormItem>
             <FormItem>

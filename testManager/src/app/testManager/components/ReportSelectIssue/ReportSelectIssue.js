@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
-import { Icon, Modal, Spin, Select, Table } from 'choerodon-ui';
-import { Content, stores } from 'choerodon-front-boot';
+import {
+  Icon, Modal, Spin, Select, Table, 
+} from 'choerodon-ui';
+import { Content } from 'choerodon-front-boot';
 import { FormattedMessage } from 'react-intl';
 import './ReportSelectIssue.less';
-import { getIssueListSearch, getIssueStatus, getProjectVersion } from '../../api/agileApi';
+import { getIssueListSearch, getProjectVersion } from '../../api/agileApi';
 
-const { AppState } = stores;
 const { Sidebar } = Modal;
 const { Option } = Select;
 
@@ -50,6 +51,7 @@ class ReportSelectIssue extends Component {
     version: 'all',
     issueIds: [],
   }
+
   componentWillReceiveProps(nextProps) {
     if (this.props.visible === false && nextProps.visible === true) {
       // this.setState({
@@ -64,6 +66,7 @@ class ReportSelectIssue extends Component {
     const { onOk } = this.props;
     onOk(issueIds);
   }
+
   getList = (pagination = this.state.pagination, typeCode = this.state.typeCode) => {
     this.setState({ loading: true });
     const search = {
@@ -97,6 +100,7 @@ class ReportSelectIssue extends Component {
       Choerodon.prompt('网络异常');
     });
   }
+
   loadVersions = () => {
     this.setState({
       selectLoading: true,
@@ -108,23 +112,29 @@ class ReportSelectIssue extends Component {
       });
     });
   }
+
   handleTableChange = (pagination, filters, sorter) => {
     this.getList(pagination);
   }
+
   selectItems = (selectedRowKeys, selectedRows) => {
     // const issueIds = selectedRows.map(row => row.issueId);
 
     this.setState({ issueIds: selectedRowKeys });
     // window.console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
   }
+
   render() {
     const { visible, onOk, onCancel } = this.props;
-    const { loading, versions, selectLoading, pagination, 
-      issueList, version, issueIds } = this.state;
-    const versionOptions = versions.map(item =>
-      (<Option value={item.versionId} key={item.versionId}>
+    const {
+      loading, versions, selectLoading, pagination, 
+      issueList, version, issueIds, 
+    } = this.state;
+    const versionOptions = versions.map(item => (
+      <Option value={item.versionId} key={item.versionId}>
         {item.name}
-      </Option>));
+      </Option>
+    ));
     const columns = [{
       title: <FormattedMessage id="type" />,
       dataIndex: 'typeCode',
@@ -142,7 +152,7 @@ class ReportSelectIssue extends Component {
       key: 'summary', 
     }];
     return (
-      <div onClick={() => { this.setState({ pickShow: false }); }} role="none">
+      <div>
         <Spin spinning={loading}>
           <Sidebar
             title={<FormattedMessage id="report_select_title" />}
@@ -156,7 +166,7 @@ class ReportSelectIssue extends Component {
               }}
               title={<FormattedMessage id="report_select_title" />}
               description={<FormattedMessage id="report_select_content_description" />}
-              link={'http://choerodon.io/zh/docs/user-guide/test-management/test-report/report/'}
+              link="http://choerodon.io/zh/docs/user-guide/test-management/test-report/report/"
             >
 
               <div style={{ display: 'flex' }}>
@@ -187,28 +197,31 @@ class ReportSelectIssue extends Component {
                     });
                     this.getList(pagination, code);
                   }}
-                >{
-                    Object.keys(TYPE).map(type => (<Option value={type} key={type}>
-                      <div style={{ display: 'inline-flex', height: 20 }}>
-                        <div style={{
-                          background: TYPE[type],
-                          borderRadius: '50%',
-                          color: 'white',
-                          width: 20,
-                          height: 20,
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          marginRight: 8,
-                        }}
-                        >
-                          <Icon type={ICON[type]} style={{ fontSize: '14px' }} />
+                >
+                  {
+                    Object.keys(TYPE).map(type => (
+                      <Option value={type} key={type}>
+                        <div style={{ display: 'inline-flex', height: 20 }}>
+                          <div style={{
+                            background: TYPE[type],
+                            borderRadius: '50%',
+                            color: 'white',
+                            width: 20,
+                            height: 20,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            marginRight: 8,
+                          }}
+                          >
+                            <Icon type={ICON[type]} style={{ fontSize: '14px' }} />
+                          </div>
+                          <span>
+                            {NAME[type]}
+                          </span>
                         </div>
-                        <span>
-                          {NAME[type]}
-                        </span>
-                      </div>
-                    </Option>))
+                      </Option>
+                    ))
                   }
                 </Select>
               </div>

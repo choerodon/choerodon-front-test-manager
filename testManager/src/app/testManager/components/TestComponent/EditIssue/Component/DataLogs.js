@@ -4,13 +4,6 @@ import { FormattedMessage } from 'react-intl';
 import DataLog from './DataLog';
 
 
-const PROP = {
-  Sprint: '冲刺',
-  status: '状态',
-  resolution: '',
-  'Story Points': '故事点',
-};
-
 class DataLogs extends Component {
   constructor(props, context) {
     super(props, context);
@@ -18,9 +11,6 @@ class DataLogs extends Component {
       user: {},
       expand: false,
     };
-  }
-
-  componentDidMount() {
   }
 
   setUser(user) {

@@ -13,10 +13,6 @@ class UploadButton extends React.Component {
     onRemove: PropTypes.func,
     beforeUpload: PropTypes.func,
   };
-  constructor(props, context) {
-    super(props, context);
-    this.state = {};
-  }
 
   onRemove = fileList => (file) => {
     const index = fileList.indexOf(file);

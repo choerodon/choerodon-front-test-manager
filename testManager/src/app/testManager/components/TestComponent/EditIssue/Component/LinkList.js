@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Icon, Popconfirm, Tooltip } from 'choerodon-ui';
-import { AppState } from 'choerodon-front-boot';
 import _ from 'lodash';
-import UserHead from '../../UserHead';
-import WYSIWYGEditor from '../../WYSIWYGEditor';
-import { IssueDescription } from '../../CommonComponent';
-import { delta2Html, text2Delta, beforeTextUpload, formatDate } from '../../../../common/utils';
+
+import {
+  delta2Html, text2Delta, beforeTextUpload, formatDate, 
+} from '../../../../common/utils';
 import { deleteLink, updateCommit } from '../../../../api/IssueApi';
 import PriorityTag from '../../PriorityTag';
 import StatusTag from '../../StatusTag';
@@ -14,21 +13,9 @@ import TypeTag from '../../TypeTag';
 import './IssueList.scss';
 import { issueLink } from '../../../../common/utils';
 
-class IssueList extends Component {
-  constructor(props, context) {
-    super(props, context);
-    this.state = {
-    };
-  }
-
-  componentWillMount() {
-  }
-
+class LinkList extends Component {
   confirm(issueId, e) {
     this.handleDeleteIssue(issueId);
-  }
-
-  cancel(e) {
   }
 
   handleDeleteIssue(linkId) {
@@ -64,7 +51,9 @@ class IssueList extends Component {
         <Tooltip title={`编号概要： ${issue.issueNum} ${issue.summary}`}>
           <div style={{ marginLeft: 8, flex: 1, overflow: 'hidden' }}>
             <p
-              style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 0, color: 'rgb(63, 81, 181)' }}
+              style={{
+                overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 0, color: 'rgb(63, 81, 181)', 
+              }}
               role="none"
               // onClick={() => {
               //   this.props.onOpen(issue.issueId, issue.linkedIssueId);
@@ -88,7 +77,10 @@ class IssueList extends Component {
             </div>
           </Tooltip>
         </div>
-        <div style={{ width: '48px', marginRight: '15px', display: 'flex', justifyContent: 'flex-end' }}>
+        <div style={{
+          width: '48px', marginRight: '15px', display: 'flex', justifyContent: 'flex-end', 
+        }}
+        >
           <Tooltip mouseEnterDelay={0.5} title={`任务状态： ${issue.statusName}`}>
             <div>
               <StatusTag
@@ -124,4 +116,4 @@ class IssueList extends Component {
   }
 }
 
-export default IssueList;
+export default LinkList;

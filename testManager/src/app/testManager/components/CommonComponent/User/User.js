@@ -34,7 +34,10 @@ class User extends Component {
                 style={{ width: '100%' }}
               />
             ) : (
-              <span style={{ width: 18, height: 18, lineHeight: '18px', textAlign: 'center', color: '#6473c3' }}>
+              <span style={{
+                width: 18, height: 18, lineHeight: '18px', textAlign: 'center', color: '#6473c3', 
+              }}
+              >
                 {user.realName[0]}
               </span>
             )
@@ -51,7 +54,9 @@ class User extends Component {
               color: 'rgba(0, 0, 0, 0.65)',
             }}
           >
-            {user.loginName} {user.realName}
+            {user.loginName} 
+            {' '}
+            {user.realName}
           </span>
         </div>
       </div>

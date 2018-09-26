@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-  Button, Icon, Card, Select, Upload,
+  Button, Icon, Select, Upload,
 } from 'choerodon-ui';
 import _ from 'lodash';
 import { observer } from 'mobx-react';
@@ -249,7 +249,7 @@ class TestExecuteInfo extends Component {
             <div style={styles.cardContentItem}>
               <div style={styles.carsContentItemPrefix}>
                 <FormattedMessage id="execute_status" />
-                :
+                {':'}
               </div>
               <TextEditToggle
                 disabled={disabled}
@@ -279,7 +279,7 @@ class TestExecuteInfo extends Component {
             <div style={styles.cardContentItem}>
               <div style={styles.carsContentItemPrefix}>
                 <FormattedMessage id="execute_assignedTo" />
-                ：
+                {'：'}
               </div>
               <TextEditToggle
                 disabled={disabled}
@@ -311,14 +311,14 @@ class TestExecuteInfo extends Component {
             <div style={styles.cardContentItem}>
               <div style={styles.carsContentItemPrefix}>
                 <FormattedMessage id="execute_executive" />
-                ：
+                {'：'}
               </div>
               {lastUpdateUser ? <User user={lastUpdateUser} /> : '无'}
             </div>
             <div style={styles.cardContentItem}>
               <div style={styles.carsContentItemPrefix}>
                 <FormattedMessage id="execute_executeTime" />
-                ：
+                {'：'}
               </div>
               <div>
                 {lastUpdateDate}
@@ -327,9 +327,8 @@ class TestExecuteInfo extends Component {
             <div style={styles.cardContentItem}>
               <div style={styles.carsContentItemPrefix}>
                 <FormattedMessage id="bug" />
-                ：
+                {'：'}
               </div>
-
               <TextEditToggle
                 disabled={disabled}
                 formKey="defects"
@@ -372,10 +371,6 @@ class TestExecuteInfo extends Component {
                 </Edit>
               </TextEditToggle>
             </div>
-            {/* <CreateIssueTiny    
-            typeCode="bug"       
-            // onOk={CycleExecuteStore.getInfo}
-          /> */}
           </div>
         </div>
         <div style={{ marginLeft: 20, flex: 1 }}>
@@ -440,7 +435,6 @@ class TestExecuteInfo extends Component {
               )}
             </div>
             <div style={{ marginTop: -10 }}>
-              {/* {caseAttachment} */}
               <Upload
                 {...props}
                 fileList={fileList}

@@ -15,14 +15,13 @@ import moment from 'moment';
 import './CycleHome.scss';
 import { getUsers } from '../../../../api/CommonApi';
 import {
-  getCycles, deleteExecute, getCycleById, editCycleExecute,
+  getCycles, deleteExecute, getCycleById,
   clone, addFolder, getStatusList, exportCycle,
 } from '../../../../api/cycleApi';
 import { editCycle } from '../../../../api/CycleExecuteApi';
 import {
-  TreeTitle, CreateCycle, EditCycle, CreateCycleExecute, ShowCycleData, CloneCycle,
+  TreeTitle, CreateCycle, EditCycle, ShowCycleData, CloneCycle,
 } from '../../../../components/CycleComponent';
-import DragTable from '../../../../components/DragTable';
 import { RichTextShow, SelectFocusLoad, RadioButton } from '../../../../components/CommonComponent';
 import {
   delta2Html, delta2Text, issueLink, getParams,
@@ -901,7 +900,7 @@ class CycleHome extends Component {
           style={{ paddingBottom: 0, paddingRight: 0 }}
         >
           <Spin spinning={loading}>
-            <CreateCycleExecute
+            {/* <CreateCycleExecute
               data={currentCycle}
               rank={testList.slice(-1)[0] && testList.slice(-1)[0].rank}
               visible={CreateCycleExecuteVisible}
@@ -914,7 +913,7 @@ class CycleHome extends Component {
                 // window.console.log(data);
                 this.refresh();
               }}
-            />
+            /> */}
             <CreateCycle
               visible={CreateCycleVisible}
               onCancel={() => { this.setState({ CreateCycleVisible: false }); }}
@@ -1031,15 +1030,7 @@ class CycleHome extends Component {
                     <div>
                       {type === 'folder' ? <FormattedMessage id="cycle_stageName" />
                         : <FormattedMessage id="cycle_cycleName" />}
-
-
-
-
-
-
-
-                      ：
-<span>{title}</span>
+                      <span>{`：${title}`}</span>
                     </div>
                     <div style={{ flex: 1, visiblity: 'hidden' }} />
                     {/* <div>

@@ -196,7 +196,7 @@ export function deleteFolder(folderId) {
 }
 
 export function getAllIssues(page = 0, size = 10, search, orderField, orderType) {
-  console.log(search);
+  // console.log(search);
   const searchDTO = { ...search, otherArgs: search.searchArgs };
   searchDTO.advancedSearchArgs.typeCode = ['issue_test'];
   const projectId = AppState.currentMenuType.id;
