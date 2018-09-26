@@ -1,8 +1,5 @@
 import React from 'react';
-import {
-  Table, Button, Tooltip, Input, Dropdown, Menu, Pagination,
-  Spin, Icon, Select, Popover,
-} from 'choerodon-ui';
+import { Tooltip } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 import UserHead from '../UserHead';
 import PriorityTag from '../PriorityTag';
@@ -107,6 +104,28 @@ export function renderEpic(epicName, epicColor) {
         }}
       >
         {epicName}
+      </div>
+    ) : null
+  );
+}
+export function renderFolder(folderName) {
+  return (
+    folderName ? (
+      <div
+        style={{
+          color: '#4D90FE',
+          height: 22,
+          borderWidth: '1px',
+          borderStyle: 'solid',
+          borderColor: '#4D90FE',
+          borderRadius: '2px',
+          fontSize: '13px',
+          lineHeight: '20px',
+          padding: '0 8px',
+          margin: '0 5px',
+        }}
+      >
+        {folderName}
       </div>
     ) : null
   );

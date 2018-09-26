@@ -10,8 +10,8 @@ export const COLOR = {
     bgColor: 'rgba(77, 144, 254, 0.2)',
   },
   high: {
-    color: '#ffb100',
-    bgColor: 'rgba(255, 177, 0, 0.12)',
+    color: '#F44336',
+    bgColor: 'rgba(244,67,54,0.20)',
   },
   low: {
     color: 'rgba(0, 0, 0, 0.36)',

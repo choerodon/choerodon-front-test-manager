@@ -60,7 +60,11 @@ const STATUS_ICON = {
     bgColor: '',
   },
 };
-
+const ICON_COLOR={
+  todo:"rgba(255, 177, 0, 0.2)",
+  doing:"rgba(77,144,254,0.2)",
+  done:"rgba(0,191,165,0.2)"
+}
 class EditIssueNarrow extends Component {
   constructor(props) {
     super(props);
@@ -749,10 +753,10 @@ class EditIssueNarrow extends Component {
       width: 560,
       title: `删除测试用例${this.state.issueNum}`,
       content:
-  <div style={{ marginBottom: 32 }}>
-    <p style={{ marginBottom: 10 }}>请确认您要删除这个测试用例。</p>
-    <p style={{ marginBottom: 10 }}>这个测试用例将会被彻底删除。包括所有步骤和相关执行。</p>
-  </div>,
+        <div style={{ marginBottom: 32 }}>
+          <p style={{ marginBottom: 10 }}>请确认您要删除这个测试用例。</p>
+          <p style={{ marginBottom: 10 }}>这个测试用例将会被彻底删除。包括所有步骤和相关执行。</p>
+        </div>,
       onOk() {
         return deleteIssue(issueId)
           .then((res) => {
@@ -1244,7 +1248,7 @@ class EditIssueNarrow extends Component {
                     </Dropdown>
                   </div>
                 </div>
-                {mode === 'narrow' && this.state.issueId && this.state.typeCode !== 'issue_epic' ? (
+                {/* {mode === 'narrow' && this.state.issueId && this.state.typeCode !== 'issue_epic' ? (
                   <div style={{ display: 'flex' }}>
                     <span>预估时间：</span>
                     <div>
@@ -1279,8 +1283,8 @@ class EditIssueNarrow extends Component {
                       </ReadAndEdit>
                     </div>
                   </div>
-                ) : null
-                }
+                ) : null */}
+                {/* 状态 */}
                 {mode === 'wide' && (
                   <div className="line-start" style={{ alignItems: 'center' }}>
                     <div style={{ display: 'flex', flex: 1 }}>
@@ -1289,7 +1293,7 @@ class EditIssueNarrow extends Component {
                           width: 30,
                           height: 30,
                           borderRadius: '50%',
-                          // background: 'rgba(255, 177, 0, 0.2)',
+                          background: ICON_COLOR[this.state.statusCode],
                           marginRight: 12,
                           flexShrink: 0,
                           display: 'flex',
@@ -1300,7 +1304,7 @@ class EditIssueNarrow extends Component {
                         <Icon
                           type={STATUS_ICON[this.state.statusCode] ? STATUS_ICON[this.state.statusCode].icon : 'timelapse'}
                           style={{
-                            fontSize: '33px',
+                            fontSize: '24px',
                             color: this.state.statusColor || '#ffae02',
                           }}
                         />
@@ -1486,56 +1490,37 @@ class EditIssueNarrow extends Component {
                         </div>
                       </div>
                     </div>
-                    {
-                      this.state.issueId && this.state.typeCode !== 'issue_epic' ? (
-                        <div style={{ display: 'flex', flex: 1 }}>
-                          <span
-                            style={{
-                              width: 30, height: 30, borderRadius: '50%', background: '#d8d8d8', marginRight: 12, flexShrink: 0, display: 'flex', justifyContent: 'center', alignItems: 'center',
-                            }}
-                          >
-                            <Icon type="event_note" style={{ fontSize: '24px' }} />
-                          </span>
+                    {/* 版本 */}
+                    <div style={{ display: 'flex', flex: 1 }}>
+                      <span
+                        style={{
+                          width: 30, height: 30, borderRadius: '50%', background: '#d8d8d8', marginRight: 12, flexShrink: 0, display: 'flex', justifyContent: 'center', alignItems: 'center',
+                        }}
+                      >
+                        <Icon type="versionline" style={{ fontSize: '24px', color: 'black' }} />
+                      </span>
+                      <div>
+                        <div style={{ fontSize: '12px', color: 'rgba(0, 0, 0, 0.54)', marginBottom: 4 }}>
+                          <FormattedMessage id="version" />
+                        </div>
+                        <div>
                           <div>
-                            <div style={{ fontSize: '12px', color: 'rgba(0, 0, 0, 0.54)', marginBottom: 4 }}>
-                              <FormattedMessage id="issue_edit_planTime" />
-                            </div>
-                            <div>
-                              {/* 预估时间 */}
-                              <ReadAndEdit
-                                callback={this.changeRae.bind(this)}
-                                thisType="remainingTime"
-                                current={this.state.currentRae}
-                                handleEnter
-                                origin={this.state.remainingTime}
-                                onInit={() => this.setAnIssueToState(this.state.origin)}
-                                onOk={this.updateIssue.bind(this, 'remainingTime')}
-                                onCancel={this.resetRemainingTime.bind(this)}
-                                readModeContent={(
-                                  <span>
-                                    {this.state.remainingTime === undefined || this.state.remainingTime === null ? '无' : `${this.state.remainingTime} 小时`}
-                                  </span>
-                                )}
-                              >
-                                <NumericInput
-                                  maxLength="3"
-                                  value={this.state.remainingTime}
-                                  // size="large"
-                                  autoFocus
-                                  onChange={this.handleRemainingTimeChange.bind(this)}
-                                  onPressEnter={() => {
-                                    this.updateIssue('remainingTime');
-                                    this.setState({
-                                      currentRae: undefined,
-                                    });
-                                  }}
-                                />
-                              </ReadAndEdit>
-                            </div>
+                            {
+                              !this.state.fixVersionsFixed.length && !this.state.fixVersions.length ? '无' : (
+                                <div>
+                                  <div style={{ color: '#000' }}>
+                                    {_.map(this.state.fixVersionsFixed, 'name').join(' , ')}
+                                  </div>
+                                  <p style={{ wordBreak: 'break-word', marginBottom: 0 }}>
+                                    {_.map(this.state.fixVersions, 'name').join(' , ')}
+                                  </p>
+                                </div>
+                              )
+                            }
                           </div>
                         </div>
-                      ) : null
-                    }
+                      </div>
+                    </div>
                   </div>
                 )
                 }
@@ -1558,11 +1543,12 @@ class EditIssueNarrow extends Component {
                       />
                     </div>
                     <div className="c7n-content-wrapper" style={{ display: 'flex', flexWrap: 'wrap' }}>
+                      {/* 状态 */}
                       <div style={{ flex: 1 }}>
                         {mode === 'narrow'
                           && (
                             <div>
-                              <div className="line-start mt-10">
+                              <div className="line-start mt-10 ht-20">
                                 <div className="c7n-property-wrapper">
                                   <span className="c7n-property">
                                     {'状态：'}
@@ -1640,9 +1626,10 @@ class EditIssueNarrow extends Component {
                                   </ReadAndEdit>
                                 </div>
                               </div>
-                              <div className="line-start mt-10">
+                              {/* 优先级 */}
+                              <div className="line-start mt-10 ht-20">
                                 <div className="c7n-property-wrapper">
-                                  <span className="c7n-property">                                   优先级：</span>
+                                  <span className="c7n-property">优先级：</span>
                                 </div>
                                 <div className="c7n-value-wrapper">
                                   <ReadAndEdit
@@ -1735,9 +1722,10 @@ class EditIssueNarrow extends Component {
                             </div>
                           )
                         }
+                        {/* 模块 */}
                         {
                           this.state.typeCode !== 'sub_task' ? (
-                            <div className="line-start mt-10">
+                            <div className="line-start mt-10 ht-20">
                               <div className="c7n-property-wrapper">
                                 <span className="c7n-property">
                                   <FormattedMessage id="summary_component" />
@@ -1798,8 +1786,8 @@ class EditIssueNarrow extends Component {
                             </div>
                           ) : null
                         }
-
-                        <div className="line-start mt-10">
+                        {/* 标签 */}
+                        <div className="line-start mt-10 ht-20">
                           <div className="c7n-property-wrapper">
                             <span className="c7n-property">
                               <FormattedMessage id="summary_label" />
@@ -1879,223 +1867,33 @@ class EditIssueNarrow extends Component {
                             </ReadAndEdit>
                           </div>
                         </div>
-
-                        <div className="line-start mt-10">
-                          <div className="c7n-property-wrapper">
-                            <span className="c7n-property">
-                              <FormattedMessage id="issue_create_content_version" />
-                              {'：'}
-                            </span>
-                          </div>
-                          <div className="c7n-value-wrapper">
-                            <ReadAndEdit
-                              callback={this.changeRae.bind(this)}
-                              thisType="fixVersions"
-                              current={this.state.currentRae}
-                              origin={this.state.fixVersions}
-                              onInit={() => this.setAnIssueToState(this.state.origin)}
-                              onOk={this.updateVersionSelect.bind(this, 'originVersions', 'fixVersions')}
-                              onCancel={this.resetFixVersions.bind(this)}
-                              readModeContent={(
-                                <div style={{ color: '#3f51b5' }}>
-                                  {
-                                    !this.state.fixVersionsFixed.length && !this.state.fixVersions.length ? '无' : (
-                                      <div>
-                                        <div style={{ color: '#000' }}>
-                                          {_.map(this.state.fixVersionsFixed, 'name').join(' , ')}
-                                        </div>
-                                        <p style={{ color: '#3f51b5', wordBreak: 'break-word', marginBottom: 0 }}>
-                                          {_.map(this.state.fixVersions, 'name').join(' , ')}
-                                        </p>
-                                      </div>
-                                    )
-                                  }
-                                </div>
-                              )}
-                            >
-                              {
-                                this.state.fixVersionsFixed.length ? (
-                                  <div>
-                                    <span>已归档版本：</span>
-                                    <span>
-                                      {_.map(this.state.fixVersionsFixed, 'name').join(' , ')}
-                                    </span>
-                                  </div>
-                                ) : null
-                              }
-                              <Select
-                                label="未归档版本"
-                                value={this.transToArr(this.state.fixVersions, 'name', 'array')}
-                                mode="tags"
-                                autoFocus
-                                loading={this.state.selectLoading}
-                                tokenSeparators={[',']}
-                                getPopupContainer={triggerNode => triggerNode.parentNode}
-                                style={{ width: '200px', marginTop: 0, paddingTop: 0 }}
-                                onFocus={() => {
-                                  this.setState({
-                                    selectLoading: true,
-                                  });
-                                  loadVersions(['version_planning', 'released']).then((res) => {
-                                    this.setState({
-                                      originVersions: res,
-                                      selectLoading: false,
-                                    });
-                                  });
-                                }}
-                                onChange={value => this.setState({ fixVersions: value })}
-                              >
-                                {this.state.originVersions.map(version => (
-                                  <Option
-                                    key={version.name}
-                                    value={version.name}
-                                  >
-                                    {version.name}
-                                  </Option>
-                                ))}
-                              </Select>
-                            </ReadAndEdit>
-                          </div>
-                        </div>
-                        {
-                          this.state.typeCode !== 'issue_epic' && this.state.typeCode !== 'sub_task' ? (
-                            <div className="line-start mt-10">
-                              <div className="c7n-property-wrapper">
-                                <span className="c7n-property">
-                                  <FormattedMessage id="issue_create_content_epic" />
-                                  {'：'}
-                                </span>
-                              </div>
-                              <div className="c7n-value-wrapper">
-                                <ReadAndEdit
-                                  callback={this.changeRae.bind(this)}
-                                  thisType="epicId"
-                                  current={this.state.currentRae}
-                                  origin={this.state.epicId}
-                                  onOk={this.updateIssue.bind(this, 'epicId')}
-                                  onCancel={this.resetEpicId.bind(this)}
-                                  onInit={() => {
-                                    this.setAnIssueToState(this.state.origin);
-                                    loadEpics().then((res) => {
-                                      this.setState({
-                                        originEpics: res,
-                                      });
-                                    });
-                                  }}
-                                  readModeContent={(
+                        {/* 版本 */}
+                        {mode === 'narrow' && (
+                          <div className="line-start mt-10 ht-20">
+                            <div className="c7n-property-wrapper">
+                              <span className="c7n-property">
+                                <FormattedMessage id="issue_create_content_version" />
+                                {'：'}
+                              </span>
+                            </div>
+                            <div className="c7n-value-wrapper">
+                              <div>
+                                {
+                                  !this.state.fixVersionsFixed.length && !this.state.fixVersions.length ? '无' : (
                                     <div>
-                                      {
-                                        this.state.epicId ? (
-                                          <div
-                                            style={{
-                                              color: this.state.epicColor,
-                                              borderWidth: '1px',
-                                              borderStyle: 'solid',
-                                              borderColor: this.state.epicColor,
-                                              borderRadius: '2px',
-                                              fontSize: '13px',
-                                              lineHeight: '20px',
-                                              padding: '0 8px',
-                                              display: 'inline-block',
-                                            }}
-                                          >
-                                            {this.state.epicName}
-                                          </div>
-                                        ) : '无'
-                                      }
+                                      <div style={{ color: '#000' }}>
+                                        {_.map(this.state.fixVersionsFixed, 'name').join(' , ')}
+                                      </div>
+                                      <p style={{ wordBreak: 'break-word', marginBottom: 0 }}>
+                                        {_.map(this.state.fixVersions, 'name').join(' , ')}
+                                      </p>
                                     </div>
-                                  )}
-                                >
-                                  <Select
-                                    value={this.state.originEpics.length
-                                      ? this.state.epicId || undefined
-                                      : this.state.epicName || undefined}
-                                    getPopupContainer={triggerNode => triggerNode.parentNode}
-                                    style={{ width: '150px' }}
-                                    autoFocus
-                                    allowClear
-                                    loading={this.state.selectLoading}
-                                    onFocus={() => {
-                                      this.setState({
-                                        selectLoading: true,
-                                      });
-                                      loadEpics().then((res) => {
-                                        this.setState({
-                                          originEpics: res,
-                                          selectLoading: false,
-                                        });
-                                      });
-                                    }}
-                                    onChange={(value) => {
-                                      const epic = _.find(this.state.originEpics,
-                                        { issueId: value * 1 });
-                                      this.setState({
-                                        epicId: value,
-                                        // epicName: epic.epicName,
-                                      });
-                                    }}
-                                  >
-                                    {this.state.originEpics.map(epic => (
-                                      <Option key={`${epic.issueId}`} value={epic.issueId}>
-                                        <Tooltip title={epic.epicName}>
-                                          {epic.epicName}
-                                        </Tooltip>
-                                      </Option>
-                                    ))}
-                                  </Select>
-                                </ReadAndEdit>
-
+                                  )
+                                }
                               </div>
                             </div>
-                          ) : null
-                        }
-
-                        <div className="line-start mt-10">
-                          <div className="c7n-property-wrapper">
-                            <span className="c7n-property">
-                              <FormattedMessage id="issue_edit_timeFollow" />
-                              {'：'}
-                            </span>
                           </div>
-                          {/* 预估时间 */}
-                          <div className="c7n-value-wrapper" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
-                            <Progress
-                              style={{ width: 100 }}
-                              percent={
-                                this.getWorkloads() !== 0
-                                  ? (this.getWorkloads() * 100)
-                                  / (this.getWorkloads() + (this.state.origin.remainingTime || 0))
-                                  : 0
-                              }
-                              size="small"
-                              status="success"
-                            />
-                            <span>
-                              {this.getWorkloads()}
-                              {'h/'}
-                              {this.getWorkloads() + (this.state.origin.remainingTime || 0)}
-                              {'h'}
-                            </span>
-                            <span
-                              role="none"
-                              style={{
-                                marginLeft: '8px',
-                                color: '#3f51b5',
-                                cursor: 'pointer',
-                              }}
-                              onClick={() => {
-                                this.setState({
-                                  dailyLogShow: true,
-                                });
-                              }}
-                            >
-                              <FormattedMessage id="issue_edit_registrationWork" />
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                      {/* --- */}
-                      <div style={{ flex: 1 }}>
+                        )}
                         <div className="line-start mt-10">
                           <div className="c7n-property-wrapper">
                             <span className="c7n-subtitle">
@@ -2103,7 +1901,7 @@ class EditIssueNarrow extends Component {
                             </span>
                           </div>
                         </div>
-                        <div className="line-start mt-10 assignee">
+                        <div className="line-start mt-10 assignee ht-20">
                           <div className="c7n-property-wrapper">
                             <span className="c7n-property">
                               <FormattedMessage id="issue_edit_reporter" />
@@ -2213,7 +2011,7 @@ class EditIssueNarrow extends Component {
                             </span>
                           </div>
                         </div>
-                        <div className="line-start mt-10 assignee">
+                        <div className="line-start mt-10 assignee ht-20">
                           <div className="c7n-property-wrapper">
                             <span className="c7n-property">
                               <FormattedMessage id="issue_edit_manager" />
@@ -2323,7 +2121,10 @@ class EditIssueNarrow extends Component {
                             </span>
                           </div>
                         </div>
-
+                      </div>
+                      {/* --- */}
+                      <div style={{ flex: 1, marginTop: mode === 'wide' && 62 }}>
+                        {/* 日期 */}
                         <div className="line-start mt-10">
                           <div className="c7n-property-wrapper">
                             <span className="c7n-subtitle">
@@ -2332,7 +2133,7 @@ class EditIssueNarrow extends Component {
                           </div>
                         </div>
 
-                        <div className="line-start mt-10">
+                        <div className="line-start mt-10 ht-20">
                           <div className="c7n-property-wrapper">
                             <span className="c7n-property">
                               <FormattedMessage id="issue_edit_createDate" />
@@ -2343,7 +2144,7 @@ class EditIssueNarrow extends Component {
                             {formatDate(this.state.creationDate)}
                           </div>
                         </div>
-                        <div className="line-start mt-10">
+                        <div className="line-start mt-10 ht-20">
                           <div className="c7n-property-wrapper">
                             <span className="c7n-property">
                               <FormattedMessage id="issue_edit_updateDate" />

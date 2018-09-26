@@ -113,7 +113,7 @@ class SprintCommonStore {
         funcArr.push(loadIssues(page, size, this.getFilter, orderField, orderType));
       }
     }
-    console.log(type);
+    // console.log(type);
     // 三种加载issue情况
     // 1.选择文件夹
     // if (IssueTreeStore.currentCycle.versionId) {

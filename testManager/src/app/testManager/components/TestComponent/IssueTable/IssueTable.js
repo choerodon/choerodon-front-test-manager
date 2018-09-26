@@ -1,24 +1,15 @@
-/*eslint-disable */
+
 import React, { Component } from 'react';
 import _ from 'lodash';
 import { observer } from 'mobx-react';
-import {
-  Table, Button, Tooltip, Input, Dropdown, Menu, Pagination,
-  Spin, Icon, Select, Popover,
-} from 'choerodon-ui';
-import { FormattedMessage } from 'react-intl';
+import { Spin } from 'choerodon-ui';
 import { Draggable, Droppable, DragDropContext } from 'react-beautiful-dnd';
-import moment from 'moment';
+
 import IssueStore from '../../../store/project/IssueStore';
-import DragTable from '../../DragTable';
-import UserHead from '../UserHead';
-import PriorityTag from '../PriorityTag';
-import StatusTag from '../StatusTag';
-import TypeTag from '../TypeTag';
-import { TYPE_NAME } from '../../../common/Constant';
+
 import {
-  renderType, renderIssueNum, renderSummary, renderPriority, renderVersions, renderEpic,
-  renderComponents, renderLabels, renderAssigned, renderStatus
+  renderType, renderIssueNum, renderSummary, renderPriority, renderVersions, renderFolder,
+  renderComponents, renderLabels, renderAssigned, renderStatus,
 } from './tags';
 import './IssueTable.scss';
 
@@ -34,7 +25,7 @@ class IssueTable extends Component {
       issueId,
       typeCode, issueNum, summary, assigneeId, assigneeName, assigneeImageUrl, reporterId,
       reporterName, reporterImageUrl, statusName, statusColor, priorityName, priorityCode,
-      epicName, epicColor, componentIssueRelDTOList, labelIssueRelDTOList,
+      folderName, epicColor, componentIssueRelDTOList, labelIssueRelDTOList,
       versionIssueRelDTOList, creationDate, lastUpdateDate,
     } = issue;
     return (
@@ -50,8 +41,8 @@ class IssueTable extends Component {
         <div style={{ display: 'flex' }}>
           {renderPriority(priorityCode, priorityName)}
           {renderVersions(versionIssueRelDTOList)}
-          {renderEpic(epicName, epicColor)}
-          <div className="c7n-flex-space"></div>
+          {renderFolder(folderName)}
+          <div className="c7n-flex-space" />
           {renderAssigned(assigneeId, assigneeName, assigneeImageUrl)}
           {renderStatus(statusName, statusColor)}
         </div>
@@ -64,7 +55,7 @@ class IssueTable extends Component {
       issueId,
       typeCode, issueNum, summary, assigneeId, assigneeName, assigneeImageUrl, reporterId,
       reporterName, reporterImageUrl, statusName, statusColor, priorityName, priorityCode,
-      epicName, epicColor, componentIssueRelDTOList, labelIssueRelDTOList,
+      folderName, epicColor, componentIssueRelDTOList, labelIssueRelDTOList,
       versionIssueRelDTOList, creationDate, lastUpdateDate,
     } = issue;
     return (
@@ -75,10 +66,10 @@ class IssueTable extends Component {
         {/* {renderType(typeCode)} */}
         {renderIssueNum(issueNum)}
         {renderSummary(summary)}
-        <div className="c7n-flex-space"></div>
+        <div className="c7n-flex-space" />
         {renderPriority(priorityCode, priorityName)}
         {renderVersions(versionIssueRelDTOList)}
-        {renderEpic(epicName, epicColor)}
+        {renderFolder(folderName)}
         {renderComponents(componentIssueRelDTOList)}
         {/* 标签 */}
         {renderLabels(labelIssueRelDTOList)}
@@ -93,7 +84,7 @@ class IssueTable extends Component {
       issueId,
       typeCode, issueNum, summary, assigneeId, assigneeName, assigneeImageUrl, reporterId,
       reporterName, reporterImageUrl, statusName, statusColor, priorityName, priorityCode,
-      epicName, epicColor, componentIssueRelDTOList, labelIssueRelDTOList,
+      folderName, epicColor, componentIssueRelDTOList, labelIssueRelDTOList,
       versionIssueRelDTOList, creationDate, lastUpdateDate,
     } = issue;
     return (
@@ -109,25 +100,26 @@ class IssueTable extends Component {
         <div style={{ display: 'flex' }}>
 
           {renderPriority(priorityCode, priorityName)}
-          {renderEpic(epicName, epicColor)}
-          <div className="c7n-flex-space"></div>
+          {renderFolder(folderName)}
+          <div className="c7n-flex-space" />
           {renderAssigned(assigneeId, assigneeName, assigneeImageUrl)}
           {renderStatus(statusName, statusColor)}
         </div>
       </div>
     );
   }
+
   renderIssue = (issue) => {
     const { expand, treeShow } = this.props;
     if (!expand) {
-      return this.renderWideIssue(issue)
-
+      return this.renderWideIssue(issue);
     } else if (expand && !treeShow) {
-      return this.renderNarrowIssue(issue)
+      return this.renderNarrowIssue(issue);
     } else {
-      return this.renderTestIssue(issue)
+      return this.renderTestIssue(issue);
     }
   }
+
   onDragEnd = (result) => {
     // console.log('end', result);
     IssueStore.setTableDraging(false);
@@ -183,7 +175,7 @@ class IssueTable extends Component {
     const { setSelectIssue, setExpand } = this.props;
     const { firstIndex } = this.state;
     // console.log(e.shiftKey, e.ctrlKey, issue, index, firstIndex);
-    if (e.shiftKey || e.ctrlKey) {
+    if (e.shiftKey || e.ctrlKey || e.metaKey) {
       if (e.shiftKey) {
         if (firstIndex !== null) {
           const start = Math.min(firstIndex, index);
@@ -235,10 +227,12 @@ class IssueTable extends Component {
     return (
       <Spin spinning={IssueStore.loading}>
         <div id="template_copy" style={{ display: 'none' }}>
-          当前状态：<span style={{fontWeight:500}}>复制</span>
+          {'当前状态：'}
+          <span style={{ fontWeight: 500 }}>复制</span>
         </div>
         <div id="template_move" style={{ display: 'none' }}>
-          当前状态：<span style={{fontWeight:500}}>移动</span>
+          {'当前状态：'}
+          <span style={{ fontWeight: 500 }}>移动</span>
         </div>
         <DragDropContext onDragEnd={this.onDragEnd} onDragStart={this.onDragStart}>
           <Droppable droppableId="dropTable" isDropDisabled>
@@ -285,13 +279,16 @@ class IssueTable extends Component {
                                 && (
                                   <div className="IssueTable-drag-prompt">
                                     <div>
-                                      复制或移动测试用例
+                                      {'复制或移动测试用例'}
                                     </div>
                                     <div> 按下ctrl/command复制</div>
                                     <div
                                       ref={(instance) => { this.instance = instance; }}
                                     >
-                                      <div>当前状态：<span style={{fontWeight:500}}>移动</span></div>
+                                      <div>
+                                        {'当前状态：'}
+                                        <span style={{ fontWeight: 500 }}>移动</span>
+                                      </div>
                                     </div>
                                   </div>
                                 )
