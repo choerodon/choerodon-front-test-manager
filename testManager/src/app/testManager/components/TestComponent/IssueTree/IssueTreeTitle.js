@@ -176,12 +176,12 @@ class IssueTreeTitle extends Component {
         <Menu.Item key="delete">
           <FormattedMessage id="issue_tree_delete" />
         </Menu.Item>,
-        <Menu.Item key="copy">
-          <FormattedMessage id="issue_tree_copy" />
-        </Menu.Item>,
-        <Menu.Item key="paste">
-          <FormattedMessage id="issue_tree_paste" />
-        </Menu.Item>,
+        // <Menu.Item key="copy">
+        //   <FormattedMessage id="issue_tree_copy" />
+        // </Menu.Item>,
+        // <Menu.Item key="paste">
+        //   <FormattedMessage id="issue_tree_paste" />
+        // </Menu.Item>,
       ]);
       // }
       return <Menu onClick={this.handleItemClick} style={{ margin: '10px 0 0 28px' }}>{items}</Menu>;
