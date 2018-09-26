@@ -3,15 +3,12 @@ import {
   Table, Tabs, Button, Icon, Spin,
 } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
-import {
-  Page, Header, Content, stores,
-} from 'choerodon-front-boot';
+import { Page, Header, Content } from 'choerodon-front-boot';
 import CreateStatus from '../../../../components/CreateStatus';
 import EditStatusSide from '../../../../components/EditStatusSide';
 import { getStatusList, deleteStatus } from '../../../../api/TestStatusApi';
 
 const TabPane = Tabs.TabPane;
-const { AppState } = stores;
 class CustomStatusHome extends Component {
   state = {
     loading: false,

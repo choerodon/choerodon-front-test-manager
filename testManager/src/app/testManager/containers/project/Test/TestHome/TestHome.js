@@ -5,7 +5,7 @@ import {
   Page, Header, Content, stores, axios,
 } from 'choerodon-front-boot';
 import {
-  Table, Button, Tooltip, Input, Dropdown, Menu, Pagination,
+  Table, Button, Input, Dropdown, Menu, Pagination,
   Spin, Icon, Select,
 } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
