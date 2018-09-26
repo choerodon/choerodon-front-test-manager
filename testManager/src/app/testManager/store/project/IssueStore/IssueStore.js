@@ -305,7 +305,7 @@ class SprintCommonStore {
     const otherArgs = {
       type: this.paramType,
       id: this.paramId ? [this.paramId] : undefined,
-      issueIds: this.paramIssueId ? [this.paramIssueId] : undefined,
+      issueIds: this.paramIssueId ? [Number(this.paramIssueId)] : undefined,
     };
     return {
       ...filter,
