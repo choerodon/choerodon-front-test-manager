@@ -109,7 +109,7 @@ class SprintCommonStore {
         funcArr.push(getIssuesByFolder(cycleId,
           page, size, this.getFilter, orderField, orderType));
       } else if (this.paramIssueId) {
-        // 5.地址栏有url 调用敏捷原有方法 这个要放最后
+        // 5.地址栏有url 调用只取这一个issue的方法 这个要放最后
         funcArr.push(getSingleIssues(page, size, this.getFilter, orderField, orderType));
       }
     }
