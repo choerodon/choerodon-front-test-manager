@@ -8,17 +8,6 @@ import './WYSIWYGEditor.scss';
 Quill.register('modules/imageDrop', ImageDrop);
 
 class WYSIWYGEditor extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      message: null,
-      msgSaving: null,
-      delta: null,
-      chatError: null,
-    };
-    this.handleChange = this.handleChange.bind(this);
-  }
-
   modules = {
     toolbar: [
       ['bold', 'italic', 'underline', 'strike', 'blockquote'],
@@ -91,7 +80,10 @@ class WYSIWYGEditor extends Component {
         </div>
         {
           this.props.bottomBar && (
-            <div style={{ padding: '0 8px', border: '1px solid #ccc', borderTop: 'none', display: 'flex', justifyContent: 'flex-end' }}>
+            <div style={{
+              padding: '0 8px', border: '1px solid #ccc', borderTop: 'none', display: 'flex', justifyContent: 'flex-end', 
+            }}
+            >
               <Button 
                 type="primary"
                 onClick={() => this.props.handleDelete()}

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import './DailyLog.scss';
+import './EmptyBlock.scss';
 
 class EmptyBlock extends Component {
   constructor(props) {

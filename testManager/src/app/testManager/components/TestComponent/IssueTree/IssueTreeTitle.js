@@ -2,10 +2,10 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { observer } from 'mobx-react';
 import {
-  Menu, Input, Dropdown, Button, Popover, Tooltip, Icon, Modal,
+  Menu, Input, Dropdown, Button, Tooltip, Icon, Modal,
 } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
-import { Draggable, Droppable, DragDropContext } from 'react-beautiful-dnd';
+import { Draggable, Droppable } from 'react-beautiful-dnd';
 import { IssueTreeStore } from '../../../store/project/treeStore';
 import {
   editFolder, deleteFolder, moveIssues, copyIssues, 

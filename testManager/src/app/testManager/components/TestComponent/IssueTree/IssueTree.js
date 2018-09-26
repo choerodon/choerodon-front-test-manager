@@ -5,17 +5,14 @@ import {
   Input, Icon, Spin, Tree,
 } from 'choerodon-ui';
 import _ from 'lodash';
-import { Draggable, Droppable, DragDropContext } from 'react-beautiful-dnd';
+import {  DragDropContext } from 'react-beautiful-dnd';
 import './IssueTree.scss';
 import { IssueTreeStore } from '../../../store/project/treeStore';
-// import { TreeTitle } from '../../CycleComponent';
 import {
-  getIssueTree, addFolder, getIssuesByFolder, moveFolder, copyFolder,
+  getIssueTree, addFolder,  moveFolder, copyFolder,
 } from '../../../api/IssueApi';
 import IssueTreeTitle from './IssueTreeTitle';
-import pic from '../../../assets/问题管理－空.png';
 import IssueStore from '../../../store/project/IssueStore';
-// import { Tree } from '../../CommonComponent';
 
 const { TreeNode } = Tree;
 const dataList = [];
