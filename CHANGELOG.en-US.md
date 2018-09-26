@@ -54,3 +54,36 @@ All notable changes to choerodon-front-agile will be documented in this file.
 - Fix the problem that the page after execution is not automatically refreshed globally
 - Fix execution details interface width compatibility error causes the editor button not to be seen
 - Fixed a problem with pagination data error in `report`
+
+## [0.10.0] - 2018-09-30
+
+### Add
+
+#### 0.10.0 Significantly added features
+
+- Changes layout of `test case management` page,The sidebar has two types of width and narrow type to display
+- `Test case management` page to add classification of use cases（folder）
+- Added `test plan` function
+- `Test execution` added user filtering function
+
+### Modify
+
+#### 0.10.0 Significantly modify the feature
+
+- The start and end time of the `test cycle` and `test phase` become mandatory
+- Test execution will no longer be directly included in the `test cycle`
+- When the `test case` is created, the version becomes mandatory and the folder becomes optional.
+- The `Test cycle` interface changed to the `test execution` interface
+- Test execution interface cannot edit test plan
+- Report removes the function of select cases
+- Reports show all items which have test connection by default
+- Reports add test case filtering function
+- The execution details page which transitions in report cannot edit
+
+### Fix
+
+#### 0.10.0 Significant repair features
+
+- Fix the save operation of the edit in the table
+- Fix some style issues
+- Fix the style problem of dragging the table without searching for data
