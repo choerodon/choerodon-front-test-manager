@@ -31,50 +31,6 @@ class CustomStatusHome extends Component {
     },
   }
 
-  // getList = (pagination) => {
-  //   this.setState({ loading: true });
-  //   getStatusList({
-  //     page: pagination.current - 1,
-  //     size: pagination.pageSize,
-  //   }, 1).then((statusData) => {
-  //     this.setState({
-  //       loading: false,
-  //       statusPagination: {
-  //         current: pagination.current,
-  //         pageSize: pagination.pageSize,
-  //         total: history.totalElements,
-  //       },
-  //       statusList: statusData.content,
-  //     });
-  //   }).catch(() => {
-  //     this.setState({
-  //       loading: false,
-  //     });
-  //     Choerodon.prompt('网络异常');
-  //   });
-  // }
-  // getList = (pagination) => {
-  //   this.setState({ loading: true });
-  //   getStatusList({
-  //     page: pagination.current - 1,
-  //     size: pagination.pageSize,
-  //   }, 1).then((statusData) => {
-  //     this.setState({
-  //       loading: false,
-  //       statusPagination: {
-  //         current: pagination.current,
-  //         pageSize: pagination.pageSize,
-  //         total: history.totalElements,
-  //       },
-  //       statusList: statusData.content,
-  //     });
-  //   }).catch(() => {
-  //     this.setState({
-  //       loading: false,
-  //     });
-  //     Choerodon.prompt('网络异常');
-  //   });
-  // }
   componentDidMount() {
     this.getList(this.state.statusType);
   }

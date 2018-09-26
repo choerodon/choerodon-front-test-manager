@@ -508,7 +508,7 @@ class CreateIssue extends Component {
                 <Select
                   loading={selectLoading}
                   onFocus={this.loadFolders}                 
-                  label={<FormattedMessage id="testPlan_linkFolder" />}
+                  label={<FormattedMessage id="issue_folder" />}
                 >
                   {folderOptions}
                 </Select>,                    
