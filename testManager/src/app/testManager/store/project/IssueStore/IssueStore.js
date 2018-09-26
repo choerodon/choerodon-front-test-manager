@@ -3,7 +3,7 @@ import {
 } from 'mobx';
 import { store, stores, axios } from 'choerodon-front-boot';
 import {
-  loadIssues, loadVersions, getIssuesByFolder, getIssuesByIds,
+  loadIssues, loadVersions, getIssuesByFolder, getIssuesByIds, getSingleIssues,
   getIssuesByVersion, getAllIssues,
 } from '../../../api/IssueApi';
 import IssueTreeStore from '../treeStore/IssueTreeStore';
@@ -110,7 +110,7 @@ class SprintCommonStore {
           page, size, this.getFilter, orderField, orderType));
       } else if (this.paramIssueId) {
         // 5.地址栏有url 调用敏捷原有方法 这个要放最后
-        funcArr.push(loadIssues(page, size, this.getFilter, orderField, orderType));
+        funcArr.push(getSingleIssues(page, size, this.getFilter, orderField, orderType));
       }
     }
     // console.log(type);
