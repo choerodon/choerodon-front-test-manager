@@ -32,7 +32,7 @@ const { Option } = Select;
 class Test extends Component {
   constructor(props) {
     super(props);
-    this.state = {     
+    this.state = {
       expand: false,
       create: false,
       selectedIssue: {},
@@ -153,7 +153,8 @@ class Test extends Component {
       const selectedVersion = IssueTreeStore.currentCycle.versionId || IssueStore.getSeletedVersion;
       const folderId = IssueTreeStore.currentCycle.cycleId;
       // 判断是否选择版本
-      if (!selectedVersion) {
+      const versions = IssueStore.getVersions;
+      if (!selectedVersion || !_.find(versions, { versionId: selectedVersion })) {
         Choerodon.prompt('请选择版本');
         return;
       }
@@ -410,7 +411,7 @@ class Test extends Component {
               const { current, pageSize } = IssueStore.pagination;
               if (this.tree) {
                 this.tree.getTree();
-              }              
+              }
               IssueStore.loadIssues(current - 1, pageSize);
             }}
           >
@@ -422,30 +423,30 @@ class Test extends Component {
           {/* <DragDropContext onDragEnd={this.onDragEnd} onDragStart={this.onDragStart}> */}
           <div className="c7n-chs-bar">
             {!treeShow && (
-            <p
-              role="none"
-              onClick={() => {
-                IssueStore.setTreeShow(true);
-              }}
-            >
-              <FormattedMessage id="issue_repository" />
-            </p>
+              <p
+                role="none"
+                onClick={() => {
+                  IssueStore.setTreeShow(true);
+                }}
+              >
+                <FormattedMessage id="issue_repository" />
+              </p>
             )}
           </div>
           <div
             className="c7n-issue-tree"
-            // style={{
-            //   overflowY: 'auto',
-            //   overflowX: 'hidden',
-            // }}
+          // style={{
+          //   overflowY: 'auto',
+          //   overflowX: 'hidden',
+          // }}
           >
             {treeShow && (
-            <IssueTree 
-              ref={tree => this.tree = tree}
-              onClose={() => {
-                IssueStore.setTreeShow(false);
-              }}
-            />
+              <IssueTree
+                ref={tree => this.tree = tree}
+                onClose={() => {
+                  IssueStore.setTreeShow(false);
+                }}
+              />
             )}
           </div>
           <div
@@ -493,32 +494,32 @@ class Test extends Component {
               }}
             >
               {
-                  IssueStore.issues.length === 0 && !IssueStore.loading ? (
-                    <EmptyBlock
-                      style={{ marginTop: 40 }}
-                      border
-                      pic={pic}
-                      title={<FormattedMessage id="issue_noIssueTitle" />}
-                      des={<FormattedMessage id="issue_noIssueDescription" />}
-                    />
-                  ) : (
-                    <IssueTable
-                      setExpand={(value) => {
-                        this.setState({
-                          expand: value,
-                        });
-                      }}
-                      setSelectIssue={(value) => {
-                        this.setState({
-                          selectedIssue: value,
-                        });
-                      }}
-                      selectedIssue={this.state.selectedIssue}
-                      expand={expand}
-                      treeShow={treeShow}
-                    />
-                  )
-                }
+                IssueStore.issues.length === 0 && !IssueStore.loading ? (
+                  <EmptyBlock
+                    style={{ marginTop: 40 }}
+                    border
+                    pic={pic}
+                    title={<FormattedMessage id="issue_noIssueTitle" />}
+                    des={<FormattedMessage id="issue_noIssueDescription" />}
+                  />
+                ) : (
+                  <IssueTable
+                    setExpand={(value) => {
+                      this.setState({
+                        expand: value,
+                      });
+                    }}
+                    setSelectIssue={(value) => {
+                      this.setState({
+                        selectedIssue: value,
+                      });
+                    }}
+                    selectedIssue={this.state.selectedIssue}
+                    expand={expand}
+                    treeShow={treeShow}
+                  />
+                )
+              }
 
               <div className="c7n-backlog-sprintIssue">
                 <div
@@ -536,20 +537,33 @@ class Test extends Component {
                     <div className="c7n-add" style={{ display: 'block', width: '100%' }}>
                       <div className="c7n-add-select-version">
                         {/* 创建issue选择版本 */}
-                        <span className="c7n-add-select-version-prefix">V</span>
-                        <Select
-                          disabled={IssueTreeStore.currentCycle.versionId}
-                          onChange={(value) => {
-                            IssueStore.selectVersion(value);
-                          }}
-                          value={selectedVersion}
-                          style={{ width: 50 }}
-                          dropdownMatchSelectWidth={false}
-                        >
-                          {
-                              versions.map(version => <Option value={version.versionId}>{version.name}</Option>)
-                            }
-                        </Select>
+                        {
+                          _.find(versions, { versionId: selectedVersion })
+                            ? (
+                              <div style={{ display: 'flex', alignItems: 'center' }}>
+                                <span className="c7n-add-select-version-prefix">V</span>
+                                <Select
+                                  disabled={IssueTreeStore.currentCycle.versionId}
+                                  onChange={(value) => {
+                                    IssueStore.selectVersion(value);
+                                  }}
+                                  value={selectedVersion}
+                                  style={{ width: 50 }}
+                                  dropdownMatchSelectWidth={false}
+                                >
+                                  {
+                                    versions.map(version => <Option value={version.versionId}>{version.name}</Option>)
+                                  }
+                                </Select>
+                              </div>
+                            )
+                            : (
+                              <div style={{ color: 'gray', marginTop: -3 }}>
+                                {'暂无版本'}
+                              </div>
+                            )
+                        }
+
                         <div style={{ marginLeft: 8, flexGrow: 1 }}>
                           <Input
                             autoFocus
@@ -607,24 +621,24 @@ class Test extends Component {
                 </div>
               </div>
               {
-                  IssueStore.issues.length !== 0 ? (
-                    <div style={{
-                      display: 'flex', justifyContent: 'flex-end', marginTop: 16, marginBottom: 16,
-                    }}
-                    >
-                      <Pagination
-                        current={IssueStore.pagination.current}
-                        defaultCurrent={1}
-                        defaultPageSize={10}
-                        pageSize={IssueStore.pagination.pageSize}
-                        showSizeChanger
-                        total={IssueStore.pagination.total}
-                        onChange={this.handlePaginationChange.bind(this)}
-                        onShowSizeChange={this.handlePaginationShowSizeChange.bind(this)}
-                      />
-                    </div>
-                  ) : null
-                }
+                IssueStore.issues.length !== 0 ? (
+                  <div style={{
+                    display: 'flex', justifyContent: 'flex-end', marginTop: 16, marginBottom: 16,
+                  }}
+                  >
+                    <Pagination
+                      current={IssueStore.pagination.current}
+                      defaultCurrent={1}
+                      defaultPageSize={10}
+                      pageSize={IssueStore.pagination.pageSize}
+                      showSizeChanger
+                      total={IssueStore.pagination.total}
+                      onChange={this.handlePaginationChange.bind(this)}
+                      onShowSizeChange={this.handlePaginationShowSizeChange.bind(this)}
+                    />
+                  </div>
+                ) : null
+              }
 
             </section>
 
@@ -642,46 +656,46 @@ class Test extends Component {
             }}
           >
             {
-                this.state.expand ? (
-                  <EditIssue
-                    mode={treeShow ? 'narrow' : 'wide'}
-                    ref={(instance) => {
-                      if (instance) { this.EditIssue = instance; }
-                    }}
-                    issueId={this.state.selectedIssue.issueId}
-                    onCancel={() => {
-                      this.setState({
-                        expand: false,
-                        selectedIssue: {},
-                      });
-                    }}
-                    onDeleteIssue={() => {
-                      this.setState({
-                        expand: false,
-                        selectedIssue: {},
-                      });
-                      IssueStore.init();
-                      IssueStore.loadIssues();
-                    }}
-                    onUpdate={this.handleIssueUpdate.bind(this)}
-                    onCopyAndTransformToSubIssue={() => {
-                      const { current, pageSize } = IssueStore.pagination;
-                      IssueStore.loadIssues(current - 1, pageSize);
-                    }}
-                  />
-                ) : null
-              }
-          </div>
-          {
-              this.state.create ? (
-                <CreateIssue
-                  visible={this.state.create}
-                  onCancel={() => this.setState({ create: false })}
-                  onOk={this.handleCreateIssue.bind(this)}
-
+              this.state.expand ? (
+                <EditIssue
+                  mode={treeShow ? 'narrow' : 'wide'}
+                  ref={(instance) => {
+                    if (instance) { this.EditIssue = instance; }
+                  }}
+                  issueId={this.state.selectedIssue.issueId}
+                  onCancel={() => {
+                    this.setState({
+                      expand: false,
+                      selectedIssue: {},
+                    });
+                  }}
+                  onDeleteIssue={() => {
+                    this.setState({
+                      expand: false,
+                      selectedIssue: {},
+                    });
+                    IssueStore.init();
+                    IssueStore.loadIssues();
+                  }}
+                  onUpdate={this.handleIssueUpdate.bind(this)}
+                  onCopyAndTransformToSubIssue={() => {
+                    const { current, pageSize } = IssueStore.pagination;
+                    IssueStore.loadIssues(current - 1, pageSize);
+                  }}
                 />
               ) : null
             }
+          </div>
+          {
+            this.state.create ? (
+              <CreateIssue
+                visible={this.state.create}
+                onCancel={() => this.setState({ create: false })}
+                onOk={this.handleCreateIssue.bind(this)}
+
+              />
+            ) : null
+          }
           {/* </DragDropContext> */}
         </Content>
       </Page>
