@@ -60,11 +60,11 @@ const STATUS_ICON = {
     bgColor: '',
   },
 };
-const ICON_COLOR={
-  todo:"rgba(255, 177, 0, 0.2)",
-  doing:"rgba(77,144,254,0.2)",
-  done:"rgba(0,191,165,0.2)"
-}
+const ICON_COLOR = {
+  todo: 'rgba(255, 177, 0, 0.2)',
+  doing: 'rgba(77,144,254,0.2)',
+  done: 'rgba(0,191,165,0.2)',
+};
 class EditIssueNarrow extends Component {
   constructor(props) {
     super(props);
@@ -753,7 +753,7 @@ class EditIssueNarrow extends Component {
       width: 560,
       title: `删除测试用例${this.state.issueNum}`,
       content:
-        <div style={{ marginBottom: 32 }}>
+  <div style={{ marginBottom: 32 }}>
           <p style={{ marginBottom: 10 }}>请确认您要删除这个测试用例。</p>
           <p style={{ marginBottom: 10 }}>这个测试用例将会被彻底删除。包括所有步骤和相关执行。</p>
         </div>,
@@ -2307,7 +2307,7 @@ class EditIssueNarrow extends Component {
                   {this.renderCommits()}
                 </div>
 
-                <div id="log">
+                {/* <div id="log">
                   <div className="c7n-title-wrapper">
                     <div className="c7n-title-left">
                       <Icon type="work_log c7n-icon-title" />
@@ -2325,7 +2325,7 @@ class EditIssueNarrow extends Component {
                     </div>
                   </div>
                   {this.renderLogs()}
-                </div>
+                </div> */}
 
                 <div id="data_log">
                   <div className="c7n-title-wrapper">

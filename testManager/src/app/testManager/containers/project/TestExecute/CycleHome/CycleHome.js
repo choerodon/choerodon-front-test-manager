@@ -708,7 +708,7 @@ class CycleHome extends Component {
               <Icon type="pass" onClick={this.quickPass.bind(this, record)} style={{ cursor: 'pointer' }} />
             </Tooltip>
             <Icon
-              type="explicit2"
+              type="explicit-outline"
               style={{ cursor: 'pointer', margin: '0 10px' }}
               onClick={() => {
                 const { history } = this.props;

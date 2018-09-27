@@ -408,6 +408,9 @@ class Test extends Component {
                 this.EditIssue.reloadIssue(this.state.selectedIssue.issueId);
               }
               const { current, pageSize } = IssueStore.pagination;
+              if (this.tree) {
+                this.tree.getTree();
+              }              
               IssueStore.loadIssues(current - 1, pageSize);
             }}
           >
@@ -437,9 +440,11 @@ class Test extends Component {
             // }}
           >
             {treeShow && (
-            <IssueTree onClose={() => {
-              IssueStore.setTreeShow(false);
-            }}
+            <IssueTree 
+              ref={tree => this.tree = tree}
+              onClose={() => {
+                IssueStore.setTreeShow(false);
+              }}
             />
             )}
           </div>

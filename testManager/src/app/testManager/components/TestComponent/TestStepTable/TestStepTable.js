@@ -94,7 +94,7 @@ class TestStepTable extends Component {
       title: Choerodon.getMessage('确认删除吗？', 'Confirm delete'),
       content:
   <div style={{ marginBottom: 32 }}>
-    {Choerodon.getMessage('当你点击删除后，该条数据将被永久删除，不可恢复!', 'When you click delete, after which the data will be permanently deleted and irreversible!')
+    {Choerodon.getMessage('当你点击删除后，所有与之关联的测试步骤将删除!', 'When you click delete, after which the data will be permanently deleted and irreversible!')
           }
   </div>,
       onOk() {
