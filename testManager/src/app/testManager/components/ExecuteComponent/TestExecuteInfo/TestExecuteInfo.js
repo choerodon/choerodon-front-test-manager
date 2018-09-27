@@ -282,7 +282,7 @@ class TestExecuteInfo extends Component {
                 {'：'}
               </div>
               <TextEditToggle
-                disabled={disabled}
+                // disabled={disabled}
                 formKey="assignedTo"
                 onSubmit={(id) => { this.submit({ assignedTo: id || 0 }); }}
                 originData={assigneeUser ? assigneeUser.id : null}
@@ -385,13 +385,13 @@ class TestExecuteInfo extends Component {
               <Icon type="expand_more" />
               <span style={styles.cardTitleText}><FormattedMessage id="execute_description" /></span>
               <div style={{ flex: 1, visibility: 'hidden' }} />
-              {!disabled && (
+              {/* {!disabled && ( */}
               <Button className="c7n-upload-button" onClick={() => { this.setState({ edit: true }); }}>
                 <Icon type="zoom_out_map" />
                 {' '}
                 <FormattedMessage id="execute_edit_fullScreen" />
               </Button>
-              )}
+              {/* )} */}
               <FullEditor
                 initValue={comment}
                 visible={this.state.edit}
@@ -417,7 +417,7 @@ class TestExecuteInfo extends Component {
                 <span style={styles.cardTitleText}><FormattedMessage id="attachment" /></span>
               </div>
               <div style={{ flex: 1, visibility: 'hidden' }} />
-              {!disabled && (
+              {/* {!disabled && ( */}
               <Button className="c7n-upload-button" onClick={() => this.uploadInput.click()}>
                 <Icon type="file_upload" />
                 {' '}
@@ -432,7 +432,7 @@ class TestExecuteInfo extends Component {
                   style={{ display: 'none' }}
                 />
               </Button>
-              )}
+              {/* )} */}
             </div>
             <div style={{ marginTop: -10 }}>
               <Upload

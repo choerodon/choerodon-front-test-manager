@@ -238,7 +238,7 @@ class IssueTreeTitle extends Component {
           )
           : (
             <div className="c7n-issue-tree-title-text">
-              <Tooltip title={title}>
+              <Tooltip title={title} placement="topLeft">
                 {title}
               </Tooltip>
             </div>

@@ -5,7 +5,7 @@ import { FormattedMessage } from 'react-intl';
 import {
   Modal, Form, Input, Checkbox, 
 } from 'choerodon-ui';
-import { cloneIssue } from '../../../api/IssueApi';
+import { cloneIssue, copyIssues } from '../../../api/IssueApi';
 import './CopyIssue.scss';
 
 const { AppState } = stores;
@@ -70,7 +70,7 @@ class CopyIssue extends Component {
         confirmLoading={this.state.loading}
       >
         <Form layout="vertical">
-          <FormItem>
+          {/* <FormItem>
             {getFieldDecorator('issueSummary', {
               rules: [{ required: true, message: '请输入概要' }],
               initialValue: issueSummary,
@@ -81,8 +81,8 @@ class CopyIssue extends Component {
                 maxLength={44}
               />,
             )}
-          </FormItem>
-          {
+          </FormItem> */}
+          {/* {
             this.props.issue.closeSprint.length || this.props.issue.activeSprint ? (
               <FormItem>
                 {getFieldDecorator('sprint', {})(
@@ -92,7 +92,7 @@ class CopyIssue extends Component {
                 )}
               </FormItem>
             ) : null
-          }
+          } */}
           {/* {
             this.props.issue.subIssueDTOList.length ? (
               <FormItem>
@@ -104,7 +104,7 @@ class CopyIssue extends Component {
               </FormItem>
             ) : null
           } */}
-          {
+          {/* {
             this.props.issueLink.length ? (
               <FormItem>
                 {getFieldDecorator('copyLinkIssue', {})(
@@ -114,7 +114,7 @@ class CopyIssue extends Component {
                 )}
               </FormItem>
             ) : null
-          }
+          } */}
         </Form>
       </Modal>
     );
