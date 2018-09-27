@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
-import {
-  Button, Select, Icon, Modal, Upload, Spin, 
-} from 'choerodon-ui';
+import { Select } from 'choerodon-ui';
 import _ from 'lodash';
 import { removeDefect, addDefects } from '../../../api/CycleExecuteApi';
 import { getIssuesForDefects } from '../../../api/agileApi';

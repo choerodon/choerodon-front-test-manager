@@ -28,7 +28,7 @@ const NAME = {
   issue_test: '测试',
 };
 
-class UserHead extends Component {
+class TypeTag extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -76,4 +76,4 @@ class UserHead extends Component {
     );
   }
 }
-export default UserHead;
+export default TypeTag;

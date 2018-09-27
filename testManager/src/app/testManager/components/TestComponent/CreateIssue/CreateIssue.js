@@ -19,20 +19,12 @@ import { COLOR } from '../../../common/Constant';
 import WYSIWYGEditor from '../WYSIWYGEditor';
 import FullEditor from '../FullEditor';
 import UserHead from '../UserHead';
-import TypeTag from '../TypeTag';
 
 const { AppState } = stores;
 const { Sidebar } = Modal;
 const { Option } = Select;
 const FormItem = Form.Item;
 
-const NAME = {
-  story: '故事',
-  bug: '故障',
-  task: '任务',
-  issue_epic: '史诗',
-  issue_test: '测试',
-};
 let sign = false;
 
 class CreateIssue extends Component {
@@ -395,7 +387,7 @@ class CreateIssue extends Component {
               />
             </Tooltip>
 
-            {
+            {/* {
               this.props.form.getFieldValue('typeCode') !== 'issue_epic' && (
                 <FormItem style={{ width: 520 }}>
                   {getFieldDecorator('epicId', {})(
@@ -457,7 +449,7 @@ class CreateIssue extends Component {
                   ))}
                 </Select>,
               )}
-            </FormItem>
+            </FormItem> */}
 
             <FormItem style={{ width: 520 }}>
               {getFieldDecorator('versionId', {
@@ -508,7 +500,7 @@ class CreateIssue extends Component {
                 <Select
                   loading={selectLoading}
                   onFocus={this.loadFolders}                 
-                  label={<FormattedMessage id="testPlan_linkFolder" />}
+                  label={<FormattedMessage id="issue_folder" />}
                 >
                   {folderOptions}
                 </Select>,                    

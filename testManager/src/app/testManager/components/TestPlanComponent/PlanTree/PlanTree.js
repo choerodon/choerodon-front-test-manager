@@ -6,10 +6,9 @@ import _ from 'lodash';
 import './PlanTree.scss';
 import FileSaver from 'file-saver';
 import TestPlanStore from '../../../store/project/TestPlan/TestPlanStore';
-import { CreateCycle, EditCycle, CloneCycle } from '../../CycleComponent';
-import {
-  getCycles, deleteExecute, getCycleById, editCycleExecute,
-  clone, addFolder, getStatusList, exportCycle,
+import { CloneCycle } from '../../CycleComponent';
+import {  
+  clone, addFolder,  exportCycle,
 } from '../../../api/cycleApi';
 import PlanTreeTitle from './PlanTreeTitle';
 import CreateStage from '../CreateStage';

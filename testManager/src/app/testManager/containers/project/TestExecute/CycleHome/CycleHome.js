@@ -15,14 +15,13 @@ import moment from 'moment';
 import './CycleHome.scss';
 import { getUsers } from '../../../../api/CommonApi';
 import {
-  getCycles, deleteExecute, getCycleById, editCycleExecute,
+  getCycles, deleteExecute, getCycleById,
   clone, addFolder, getStatusList, exportCycle,
 } from '../../../../api/cycleApi';
 import { editCycle } from '../../../../api/CycleExecuteApi';
 import {
-  TreeTitle, CreateCycle, EditCycle, CreateCycleExecute, ShowCycleData, CloneCycle,
+  TreeTitle, CreateCycle, EditCycle, ShowCycleData, CloneCycle,
 } from '../../../../components/CycleComponent';
-import DragTable from '../../../../components/DragTable';
 import { RichTextShow, SelectFocusLoad, RadioButton } from '../../../../components/CommonComponent';
 import {
   delta2Html, delta2Text, issueLink, getParams,
@@ -86,52 +85,6 @@ class CycleHome extends Component {
     });
   }
 
-  // onDragEnd = (sourceIndex, targetIndex) => {
-  //   let lastRank = null;
-  //   let nextRank = null;
-  //   const { testList } = this.state;
-  //   if (sourceIndex < targetIndex) {
-  //     lastRank = testList[targetIndex].rank;
-  //     nextRank = testList[targetIndex + 1] ? testList[targetIndex + 1].rank : null;
-  //   } else if (sourceIndex > targetIndex) {
-  //     lastRank = testList[targetIndex - 1] ? testList[targetIndex - 1].rank : null;
-  //     nextRank = testList[targetIndex].rank;
-  //   }
-  //   // window.console.log(sourceIndex, targetIndex, lastRank, nextRank);
-  //   const source = testList[sourceIndex];
-  //   const temp = { ...source };
-  //   delete temp.defects;
-  //   delete temp.caseAttachment;
-  //   delete temp.testCycleCaseStepES;
-  //   delete temp.issueInfosDTO;
-  //   this.setState({ rightLoading: true });
-  //   editCycleExecute({
-  //     ...temp,
-  //     ...{
-  //       lastRank,
-  //       nextRank,
-  //     },
-  //   }).then((res) => {
-  //     const { executePagination } = this.state;
-  //     const currentCycle = CycleStore.getCurrentCycle;
-  //     getCycleById({
-  //       page: executePagination.current - 1,
-  //       size: executePagination.pageSize,
-  //     }, currentCycle.cycleId).then((cycle) => {
-  //       this.setState({
-  //         rightLoading: false,
-  //         testList: cycle.content,
-  //         executePagination: {
-  //           current: executePagination.current,
-  //           pageSize: executePagination.pageSize,
-  //           total: cycle.totalElements,
-  //         },
-  //       });
-  //       // window.console.log(cycle);
-  //     });
-  //   });
-  // }
-
   getParentKey = (key, tree) => key.split('-').slice(0, -1).join('-')
 
   loadCycle = (selectedKeys, {
@@ -178,18 +131,6 @@ class CycleHome extends Component {
     }
   }
 
-
-  // generateList = (data) => {
-  //   for (let i = 0; i < data.length; i += 1) {
-  //     const node = data[i];
-  //     const { key, title, cycleId } = node;
-  //     window.console.log(key, title, cycleId);
-  //     dataList.push({ ...node });
-  //     if (node.children) {
-  //       this.generateList(node.children, node.key);
-  //     }
-  //   }
-  // }
   generateList = (data) => {
     // const temp = data;
     // while (temp) {
@@ -608,7 +549,7 @@ class CycleHome extends Component {
     const { cycleId, title, type } = currentCycle;
     const prefix = <Icon type="filter_list" />;
     const columns = [{
-      title: 'ID',
+      title: <span>ID</span>,
       dataIndex: 'issueName',
       key: 'issueName',
       flex: 1,
@@ -767,7 +708,7 @@ class CycleHome extends Component {
               <Icon type="pass" onClick={this.quickPass.bind(this, record)} style={{ cursor: 'pointer' }} />
             </Tooltip>
             <Icon
-              type="explicit2"
+              type="explicit-outline"
               style={{ cursor: 'pointer', margin: '0 10px' }}
               onClick={() => {
                 const { history } = this.props;
@@ -901,20 +842,6 @@ class CycleHome extends Component {
           style={{ paddingBottom: 0, paddingRight: 0 }}
         >
           <Spin spinning={loading}>
-            <CreateCycleExecute
-              data={currentCycle}
-              rank={testList.slice(-1)[0] && testList.slice(-1)[0].rank}
-              visible={CreateCycleExecuteVisible}
-              onCancel={() => { this.setState({ CreateCycleExecuteVisible: false }); }}
-              onOk={() => {
-                this.setState({
-                  CreateCycleExecuteVisible: false,
-                  rightLoading: true,
-                });
-                // window.console.log(data);
-                this.refresh();
-              }}
-            />
             <CreateCycle
               visible={CreateCycleVisible}
               onCancel={() => { this.setState({ CreateCycleVisible: false }); }}
@@ -995,20 +922,7 @@ class CycleHome extends Component {
                       }}
                     >
                       <Icon type="navigate_before" />
-                    </div>
-                    {/* <div
-                      role="none"
-                      className="c7n-cycleHome-button"
-                    >
-                      <Icon
-                        type="add"
-                        onClick={() => {
-                          this.setState({
-                            CreateCycleVisible: true,
-                          });
-                        }}
-                      />
-                    </div> */}
+                    </div>                    
                   </div>
                 </div>
                 <div className="c7n-chlh-tree" style={{ height: window.innerHeight - 200 }}>
@@ -1031,30 +945,9 @@ class CycleHome extends Component {
                     <div>
                       {type === 'folder' ? <FormattedMessage id="cycle_stageName" />
                         : <FormattedMessage id="cycle_cycleName" />}
-
-
-
-
-
-
-
-                      ：
-<span>{title}</span>
+                      <span>{`：${title}`}</span>
                     </div>
-                    <div style={{ flex: 1, visiblity: 'hidden' }} />
-                    {/* <div>
-                      <Button
-                        style={{ color: '#3f51b5', marginRight: '-15px' }}
-                        onClick={() => {
-                          this.setState({ CreateCycleExecuteVisible: true });
-                        }}
-                      >
-                        <Icon type="playlist_add" style={{ marginRight: -2 }} />
-                        <span>
-                          <FormattedMessage id="cycle_addCycle" />
-                        </span>
-                      </Button>
-                    </div> */}
+                    <div style={{ flex: 1, visiblity: 'hidden' }} />                    
                   </div>
                   <ShowCycleData data={currentCycle} />                  
                   <div>

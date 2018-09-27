@@ -1,18 +1,15 @@
 import React, { Component } from 'react';
 import {
-  Form, Input, Select, Button, Icon, Modal, Upload, Spin, DatePicker, 
+  Form, Input, Select, Modal, Spin, DatePicker, 
 } from 'choerodon-ui';
-import { Content, stores } from 'choerodon-front-boot';
-// import './CreateCycle.less';
+import { Content } from 'choerodon-front-boot';
 import { FormattedMessage } from 'react-intl';
 import { getProjectVersion } from '../../../api/agileApi';
 import { addCycle } from '../../../api/cycleApi';
 
 const { Option } = Select;
-const { AppState } = stores;
 const FormItem = Form.Item;
 const { Sidebar } = Modal;
-const { TextArea } = Input;
 
 class CreateCycle extends Component {
   state = {
@@ -71,7 +68,7 @@ class CreateCycle extends Component {
 
   render() {
     const {
-      visible, onOk, onCancel, type, 
+      visible, onCancel,  
     } = this.props;
     const { getFieldDecorator } = this.props.form;
     const { versions, loading, selectLoading } = this.state;

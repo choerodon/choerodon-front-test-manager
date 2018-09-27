@@ -6,12 +6,7 @@ import WYSIWYGEditor from '../WYSIWYGEditor';
 
 class CreateSprint extends Component {
   state = {
-    saveLoading: false,
-    releasePlans: [],
-    selectedIssue: {},
-    rollup: false,
     delta: '',
-    edit: false,
   };
 
   componentWillReceiveProps(nextProps) {

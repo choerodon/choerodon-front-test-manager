@@ -3,15 +3,12 @@ import {
   Table, Tabs, Button, Icon, Spin,
 } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
-import {
-  Page, Header, Content, stores,
-} from 'choerodon-front-boot';
+import { Page, Header, Content } from 'choerodon-front-boot';
 import CreateStatus from '../../../../components/CreateStatus';
 import EditStatusSide from '../../../../components/EditStatusSide';
 import { getStatusList, deleteStatus } from '../../../../api/TestStatusApi';
 
 const TabPane = Tabs.TabPane;
-const { AppState } = stores;
 class CustomStatusHome extends Component {
   state = {
     loading: false,
@@ -34,50 +31,6 @@ class CustomStatusHome extends Component {
     },
   }
 
-  // getList = (pagination) => {
-  //   this.setState({ loading: true });
-  //   getStatusList({
-  //     page: pagination.current - 1,
-  //     size: pagination.pageSize,
-  //   }, 1).then((statusData) => {
-  //     this.setState({
-  //       loading: false,
-  //       statusPagination: {
-  //         current: pagination.current,
-  //         pageSize: pagination.pageSize,
-  //         total: history.totalElements,
-  //       },
-  //       statusList: statusData.content,
-  //     });
-  //   }).catch(() => {
-  //     this.setState({
-  //       loading: false,
-  //     });
-  //     Choerodon.prompt('网络异常');
-  //   });
-  // }
-  // getList = (pagination) => {
-  //   this.setState({ loading: true });
-  //   getStatusList({
-  //     page: pagination.current - 1,
-  //     size: pagination.pageSize,
-  //   }, 1).then((statusData) => {
-  //     this.setState({
-  //       loading: false,
-  //       statusPagination: {
-  //         current: pagination.current,
-  //         pageSize: pagination.pageSize,
-  //         total: history.totalElements,
-  //       },
-  //       statusList: statusData.content,
-  //     });
-  //   }).catch(() => {
-  //     this.setState({
-  //       loading: false,
-  //     });
-  //     Choerodon.prompt('网络异常');
-  //   });
-  // }
   componentDidMount() {
     this.getList(this.state.statusType);
   }

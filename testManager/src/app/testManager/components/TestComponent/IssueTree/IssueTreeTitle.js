@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { stores, axios, Permission } from 'choerodon-front-boot';
 import { observer } from 'mobx-react';
 import {
-  Menu, Input, Dropdown, Button, Popover, Tooltip, Icon, Modal,
+  Menu, Input, Dropdown, Button, Tooltip, Icon, Modal,
 } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
-import { Draggable, Droppable, DragDropContext } from 'react-beautiful-dnd';
+import { Draggable, Droppable } from 'react-beautiful-dnd';
 import { IssueTreeStore } from '../../../store/project/treeStore';
 import {
   editFolder, deleteFolder, moveIssues, copyIssues, 
@@ -13,6 +14,7 @@ import {
 import IssueStore from '../../../store/project/IssueStore';
 import './IssueTreeTitle.scss';
 
+const { AppState } = stores;
 const confirm = Modal.confirm;
 @observer
 class IssueTreeTitle extends Component {
@@ -35,7 +37,7 @@ class IssueTreeTitle extends Component {
         });
         break;
       }
-      case 'delete': {    
+      case 'item_1': {    
         confirm({
           title: '确定删除文件夹?',
           content: '删除文件夹后将删除文件夹内所有测试用例，以及相关的测试阶段和执行',
@@ -165,7 +167,11 @@ class IssueTreeTitle extends Component {
   }
 
   render() {
-    const getMenu = (type) => {
+    const menu = AppState.currentMenuType;
+    const {
+      type: Menutype, id: projectId, organizationId: orgId, name,
+    } = menu;   
+    const getMenu = () => {
       let items = [];
       // if (type === 'temp') {
       items.push(
@@ -176,9 +182,11 @@ class IssueTreeTitle extends Component {
       // } else {
       // if (type === 'cycle') {         
       items = items.concat([
-        <Menu.Item key="delete">
-          <FormattedMessage id="issue_tree_delete" />
-        </Menu.Item>,
+        <Permission type={Menutype} projectId={projectId} organizationId={orgId} service={['agile-service.issue.deleteIssue']}>
+          <Menu.Item key="delete">
+            <FormattedMessage id="issue_tree_delete" />
+          </Menu.Item>
+        </Permission>,
         // <Menu.Item key="copy">
         //   <FormattedMessage id="issue_tree_copy" />
         // </Menu.Item>,

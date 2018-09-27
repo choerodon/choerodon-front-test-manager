@@ -1,9 +1,13 @@
 import React, { Component } from 'react';
-import { Button, Select, Icon, Modal, Upload, Spin } from 'choerodon-ui';
+import {
+  Button, Select, Icon, Modal, Upload, Spin, 
+} from 'choerodon-ui';
 import { Content } from 'choerodon-front-boot';
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
-import { editCycleSide, deleteAttachment, removeDefect, addDefects } from '../../../api/CycleExecuteApi';
+import {
+  editCycleSide, deleteAttachment, removeDefect, addDefects, 
+} from '../../../api/CycleExecuteApi';
 import { getIssueList } from '../../../api/agileApi';
 import './EditTestDetail.less';
 import WYSIWYGEditor from '../../WYSIWYGEditor';
@@ -47,6 +51,7 @@ class EditTestDetail extends Component {
     defectIds: [],
     originDefects: [],
   }
+
   componentWillReceiveProps(nextProps) {
     const { editing } = nextProps;
     // console.log(editing)
@@ -106,6 +111,7 @@ class EditTestDetail extends Component {
       });
     }
   }
+
   onOk = () => {
     // editCycleSide
     const {
@@ -122,7 +128,8 @@ class EditTestDetail extends Component {
       defects,
       defectIds,
       originDefects,
-      issueList } = this.state;
+      issueList, 
+    } = this.state;
     const data = {
       executeId,
       stepStatus,
@@ -146,16 +153,15 @@ class EditTestDetail extends Component {
     });
     this.setState({ loading: true });
     // 
-    const needAdd =
-      issueList
-        .filter(issue => defectIds.includes(issue.issueId.toString()))// 取到选中的issueList
-        .filter(issue => !originDefects.includes(issue.issueId.toString()))// 去掉之前已有的
-        .map(item => ({
-          defectType: 'CASE_STEP',
-          defectLinkId: executeStepId,
-          issueId: item.issueId,
-          defectName: item.issueNum,
-        }));
+    const needAdd = issueList
+      .filter(issue => defectIds.includes(issue.issueId.toString()))// 取到选中的issueList
+      .filter(issue => !originDefects.includes(issue.issueId.toString()))// 去掉之前已有的
+      .map(item => ({
+        defectType: 'CASE_STEP',
+        defectLinkId: executeStepId,
+        issueId: item.issueId,
+        defectName: item.issueNum,
+      }));
     if (needAdd.length > 0) {
       addDefects(needAdd).then((res) => {
 
@@ -174,15 +180,18 @@ class EditTestDetail extends Component {
       Choerodon.prompt('网络错误');
     });
   }
+
   handleChange = (value) => {
     this.setState({
       stepStatus: value,
     });
   }
+
   handleFileChange = (info) => {
     const fileList = info.fileList;
     this.setState({ fileList });
   }
+
   handleDefectsChange = (List) => {
     const { originDefects, defects, defectIds } = this.state;
     const oldList = [...defectIds];
@@ -205,11 +214,14 @@ class EditTestDetail extends Component {
       defectIds: List,
     });
   }
+
   render() {
     const { visible, onOk, onCancel } = this.props;
-    const { reset, fileList, executeId, testStep, comment,
+    const {
+      reset, fileList, executeId, testStep, comment,
       stepStatusList, stepStatus, loading, defects, issueList,
-      selectLoading, defectIds } = this.state;
+      selectLoading, defectIds, 
+    } = this.state;
     const delta = text2Delta(comment);
     // console.log(delta)
     const props = {
@@ -241,17 +253,22 @@ class EditTestDetail extends Component {
     };
     const options = stepStatusList.map((status) => {
       const { statusName, statusId, statusColor } = status;
-      return (<Option value={statusId} key={statusId}>
-        <div style={{ ...styles.statusOption, ...{ background: statusColor } }}>
-          {statusName}
-        </div>
-      </Option>);
+      return (
+        <Option value={statusId} key={statusId}>
+          <div style={{ ...styles.statusOption, ...{ background: statusColor } }}>
+            {statusName}
+          </div>
+        </Option>
+      );
     });
 
-    const defectsOptions =
-      issueList.map(issue => (<Option key={issue.issueId} value={issue.issueId.toString()}>
-        {issue.issueNum} {issue.summary}
-      </Option>));
+    const defectsOptions = issueList.map(issue => (
+      <Option key={issue.issueId} value={issue.issueId.toString()}>
+        {issue.issueNum} 
+        {' '}
+        {issue.summary}
+      </Option>
+    ));
     return (
       <Sidebar
         title={<FormattedMessage id="execute_stepDetail" />}
@@ -321,18 +338,22 @@ class EditTestDetail extends Component {
             <div style={styles.editLabel}><FormattedMessage id="attachment" /></div>
             <Upload {...props} fileList={fileList}>
               <Button className="c7n-EditTestDetail-uploadBtn">
-                <Icon type="file_upload" /> <FormattedMessage id="upload_attachment" />
+                <Icon type="file_upload" /> 
+                {' '}
+                <FormattedMessage id="upload_attachment" />
               </Button>
             </Upload>
             <div style={styles.editLabel}><FormattedMessage id="execute_comment" /></div>
-            {reset && <WYSIWYGEditor
+            {reset && (
+            <WYSIWYGEditor
               // value={comment}
               value={delta}
               style={{ height: 200, width: '100%' }}
               onChange={(value) => {
                 this.setState({ comment: value });
               }}
-            />}
+            />
+            )}
           </Spin>
         </Content>
       </Sidebar>

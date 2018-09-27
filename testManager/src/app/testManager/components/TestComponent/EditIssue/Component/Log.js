@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import { Icon, Popconfirm } from 'choerodon-ui';
-import { AppState } from 'choerodon-front-boot';
 import _ from 'lodash';
 import UserHead from '../../UserHead';
 import WYSIWYGEditor from '../../WYSIWYGEditor';
 import { IssueDescription } from '../../CommonComponent';
-import { delta2Html, text2Delta, beforeTextUpload, formatDate } from '../../../../common/utils';
+import {
+  delta2Html, text2Delta, beforeTextUpload, formatDate, 
+} from '../../../../common/utils';
 import { deleteWorklog, updateWorklog } from '../../../../api/IssueApi';
 import './Log.scss';
 
@@ -20,14 +21,8 @@ class Log extends Component {
     };
   }
 
-  componentDidMount() {
-  }
-
   confirm(logId, e) {
     this.handleDeleteLog(logId);
-  }
-
-  cancel(e) {
   }
 
   handleDeleteLog(logId) {
@@ -115,7 +110,7 @@ class Log extends Component {
                   realName: worklog.userName,
                   avatar: worklog.imageUrl,
                 }}
-                color={'#3f51b5'}
+                color="#3f51b5"
               />
             </div>
             <span style={{ color: 'rgba(0, 0, 0, 0.65)' }}>记录了工作日志</span>
@@ -148,7 +143,8 @@ class Log extends Component {
           </div>
         </div>
         <div className="line-start" style={{ color: 'rgba(0, 0, 0, 0.65)', marginTop: 2 }}>
-          - {formatDate(worklog.lastUpdateDate)}
+          {'-'}
+          {formatDate(worklog.lastUpdateDate)}
         </div>
         <div className="line-start" style={{ color: 'rgba(0, 0, 0, 0.65)', marginTop: '10px', marginBottom: '10px' }}>
           <span style={{ width: 70 }}>耗费时间:</span>

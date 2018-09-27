@@ -3,18 +3,14 @@ import { stores, Content } from 'choerodon-front-boot';
 import { withRouter } from 'react-router-dom';
 import moment from 'moment';
 import { FormattedMessage } from 'react-intl';
-import { Select, Form, Input, DatePicker, Button, Modal, Tabs, Tooltip, Radio, message, Icon } from 'choerodon-ui';
+import {
+  Select, Form, DatePicker, Button, Modal, Radio, message, Icon, 
+} from 'choerodon-ui';
 
 import './DailyLog.scss';
 import '../../../assets/main.scss';
 import { NumericInput } from '../CommonComponent';
-import {
-  delta2Html,
-  escape,
-  handleFileUpload,
-  text2Delta,
-  beforeTextUpload,
-} from '../../../common/utils';
+import { beforeTextUpload } from '../../../common/utils';
 import { createWorklog } from '../../../api/IssueApi';
 import WYSIWYGEditor from '../WYSIWYGEditor';
 import FullEditor from '../FullEditor';
@@ -171,7 +167,9 @@ class DailyLog extends Component {
 
   render() {
     const { getFieldDecorator } = this.props.form;
-    const { initValue, visible, onCancel, onOk } = this.props;
+    const {
+      initValue, visible, onCancel, onOk, 
+    } = this.props;
     const radioStyle = {
       display: 'block',
       height: '30px',
@@ -225,11 +223,15 @@ class DailyLog extends Component {
                 {['h', 'd', 'w'].map(type => (
                   <Option key={`${type}`} value={`${type}`}>
                     {type}
-                  </Option>),
-                )}
+                  </Option>))}
               </Select>
             </div>
-            <div className="dataPicker" style={{ width: 218, marginBottom: 32, display: 'flex', flexDirection: 'column', position: 'relative' }}>
+            <div
+              className="dataPicker"
+              style={{
+                width: 218, marginBottom: 32, display: 'flex', flexDirection: 'column', position: 'relative', 
+              }}
+            >
               <div style={{ marginTop: 20, width: 220, paddingBottom: 3 }}>
                 <DatePicker
                   label={<FormattedMessage id="issue_worklog_workTime" />}
@@ -274,8 +276,7 @@ class DailyLog extends Component {
                     {['h', 'd', 'w'].map(type => (
                       <Option key={`${type}`} value={`${type}`}>
                         {type}
-                      </Option>),
-                    )}
+                      </Option>))}
                   </Select>
                 </Radio>
                 <Radio style={radioStyle} value={4}>
@@ -297,8 +298,7 @@ class DailyLog extends Component {
                     {['h', 'd', 'w'].map(type => (
                       <Option key={`${type}`} value={`${type}`}>
                         {type}
-                      </Option>),
-                    )}
+                      </Option>))}
                   </Select>
                 </Radio>
               </RadioGroup>

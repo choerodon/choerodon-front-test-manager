@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 
 import {
-  Table, Radio, Button, Icon, Spin, Popover,
+  Table, Button, Icon, Spin, Popover,
 } from 'choerodon-ui';
-import { Page, Header, stores } from 'choerodon-front-boot';
+import { Page, Header } from 'choerodon-front-boot';
 import {
   Chart, Axis, Geom, Tooltip,
 } from 'bizcharts';
@@ -100,13 +100,13 @@ class SummaryHome extends Component {
         }
         return { name: version.name, versionId: version.versionId, num };
       });
-      const noVersionData = _.find(data, { typeName: null }) || {};
-      const noVersion = {
-        num: noVersionData.value || 0,
-        id: null,
-        name: <FormattedMessage id="summary_noVersion" />,
-      };
-      versionTable.unshift(noVersion);
+      // const noVersionData = _.find(data, { typeName: null }) || {};
+      // const noVersion = {
+      //   num: noVersionData.value || 0,
+      //   id: null,
+      //   name: <FormattedMessage id="summary_noVersion" />,
+      // };
+      // versionTable.unshift(noVersion);
       resolve(versionTable);
     });
   })
@@ -492,9 +492,9 @@ class SummaryHome extends Component {
               <div className="c7n-table-container">
                 <div className="c7n-table-title">
                   <FormattedMessage id="summary_testSummary" />
-                  （
+                  {'（'}
                   <FormattedMessage id="summary_summaryByVersion" />
-                  ）
+                  {'）'}
                 </div>
                 <Table
                   // rowKey="name"
@@ -508,9 +508,9 @@ class SummaryHome extends Component {
               <div className="c7n-table-container" style={{ margin: '0 15px' }}>
                 <div className="c7n-table-title">
                   <FormattedMessage id="summary_testSummary" />
-                  （
+                  {'（'}
                   <FormattedMessage id="summary_summaryByComponent" />
-                  ）
+                  {' ）'}
                 </div>
                 <Table
                   // rowKey="name"
@@ -524,9 +524,9 @@ class SummaryHome extends Component {
               <div className="c7n-table-container">
                 <div className="c7n-table-title">
                   <FormattedMessage id="summary_testSummary" />
-                  （
+                  {'（'}
                   <FormattedMessage id="summary_summaryByLabel" />
-                  ）
+                  {' ）'}
                 </div>
                 <Table
                   // rowKey="name"
@@ -541,7 +541,7 @@ class SummaryHome extends Component {
             <div style={{ margin: '30px 20px 18px 20px', display: 'flex', alignItems: 'center' }}>
               <div>
                 <FormattedMessage id="summary_summaryTimeLeap" />
-                ：
+                {'：'}
               </div>
               <RadioButton       
                 defaultValue={range} 
@@ -558,20 +558,6 @@ class SummaryHome extends Component {
                   text: [30, <FormattedMessage id="day" />],
                 }]}
               />
-              {/* <Radio.Group value={range} onChange={this.handleRangeChange}>          
-                <Radio.Button value="7">
-                  7
-                  {<FormattedMessage id="day" />}
-                </Radio.Button>
-                <Radio.Button value="15">
-                  15
-                  {<FormattedMessage id="day" />}
-                </Radio.Button>
-                <Radio.Button value="30">
-                  30
-                  {<FormattedMessage id="day" />}
-                </Radio.Button>
-              </Radio.Group> */}
             </div>
             <div className="c7n-chartArea-container">
 
@@ -582,30 +568,11 @@ class SummaryHome extends Component {
                     option={this.getCreateOption()}
                   />
                 </div>
-                {/* <Chart height={240} scale={createScale} 
-                width={width} data={createList} padding="auto">
-                  <Axis name="creationDay" />
-                  <Axis
-                    name="issueCount"             
-                    
-                  />
-                  <Tooltip crosshairs={{
-                    type: 'y',    
-                  }}
-                  />
-                  <Geom
-                    type="line"
-                    position="time*value"
-                    size={2}
-                  />
-                  <Geom type="point" position="time*value" size={4} shape="circle"
-                   style={{ stroke: '#fff', lineWidth: 1 }} />
-                </Chart> */}
                 <div style={{ color: 'rgba(0,0,0,0.65)', marginLeft: 38 }}>
                   <FormattedMessage id="summary_testCreated" />
-                  ：
+                  {'：'}
                   <span style={{ color: 'black', fontWeight: 500 }}>{totalCreate}</span>
-                  ，
+                  {'，'}
                   <FormattedMessage id="summary_testLast" />
                   <span style={{ color: 'black', fontWeight: 500 }}>
                     {' '}
@@ -622,30 +589,11 @@ class SummaryHome extends Component {
                     option={this.getExecuteOption()}
                   />
                 </div>
-                {/* <Chart height={240} scale={executeScale}
-                 width={parseInt((window.innerWidth - 320) / 2, 10)} 
-                 data={excuteList} padding="auto">
-                  <Axis name="time" />
-                  <Axis name="value" />
-                  <Tooltip crosshairs={{ type: 'y' }} />
-                  <Geom
-                    type="line"
-                    position="time*value"
-                    size={2}
-                  />
-                  <Geom
-                    type="point"
-                    position="time*value"
-                    size={4}
-                    shape="circle"
-                    style={{ stroke: '#fff', lineWidth: 1 }}
-                  />
-                </Chart> */}
                 <div style={{ color: 'rgba(0,0,0,0.65)', marginLeft: 38 }}>
                   <FormattedMessage id="summary_testExecuted" />
-                  ：
+                  {'：'}
                   <span style={{ color: 'black', fontWeight: 500 }}>{totalExcute}</span>
-                  ，
+                  {'，'}
                   <FormattedMessage id="summary_testLast" />
                   <span style={{ color: 'black', fontWeight: 500 }}>
                     {' '}

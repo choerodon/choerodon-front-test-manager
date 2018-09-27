@@ -195,8 +195,19 @@ export function deleteFolder(folderId) {
   return axios.delete(`/test/v1/projects/${projectId}/issueFolder/${folderId}`);
 }
 
+export function getSingleIssues(page = 0, size = 10, search, orderField, orderType) {
+  // console.log(search);
+  const searchDTO = { ...search };
+  searchDTO.advancedSearchArgs.typeCode = ['issue_test'];
+  const projectId = AppState.currentMenuType.id;
+  return axios.post(`/test/v1/projects/${projectId}/issueFolderRel/query?page=${page}&size=${size}`, { versionIds: [], searchDTO }, {
+    params: {
+      sort: `${orderField && orderType ? `${orderField},${orderType}` : ''}`,
+    },
+  });
+}
 export function getAllIssues(page = 0, size = 10, search, orderField, orderType) {
-  console.log(search);
+  // console.log(search);
   const searchDTO = { ...search, otherArgs: search.searchArgs };
   searchDTO.advancedSearchArgs.typeCode = ['issue_test'];
   const projectId = AppState.currentMenuType.id;
@@ -226,7 +237,7 @@ export function getIssuesByVersion(versionIds, page = 0, size = 10, search, orde
     },
   });
 }
-export function getIssuesByIds(versionId, folderId, ids) { 
+export function getIssuesByIds(versionId, folderId, ids) {
   const projectId = AppState.currentMenuType.id;
   return axios.post(`/test/v1/projects/${projectId}/issueFolderRel/query/by/issueId${versionId ? `?versionId=${versionId}` : ''}${folderId ? `&folderId=${folderId}` : ''}`, ids);
 }

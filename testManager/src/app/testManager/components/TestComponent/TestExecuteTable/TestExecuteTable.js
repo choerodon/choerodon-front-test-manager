@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  Table,
-  Button, Icon, Tooltip, Menu, Popconfirm,
+  Table, Icon, Tooltip, Menu, 
 } from 'choerodon-ui';
 import { stores, axios } from 'choerodon-front-boot';
 import _ from 'lodash';

@@ -63,7 +63,7 @@ class RichTextShow extends Component {
                 <Lightbox
                   mainSrc={item.insert.image}
                   onCloseRequest={() => this.onOpenLightboxChange(`${index}`)}
-                  imageTitle={'images'}
+                  imageTitle="images"
                 />
               ) : (
                 ''
@@ -97,7 +97,7 @@ class RichTextShow extends Component {
             <Lightbox
               mainSrc={this.state.src}
               // onCloseRequest={() => this.setState({ open: false })}
-              imageTitle={'images'}
+              imageTitle="images"
             />
           ) : null
         }

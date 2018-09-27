@@ -5,12 +5,10 @@ import {
   Page, Header, Content, stores, axios,
 } from 'choerodon-front-boot';
 import {
-  Table, Button, Tooltip, Input, Dropdown, Menu, Pagination,
+  Table, Button, Input, Dropdown, Menu, Pagination,
   Spin, Icon, Select,
 } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
-import moment from 'moment';
-import { Draggable, Droppable, DragDropContext } from 'react-beautiful-dnd';
 import FileSaver from 'file-saver';
 import '../../../../assets/main.scss';
 import './TestHome.scss';
@@ -21,18 +19,11 @@ import {
 } from '../../../../common/Constant';
 import pic from '../../../../assets/问题管理－空.png';
 import { loadIssue, createIssue } from '../../../../api/IssueApi';
-import UserHead from '../../../../components/TestComponent/UserHead';
-import PriorityTag from '../../../../components/TestComponent/PriorityTag';
-import StatusTag from '../../../../components/TestComponent/StatusTag';
-import TypeTag from '../../../../components/TestComponent/TypeTag';
 import EmptyBlock from '../../../../components/TestComponent/EmptyBlock';
 import CreateIssue from '../../../../components/TestComponent/CreateIssue';
 import EditIssue from '../../../../components/TestComponent/EditIssue';
 import IssueTree from '../../../../components/TestComponent/IssueTree';
-import DragTable from '../../../../components/DragTable';
 import IssueTable from '../../../../components/TestComponent/IssueTable';
-// import EditIssue from '../../../../components/TestComponent/EditIssue';
-// import EditIssueNarrow from '../../../../components/TestComponent/EditIssueNarrow';
 
 
 const { AppState } = stores;
@@ -407,16 +398,19 @@ class Test extends Component {
             <Icon type="playlist_add icon" />
             <FormattedMessage id="issue_createTestIssue" />
           </Button>
-          <Button className="leftBtn" onClick={() => this.exportExcel()}>
+          {/* <Button className="leftBtn" onClick={() => this.exportExcel()}>
             <Icon type="file_upload icon" />
             <FormattedMessage id="export" />
-          </Button>
+          </Button> */}
           <Button
             onClick={() => {
               if (this.EditIssue) {
                 this.EditIssue.reloadIssue(this.state.selectedIssue.issueId);
               }
               const { current, pageSize } = IssueStore.pagination;
+              if (this.tree) {
+                this.tree.getTree();
+              }              
               IssueStore.loadIssues(current - 1, pageSize);
             }}
           >
@@ -446,9 +440,11 @@ class Test extends Component {
             // }}
           >
             {treeShow && (
-            <IssueTree onClose={() => {
-              IssueStore.setTreeShow(false);
-            }}
+            <IssueTree 
+              ref={tree => this.tree = tree}
+              onClose={() => {
+                IssueStore.setTreeShow(false);
+              }}
             />
             )}
           </div>
@@ -475,7 +471,7 @@ class Test extends Component {
                 filterBarPlaceholder={<FormattedMessage id="issue_filterTestIssue" />}
               />
             </section>
-            <section className="c7n-count">
+            {/* <section className="c7n-count">
               <span className="c7n-span-count"><FormattedMessage id="issue_issueTotal" values={{ total: IssueStore.pagination.total }} /></span>
               <Dropdown overlay={sort} trigger={['click']}>
                 <div style={{
@@ -486,7 +482,7 @@ class Test extends Component {
                   <FormattedMessage id="issue_issueSort" />
                 </div>
               </Dropdown>
-            </section>
+            </section> */}
 
             <section
               className={`c7n-table ${this.state.expand ? 'expand-sign' : ''}`}

@@ -20,10 +20,24 @@ export function editCycle(cycle) {
   const projectId = AppState.currentMenuType.id;
   return axios.post(`/test/v1/projects/${projectId}/cycle/case/update`, cycle);
 }
+/**
+ *增加缺陷
+ *
+ * @export
+ * @param {*} defects
+ * @returns
+ */
 export function addDefects(defects) {
   const projectId = AppState.currentMenuType.id;
   return axios.post(`/test/v1/projects/${projectId}/defect`, defects);
 }
+/**
+ *移除缺陷
+ *
+ * @export
+ * @param {*} defectId
+ * @returns
+ */
 export function removeDefect(defectId) {
   const projectId = AppState.currentMenuType.id;
   return axios.delete(`/test/v1/projects/${projectId}/defect/delete/${defectId}`);

@@ -8,11 +8,11 @@ import {
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import {
-  Tooltip, Table, Button, Icon, Input, Tree, Spin, Modal,
+  Tooltip, Button, Icon, Spin, Modal,
 } from 'choerodon-ui';
 import { Link } from 'react-router-dom';
 import {
-  getCycleById, getCycles, getStatusList, editCycleExecute, deleteExecute,
+  getCycleById, getStatusList, editCycleExecute, deleteExecute,
 } from '../../../../api/cycleApi';
 import {
   EventCalendar, PlanTree, CreateCycle, EditStage, EditCycle,

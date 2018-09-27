@@ -7,9 +7,8 @@ import DefectSelect from './DefectSelect';
 import CreateIssueTiny from './CreateIssueTiny';
 import SelectCreateIssueFooter from './SelectCreateIssueFooter';
 import RadioButton from './RadioButton';
-import Tree from './Tree';
 
 export {
   TextEditToggle, RichTextShow, SelectFocusLoad, User, UploadInTable, DefectSelect, CreateIssueTiny,
-  SelectCreateIssueFooter, RadioButton, Tree,
+  SelectCreateIssueFooter, RadioButton, 
 };

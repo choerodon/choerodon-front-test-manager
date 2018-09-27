@@ -1,13 +1,17 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { Menu, Dropdown, Button, Icon, Select } from 'choerodon-ui';
-import { Page, Header, Content, stores } from 'choerodon-front-boot';
+import {
+  Menu, Dropdown, Icon,  
+} from 'choerodon-ui';
+import {
+  Page, Header, Content, stores, 
+} from 'choerodon-front-boot';
 import { FormattedMessage } from 'react-intl';
 import './ReportHome.less';
 import Pic from './pic.svg';
 import Pic2 from './pic2.svg';
 
-const { Option } = Select;
+
 const { AppState } = stores;
 const styles = {
   itemContainer: {
@@ -44,7 +48,7 @@ class ReportHome extends Component {
     const menu = (
       <Menu style={{ marginTop: 35 }}>
         <Menu.Item key="0">
-          <Link to={`/testManager/report/story?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`} >
+          <Link to={`/testManager/report/story?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}>
             <FormattedMessage id="report_dropDown_demand" /> 
           </Link>
         </Menu.Item>
@@ -79,7 +83,7 @@ class ReportHome extends Component {
           link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management/test-report/report/"
         >
           <div style={{ display: 'flex' }}>
-            <Link to={`/testManager/report/story?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`} >
+            <Link to={`/testManager/report/story?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}>
               <div style={styles.itemContainer}>
                 <div style={styles.imgContainer}>
                   <img src={Pic} alt="" />

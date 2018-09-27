@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
-import {
-  Table, Button, Icon, Card, Select, Spin, Upload, Tooltip, 
-} from 'choerodon-ui';
+import { Select } from 'choerodon-ui';
 
 const Option = Select.Option;
 const styles = {

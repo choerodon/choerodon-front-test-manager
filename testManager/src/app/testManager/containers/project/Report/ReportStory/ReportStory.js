@@ -9,43 +9,14 @@ import {
 } from 'choerodon-ui';
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
-import ReportSelectIssue from '../../../../components/ReportSelectIssue';
 import { getReportsFromStory } from '../../../../api/reportApi';
 import { getIssueStatus } from '../../../../api/agileApi';
 import { getStatusList } from '../../../../api/cycleApi';
 import { issueLink, cycleLink } from '../../../../common/utils';
-import { ReportStoryArea } from '../../../../components/ReportComponent';
-import ReportStoryStore from '../../../../store/project/report/ReportStoryStore';
 import './ReportStory.scss';
 
 const { AppState } = stores;
 const Panel = Collapse.Panel;
-const ICON = {
-  story: 'turned_in',
-  bug: 'bug_report',
-  task: 'assignment',
-  issue_epic: 'priority',
-  sub_task: 'relation',
-  issue_test: 'test',
-};
-
-const TYPE = {
-  story: '#00bfa5',
-  bug: '#f44336',
-  task: '#4d90fe',
-  issue_epic: '#743be7',
-  sub_task: '#4d90fe',
-  issue_test: '#FFB100',
-};
-
-const NAME = {
-  story: '故事',
-  bug: '故障',
-  task: '任务',
-  issue_epic: '史诗',
-  sub_task: '子任务',
-  issue_test: '测试',
-};
 
 class ReportStory extends Component {
   state = {

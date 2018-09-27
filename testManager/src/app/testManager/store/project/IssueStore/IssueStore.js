@@ -3,7 +3,7 @@ import {
 } from 'mobx';
 import { store, stores, axios } from 'choerodon-front-boot';
 import {
-  loadIssues, loadVersions, getIssuesByFolder, getIssuesByIds,
+  loadIssues, loadVersions, getIssuesByFolder, getIssuesByIds, getSingleIssues,
   getIssuesByVersion, getAllIssues,
 } from '../../../api/IssueApi';
 import IssueTreeStore from '../treeStore/IssueTreeStore';
@@ -109,11 +109,11 @@ class SprintCommonStore {
         funcArr.push(getIssuesByFolder(cycleId,
           page, size, this.getFilter, orderField, orderType));
       } else if (this.paramIssueId) {
-        // 5.地址栏有url 调用敏捷原有方法 这个要放最后
-        funcArr.push(loadIssues(page, size, this.getFilter, orderField, orderType));
+        // 5.地址栏有url 调用只取这一个issue的方法 这个要放最后
+        funcArr.push(getSingleIssues(page, size, this.getFilter, orderField, orderType));
       }
     }
-    console.log(type);
+    // console.log(type);
     // 三种加载issue情况
     // 1.选择文件夹
     // if (IssueTreeStore.currentCycle.versionId) {
@@ -305,7 +305,7 @@ class SprintCommonStore {
     const otherArgs = {
       type: this.paramType,
       id: this.paramId ? [this.paramId] : undefined,
-      issueIds: this.paramIssueId ? [this.paramIssueId] : undefined,
+      issueIds: this.paramIssueId ? [Number(this.paramIssueId)] : undefined,
     };
     return {
       ...filter,
