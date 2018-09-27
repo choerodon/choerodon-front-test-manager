@@ -5,3 +5,4 @@
 'test-manager.TestExecute': 测试执行
 'test-manager.report':  报表
 'test-manager.status':  自定义状态
+'test-manager.cycle':  测试循环

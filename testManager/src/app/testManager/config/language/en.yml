@@ -5,3 +5,4 @@
 'test-manager.TestExecute': TestExecute
 'test-manager.report':  report
 'test-manager.status':  status
+'test-manager.cycle':  cycle
