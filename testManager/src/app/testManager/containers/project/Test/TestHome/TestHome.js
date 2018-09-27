@@ -148,7 +148,7 @@ class Test extends Component {
   }
 
   handleBlurCreateIssue() {
-    if (this.state.createIssueValue === '') {
+    if (this.state.createIssueValue !== '') {
       const versionIssueRelDTOList = [];
       const selectedVersion = IssueTreeStore.currentCycle.versionId || IssueStore.getSeletedVersion;
       const folderId = IssueTreeStore.currentCycle.cycleId;
@@ -398,10 +398,10 @@ class Test extends Component {
             <Icon type="playlist_add icon" />
             <FormattedMessage id="issue_createTestIssue" />
           </Button>
-          <Button className="leftBtn" onClick={() => this.exportExcel()}>
+          {/* <Button className="leftBtn" onClick={() => this.exportExcel()}>
             <Icon type="file_upload icon" />
             <FormattedMessage id="export" />
-          </Button>
+          </Button> */}
           <Button
             onClick={() => {
               if (this.EditIssue) {
@@ -466,7 +466,7 @@ class Test extends Component {
                 filterBarPlaceholder={<FormattedMessage id="issue_filterTestIssue" />}
               />
             </section>
-            <section className="c7n-count">
+            {/* <section className="c7n-count">
               <span className="c7n-span-count"><FormattedMessage id="issue_issueTotal" values={{ total: IssueStore.pagination.total }} /></span>
               <Dropdown overlay={sort} trigger={['click']}>
                 <div style={{
@@ -477,7 +477,7 @@ class Test extends Component {
                   <FormattedMessage id="issue_issueSort" />
                 </div>
               </Dropdown>
-            </section>
+            </section> */}
 
             <section
               className={`c7n-table ${this.state.expand ? 'expand-sign' : ''}`}

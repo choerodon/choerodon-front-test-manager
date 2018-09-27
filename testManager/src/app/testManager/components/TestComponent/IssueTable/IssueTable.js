@@ -99,7 +99,7 @@ class IssueTable extends Component {
         </div>
         <div style={{ display: 'flex' }}>
 
-          {renderPriority(priorityCode, priorityName)}
+          {renderVersions(versionIssueRelDTOList)}
           {renderFolder(folderName)}
           <div className="c7n-flex-space" />
           {renderAssigned(assigneeId, assigneeName, assigneeImageUrl)}

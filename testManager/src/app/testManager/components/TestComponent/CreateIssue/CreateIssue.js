@@ -387,7 +387,7 @@ class CreateIssue extends Component {
               />
             </Tooltip>
 
-            {
+            {/* {
               this.props.form.getFieldValue('typeCode') !== 'issue_epic' && (
                 <FormItem style={{ width: 520 }}>
                   {getFieldDecorator('epicId', {})(
@@ -449,7 +449,7 @@ class CreateIssue extends Component {
                   ))}
                 </Select>,
               )}
-            </FormItem>
+            </FormItem> */}
 
             <FormItem style={{ width: 520 }}>
               {getFieldDecorator('versionId', {

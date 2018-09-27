@@ -549,7 +549,7 @@ class CycleHome extends Component {
     const { cycleId, title, type } = currentCycle;
     const prefix = <Icon type="filter_list" />;
     const columns = [{
-      title: 'ID',
+      title: <span>ID</span>,
       dataIndex: 'issueName',
       key: 'issueName',
       flex: 1,
