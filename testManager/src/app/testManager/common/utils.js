@@ -43,7 +43,8 @@ export function delta2Html(description, config) {
   // }
 }
 export function delta2Text(delta) {
-  return delta2Html(delta, { encodeHtml: false }).replace(/<[^>]+>/g, '');
+  // console.log(delta2Html(delta, { encodeHtml: false }).replace(/<[^>]+>/g, ''));
+  return delta2Html(delta, { encodeHtml: false }).replace(/<br\/>/g, '\n').replace(/<[^>]+>/g, '');
 }
 export function escape(str) {
   return str.replace(/<\/script/g, '<\\/script').replace(/<!--/g, '<\\!--');
