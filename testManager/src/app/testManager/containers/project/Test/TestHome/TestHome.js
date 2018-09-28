@@ -142,7 +142,7 @@ class Test extends Component {
       // };
       const originIssues = _.slice(IssueStore.issues);
       const index = _.findIndex(originIssues, { issueId: res.issueId });
-      originIssues[index] = res;
+      originIssues[index] = { ...originIssues[index], ...res };
       IssueStore.setIssues(originIssues);
     });
   }
