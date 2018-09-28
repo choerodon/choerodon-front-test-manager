@@ -3,6 +3,12 @@
   .ant-tree-switcher {
     margin-top: 3px;
   }
+  .ant-spin-nested-loading {
+    flex: 1;
+  }
+  .ant-spin-container {
+    height: 100%;
+  }
   .icon-folder_open,
   .icon-folder_open2 {
     // margin-top: -3px;
@@ -17,6 +23,7 @@
     height: 30px;
   }
   .c7n-cycleHome {
+    height: 100%;
     display: flex;
     table{
       table-layout: fixed;
@@ -64,6 +71,7 @@
     // height: 100%;
   }
   .c7n-ch-left {
+    height: 100%;
     // margin-left: 10px;
     width: 310px; // border-right: 1px solid rgba(0, 0, 0, 0.36);
     // padding-bottom: 30px;
@@ -87,7 +95,7 @@
     // width: 400px;
   }
   .c7n-chlh-tree {
-    min-height: calc(100% - 20px);
+    height: calc(100% - 75px);
     overflow-y: auto;
     overflow-x: hidden;
     .ant-tree li .ant-tree-node-content-wrapper.ant-tree-node-selected {
@@ -96,7 +104,8 @@
   }
   .c7n-ch-right {
     flex: 1;
-    overflow: hidden;
+    overflow-y: auto;
+    overflow-x: hidden;
     padding: 0 20px;
   }
   .c7n-avatar {

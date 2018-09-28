@@ -839,7 +839,7 @@ class CycleHome extends Component {
         <Content
           // title={<FormattedMessage id="cycle_title" />}
           // description={<FormattedMessage id="cycle_description" />}
-          style={{ paddingBottom: 0, paddingRight: 0 }}
+          style={{ paddingBottom: 0, paddingRight: 0, display: 'flex' }}
         >
           <Spin spinning={loading}>
             <CreateCycle
@@ -925,7 +925,7 @@ class CycleHome extends Component {
                     </div>                    
                   </div>
                 </div>
-                <div className="c7n-chlh-tree" style={{ height: window.innerHeight - 200 }}>
+                <div className="c7n-chlh-tree">
                   <Tree
                     selectedKeys={selectedKeys}
                     expandedKeys={expandedKeys}
