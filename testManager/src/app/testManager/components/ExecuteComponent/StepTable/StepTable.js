@@ -229,6 +229,7 @@ class StepTable extends Component {
           >
             <Text>
               <div 
+                style={{ minHeight: 20 }}
                 dangerouslySetInnerHTML={{ __html: delta2Text(comment) && delta2Text(comment).replace(/\n/g, '<br />') }}
               />
             </Text>
@@ -272,7 +273,7 @@ class StepTable extends Component {
             disabled={disabled}
           >
             <Text>
-              <div>
+              <div style={{ minHeight: 20 }}>
                 {stepAttachment.filter(attachment => attachment.attachmentType === 'CYCLE_STEP').map(attachment => (
                   <div style={{
                     display: 'flex', fontSize: '12px', flexShrink: 0, margin: '5px 2px', alignItems: 'center',
