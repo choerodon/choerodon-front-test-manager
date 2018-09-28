@@ -19,7 +19,7 @@ import {
 import {
   loadDatalogs, loadLinkIssues, loadLabels, loadIssue, loadWorklogs,
   updateIssue, loadPriorities, loadComponents, loadVersions, loadEpics,
-  createCommit, deleteIssue, loadStatus,
+  createCommit, deleteIssue, loadStatus, cloneIssue,
 } from '../../../api/IssueApi';
 import { getSelf, getUsers, getUser } from '../../../api/CommonApi';
 import WYSIWYGEditor from '../WYSIWYGEditor';
@@ -729,7 +729,24 @@ class EditIssueNarrow extends Component {
         break;
       }
       case 'copy': {
-        this.setState({ copyIssueShow: true });
+        const copyConditionDTO = {
+          issueLink: false,
+          sprintValues: false,
+          subTask: false,
+          summary: false,
+        };
+        this.setState({
+          issueLoading: true,
+        });
+        cloneIssue(this.state.origin.issueId, copyConditionDTO).then((res) => {
+          this.handleCopyIssue();
+        }).catch((err) => {
+          this.setState({
+            issueLoading: false,
+          });
+          Choerodon.prompt('网络错误');
+        });
+        // this.setState({ copyIssueShow: true });
         break;
       }
       case 'item_1': {
@@ -754,9 +771,9 @@ class EditIssueNarrow extends Component {
       title: `删除测试用例${this.state.issueNum}`,
       content:
   <div style={{ marginBottom: 32 }}>
-          <p style={{ marginBottom: 10 }}>请确认您要删除这个测试用例。</p>
-          <p style={{ marginBottom: 10 }}>这个测试用例将会被彻底删除。包括所有步骤和相关执行。</p>
-        </div>,
+    <p style={{ marginBottom: 10 }}>请确认您要删除这个测试用例。</p>
+    <p style={{ marginBottom: 10 }}>这个测试用例将会被彻底删除。包括所有步骤和相关执行。</p>
+  </div>,
       onOk() {
         return deleteIssue(issueId)
           .then((res) => {

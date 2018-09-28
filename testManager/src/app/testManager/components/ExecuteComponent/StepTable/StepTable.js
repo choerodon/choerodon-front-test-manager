@@ -174,13 +174,16 @@ class StepTable extends Component {
           <Tooltip title={(
             <div>
               {stepAttachment.filter(attachment => attachment.attachmentType === 'CASE_STEP').map((attachment, i) => (
-                <div style={{
-                  fontSize: '13px',
-                  color: 'white',
-                }}
-                >
-                  {attachment.attachmentName}
-                </div>))}
+                <a
+                  href={attachment.url}
+                  style={{
+                    fontSize: '13px',
+                    color: 'white',
+                  }}
+                >                  
+                  {attachment.attachmentName}           
+                  
+                </a>))}
             </div>
           )}
           >

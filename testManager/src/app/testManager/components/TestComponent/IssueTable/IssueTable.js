@@ -102,7 +102,7 @@ class IssueTable extends Component {
           {renderVersions(versionIssueRelDTOList)}
           {renderFolder(folderName)}
           <div className="c7n-flex-space" />
-          {renderAssigned(assigneeId, assigneeName, assigneeImageUrl)}
+          {/* {renderAssigned(assigneeId, assigneeName, assigneeImageUrl)} */}
           {renderStatus(statusName, statusColor)}
         </div>
       </div>

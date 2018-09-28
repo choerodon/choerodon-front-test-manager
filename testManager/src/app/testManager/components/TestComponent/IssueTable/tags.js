@@ -124,6 +124,7 @@ export function renderFolder(folderName) {
           padding: '0 8px',
           margin: '0 5px',
         }}
+        className="c7n-text-dot"
       >
         {folderName}
       </div>
