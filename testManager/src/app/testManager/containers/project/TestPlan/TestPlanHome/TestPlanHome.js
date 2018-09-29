@@ -248,7 +248,7 @@ class TestPlanHome extends Component {
           //   {_.find(statusList, { statusId: executionStatus })
           //     && _.find(statusList, { statusId: executionStatus }).statusName}
           // </div>
-          <StatusTags
+          _.find(statusList, { statusId: executionStatus })&&<StatusTags
           color={statusColor}
           name={_.find(statusList, { statusId: executionStatus }).statusName}
           />
