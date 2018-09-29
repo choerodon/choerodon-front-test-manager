@@ -6,7 +6,7 @@ import _ from 'lodash';
 import { observer } from 'mobx-react';
 import { FormattedMessage } from 'react-intl';
 import {
-  TextEditToggle, RichTextShow, User, SelectCreateIssueFooter,
+  TextEditToggle, RichTextShow, User, SelectCreateIssueFooter,StatusTags
 } from '../../CommonComponent';
 import { uploadFile } from '../../../api/CommonApi';
 import { delta2Html } from '../../../common/utils';
@@ -199,9 +199,13 @@ class TestExecuteInfo extends Component {
     };
     const options = statusList.map(status => (
       <Option value={status.statusId} key={status.statusId}>
-        <div style={{ ...styles.statusOption, ...{ background: status.statusColor } }}>
+      <StatusTags
+          color={status.statusColor}
+          name={status.statusName}
+          />
+        {/* <div style={{ ...styles.statusOption, ...{ background: status.statusColor } }}>
           {status.statusName}
-        </div>
+        </div> */}
       </Option>
     ));
     const defectsOptions = issueList.map(issue => (
@@ -242,7 +246,7 @@ class TestExecuteInfo extends Component {
           style={{ flex: 1, minHeight: 236 }}
         >
           <div style={styles.cardTitle}>
-            <Icon type="expand_more" />
+            {/* <Icon type="expand_more" /> */}
             <span style={styles.cardTitleText}><FormattedMessage id="execute_cycle_execute" /></span>
           </div>
           <div style={styles.cardContent}>
@@ -258,12 +262,16 @@ class TestExecuteInfo extends Component {
                 originData={executionStatus}
               >
                 <Text>
-                  <div style={{
+                <StatusTags
+          color={statusColor}
+          name={statusName}
+          />
+                  {/* <div style={{
                     background: statusColor, width: 60, textAlign: 'center', borderRadius: '2px', display: 'inline-block', color: 'white',
                   }}
                   >
                     {statusName}
-                  </div>
+                  </div> */}
                 </Text>
                 <Edit>
                   <Select
@@ -382,7 +390,7 @@ class TestExecuteInfo extends Component {
             }}
           >
             <div style={styles.cardTitle}>
-              <Icon type="expand_more" />
+              {/* <Icon type="expand_more" /> */}
               <span style={styles.cardTitleText}><FormattedMessage id="execute_description" /></span>
               <div style={{ flex: 1, visibility: 'hidden' }} />
               {/* {!disabled && ( */}
@@ -413,7 +421,7 @@ class TestExecuteInfo extends Component {
           >
             <div style={styles.cardTitle}>
               <div>
-                <Icon type="expand_more" />
+                {/* <Icon type="expand_more" /> */}
                 <span style={styles.cardTitleText}><FormattedMessage id="attachment" /></span>
               </div>
               <div style={{ flex: 1, visibility: 'hidden' }} />

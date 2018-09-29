@@ -270,7 +270,7 @@ class SummaryHome extends Component {
         data: this.state.createList.map(execute => execute.value),
       },
     ],
-    color: ['#00BFA5'],
+    color: ['#5266D4'],
   })
 
   getExecuteOption = () => ({
@@ -355,7 +355,7 @@ class SummaryHome extends Component {
         data: this.state.excuteList.map(execute => execute.value),
       },
     ],
-    color: ['#00BFA5'],
+    color: ['#5266D4'],
   })
 
   render() {

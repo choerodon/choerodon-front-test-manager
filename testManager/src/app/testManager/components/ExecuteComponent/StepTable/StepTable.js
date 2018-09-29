@@ -6,7 +6,7 @@ import { FormattedMessage } from 'react-intl';
 import _ from 'lodash';
 import { editCycleStep, addDefects } from '../../../api/CycleExecuteApi';
 import {
-  TextEditToggle, UploadInTable, DefectSelect,
+  TextEditToggle, UploadInTable, DefectSelect,StatusTags
 } from '../../CommonComponent';
 import { delta2Text } from '../../../common/utils';
 
@@ -115,9 +115,13 @@ class StepTable extends Component {
       const { statusName, statusId, statusColor } = status;
       return (
         <Option value={statusId} key={statusId}>
-          <div style={{ ...styles.statusOption, ...{ background: statusColor } }}>
+        <StatusTags
+          color={statusColor}
+          name={statusName}
+          />
+          {/* <div style={{ ...styles.statusOption, ...{ background: statusColor } }}>
             {statusName}
-          </div>
+          </div> */}
         </Option>
       );
     });
@@ -200,9 +204,13 @@ class StepTable extends Component {
               originData={stepStatus}
             >
               <Text>
-                <div style={{ ...styles.statusOption, ...{ background: statusColor } }}>
+              <StatusTags
+          color={statusColor}
+          name={statusName}
+          />
+                {/* <div style={{ ...styles.statusOption, ...{ background: statusColor } }}>
                   {statusName}
-                </div>
+                </div> */}
               </Text>
               <Edit>
                 <Select autoFocus style={{ width: 85 }}>

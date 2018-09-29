@@ -10,7 +10,7 @@ import TimeAgo from 'timeago-react';
 import { cycleLink, issueLink } from '../../../common/utils';
 import './TestExecuteTable.scss';
 import { editCycle } from '../../../api/CycleExecuteApi';
-
+import {StatusTags} from '../../CommonComponent';
 const { AppState } = stores;
 
 class TestExecuteTable extends Component {
@@ -162,13 +162,17 @@ class TestExecuteTable extends Component {
       render: (statusName, item) => {
         const urlParams = AppState.currentMenuType;
         const status = _.find(this.state.status, { statusId: item.executionStatus }) || {};
-        return (         
-          <div style={{
-            width: 60, height: 20, borderRadius: '2px', background: status.statusColor, display: 'inline-block', lineHeight: '20px', textAlign: 'center', color: '#fff',
-          }}
-          >
-            {status && status.statusName}
-          </div>       
+        return (   
+          <StatusTags
+          color={status.statusColor}
+          name={status.statusName}
+          />      
+          // <div style={{
+          //   width: 60, height: 20, borderRadius: '2px', background: status.statusColor, display: 'inline-block', lineHeight: '20px', textAlign: 'center', color: '#fff',
+          // }}
+          // >
+          //   {status && status.statusName}
+          // </div>       
         );
       },
     }];
