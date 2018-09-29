@@ -328,7 +328,7 @@ class Test extends Component {
             value: 'todo',
           },
           {
-            text: Choerodon.getMessage('进行中', 'doing'),
+            text: Choerodon.getMessage('处理中', 'doing'),
             value: 'doing',
           },
           {
