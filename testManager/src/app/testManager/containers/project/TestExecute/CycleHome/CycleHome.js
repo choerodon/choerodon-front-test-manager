@@ -22,7 +22,9 @@ import { editCycle } from '../../../../api/CycleExecuteApi';
 import {
   TreeTitle, CreateCycle, EditCycle, ShowCycleData, CloneCycle,
 } from '../../../../components/CycleComponent';
-import { RichTextShow, SelectFocusLoad, RadioButton,StatusTags } from '../../../../components/CommonComponent';
+import {
+  RichTextShow, SelectFocusLoad, RadioButton, StatusTags, 
+} from '../../../../components/CommonComponent';
 import {
   delta2Html, delta2Text, issueLink, getParams,
 } from '../../../../common/utils';
@@ -597,10 +599,12 @@ class CycleHome extends Component {
           //   {_.find(statusList, { statusId: executionStatus })
           //     && _.find(statusList, { statusId: executionStatus }).statusName}
           // </div>
-          _.find(statusList, { statusId: executionStatus })&&<StatusTags
-          color={statusColor}
-          name={_.find(statusList, { statusId: executionStatus }).statusName}
+          _.find(statusList, { statusId: executionStatus }) && (
+          <StatusTags
+            color={statusColor}
+            name={_.find(statusList, { statusId: executionStatus }).statusName}
           />
+          )
         );
       },
     }, {
