@@ -106,7 +106,7 @@ class Test extends Component {
 
   handleCreateIssue(issueObj) {
     this.setState({ create: false });
-    IssueStore.init();
+    // IssueStore.init();
     IssueStore.loadIssues();
   }
 
@@ -177,7 +177,7 @@ class Test extends Component {
       });
       createIssue(data, folderId)
         .then((res) => {
-          IssueStore.init();
+          // IssueStore.init();
           IssueStore.loadIssues();
           this.setState({
             createIssueValue: '',
@@ -674,7 +674,7 @@ class Test extends Component {
                       expand: false,
                       selectedIssue: {},
                     });
-                    IssueStore.init();
+                    // IssueStore.init();
                     IssueStore.loadIssues();
                   }}
                   onUpdate={this.handleIssueUpdate.bind(this)}
