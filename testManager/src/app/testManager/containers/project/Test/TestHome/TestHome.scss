@@ -1,8 +1,5 @@
 .c7n-Issue {
   user-select: none;
-  .ant-select-selection__rendered{
-    margin-bottom: -4px!important;
-  }
   .c7n-chs-bar {
     margin-top: 10px;
     width: 22.5px;
@@ -90,6 +87,9 @@
     }
     .ant-dropdown-trigger{
       bottom:30;
+    }
+    .ant-select-selection__rendered{
+      margin-bottom: -4px!important;
     }
   }
 
