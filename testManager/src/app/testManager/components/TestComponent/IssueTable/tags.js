@@ -80,6 +80,7 @@ export function renderVersions(versions, priorityName) {
           padding: '0 8px',
           margin: '0 5px',
         }}
+        className="c7n-text-dot"
       >
         {version.name}
       </div>
