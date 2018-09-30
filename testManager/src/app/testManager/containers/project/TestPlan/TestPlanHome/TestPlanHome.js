@@ -17,7 +17,7 @@ import {
 import {
   EventCalendar, PlanTree, CreateCycle, EditStage, EditCycle,
 } from '../../../../components/TestPlanComponent';
-import { RichTextShow, SelectFocusLoad } from '../../../../components/CommonComponent';
+import { RichTextShow, SelectFocusLoad,StatusTags } from '../../../../components/CommonComponent';
 import DragTable from '../../../../components/DragTable';
 
 import { getUsers } from '../../../../api/CommonApi';
@@ -244,10 +244,14 @@ class TestPlanHome extends Component {
         const statusColor = _.find(statusList, { statusId: executionStatus })
           ? _.find(statusList, { statusId: executionStatus }).statusColor : '';
         return (
-          <div style={{ ...styles.statusOption, ...{ background: statusColor } }}>
-            {_.find(statusList, { statusId: executionStatus })
-              && _.find(statusList, { statusId: executionStatus }).statusName}
-          </div>
+          // <div style={{ ...styles.statusOption, ...{ background: statusColor } }}>
+          //   {_.find(statusList, { statusId: executionStatus })
+          //     && _.find(statusList, { statusId: executionStatus }).statusName}
+          // </div>
+          _.find(statusList, { statusId: executionStatus })&&<StatusTags
+          color={statusColor}
+          name={_.find(statusList, { statusId: executionStatus }).statusName}
+          />
         );
       },
     }, {
@@ -364,7 +368,7 @@ class TestPlanHome extends Component {
               onClick={() => {
                 const { history } = this.props;
                 const urlParams = AppState.currentMenuType;
-                history.push(`/testManager/TestExecute/executeShow/${record.executeId}?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`);
+                history.push(`/testManager/TestPlan/executeShow/${record.executeId}?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`);
               }}
             />
             <Icon

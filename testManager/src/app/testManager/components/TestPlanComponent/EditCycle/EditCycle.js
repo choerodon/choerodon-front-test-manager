@@ -231,7 +231,7 @@ class EditCycle extends Component {
                 </FormItem>
                 <FormItem>
                   {getFieldDecorator('fromDate', {
-                    initialValue: moment(fromDate),
+                    initialValue: fromDate && moment(fromDate),
                     rules: [{
                       required: true, message: '请选择日期!',
                     }],
@@ -249,7 +249,7 @@ class EditCycle extends Component {
                 </FormItem>
                 <FormItem>
                   {getFieldDecorator('toDate', {
-                    initialValue: moment(toDate),
+                    initialValue: toDate && moment(toDate),
                     rules: [{
                       required: true, message: '请选择日期!',
                     }],

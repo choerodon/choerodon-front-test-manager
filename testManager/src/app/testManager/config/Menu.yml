@@ -9,26 +9,26 @@
         permission:
           - 'test-manager-service.test-cycle.getTestCycle'
     - "manager":
-        icon: assignment
+        icon: description
         Routes: /testManager/manager
         sort: 2
         permission:
           - 'test-manager-service.test-cycle.getTestCycle'
     - "TestPlan":
-        icon: poll
+        icon: test_planning
         Routes: /testManager/TestPlan
         sort: 3
         permission:
           - 'test-manager-service.test-cycle.getTestCycle'
     - "TestExecute":
-        icon: repeat
+        icon: test_execute
         Routes: /testManager/TestExecute
         sort: 4
         permission:
           - 'test-manager-service.test-cycle.getTestCycle'
 
     - "report":
-        icon: description
+        icon: baseline-list_alt
         Routes: /testManager/report
         sort: 5
         permission:

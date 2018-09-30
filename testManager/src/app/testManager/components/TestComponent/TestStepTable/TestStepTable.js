@@ -139,11 +139,11 @@ class TestStepTable extends Component {
               }]}
             >
               <Text>
-                <Tooltip title={testStep}>
-                  <div className="c7n-text-wrap">
-                    {testStep}
-                  </div>
-                </Tooltip>
+                {/* <Tooltip title={testStep}> */}
+                <div className="c7n-text-wrap">
+                  {testStep}
+                </div>
+                {/* </Tooltip> */}
               </Text>
               <Edit>
                 <TextArea autoFocus autosize />
@@ -167,11 +167,11 @@ class TestStepTable extends Component {
               originData={testData}
             >
               <Text>
-                <Tooltip title={testData}>
-                  <div className="c7n-text-wrap">
-                    {testData}
-                  </div>
-                </Tooltip>
+                {/* <Tooltip title={testData}> */}
+                <div className="c7n-text-wrap">
+                  {testData}
+                </div>
+                {/* </Tooltip> */}
               </Text>
               <Edit>
                 <TextArea autoFocus autosize />
@@ -199,11 +199,11 @@ class TestStepTable extends Component {
                 }]}
               >
                 <Text>
-                  <Tooltip title={expectedResult}>
-                    <div className="c7n-text-wrap">
-                      {expectedResult}
-                    </div>
-                  </Tooltip>
+                  {/* <Tooltip title={expectedResult}> */}
+                  <div className="c7n-text-wrap">
+                    {expectedResult}
+                  </div>
+                  {/* </Tooltip> */}
                 </Text>
                 <Edit>
                   <TextArea autoFocus autosize />
@@ -224,11 +224,14 @@ class TestStepTable extends Component {
                 originData={attachments}
               >
                 <Text>
-                  <div style={{ display: 'flex', overflow: 'hidden', minHeight: 20 }}>
+                  <div style={{ minHeight: 20 }}>
                     {attachments.map(attachment => (
-                      <div style={{ fontSize: '12px', flexShrink: 0, margin: '0 2px' }} className="c7n-text-wrap">
+                      <div style={{
+                        display: 'flex', fontSize: '12px', flexShrink: 0, margin: '5px 2px', alignItems: 'center',
+                      }}
+                      >
                         <Icon type="attach_file" style={{ fontSize: '12px', color: 'rgba(0,0,0,0.65)' }} />
-                        <a href={attachment.url} target="_blank" rel="noopener noreferrer">{attachment.attachmentName}</a>
+                        <a className="c7n-text-dot" style={{ margin: '2px 5px', fontSize: '13px' }} href={attachment.url} target="_blank" rel="noopener noreferrer">{attachment.attachmentName}</a>
                       </div>
                     ))
                     }

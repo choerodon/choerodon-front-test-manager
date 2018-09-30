@@ -182,7 +182,7 @@ class CycleExecuteShow extends Component {
               bodyStyle={styles.cardBodyStyle}
             >
               <div style={{ ...styles.cardTitle, marginBottom: 10 }}>
-                <Icon type="expand_more" />
+                {/* <Icon type="expand_more" /> */}
                 <span style={styles.cardTitleText}><FormattedMessage id="execute_testDetail" /></span>
               </div>
               <StepTable disabled={disabled} />
@@ -194,7 +194,7 @@ class CycleExecuteShow extends Component {
               bodyStyle={styles.cardBodyStyle}
             >
               <div style={{ ...styles.cardTitle, marginBottom: 10 }}>
-                <Icon type="expand_more" />
+                {/* <Icon type="expand_more" /> */}
                 <span style={styles.cardTitleText}><FormattedMessage id="execute_executeHistory" /></span>
               </div>
               <div style={{ padding: '0 20px' }}>

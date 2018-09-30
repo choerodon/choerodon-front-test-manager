@@ -248,7 +248,7 @@ class IssueTreeTitle extends Component {
         ? null : */}
           {
             type === 'version'
-              ? <Icon type="create_new_folder" className="c7n-add-folder" onClick={this.addFolder.bind(this, data)} />
+              ? <Tooltip title="添加文件夹"><Icon type="create_new_folder" className="c7n-add-folder" onClick={this.addFolder.bind(this, data)} /></Tooltip>
               : null
           }
           {

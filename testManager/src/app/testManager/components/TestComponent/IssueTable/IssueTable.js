@@ -70,9 +70,9 @@ class IssueTable extends Component {
         {renderPriority(priorityCode, priorityName)}
         {renderVersions(versionIssueRelDTOList)}
         {renderFolder(folderName)}
-        {renderComponents(componentIssueRelDTOList)}
+        {/* {renderComponents(componentIssueRelDTOList)} */}
         {/* 标签 */}
-        {renderLabels(labelIssueRelDTOList)}
+        {/* {renderLabels(labelIssueRelDTOList)} */}
         {renderAssigned(assigneeId, assigneeName, assigneeImageUrl)}
         {renderStatus(statusName, statusColor)}
       </div>

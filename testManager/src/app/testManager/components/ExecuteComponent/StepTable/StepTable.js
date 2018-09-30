@@ -6,7 +6,7 @@ import { FormattedMessage } from 'react-intl';
 import _ from 'lodash';
 import { editCycleStep, addDefects } from '../../../api/CycleExecuteApi';
 import {
-  TextEditToggle, UploadInTable, DefectSelect,
+  TextEditToggle, UploadInTable, DefectSelect,StatusTags
 } from '../../CommonComponent';
 import { delta2Text } from '../../../common/utils';
 
@@ -115,9 +115,13 @@ class StepTable extends Component {
       const { statusName, statusId, statusColor } = status;
       return (
         <Option value={statusId} key={statusId}>
-          <div style={{ ...styles.statusOption, ...{ background: statusColor } }}>
+        <StatusTags
+          color={statusColor}
+          name={statusName}
+          />
+          {/* <div style={{ ...styles.statusOption, ...{ background: statusColor } }}>
             {statusName}
-          </div>
+          </div> */}
         </Option>
       );
     });
@@ -131,38 +135,33 @@ class StepTable extends Component {
       key: 'testStep',
       width: '10%',
       render: testStep => (
-        <Tooltip title={testStep}>
-          <div className="c7n-text-dot">
-            {testStep}
-          </div>
-        </Tooltip>
+        // <Tooltip title={testStep}>
+        <div 
+          dangerouslySetInnerHTML={{ __html: testStep && testStep.replace(/\n/g, '<br />') }}
+        />
+        // </Tooltip>
       ),
     }, {
       title: <FormattedMessage id="execute_testData" />,
       dataIndex: 'testData',
       key: 'testData',
       render: testData => (
-        <Tooltip title={testData}>
-          <div
-            className="c7n-text-dot"
-          >
-            {testData}
-          </div>
-        </Tooltip>
+        // <Tooltip title={testData}>
+        <div
+          dangerouslySetInnerHTML={{ __html: testData && testData.replace(/\n/g, '<br />') }}
+        /> 
+        // </Tooltip>
       ),
     }, {
       title: <FormattedMessage id="execute_expectedOutcome" />,
       dataIndex: 'expectedResult',
       key: 'expectedResult',
       render: expectedResult => (
-        <Tooltip title={expectedResult}>
-          <div
-
-            className="c7n-text-dot"
-          >
-            {expectedResult}
-          </div>
-        </Tooltip>
+        // <Tooltip title={expectedResult}>
+        <div
+          dangerouslySetInnerHTML={{ __html: expectedResult && expectedResult.replace(/\n/g, '<br />') }}
+        />
+        // </Tooltip> 
       ),
     },
     {
@@ -171,28 +170,18 @@ class StepTable extends Component {
       key: 'stepAttachment',
       render(stepAttachment) {
         return (
-          <Tooltip title={(
-            <div>
-              {stepAttachment.filter(attachment => attachment.attachmentType === 'CASE_STEP').map((attachment, i) => (
-                <a
-                  href={attachment.url}
-                  style={{
-                    fontSize: '13px',
-                    color: 'white',
-                  }}
-                >                  
-                  {attachment.attachmentName}           
-                  
-                </a>))}
-            </div>
-          )}
-          >
-            <div
-              className="c7n-text-dot"
-            >
-              {stepAttachment.filter(attachment => attachment.attachmentType === 'CASE_STEP').map((attachment, i) => attachment.attachmentName).join(',')}
-            </div>
-          </Tooltip>
+          <div>
+            {stepAttachment.filter(attachment => attachment.attachmentType === 'CASE_STEP').map(attachment => (
+              <div style={{
+                display: 'flex', fontSize: '12px', flexShrink: 0, margin: '5px 2px', alignItems: 'center',
+              }}
+              >
+                <Icon type="attach_file" style={{ fontSize: '12px', color: 'rgba(0,0,0,0.65)' }} />
+                <a className="c7n-text-dot" style={{ margin: '2px 5px', fontSize: '13px' }} href={attachment.url} target="_blank" rel="noopener noreferrer">{attachment.attachmentName}</a>
+              </div>
+            ))
+                }
+          </div>
         );
       },
     },
@@ -215,9 +204,13 @@ class StepTable extends Component {
               originData={stepStatus}
             >
               <Text>
-                <div style={{ ...styles.statusOption, ...{ background: statusColor } }}>
+              <StatusTags
+          color={statusColor}
+          name={statusName}
+          />
+                {/* <div style={{ ...styles.statusOption, ...{ background: statusColor } }}>
                   {statusName}
-                </div>
+                </div> */}
               </Text>
               <Edit>
                 <Select autoFocus style={{ width: 85 }}>
@@ -243,15 +236,10 @@ class StepTable extends Component {
             originData={delta2Text(comment)}
           >
             <Text>
-              <div
-                style={{
-                  width: 100,
-                  height: 20,
-                }}
-                className="c7n-text-dot"
-              >
-                {delta2Text(comment)}
-              </div>
+              <div 
+                style={{ minHeight: 20 }}
+                dangerouslySetInnerHTML={{ __html: delta2Text(comment) && delta2Text(comment).replace(/\n/g, '<br />') }}
+              />
             </Text>
             <Edit>
               <TextArea autosize autoFocus />
@@ -293,11 +281,14 @@ class StepTable extends Component {
             disabled={disabled}
           >
             <Text>
-              <div style={{ display: 'flex', overflow: 'hidden', height: 20 }}>
+              <div style={{ minHeight: 20 }}>
                 {stepAttachment.filter(attachment => attachment.attachmentType === 'CYCLE_STEP').map(attachment => (
-                  <div style={{ fontSize: '12px', flexShrink: 0, margin: '0 2px' }} className="c7n-text-dot">
+                  <div style={{
+                    display: 'flex', fontSize: '12px', flexShrink: 0, margin: '5px 2px', alignItems: 'center',
+                  }}
+                  >
                     <Icon type="attach_file" style={{ fontSize: '12px', color: 'rgba(0,0,0,0.65)' }} />
-                    <a href={attachment.url} target="_blank" rel="noopener noreferrer">{attachment.attachmentName}</a>
+                    <a className="c7n-text-dot" style={{ margin: '2px 5px', fontSize: '13px' }} href={attachment.url} target="_blank" rel="noopener noreferrer">{attachment.attachmentName}</a>
                   </div>
                 ))
                 }
@@ -342,29 +333,22 @@ class StepTable extends Component {
           <Text>
             {
               defects.length > 0 ? (
-                <Tooltip title={(
-                  <div>
-                    {defects.map((defect, i) => (
-                      <div style={{
-                        fontSize: '13px',
-                        color: 'white',
-                      }}
-                      >
-                        {defect.issueInfosDTO && defect.issueInfosDTO.issueName}
-                      </div>))}
-                  </div>
-                )}
-                >
-                  <div
-                    style={{
-                      width: 100,
-                      height: 20,
+              // <Tooltip title={(
+                <div>
+                  {defects.map((defect, i) => (
+                    <div style={{
+                      fontSize: '13px',                 
                     }}
-                    className="c7n-text-dot"
-                  >
-                    {defects.map((defect, i) => defect.issueInfosDTO && defect.issueInfosDTO.issueName).join(',')}
-                  </div>
-                </Tooltip>
+                    >
+                      {defect.issueInfosDTO && defect.issueInfosDTO.issueName}
+                    </div>))}
+                </div>
+              // )}
+              // >
+              // <div>
+              // {defects.map((defect, i) => defect.issueInfosDTO && defect.issueInfosDTO.issueName).join(',')}
+              // </div> */}
+              // </Tooltip> 
               ) : (
                 <div
                   style={{

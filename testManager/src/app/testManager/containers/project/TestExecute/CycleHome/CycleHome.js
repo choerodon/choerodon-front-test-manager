@@ -22,7 +22,7 @@ import { editCycle } from '../../../../api/CycleExecuteApi';
 import {
   TreeTitle, CreateCycle, EditCycle, ShowCycleData, CloneCycle,
 } from '../../../../components/CycleComponent';
-import { RichTextShow, SelectFocusLoad, RadioButton } from '../../../../components/CommonComponent';
+import { RichTextShow, SelectFocusLoad, RadioButton,StatusTags } from '../../../../components/CommonComponent';
 import {
   delta2Html, delta2Text, issueLink, getParams,
 } from '../../../../common/utils';
@@ -593,10 +593,14 @@ class CycleHome extends Component {
         const statusColor = _.find(statusList, { statusId: executionStatus })
           ? _.find(statusList, { statusId: executionStatus }).statusColor : '';
         return (
-          <div style={{ ...styles.statusOption, ...{ background: statusColor } }}>
-            {_.find(statusList, { statusId: executionStatus })
-              && _.find(statusList, { statusId: executionStatus }).statusName}
-          </div>
+          // <div style={{ ...styles.statusOption, ...{ background: statusColor } }}>
+          //   {_.find(statusList, { statusId: executionStatus })
+          //     && _.find(statusList, { statusId: executionStatus }).statusName}
+          // </div>
+          _.find(statusList, { statusId: executionStatus })&&<StatusTags
+          color={statusColor}
+          name={_.find(statusList, { statusId: executionStatus }).statusName}
+          />
         );
       },
     }, {
@@ -839,7 +843,7 @@ class CycleHome extends Component {
         <Content
           // title={<FormattedMessage id="cycle_title" />}
           // description={<FormattedMessage id="cycle_description" />}
-          style={{ paddingBottom: 0, paddingRight: 0 }}
+          style={{ paddingBottom: 0, paddingRight: 0, display: 'flex' }}
         >
           <Spin spinning={loading}>
             <CreateCycle
@@ -925,7 +929,7 @@ class CycleHome extends Component {
                     </div>                    
                   </div>
                 </div>
-                <div className="c7n-chlh-tree" style={{ height: window.innerHeight - 200 }}>
+                <div className="c7n-chlh-tree">
                   <Tree
                     selectedKeys={selectedKeys}
                     expandedKeys={expandedKeys}
