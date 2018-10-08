@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Select } from 'choerodon-ui';
 import _ from 'lodash';
-import { removeDefect, addDefects } from '../../../api/CycleExecuteApi';
+import { removeDefect, addDefects } from '../../../api/ExecuteDetailApi';
 import { getIssuesForDefects } from '../../../api/agileApi';
 import './DefectSelect.scss';
 import SelectCreateIssueFooter from '../SelectCreateIssueFooter';

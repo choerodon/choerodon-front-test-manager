@@ -12,13 +12,13 @@ import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import FileSaver from 'file-saver';
 import moment from 'moment';
-import './CycleHome.scss';
+import './TestExecuteHome.scss';
 import { getUsers } from '../../../../api/CommonApi';
 import {
   getCycles, deleteExecute, getCycleById,
   clone, addFolder, getStatusList, exportCycle,
 } from '../../../../api/cycleApi';
-import { editCycle } from '../../../../api/CycleExecuteApi';
+import { editCycle } from '../../../../api/ExecuteDetailApi';
 import {
   TreeTitle, CreateCycle, EditCycle, ShowCycleData, CloneCycle,
 } from '../../../../components/CycleComponent';
@@ -49,9 +49,9 @@ const dataList = [];
 
 const { TreeNode } = Tree;
 @observer
-class CycleHome extends Component {
+class TestExecuteHome extends Component {
   state = {
-    CreateCycleExecuteVisible: false,
+    CreateExecuteDetailVisible: false,
     CreateCycleVisible: false,
     EditCycleVisible: false,
     CloneCycleVisible: false,
@@ -538,7 +538,7 @@ class CycleHome extends Component {
   render() {
     // window.console.log('render');
     const {
-      CreateCycleExecuteVisible, CreateCycleVisible, EditCycleVisible, CloneCycleVisible,
+      CreateExecuteDetailVisible, CreateCycleVisible, EditCycleVisible, CloneCycleVisible,
       currentCloneCycle, loading, currentEditValue, testList, rightLoading, leftVisible,
       searchValue, autoExpandParent,
       executePagination,
@@ -867,14 +867,14 @@ class CycleHome extends Component {
               onCancel={() => { this.setState({ CloneCycleVisible: false }); }}
               onOk={() => { this.setState({ CloneCycleVisible: false }); this.refresh(); }}
             />
-            <div className="c7n-cycleHome">
+            <div className="c7n-TestExecuteHome">
 
               <div className={this.state.sideVisible ? 'c7n-ch-side' : 'c7n-ch-hidden'} style={{ minHeight: window.innerHeight - 128 }}>
 
                 <div className="c7n-chs-button">
                   <div
                     role="none"
-                    className="c7n-cycleHome-button"
+                    className="c7n-TestExecuteHome-button"
                     onClick={() => {
                       this.setState({
                         leftVisible: true,
@@ -921,7 +921,7 @@ class CycleHome extends Component {
                   <div className="c7n-chlh-button">
                     <div
                       role="none"
-                      className="c7n-cycleHome-button"
+                      className="c7n-TestExecuteHome-button"
                       onClick={() => {
                         this.setState({
                           leftVisible: false,
@@ -1011,4 +1011,4 @@ class CycleHome extends Component {
   }
 }
 
-export default CycleHome;
+export default TestExecuteHome;

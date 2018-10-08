@@ -29,7 +29,7 @@ export function addCycle(data) {
   const projectId = AppState.currentMenuType.id;
   return axios.post(`/test/v1/projects/${projectId}/cycle`, data);
 }
-export function editCycleExecute(data) {
+export function editExecuteDetail(data) {
   const projectId = AppState.currentMenuType.id;
   return axios.post(`/test/v1/projects/${projectId}/cycle/case/update`, data);
 }
@@ -66,11 +66,11 @@ export function editFolder(data) {
  * @param {*} data
  * @returns
  */
-export function createCycleExecute(data) {
+export function createExecuteDetail(data) {
   const projectId = AppState.currentMenuType.id;
   return axios.post(`/test/v1/projects/${projectId}/cycle/case/insert/batch`, data);
 }
-export function createCycleExecuteFromCycle(fromCycleId, toCycleId, assignee, filter) {
+export function createExecuteDetailFromCycle(fromCycleId, toCycleId, assignee, filter) {
   const projectId = AppState.currentMenuType.id;
   return axios.post(`/test/v1/projects/${projectId}/cycle/case/insert/case/filter/${fromCycleId}/to/${toCycleId}/assigneeTo/${assignee}`, filter);
 }

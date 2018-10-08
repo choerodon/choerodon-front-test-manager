@@ -7,7 +7,7 @@ import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import {
   editCycleSide, deleteAttachment, removeDefect, addDefects, 
-} from '../../../api/CycleExecuteApi';
+} from '../../../api/ExecuteDetailApi';
 import { getIssueList } from '../../../api/agileApi';
 import './EditTestDetail.less';
 import WYSIWYGEditor from '../../WYSIWYGEditor';

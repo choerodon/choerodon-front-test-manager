@@ -9,7 +9,7 @@ import { FormattedMessage } from 'react-intl';
 import TimeAgo from 'timeago-react';
 import { cycleLink, issueLink } from '../../../common/utils';
 import './TestExecuteTable.scss';
-import { editCycle } from '../../../api/CycleExecuteApi';
+import { editCycle } from '../../../api/ExecuteDetailApi';
 import {StatusTags} from '../../CommonComponent';
 const { AppState } = stores;
 

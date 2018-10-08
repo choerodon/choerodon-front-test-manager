@@ -175,7 +175,7 @@ const zhCN = {
   cycle_environment: '环境',
   cycle_createBy: '创建人',
   cycle_startTime: '开始时间',
-  cycle_cycleExecute: '循环层执行数',
+  cycle_ExecuteDetail: '循环层执行数',
   cycle_endTime: '结束时间',
   cycle_totalExecute: '执行数',
   cycle_totalExecuted: '已执行数',

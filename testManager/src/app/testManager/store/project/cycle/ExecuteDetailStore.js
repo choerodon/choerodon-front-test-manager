@@ -6,14 +6,14 @@ import { store, stores } from 'choerodon-front-boot';
 import _ from 'lodash';
 import {
   getCycle, getCycleDetails, getStatusList, getCycleHistiorys, 
-} from '../../../api/CycleExecuteApi';
+} from '../../../api/ExecuteDetailApi';
 import { getUsers } from '../../../api/CommonApi';
 import { getIssueList, getIssuesForDefects } from '../../../api/agileApi';
 
 const { AppState } = stores;
 
-@store('CycleExecuteStore')
-class CycleExecuteStore {
+@store('ExecuteDetailStore')
+class ExecuteDetailStore {
   @observable id = null;
 
   @observable issueList = [];
@@ -291,5 +291,5 @@ class CycleExecuteStore {
   // }
 }
 
-const cycleExecuteStore = new CycleExecuteStore();
-export default cycleExecuteStore;
+const executeDetailStore = new ExecuteDetailStore();
+export default executeDetailStore;

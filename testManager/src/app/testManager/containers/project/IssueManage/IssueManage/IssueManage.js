@@ -11,7 +11,7 @@ import {
 import { FormattedMessage } from 'react-intl';
 import FileSaver from 'file-saver';
 import '../../../../assets/main.scss';
-import './TestHome.scss';
+import './IssueManage.scss';
 import IssueStore from '../../../../store/project/IssueStore';
 import IssueTreeStore from '../../../../store/project/treeStore/IssueTreeStore';
 import {
@@ -442,7 +442,7 @@ class Test extends Component {
           >
             {treeShow && (
               <IssueTree
-                ref={tree => this.tree = tree}
+                ref={(tree) => { this.tree = tree; }}
                 onClose={() => {
                   IssueStore.setTreeShow(false);
                 }}

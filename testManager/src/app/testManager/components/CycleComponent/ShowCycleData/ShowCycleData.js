@@ -90,7 +90,7 @@ class ShowCycleData extends Component {
               </div>
               {/* <div className="c7n-right-card-item">
                 <div className="c7n-right-card-item-label">
-                  <FormattedMessage id="cycle_cycleExecute" />
+                  <FormattedMessage id="cycle_ExecuteDetail" />
 ：
                 </div>
                 <div className="c7n-right-card-item-text">

@@ -6,11 +6,11 @@ import {
 import { asyncRouter, nomatch } from 'choerodon-front-boot';
 
 const TestPlanHome = asyncRouter(() => (import('./TestPlanHome')));
-const CycleExecuteShow = asyncRouter(() => import('./CycleExecuteShow'));
+const ExecuteDetailShow = asyncRouter(() => import('./ExecuteDetailShow'));
 const TestIndex = ({ match }) => (
   <Switch>
     <Route exact path={match.url} component={TestPlanHome} />
-    <Route exact path={`${match.url}/executeShow/:id?`} component={CycleExecuteShow} />
+    <Route exact path={`${match.url}/executeShow/:id?`} component={ExecuteDetailShow} />
     <Route path="*" component={nomatch} />
   </Switch>
 );

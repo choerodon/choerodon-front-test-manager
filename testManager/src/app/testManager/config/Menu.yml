@@ -10,7 +10,7 @@
           - 'test-manager-service.test-cycle.getTestCycle'
     - "manager":
         icon: description
-        Routes: /testManager/manager
+        Routes: /testManager/IssueManage
         sort: 2
         permission:
           - 'test-manager-service.test-cycle.getTestCycle'

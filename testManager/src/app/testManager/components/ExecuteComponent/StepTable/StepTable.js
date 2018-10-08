@@ -4,7 +4,7 @@ import {
 } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 import _ from 'lodash';
-import { editCycleStep, addDefects } from '../../../api/CycleExecuteApi';
+import { editCycleStep, addDefects } from '../../../api/ExecuteDetailApi';
 import {
   TextEditToggle, UploadInTable, DefectSelect,StatusTags
 } from '../../CommonComponent';
@@ -12,7 +12,7 @@ import { delta2Text } from '../../../common/utils';
 
 import EditTestDetail from '../EditTestDetail';
 import './StepTable.scss';
-import CycleExecuteStore from '../../../store/project/cycle/CycleExecuteStore';
+import ExecuteDetailStore from '../../../store/project/cycle/ExecuteDetailStore';
 
 const { TextArea } = Input;
 const Option = Select.Option;
@@ -92,7 +92,7 @@ class StepTable extends Component {
       // this.setState({
       //   loading: false,
       // });
-      CycleExecuteStore.loadDetailList();
+      ExecuteDetailStore.loadDetailList();
     }).catch((error) => {
       window.console.log(error);
       // this.setState({
@@ -106,9 +106,9 @@ class StepTable extends Component {
     const that = this;
     // const { onOk, enterLoad, leaveLoad } = this.props;
     const { disabled } = this.props;
-    const stepStatusList = CycleExecuteStore.getStepStatusList;
-    const detailList = CycleExecuteStore.getDetailList;
-    const detailPagination = CycleExecuteStore.getDetailPagination;
+    const stepStatusList = ExecuteDetailStore.getStepStatusList;
+    const detailList = ExecuteDetailStore.getDetailList;
+    const detailPagination = ExecuteDetailStore.getDetailPagination;
     // const { getFieldDecorator } = this.props.form;
     const { editVisible, editing } = this.state;
     const options = stepStatusList.map((status) => {
@@ -297,9 +297,9 @@ class StepTable extends Component {
             <Edit>
               <UploadInTable
                 fileList={stepAttachment.filter(attachment => attachment.attachmentType === 'CYCLE_STEP')}
-                onOk={CycleExecuteStore.loadDetailList}
-                enterLoad={CycleExecuteStore.enterloading}
-                leaveLoad={CycleExecuteStore.unloading}
+                onOk={ExecuteDetailStore.loadDetailList}
+                enterLoad={ExecuteDetailStore.enterloading}
+                leaveLoad={ExecuteDetailStore.unloading}
                 config={{
                   attachmentLinkId: record.executeStepId,
                   attachmentType: 'CYCLE_STEP',
@@ -319,16 +319,16 @@ class StepTable extends Component {
           disabled={disabled}
           onSubmit={() => {   
             if (that.needAdd.length > 0) {
-              CycleExecuteStore.enterloading();
+              ExecuteDetailStore.enterloading();
               addDefects(that.needAdd).then((res) => {
-                CycleExecuteStore.loadDetailList();
+                ExecuteDetailStore.loadDetailList();
               });
             } else {
-              CycleExecuteStore.loadDetailList();
+              ExecuteDetailStore.loadDetailList();
             }
           }}
           // originData={{ defects }}
-          onCancel={CycleExecuteStore.loadDetailList}
+          onCancel={ExecuteDetailStore.loadDetailList}
         >
           <Text>
             {
@@ -381,7 +381,7 @@ class StepTable extends Component {
       //         that.setState({
       //           editVisible: true,
       //           editing: { ...recorder, ...{ stepStatusList:
-      //  CycleExecuteStore.getStepStatusList } },
+      //  ExecuteDetailStore.getStepStatusList } },
       //         });
       //       }}
       //     />);
@@ -394,11 +394,11 @@ class StepTable extends Component {
           visible={editVisible}
           onCancel={() => {
             this.setState({ editVisible: false });
-            CycleExecuteStore.loadDetailList();
+            ExecuteDetailStore.loadDetailList();
           }}
           onOk={(data) => {
             this.setState({ editVisible: false });
-            CycleExecuteStore.loadDetailList();
+            ExecuteDetailStore.loadDetailList();
           }}
           editing={editing}
         />
@@ -407,7 +407,7 @@ class StepTable extends Component {
           dataSource={detailList}
           columns={columns}
           pagination={detailPagination}
-          onChange={CycleExecuteStore.loadDetailList}
+          onChange={ExecuteDetailStore.loadDetailList}
         />
       </div>);
   }

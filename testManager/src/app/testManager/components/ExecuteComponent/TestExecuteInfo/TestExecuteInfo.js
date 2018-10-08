@@ -12,9 +12,9 @@ import { uploadFile } from '../../../api/CommonApi';
 import { delta2Html } from '../../../common/utils';
 import {
   addDefects, editCycle, deleteAttachment, removeDefect,
-} from '../../../api/CycleExecuteApi';
+} from '../../../api/ExecuteDetailApi';
 import FullEditor from '../../FullEditor';
-import CycleExecuteStore from '../../../store/project/cycle/CycleExecuteStore';
+import ExecuteDetailStore from '../../../store/project/cycle/ExecuteDetailStore';
 import './TestExecuteInfo.scss';
 
 
@@ -86,12 +86,12 @@ class TestExecuteInfo extends Component {
       const config = {
         bucketName: 'test',
         comment: '',
-        attachmentLinkId: CycleExecuteStore.getCycleData.executeId,
+        attachmentLinkId: ExecuteDetailStore.getCycleData.executeId,
         attachmentType: 'CYCLE_CASE',
       };
-      CycleExecuteStore.enterloading();
+      ExecuteDetailStore.enterloading();
       uploadFile(formData, config).then(() => {
-        CycleExecuteStore.getInfo();
+        ExecuteDetailStore.getInfo();
         // 清空input值，保证触发change
         this.uploadInput.value = '';
       }).catch(() => {
@@ -104,8 +104,8 @@ class TestExecuteInfo extends Component {
 
 
   addDefects = (issueList) => {
-    const cycleData = CycleExecuteStore.getCycleData;
-    const defectIds = CycleExecuteStore.getDefectIds;
+    const cycleData = ExecuteDetailStore.getCycleData;
+    const defectIds = ExecuteDetailStore.getDefectIds;
     const { executeId } = cycleData;
     const needAdd = issueList.filter(issueId => !defectIds.includes(issueId))
       .map(issueId => ({
@@ -115,17 +115,17 @@ class TestExecuteInfo extends Component {
         // defectName: item.issueNum,
       }));
     if (needAdd.length > 0) {
-      CycleExecuteStore.enterloading();
+      ExecuteDetailStore.enterloading();
       addDefects(needAdd).then((res) => {
-        CycleExecuteStore.getInfo();
+        ExecuteDetailStore.getInfo();
       });
     }
   }
 
   handleDefectsChange = (List) => {
     // const { originDefects, defectIds, cycleData } = this.state;
-    const cycleData = CycleExecuteStore.getCycleData;
-    const defectIds = CycleExecuteStore.getDefectIds;
+    const cycleData = ExecuteDetailStore.getCycleData;
+    const defectIds = ExecuteDetailStore.getDefectIds;
     const oldList = [...defectIds];
     window.console.log('old', oldList, 'new', List);
     // 删除元素
@@ -138,7 +138,7 @@ class TestExecuteInfo extends Component {
           cycleData.defects.splice(defectIds.indexOf(deleteEle[0].toString()));
           removeDefect(id).then((res) => {
             cycleData.defects.splice(defectIds.indexOf(deleteEle[0]));
-            CycleExecuteStore.setCycleData(cycleData);
+            ExecuteDetailStore.setCycleData(cycleData);
           });
         }
       }
@@ -150,7 +150,7 @@ class TestExecuteInfo extends Component {
 
   submit = (updateData) => {
     // window.console.log('submit', originData);
-    const cycleData = CycleExecuteStore.getCycleData;
+    const cycleData = ExecuteDetailStore.getCycleData;
     const newData = { ...cycleData, ...updateData };
     newData.assignedTo = newData.assignedTo || 0;
     // 删除一些不必要字段
@@ -164,7 +164,7 @@ class TestExecuteInfo extends Component {
       this.setState({
         edit: false,
       });
-      CycleExecuteStore.getInfo();
+      ExecuteDetailStore.getInfo();
     }).catch((error) => {
       Choerodon.prompt('网络异常');
     });
@@ -172,26 +172,26 @@ class TestExecuteInfo extends Component {
 
   render() {
     const { disabled } = this.props;
-    const statusList = CycleExecuteStore.getStatusList;
-    const issueList = CycleExecuteStore.getIssueList;
-    const userList = CycleExecuteStore.getUserList;
-    const cycleData = CycleExecuteStore.getCycleData;
+    const statusList = ExecuteDetailStore.getStatusList;
+    const issueList = ExecuteDetailStore.getIssueList;
+    const userList = ExecuteDetailStore.getUserList;
+    const cycleData = ExecuteDetailStore.getCycleData;
     // debugger;
-    const selectLoading = CycleExecuteStore.selectLoading;
+    const selectLoading = ExecuteDetailStore.selectLoading;
     const {
       executionStatus, assigneeUser, lastUpdateUser,
       lastUpdateDate, comment, defects,
     } = cycleData;
-    const fileList = CycleExecuteStore.getFileList;
-    const defectIds = CycleExecuteStore.getDefectIds;
-    const { statusColor, statusName } = CycleExecuteStore.getStatusById(executionStatus);
+    const fileList = ExecuteDetailStore.getFileList;
+    const defectIds = ExecuteDetailStore.getDefectIds;
+    const { statusColor, statusName } = ExecuteDetailStore.getStatusById(executionStatus);
     const props = {
       onRemove: (file) => {
         if (file.url) {
-          CycleExecuteStore.enterloading();
+          ExecuteDetailStore.enterloading();
           deleteAttachment(file.uid).then((data) => {
             // window.console.log(data);
-            CycleExecuteStore.getInfo();
+            ExecuteDetailStore.getInfo();
           });
           // 写服务端删除逻辑
         }
@@ -306,10 +306,10 @@ class TestExecuteInfo extends Component {
                     allowClear
                     autoFocus
                     filterOption={false}
-                    onFilterChange={(value) => { CycleExecuteStore.loadUserList(value); }}
+                    onFilterChange={(value) => { ExecuteDetailStore.loadUserList(value); }}
                     loading={selectLoading}
                     style={{ width: 200 }}
-                    onFocus={() => { CycleExecuteStore.loadUserList(); }}
+                    onFocus={() => { ExecuteDetailStore.loadUserList(); }}
                   >
                     {userOptions}
                   </Select>
@@ -371,8 +371,8 @@ class TestExecuteInfo extends Component {
                     // value={defectIds}
                     style={{ minWidth: 250 }}
                     onChange={this.handleDefectsChange}
-                    onFilterChange={(value) => { CycleExecuteStore.loadIssueList(value); }}
-                    onFocus={() => { CycleExecuteStore.loadIssueList(); }}
+                    onFilterChange={(value) => { ExecuteDetailStore.loadIssueList(value); }}
+                    onFocus={() => { ExecuteDetailStore.loadIssueList(); }}
                   >
                     {defectsOptions}
                   </Select>

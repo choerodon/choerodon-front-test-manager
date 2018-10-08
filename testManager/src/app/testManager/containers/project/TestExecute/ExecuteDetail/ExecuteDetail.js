@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-  Table, Button, Icon, Card, Spin, Tooltip,
+  Table, Button, Icon, Card, Spin, Tooltip, 
 } from 'choerodon-ui';
 import { Page, Header, Content } from 'choerodon-front-boot';
 import { observer } from 'mobx-react';
@@ -9,9 +9,9 @@ import { FormattedMessage } from 'react-intl';
 import { RichTextShow, User } from '../../../../components/CommonComponent';
 // import EditTestDetail from '../../../../components/EditTestDetail';
 import { delta2Html, delta2Text } from '../../../../common/utils';
-import './CycleExecuteShow.less';
+import './ExecuteDetail.scss';
 import { StepTable, TestExecuteInfo } from '../../../../components/ExecuteComponent';
-import CycleExecuteStore from '../../../../store/project/cycle/CycleExecuteStore';
+import ExecuteDetailStore from '../../../../store/project/cycle/ExecuteDetailStore';
 
 const styles = {
   cardTitle: {
@@ -34,26 +34,26 @@ const styles = {
 };
 
 @observer
-class CycleExecuteShow extends Component {
+class ExecuteDetail extends Component {
   state = {
     editVisible: false,
     editing: null,
-    disabled: true,
   }
 
   componentDidMount() {
     const { id } = this.props.match.params;
-    CycleExecuteStore.getInfo(id);
+    ExecuteDetailStore.getInfo(id);
   }
 
   render() {
-    const { editVisible, editing, disabled } = this.state;
-    const loading = CycleExecuteStore.loading;
-    const cycleData = CycleExecuteStore.getCycleData;
-    // const detailList = CycleExecuteStore.getDetailList;
-    const historyList = CycleExecuteStore.getHistoryList;
-    const historyPagination = CycleExecuteStore.getHistoryPagination;
-    // const detailPagination = CycleExecuteStore.getDetailPagination;
+    const { disabled } = this.props;
+    const { editVisible, editing } = this.state;
+    const loading = ExecuteDetailStore.loading;
+    const cycleData = ExecuteDetailStore.getCycleData;
+    // const detailList = ExecuteDetailStore.getDetailList;
+    const historyList = ExecuteDetailStore.getHistoryList;
+    const historyPagination = ExecuteDetailStore.getHistoryPagination;
+    // const detailPagination = ExecuteDetailStore.getDetailPagination;
     // const that = this;
     const columnsHistory = [{
       title: <FormattedMessage id="execute_executive" />,
@@ -146,7 +146,7 @@ class CycleExecuteShow extends Component {
       lastUpdateDate, comment, defects,
     } = cycleData;
     return (
-      <Page className="c7n-cycleExecute">
+      <Page className="c7n-ExecuteDetail">
         <Header title={(
           <div>
             <Tooltip
@@ -167,7 +167,7 @@ class CycleExecuteShow extends Component {
         )}
         >
 
-          <Button onClick={() => CycleExecuteStore.getInfo()}>
+          <Button onClick={() => ExecuteDetailStore.getInfo()}>
             <Icon type="autorenew icon" />
             <span><FormattedMessage id="refresh" /></span>
           </Button>
@@ -203,7 +203,7 @@ class CycleExecuteShow extends Component {
                   dataSource={historyList}
                   columns={columnsHistory}
                   pagination={historyPagination}
-                  onChange={CycleExecuteStore.loadHistoryList}
+                  onChange={ExecuteDetailStore.loadHistoryList}
                 />
               </div>
             </Card>
@@ -215,4 +215,4 @@ class CycleExecuteShow extends Component {
 }
 
 
-export default withRouter(CycleExecuteShow);
+export default withRouter(ExecuteDetail);

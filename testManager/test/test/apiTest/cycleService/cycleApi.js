@@ -23,7 +23,7 @@ describe('Cycle Api-GET', () => {
     return cycleFunc.getFoldersByCycleId(testCycleId);
   });
   it('[GET] 根据Id查询执行', () => {
-    return cycleFunc.getCycleExecute(testExecuteId);
+    return cycleFunc.getExecuteDetail(testExecuteId);
   });
   it('[GET] 查询执行下的步骤', () => {
     return cycleFunc.getExecuteSteps(testExecuteId);
@@ -80,7 +80,7 @@ describe('Cycle Api-POST', () => {
   //     objectVersionNumber: 1,
   //   }
   //   // console.log(data)
-  //   return cycleFunc.createCycleExecute(data);
+  //   return cycleFunc.createExecuteDetail(data);
   // });  
   it('[POST] 在指定循环下创建文件夹', (done) => {
     const data = {

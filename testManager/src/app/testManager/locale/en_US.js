@@ -172,7 +172,7 @@ const enUS = {
   cycle_environment: 'Environment',
   cycle_createBy: 'Created by',
   cycle_startTime: 'Started on',
-  cycle_cycleExecute: 'Cycle Execute',
+  cycle_ExecuteDetail: 'Cycle Execute',
   cycle_endTime: 'Ended on',
   cycle_totalExecute: 'Total Execute',
   cycle_totalExecuted: 'Total Executed',

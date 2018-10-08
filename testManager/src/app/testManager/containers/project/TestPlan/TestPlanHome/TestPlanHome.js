@@ -12,7 +12,7 @@ import {
 } from 'choerodon-ui';
 import { Link } from 'react-router-dom';
 import {
-  getCycleById, getStatusList, editCycleExecute, deleteExecute,
+  getCycleById, getStatusList, editExecuteDetail, deleteExecute,
 } from '../../../../api/cycleApi';
 import {
   EventCalendar, PlanTree, CreateCycle, EditStage, EditCycle,
@@ -120,7 +120,7 @@ class TestPlanHome extends Component {
     delete temp.issueInfosDTO;
     temp.assignedTo = temp.assignedTo || 0;
     TestPlanStore.rightEnterLoading();
-    editCycleExecute({
+    editExecuteDetail({
       ...temp,
       ...{
         lastRank,
