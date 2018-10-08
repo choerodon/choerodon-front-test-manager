@@ -8,7 +8,7 @@ import FileSaver from 'file-saver';
 import TestPlanStore from '../../../store/project/TestPlan/TestPlanStore';
 import { CloneCycle } from '../../CycleComponent';
 import {  
-  clone, addFolder,  exportCycle,
+  clone, addFolder, exportCycle,
 } from '../../../api/cycleApi';
 import PlanTreeTitle from './PlanTreeTitle';
 import CreateStage from '../CreateStage';

@@ -17,7 +17,7 @@ import {
 import {
   EventCalendar, PlanTree, CreateCycle, EditStage, EditCycle,
 } from '../../../../components/TestPlanComponent';
-import { RichTextShow, SelectFocusLoad,StatusTags } from '../../../../components/CommonComponent';
+import { RichTextShow, SelectFocusLoad, StatusTags } from '../../../../components/CommonComponent';
 import DragTable from '../../../../components/DragTable';
 
 import { getUsers } from '../../../../api/CommonApi';
@@ -51,6 +51,7 @@ class TestPlanHome extends Component {
   }
 
   componentDidMount() {
+    TestPlanStore.setFilters({});
     TestPlanStore.setAssignedTo(null);
     TestPlanStore.setLastUpdatedBy(null);
     this.refresh();
@@ -248,10 +249,12 @@ class TestPlanHome extends Component {
           //   {_.find(statusList, { statusId: executionStatus })
           //     && _.find(statusList, { statusId: executionStatus }).statusName}
           // </div>
-          _.find(statusList, { statusId: executionStatus })&&<StatusTags
-          color={statusColor}
-          name={_.find(statusList, { statusId: executionStatus }).statusName}
+          _.find(statusList, { statusId: executionStatus }) && (
+          <StatusTags
+            color={statusColor}
+            name={_.find(statusList, { statusId: executionStatus }).statusName}
           />
+          )
         );
       },
     }, {

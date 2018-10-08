@@ -141,6 +141,7 @@ class TestPlanStore {
     if (data.type === 'folder') {
       this.setCalendarShowMode('single');
     } else {
+      this.setFilters({});
       this.setCalendarShowMode('multi');
     }
     // if (data.versionId) {
