@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { Icon, Popconfirm } from 'choerodon-ui';
-import { AppState } from 'choerodon-front-boot';
 import _ from 'lodash';
 import UserHead from '../../UserHead';
 import WYSIWYGEditor from '../../WYSIWYGEditor';
@@ -21,10 +20,6 @@ class Comment extends Component {
       expand: false,
     };
   }
-
-  componentDidMount() {
-  }
-
   confirm(commentId, e) {
     this.handleDeleteCommit(commentId);
   }

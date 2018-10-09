@@ -1,10 +1,8 @@
 import React, { Component } from 'react';
 import { Icon, Popconfirm, Popover } from 'choerodon-ui';
-import { AppState } from 'choerodon-front-boot';
 import _ from 'lodash';
 import UserHead from '../../UserHead';
 import { formatDate } from '../../../../common/utils';
-import { getUser } from '../../../../api/CommonApi';
 import './DataLog.scss';
 
 const PROP = {

@@ -3,7 +3,7 @@ import { stores, axios, Permission } from 'choerodon-front-boot';
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import {
-  Select, Input, Button, Modal, Tooltip, Progress, Dropdown, Menu, Spin, Icon,
+  Select, Input, Button, Modal, Tooltip, Dropdown, Menu, Spin, Icon,
 } from 'choerodon-ui';
 import {
   STATUS, COLOR, TYPE, ICON, TYPE_NAME,
@@ -11,26 +11,23 @@ import {
 import './EditIssue.scss';
 import '../../../assets/main.scss';
 import {
-  UploadButtonNow, NumericInput, ReadAndEdit, IssueDescription,
+  UploadButtonNow, ReadAndEdit, IssueDescription,
 } from '../CommonComponent';
 import {
   delta2Html, handleFileUpload, text2Delta, beforeTextUpload, formatDate, returnBeforeTextUpload,
 } from '../../../common/utils';
 import {
-  loadDatalogs, loadLinkIssues, loadLabels, loadIssue, loadWorklogs,
-  updateIssue, loadPriorities, loadComponents, loadVersions, loadEpics,
+  loadDatalogs, loadLinkIssues, loadLabels, loadIssue,
+  updateIssue, loadPriorities, loadComponents,
   createCommit, deleteIssue, loadStatus, cloneIssue,
 } from '../../../api/IssueApi';
 import { getSelf, getUsers, getUser } from '../../../api/CommonApi';
 import WYSIWYGEditor from '../WYSIWYGEditor';
 import FullEditor from '../FullEditor';
-import DailyLog from '../DailyLog';
 import CreateLinkTask from '../CreateLinkTask';
 import UserHead from '../UserHead';
 import Comment from './Component/Comment';
-import Log from './Component/Log';
 import DataLogs from './Component/DataLogs';
-import IssueList from './Component/IssueList';
 import LinkList from './Component/LinkList';
 import CopyIssue from '../CopyIssue';
 import TestStepTable from '../TestStepTable';
@@ -77,7 +74,6 @@ class EditIssueNarrow extends Component {
       edit: false,
       addCommit: false,
       addCommitDes: '',
-      dailyLogShow: false,
       createLinkTaskShow: false,
       createTestStepShow: false,
       editDesShow: false,
@@ -116,8 +112,6 @@ class EditIssueNarrow extends Component {
       componentIssueRelDTOList: [],
       activeSprint: {},
       closeSprint: [],
-
-      worklogs: [],
       datalogs: [],
       fileList: [],
       testStepData: [],
@@ -187,14 +181,6 @@ class EditIssueNarrow extends Component {
     }
   }
 
-  getWorkloads = () => {
-    const { worklogs } = this.state;
-    if (!Array.isArray(worklogs)) {
-      return 0;
-    }
-    const workTimeArr = _.reduce(worklogs, (sum, v) => sum + (v.workTime || 0), 0);
-    return workTimeArr;
-  }
 
   /**
    * Attachment
@@ -308,7 +294,7 @@ class EditIssueNarrow extends Component {
   }
 
   getCurrentNav(e) {
-    const eles = ['detail', 'des', 'test1', 'test2', 'attachment', 'commit', 'log', 'data_log', 'link_task'];
+    const eles = ['detail', 'des', 'test1', 'test2', 'attachment', 'commit', 'data_log', 'link_task'];
     return _.find(eles, i => this.isInLook(document.getElementById(i)));
   }
 
@@ -458,11 +444,6 @@ class EditIssueNarrow extends Component {
       loadIssue(issueId).then((res) => {
         this.setAnIssueToState(res);
       });
-      loadWorklogs(issueId).then((res) => {
-        this.setState({
-          worklogs: res,
-        });
-      });
       loadLinkIssues(issueId).then((res) => {
         this.setState({
           linkIssues: res,
@@ -494,11 +475,6 @@ class EditIssueNarrow extends Component {
   refresh = () => {
     loadIssue(this.state.origin.issueId).then((res) => {
       this.setAnIssueToState(res);
-    });
-    loadWorklogs(this.state.origin.issueId).then((res) => {
-      this.setState({
-        worklogs: res,
-      });
     });
   }
 
@@ -724,10 +700,7 @@ class EditIssueNarrow extends Component {
   handleClickMenu(e) {
     console.log(e.key);
     switch (e.key) {
-      case 'add_worklog': {
-        this.setState({ dailyLogShow: true });
-        break;
-      }
+
       case 'copy': {
         const copyConditionDTO = {
           issueLink: false,
@@ -770,10 +743,10 @@ class EditIssueNarrow extends Component {
       width: 560,
       title: `删除测试用例${this.state.issueNum}`,
       content:
-  <div style={{ marginBottom: 32 }}>
-    <p style={{ marginBottom: 10 }}>请确认您要删除这个测试用例。</p>
-    <p style={{ marginBottom: 10 }}>这个测试用例将会被彻底删除。包括所有步骤和相关执行。</p>
-  </div>,
+        <div style={{ marginBottom: 32 }}>
+          <p style={{ marginBottom: 10 }}>请确认您要删除这个测试用例。</p>
+          <p style={{ marginBottom: 10 }}>这个测试用例将会被彻底删除。包括所有步骤和相关执行。</p>
+        </div>,
       onOk() {
         return deleteIssue(issueId)
           .then((res) => {
@@ -829,26 +802,6 @@ class EditIssueNarrow extends Component {
   }
 
   /**
-   * Log
-   */
-  renderLogs() {
-    return (
-      <div>
-        {
-          this.state.worklogs.map(worklog => (
-            <Log
-              key={worklog.logId}
-              worklog={worklog}
-              onDeleteLog={() => this.reloadIssue()}
-              onUpdateLog={() => this.reloadIssue()}
-            />
-          ))
-        }
-      </div>
-    );
-  }
-
-  /**
    * DataLog
    */
   renderDataLogs() {
@@ -858,20 +811,6 @@ class EditIssueNarrow extends Component {
       />
     );
   }
-
-  /**
-   * SubIssue
-   */
-  renderSubIssues() {
-    return (
-      <div className="c7n-tasks">
-        {
-          this.state.subIssueDTOList.map((subIssue, i) => this.renderIssueList(subIssue, i))
-        }
-      </div>
-    );
-  }
-
   renderLinkIssues() {
     const group = _.groupBy(this.state.linkIssues, 'ward');
     return (
@@ -890,29 +829,6 @@ class EditIssueNarrow extends Component {
     );
   }
 
-  /**
-   * IssueList
-   * @param {*} issue 
-   * @param {*} i 
-   */
-  renderIssueList(issue, i) {
-    return (
-      <IssueList
-        key={issue.issueId}
-        issue={{
-          ...issue,
-          typeCode: issue.typeCode || 'sub_task',
-        }}
-        i={i}
-        onOpen={(issueId, linkedIssueId) => {
-          this.reloadIssue(issue.issueId);
-        }}
-        onRefresh={() => {
-          this.reloadIssue(this.state.origin.issueId);
-        }}
-      />
-    );
-  }
 
   renderLinkList(link, i) {
     return (
@@ -1140,18 +1056,6 @@ class EditIssueNarrow extends Component {
                 />
               </li>
             </Tooltip>
-            <Tooltip placement="right" title="工作日志">
-              <li id="LOG-nav" className={`c7n-li ${this.state.nav === 'log' ? 'c7n-li-active' : ''}`}>
-                <Icon
-                  type="work_log c7n-icon-li"
-                  role="none"
-                  onClick={() => {
-                    this.setState({ nav: 'log' });
-                    this.scrollToAnchor('log');
-                  }}
-                />
-              </li>
-            </Tooltip>
             <Tooltip placement="right" title="活动日志">
               <li id="DATA_LOG-nav" className={`c7n-li ${this.state.nav === 'data_log' ? 'c7n-li-active' : ''}`}>
                 <Icon
@@ -1264,43 +1168,7 @@ class EditIssueNarrow extends Component {
                       <Button icon="more_vert" />
                     </Dropdown>
                   </div>
-                </div>
-                {/* {mode === 'narrow' && this.state.issueId && this.state.typeCode !== 'issue_epic' ? (
-                  <div style={{ display: 'flex' }}>
-                    <span>预估时间：</span>
-                    <div>
-                      <ReadAndEdit
-                        callback={this.changeRae.bind(this)}
-                        thisType="remainingTime"
-                        current={this.state.currentRae}
-                        handleEnter
-                        origin={this.state.remainingTime}
-                        onInit={() => this.setAnIssueToState(this.state.origin)}
-                        onOk={this.updateIssue.bind(this, 'remainingTime')}
-                        onCancel={this.resetRemainingTime.bind(this)}
-                        readModeContent={(
-                          <span>
-                            {this.state.remainingTime === undefined || this.state.remainingTime === null ? '无' : `${this.state.remainingTime} 小时`}
-                          </span>
-                        )}
-                      >
-                        <NumericInput
-                          maxLength="3"
-                          value={this.state.remainingTime}
-                          // size="large"
-                          autoFocus
-                          onChange={this.handleRemainingTimeChange.bind(this)}
-                          onPressEnter={() => {
-                            this.updateIssue('remainingTime');
-                            this.setState({
-                              currentRae: undefined,
-                            });
-                          }}
-                        />
-                      </ReadAndEdit>
-                    </div>
-                  </div>
-                ) : null */}
+                </div>                
                 {/* 状态 */}
                 {mode === 'wide' && (
                   <div className="line-start" style={{ alignItems: 'center' }}>
@@ -2323,27 +2191,6 @@ class EditIssueNarrow extends Component {
                   </div>
                   {this.renderCommits()}
                 </div>
-
-                {/* <div id="log">
-                  <div className="c7n-title-wrapper">
-                    <div className="c7n-title-left">
-                      <Icon type="work_log c7n-icon-title" />
-                      <FormattedMessage id="issue_edit_workLog" />
-                    </div>
-                    <div style={{
-                      flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px',
-                    }}
-                    />
-                    <div className="c7n-title-right" style={{ marginLeft: '14px' }}>
-                      <Button className="leftBtn" funcType="flat" onClick={() => this.setState({ dailyLogShow: true })}>
-                        <Icon type="playlist_add icon" />
-                        <FormattedMessage id="issue_edit_registrationWork" />
-                      </Button>
-                    </div>
-                  </div>
-                  {this.renderLogs()}
-                </div> */}
-
                 <div id="data_log">
                   <div className="c7n-title-wrapper">
                     <div className="c7n-title-left">
@@ -2395,28 +2242,6 @@ class EditIssueNarrow extends Component {
             />
           ) : null
         }
-        {
-          this.state.dailyLogShow ? (
-            <DailyLog
-              issueId={this.state.origin.issueId}
-              issueNum={this.state.issueNum}
-              visible={this.state.dailyLogShow}
-              onCancel={() => this.setState({ dailyLogShow: false })}
-              onOk={() => {
-                loadWorklogs(this.state.issueId).then((res) => {
-                  this.setState({
-                    worklogs: res,
-                  });
-                });
-                loadIssue(this.state.issueId).then((res) => {
-                  this.setAnIssueToState(res);
-                });
-                this.setState({ dailyLogShow: false });
-              }}
-            />
-          ) : null
-        }
-
         {
           this.state.createLinkTaskShow ? (
             <CreateLinkTask
