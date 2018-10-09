@@ -6,14 +6,14 @@ import _ from 'lodash';
 import { observer } from 'mobx-react';
 import { FormattedMessage } from 'react-intl';
 import {
-  TextEditToggle, RichTextShow, User, SelectCreateIssueFooter,StatusTags
+  TextEditToggle, RichTextShow, User, SelectCreateIssueFooter, StatusTags,
 } from '../../CommonComponent';
-import { uploadFile,deleteAttachment } from '../../../api/FileApi';
+import { uploadFile, deleteAttachment } from '../../../api/FileApi';
 import { delta2Html } from '../../../common/utils';
 import {
-  addDefects, editCycle,  removeDefect,
+  addDefects, editCycle, removeDefect,
 } from '../../../api/ExecuteDetailApi';
-import FullEditor from '../../FullEditor';
+import { FullEditor } from '../../CommonComponent';
 import ExecuteDetailStore from '../../../store/project/cycle/ExecuteDetailStore';
 import './TestExecuteInfo.scss';
 
@@ -199,10 +199,10 @@ class TestExecuteInfo extends Component {
     };
     const options = statusList.map(status => (
       <Option value={status.statusId} key={status.statusId}>
-      <StatusTags
+        <StatusTags
           color={status.statusColor}
           name={status.statusName}
-          />
+        />
         {/* <div style={{ ...styles.statusOption, ...{ background: status.statusColor } }}>
           {status.statusName}
         </div> */}
@@ -262,10 +262,10 @@ class TestExecuteInfo extends Component {
                 originData={executionStatus}
               >
                 <Text>
-                <StatusTags
-          color={statusColor}
-          name={statusName}
-          />
+                  <StatusTags
+                    color={statusColor}
+                    name={statusName}
+                  />
                   {/* <div style={{
                     background: statusColor, width: 60, textAlign: 'center', borderRadius: '2px', display: 'inline-block', color: 'white',
                   }}

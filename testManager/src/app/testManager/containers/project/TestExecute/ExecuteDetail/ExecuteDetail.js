@@ -7,7 +7,6 @@ import { observer } from 'mobx-react';
 import { withRouter } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
 import { RichTextShow, User } from '../../../../components/CommonComponent';
-// import EditTestDetail from '../../../../components/EditTestDetail';
 import { delta2Html, delta2Text } from '../../../../common/utils';
 import './ExecuteDetail.scss';
 import { StepTable, TestExecuteInfo } from '../../../../components/ExecuteComponent';
@@ -27,27 +26,17 @@ const styles = {
     padding: 12,
     overflow: 'hidden',
   },
-  cardContent: {
-
-  },
-
 };
 
 @observer
 class ExecuteDetail extends Component {
-  state = {
-    editVisible: false,
-    editing: null,
-  }
-
   componentDidMount() {
     const { id } = this.props.match.params;
     ExecuteDetailStore.getInfo(id);
   }
 
   render() {
-    const { disabled } = this.props;
-    const { editVisible, editing } = this.state;
+    const { disabled } = this.props;  
     const loading = ExecuteDetailStore.loading;
     const cycleData = ExecuteDetailStore.getCycleData;
     // const detailList = ExecuteDetailStore.getDetailList;

@@ -34,17 +34,7 @@ import noRight from '../../../../assets/noright.svg';
 
 const { AppState } = stores;
 const { confirm } = Modal;
-const styles = {
-  statusOption: {
-    lineHeight: '20px',
-    height: 20,
-    width: 60,
-    textAlign: 'center',
-    borderRadius: '2px',
-    display: 'inline-block',
-    color: 'white',
-  },
-};
+
 
 const dataList = [];
 

@@ -22,8 +22,7 @@ import {
   createCommit, deleteIssue, loadStatus, cloneIssue,
 } from '../../../api/IssueApi';
 import { getSelf, getUsers, getUser } from '../../../api/CommonApi';
-import WYSIWYGEditor from '../WYSIWYGEditor';
-import FullEditor from '../FullEditor';
+import { FullEditor, WYSIWYGEditor } from '../../CommonComponent';
 import CreateLinkTask from '../CreateLinkTask';
 import UserHead from '../UserHead';
 import Comment from './Component/Comment';
@@ -698,9 +697,8 @@ class EditIssueNarrow extends Component {
 
 
   handleClickMenu(e) {
-    console.log(e.key);
+    // console.log(e.key);
     switch (e.key) {
-
       case 'copy': {
         const copyConditionDTO = {
           issueLink: false,
@@ -743,10 +741,10 @@ class EditIssueNarrow extends Component {
       width: 560,
       title: `删除测试用例${this.state.issueNum}`,
       content:
-        <div style={{ marginBottom: 32 }}>
-          <p style={{ marginBottom: 10 }}>请确认您要删除这个测试用例。</p>
-          <p style={{ marginBottom: 10 }}>这个测试用例将会被彻底删除。包括所有步骤和相关执行。</p>
-        </div>,
+  <div style={{ marginBottom: 32 }}>
+    <p style={{ marginBottom: 10 }}>请确认您要删除这个测试用例。</p>
+    <p style={{ marginBottom: 10 }}>这个测试用例将会被彻底删除。包括所有步骤和相关执行。</p>
+  </div>,
       onOk() {
         return deleteIssue(issueId)
           .then((res) => {
@@ -811,6 +809,7 @@ class EditIssueNarrow extends Component {
       />
     );
   }
+
   renderLinkIssues() {
     const group = _.groupBy(this.state.linkIssues, 'ward');
     return (

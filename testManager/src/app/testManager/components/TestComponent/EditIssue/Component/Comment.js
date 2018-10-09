@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Icon, Popconfirm } from 'choerodon-ui';
 import _ from 'lodash';
 import UserHead from '../../UserHead';
-import WYSIWYGEditor from '../../WYSIWYGEditor';
+import { WYSIWYGEditor } from '../../../CommonComponent';
 import { IssueDescription } from '../../CommonComponent';
 import {
   delta2Html, text2Delta, beforeTextUpload, formatDate, 
@@ -20,6 +20,7 @@ class Comment extends Component {
       expand: false,
     };
   }
+
   confirm(commentId, e) {
     this.handleDeleteCommit(commentId);
   }
