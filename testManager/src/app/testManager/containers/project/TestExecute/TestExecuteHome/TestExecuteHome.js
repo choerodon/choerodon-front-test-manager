@@ -16,14 +16,15 @@ import './TestExecuteHome.scss';
 import { getUsers } from '../../../../api/CommonApi';
 import {
   getCycles, deleteExecute, getCycleById,
-  clone, addFolder, getStatusList, exportCycle,
+  clone, addFolder, exportCycle,
 } from '../../../../api/cycleApi';
+import { getStatusList } from '../../../../api/TestStatusApi';
 import { editCycle } from '../../../../api/ExecuteDetailApi';
 import {
   TreeTitle, CreateCycle, EditCycle, ShowCycleData, CloneCycle,
 } from '../../../../components/CycleComponent';
 import {
-  RichTextShow, SelectFocusLoad, RadioButton, StatusTags, 
+  RichTextShow, SelectFocusLoad, RadioButton, StatusTags,
 } from '../../../../components/CommonComponent';
 import {
   delta2Html, delta2Text, issueLink, getParams,
@@ -532,7 +533,7 @@ class TestExecuteHome extends Component {
     } else {
       this.treeAssignedTo = 0;
       this.refresh(0);
-    }    
+    }
   }
 
   render() {
@@ -600,10 +601,10 @@ class TestExecuteHome extends Component {
           //     && _.find(statusList, { statusId: executionStatus }).statusName}
           // </div>
           _.find(statusList, { statusId: executionStatus }) && (
-          <StatusTags
-            color={statusColor}
-            name={_.find(statusList, { statusId: executionStatus }).statusName}
-          />
+            <StatusTags
+              color={statusColor}
+              name={_.find(statusList, { statusId: executionStatus }).statusName}
+            />
           )
         );
       },
@@ -930,7 +931,7 @@ class TestExecuteHome extends Component {
                       }}
                     >
                       <Icon type="navigate_before" />
-                    </div>                    
+                    </div>
                   </div>
                 </div>
                 <div className="c7n-chlh-tree">
@@ -955,9 +956,9 @@ class TestExecuteHome extends Component {
                         : <FormattedMessage id="cycle_cycleName" />}
                       <span>{`：${title}`}</span>
                     </div>
-                    <div style={{ flex: 1, visiblity: 'hidden' }} />                    
+                    <div style={{ flex: 1, visiblity: 'hidden' }} />
                   </div>
-                  <ShowCycleData data={currentCycle} />                  
+                  <ShowCycleData data={currentCycle} />
                   <div>
                     <div style={{ display: 'flex', marginBottom: 20 }}>
                       <SelectFocusLoad
@@ -969,16 +970,16 @@ class TestExecuteHome extends Component {
                         }}
                       />
                       {this.treeAssignedTo === 0 && (
-                      <div style={{ marginLeft: 20 }}>
-                        <SelectFocusLoad
-                          label={<FormattedMessage id="cycle_assignedTo" />}
-                          request={getUsers}
-                          onChange={(value) => {
-                            this.assignedTo = value;
-                            this.loadCycle();
-                          }}
-                        />
-                      </div>
+                        <div style={{ marginLeft: 20 }}>
+                          <SelectFocusLoad
+                            label={<FormattedMessage id="cycle_assignedTo" />}
+                            request={getUsers}
+                            onChange={(value) => {
+                              this.assignedTo = value;
+                              this.loadCycle();
+                            }}
+                          />
+                        </div>
                       )}
                     </div>
                     <Table
@@ -989,7 +990,7 @@ class TestExecuteHome extends Component {
                       columns={leftVisible ? columns
                         : columns.slice(0, 4).concat(otherColumns).concat(columns.slice(4))}
                     />
-                  </div>               
+                  </div>
                 </div>
               ) : (
                 <div style={{

@@ -1,16 +1,15 @@
 
 import {
-  observable, action, computed, toJS, 
+  observable, action, computed, toJS,
 } from 'mobx';
-import { store, stores } from 'choerodon-front-boot';
+import { store } from 'choerodon-front-boot';
 import _ from 'lodash';
 import {
-  getCycle, getCycleDetails, getStatusList, getCycleHistiorys, 
+  getCycle, getCycleDetails, getCycleHistiorys,
 } from '../../../api/ExecuteDetailApi';
+import { getStatusList } from '../../../api/TestStatusApi';
 import { getUsers } from '../../../api/CommonApi';
 import { getIssueList, getIssuesForDefects } from '../../../api/agileApi';
-
-const { AppState } = stores;
 
 @store('ExecuteDetailStore')
 class ExecuteDetailStore {
@@ -75,7 +74,7 @@ class ExecuteDetailStore {
       }, id),
       getIssuesForDefects(),
     ])
-      .then(([cycleData, statusList, detailData, stepStatusList, historyData, issueData]) => {      
+      .then(([cycleData, statusList, detailData, stepStatusList, historyData, issueData]) => {
         this.setCycleData(cycleData);
         this.setStatusList(statusList);
         this.setDetailList(detailData.content);
@@ -92,14 +91,14 @@ class ExecuteDetailStore {
         });
         this.setHistoryList(historyData.content);
         this.setIssueList(issueData.content);
-        this.unloading();   
+        this.unloading();
       }).catch((error) => {
         Choerodon.prompt('网络异常');
         this.unloading();
       });
   }
 
-  loadHistoryList=(pagination = this.historyPagination) => {
+  loadHistoryList = (pagination = this.historyPagination) => {
     const id = this.id;
     this.enterloading();
     getCycleHistiorys({
@@ -116,7 +115,7 @@ class ExecuteDetailStore {
     });
   }
 
-  loadDetailList=(pagination = this.detailPagination) => {
+  loadDetailList = (pagination = this.detailPagination) => {
     const id = this.id;
     this.enterloading();
     getCycleDetails({
@@ -133,7 +132,7 @@ class ExecuteDetailStore {
     });
   }
 
-  loadIssueList=(value) => {
+  loadIssueList = (value) => {
     this.selectEnterLoading();
     // 加载不含测试类型的issue
     getIssuesForDefects(value).then((issueData) => {
@@ -142,10 +141,10 @@ class ExecuteDetailStore {
     });
   }
 
-  loadUserList=(value) => {
+  loadUserList = (value) => {
     this.selectEnterLoading();
     getUsers(value).then((userData) => {
-      this.setUserList(userData.content);     
+      this.setUserList(userData.content);
       this.selectUnLoading();
     });
     getIssueList(value).then((issueData) => {
@@ -210,7 +209,7 @@ class ExecuteDetailStore {
     return this.cycleData.defects.map(defect => defect.issueId.toString());
   }
 
-  getStatusById=(status) => {
+  getStatusById = (status) => {
     const statusId = Number(status);
     return {
       statusName: _.find(this.statusList, { statusId })
@@ -226,60 +225,60 @@ class ExecuteDetailStore {
   }
 
   // set
-  @action setId=(id) => {
+  @action setId = (id) => {
     this.id = id;
   }
 
-  @action setCycleData=(cycleData) => {
+  @action setCycleData = (cycleData) => {
     // window.console.log(cycleData, 'set');
     this.cycleData = cycleData;
   }
 
-  @action setStatusList=(statusList) => {
+  @action setStatusList = (statusList) => {
     this.statusList = statusList;
   }
 
-  @action setStepStatusList=(stepStatusList) => {
+  @action setStepStatusList = (stepStatusList) => {
     this.stepStatusList = stepStatusList;
   }
 
-  @action setIssueList=(issueList) => {
+  @action setIssueList = (issueList) => {
     this.issueList = issueList;
   }
 
-  @action setUserList=(userList) => {
+  @action setUserList = (userList) => {
     this.userList = userList;
   }
 
-  @action setHistoryPagination=(historyPagination) => {
+  @action setHistoryPagination = (historyPagination) => {
     this.historyPagination = historyPagination;
   }
 
-  @action setDetailPagination=(detailPagination) => {
+  @action setDetailPagination = (detailPagination) => {
     this.detailPagination = detailPagination;
   }
 
-  @action setHistoryList=(historyList) => {
+  @action setHistoryList = (historyList) => {
     this.historyList = historyList;
   }
 
-  @action setDetailList=(detailList) => {
+  @action setDetailList = (detailList) => {
     this.detailList = detailList;
   }
 
-  @action selectEnterLoading=() => {
+  @action selectEnterLoading = () => {
     this.selectLoading = true;
   }
 
-  @action selectUnLoading=() => {
+  @action selectUnLoading = () => {
     this.selectLoading = false;
   }
 
-  @action enterloading=() => {
+  @action enterloading = () => {
     this.loading = true;
   }
 
-  @action unloading=() => {
+  @action unloading = () => {
     this.loading = false;
   }
 

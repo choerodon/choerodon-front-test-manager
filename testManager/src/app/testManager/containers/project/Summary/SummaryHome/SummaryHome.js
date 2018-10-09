@@ -4,9 +4,6 @@ import {
   Table, Button, Icon, Spin, Popover,
 } from 'choerodon-ui';
 import { Page, Header } from 'choerodon-front-boot';
-import {
-  Chart, Axis, Geom, Tooltip,
-} from 'bizcharts';
 import { FormattedMessage } from 'react-intl';
 import moment from 'moment';
 import _ from 'lodash';
@@ -18,7 +15,7 @@ import {
 import {
   getProjectVersion, getLabels, getModules, getIssueCount,
 } from '../../../../api/agileApi';
-import './SummaryHome.less';
+import './SummaryHome.scss';
 
 
 class SummaryHome extends Component {
@@ -360,7 +357,7 @@ class SummaryHome extends Component {
 
   render() {
     const {
-      loading, range, excuteList, createList, totalExcute,
+      loading, range, totalExcute,
       totalCreate, totalTest, notPlan, notRun, caseNum, versionTable,
       labelTable, componentTable,
     } = this.state;
@@ -392,16 +389,6 @@ class SummaryHome extends Component {
       dataIndex: 'num',
       key: 'num',
     }];
-    const createScale = {      
-      value: { type: 'linear', alias: Choerodon.getMessage('创建数', 'Created') },
-      time: { alias: '日期', tickCount: 10 },
-    };
-    const executeScale = {     
-      value: { type: 'linear', alias: Choerodon.getMessage('执行数', 'Executed') },
-      time: { alias: '日期', tickCount: 10 },
-    };
-    const width = parseInt((window.innerWidth - 320) / 2, 10);
-
     return (
       <Page>
         <Header title={<FormattedMessage id="summary_title" />}>
