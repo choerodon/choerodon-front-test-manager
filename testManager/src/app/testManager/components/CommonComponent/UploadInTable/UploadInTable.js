@@ -10,7 +10,7 @@ class UploadInTable extends Component {
     return (
       <Upload
       // multiple
-        className="c7n-upload-reverse"
+        className="c7ntest-upload-reverse"
         fileList={fileList.map(attachment => ({
           uid: attachment.id,
           name: attachment.attachmentName,

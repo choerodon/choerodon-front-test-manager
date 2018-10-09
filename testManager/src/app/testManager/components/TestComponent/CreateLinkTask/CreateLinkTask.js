@@ -144,7 +144,7 @@ class CreateLinkTask extends Component {
 
     return (
       <Sidebar
-        className="c7n-newLink"
+        className="c7ntest-newLink"
         title={<FormattedMessage id="issue_create_link_title" />}
         visible={visible || false}
         onOk={this.handleCreateIssue}

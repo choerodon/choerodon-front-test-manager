@@ -390,7 +390,7 @@ class Test extends Component {
     );
 
     return (
-      <Page className="c7n-Issue c7n-region">
+      <Page className="c7ntest-Issue c7ntest-region">
         <Header
           title={<FormattedMessage id="issue_name" />}
           backPath={IssueStore.getBackUrl}
@@ -421,7 +421,7 @@ class Test extends Component {
         </Header>
         <Content style={{ display: 'flex', padding: '0' }}>
           {/* <DragDropContext onDragEnd={this.onDragEnd} onDragStart={this.onDragStart}> */}
-          <div className="c7n-chs-bar">
+          <div className="c7ntest-chs-bar">
             {!treeShow && (
               <p
                 role="none"
@@ -434,7 +434,7 @@ class Test extends Component {
             )}
           </div>
           <div
-            className="c7n-issue-tree"
+            className="c7ntest-issue-tree"
           // style={{
           //   overflowY: 'auto',
           //   overflowX: 'hidden',
@@ -450,7 +450,7 @@ class Test extends Component {
             )}
           </div>
           <div
-            className="c7n-content-issue"
+            className="c7ntest-content-issue"
             style={{
               // width: this.state.expand ? '28%' : '100%',
               flex: 1,
@@ -459,7 +459,7 @@ class Test extends Component {
               overflowX: 'hidden',
             }}
           >
-            <section className="c7n-bar">
+            <section className="c7ntest-bar">
               <Table
                 rowKey={record => record.id}
                 columns={filterColumns}
@@ -472,8 +472,8 @@ class Test extends Component {
                 filterBarPlaceholder={<FormattedMessage id="issue_filterTestIssue" />}
               />
             </section>
-            {/* <section className="c7n-count">
-              <span className="c7n-span-count"><FormattedMessage id="issue_issueTotal" values={{ total: IssueStore.pagination.total }} /></span>
+            {/* <section className="c7ntest-count">
+              <span className="c7ntest-span-count"><FormattedMessage id="issue_issueTotal" values={{ total: IssueStore.pagination.total }} /></span>
               <Dropdown overlay={sort} trigger={['click']}>
                 <div style={{
                   display: 'flex', alignItems: 'center', fontSize: '13px', lineHeight: '20px', cursor: 'pointer', position: 'absolute', right: 25, bottom: 28,
@@ -486,7 +486,7 @@ class Test extends Component {
             </section> */}
 
             <section
-              className={`c7n-table ${this.state.expand ? 'expand-sign' : ''}`}
+              className={`c7ntest-table ${this.state.expand ? 'expand-sign' : ''}`}
               style={{
                 paddingRight: this.state.expand ? '0' : '24px',
                 boxSizing: 'border-box',
@@ -521,7 +521,7 @@ class Test extends Component {
                 )
               }
 
-              <div className="c7n-backlog-sprintIssue">
+              <div className="c7ntest-backlog-sprintIssue">
                 <div
                   style={{
                     userSelect: 'none',
@@ -534,14 +534,14 @@ class Test extends Component {
                   }}
                 >
                   {this.state.createIssue ? (
-                    <div className="c7n-add" style={{ display: 'block', width: '100%' }}>
-                      <div className="c7n-add-select-version">
+                    <div className="c7ntest-add" style={{ display: 'block', width: '100%' }}>
+                      <div className="c7ntest-add-select-version">
                         {/* 创建issue选择版本 */}
                         {
                           _.find(versions, { versionId: selectedVersion })
                             ? (
                               <div style={{ display: 'flex', alignItems: 'center', marginTop: -8 }}>
-                                <span className="c7n-add-select-version-prefix">V</span>
+                                <span className="c7ntest-add-select-version-prefix">V</span>
                                 <Select
                                   disabled={IssueTreeStore.currentCycle.versionId}
                                   onChange={(value) => {
@@ -645,7 +645,7 @@ class Test extends Component {
           </div>
 
           <div
-            className="c7n-sidebar"
+            className="c7ntest-sidebar"
             style={{
               // width: this.state.expand ? '72%' : 0,
               // width: this.state.expand ? 440 : 0,              

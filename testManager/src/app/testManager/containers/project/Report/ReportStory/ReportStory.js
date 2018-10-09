@@ -274,7 +274,7 @@ class ReportStory extends Component {
       // },
     ];
     const columns = [{
-      className: 'c7n-table-white',
+      className: 'c7ntest-table-white',
       title: <FormattedMessage id="demand" />,
       dataIndex: 'issueId',
       key: 'issueId',
@@ -285,7 +285,7 @@ class ReportStory extends Component {
         } = defectInfo;
         return (
           <div>
-            <div className="c7n-collapse-header-container">
+            <div className="c7ntest-collapse-header-container">
               <Tooltip title={(
                 <div>
                   <div>{issueName}</div>
@@ -293,11 +293,11 @@ class ReportStory extends Component {
                 </div>
               )}
               >
-                <Link className="c7n-showId" to={issueLink(issueId, typeCode)} target="_blank">
+                <Link className="c7ntest-showId" to={issueLink(issueId, typeCode)} target="_blank">
                   {issueName}
                 </Link>
               </Tooltip>
-              <div className="c7n-issue-status-icon">
+              <div className="c7ntest-issue-status-icon">
                 <span style={{ color: issueColor, borderColor: issueColor }}>
                   {issueStatusName}
                 </span>
@@ -313,7 +313,7 @@ class ReportStory extends Component {
         );
       },
     }, {
-      className: 'c7n-table-white',
+      className: 'c7ntest-table-white',
       title: <FormattedMessage id="test" />,
       dataIndex: 'test',
       key: 'test',
@@ -340,14 +340,14 @@ class ReportStory extends Component {
                       }}
                       >
                         <div style={{ display: 'flex', alignItems: 'center' }}>
-                          <Icon type="navigate_next" className="c7n-collapse-icon" />
+                          <Icon type="navigate_next" className="c7ntest-collapse-icon" />
                           <Tooltip title={issue.issueName}>
-                            <Link className="c7n-text-dot" to={issueLink(issue.issueId, 'issue_test')} target="_blank">
+                            <Link className="c7ntest-text-dot" to={issueLink(issue.issueId, 'issue_test')} target="_blank">
                               {issue.issueName}
                             </Link>
                           </Tooltip>
                         </div>
-                        <div className="c7n-report-summary">{issue.summary}</div>
+                        <div className="c7ntest-report-summary">{issue.summary}</div>
                       </div>
                     )}
                   key={`${issue.issueId}-${i}`}
@@ -358,7 +358,7 @@ class ReportStory extends Component {
         );
       },
     }, {
-      className: 'c7n-table-white',
+      className: 'c7ntest-table-white',
       title: <FormattedMessage id="execute" />,
       dataIndex: 'cycleId',
       key: 'cycleId',
@@ -391,21 +391,21 @@ class ReportStory extends Component {
                 }
                 const marginBottom = Math.max((execute.defects.length + execute.subStepDefects.length) - 1, 0) * 30;
                 return (
-                  <div className="c7n-cycle-show-container" style={{ marginBottom }}>
+                  <div className="c7ntest-cycle-show-container" style={{ marginBottom }}>
                     <div
                       style={{
                         width: 80, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
                       }}
                     >
                       <Tooltip title={`${execute.cycleName}${execute.folderName ? `/${execute.folderName}` : ''}`}>
-                        <Link className="c7n-showId" to={cycleLink(execute.cycleId)} target="_blank">
+                        <Link className="c7ntest-showId" to={cycleLink(execute.cycleId)} target="_blank">
                           {execute.cycleName}
                           {execute.folderName ? `/${execute.folderName}` : ''}
                         </Link>
                       </Tooltip>
                     </div>
                     <div
-                      className="c7n-collapse-text-icon"
+                      className="c7ntest-collapse-text-icon"
                       style={{ color: statusColor, borderColor: statusColor }}
                     >
                       {statusName}
@@ -456,7 +456,7 @@ class ReportStory extends Component {
         );
       },
     }, {
-      className: 'c7n-table-white',
+      className: 'c7ntest-table-white',
       title: <FormattedMessage id="bug" />,
       dataIndex: 'demand',
       key: 'demand',
@@ -481,10 +481,10 @@ class ReportStory extends Component {
                               ? defects.concat(subStepDefects).map((defect) => {
                                 const { issueInfosDTO } = defect;
                                 return (
-                                  <div className="c7n-issue-show-container">
+                                  <div className="c7ntest-issue-show-container">
                                     <Tooltip title={issueInfosDTO && issueInfosDTO.issueNum}>
                                       <Link
-                                        className="c7n-showId"
+                                        className="c7ntest-showId"
                                         to={issueLink(issueInfosDTO && issueInfosDTO.issueId,
                                           issueInfosDTO && issueInfosDTO.typeCode)}
                                         target="_blank"
@@ -492,7 +492,7 @@ class ReportStory extends Component {
                                         {issueInfosDTO && issueInfosDTO.issueNum}
                                       </Link>
                                     </Tooltip>
-                                    <div className="c7n-issue-status-icon">
+                                    <div className="c7ntest-issue-status-icon">
                                       <span style={{
                                         color: issueInfosDTO && issueInfosDTO.issueColor,
                                         borderColor: issueInfosDTO && issueInfosDTO.issueColor,
@@ -518,7 +518,7 @@ class ReportStory extends Component {
                                       )}
                                   </div>
                                 );
-                              }) : <div className="c7n-issue-show-container">－</div>}
+                              }) : <div className="c7ntest-issue-show-container">－</div>}
 
                           </div>
                         );
@@ -542,7 +542,7 @@ class ReportStory extends Component {
                                   color: '#3F51B5',
                                 }}
                                 >
-                                  <Link className="c7n-showId" to={issueLink(issueInfosDTO && issueInfosDTO.issueId, issueInfosDTO && issueInfosDTO.typeCode)} target="_blank">
+                                  <Link className="c7ntest-showId" to={issueLink(issueInfosDTO && issueInfosDTO.issueId, issueInfosDTO && issueInfosDTO.typeCode)} target="_blank">
                                     {issueInfosDTO && issueInfosDTO.issueName}
                                   </Link>
                                   {i === defects.concat(subStepDefects).length - 1 ? null : '，'}
@@ -562,7 +562,7 @@ class ReportStory extends Component {
     }];
 
     return (
-      <Page className="c7n-report-story">
+      <Page className="c7ntest-report-story">
         <Header
           title={<FormattedMessage id="report_demandToDefect" />}
           backPath={`/testManager/report?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}
@@ -607,7 +607,7 @@ class ReportStory extends Component {
           link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management/test-report/report/"
         >
           <div style={{ display: 'flex' }} />
-          <div className="c7n-report-story-filter-table">
+          <div className="c7ntest-report-story-filter-table">
             <Table
               rowKey={record => record.id}
               columns={filterColumns}

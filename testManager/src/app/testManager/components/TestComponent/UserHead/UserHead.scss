@@ -1,4 +1,4 @@
-.c7n-userHead {
+.c7ntest-userHead {
     // width: 100%;
     display: flex;
     justify-content: flex-start;
@@ -6,34 +6,34 @@
     .ant-avatar-string {
         transform: scale(0.9) !important;
     }
-    .c7n-wrap {
+    .c7ntest-wrap {
         width: 800px;
         height: 280px;
         display: flex;
         border-radius: 4px;
         padding: 40px 100px 40px 135px;
-        .c7n-imgWrap {
+        .c7ntest-imgWrap {
             width: 200px;
             height: 200px;
             margin-right: 50px;
             flex-shrink: 0;
             overflow: hidden;
-            .c7n-img {
+            .c7ntest-img {
                 width: 100%;
             }
         }
-        .c7n-textWrap {
+        .c7ntest-textWrap {
             display: flex;
             flex-direction: column;
             justify-content: center;
-            .c7n-title {
+            .c7ntest-title {
                 font-size: 14px;
                 line-height: 20px;
                 color: rgba(0, 0, 0, 0.65);
                 margin-bottom: 9px;
                 margin-top: 0;
             }
-            .c7n-des {
+            .c7ntest-des {
                 font-size: 20px;
                 line-height: 34px;
                 color: #000;

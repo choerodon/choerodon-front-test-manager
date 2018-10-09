@@ -22,7 +22,7 @@ class TreeTitle extends Component {
     return processBarObject.map((item, i) => {
       const percentage = (item[1] / count) * 100;
       return (
-        <span key={Math.random()} className="c7n-tree-title-process-bar-fill-item" style={{ backgroundColor: item[0], width: `${percentage}%` }} />
+        <span key={Math.random()} className="c7ntest-tree-title-process-bar-fill-item" style={{ backgroundColor: item[0], width: `${percentage}%` }} />
       );
     });
   };
@@ -140,7 +140,7 @@ class TreeTitle extends Component {
         content.push(
           <div style={{ display: 'flex', width: 100 }}>
             <div>{status.statusName}</div>
-            <div className="c7n-flex-space" />
+            <div className="c7ntest-flex-space" />
             <div>{processBar[status.statusColor]}</div>
           </div>,
         );
@@ -148,7 +148,7 @@ class TreeTitle extends Component {
     }
 
     return (
-      <div className="c7n-tree-title">
+      <div className="c7ntest-tree-title">
         {editing
           ? (
             <Input
@@ -166,7 +166,7 @@ class TreeTitle extends Component {
             />
           )
           : (
-            <div className="c7n-tree-title-text">
+            <div className="c7ntest-tree-title-text">
               <Tooltip title={title}>
                 {title}
               </Tooltip>
@@ -179,23 +179,23 @@ class TreeTitle extends Component {
               content={<div>{content}</div>}
               title={null}
             >
-              <div className="c7n-tree-title-process-bar" style={{ marginLeft: data.type === 'cycle' || data.type === 'temp' ? '18px' : 0 }}>
-                <span className="c7n-tree-title-process-bar-unfill" />     
-                <div className="c7n-tree-title-process-bar-fill-area">
+              <div className="c7ntest-tree-title-process-bar" style={{ marginLeft: data.type === 'cycle' || data.type === 'temp' ? '18px' : 0 }}>
+                <span className="c7ntest-tree-title-process-bar-unfill" />     
+                <div className="c7ntest-tree-title-process-bar-fill-area">
                   {this.creatProcessBar(ProcessBar)} 
                 </div>          
               </div>
             </Popover>
           )
           : (
-            <div className="c7n-tree-title-process-bar" style={{ marginLeft: data.type === 'cycle' || data.type === 'temp' ? '18px' : 0 }}>
-              <span className="c7n-tree-title-process-bar-unfill" />     
-              <div className="c7n-tree-title-process-bar-fill-area">
+            <div className="c7ntest-tree-title-process-bar" style={{ marginLeft: data.type === 'cycle' || data.type === 'temp' ? '18px' : 0 }}>
+              <span className="c7ntest-tree-title-process-bar-unfill" />     
+              <div className="c7ntest-tree-title-process-bar-fill-area">
                 {this.creatProcessBar(ProcessBar)} 
               </div>                 
             </div>
           )}
-        {/* <div role="none" className="c7n-tree-title-actionButton" onClick={e => e.stopPropagation()}>    
+        {/* <div role="none" className="c7ntest-tree-title-actionButton" onClick={e => e.stopPropagation()}>    
           <Dropdown overlay={getMenu(data.type)} trigger={['click']}>
             <Button shape="circle" icon="more_vert" />
           </Dropdown>   

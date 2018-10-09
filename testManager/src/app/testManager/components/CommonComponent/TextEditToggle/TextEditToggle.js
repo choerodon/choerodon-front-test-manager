@@ -146,7 +146,7 @@ class TextEditToggle extends Component {
     const children = this.getEditOrTextChildren();
     // 根据不同模式对子元素进行包装
     return editing ? (
-      <div className="c7n-TextEditToggle-edit">
+      <div className="c7ntest-TextEditToggle-edit">
         { // 采用form模式就进行form包装,否则
           formKey ? (
             <Form layout="vertical">
@@ -164,18 +164,18 @@ class TextEditToggle extends Component {
           ) : children.map(child => (this.wrapChildren(child.props.children)))
         }
         <div style={{ textAlign: 'right', lineHeight: '20px' }}>
-          <Icon type="done" className="c7n-TextEditToggle-edit-icon" onClick={this.onSubmit} />
-          <Icon type="close" className="c7n-TextEditToggle-edit-icon" onClick={this.leaveEditing} />
+          <Icon type="done" className="c7ntest-TextEditToggle-edit-icon" onClick={this.onSubmit} />
+          <Icon type="close" className="c7ntest-TextEditToggle-edit-icon" onClick={this.leaveEditing} />
         </div>
       </div>
     ) : (
       <div
-        className={disabled ? 'c7n-TextEditToggle-text' : 'c7n-TextEditToggle-text c7n-TextEditToggle-text-active'}
+        className={disabled ? 'c7ntest-TextEditToggle-text' : 'c7ntest-TextEditToggle-text c7ntest-TextEditToggle-text-active'}
         onClick={this.enterEditing}
         role="none"
       >
         {children}
-        <Icon type="mode_edit" className="c7n-TextEditToggle-text-icon" />
+        <Icon type="mode_edit" className="c7ntest-TextEditToggle-text-icon" />
       </div>
     );
   }

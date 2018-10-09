@@ -211,7 +211,7 @@ class TestPlanHome extends Component {
               )}
             >
               <Link
-                className="c7n-text-dot"
+                className="c7ntest-text-dot"
                 style={{
                   width: 100,
                 }}
@@ -257,7 +257,7 @@ class TestPlanHome extends Component {
         return (
           <Tooltip title={<RichTextShow data={delta2Html(comment)} />}>
             <div
-              className="c7n-text-dot"
+              className="c7ntest-text-dot"
             // style={{
             //   width: 65,
             // }}
@@ -309,7 +309,7 @@ class TestPlanHome extends Component {
       render(lastUpdateUser) {
         return (
           <div
-            className="c7n-text-dot"
+            className="c7ntest-text-dot"
           >
             {lastUpdateUser.realName}
           </div>
@@ -323,7 +323,7 @@ class TestPlanHome extends Component {
       render(lastUpdateDate) {
         return (
           <div
-            className="c7n-text-dot"
+            className="c7ntest-text-dot"
           >
             {/* {lastUpdateDate && moment(lastUpdateDate).format('D/MMMM/YY')} */}
             {lastUpdateDate && moment(lastUpdateDate).format('YYYY-MM-DD')}
@@ -338,7 +338,7 @@ class TestPlanHome extends Component {
       render(assigneeUser) {
         return (
           <div
-            className="c7n-text-dot"
+            className="c7ntest-text-dot"
           >
             {assigneeUser && assigneeUser.realName}
           </div>
@@ -444,7 +444,7 @@ class TestPlanHome extends Component {
                       // margin: '0 5px',
                       // marginBottom: 3,
                     }}
-                    className="c7n-text-dot"
+                    className="c7ntest-text-dot"
                   >
                     {label.labelName}
                   </div>
@@ -457,7 +457,7 @@ class TestPlanHome extends Component {
       },
     ];
     return (
-      <Page className="c7n-TestPlan">
+      <Page className="c7ntest-TestPlan">
         <Header title={<FormattedMessage id="testPlan_name" />}>
           <Button onClick={() => { this.setState({ CreateCycleVisible: true }); }}>
             <Icon type="playlist_add icon" />
@@ -478,7 +478,7 @@ class TestPlanHome extends Component {
           style={{ padding: 0, display: 'flex' }}
         >
           <Spin spinning={loading}>
-            <div className="c7n-TestPlan-content">
+            <div className="c7ntest-TestPlan-content">
               <EditCycle visible={TestPlanStore.EditCycleVisible} />
               <EditStage visible={TestPlanStore.EditStageVisible} />
               <CreateCycle
@@ -487,10 +487,10 @@ class TestPlanHome extends Component {
                 onOk={() => { this.setState({ CreateCycleVisible: false }); this.refresh(); }}
               />
               {!treeShow && (
-                <div className="c7n-TestPlan-bar">
+                <div className="c7ntest-TestPlan-bar">
                   <div
                     role="none"
-                    className="c7n-TestPlan-bar-button"
+                    className="c7ntest-TestPlan-bar-button"
                     onClick={() => {
                       this.setState({
                         treeShow: true,
@@ -511,7 +511,7 @@ class TestPlanHome extends Component {
                   </p>
                 </div>
               )}
-              <div className="c7n-TestPlan-tree">
+              <div className="c7ntest-TestPlan-tree">
                 {treeShow && (
                   <PlanTree
                     ref={(tree) => { this.PlanTree = tree; }}
@@ -525,10 +525,10 @@ class TestPlanHome extends Component {
               </div>
               {/* <Spin spinning={loading}> */}
               {key ? (
-                <div className="c7n-TestPlan-content-right">
+                <div className="c7ntest-TestPlan-content-right">
                   <EventCalendar showMode={calendarShowMode} times={times} onItemClick={this.onItemClick} />
                   {calendarShowMode === 'single' && (
-                    <div className="c7n-TestPlan-content-right-bottom">
+                    <div className="c7ntest-TestPlan-content-right-bottom">
                       <div style={{ display: 'flex', marginBottom: 20 }}>
                         <SelectFocusLoad
                           label={<FormattedMessage id="cycle_executeBy" />}

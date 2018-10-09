@@ -68,7 +68,7 @@ class EventItem extends Component {
       <div
         role="none"
         onClick={this.handleItemClick}
-        className="c7n-EventItem-event"
+        className="c7ntest-EventItem-event"
         style={{
           flex,
           display: flex === 0 && 'none', 
@@ -76,7 +76,7 @@ class EventItem extends Component {
         }}
       >
         <Tooltip title={title} placement="topLeft">
-          <div className="c7n-EventItem-event-title c7n-text-dot">
+          <div className="c7ntest-EventItem-event-title c7ntest-text-dot">
             {title}
           </div>
         </Tooltip>
@@ -88,7 +88,7 @@ class EventItem extends Component {
   render() {
     // const { range } = this.props;
     return (
-      <div style={{ width: '100%', display: 'flex' }} className="c7n-EventItem">
+      <div style={{ width: '100%', display: 'flex' }} className="c7ntest-EventItem">
         {this.renderItems()}
       </div>
     );

@@ -134,9 +134,9 @@ class TestExecuteTable extends Component {
       dataIndex: 'cycleName',
       key: 'cycleName',
       render: (cycleName, item) => (
-        <div className="c7n-text-dot">
+        <div className="c7ntest-text-dot">
           <Tooltip title={cycleName} placement="topLeft">
-            <Link className="c7n-showId" to={cycleLink(item.cycleId)} target="_blank">
+            <Link className="c7ntest-showId" to={cycleLink(item.cycleId)} target="_blank">
               {cycleName || ''}
             </Link>
           </Tooltip>
@@ -147,9 +147,9 @@ class TestExecuteTable extends Component {
       dataIndex: 'folderName',
       key: 'folderName',
       render: (folderName, item) => (
-        <div className="c7n-text-dot">
+        <div className="c7ntest-text-dot">
           <Tooltip title={item.folderName} placement="topLeft">
-            <Link className="c7n-showId" to={cycleLink(item.cycleId)} target="_blank">
+            <Link className="c7ntest-showId" to={cycleLink(item.cycleId)} target="_blank">
               {item.folderName || ''}
             </Link>
           </Tooltip>
@@ -206,7 +206,7 @@ class TestExecuteTable extends Component {
                   </div>
                   )}
               >
-                <div className="c7n-text-dot">
+                <div className="c7ntest-text-dot">
                   {item.defects.map((defect, i) => defect.issueInfosDTO.issueNum).join(',')}
                 </div>
               </Tooltip>
@@ -224,7 +224,7 @@ class TestExecuteTable extends Component {
       dataIndex: 'executeTime',
       key: 'executeTime',
       render: (a, item) => (
-        <div style={{ flex: 2, lineHeight: '34px' }} className="c7n-text-dot">
+        <div style={{ flex: 2, lineHeight: '34px' }} className="c7ntest-text-dot">
           <TimeAgo
             datetime={item.lastUpdateDate}
             locale={Choerodon.getMessage('zh_CN', 'en')}
@@ -265,7 +265,7 @@ class TestExecuteTable extends Component {
       },
     }];
     return (
-      <div className="c7n-TestExecuteTable">
+      <div className="c7ntest-TestExecuteTable">
         <Table
           pagination={false}
           filterBar={false}

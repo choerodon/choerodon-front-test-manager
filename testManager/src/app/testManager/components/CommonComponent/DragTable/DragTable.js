@@ -131,7 +131,7 @@ class DragTable extends Component {
   render() {
     const { data } = this.state;
     return (
-      <div className="c7n-dragtable">        
+      <div className="c7ntest-dragtable">        
         <Table
           {...this.props}   
           dataSource={data}

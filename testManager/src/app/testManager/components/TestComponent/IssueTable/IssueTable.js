@@ -42,7 +42,7 @@ class IssueTable extends Component {
           {renderPriority(priorityCode, priorityName)}
           {renderVersions(versionIssueRelDTOList)}
           {renderFolder(folderName)}
-          <div className="c7n-flex-space" />
+          <div className="c7ntest-flex-space" />
           {renderAssigned(assigneeId, assigneeName, assigneeImageUrl)}
           {renderStatus(statusName, statusColor)}
         </div>
@@ -66,7 +66,7 @@ class IssueTable extends Component {
         {/* {renderType(typeCode)} */}
         {renderIssueNum(issueNum)}
         {renderSummary(summary)}
-        <div className="c7n-flex-space" />
+        <div className="c7ntest-flex-space" />
         {renderPriority(priorityCode, priorityName)}
         {renderVersions(versionIssueRelDTOList)}
         {renderFolder(folderName)}
@@ -101,7 +101,7 @@ class IssueTable extends Component {
 
           {renderVersions(versionIssueRelDTOList)}
           {renderFolder(folderName)}
-          <div className="c7n-flex-space" />
+          <div className="c7ntest-flex-space" />
           {/* {renderAssigned(assigneeId, assigneeName, assigneeImageUrl)} */}
           {renderStatus(statusName, statusColor)}
         </div>
@@ -251,7 +251,7 @@ class IssueTable extends Component {
                             <div
                               role="none"
                               onClick={this.handleClickIssue.bind(this, issue, i)}
-                              className={issue.issueId === selectedIssue.issueId ? 'c7n-border-visible c7n-table-item' : 'c7n-border c7n-table-item'}
+                              className={issue.issueId === selectedIssue.issueId ? 'c7ntest-border-visible c7ntest-table-item' : 'c7ntest-border c7ntest-table-item'}
                               style={{
                                 background: !snapshotinner.isDragging && _.find(draggingTableItems, { issueId: issue.issueId }) && 'rgb(235, 242, 249)',
                                 position: 'relative',

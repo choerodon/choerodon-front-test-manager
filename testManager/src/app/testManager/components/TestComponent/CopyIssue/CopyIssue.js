@@ -60,7 +60,7 @@ class CopyIssue extends Component {
   
     return (
       <Modal
-        className="c7n-copyIssue"
+        className="c7ntest-copyIssue"
         title={<FormattedMessage id="issue_copy_title" values={{ issueNum }} />}
         visible={visible || false}
         onOk={this.handleCopyIssue}

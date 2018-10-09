@@ -53,7 +53,7 @@ class ExecuteHistoryTable extends PureComponent {
                 }}
               >
                 <span
-                  className="c7n-avatar"
+                  className="c7ntest-avatar"
                 >
                   {user.realName.slice(0, 1)}
                 </span>

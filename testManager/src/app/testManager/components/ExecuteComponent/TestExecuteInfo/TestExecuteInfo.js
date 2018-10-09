@@ -239,10 +239,10 @@ class TestExecuteInfo extends Component {
       </Option>
     ));
     return (
-      <div style={{ display: 'flex', marginBottom: 24 }} className="c7n-TestExecuteinfo">
+      <div style={{ display: 'flex', marginBottom: 24 }} className="c7ntest-TestExecuteinfo">
         {/* 基本信息 */}
         <div
-          className="c7n-card"
+          className="c7ntest-card"
           style={{ flex: 1, minHeight: 236 }}
         >
           <div style={styles.cardTitle}>
@@ -384,7 +384,7 @@ class TestExecuteInfo extends Component {
         <div style={{ marginLeft: 20, flex: 1 }}>
           {/* 描述 */}
           <div
-            className="c7n-card"
+            className="c7ntest-card"
             style={{
               width: '100%', height: '60%', display: 'flex', flexDirection: 'column',
             }}
@@ -394,7 +394,7 @@ class TestExecuteInfo extends Component {
               <span style={styles.cardTitleText}><FormattedMessage id="execute_description" /></span>
               <div style={{ flex: 1, visibility: 'hidden' }} />
               {/* {!disabled && ( */}
-              <Button className="c7n-upload-button" onClick={() => { this.setState({ edit: true }); }}>
+              <Button className="c7ntest-upload-button" onClick={() => { this.setState({ edit: true }); }}>
                 <Icon type="zoom_out_map" />
                 {' '}
                 <FormattedMessage id="execute_edit_fullScreen" />
@@ -416,7 +416,7 @@ class TestExecuteInfo extends Component {
           </div>
           {/* 附件 */}
           <div
-            className="c7n-card"
+            className="c7ntest-card"
             style={{ width: '100%', height: 'calc(40% - 20px)', marginTop: 20 }}
           >
             <div style={styles.cardTitle}>
@@ -426,7 +426,7 @@ class TestExecuteInfo extends Component {
               </div>
               <div style={{ flex: 1, visibility: 'hidden' }} />
               {/* {!disabled && ( */}
-              <Button className="c7n-upload-button" onClick={() => this.uploadInput.click()}>
+              <Button className="c7ntest-upload-button" onClick={() => this.uploadInput.click()}>
                 <Icon type="file_upload" />
                 {' '}
                 <FormattedMessage id="upload_attachment" />

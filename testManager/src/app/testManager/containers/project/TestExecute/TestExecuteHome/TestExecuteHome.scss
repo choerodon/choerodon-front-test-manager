@@ -1,4 +1,4 @@
-.c7n-cycle {
+.c7ntest-cycle {
   overflow: hidden;
   .ant-tree-switcher {
     margin-top: 3px;
@@ -22,7 +22,7 @@
     align-items: center;
     height: 30px;
   }
-  .c7n-TestExecuteHome {
+  .c7ntest-TestExecuteHome {
     height: 100%;
     display: flex;
     table{
@@ -54,7 +54,7 @@
       box-shadow: 0 0 0 $drop-gradient inset, 0 -16px 20px $drop-gradient inset;
     }
   }
-  .c7n-chs-bar {
+  .c7ntest-chs-bar {
     margin-top: 10px;
     width: 22.5px;
     p {
@@ -64,37 +64,37 @@
       color: rgba(0, 0, 0, 0.65);
     }
   }
-  .c7n-ch-side {
+  .c7ntest-ch-side {
     display: flex;
     flex-direction: column;
     align-items: center; // border-right: 1px solid #d3d3d3;
     // height: 100%;
   }
-  .c7n-ch-left {
+  .c7ntest-ch-left {
     height: 100%;
     // margin-left: 10px;
     width: 310px; // border-right: 1px solid rgba(0, 0, 0, 0.36);
     // padding-bottom: 30px;
-    .c7n-chlh-tree {
+    .c7ntest-chlh-tree {
       margin-left: -4px;
     }
     overflow: hidden;
   }
-  .c7n-chl-head {
+  .c7ntest-chl-head {
     display: flex;
   }
-  .c7n-chlh-search {
+  .c7ntest-chlh-search {
     flex: 1; // width: 70%;
     // display: inline-block;
   }
-  .c7n-chlh-button {
+  .c7ntest-chlh-button {
     margin: 0 5px 0 10px;
     display: flex;
   }
-  .c7n-chlhb-left {
+  .c7ntest-chlhb-left {
     // width: 400px;
   }
-  .c7n-chlh-tree {
+  .c7ntest-chlh-tree {
     height: calc(100% - 75px);
     overflow-y: auto;
     overflow-x: hidden;
@@ -102,13 +102,13 @@
       background: rgba(0, 0, 0, 0.04);
     }
   }
-  .c7n-ch-right {
+  .c7ntest-ch-right {
     flex: 1;
     overflow-y: auto;
     overflow-x: hidden;
     padding: 0 20px;
   }
-  .c7n-avatar {
+  .c7ntest-avatar {
     width: 18px;
     height: 18px;
     border-radius: 50%;
@@ -118,7 +118,7 @@
     text-align: center;
     line-height: 18px;
   }
-  .c7n-TestExecuteHome-button {
+  .c7ntest-TestExecuteHome-button {
     cursor: pointer;
     width: 22px;
     height: 22px;
@@ -140,7 +140,7 @@
     display: inline-block;
     float: right;
   }
-  .c7n-ch-hidden {
+  .c7ntest-ch-hidden {
     display: none;
   }
 }

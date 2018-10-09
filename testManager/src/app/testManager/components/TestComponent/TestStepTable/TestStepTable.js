@@ -140,7 +140,7 @@ class TestStepTable extends Component {
             >
               <Text>
                 {/* <Tooltip title={testStep}> */}
-                <div className="c7n-text-wrap">
+                <div className="c7ntest-text-wrap">
                   {testStep}
                 </div>
                 {/* </Tooltip> */}
@@ -168,7 +168,7 @@ class TestStepTable extends Component {
             >
               <Text>
                 {/* <Tooltip title={testData}> */}
-                <div className="c7n-text-wrap">
+                <div className="c7ntest-text-wrap">
                   {testData}
                 </div>
                 {/* </Tooltip> */}
@@ -200,7 +200,7 @@ class TestStepTable extends Component {
               >
                 <Text>
                   {/* <Tooltip title={expectedResult}> */}
-                  <div className="c7n-text-wrap">
+                  <div className="c7ntest-text-wrap">
                     {expectedResult}
                   </div>
                   {/* </Tooltip> */}
@@ -231,7 +231,7 @@ class TestStepTable extends Component {
                       }}
                       >
                         <Icon type="attach_file" style={{ fontSize: '12px', color: 'rgba(0,0,0,0.65)' }} />
-                        <a className="c7n-text-dot" style={{ margin: '2px 5px', fontSize: '13px' }} href={attachment.url} target="_blank" rel="noopener noreferrer">{attachment.attachmentName}</a>
+                        <a className="c7ntest-text-dot" style={{ margin: '2px 5px', fontSize: '13px' }} href={attachment.url} target="_blank" rel="noopener noreferrer">{attachment.attachmentName}</a>
                       </div>
                     ))
                     }
@@ -271,7 +271,7 @@ class TestStepTable extends Component {
       },
     ];
     return (
-      <div className="c7n-TestStepTable">
+      <div className="c7ntest-TestStepTable">
         <DragTable
           pagination={false}
           filterBar={false}

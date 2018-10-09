@@ -263,7 +263,7 @@ class CreateIssue extends Component {
 
     return (
       <Sidebar
-        className="c7n-createIssue"
+        className="c7ntest-createIssue"
         title={<FormattedMessage id="issue_create_name" />}
         visible={visible || false}
         onOk={this.handleCreateIssue}

@@ -562,7 +562,7 @@ class TestExecuteHome extends Component {
               )}
             >
               <Link
-                className="c7n-text-dot"
+                className="c7ntest-text-dot"
                 style={{
                   width: 100,
                 }}
@@ -608,7 +608,7 @@ class TestExecuteHome extends Component {
         return (
           <Tooltip title={<RichTextShow data={delta2Html(comment)} />}>
             <div
-              className="c7n-text-dot"
+              className="c7ntest-text-dot"
             // style={{
             //   width: 65,
             // }}
@@ -660,7 +660,7 @@ class TestExecuteHome extends Component {
       render(lastUpdateUser) {
         return (
           <div
-            className="c7n-text-dot"
+            className="c7ntest-text-dot"
           >
             {lastUpdateUser.realName}
           </div>
@@ -674,7 +674,7 @@ class TestExecuteHome extends Component {
       render(lastUpdateDate) {
         return (
           <div
-            className="c7n-text-dot"
+            className="c7ntest-text-dot"
           >
             {/* {lastUpdateDate && moment(lastUpdateDate).format('D/MMMM/YY')} */}
             {lastUpdateDate && moment(lastUpdateDate).format('YYYY-MM-DD')}
@@ -689,7 +689,7 @@ class TestExecuteHome extends Component {
       render(assigneeUser) {
         return (
           <div
-            className="c7n-text-dot"
+            className="c7ntest-text-dot"
           >
             {assigneeUser && assigneeUser.realName}
           </div>
@@ -795,7 +795,7 @@ class TestExecuteHome extends Component {
                       // margin: '0 5px',
                       // marginBottom: 3,
                     }}
-                    className="c7n-text-dot"
+                    className="c7ntest-text-dot"
                   >
                     {label.labelName}
                   </div>
@@ -815,7 +815,7 @@ class TestExecuteHome extends Component {
       render(cycleName) {
         return (
           <div
-            className="c7n-text-dot"
+            className="c7ntest-text-dot"
           >
             {cycleName}
           </div>
@@ -826,7 +826,7 @@ class TestExecuteHome extends Component {
       columns.splice(2, 0, nameColumn);
     }
     return (
-      <Page className="c7n-cycle">
+      <Page className="c7ntest-cycle">
         <Header title={<FormattedMessage id="cycle_title" />}>
           <Button onClick={() => { this.refresh(); }}>
             <Icon type="autorenew icon" />
@@ -858,14 +858,14 @@ class TestExecuteHome extends Component {
               onCancel={() => { this.setState({ CloneCycleVisible: false }); }}
               onOk={() => { this.setState({ CloneCycleVisible: false }); this.refresh(); }}
             />
-            <div className="c7n-TestExecuteHome">
+            <div className="c7ntest-TestExecuteHome">
 
-              <div className={this.state.sideVisible ? 'c7n-ch-side' : 'c7n-ch-hidden'} style={{ minHeight: window.innerHeight - 128 }}>
+              <div className={this.state.sideVisible ? 'c7ntest-ch-side' : 'c7ntest-ch-hidden'} style={{ minHeight: window.innerHeight - 128 }}>
 
-                <div className="c7n-chs-button">
+                <div className="c7ntest-chs-button">
                   <div
                     role="none"
-                    className="c7n-TestExecuteHome-button"
+                    className="c7ntest-TestExecuteHome-button"
                     onClick={() => {
                       this.setState({
                         leftVisible: true,
@@ -876,7 +876,7 @@ class TestExecuteHome extends Component {
                     <Icon type="navigate_next" />
                   </div>
                 </div>
-                <div className="c7n-chs-bar">
+                <div className="c7ntest-chs-bar">
                   {this.state.versionVisible ? '' : (
                     <p
                       role="none"
@@ -892,7 +892,7 @@ class TestExecuteHome extends Component {
                   )}
                 </div>
               </div>
-              <div className={leftVisible ? 'c7n-ch-left' : 'c7n-ch-hidden'}>
+              <div className={leftVisible ? 'c7ntest-ch-left' : 'c7ntest-ch-hidden'}>
                 <RadioButton
                   style={{ marginBottom: 20 }}
                   onChange={this.handleTreeAssignedToChange}
@@ -905,14 +905,14 @@ class TestExecuteHome extends Component {
                     text: 'cycle_all',
                   }]}
                 />
-                <div className="c7n-chl-head">
-                  <div className="c7n-chlh-search">
+                <div className="c7ntest-chl-head">
+                  <div className="c7ntest-chlh-search">
                     <Input prefix={prefix} placeholder="过滤" onChange={e => _.debounce(this.filterCycle, 200).call(null, e.target.value)} />
                   </div>
-                  <div className="c7n-chlh-button">
+                  <div className="c7ntest-chlh-button">
                     <div
                       role="none"
-                      className="c7n-TestExecuteHome-button"
+                      className="c7ntest-TestExecuteHome-button"
                       onClick={() => {
                         this.setState({
                           leftVisible: false,
@@ -924,7 +924,7 @@ class TestExecuteHome extends Component {
                     </div>
                   </div>
                 </div>
-                <div className="c7n-chlh-tree">
+                <div className="c7ntest-chlh-tree">
                   <Tree
                     selectedKeys={selectedKeys}
                     expandedKeys={expandedKeys}
@@ -939,7 +939,7 @@ class TestExecuteHome extends Component {
               </div>
               <div style={{ width: 1, background: 'rgba(0,0,0,0.26)' }} />
               {cycleId ? (
-                <div className="c7n-ch-right">
+                <div className="c7ntest-ch-right">
                   <div style={{ display: 'flex', alignItems: 'center' }}>
                     <div>
                       {type === 'folder' ? <FormattedMessage id="cycle_stageName" />

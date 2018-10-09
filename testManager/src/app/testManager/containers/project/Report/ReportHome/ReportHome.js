@@ -61,7 +61,7 @@ class ReportHome extends Component {
     );
     
     return (
-      <Page className="c7n-report-home">
+      <Page className="c7ntest-report-home">
         <Header title={<FormattedMessage id="report_title" />}>
           <Dropdown overlay={menu} trigger={['click']}>
             <a className="ant-dropdown-link" href="#">

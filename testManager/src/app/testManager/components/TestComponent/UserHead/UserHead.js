@@ -38,7 +38,7 @@ class UserHead extends Component {
     const { user, color } = this.props; 
     return (
       <div
-        className="c7n-userHead"
+        className="c7ntest-userHead"
         style={{
           ...this.props.style,
           display: user.id ? 'flex' : 'none',

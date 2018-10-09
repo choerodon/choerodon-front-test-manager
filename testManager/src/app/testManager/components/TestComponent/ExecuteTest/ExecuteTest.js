@@ -92,7 +92,7 @@ class ExecuteTest extends Component {
     };
     return (
       <Sidebar
-        className="c7n-createSubIssue"
+        className="c7ntest-createSubIssue"
         title={<FormattedMessage id="issue_edit_executeTest" />}
         visible
         onOk={this.handleCreateIssue}

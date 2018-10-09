@@ -35,97 +35,97 @@ class ShowCycleData extends Component {
     return (
       type === 'cycle'
         ? (
-          <div className="c7n-right-card-container">
-            <div className="c7n-right-card-column">
-              <div className="c7n-right-card-item">
-                <div className="c7n-right-card-item-label">
+          <div className="c7ntest-right-card-container">
+            <div className="c7ntest-right-card-column">
+              <div className="c7ntest-right-card-item">
+                <div className="c7ntest-right-card-item-label">
                   <FormattedMessage id="cycle_build" />   
               ：
                 </div>
-                <div className="c7n-right-card-item-text">
+                <div className="c7ntest-right-card-item-text">
                   {build}
                 </div>
               </div>
-              <div className="c7n-right-card-item">
-                <div className="c7n-right-card-item-label">
+              <div className="c7ntest-right-card-item">
+                <div className="c7ntest-right-card-item-label">
                   <FormattedMessage id="cycle_startTime" />
                   {' '}
 ：
                 </div>
-                <div className="c7n-right-card-item-text">
+                <div className="c7ntest-right-card-item-text">
                   {fromDate && moment(fromDate).format('D/MMMM/YY')}
                 </div>
               </div>
-              <div className="c7n-right-card-item">
-                <div className="c7n-right-card-item-label">
+              <div className="c7ntest-right-card-item">
+                <div className="c7ntest-right-card-item-label">
                   <FormattedMessage id="cycle_totalExecute" />
                   {' '}
 ：
                 </div>
-                <div className="c7n-right-card-item-text">
+                <div className="c7ntest-right-card-item-text">
                   {allExectueNum}
                 </div>
               </div>
               
             </div>
-            <div className="c7n-right-card-column">
-              <div className="c7n-right-card-item">
-                <div className="c7n-right-card-item-label">
+            <div className="c7ntest-right-card-column">
+              <div className="c7ntest-right-card-item">
+                <div className="c7ntest-right-card-item-label">
                   <FormattedMessage id="cycle_environment" />
 ：
                 </div>
-                <div className="c7n-right-card-item-text">
+                <div className="c7ntest-right-card-item-text">
                   {environment}
                 </div>
               </div>
-              <div className="c7n-right-card-item">
-                <div className="c7n-right-card-item-label">
+              <div className="c7ntest-right-card-item">
+                <div className="c7ntest-right-card-item-label">
                   <FormattedMessage id="cycle_comment" />
                   {' '}
 ：
                 </div>
-                <div className="c7n-right-card-item-text">
+                <div className="c7ntest-right-card-item-text">
                   {description}
                 </div>
               </div>
-              {/* <div className="c7n-right-card-item">
-                <div className="c7n-right-card-item-label">
+              {/* <div className="c7ntest-right-card-item">
+                <div className="c7ntest-right-card-item-label">
                   <FormattedMessage id="cycle_ExecuteDetail" />
 ：
                 </div>
-                <div className="c7n-right-card-item-text">
+                <div className="c7ntest-right-card-item-text">
                   {CycleExectueNum}
                 </div>
               </div> */}
             </div>
-            <div className="c7n-right-card-column">
-              <div className="c7n-right-card-item">
-                <div className="c7n-right-card-item-label">
+            <div className="c7ntest-right-card-column">
+              <div className="c7ntest-right-card-item">
+                <div className="c7ntest-right-card-item-label">
                   <FormattedMessage id="cycle_createBy" />
 ：
                 </div>
-                <div className="c7n-right-card-item-text">           
+                <div className="c7ntest-right-card-item-text">           
                   <div style={{ display: 'flex', alignItems: 'center' }}>
                 
                     <User user={createdUser} />                
                   </div>
                 </div>
               </div>
-              <div className="c7n-right-card-item">
-                <div className="c7n-right-card-item-label">
+              <div className="c7ntest-right-card-item">
+                <div className="c7ntest-right-card-item-label">
                   <FormattedMessage id="cycle_endTime" />
 ：
                 </div>
-                <div className="c7n-right-card-item-text">
+                <div className="c7ntest-right-card-item-text">
                   {toDate && moment(toDate).format('D/MMMM/YY')} 
                 </div>
               </div>
-              <div className="c7n-right-card-item">
-                <div className="c7n-right-card-item-label">
+              <div className="c7ntest-right-card-item">
+                <div className="c7ntest-right-card-item-label">
                   <FormattedMessage id="cycle_totalExecuted" />
 ：
                 </div>
-                <div className="c7n-right-card-item-text">
+                <div className="c7ntest-right-card-item-text">
                   {ExectuedNum}
                 </div>
               </div>
@@ -133,44 +133,44 @@ class ShowCycleData extends Component {
           </div>
         )
         : (
-          <div className="c7n-right-card-container">
-            <div className="c7n-right-card-column">
-              <div className="c7n-right-card-item">
-                <div className="c7n-right-card-item-label">
+          <div className="c7ntest-right-card-container">
+            <div className="c7ntest-right-card-column">
+              <div className="c7ntest-right-card-item">
+                <div className="c7ntest-right-card-item-label">
                   <FormattedMessage id="cycle_startTime" />
                   {' '}
 ：
                 </div>
-                <div className="c7n-right-card-item-text">
+                <div className="c7ntest-right-card-item-text">
                   {fromDate && moment(fromDate).format('D/MMMM/YY')}
                 </div>
               </div>
-              <div className="c7n-right-card-item">
-                <div className="c7n-right-card-item-label">
+              <div className="c7ntest-right-card-item">
+                <div className="c7ntest-right-card-item-label">
                   <FormattedMessage id="cycle_totalExecute" />
 ：
                 </div>
-                <div className="c7n-right-card-item-text">
+                <div className="c7ntest-right-card-item-text">
                   {allExectueNum}
                 </div>
               </div>
             </div> 
-            <div className="c7n-right-card-column">      
-              <div className="c7n-right-card-item">
-                <div className="c7n-right-card-item-label">
+            <div className="c7ntest-right-card-column">      
+              <div className="c7ntest-right-card-item">
+                <div className="c7ntest-right-card-item-label">
                   <FormattedMessage id="cycle_endTime" />
 ：
                 </div>
-                <div className="c7n-right-card-item-text">
+                <div className="c7ntest-right-card-item-text">
                   {toDate && moment(toDate).format('D/MMMM/YY')} 
                 </div>
               </div>      
-              <div className="c7n-right-card-item">
-                <div className="c7n-right-card-item-label">
+              <div className="c7ntest-right-card-item">
+                <div className="c7ntest-right-card-item-label">
                   <FormattedMessage id="cycle_totalExecuted" />
 ：
                 </div>
-                <div className="c7n-right-card-item-text">
+                <div className="c7ntest-right-card-item-text">
                   {ExectuedNum}
                 </div>
               </div>       

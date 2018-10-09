@@ -80,7 +80,7 @@ export function renderVersions(versions, priorityName) {
           padding: '0 8px',
           margin: '0 5px',
         }}
-        className="c7n-text-dot"
+        className="c7ntest-text-dot"
       >
         {version.name}
       </div>
@@ -125,7 +125,7 @@ export function renderFolder(folderName) {
           padding: '0 8px',
           margin: '0 5px',
         }}
-        className="c7n-text-dot"
+        className="c7ntest-text-dot"
       >
         {folderName}
       </div>

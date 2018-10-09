@@ -85,7 +85,7 @@ class ExecuteDetail extends Component {
           default: {
             return (
               <div
-                className="c7n-text-dot"
+                className="c7ntest-text-dot"
               >
                 {oldValue}
               </div>
@@ -118,7 +118,7 @@ class ExecuteDetail extends Component {
           default: {
             return (
               <div
-                className="c7n-text-dot"
+                className="c7ntest-text-dot"
               >
                 {newValue}
               </div>
@@ -135,7 +135,7 @@ class ExecuteDetail extends Component {
       lastUpdateDate, comment, defects,
     } = cycleData;
     return (
-      <Page className="c7n-ExecuteDetail">
+      <Page className="c7ntest-ExecuteDetail">
         <Header title={(
           <div>
             <Tooltip

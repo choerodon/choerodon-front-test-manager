@@ -43,7 +43,7 @@ class ReadAndEdit extends Component {
     return (
       <div
         role="none"
-        className={`rae ${this.props.current !== this.props.thisType ? 'c7n-readAndEdit' : ''}`}
+        className={`rae ${this.props.current !== this.props.thisType ? 'c7ntest-readAndEdit' : ''}`}
         style={{
           ...this.props.style,
           position: 'relative',

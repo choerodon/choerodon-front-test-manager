@@ -346,9 +346,9 @@ class DataLog extends Component {
       <div>
         {
           i > 4 && !expand ? null : (
-            <div className="c7n-datalog" key={datalog.logId}>
+            <div className="c7ntest-datalog" key={datalog.logId}>
               <div className="line-justify">
-                <div className="c7n-title-log" style={{ flexShrink: 0 }}>
+                <div className="c7ntest-title-log" style={{ flexShrink: 0 }}>
                   <div
                     style={{
                       width: 40,

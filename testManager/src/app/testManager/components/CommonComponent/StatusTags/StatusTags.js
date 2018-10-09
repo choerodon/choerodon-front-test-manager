@@ -16,7 +16,7 @@ class StatusTags extends Component {
     const { name, color, colorCode } = this.props;
     return (
       <div
-        className="c7n-status-tags"
+        className="c7ntest-status-tags"
         style={{
           background: color || Color[colorCode] || 'rgba(0, 0, 0, 0.28)',
           ...this.props.style,

@@ -1,15 +1,15 @@
-.c7n-EditStatusSide-color-picker-container {
+.c7ntest-EditStatusSide-color-picker-container {
     display: flex;
     align-items: center;
     margin-top: 15px;
 }
 
-.c7n-EditStatusSide-color-picker {
+.c7ntest-EditStatusSide-color-picker {
     margin-top: 5px;
     margin-left: 10px;
 }
 
-.c7n-EditStatusSide-color-picker-show {
+.c7ntest-EditStatusSide-color-picker-show {
     position: relative;
     border: 3px solid #E0E0E0;
     border-radius: 2px;
@@ -21,7 +21,7 @@
         right: 0;
         bottom: 0;
         left: 0;
-        .c7n-EditStatusSide-color-picker-show-rec-con {
+        .c7ntest-EditStatusSide-color-picker-show-rec-con {
             position: absolute;
             right: 0;
             bottom: 0;
@@ -32,7 +32,7 @@
     }
 }
 
-.c7n-EditStatusSide-color-picker-show-rec {
+.c7ntest-EditStatusSide-color-picker-show-rec {
     position: absolute;
     right: 0;
     bottom: -1px;

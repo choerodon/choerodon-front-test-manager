@@ -275,7 +275,7 @@ class PlanTree extends Component {
     const selectedKeys = TestPlanStore.getSelectedKeys;
     const currentCycle = TestPlanStore.getCurrentCycle;
     return (
-      <div className="c7n-PlanTree">
+      <div className="c7ntest-PlanTree">
         <CloneCycle
           visible={CloneCycleVisible}
           currentCloneCycle={currentCloneCycle}
@@ -289,7 +289,7 @@ class PlanTree extends Component {
           onCancel={() => { this.setState({ CreateStageVisible: false }); }}
           onOk={() => { this.setState({ CreateStageVisible: false }); this.refresh(); }}
         />
-        <div className="c7n-PlanTree-treeTop">
+        <div className="c7ntest-PlanTree-treeTop">
           <Input
             prefix={<Icon type="filter_list" style={{ color: 'black' }} />}
             placeholder="过滤"
@@ -298,13 +298,13 @@ class PlanTree extends Component {
           />
           <div
             role="none"
-            className="c7n-PlanTree-treeTop-button"
+            className="c7ntest-PlanTree-treeTop-button"
             onClick={onClose}
           >
             <Icon type="navigate_before" />
           </div>
         </div>
-        <div className="c7n-PlanTree-tree">
+        <div className="c7ntest-PlanTree-tree">
           <Tree
             selectedKeys={selectedKeys}
             expandedKeys={expandedKeys}

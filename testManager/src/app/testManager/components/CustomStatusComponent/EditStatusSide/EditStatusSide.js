@@ -103,11 +103,11 @@ class EditStatusSide extends Component {
                   )}
                 </FormItem>
 
-                <div role="none" className="c7n-EditStatusSide-color-picker-container" onClick={e => e.stopPropagation()}>
+                <div role="none" className="c7ntest-EditStatusSide-color-picker-container" onClick={e => e.stopPropagation()}>
                   <FormattedMessage id="color" />
                   {'：'}
                   <div
-                    className="c7n-EditStatusSide-color-picker-show"
+                    className="c7ntest-EditStatusSide-color-picker-show"
                     role="none"
                     // style={{ background: statusColor }}
                     onClick={(e) => {
@@ -116,8 +116,8 @@ class EditStatusSide extends Component {
                     }}
                   >            
                     <div style={{ background: statusColor }}>
-                      <div className="c7n-EditStatusSide-color-picker-show-rec-con">
-                        <div className="c7n-EditStatusSide-color-picker-show-rec" />
+                      <div className="c7ntest-EditStatusSide-color-picker-show-rec-con">
+                        <div className="c7ntest-EditStatusSide-color-picker-show-rec" />
                       </div>
                     </div>                                        
                   </div>

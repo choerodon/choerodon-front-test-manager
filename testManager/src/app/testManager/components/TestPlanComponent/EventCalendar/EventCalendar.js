@@ -94,11 +94,11 @@ class EventCalendar extends Component {
       // }
     ];
     return (
-      <div className="c7n-EventCalendar" style={{ height: showMode === 'multi' ? '100%' : '162px' }}>
-        <div className="c7n-EventCalendar-header">
+      <div className="c7ntest-EventCalendar" style={{ height: showMode === 'multi' ? '100%' : '162px' }}>
+        <div className="c7ntest-EventCalendar-header">
           <div style={{ fontWeight: 500 }}>{moment(start).format('YYYY年M月')}</div>
-          <div className="c7n-flex-space" />
-          <div className="c7n-EventCalendar-header-skip">
+          <div className="c7ntest-flex-space" />
+          <div className="c7ntest-EventCalendar-header-skip">
             <span style={{ color: 'rgba(0,0,0,0.65)', marginRight: 7 }}>跳转到</span>
             {/* <Button
               onClick={() => { this.handleBaseChange(moment()); }}
@@ -112,7 +112,7 @@ class EventCalendar extends Component {
             }
             <DatePicker allowClear={false} onChange={this.handleCalendarChange} value={currentDate} />
           </div>
-          <div className="c7n-EventCalendar-header-radio">
+          <div className="c7ntest-EventCalendar-header-radio">
             <RadioButton
               defaultValue={mode}
               onChange={this.handleModeChange}
@@ -125,9 +125,9 @@ class EventCalendar extends Component {
               }]}
             />
           </div>
-          <div className="c7n-EventCalendar-header-page">
+          <div className="c7ntest-EventCalendar-header-page">
             <Icon
-              className="c7n-pointer"
+              className="c7ntest-pointer"
               type="keyboard_arrow_left"
               onClick={() => {
                 this.setState({
@@ -137,7 +137,7 @@ class EventCalendar extends Component {
               }}
             />
             <Icon
-              className="c7n-pointer"
+              className="c7ntest-pointer"
               type="keyboard_arrow_right"
               onClick={() => {
                 this.setState({
@@ -148,13 +148,13 @@ class EventCalendar extends Component {
             />
           </div>
         </div>
-        <div className="c7n-EventCalendar-content">
-          <div className="c7n-EventCalendar-BackItems">
+        <div className="c7ntest-EventCalendar-content">
+          <div className="c7ntest-EventCalendar-BackItems">
             {
               timeArray.map(m => <CalendarBackItem date={m} />)
             }
           </div>
-          <div className="c7n-EventCalendar-eventContainer">
+          <div className="c7ntest-EventCalendar-eventContainer">
             {times.map(event => (
               <EventItem
                 onClick={this.props.onItemClick}
