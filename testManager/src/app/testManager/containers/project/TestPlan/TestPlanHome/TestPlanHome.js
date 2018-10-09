@@ -28,19 +28,7 @@ import {
 } from '../../../../common/utils';
 import './TestPlanHome.scss';
 import noRight from '../../../../assets/noright.svg';
-
 const { confirm } = Modal;
-const styles = {
-  statusOption: {
-    lineHeight: '20px',
-    height: 20,
-    width: 60,
-    textAlign: 'center',
-    borderRadius: '2px',
-    display: 'inline-block',
-    color: 'white',
-  },
-};
 const { AppState } = stores;
 const moment = extendMoment(Moment);
 @observer

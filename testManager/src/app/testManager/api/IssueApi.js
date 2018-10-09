@@ -89,26 +89,10 @@ export function deleteLink(issueLinkId, projectId = AppState.currentMenuType.id)
   return axios.delete(`/agile/v1/projects/${projectId}/issue_links/${issueLinkId}`);
 }
 
-export function createWorklog(data, projectId = AppState.currentMenuType.id) {
-  return axios.post(`/agile/v1/projects/${projectId}/work_log`, data);
-}
-
-export function loadWorklogs(issueId, projectId = AppState.currentMenuType.id) {
-  return axios.get(`agile/v1/projects/${projectId}/work_log/issue/${issueId}`);
-}
 
 export function loadDatalogs(issueId, projectId = AppState.currentMenuType.id) {
   return axios.get(`agile/v1/projects/${projectId}/data_log?issueId=${issueId}`);
 }
-
-export function updateWorklog(logId, worklog, projectId = AppState.currentMenuType.id) {
-  return axios.patch(`agile/v1/projects/${projectId}/work_log/${logId}`, worklog);
-}
-
-export function deleteWorklog(logId, projectId = AppState.currentMenuType.id) {
-  return axios.delete(`agile/v1/projects/${projectId}/work_log/${logId}`);
-}
-
 
 export function loadIssues(page = 0, size = 10, search, orderField, orderType) {
   const searchDTO = { ...search };
