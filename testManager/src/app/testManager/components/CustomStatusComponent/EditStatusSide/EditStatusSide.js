@@ -6,7 +6,7 @@ import { Content } from 'choerodon-front-boot';
 import { FormattedMessage } from 'react-intl';
 import { SketchPicker } from 'react-color';
 import './EditStatusSide.scss';
-import { editStatus } from '../../api/TestStatusApi';
+import { editStatus } from '../../../api/TestStatusApi';
 
 const FormItem = Form.Item;
 const { Sidebar } = Modal;

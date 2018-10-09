@@ -1,4 +1,4 @@
-/*eslint-disable */
+
 import React, { Component } from 'react';
 import {
   Page, Header, Content, stores,
@@ -10,7 +10,6 @@ import {
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import { getReportsFromStory } from '../../../../api/reportApi';
-import { getIssueStatus } from '../../../../api/agileApi';
 import { getStatusList } from '../../../../api/TestStatusApi';
 import { issueLink, cycleLink } from '../../../../common/utils';
 import './ReportStory.scss';
@@ -19,20 +18,16 @@ const { AppState } = stores;
 const Panel = Collapse.Panel;
 
 class ReportStory extends Component {
-  state = {
-    selectVisible: false,
+  state = {   
     loading: false,
     reportList: [],
-    issueStatusList: [],
     statusList: [],
-    stepStatusList: [],
     pagination: {
       current: 1,
       total: 0,
       pageSize: 10,
     },
     openId: {},
-    issueIds: [],
     search: {
       advancedSearchArgs: {
       },
@@ -49,15 +44,9 @@ class ReportStory extends Component {
     this.setState({
       loading: true,
     });
-    Promise.all([
-      getIssueStatus(),
-      getStatusList('CYCLE_CASE'),
-      getStatusList('CASE_STEP'),
-      this.getReportsFromStory(),
-    ]).then(([issueStatusList, statusList]) => {
-      // ReportStoryStore.setStatusList(statusList);  
-      this.setState({
-        issueStatusList,
+    this.getReportsFromStory();
+    getStatusList('CYCLE_CASE').then((statusList) => {      
+      this.setState({       
         statusList,
         // loading: false,
         openId: {},
@@ -65,10 +54,6 @@ class ReportStory extends Component {
     });
   }
 
-  sliceIssueIds = (arr, pagination) => {
-    const { current, pageSize } = pagination;
-    return arr.slice(pageSize * (current - 1), pageSize * current);
-  }
 
   getReportsFromStory = (pagination, search) => {
     const Pagination = pagination || this.state.pagination;
@@ -78,7 +63,7 @@ class ReportStory extends Component {
       page: Pagination.current - 1,
       size: Pagination.pageSize,
     }, Search).then((reportData) => {
-      if (reportData.totalElements != undefined) {
+      if (reportData.totalElements !== undefined) {
         this.setState({
           loading: false,
           // reportList: reportData.content,
@@ -90,19 +75,7 @@ class ReportStory extends Component {
             total: reportData.totalElements,
           },
         });
-      } else {
-        this.setState({
-          loading: false,
-          // reportList: reportData.content,
-          reportList: reportData,
-          pagination: {
-            current: Pagination.current,
-            pageSize: Pagination.pageSize,
-            // total: reportData.totalElements,
-            total: issueIds.length,
-          },
-        });
-      }
+      } 
     }).catch((error) => {
       window.console.log(error);
       this.setState({
@@ -118,24 +91,18 @@ class ReportStory extends Component {
 
   handleOpen = (issueId, keys) => {
     const { openId } = this.state;
-    openId[issueId] = keys;
-    // if (open) {
+    openId[issueId] = keys; 
     this.setState({
       openId: { ...openId },
     });
-    // } else {
-    //   openId.splice(openId.indexOf(issueId), 1);
-    //   this.setState({
-    //     openId: [...openId],
-    //   });
-    // }
   }
+
   handleFilterChange = (pagination, filters, sorter, barFilters) => {
     const { statusCode, priorityCode, typeCode } = filters;
     const {
-      issueNum, summary, assignee, sprint, version, component, epic, content
+      issueNum, summary, assignee, sprint, version, component, epic, content,
     } = filters;
-    console.log(barFilters)
+    console.log(barFilters);
     const search = {
       content: barFilters[0] ? barFilters[0] : content ? content[0] : '',
       advancedSearchArgs: {
@@ -160,10 +127,11 @@ class ReportStory extends Component {
     });
     this.getReportsFromStory(Pagination, search);
   }
+
   render() {
     const {
-      selectVisible, reportList, loading, pagination,
-      issueStatusList, statusList, openId,
+      reportList, loading, pagination,
+      statusList, openId,
     } = this.state;
     const urlParams = AppState.currentMenuType;
     const that = this;
@@ -338,7 +306,8 @@ class ReportStory extends Component {
             </div>
             <div>
               <FormattedMessage id="report_defectCount" />
-              :{' '}{defectCount}
+              {':'}
+              {defectCount}
             </div>
           </div>
         );
@@ -373,7 +342,7 @@ class ReportStory extends Component {
                         <div style={{ display: 'flex', alignItems: 'center' }}>
                           <Icon type="navigate_next" className="c7n-collapse-icon" />
                           <Tooltip title={issue.issueName}>
-                            <Link className="c7n-showId" to={issueLink(issue.issueId, 'issue_test')} target="_blank">
+                            <Link className="c7n-text-dot" to={issueLink(issue.issueId, 'issue_test')} target="_blank">
                               {issue.issueName}
                             </Link>
                           </Tooltip>
@@ -397,7 +366,7 @@ class ReportStory extends Component {
         const { linkedTestIssues, defectInfo } = record;
         return (
           <div>
-            {linkedTestIssues.map((testIssue,i) => {
+            {linkedTestIssues.map((testIssue, i) => {
               const { testCycleCaseES, issueId } = testIssue;
 
               // console.log()
@@ -464,14 +433,17 @@ class ReportStory extends Component {
                   <div style={{ height: 50 }}>
                     <div>
                       <FormattedMessage id="report_total" />
-                      {' '}：{totalExecute}
+                      {'：'}
+                      {totalExecute}
                     </div>
                     <div style={{ display: 'flex' }}>
                       {
                         Object.keys(executeStatus).map(key => (
                           <div>
                             <span>
-                              {key}：</span>
+                              {key}
+                              {'：'}
+                            </span>
                             <span>{executeStatus[key]}</span>
                           </div>
                         ))
@@ -492,7 +464,7 @@ class ReportStory extends Component {
         const { linkedTestIssues, defectInfo } = record;
         return (
           <div>
-            {linkedTestIssues.map((testIssue,i) => {
+            {linkedTestIssues.map((testIssue, i) => {
               const { testCycleCaseES, issueId } = testIssue;
               if (testCycleCaseES.length === 0) {
                 return <div style={{ minHeight: 50 }} />;
@@ -635,26 +607,6 @@ class ReportStory extends Component {
           link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management/test-report/report/"
         >
           <div style={{ display: 'flex' }} />
-          {/* <ReportSelectIssue
-            visible={selectVisible}
-            onCancel={() => { this.setState({ selectVisible: false }); }}
-            onOk={(issueIds) => {
-              this.setState({
-                selectVisible: false,
-                pagination: {
-                  current: 1,
-                  total: 0,
-                  pageSize: 10,
-                },
-                issueIds,
-              });
-              this.getReportsFromStory({
-                current: 1,
-                total: 0,
-                pageSize: 10,
-              }, issueIds);
-            }}
-          /> */}
           <div className="c7n-report-story-filter-table">
             <Table
               rowKey={record => record.id}

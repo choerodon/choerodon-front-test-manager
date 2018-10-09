@@ -5,7 +5,7 @@ import {
 import { stores, axios } from 'choerodon-front-boot';
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
-import DragTable from '../../DragTable';
+import { DragTable } from '../../CommonComponent';
 import { TextEditToggle, UploadInTable } from '../../CommonComponent';
 import './TestStepTable.scss';
 

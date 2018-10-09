@@ -4,8 +4,8 @@ import {
 } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 import { Page, Header, Content } from 'choerodon-front-boot';
-import CreateStatus from '../../../../components/CreateStatus';
-import EditStatusSide from '../../../../components/EditStatusSide';
+import { CreateStatus, EditStatusSide } from '../../../../components/CustomStatusComponent';
+
 import { getStatusList, deleteStatus } from '../../../../api/TestStatusApi';
 
 const TabPane = Tabs.TabPane;

@@ -2,13 +2,12 @@ import React, { Component } from 'react';
 import {
   Form, Input, Select, Modal, Spin, Icon, 
 } from 'choerodon-ui';
-import { Content, stores } from 'choerodon-front-boot';
+import { Content } from 'choerodon-front-boot';
 import { FormattedMessage } from 'react-intl';
 import { SketchPicker } from 'react-color';
 import './CreateStatus.scss';
-import { createStatus } from '../../api/TestStatusApi';
+import { createStatus } from '../../../api/TestStatusApi';
 
-const { AppState } = stores;
 const FormItem = Form.Item;
 const { Sidebar } = Modal;
 const Option = Select.Option;

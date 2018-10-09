@@ -18,9 +18,9 @@ import { getStatusList } from '../../../../api/TestStatusApi';
 import {
   EventCalendar, PlanTree, CreateCycle, EditStage, EditCycle,
 } from '../../../../components/TestPlanComponent';
-import { RichTextShow, SelectFocusLoad, StatusTags } from '../../../../components/CommonComponent';
-import DragTable from '../../../../components/DragTable';
-
+import {
+  RichTextShow, SelectFocusLoad, StatusTags, DragTable, 
+} from '../../../../components/CommonComponent';
 import { getUsers } from '../../../../api/CommonApi';
 import TestPlanStore from '../../../../store/project/TestPlan/TestPlanStore';
 import {
@@ -28,6 +28,7 @@ import {
 } from '../../../../common/utils';
 import './TestPlanHome.scss';
 import noRight from '../../../../assets/noright.svg';
+
 const { confirm } = Modal;
 const { AppState } = stores;
 const moment = extendMoment(Moment);
@@ -73,19 +74,19 @@ class TestPlanHome extends Component {
         size: pagination.pageSize,
         page: pagination.current - 1,
       }, currentCycle.cycleId,
-        {
-          ...filters,
-          lastUpdatedBy: [Number(this.lastUpdatedBy)],
-          assignedTo: [Number(this.assignedTo)],
-        }).then((cycle) => {
-          TestPlanStore.rightLeaveLoading();
-          TestPlanStore.setTestList(cycle.content);
-          TestPlanStore.setExecutePagination({
-            current: pagination.current,
-            pageSize: pagination.pageSize,
-            total: cycle.totalElements,
-          });
+      {
+        ...filters,
+        lastUpdatedBy: [Number(this.lastUpdatedBy)],
+        assignedTo: [Number(this.assignedTo)],
+      }).then((cycle) => {
+        TestPlanStore.rightLeaveLoading();
+        TestPlanStore.setTestList(cycle.content);
+        TestPlanStore.setExecutePagination({
+          current: pagination.current,
+          pageSize: pagination.pageSize,
+          total: cycle.totalElements,
         });
+      });
     }
   }
 
@@ -143,9 +144,9 @@ class TestPlanHome extends Component {
       width: 560,
       title: Choerodon.getMessage('确认删除吗?', 'Confirm delete'),
       content:
-        <div style={{ marginBottom: 32 }}>
-          {Choerodon.getMessage('当你点击删除后，该条数据将被永久删除，不可恢复!', 'When you click delete, after which the data will be permanently deleted and irreversible!')}
-        </div>,
+  <div style={{ marginBottom: 32 }}>
+    {Choerodon.getMessage('当你点击删除后，该条数据将被永久删除，不可恢复!', 'When you click delete, after which the data will be permanently deleted and irreversible!')}
+  </div>,
       onOk: () => {
         TestPlanStore.rightEnterLoading();
         deleteExecute(executeId)
@@ -564,17 +565,17 @@ class TestPlanHome extends Component {
                   )}
                 </div>
               ) : (
-                  <div style={{
-                    display: 'flex', alignItems: 'center', height: 250, margin: '88px auto', padding: '50px 75px', border: '1px dashed rgba(0,0,0,0.54)',
-                  }}
-                  >
-                    <img src={noRight} alt="" />
-                    <div style={{ marginLeft: 40 }}>
-                      <div style={{ fontSize: '14px', color: 'rgba(0,0,0,0.65)' }}>根据当前选定的测试循环没有查询到循环信息</div>
-                      <div style={{ fontSize: '20px', marginTop: 10 }}>尝试在您的树状图中选择测试循环</div>
-                    </div>
+                <div style={{
+                  display: 'flex', alignItems: 'center', height: 250, margin: '88px auto', padding: '50px 75px', border: '1px dashed rgba(0,0,0,0.54)',
+                }}
+                >
+                  <img src={noRight} alt="" />
+                  <div style={{ marginLeft: 40 }}>
+                    <div style={{ fontSize: '14px', color: 'rgba(0,0,0,0.65)' }}>根据当前选定的测试循环没有查询到循环信息</div>
+                    <div style={{ fontSize: '20px', marginTop: 10 }}>尝试在您的树状图中选择测试循环</div>
                   </div>
-                )}
+                </div>
+              )}
 
             </div>
           </Spin>

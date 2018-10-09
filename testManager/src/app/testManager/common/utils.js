@@ -53,7 +53,7 @@ export function issueLink(issueId, typeCode) {
   const menu = AppState.currentMenuType;
   const { type, id: projectId, name } = menu;
   if (typeCode === 'issue_test') {
-    return `/testManager/manager?type=${type}&id=${projectId}&name=${name}&paramIssueId=${issueId}`;
+    return `/testManager/IssueManage?type=${type}&id=${projectId}&name=${name}&paramIssueId=${issueId}`;
   } else {
     return `/agile/issue?type=${type}&id=${projectId}&name=${name}&paramIssueId=${issueId}`;
   }

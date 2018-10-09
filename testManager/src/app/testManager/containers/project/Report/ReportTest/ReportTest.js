@@ -626,26 +626,6 @@ class ReportTest extends Component {
           link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management/test-report/report/"
         >
           <div style={{ display: 'flex' }} />
-          {/* <ReportSelectIssue
-            visible={selectVisible}
-            onCancel={() => { this.setState({ selectVisible: false }); }}
-            onOk={(issueIds) => {
-              this.setState({
-                selectVisible: false,
-                pagination: {
-                  current: 1,
-                  total: 0,
-                  pageSize: 10,
-                },
-                issueIds,
-              });
-              this.getReportsFromDefect({
-                current: 1,
-                total: 0,
-                pageSize: 10,
-              }, issueIds);
-            }}
-          /> */}
           <div className="c7n-report-test-filter-table">
             <Table
               rowKey={record => record.id}
