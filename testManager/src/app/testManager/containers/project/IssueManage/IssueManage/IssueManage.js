@@ -14,9 +14,6 @@ import '../../../../assets/main.scss';
 import './IssueManage.scss';
 import IssueStore from '../../../../store/project/IssueStore';
 import IssueTreeStore from '../../../../store/project/treeStore/IssueTreeStore';
-import {
-  STATUS, COLOR, TYPE, ICON, TYPE_NAME,
-} from '../../../../common/Constant';
 import pic from '../../../../assets/问题管理－空.png';
 import { loadIssue, createIssue } from '../../../../api/IssueApi';
 import EmptyBlock from '../../../../components/TestComponent/EmptyBlock';
@@ -420,7 +417,6 @@ class Test extends Component {
           </Button>
         </Header>
         <Content style={{ display: 'flex', padding: '0' }}>
-          {/* <DragDropContext onDragEnd={this.onDragEnd} onDragStart={this.onDragStart}> */}
           <div className="c7ntest-chs-bar">
             {!treeShow && (
               <p
@@ -433,13 +429,7 @@ class Test extends Component {
               </p>
             )}
           </div>
-          <div
-            className="c7ntest-issue-tree"
-          // style={{
-          //   overflowY: 'auto',
-          //   overflowX: 'hidden',
-          // }}
-          >
+          <div className="c7ntest-issue-tree">
             {treeShow && (
               <IssueTree
                 ref={(tree) => { this.tree = tree; }}
@@ -695,8 +685,7 @@ class Test extends Component {
 
               />
             ) : null
-          }
-          {/* </DragDropContext> */}
+          }      
         </Content>
       </Page>
     );

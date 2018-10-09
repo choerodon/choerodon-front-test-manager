@@ -25,9 +25,6 @@ class CreateLinkTask extends Component {
 
       originIssues: [],
       originLinks: [],
-
-      active: [],
-      passive: [],
       show: [],
 
       selected: [],
@@ -68,8 +65,6 @@ class CreateLinkTask extends Component {
       }
     });
     this.setState({
-      active,
-      passive,
       show: active.concat(passive),
     });
   }
@@ -140,7 +135,9 @@ class CreateLinkTask extends Component {
 
   render() {
     const { getFieldDecorator } = this.props.form;
-    const { initValue, visible, onCancel, onOk } = this.props;
+    const {
+      initValue, visible, onCancel, onOk, 
+    } = this.props;
 
     return (
       <Sidebar
@@ -168,11 +165,11 @@ class CreateLinkTask extends Component {
                   // labelInValue
                   loading={this.state.selectLoading}
                 >
-                  {this.state.show.map(link =>
-                    (<Option key={`${link.linkTypeId}+${link.name}`} value={`${link.linkTypeId}+${link.name}`}>
+                  {this.state.show.map(link => (
+                    <Option key={`${link.linkTypeId}+${link.name}`} value={`${link.linkTypeId}+${link.name}`}>
                       {link.name}
-                    </Option>),
-                  )}
+                    </Option>
+                  ))}
                 </Select>,
               )}
             </FormItem>
@@ -189,8 +186,8 @@ class CreateLinkTask extends Component {
                   onFilterChange={this.onFilterChange.bind(this)}
                   onChange={this.handleSelect.bind(this)}
                 >
-                  {this.state.originIssues.map(issue =>
-                    (<Option
+                  {this.state.originIssues.map(issue => (
+                    <Option
                       key={issue.issueId}
                       value={issue.issueNum}
                     >
@@ -202,17 +199,23 @@ class CreateLinkTask extends Component {
                             }}
                           />
                         </div>
-                        <a style={{ paddingLeft: 12, paddingRight: 12, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        <a style={{
+                          paddingLeft: 12, paddingRight: 12, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', 
+                        }}
+                        >
                           {issue.issueNum}
                         </a>
                         <div style={{ overflow: 'hidden', flex: 1 }}>
-                          <p style={{ paddingRight: '25px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 0, maxWidth: 'unset' }}>
+                          <p style={{
+                            paddingRight: '25px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 0, maxWidth: 'unset', 
+                          }}
+                          >
                             {issue.summary}
                           </p>
                         </div>
                       </div>
-                    </Option>),
-                  )}
+                    </Option>
+                  ))}
                 </Select>,
               )}
             </FormItem>

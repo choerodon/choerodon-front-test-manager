@@ -17,7 +17,6 @@ import {
 } from '../../../../api/agileApi';
 import './SummaryHome.scss';
 
-
 class SummaryHome extends Component {
   constructor() {
     super();
@@ -399,7 +398,7 @@ class SummaryHome extends Component {
         </Header>
         <Spin spinning={loading}>
           <div className="c7ntest-content-container">
-            <div className="c7ntest-statistic-container">
+            <div className="c7ntest-statistic-container">              
               <Popover
                 placement="topLeft"
                 content={<div><FormattedMessage id="summary_totalTest_tip" /></div>}
@@ -474,7 +473,7 @@ class SummaryHome extends Component {
                   </div>
                 </div>
               </Popover>
-            </div>
+            </div>         
             <div className="c7ntest-tableArea-container">
               <div className="c7ntest-table-container">
                 <div className="c7ntest-table-title">

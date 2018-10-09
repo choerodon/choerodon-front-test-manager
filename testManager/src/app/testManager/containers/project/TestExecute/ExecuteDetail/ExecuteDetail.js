@@ -156,7 +156,11 @@ class ExecuteDetail extends Component {
         )}
         >
 
-          <Button onClick={() => ExecuteDetailStore.getInfo()}>
+          <Button onClick={() => {
+            // this.props.history.replace('55');
+            ExecuteDetailStore.getInfo();
+          }}
+          >
             <Icon type="autorenew icon" />
             <span><FormattedMessage id="refresh" /></span>
           </Button>
