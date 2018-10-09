@@ -11,7 +11,7 @@ import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import { getReportsFromStory } from '../../../../api/reportApi';
 import { getIssueStatus } from '../../../../api/agileApi';
-import { getStatusList } from '../../../../api/cycleApi';
+import { getStatusList } from '../../../../api/TestStatusApi';
 import { issueLink, cycleLink } from '../../../../common/utils';
 import './ReportStory.scss';
 

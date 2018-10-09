@@ -13,7 +13,7 @@ import EventItem from './EventItem';
 const moment = extendMoment(Moment);
 class EventCalendar extends Component {
   state = {
-    currentDate:null,
+    currentDate: null,
     baseDate: moment(),
     mode: 'month',
     pos: 0,
@@ -27,7 +27,7 @@ class EventCalendar extends Component {
     if (times && times.length > 0) {
       this.setState({
         pos: 0,
-        currentDate:null,
+        currentDate: null,
         baseDate: times[0].start ? moment(times[0].start).startOf(mode) : moment(),
       });
     }
@@ -45,7 +45,7 @@ class EventCalendar extends Component {
     this.setState({
       pos: 0,
       mode: e.target.value,
-      currentDate:null,
+      currentDate: null,
       baseDate: times[0].start ? moment(times[0].start).startOf(e.target.value) : moment(),
     });
   }
@@ -54,18 +54,20 @@ class EventCalendar extends Component {
     this.setState({
       pos: 0,
       baseDate: date,
-      currentDate:null
+      currentDate: null,
     });
   }
-  handleCalendarChange=(date)=>{
+
+  handleCalendarChange=(date) => {
     this.setState({
-      currentDate:date,
+      currentDate: date,
       pos: 0,
       baseDate: date,
-    })
+    });
   }
+
   render() {
-    const { mode,currentDate } = this.state;
+    const { mode, currentDate } = this.state;
     const { showMode, times } = this.props;
     const { start, end } = this.calculateTime();
     const range = moment.range(start, end);
@@ -106,9 +108,9 @@ class EventCalendar extends Component {
 
             </Button> */}
             {
-              currentDate&&currentDate.format("LL")
+              currentDate && currentDate.format('LL')
             }
-            <DatePicker allowClear={false} onChange={this.handleCalendarChange} value={currentDate}/>
+            <DatePicker allowClear={false} onChange={this.handleCalendarChange} value={currentDate} />
           </div>
           <div className="c7n-EventCalendar-header-radio">
             <RadioButton
@@ -129,7 +131,7 @@ class EventCalendar extends Component {
               type="keyboard_arrow_left"
               onClick={() => {
                 this.setState({
-                  currentDate:null,
+                  currentDate: null,
                   pos: this.state.pos - 1,
                 });
               }}
@@ -139,7 +141,7 @@ class EventCalendar extends Component {
               type="keyboard_arrow_right"
               onClick={() => {
                 this.setState({
-                  currentDate:null,
+                  currentDate: null,
                   pos: this.state.pos + 1,
                 });
               }}

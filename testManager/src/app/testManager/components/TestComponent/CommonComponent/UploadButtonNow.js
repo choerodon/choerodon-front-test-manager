@@ -6,7 +6,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Upload, Button, Icon } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
-import { deleteFile } from '../../../api/FileApi';
+import { deleteFileAgile } from '../../../api/FileApi';
 
 class UploadButton extends React.Component {
   static propTypes = {
@@ -19,7 +19,7 @@ class UploadButton extends React.Component {
     const index = fileList.indexOf(file);
     const newFileList = fileList.slice();
     if (file.url && this.props.onRemove) {
-      deleteFile(file.uid)
+      deleteFileAgile(file.uid)
         .then((response) => {
           if (response) {
             newFileList.splice(index, 1);
@@ -93,7 +93,7 @@ class UploadButton extends React.Component {
         const index = fileList.indexOf(file);
         const newFileList = fileList.slice();
         if (file.url && this.props.onRemove) {
-          deleteFile(file.uid)
+          deleteFileAgile(file.uid)
             .then((response) => {
               if (response) {
                 newFileList.splice(index, 1);

@@ -10,7 +10,7 @@ import {
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import { getReportsFromDefect, getReportsFromDefectByIssueIds } from '../../../../api/reportApi';
-import { getStatusList } from '../../../../api/cycleApi';
+import { getStatusList } from '../../../../api/TestStatusApi';
 import { issueLink, cycleLink } from '../../../../common/utils';
 import './ReportTest.scss';
 

@@ -3,38 +3,6 @@ import { stores, axios } from 'choerodon-front-boot';
 const { AppState } = stores;
 
 /**
- *文件上传
- *
- * @export
- * @param {*} data
- * @param {*} config
- * @returns
- */
-export function uploadFile(data, config) {
-  const { bucketName, attachmentLinkId, attachmentType } = config;
-  const projectId = AppState.currentMenuType.id;
-  const axiosConfig = {
-    headers: { 'content-type': 'multipart/form-datal' },
-  };
-
-  return axios.post(
-    `/zuul/test/v1/projects/${projectId}/test/case/attachment?bucket_name=${'test'}&attachmentLinkId=${attachmentLinkId}&attachmentType=${attachmentType}`,
-    data,
-    axiosConfig,
-  );
-}
-/**
- *删除附件
- *
- * @export
- * @param {*} id
- * @returns
- */
-export function deleteAttachment(id) {
-  const projectId = AppState.currentMenuType.id;
-  return axios.delete(`test/v1/projects/${projectId}/test/case/attachment/delete/bucket/test/attach/${id}`);
-}
-/**
  *获取当前用户
  *
  * @export

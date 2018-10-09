@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
 import {
-  Button, Select, Icon, Modal, Upload, Spin, 
+  Button, Select, Icon, Modal, Upload, Spin,
 } from 'choerodon-ui';
 import { Content } from 'choerodon-front-boot';
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import {
-  editCycleSide, deleteAttachment, removeDefect, addDefects, 
+  editCycleSide, removeDefect, addDefects,
 } from '../../../api/ExecuteDetailApi';
+import { deleteAttachment } from '../../../api/FileApi';
 import { getIssueList } from '../../../api/agileApi';
 import './EditTestDetail.less';
 import WYSIWYGEditor from '../../WYSIWYGEditor';
@@ -128,7 +129,7 @@ class EditTestDetail extends Component {
       defects,
       defectIds,
       originDefects,
-      issueList, 
+      issueList,
     } = this.state;
     const data = {
       executeId,
@@ -220,7 +221,7 @@ class EditTestDetail extends Component {
     const {
       reset, fileList, executeId, testStep, comment,
       stepStatusList, stepStatus, loading, defects, issueList,
-      selectLoading, defectIds, 
+      selectLoading, defectIds,
     } = this.state;
     const delta = text2Delta(comment);
     // console.log(delta)
@@ -264,7 +265,7 @@ class EditTestDetail extends Component {
 
     const defectsOptions = issueList.map(issue => (
       <Option key={issue.issueId} value={issue.issueId.toString()}>
-        {issue.issueNum} 
+        {issue.issueNum}
         {' '}
         {issue.summary}
       </Option>
@@ -286,7 +287,7 @@ class EditTestDetail extends Component {
         >
           <Spin spinning={loading}>
             <Select
-              label={<FormattedMessage id="status" />}           
+              label={<FormattedMessage id="status" />}
               value={stepStatus}
               style={{ width: 500 }}
               onChange={(value) => {
@@ -298,16 +299,16 @@ class EditTestDetail extends Component {
               {options}
             </Select>
             <br />
-            <Select             
+            <Select
               style={{ width: 500 }}
-              label={<FormattedMessage id="bug" />}        
+              label={<FormattedMessage id="bug" />}
               value={defectIds}
               onChange={this.handleDefectsChange}
               // allowClear
               loading={selectLoading}
               filter
               mode="multiple"
-              filterOption={false}                        
+              filterOption={false}
 
               onFilterChange={(value) => {
                 // window.console.log('filter');
@@ -338,21 +339,21 @@ class EditTestDetail extends Component {
             <div style={styles.editLabel}><FormattedMessage id="attachment" /></div>
             <Upload {...props} fileList={fileList}>
               <Button className="c7n-EditTestDetail-uploadBtn">
-                <Icon type="file_upload" /> 
+                <Icon type="file_upload" />
                 {' '}
                 <FormattedMessage id="upload_attachment" />
               </Button>
             </Upload>
             <div style={styles.editLabel}><FormattedMessage id="execute_comment" /></div>
             {reset && (
-            <WYSIWYGEditor
-              // value={comment}
-              value={delta}
-              style={{ height: 200, width: '100%' }}
-              onChange={(value) => {
-                this.setState({ comment: value });
-              }}
-            />
+              <WYSIWYGEditor
+                // value={comment}
+                value={delta}
+                style={{ height: 200, width: '100%' }}
+                onChange={(value) => {
+                  this.setState({ comment: value });
+                }}
+              />
             )}
           </Spin>
         </Content>

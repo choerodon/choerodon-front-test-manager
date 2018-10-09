@@ -1,6 +1,6 @@
 import { stores } from 'choerodon-front-boot';
 import QuillDeltaToHtmlConverter from 'quill-delta-to-html';
-import { uploadImage, uploadFile } from '../api/FileApi';
+import { uploadImage, uploadFileAgile } from '../api/FileApi';
 import { SERVICES_URL } from './Constant';
 
 const { AppState } = stores;
@@ -181,7 +181,7 @@ export function handleFileUpload(propFileList, func, config) {
     // file.name = encodeURI(encodeURI(file.name));
     formData.append('file', file);
   });
-  uploadFile(formData, config)
+  uploadFileAgile(formData, config)
     .then((response) => {
       const newFileList = [
         {

@@ -8,10 +8,10 @@ import { FormattedMessage } from 'react-intl';
 import {
   TextEditToggle, RichTextShow, User, SelectCreateIssueFooter,StatusTags
 } from '../../CommonComponent';
-import { uploadFile } from '../../../api/CommonApi';
+import { uploadFile,deleteAttachment } from '../../../api/FileApi';
 import { delta2Html } from '../../../common/utils';
 import {
-  addDefects, editCycle, deleteAttachment, removeDefect,
+  addDefects, editCycle,  removeDefect,
 } from '../../../api/ExecuteDetailApi';
 import FullEditor from '../../FullEditor';
 import ExecuteDetailStore from '../../../store/project/cycle/ExecuteDetailStore';

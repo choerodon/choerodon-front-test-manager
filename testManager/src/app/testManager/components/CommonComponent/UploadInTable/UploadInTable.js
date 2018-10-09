@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Button, Upload } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
-import { uploadFile, deleteAttachment } from '../../../api/CommonApi';
+import { uploadFile, deleteAttachment } from '../../../api/FileApi';
 import './UploadInTable.scss';
 
 class UploadInTable extends Component {

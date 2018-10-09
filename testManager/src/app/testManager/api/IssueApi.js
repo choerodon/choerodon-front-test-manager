@@ -1,6 +1,4 @@
 import { stores, axios } from 'choerodon-front-boot';
-import { version } from 'moment';
-
 const { AppState } = stores;
 
 export function createIssue(issueObj, folderId) {
@@ -9,7 +7,6 @@ export function createIssue(issueObj, folderId) {
     projectId,
     ...issueObj,
   };
-  // return axios.post(`/agile/v1/projects/${projectId}/issues`, issue);
   const versionId = issue.versionIssueRelDTOList[0].versionId;
   return axios.post(`/test/v1/projects/${projectId}/issueFolderRel/testAndRelationship?versionId=${versionId}${folderId ? `&folderId=${folderId}` : ''}`, issue);
 }
@@ -61,21 +58,6 @@ export function loadSprints(arr = []) {
   return axios.post(`/agile/v1/projects/${projectId}/sprint/names`, arr);
 }
 
-// export function loadSprint(sprintId) {
-//   const projectId = AppState.currentMenuType.id;
-//   return axios.get(`/agile/v1/projects/${projectId}/sprint/${sprintId}`);
-// }
-
-// export function loadSprintIssues(sprintId, status, page = 0, size = 99999) {
-//   const projectId = AppState.currentMenuType.id;
-//   return axios.get(`/agile/v1/projects/${projectId}/sprint/${sprintId}/issues?status=${status}&page=${page}&size=${size}`);
-// }
-
-// export function loadChartData(id, type) {
-//   const projectId = AppState.currentMenuType.id;
-//   return axios.get(`/agile/v1/projects/${projectId}/reports/${id}/burn_down_report?type=${type}`);
-// }
-
 export function loadStatus() {
   const projectId = AppState.currentMenuType.id;
   return axios.get(
@@ -94,24 +76,10 @@ export function loadIssue(issueId, projectId = AppState.currentMenuType.id) {
   return axios.get(`/agile/v1/projects/${projectId}/issues/${issueId}`);
 }
 
-// export function loadSubtask(issueId, projectId = AppState.currentMenuType.id) {
-//   return axios.get(`agile/v1/projects/${projectId}/issues/sub_issue/${issueId}`);
-// }
-
 export function updateIssue(data, projectId = AppState.currentMenuType.id) {
-  // if (type === 'sub_task') {
-  //   return axios.put(`agile/v1/projects/${projectId}/issues/sub_issue`, data);
-  // }
   return axios.put(`/agile/v1/projects/${projectId}/issues`, data);
 }
 
-// export function createSubIssue(issueId, obj, projectId = AppState.currentMenuType.id) {
-//   const subIssueObj = {
-//     ...obj,
-//     parentIssueId: issueId,
-//   };
-//   return axios.post(`/agile/v1/projects/${projectId}/issues/sub_issue`, subIssueObj);
-// }
 
 export function deleteIssue(issueId, projectId = AppState.currentMenuType.id) {
   return axios.delete(`/agile/v1/projects/${projectId}/issues/${issueId}`);
@@ -141,13 +109,6 @@ export function deleteWorklog(logId, projectId = AppState.currentMenuType.id) {
   return axios.delete(`agile/v1/projects/${projectId}/work_log/${logId}`);
 }
 
-// export function updateIssueType(data, projectId = AppState.currentMenuType.id) {
-//   const issueUpdateTypeDTO = {
-//     projectId,
-//     ...data,
-//   };
-//   return axios.post(`/agile/v1/projects/${projectId}/issues/update_type`, issueUpdateTypeDTO);
-// }
 
 export function loadIssues(page = 0, size = 10, search, orderField, orderType) {
   const searchDTO = { ...search };

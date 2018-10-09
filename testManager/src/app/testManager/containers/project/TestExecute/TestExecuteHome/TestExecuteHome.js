@@ -836,7 +836,7 @@ class TestExecuteHome extends Component {
     }
     return (
       <Page className="c7n-cycle">
-        <Header title={<FormattedMessage id="cycle_name" />}>
+        <Header title={<FormattedMessage id="cycle_title" />}>
           <Button onClick={() => { this.refresh(); }}>
             <Icon type="autorenew icon" />
             <span>

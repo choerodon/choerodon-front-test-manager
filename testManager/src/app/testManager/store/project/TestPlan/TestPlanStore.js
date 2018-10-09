@@ -1,13 +1,11 @@
-import axios from 'axios';
 import {
   observable, action, computed, toJS,
 } from 'mobx';
 import moment from 'moment';
-import { store, stores } from 'choerodon-front-boot';
-import { getCycles, getStatusList, getCycleById } from '../../../api/cycleApi';
-import { EditStage } from '../../../components/TestPlanComponent';
+import { store } from 'choerodon-front-boot';
+import { getCycles, getCycleById } from '../../../api/cycleApi';
+import { getStatusList } from '../../../api/TestStatusApi';
 
-const { AppState } = stores;
 
 @store('TestPlanStore')
 class TestPlanStore {
@@ -113,19 +111,19 @@ class TestPlanStore {
         page: executePagination.current - 1,
         size: executePagination.pageSize,
       }, data.cycleId,
-      {
-        ...filters,
-        lastUpdatedBy: [Number(this.lastUpdatedBy) || null],
-        assignedTo: [Number(this.assignedTo) || null],
-      }).then((cycle) => {
-        this.rightLeaveLoading();
-        this.setTestList(cycle.content);
-        this.setExecutePagination({
-          current: executePagination.current,
-          pageSize: executePagination.pageSize,
-          total: cycle.totalElements,
+        {
+          ...filters,
+          lastUpdatedBy: [Number(this.lastUpdatedBy) || null],
+          assignedTo: [Number(this.assignedTo) || null],
+        }).then((cycle) => {
+          this.rightLeaveLoading();
+          this.setTestList(cycle.content);
+          this.setExecutePagination({
+            current: executePagination.current,
+            pageSize: executePagination.pageSize,
+            total: cycle.totalElements,
+          });
         });
-      });
     }
   }
 
@@ -160,19 +158,19 @@ class TestPlanStore {
         page: 0,
         size: executePagination.pageSize,
       }, data.cycleId,
-      {
-        ...filters,
-        lastUpdatedBy: [Number(this.lastUpdatedBy) || null],
-        assignedTo: [Number(this.assignedTo) || null],
-      }).then((cycle) => {
-        this.rightLeaveLoading();
-        this.setTestList(cycle.content);
-        this.setExecutePagination({
-          current: 1,
-          pageSize: executePagination.pageSize,
-          total: cycle.totalElements,
+        {
+          ...filters,
+          lastUpdatedBy: [Number(this.lastUpdatedBy) || null],
+          assignedTo: [Number(this.assignedTo) || null],
+        }).then((cycle) => {
+          this.rightLeaveLoading();
+          this.setTestList(cycle.content);
+          this.setExecutePagination({
+            current: 1,
+            pageSize: executePagination.pageSize,
+            total: cycle.totalElements,
+          });
         });
-      });
     }
     // }
   }
