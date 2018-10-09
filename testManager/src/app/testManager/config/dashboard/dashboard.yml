@@ -2,7 +2,12 @@ dashboard:
   - code: "Test"
     icon: test
     title: "测试管理"
-    description: "测试管理测试"
+    description: "测试管理"
     level: project
     sort: 1
-
+  - code: "TestSurvey"
+    icon: test_execute
+    title: "测试进度"
+    description: "测试进度"
+    level: project
+    sort: 2
