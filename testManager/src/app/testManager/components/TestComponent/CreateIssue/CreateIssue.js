@@ -13,7 +13,7 @@ import { handleFileUpload, beforeTextUpload } from '../../../common/utils';
 import {
   createIssue, loadLabels, loadPriorities, loadVersions, loadComponents, 
   getFoldersByVersion,
-} from '../../../api/IssueApi';
+} from '../../../api/IssueManageApi';
 import { getUsers } from '../../../api/CommonApi';
 import { COLOR } from '../../../common/Constant';
 import { FullEditor, WYSIWYGEditor } from '../../CommonComponent';

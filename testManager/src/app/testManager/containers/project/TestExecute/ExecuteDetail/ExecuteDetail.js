@@ -24,7 +24,7 @@ const styles = {
   cardBodyStyle: {
     // maxHeight: '100%',
     padding: 12,
-    overflow: 'hidden',
+    // overflow: 'hidden',
   },
 };
 
@@ -38,12 +38,8 @@ class ExecuteDetail extends Component {
   render() {
     const { disabled } = this.props;  
     const loading = ExecuteDetailStore.loading;
-    const cycleData = ExecuteDetailStore.getCycleData;
-    // const detailList = ExecuteDetailStore.getDetailList;
     const historyList = ExecuteDetailStore.getHistoryList;
     const historyPagination = ExecuteDetailStore.getHistoryPagination;
-    // const detailPagination = ExecuteDetailStore.getDetailPagination;
-    // const that = this;
     const columnsHistory = [{
       title: <FormattedMessage id="execute_executive" />,
       dataIndex: 'user',
@@ -128,12 +124,6 @@ class ExecuteDetail extends Component {
       },
     }];
 
-
-    const {
-      executionStatus, executionStatusName,
-      executionStatusColor, assigneeUser, lastUpdateUser,
-      lastUpdateDate, comment, defects,
-    } = cycleData;
     return (
       <Page className="c7ntest-ExecuteDetail">
         <Header title={(

@@ -6,7 +6,7 @@ import {
 import { FormattedMessage } from 'react-intl';
 import './PlanTreeTitle.scss';
 import { editFolder, deleteCycleOrFolder } from '../../../api/cycleApi';
-import { syncFolder, syncFoldersInCycle, syncFoldersInVersion } from '../../../api/IssueApi';
+import { syncFolder, syncFoldersInCycle, syncFoldersInVersion } from '../../../api/IssueManageApi';
 import TestPlanStore from '../../../store/project/TestPlan/TestPlanStore';
 
 @observer

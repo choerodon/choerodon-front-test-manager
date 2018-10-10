@@ -7,7 +7,7 @@ import { Select, Form, Modal } from 'choerodon-ui';
 
 import './CreateLinkTask.scss';
 import '../../../assets/main.scss';
-import { createLink, loadIssuesInLink } from '../../../api/IssueApi';
+import { createLink, loadIssuesInLink } from '../../../api/IssueManageApi';
 import TypeTag from '../TypeTag';
 
 const { AppState } = stores;

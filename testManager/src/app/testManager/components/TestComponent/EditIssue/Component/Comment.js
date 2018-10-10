@@ -7,7 +7,7 @@ import { IssueDescription } from '../../CommonComponent';
 import {
   delta2Html, text2Delta, beforeTextUpload, formatDate, 
 } from '../../../../common/utils';
-import { deleteCommit, updateCommit } from '../../../../api/IssueApi';
+import { deleteCommit, updateCommit } from '../../../../api/IssueManageApi';
 import './Comment.scss';
 
 

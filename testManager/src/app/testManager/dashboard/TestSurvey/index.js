@@ -94,15 +94,15 @@ export default class TestSurvey extends Component {
           <ul className="c7ntest-charts-legend">
             <li>
               <div />
-              {'待处理'}
+              {'剩余数量'}
             </li>
             <li>
               <div />
-              {'处理中'}
+              {'执行数量'}
             </li>
             <li>
               <div />
-              {'已完成'}
+              {'未规划数量'}
             </li>
           </ul>
         </div>

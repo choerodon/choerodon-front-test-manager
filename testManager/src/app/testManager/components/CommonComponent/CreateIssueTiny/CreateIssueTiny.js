@@ -6,7 +6,7 @@ import { Button, Input, Icon } from 'choerodon-ui';
 import {
   STATUS, COLOR, TYPE, ICON, TYPE_NAME, 
 } from '../../../common/Constant';
-import { createIssue } from '../../../api/IssueApi';
+import { createIssue } from '../../../api/IssueManageApi';
 import './CreateIssueTiny.scss';
 
 const { AppState } = stores;
@@ -130,7 +130,7 @@ class CreateIssueTiny extends Component {
 }
 
 CreateIssueTiny.propTypes = {
-
+  typeCode: PropTypes.string,
 };
 
 export default CreateIssueTiny;

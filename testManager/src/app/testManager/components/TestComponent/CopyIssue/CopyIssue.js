@@ -5,7 +5,7 @@ import { FormattedMessage } from 'react-intl';
 import {
   Modal, Form, Input, Checkbox, 
 } from 'choerodon-ui';
-import { cloneIssue, copyIssues } from '../../../api/IssueApi';
+import { cloneIssue, copyIssues } from '../../../api/IssueManageApi';
 import './CopyIssue.scss';
 
 const { AppState } = stores;

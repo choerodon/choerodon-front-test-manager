@@ -1,4 +1,5 @@
 import { stores, axios } from 'choerodon-front-boot';
+
 const { AppState } = stores;
 
 export function createIssue(issueObj, folderId) {

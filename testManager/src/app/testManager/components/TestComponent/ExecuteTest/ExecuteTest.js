@@ -5,7 +5,7 @@ import { FormattedMessage } from 'react-intl';
 import { Select, Form, Input, Button, Modal, Icon, Tooltip, Radio } from 'choerodon-ui';
 import UserHead from '../UserHead';
 import { getUsers, getSelf } from '../../../api/CommonApi';
-import { loadVersions } from '../../../api/IssueApi';
+import { loadVersions } from '../../../api/IssueManageApi';
 
 import './ExecuteTest.scss';
 

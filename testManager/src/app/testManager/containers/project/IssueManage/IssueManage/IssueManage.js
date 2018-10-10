@@ -15,7 +15,7 @@ import './IssueManage.scss';
 import IssueStore from '../../../../store/project/IssueStore';
 import IssueTreeStore from '../../../../store/project/treeStore/IssueTreeStore';
 import pic from '../../../../assets/问题管理－空.png';
-import { loadIssue, createIssue } from '../../../../api/IssueApi';
+import { loadIssue, createIssue } from '../../../../api/IssueManageApi';
 import EmptyBlock from '../../../../components/TestComponent/EmptyBlock';
 import CreateIssue from '../../../../components/TestComponent/CreateIssue';
 import EditIssue from '../../../../components/TestComponent/EditIssue';

@@ -10,7 +10,7 @@ import { Draggable, Droppable } from 'react-beautiful-dnd';
 import { IssueTreeStore } from '../../../store/project/treeStore';
 import {
   editFolder, deleteFolder, moveIssues, copyIssues, 
-} from '../../../api/IssueApi';
+} from '../../../api/IssueManageApi';
 import IssueStore from '../../../store/project/IssueStore';
 import './IssueTreeTitle.scss';
 

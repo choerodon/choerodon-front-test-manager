@@ -10,7 +10,7 @@ import './IssueTree.scss';
 import { IssueTreeStore } from '../../../store/project/treeStore';
 import {
   getIssueTree, addFolder,  moveFolder, copyFolder,
-} from '../../../api/IssueApi';
+} from '../../../api/IssueManageApi';
 import IssueTreeTitle from './IssueTreeTitle';
 import IssueStore from '../../../store/project/IssueStore';
 

@@ -20,7 +20,7 @@ import {
   loadDatalogs, loadLinkIssues, loadLabels, loadIssue,
   updateIssue, loadPriorities, loadComponents,
   createCommit, deleteIssue, loadStatus, cloneIssue,
-} from '../../../api/IssueApi';
+} from '../../../api/IssueManageApi';
 import { getSelf, getUsers, getUser } from '../../../api/CommonApi';
 import { FullEditor, WYSIWYGEditor } from '../../CommonComponent';
 import CreateLinkTask from '../CreateLinkTask';
