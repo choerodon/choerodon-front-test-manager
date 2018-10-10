@@ -24,7 +24,7 @@ import {
 import { getUsers } from '../../../../api/CommonApi';
 import TestPlanStore from '../../../../store/project/TestPlan/TestPlanStore';
 import {
-  delta2Html, delta2Text, issueLink,
+  delta2Html, delta2Text, issueLink, executeDetailShowLink,
 } from '../../../../common/utils';
 import './TestPlanHome.scss';
 import noRight from '../../../../assets/noright.svg';
@@ -359,9 +359,8 @@ class TestPlanHome extends Component {
               type="explicit2"
               style={{ cursor: 'pointer', margin: '0 10px' }}
               onClick={() => {
-                const { history } = this.props;
-                const urlParams = AppState.currentMenuType;
-                history.push(`/testManager/TestPlan/executeShow/${record.executeId}?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`);
+                const { history } = this.props;         
+                history.push(executeDetailShowLink(record.executeId));
               }}
             />
             <Icon

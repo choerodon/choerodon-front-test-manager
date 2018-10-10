@@ -49,20 +49,7 @@ export function delta2Text(delta) {
 export function escape(str) {
   return str.replace(/<\/script/g, '<\\/script').replace(/<!--/g, '<\\!--');
 }
-export function issueLink(issueId, typeCode) {
-  const menu = AppState.currentMenuType;
-  const { type, id: projectId, name } = menu;
-  if (typeCode === 'issue_test') {
-    return `/testManager/IssueManage?type=${type}&id=${projectId}&name=${name}&paramIssueId=${issueId}`;
-  } else {
-    return `/agile/issue?type=${type}&id=${projectId}&name=${name}&paramIssueId=${issueId}`;
-  }
-}
-export function createIssueLink() {
-  const menu = AppState.currentMenuType;
-  const { type, id: projectId, name } = menu;
-  return `/agile/issue?type=${type}&id=${projectId}&name=${name}`;
-}
+
 
 /**
  * 将以base64的图片url数据转换为Blob
@@ -244,9 +231,35 @@ export function getParams(url) {
   }
   return theRequest;
 }
+export function issueLink(issueId, typeCode) {
+  const menu = AppState.currentMenuType;
+  const { type, id: projectId, name } = menu;
+  if (typeCode === 'issue_test') {
+    return `/testManager/IssueManage?type=${type}&id=${projectId}&name=${name}&paramIssueId=${issueId}`;
+  } else {
+    return `/agile/issue?type=${type}&id=${projectId}&name=${name}&paramIssueId=${issueId}`;
+  }
+}
+export function createIssueLink() {
+  const menu = AppState.currentMenuType;
+  const { type, id: projectId, name } = menu;
+  return `/agile/issue?type=${type}&id=${projectId}&name=${name}`;
+}
 export function cycleLink(cycleId) {
   const menu = AppState.currentMenuType;
   const { type, id: projectId, name } = menu;
  
   return `/testManager/TestExecute?type=${type}&id=${projectId}&name=${name}&cycleId=${cycleId}`;
+}
+export function executeDetailLink(executeId) {
+  const menu = AppState.currentMenuType;
+  const { type, id: projectId, name } = menu;
+ 
+  return `/testManager/TestExecute/execute/${executeId}?type=${type}&id=${projectId}&name=${name}`;
+}
+export function executeDetailShowLink(executeId) {
+  const menu = AppState.currentMenuType;
+  const { type, id: projectId, name } = menu;
+ 
+  return `/testManager/TestPlan/executeShow/${executeId}?type=${type}&id=${projectId}&name=${name}`;
 }

@@ -11,7 +11,7 @@ import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import { getReportsFromDefect, getReportsFromDefectByIssueIds } from '../../../../api/reportApi';
 import { getStatusList } from '../../../../api/TestStatusApi';
-import { issueLink, cycleLink } from '../../../../common/utils';
+import { issueLink, cycleLink, executeDetailShowLink } from '../../../../common/utils';
 import './ReportTest.scss';
 
 const { AppState } = stores;
@@ -312,7 +312,7 @@ class ReportTest extends Component {
               </div>
               <Link
                 style={{ lineHeight: '13px' }}
-                to={`/testManager/TestPlan/executeShow/${execute.executeId}?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}
+                to={executeDetailShowLink(execute.executeId)}
               >
                 <Icon type="explicit2" style={{ marginLeft: 10, color: 'black' }} />
               </Link>
