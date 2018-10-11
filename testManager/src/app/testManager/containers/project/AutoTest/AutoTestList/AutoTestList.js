@@ -111,9 +111,8 @@ class AutoTestList extends Component {
           <div>
             <Tooltip title={status === 'failed' ? '重试' : '重新执行'}>
               <Icon type="replay" className="c7ntest-icon-in-table" />
-            </Tooltip>
-            
-            <Icon />
+            </Tooltip>            
+            <Icon type="exit_to_app" className="c7ntest-icon-in-table" style={{ marginLeft: 8 }} />
           </div>
         );
       },
