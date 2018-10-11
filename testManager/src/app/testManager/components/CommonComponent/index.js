@@ -12,8 +12,10 @@ import FullEditor from './FullEditor';
 import WYSIWYGEditor from './WYSIWYGEditor';
 import DragTable from './DragTable';
 import AceForYaml from './yamlAce';
+import SelectVersion from './SelectVersion';
 
 export {
   TextEditToggle, RichTextShow, SelectFocusLoad, User, UploadInTable, DefectSelect, CreateIssueTiny,
   SelectCreateIssueFooter, RadioButton, StatusTags, FullEditor, WYSIWYGEditor, DragTable, AceForYaml,
+  SelectVersion,
 };

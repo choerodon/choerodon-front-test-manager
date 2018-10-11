@@ -30,7 +30,7 @@ class AutoTestList extends Component {
       selectLoading: true,
     });
     getAppList(value).then((List) => {
-      console.log(List);
+      console.log(currentApp);
       if (!currentApp && !value && List.length > 0) {
         this.setState({
           currentApp: List[0].id,

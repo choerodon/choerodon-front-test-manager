@@ -342,6 +342,8 @@ const zhCN = {
   autoteststep_one_app: '选择应用',
   autoteststep_one_version_title: '选择应用版本',
   autoteststep_one_version: '应用版本',
+  autoteststep_one_targetversion: '版本',
+  autoteststep_one_environment: '环境',
   autotestapp_add: '打开应用列表',
   autoteststep_two_title: '修改配置信息',
   autoteststep_three_title: '确认信息并执行',

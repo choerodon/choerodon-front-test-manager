@@ -11,7 +11,7 @@ import {
 import _ from 'lodash';
 import YAML from 'yamljs';
 import './CreateAutoTest.scss';
-import { AceForYaml } from '../../../../components/CommonComponent';
+import { AceForYaml, SelectVersion } from '../../../../components/CommonComponent';
 import SelectApp from './selectApp';
 
 const RadioGroup = Radio.Group;
@@ -353,6 +353,7 @@ class CreateAutoTest extends Component {
         <p>
           {formatMessage({ id: 'autoteststep_one_description' })}
         </p>
+        {/* 选择应用 */}
         <section className="deployApp-section">
           <div className="autotest-title">
             <i className="icon icon-widgets section-title-icon" />
@@ -380,10 +381,44 @@ class CreateAutoTest extends Component {
             </a>
           </div>
         </section>
+        {/* 选择应用版本 */}
         <section className="deployApp-section">
           <div className="autotest-title">
             <i className="icon icon-version section-title-icon " />
             <span className="section-title">{formatMessage({ id: 'autoteststep_one_version_title' })}</span>
+          </div>
+          <Select
+            notFoundContent={formatMessage({ id: 'network.form.version.disable' })}
+            value={this.state.versionId ? parseInt(this.state.versionId, 10) : undefined}
+            label={<FormattedMessage id="autoteststep_one_version" />}
+            className="section-text-margin"
+            onSelect={this.handleSelectVersion}
+            style={{ width: 482 }}
+            optionFilterProp="children"
+            filterOption={(input, option) => option.props.children
+              .toLowerCase().indexOf(input.toLowerCase()) >= 0}
+            filter
+          >
+            {versions.map(v => <Option key={v.id} value={v.id}>{v.version}</Option>)}
+          </Select>
+        </section>
+        {/* 选择目标版本 */}
+        <section className="deployApp-section">
+          <div className="autotest-title">
+            <i className="icon icon-version section-title-icon " />
+            <span className="section-title">{formatMessage({ id: 'autoteststep_one_targetversion' })}</span>
+          </div>
+          <SelectVersion 
+            className="section-text-margin"
+            style={{ width: 482 }}
+            onChange={this.handleVersionSelect}
+          />
+        </section>
+        {/* 选择环境 */}
+        <section className="deployApp-section">
+          <div className="autotest-title">
+            <i className="icon icon-version section-title-icon " />
+            <span className="section-title">{formatMessage({ id: 'autoteststep_one_environment' })}</span>
           </div>
           <Select
             notFoundContent={formatMessage({ id: 'network.form.version.disable' })}
@@ -720,6 +755,7 @@ class CreateAutoTest extends Component {
     const {
       appId, versionId, envId, instanceId, mode, value, current, 
     } = this.state;
+    // console.log(window.getComputedStyle(document.body));
     return (
       <Page
         className="c7ntest-region c7ntest-deployApp"
