@@ -64,6 +64,8 @@ const zhCN = {
   todo: '待处理',
   doing: '进行中',
   done: '已完成',
+  next: '下一步',
+  previous: '上一步',
   // 执行详情
   execute_detail: '执行详情',
   execute_cycle_execute: '测试执行',
@@ -331,6 +333,18 @@ const zhCN = {
   dashboard_cycle: '测试循环',
   dashboard_execute: '执行测试',
   dashboard_report: '测试报告',
+  // 自动化测试
+  autotest_header_title: '自动化测试',
+  'autotest.title': '在项目“{name}”中创建自动化测试',
+  'autotest.description': '您可以在此页面选择测试框架，测试应用以及测试应用的版本，修改配置以创建自动化测试。',
+  autoteststep_one_title: '选择测试实例',
+  autoteststep_one_description: '您可以在此页面选择测试框架，测试应用以及测试应用的版本。',
+  autoteststep_one_app: '选择应用',
+  autoteststep_one_version_title: '选择应用版本',
+  autoteststep_one_version: '应用版本',
+  autotestapp_add: '打开应用列表',
+  autoteststep_two_title: '修改配置信息',
+  autoteststep_three_title: '确认信息并执行',
 };
 
 export default zhCN;

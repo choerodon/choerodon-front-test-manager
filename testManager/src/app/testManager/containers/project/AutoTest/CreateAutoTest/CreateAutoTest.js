@@ -10,10 +10,9 @@ import {
 } from 'choerodon-front-boot';
 import _ from 'lodash';
 import YAML from 'yamljs';
-// import '../../../main.scss';
-import './DeployApp.scss';
+import './CreateAutoTest.scss';
 import { AceForYaml } from '../../../../components/CommonComponent';
-// import SelectApp from '../selectApp';
+import SelectApp from './selectApp';
 
 const RadioGroup = Radio.Group;
 const Step = Steps.Step;
@@ -39,35 +38,35 @@ class CreateAutoTest extends Component {
   }
 
   componentDidMount() {
-    const { DeploymentAppStore } = this.props;
-    DeploymentAppStore.setValue(null);
+    const { CreateAutoTestStore } = this.props;
+    CreateAutoTestStore.setValue(null);
     if (this.state.appId) {
-      DeploymentAppStore.loadApps(this.state.appId)
+      CreateAutoTestStore.loadApps(this.state.appId)
         .then((data) => {
           this.setState({ app: data });
         });
       const versionId = parseInt(this.state.versionId, 10);
       if (this.state.is_project) {
-        DeploymentAppStore.loadVersion(this.state.appId, this.state.projectId, '')
+        CreateAutoTestStore.loadVersion(this.state.appId, this.state.projectId, '')
           .then((data) => {
             this.setState({ versionDto: _.filter(data, v => v.id === versionId)[0] });
           });
       } else if (this.props.location.search.split('verId=')[1]) {
-        DeploymentAppStore.loadVersion(this.state.appId, this.state.projectId, true)
+        CreateAutoTestStore.loadVersion(this.state.appId, this.state.projectId, true)
           .then((data) => {
             this.setState({ versionDto: _.filter(data, v => v.id === versionId)[0] });
           });
         this.setState({ versionId: undefined });
       } else {
-        DeploymentAppStore.loadVersion(this.state.appId, this.state.projectId, true)
+        CreateAutoTestStore.loadVersion(this.state.appId, this.state.projectId, true)
           .then((data) => {
             this.setState({ versionDto: _.filter(data, v => v.id === versionId)[0] });
           });
       }
     } else {
-      DeploymentAppStore.setVersions([]);
+      CreateAutoTestStore.setVersions([]);
     }
-    DeploymentAppStore.loadEnv();
+    CreateAutoTestStore.loadEnv();
   }
 
 
@@ -94,15 +93,15 @@ class CreateAutoTest extends Component {
    * @param index
    */
   changeStep = (index) => {
-    const { DeploymentAppStore } = this.props;
+    const { CreateAutoTestStore } = this.props;
     const {
       appId, versionId, envId, mode, 
     } = this.state;
     this.setState({ current: index });
     this.loadReview();
     if (index === 2 && appId && versionId && envId) {
-      DeploymentAppStore.setValue(null);
-      DeploymentAppStore.loadValue(appId, versionId, envId)
+      CreateAutoTestStore.setValue(null);
+      CreateAutoTestStore.loadValue(appId, versionId, envId)
         .then((data) => {
           this.setState({ errorLine: data.errorLines });
         });
@@ -133,10 +132,10 @@ class CreateAutoTest extends Component {
    * @param key 标明是项目应用还是应用市场应用
    */
   handleOk = (app, key) => {
-    const { DeploymentAppStore } = this.props;
+    const { CreateAutoTestStore } = this.props;
     if (app) {
       if (key === '1') {
-        DeploymentAppStore.loadVersion(app.id, this.state.projectId, '');
+        CreateAutoTestStore.loadVersion(app.id, this.state.projectId, '');
         this.setState({
           app,
           appId: app.id,
@@ -146,7 +145,7 @@ class CreateAutoTest extends Component {
           versionDto: null,
         });
       } else {
-        DeploymentAppStore.loadVersion(app.appId, this.state.projectId, true);
+        CreateAutoTestStore.loadVersion(app.appId, this.state.projectId, true);
         this.setState({
           app,
           appId: app.appId,
@@ -166,20 +165,20 @@ class CreateAutoTest extends Component {
    * @param value
    */
   handleSelectEnv = (value) => {
-    const { DeploymentAppStore } = this.props;
-    const envs = DeploymentAppStore.envs;
+    const { CreateAutoTestStore } = this.props;
+    const envs = CreateAutoTestStore.envs;
     const envDto = _.filter(envs, v => v.id === value)[0];
     this.setState({
       envId: value, envDto, value: null, yaml: null, changeYaml: false, mode: 'new', 
     });
     const { appId, versionId } = this.state;
-    DeploymentAppStore.setValue(null);
+    CreateAutoTestStore.setValue(null);
     this.setState({ value: null, markers: [] });
-    DeploymentAppStore.loadValue(appId, versionId, value)
+    CreateAutoTestStore.loadValue(appId, versionId, value)
       .then((data) => {
         this.setState({ errorLine: data.errorLines });
       });
-    DeploymentAppStore.loadInstances(this.state.appId, value);
+    CreateAutoTestStore.loadInstances(this.state.appId, value);
   };
 
   /**
@@ -187,10 +186,10 @@ class CreateAutoTest extends Component {
    * @param value
    */
   handleSelectVersion = (value) => {
-    const { DeploymentAppStore } = this.props;
-    const versions = DeploymentAppStore.versions;
+    const { CreateAutoTestStore } = this.props;
+    const versions = CreateAutoTestStore.versions;
     const versionDto = _.filter(versions, v => v.id === value)[0];
-    DeploymentAppStore.setValue(null);
+    CreateAutoTestStore.setValue(null);
     this.setState({
       versionId: value, versionDto, value: null, markers: [], 
     });
@@ -204,8 +203,8 @@ class CreateAutoTest extends Component {
    * @param value
    */
   handleSelectInstance = (value) => {
-    const { DeploymentAppStore } = this.props;
-    const instance = DeploymentAppStore.currentInstance;
+    const { CreateAutoTestStore } = this.props;
+    const instance = CreateAutoTestStore.currentInstance;
     const instanceDto = _.filter(instance, v => v.id === value)[0];
     this.setState({ instanceId: value, instanceDto });
   };
@@ -215,12 +214,12 @@ class CreateAutoTest extends Component {
    * @param value
    */
   handleChangeValue = (value) => {
-    const { DeploymentAppStore } = this.props;
+    const { CreateAutoTestStore } = this.props;
     this.setState({ value });
-    DeploymentAppStore.checkYaml(value)
+    CreateAutoTestStore.checkYaml(value)
       .then((data) => {
         this.setState({ errorLine: data });
-        const oldYaml = DeploymentAppStore.getValue ? DeploymentAppStore.getValue.yaml : '';
+        const oldYaml = CreateAutoTestStore.getValue ? CreateAutoTestStore.getValue.yaml : '';
         const oldvalue = YAML.parse(oldYaml);
         const newvalue = YAML.parse(value);
         if (JSON.stringify(oldvalue) === JSON.stringify(newvalue)) {
@@ -248,9 +247,9 @@ class CreateAutoTest extends Component {
    * 取消第一步
    */
   clearStepOne = () => {
-    const { DeploymentAppStore } = this.props;
-    DeploymentAppStore.setVersions([]);
-    DeploymentAppStore.setValue(null);
+    const { CreateAutoTestStore } = this.props;
+    CreateAutoTestStore.setVersions([]);
+    CreateAutoTestStore.setValue(null);
     this.setState({
       current: 1,
       appId: undefined,
@@ -272,9 +271,9 @@ class CreateAutoTest extends Component {
    * 取消第一步
    */
   clearStepOneBack = () => {
-    const { DeploymentAppStore, location } = this.props;
-    DeploymentAppStore.setVersions([]);
-    DeploymentAppStore.setValue(null);
+    const { CreateAutoTestStore, location } = this.props;
+    CreateAutoTestStore.setVersions([]);
+    CreateAutoTestStore.setValue(null);
     this.setState({
       current: 1,
       appId: undefined,
@@ -303,9 +302,9 @@ class CreateAutoTest extends Component {
     this.setState({
       loading: true,
     });
-    const { DeploymentAppStore } = this.props;
-    const instances = DeploymentAppStore.currentInstance;
-    const value = this.state.value || DeploymentAppStore.value.yaml;
+    const { CreateAutoTestStore } = this.props;
+    const instances = CreateAutoTestStore.currentInstance;
+    const value = this.state.value || CreateAutoTestStore.value.yaml;
     const applicationDeployDTO = {
       appId: this.state.appId,
       appVerisonId: this.state.versionId,
@@ -315,7 +314,7 @@ class CreateAutoTest extends Component {
       appInstanceId: this.state.mode === 'new'
         ? null : this.state.instanceId || (instances && instances.length === 1 && instances[0].id),
     };
-    DeploymentAppStore.deploymentApp(applicationDeployDTO)
+    CreateAutoTestStore.deploymentApp(applicationDeployDTO)
       .then((datas) => {
         if (datas) {
           this.openAppDeployment();
@@ -346,21 +345,20 @@ class CreateAutoTest extends Component {
    * 渲染第一步
    */
   handleRenderApp = () => {
-    const { DeploymentAppStore, intl } = this.props;
+    const { CreateAutoTestStore, intl } = this.props;
     const { formatMessage } = intl;
-    const versions = DeploymentAppStore.versions;
-    const proId = parseInt(AppState.currentMenuType.id, 10);
+    const versions = CreateAutoTestStore.versions;
     return (
       <div className="deployApp-app">
         <p>
-          {formatMessage({ id: 'deploy.step.one.description' })}
+          {formatMessage({ id: 'autoteststep_one_description' })}
         </p>
         <section className="deployApp-section">
-          <div className="deploy-title">
+          <div className="autotest-title">
             <i className="icon icon-widgets section-title-icon" />
-            <span className="section-title">{formatMessage({ id: 'deploy.step.one.app' })}</span>
+            <span className="section-title">{formatMessage({ id: 'autoteststep_one_app' })}</span>
           </div>
-          <div className="deploy-text">
+          <div className="autotest-text">
             {this.state.app && (
             <div className="section-text-margin">
               <Tooltip title={<FormattedMessage id={this.state.is_project ? 'project' : 'market'} />}><span className={`icon ${this.state.is_project ? 'icon-project' : 'icon-apps'} section-text-icon`} /></Tooltip>
@@ -371,28 +369,26 @@ class CreateAutoTest extends Component {
                 {')'}
               </span>
             </div>
-            )}
-            <Permission service={['devops-service.application.pageByOptions', 'devops-service.application-market.listAllApp']}>
-              <a
-                role="none"
-                className={`${this.state.app ? '' : 'section-text-margin'}`}
-                onClick={this.showSideBar}
-              >
-                {formatMessage({ id: 'deploy.app.add' })}
-                <i className="icon icon-open_in_new icon-small" />
-              </a>
-            </Permission>
+            )}            
+            <a
+              role="none"
+              className={`${this.state.app ? '' : 'section-text-margin'}`}
+              onClick={this.showSideBar}
+            >
+              {formatMessage({ id: 'autotestapp_add' })}
+              <i className="icon icon-open_in_new icon-small" />
+            </a>            
           </div>
         </section>
         <section className="deployApp-section">
-          <div className="deploy-title">
+          <div className="autotest-title">
             <i className="icon icon-version section-title-icon " />
-            <span className="section-title">{formatMessage({ id: 'deploy.step.one.version.title' })}</span>
+            <span className="section-title">{formatMessage({ id: 'autoteststep_one_version_title' })}</span>
           </div>
           <Select
             notFoundContent={formatMessage({ id: 'network.form.version.disable' })}
             value={this.state.versionId ? parseInt(this.state.versionId, 10) : undefined}
-            label={<FormattedMessage id="deploy.step.one.version" />}
+            label={<FormattedMessage id="autoteststep_one_version" />}
             className="section-text-margin"
             onSelect={this.handleSelectVersion}
             style={{ width: 482 }}
@@ -408,12 +404,12 @@ class CreateAutoTest extends Component {
           <Button
             type="primary"
             funcType="raised"
-            disabled={!(this.state.appId && this.state.versionId)}
+            // disabled={!(this.state.appId && this.state.versionId)}
             onClick={this.changeStep.bind(this, 2)}
           >
             {formatMessage({ id: 'next' })}
           </Button>
-          <Button funcType="raised" className="c7n-deploy-clear" onClick={this.clearStepOneBack}>{formatMessage({ id: 'cancel' })}</Button>
+          <Button funcType="raised" className="c7ntest-autotest-clear" onClick={this.clearStepOneBack}>{formatMessage({ id: 'cancel' })}</Button>
         </section>
       </div>
     );
@@ -423,23 +419,23 @@ class CreateAutoTest extends Component {
    * 渲染第二步
    */
   handleRenderEnv = () => {
-    const { DeploymentAppStore, intl } = this.props;
+    const { CreateAutoTestStore, intl } = this.props;
     const { formatMessage } = intl;
-    const envs = DeploymentAppStore.envs;
-    const data = this.state.yaml || DeploymentAppStore.value;
+    const envs = CreateAutoTestStore.envs;
+    const data = this.state.yaml || CreateAutoTestStore.value;
     return (
       <div className="deployApp-env">
         <p>
-          {formatMessage({ id: 'deploy.step.two.description' })}
+          {formatMessage({ id: 'autoteststep.two.description' })}
         </p>
         <section className="deployApp-section">
-          <div className="deploy-title">
+          <div className="autotest-title">
             <i className="icon icon-donut_large section-title-icon " />
-            <span className="section-title">{formatMessage({ id: 'deploy.step.two.env.title' })}</span>
+            <span className="section-title">{formatMessage({ id: 'autoteststep.two.env.title' })}</span>
           </div>
           <Select
             value={this.state.envId}
-            label={<span className="deploy-text">{formatMessage({ id: 'deploy.step.two.env' })}</span>}
+            label={<span className="autotest-text">{formatMessage({ id: 'autoteststep.two.env' })}</span>}
             className="section-text-margin"
             onSelect={this.handleSelectEnv}
             style={{ width: 482 }}
@@ -450,16 +446,16 @@ class CreateAutoTest extends Component {
           >
             {envs.map(v => (
               <Option value={v.id} key={v.id} disabled={!v.connect}>
-                {v.connect ? <span className="c7n-ist-status_on" /> : <span className="c7n-ist-status_off" />}
+                {v.connect ? <span className="c7ntest-ist-status_on" /> : <span className="c7ntest-ist-status_off" />}
                 {v.name}
               </Option>
             ))}
           </Select>
         </section>
         <section className="deployApp-section">
-          <div className="deploy-title">
+          <div className="autotest-title">
             <i className="icon icon-description section-title-icon " />
-            <span className="section-title">{formatMessage({ id: 'deploy.step.two.config' })}</span>
+            <span className="section-title">{formatMessage({ id: 'autoteststep.two.config' })}</span>
           </div>
           {data && (
           <AceForYaml
@@ -481,14 +477,14 @@ class CreateAutoTest extends Component {
             type="primary"
             funcType="raised"
             onClick={this.changeStep.bind(this, 3)}
-            disabled={!(this.state.envId && (this.state.value || (data && data.yaml)) 
-              && (this.state.errorLine
-                ? this.state.errorLine.length === 0 : (data && data.errorLines === null)))}
+            // disabled={!(this.state.envId && (this.state.value || (data && data.yaml)) 
+            //   && (this.state.errorLine
+            //     ? this.state.errorLine.length === 0 : (data && data.errorLines === null)))}
           >
             {formatMessage({ id: 'next' })}
           </Button>
           <Button onClick={this.changeStep.bind(this, 1)} funcType="raised">{formatMessage({ id: 'previous' })}</Button>
-          <Button funcType="raised" className="c7n-deploy-clear" onClick={this.clearStepOne}>{formatMessage({ id: 'cancel' })}</Button>
+          <Button funcType="raised" className="c7ntest-autotest-clear" onClick={this.clearStepOne}>{formatMessage({ id: 'cancel' })}</Button>
         </section>
       </div>
     );
@@ -499,30 +495,30 @@ class CreateAutoTest extends Component {
    * @returns {*}
    */
   handleRenderMode = () => {
-    const { DeploymentAppStore, intl } = this.props;
+    const { CreateAutoTestStore, intl } = this.props;
     const { formatMessage } = intl;
-    const instances = DeploymentAppStore.currentInstance;
+    const instances = CreateAutoTestStore.currentInstance;
     return (
-      <div className="deployApp-deploy">
+      <div className="deployApp-autotest">
         <p>
-          {formatMessage({ id: 'deploy.step.three.description' })}
+          {formatMessage({ id: 'autoteststep.three.description' })}
         </p>
         <section className="deployApp-section">
-          <div className="deploy-title">
+          <div className="autotest-title">
             <i className="icon icon-jsfiddle section-title-icon " />
-            <span className="section-title">{formatMessage({ id: 'deploy.step.three.mode.title' })}</span>
+            <span className="section-title">{formatMessage({ id: 'autoteststep.three.mode.title' })}</span>
           </div>
           <div className="section-text-margin">
             <RadioGroup
               onChange={this.handleChangeMode}
               value={this.state.mode}
-              label={<span className="deploy-text">{formatMessage({ id: 'deploy.step.three.mode' })}</span>}
+              label={<span className="autotest-text">{formatMessage({ id: 'autoteststep.three.mode' })}</span>}
             >
-              <Radio className="deploy-radio" value="new">{formatMessage({ id: 'deploy.step.three.mode.new' })}</Radio>
-              <Radio className="deploy-radio" value="replace" disabled={instances.length === 0 || (instances.length === 1 && (instances[0].appVersion === this.state.versionDto.version) && !this.state.changeYaml)}>
-                {formatMessage({ id: 'deploy.step.three.mode.replace' })}
+              <Radio className="autotest-radio" value="new">{formatMessage({ id: 'autoteststep.three.mode.new' })}</Radio>
+              <Radio className="autotest-radio" value="replace" disabled={instances.length === 0 || (instances.length === 1 && (instances[0].appVersion === this.state.versionDto.version) && !this.state.changeYaml)}>
+                {formatMessage({ id: 'autoteststep.three.mode.replace' })}
                 <i className="icon icon-error section-instance-icon" />
-                <span className="deploy-tip-text">{formatMessage({ id: 'deploy.step.three.mode.help' })}</span>
+                <span className="autotest-tip-text">{formatMessage({ id: 'autoteststep.three.mode.help' })}</span>
               </Radio>
             </RadioGroup>
             {this.state.mode === 'replace' && (
@@ -530,8 +526,8 @@ class CreateAutoTest extends Component {
               onSelect={this.handleSelectInstance}
               value={this.state.instanceId 
                 || (instances && instances.length === 1 && instances[0].id)}
-              label={<FormattedMessage id="deploy.step.three.mode.replace.label" />}
-              className="deploy-select"
+              label={<FormattedMessage id="autoteststep.three.mode.replace.label" />}
+              className="autotest-select"
               placeholder="Select a person"
               optionFilterProp="children"
               filterOption={(input, option) => option.props.children
@@ -551,13 +547,13 @@ class CreateAutoTest extends Component {
           <Button
             type="primary"
             funcType="raised"
-            onClick={this.changeStep.bind(this, 4)}
-            disabled={!(this.state.mode === 'new' || (this.state.mode === 'replace' && (this.state.instanceId || (instances && instances.length === 1))))}
+            onClick={this.changeStep.bind(this, 3)}
+            // disabled={!(this.state.mode === 'new' || (this.state.mode === 'replace' && (this.state.instanceId || (instances && instances.length === 1))))}
           >
             {formatMessage({ id: 'next' })}
           </Button>
           <Button funcType="raised" onClick={this.changeStep.bind(this, 2)}>{formatMessage({ id: 'previous' })}</Button>
-          <Button funcType="raised" className="c7n-deploy-clear" onClick={this.clearStepOne}>{formatMessage({ id: 'cancel' })}</Button>
+          <Button funcType="raised" className="c7ntest-autotest-clear" onClick={this.clearStepOne}>{formatMessage({ id: 'cancel' })}</Button>
         </section>
       </div>
     );
@@ -568,11 +564,11 @@ class CreateAutoTest extends Component {
    * @returns {*}
    */
   handleRenderReview = () => {
-    const { DeploymentAppStore } = this.props;
-    const instances = DeploymentAppStore.currentInstance;
+    const { CreateAutoTestStore } = this.props;
+    const instances = CreateAutoTestStore.currentInstance;
     const { intl } = this.props;
     const { formatMessage } = intl;
-    const data = this.state.yaml || DeploymentAppStore.value;
+    const data = this.state.yaml || CreateAutoTestStore.value;
     const {
       app, versionId, envId, instanceId, mode, 
     } = this.state;
@@ -589,7 +585,7 @@ class CreateAutoTest extends Component {
             <div className="deployApp-title">
               <Icon type="widgets" />
               <span className="deployApp-title-text">
-                {formatMessage({ id: 'deploy.step.four.app' })}
+                {formatMessage({ id: 'autoteststep.four.app' })}
 
 
                 {'：'}
@@ -612,7 +608,7 @@ class CreateAutoTest extends Component {
             <div className="deployApp-title">
               <Icon type="version" />
               <span className="deployApp-title-text">
-                {formatMessage({ id: 'deploy.step.four.version' })}
+                {formatMessage({ id: 'autoteststep.four.version' })}
 
 
                 {'：'}
@@ -624,7 +620,7 @@ class CreateAutoTest extends Component {
             <div className="deployApp-title">
               <Icon type="donut_large" />
               <span className="deployApp-title-text">
-                {formatMessage({ id: 'deploy.step.two.env.title' })}
+                {formatMessage({ id: 'autoteststep.two.env.title' })}
 
 
                 {'：'}
@@ -647,14 +643,14 @@ class CreateAutoTest extends Component {
             <div className="deployApp-title">
               <Icon type="jsfiddle" />
               <span className="deployApp-title-text">
-                {formatMessage({ id: 'deploy.step.three.mode' })}
+                {formatMessage({ id: 'autoteststep.three.mode' })}
 
 
                 {'：'}
               </span>
             </div>
             <div className="deployApp-text">
-              {this.state.mode === 'new' ? formatMessage({ id: 'deploy.step.three.mode.new' }) : formatMessage({ id: 'deploy.step.three.mode.replace' })} 
+              {this.state.mode === 'new' ? formatMessage({ id: 'autoteststep.three.mode.new' }) : formatMessage({ id: 'autoteststep.three.mode.replace' })} 
               {' '}
               {this.state.mode === 'replace'
             && (
@@ -675,7 +671,7 @@ class CreateAutoTest extends Component {
             <div className="deployApp-title">
               <Icon type="description" />
               <span className="deployApp-title-text">
-                {formatMessage({ id: 'deploy.step.two.config' })}
+                {formatMessage({ id: 'autoteststep.two.config' })}
 
 
                 {'：'}
@@ -687,7 +683,7 @@ class CreateAutoTest extends Component {
             {<AceForYaml
               options={options}
               newLines={data.newLines}
-              readOnly={this.state.current === 4}
+              readOnly={this.state.current === 3}
               value={data.yaml}
               highlightMarkers={data.highlightMarkers}
             />}
@@ -695,11 +691,10 @@ class CreateAutoTest extends Component {
           )}
         </section>
         <section className="deployApp-section">
-          <Permission service={['devops-service.application-instance.deploy']}>
-            <Button type="primary" funcType="raised" disabled={!(app && versionId && envId && mode)} onClick={this.handleDeploy} loading={this.state.loading}>{formatMessage({ id: 'deploy.btn.deploy' })}</Button>
-          </Permission>
-          <Button funcType="raised" onClick={this.changeStep.bind(this, 3)}>{formatMessage({ id: 'previous' })}</Button>
-          <Button funcType="raised" className="c7n-deploy-clear" onClick={this.clearStepOne}>{formatMessage({ id: 'cancel' })}</Button>
+          <Button type="primary" funcType="raised" disabled={!(app && versionId && envId && mode)} onClick={this.handleDeploy} loading={this.state.loading}>{formatMessage({ id: 'autotestbtn.autotest' })}</Button>
+         
+          <Button funcType="raised" onClick={this.changeStep.bind(this, 2)}>{formatMessage({ id: 'previous' })}</Button>
+          <Button funcType="raised" className="c7ntest-autotest-clear" onClick={this.clearStepOne}>{formatMessage({ id: 'cancel' })}</Button>
         </section>
       </section>
     );
@@ -718,55 +713,43 @@ class CreateAutoTest extends Component {
   }
 
   render() {
-    const { DeploymentAppStore, intl } = this.props;
+    const { CreateAutoTestStore, intl } = this.props;
     const { formatMessage } = intl;
-    const data = DeploymentAppStore.value;
+    const data = CreateAutoTestStore.value;
     const projectName = AppState.currentMenuType.name;
     const {
       appId, versionId, envId, instanceId, mode, value, current, 
     } = this.state;
     return (
       <Page
-        service={[
-          'devops-service.application.queryByAppId',
-          'devops-service.application-version.queryByAppId',
-          'devops-service.devops-environment.listByProjectIdAndActive',
-          'devops-service.application-instance.queryValues',
-          'devops-service.application-instance.formatValue',
-          'devops-service.application-instance.listByAppVersionId',
-          'devops-service.application-instance.deploy',
-          'devops-service.application.pageByOptions',
-          'devops-service.application-market.listAllApp',
-          'devops-service.application-instance.previewValues',
-        ]}
-        className="c7n-region c7n-deployApp"
+        className="c7ntest-region c7ntest-deployApp"
       >
-        <Header title={<FormattedMessage id="deploy.header.title" />} />
-        <Content className="c7n-deployApp-wrapper" code="deploy" values={{ name: projectName }}>
+        <Header title={<FormattedMessage id="autotest_header_title" />} />
+        <Content className="c7ntest-deployApp-wrapper" code="autotest" values={{ name: projectName }}>
           <div className="deployApp-card">
             <Steps current={this.state.current}>
               <Step
-                title={<span style={{ color: current === 1 ? '#3F51B5' : '', fontSize: 14 }}>{formatMessage({ id: 'deploy.step.one.title' })}</span>}
+                title={<span style={{ color: current === 1 ? '#3F51B5' : '', fontSize: 14 }}>{formatMessage({ id: 'autoteststep_one_title' })}</span>}
                 onClick={this.changeStep.bind(this, 1)}
                 status={this.getStatus(1)}
               />
               <Step
                 className={!(appId && versionId) ? 'step-disabled' : ''}
-                title={<span style={{ color: current === 2 ? '#3F51B5' : '', fontSize: 14 }}>{formatMessage({ id: 'deploy.step.two.title' })}</span>}
+                title={<span style={{ color: current === 2 ? '#3F51B5' : '', fontSize: 14 }}>{formatMessage({ id: 'autoteststep_two_title' })}</span>}
                 onClick={this.changeStep.bind(this, 2)}
                 status={this.getStatus(2)}
               />
-              <Step
+              {/* <Step
                 className={!(envId && data && data.errorLines === null && (this.state.errorLine === '' || this.state.errorLine === null) && (value || (data && data.yaml))) ? 'step-disabled' : ''}
-                title={<span style={{ color: current === 3 ? '#3F51B5' : '', fontSize: 14 }}>{formatMessage({ id: 'deploy.step.three.title' })}</span>}
+                title={<span style={{ color: current === 3 ? '#3F51B5' : '', fontSize: 14 }}>{formatMessage({ id: 'autoteststep.three.title' })}</span>}
                 onClick={this.changeStep.bind(this, 3)}
                 status={this.getStatus(3)}
-              />
+              /> */}
               <Step
                 className={!((mode === 'new' || (mode === 'replace' && instanceId)) && this.state.envId) ? 'step-disabled' : ''}
-                title={<span style={{ color: current === 4 ? '#3F51B5' : '', fontSize: 14 }}>{formatMessage({ id: 'deploy.step.four.title' })}</span>}
-                onClick={this.changeStep.bind(this, 4)}
-                status={this.getStatus(4)}
+                title={<span style={{ color: current === 3 ? '#3F51B5' : '', fontSize: 14 }}>{formatMessage({ id: 'autoteststep_three_title' })}</span>}
+                onClick={this.changeStep.bind(this, 3)}
+                status={this.getStatus(3)}
               />
             </Steps>
             <div className="deployApp-card-content">
@@ -774,12 +757,12 @@ class CreateAutoTest extends Component {
 
               {this.state.current === 2 && this.handleRenderEnv()}
 
-              {this.state.current === 3 && this.handleRenderMode()}
+              {/* {this.state.current === 3 && this.handleRenderMode()} */}
 
-              {this.state.current === 4 && this.handleRenderReview()}
+              {this.state.current === 3 && this.handleRenderReview()}
             </div>
           </div>
-          {/* {this.state.show && (
+          {this.state.show && (
           <SelectApp
             isMarket={!this.state.is_project}
             app={this.state.app}
@@ -787,7 +770,7 @@ class CreateAutoTest extends Component {
             handleCancel={this.handleCancel}
             handleOk={this.handleOk}
           />
-          )} */}
+          )}
         </Content>
       </Page>
     );

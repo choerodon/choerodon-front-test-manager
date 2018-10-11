@@ -61,6 +61,8 @@ const enUS = {
   todo: 'todo',
   doing: 'doing',
   done: 'done',
+  next: 'next step',
+  previous: 'pre step',
   // 测试执行
   execute_detail: 'Execution details',
   execute_cycle_execute: 'Test execution',

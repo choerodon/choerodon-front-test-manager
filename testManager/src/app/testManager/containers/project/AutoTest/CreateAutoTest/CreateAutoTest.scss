@@ -1,4 +1,4 @@
-.c7n-deployApp-wrapper {
+.c7ntest-deployApp-wrapper {
   // background-color: rgba(0, 0, 0, 0.04);
 
   .deployApp-card {
@@ -31,7 +31,7 @@
         margin-right: 12px;
       }
 
-      .deploy-title {
+      .autotest-title {
         margin-bottom: 16px;
 
         .section-title {
@@ -47,7 +47,7 @@
         }
       }
 
-      .deploy-text {
+      .autotest-text {
         width: 512px;
         display: flex;
 
@@ -111,7 +111,7 @@
   }
 }
 
-.deploy-radio {
+.autotest-radio {
   display: block;
   height: 30px;
   line-height: 30px;
@@ -124,12 +124,12 @@
   color: #f44336;
 }
 
-.deploy-tip-text {
+.autotest-tip-text {
   vertical-align: middle;
   color: rgba(0, 0, 0, 0.65);
 }
 
-.deploy-select {
+.autotest-select {
   width: 482px;
   display: block;
 }
@@ -138,6 +138,6 @@
   pointer-events: none;
 }
 
-.c7n-deploy-clear {
+.c7ntest-autotest-clear {
   color: #3f51b5;
 }

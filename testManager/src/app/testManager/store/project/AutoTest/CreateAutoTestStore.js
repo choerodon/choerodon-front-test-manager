@@ -3,8 +3,8 @@ import { axios, store, stores } from 'choerodon-front-boot';
 
 const { AppState } = stores;
 
-@store('DeploymentAppStore')
-class DeploymentAppStore {
+@store('CreateAutoTestStore')
+class CreateAutoTestStore {
   @observable apps = [];
 
   @observable currentApp = {};
@@ -151,5 +151,5 @@ class DeploymentAppStore {
     }
   }
 }
-const deploymentAppStore = new DeploymentAppStore();
-export default deploymentAppStore;
+const createAutoTestStore = new CreateAutoTestStore();
+export default createAutoTestStore;

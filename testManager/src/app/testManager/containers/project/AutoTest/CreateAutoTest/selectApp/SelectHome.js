@@ -6,11 +6,10 @@ import {
   Button, Tabs, Icon, Modal, Input, Table, Pagination,
 } from 'choerodon-ui';
 import { stores, Content } from 'choerodon-front-boot';
-import Loadingbar from '../../../../components/loadingBar';
-import '../../../main.scss';
+import Loadingbar from '../../../../../components/loadingBar';
 import './SelectApp.scss';
-import SelectAppStore from '../../../../stores/project/deploymentApp/SelectAppStore';
-import MouserOverWrapper from '../../../../components/MouseOverWrapper';
+import SelectAppStore from '../../../../../store/project/AutoTest/SelectAppStore';
+import MouserOverWrapper from '../../../../../components/MouseOverWrapper';
 
 const { TabPane } = Tabs;
 const ButtonGroup = Button.Group;
@@ -317,38 +316,38 @@ class DeployAppHome extends Component {
     const loading = SelectAppStore.getLoading;
     return (
       <SideBar
-        title={<FormattedMessage id="deploy.step.one.app" />}
+        title={<FormattedMessage id="autotest.step.one.app" />}
         visible={show}
         onOk={this.handleOk}
         okText={formatMessage({ id: 'ok' })}
         cancelText={formatMessage({ id: 'cancel' })}
         onCancel={handleCancel}
       >
-        <Content className="c7n-deployApp-sidebar sidebar-content" code="deploy.sidebar" value={projectName}>
+        <Content className="c7ntest-deployApp-sidebar sidebar-content" code="autotest.sidebar" value={projectName}>
           <div>
             <Tabs
               animated={false}
               tabBarExtraContent={(
                 <ButtonGroup>
-                  <Button onClick={this.changeView.bind(this, 'list')} className={view === 'list' ? 'c7n-tab-active' : ''}><Icon type="format_list_bulleted" /></Button>
-                  <Button onClick={this.changeView.bind(this, 'card')} className={view === 'card' ? 'c7n-tab-active' : ''}><Icon type="dashboard" /></Button>
+                  <Button onClick={this.changeView.bind(this, 'list')} className={view === 'list' ? 'c7ntest-tab-active' : ''}><Icon type="format_list_bulleted" /></Button>
+                  <Button onClick={this.changeView.bind(this, 'card')} className={view === 'card' ? 'c7ntest-tab-active' : ''}><Icon type="dashboard" /></Button>
                 </ButtonGroup>
               )}
               onChange={this.changeTab}
 
             >
-              <TabPane className="c7n-deploy-tabpane" tab={formatMessage({ id: 'deploy.sidebar.project' })} key="1">
+              <TabPane className="c7ntest-autotest-tabpane" tab={formatMessage({ id: 'autotest.sidebar.project' })} key="1">
                 {view === 'list' && this.getProjectTable()}
                 {view === 'card' && (
                   <React.Fragment>
-                    <div className="c7n-store-search">
+                    <div className="c7ntest-store-search">
                       <Input
                         value={val}
                         prefix={prefix}
                         suffix={suffix}
                         onChange={this.handleSearch}
                         onPressEnter={this.handleSearch}
-                        placeholder={formatMessage({ id: 'deploy.sidebar.search' })}
+                        placeholder={formatMessage({ id: 'autotest.sidebar.search' })}
                         // eslint-disable-next-line no-return-assign
                         ref={node => this.searchInput = node}
                       />
@@ -360,12 +359,12 @@ class DeployAppHome extends Component {
                             <div
                               key={card.id}
                               role="none"
-                              className={`c7n-store-card ${app && app.id === card.id && !isMarket && 'c7n-card-active'}`}
+                              className={`c7ntest-store-card ${app && app.id === card.id && !isMarket && 'c7ntest-card-active'}`}
                               onClick={this.handleSelectApp.bind(this, card)}
                             >
                               {app && !isMarket && app.id === card.id && <span className="span-icon-check"><i className="icon icon-check" /></span> }
-                              <div className="c7n-store-card-icon" />
-                              <div className="c7n-store-card-name">
+                              <div className="c7ntest-store-card-icon" />
+                              <div className="c7ntest-store-card-name">
                                 <MouserOverWrapper
                                   text={card.name}
                                   width={0.15}
@@ -373,13 +372,13 @@ class DeployAppHome extends Component {
                                   {card.name}
                                 </MouserOverWrapper>
                               </div>
-                              <div title={card.code} className="c7n-store-card-des-60">
+                              <div title={card.code} className="c7ntest-store-card-des-60">
                                 {card.code}
                               </div>
                             </div>
                           ))}
                         </div>
-                        <div className="c7n-store-pagination">
+                        <div className="c7ntest-store-pagination">
                           <Pagination
                             total={lt}
                             current={lc}
@@ -395,13 +394,13 @@ class DeployAppHome extends Component {
                 )}
 
               </TabPane>
-              <TabPane className="c7n-deploy-tabpane" tab={formatMessage({ id: 'deploy.sidebar.market' })} key="2">
+              <TabPane className="c7ntest-autotest-tabpane" tab={formatMessage({ id: 'autotest.sidebar.market' })} key="2">
                 {view === 'list' && this.getMarketTable()}
                 {view === 'card' && (
                   <React.Fragment>
-                    <div className="c7n-store-search">
+                    <div className="c7ntest-store-search">
                       <Input
-                        placeholder={formatMessage({ id: 'deploy.sidebar.search' })}
+                        placeholder={formatMessage({ id: 'autotest.sidebar.search' })}
                         value={val}
                         prefix={prefix}
                         suffix={suffix}
@@ -419,25 +418,25 @@ class DeployAppHome extends Component {
                             <div
                               key={card.id}
                               role="none"
-                              className={`c7n-store-card ${app && isMarket && app.appId === card.appId && 'c7n-card-active'}`}
+                              className={`c7ntest-store-card ${app && isMarket && app.appId === card.appId && 'c7ntest-card-active'}`}
                               onClick={this.handleSelectApp.bind(this, card)}
                             >
                               {app && app.appId === card.appId && isMarket && <span className="span-icon-check"><i className="icon icon-check " /></span> }
-                              {card.imgUrl ? <div className="c7n-store-card-icon" style={{ backgroundImage: `url(${Choerodon.fileServer(card.imgUrl)})` }} />
-                                : <div className="c7n-store-card-icon" />}
-                              <div title={card.name} className="c7n-store-card-name">
+                              {card.imgUrl ? <div className="c7ntest-store-card-icon" style={{ backgroundImage: `url(${Choerodon.fileServer(card.imgUrl)})` }} />
+                                : <div className="c7ntest-store-card-icon" />}
+                              <div title={card.name} className="c7ntest-store-card-name">
                                 {card.name}
                               </div>
-                              <div className="c7n-store-card-source">
+                              <div className="c7ntest-store-card-source">
                                 {card.category}
                               </div>
-                              <div title={card.description} className="c7n-store-card-des-60">
+                              <div title={card.description} className="c7ntest-store-card-des-60">
                                 {card.description}
                               </div>
                             </div>
                           ))}
                         </div>
-                        <div className="c7n-store-pagination">
+                        <div className="c7ntest-store-pagination">
                           <Pagination
                             total={st}
                             current={sc}
