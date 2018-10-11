@@ -6,3 +6,5 @@
 'test-manager.report':  报表
 'test-manager.status':  自定义状态
 'test-manager.cycle':  测试循环
+'test-manager.createautotest':  新建测试
+'test-manager.autotestlist':  测试记录
