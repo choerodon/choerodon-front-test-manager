@@ -345,6 +345,10 @@ const zhCN = {
   autotestapp_add: '打开应用列表',
   autoteststep_two_title: '修改配置信息',
   autoteststep_three_title: '确认信息并执行',
+  // 测试列表页面
+  autotestlist_title: '测试记录',
+  autotestlist_content_title: `项目“${projectName}”的测试记录`,
+  autotestlist_content_description: '测试记录保存了自动化测试的所有记录',
 };
 
 export default zhCN;

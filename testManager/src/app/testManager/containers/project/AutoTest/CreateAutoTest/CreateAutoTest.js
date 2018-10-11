@@ -377,7 +377,7 @@ class CreateAutoTest extends Component {
             >
               {formatMessage({ id: 'autotestapp_add' })}
               <i className="icon icon-open_in_new icon-small" />
-            </a>            
+            </a>
           </div>
         </section>
         <section className="deployApp-section">
@@ -692,7 +692,7 @@ class CreateAutoTest extends Component {
         </section>
         <section className="deployApp-section">
           <Button type="primary" funcType="raised" disabled={!(app && versionId && envId && mode)} onClick={this.handleDeploy} loading={this.state.loading}>{formatMessage({ id: 'autotestbtn.autotest' })}</Button>
-         
+       
           <Button funcType="raised" onClick={this.changeStep.bind(this, 2)}>{formatMessage({ id: 'previous' })}</Button>
           <Button funcType="raised" className="c7ntest-autotest-clear" onClick={this.clearStepOne}>{formatMessage({ id: 'cancel' })}</Button>
         </section>
