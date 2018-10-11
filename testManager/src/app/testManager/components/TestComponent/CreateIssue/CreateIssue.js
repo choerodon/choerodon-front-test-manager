@@ -11,13 +11,12 @@ import '../../../assets/main.scss';
 import { UploadButton } from '../CommonComponent';
 import { handleFileUpload, beforeTextUpload } from '../../../common/utils';
 import {
-  createIssue, loadLabels, loadPriorities, loadVersions, loadSprints, loadComponents, loadEpics,
+  createIssue, loadLabels, loadPriorities, loadVersions, loadComponents, 
   getFoldersByVersion,
-} from '../../../api/IssueApi';
+} from '../../../api/IssueManageApi';
 import { getUsers } from '../../../api/CommonApi';
 import { COLOR } from '../../../common/Constant';
-import WYSIWYGEditor from '../WYSIWYGEditor';
-import FullEditor from '../FullEditor';
+import { FullEditor, WYSIWYGEditor } from '../../CommonComponent';
 import UserHead from '../UserHead';
 
 const { AppState } = stores;
@@ -36,13 +35,10 @@ class CreateIssue extends Component {
       createLoading: false,
       fileList: [],
       selectLoading: false,
-
       originLabels: [],
       originComponents: [],
-      originEpics: [],
       originPriorities: [],
-      originFixVersions: [],
-      originSprints: [],
+      originFixVersions: [],  
       originUsers: [],
 
       origin: {},
@@ -219,6 +215,7 @@ class CreateIssue extends Component {
         }
         this.props.onOk(extra);
       }
+      
     });
   };
 
@@ -266,7 +263,7 @@ class CreateIssue extends Component {
 
     return (
       <Sidebar
-        className="c7n-createIssue"
+        className="c7ntest-createIssue"
         title={<FormattedMessage id="issue_create_name" />}
         visible={visible || false}
         onOk={this.handleCreateIssue}

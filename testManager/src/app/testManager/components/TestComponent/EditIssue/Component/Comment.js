@@ -1,14 +1,13 @@
 import React, { Component } from 'react';
 import { Icon, Popconfirm } from 'choerodon-ui';
-import { AppState } from 'choerodon-front-boot';
 import _ from 'lodash';
 import UserHead from '../../UserHead';
-import WYSIWYGEditor from '../../WYSIWYGEditor';
+import { WYSIWYGEditor } from '../../../CommonComponent';
 import { IssueDescription } from '../../CommonComponent';
 import {
   delta2Html, text2Delta, beforeTextUpload, formatDate, 
 } from '../../../../common/utils';
-import { deleteCommit, updateCommit } from '../../../../api/IssueApi';
+import { deleteCommit, updateCommit } from '../../../../api/IssueManageApi';
 import './Comment.scss';
 
 
@@ -20,9 +19,6 @@ class Comment extends Component {
       editComment: undefined,
       expand: false,
     };
-  }
-
-  componentDidMount() {
   }
 
   confirm(commentId, e) {
@@ -69,7 +65,7 @@ class Comment extends Component {
     const deltaEdit = text2Delta(this.state.editComment);
     return (
       <div
-        className={`c7n-comment ${commit.commentId === this.state.editCommentId ? 'c7n-comment-focus' : ''}`}
+        className={`c7ntest-comment ${commit.commentId === this.state.editCommentId ? 'c7ntest-comment-focus' : ''}`}
       >
         <div className="line-justify">
           {
@@ -108,7 +104,7 @@ class Comment extends Component {
               />
             ) : null
           }
-          <div className="c7n-title-commit">
+          <div className="c7ntest-title-commit">
             <div style={{ marginRight: 19 }}>
               <UserHead
                 user={{
@@ -122,7 +118,7 @@ class Comment extends Component {
             </div>
             <span style={{ color: 'rgba(0, 0, 0, 0.65)' }}>添加了评论</span>
           </div>
-          <div className="c7n-action">
+          <div className="c7ntest-action">
             <Icon
               role="none"
               type="mode_edit mlr-3 pointer"
@@ -162,7 +158,7 @@ class Comment extends Component {
         </div>
         {
           this.state.expand && (
-            <div className="c7n-conent-commit" style={{ marginTop: 10 }}>
+            <div className="c7ntest-conent-commit" style={{ marginTop: 10 }}>
               {
                 commit.commentId === this.state.editCommentId ? (
                   <WYSIWYGEditor

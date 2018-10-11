@@ -3,7 +3,7 @@ import { stores, axios, Permission } from 'choerodon-front-boot';
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import {
-  Select, Input, Button, Modal, Tooltip, Progress, Dropdown, Menu, Spin, Icon,
+  Select, Input, Button, Modal, Tooltip, Dropdown, Menu, Spin, Icon,
 } from 'choerodon-ui';
 import {
   STATUS, COLOR, TYPE, ICON, TYPE_NAME,
@@ -11,26 +11,22 @@ import {
 import './EditIssue.scss';
 import '../../../assets/main.scss';
 import {
-  UploadButtonNow, NumericInput, ReadAndEdit, IssueDescription,
+  UploadButtonNow, ReadAndEdit, IssueDescription,
 } from '../CommonComponent';
 import {
   delta2Html, handleFileUpload, text2Delta, beforeTextUpload, formatDate, returnBeforeTextUpload,
 } from '../../../common/utils';
 import {
-  loadDatalogs, loadLinkIssues, loadLabels, loadIssue, loadWorklogs,
-  updateIssue, loadPriorities, loadComponents, loadVersions, loadEpics,
+  loadDatalogs, loadLinkIssues, loadLabels, loadIssue,
+  updateIssue, loadPriorities, loadComponents,
   createCommit, deleteIssue, loadStatus, cloneIssue,
-} from '../../../api/IssueApi';
+} from '../../../api/IssueManageApi';
 import { getSelf, getUsers, getUser } from '../../../api/CommonApi';
-import WYSIWYGEditor from '../WYSIWYGEditor';
-import FullEditor from '../FullEditor';
-import DailyLog from '../DailyLog';
+import { FullEditor, WYSIWYGEditor } from '../../CommonComponent';
 import CreateLinkTask from '../CreateLinkTask';
 import UserHead from '../UserHead';
 import Comment from './Component/Comment';
-import Log from './Component/Log';
 import DataLogs from './Component/DataLogs';
-import IssueList from './Component/IssueList';
 import LinkList from './Component/LinkList';
 import CopyIssue from '../CopyIssue';
 import TestStepTable from '../TestStepTable';
@@ -77,7 +73,6 @@ class EditIssueNarrow extends Component {
       edit: false,
       addCommit: false,
       addCommitDes: '',
-      dailyLogShow: false,
       createLinkTaskShow: false,
       createTestStepShow: false,
       editDesShow: false,
@@ -116,8 +111,6 @@ class EditIssueNarrow extends Component {
       componentIssueRelDTOList: [],
       activeSprint: {},
       closeSprint: [],
-
-      worklogs: [],
       datalogs: [],
       fileList: [],
       testStepData: [],
@@ -187,14 +180,6 @@ class EditIssueNarrow extends Component {
     }
   }
 
-  getWorkloads = () => {
-    const { worklogs } = this.state;
-    if (!Array.isArray(worklogs)) {
-      return 0;
-    }
-    const workTimeArr = _.reduce(worklogs, (sum, v) => sum + (v.workTime || 0), 0);
-    return workTimeArr;
-  }
 
   /**
    * Attachment
@@ -308,7 +293,7 @@ class EditIssueNarrow extends Component {
   }
 
   getCurrentNav(e) {
-    const eles = ['detail', 'des', 'test1', 'test2', 'attachment', 'commit', 'log', 'data_log', 'link_task'];
+    const eles = ['detail', 'des', 'test1', 'test2', 'attachment', 'commit', 'data_log', 'link_task'];
     return _.find(eles, i => this.isInLook(document.getElementById(i)));
   }
 
@@ -458,11 +443,6 @@ class EditIssueNarrow extends Component {
       loadIssue(issueId).then((res) => {
         this.setAnIssueToState(res);
       });
-      loadWorklogs(issueId).then((res) => {
-        this.setState({
-          worklogs: res,
-        });
-      });
       loadLinkIssues(issueId).then((res) => {
         this.setState({
           linkIssues: res,
@@ -494,11 +474,6 @@ class EditIssueNarrow extends Component {
   refresh = () => {
     loadIssue(this.state.origin.issueId).then((res) => {
       this.setAnIssueToState(res);
-    });
-    loadWorklogs(this.state.origin.issueId).then((res) => {
-      this.setState({
-        worklogs: res,
-      });
     });
   }
 
@@ -722,12 +697,8 @@ class EditIssueNarrow extends Component {
 
 
   handleClickMenu(e) {
-    console.log(e.key);
+    // console.log(e.key);
     switch (e.key) {
-      case 'add_worklog': {
-        this.setState({ dailyLogShow: true });
-        break;
-      }
       case 'copy': {
         const copyConditionDTO = {
           issueLink: false,
@@ -829,26 +800,6 @@ class EditIssueNarrow extends Component {
   }
 
   /**
-   * Log
-   */
-  renderLogs() {
-    return (
-      <div>
-        {
-          this.state.worklogs.map(worklog => (
-            <Log
-              key={worklog.logId}
-              worklog={worklog}
-              onDeleteLog={() => this.reloadIssue()}
-              onUpdateLog={() => this.reloadIssue()}
-            />
-          ))
-        }
-      </div>
-    );
-  }
-
-  /**
    * DataLog
    */
   renderDataLogs() {
@@ -859,23 +810,10 @@ class EditIssueNarrow extends Component {
     );
   }
 
-  /**
-   * SubIssue
-   */
-  renderSubIssues() {
-    return (
-      <div className="c7n-tasks">
-        {
-          this.state.subIssueDTOList.map((subIssue, i) => this.renderIssueList(subIssue, i))
-        }
-      </div>
-    );
-  }
-
   renderLinkIssues() {
     const group = _.groupBy(this.state.linkIssues, 'ward');
     return (
-      <div className="c7n-tasks">
+      <div className="c7ntest-tasks">
         {
           _.map(group, (issues, ward) => (
             <div key={ward}>
@@ -890,29 +828,6 @@ class EditIssueNarrow extends Component {
     );
   }
 
-  /**
-   * IssueList
-   * @param {*} issue 
-   * @param {*} i 
-   */
-  renderIssueList(issue, i) {
-    return (
-      <IssueList
-        key={issue.issueId}
-        issue={{
-          ...issue,
-          typeCode: issue.typeCode || 'sub_task',
-        }}
-        i={i}
-        onOpen={(issueId, linkedIssueId) => {
-          this.reloadIssue(issue.issueId);
-        }}
-        onRefresh={() => {
-          this.reloadIssue(this.state.origin.issueId);
-        }}
-      />
-    );
-  }
 
   renderLinkList(link, i) {
     return (
@@ -976,9 +891,9 @@ class EditIssueNarrow extends Component {
     } else {
       delta = delta2Html(this.state.description);
       return (
-        <div className="c7n-content-wrapper">
+        <div className="c7ntest-content-wrapper">
           <div
-            className="line-start mt-10 c7n-description"
+            className="line-start mt-10 c7ntest-description"
             role="none"
             onClick={() => {
               this.setState({
@@ -1048,7 +963,7 @@ class EditIssueNarrow extends Component {
             </div>
           ) : null
         }
-        <div className="c7n-nav">
+        <div className="c7ntest-nav">
           <div>
             <div style={{
               height: 44, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', borderBottom: '1px solid rgba(0,0,0,0.26)',
@@ -1067,11 +982,11 @@ class EditIssueNarrow extends Component {
               </div>
             </div>
           </div>
-          <ul className="c7n-nav-ul">
+          <ul className="c7ntest-nav-ul">
             <Tooltip placement="right" title="详情">
-              <li id="DETAILS-nav" className={`c7n-li ${this.state.nav === 'detail' ? 'c7n-li-active' : ''}`}>
+              <li id="DETAILS-nav" className={`c7ntest-li ${this.state.nav === 'detail' ? 'c7ntest-li-active' : ''}`}>
                 <Icon
-                  type="error_outline c7n-icon-li"
+                  type="error_outline c7ntest-icon-li"
                   role="none"
                   onClick={() => {
                     this.setState({ nav: 'detail' });
@@ -1081,9 +996,9 @@ class EditIssueNarrow extends Component {
               </li>
             </Tooltip>
             <Tooltip placement="right" title="描述">
-              <li id="DESCRIPTION-nav" className={`c7n-li ${this.state.nav === 'des' ? 'c7n-li-active' : ''}`}>
+              <li id="DESCRIPTION-nav" className={`c7ntest-li ${this.state.nav === 'des' ? 'c7ntest-li-active' : ''}`}>
                 <Icon
-                  type="subject c7n-icon-li"
+                  type="subject c7ntest-icon-li"
                   role="none"
                   onClick={() => {
                     this.setState({ nav: 'des' });
@@ -1093,9 +1008,9 @@ class EditIssueNarrow extends Component {
               </li>
             </Tooltip>
             <Tooltip placement="right" title="测试详细信息">
-              <li id="DESCRIPTION-test1" className={`c7n-li ${this.state.nav === 'test1' ? 'c7n-li-active' : ''}`}>
+              <li id="DESCRIPTION-test1" className={`c7ntest-li ${this.state.nav === 'test1' ? 'c7ntest-li-active' : ''}`}>
                 <Icon
-                  type="compass c7n-icon-li"
+                  type="compass c7ntest-icon-li"
                   role="none"
                   onClick={() => {
                     this.setState({ nav: 'test1' });
@@ -1105,9 +1020,9 @@ class EditIssueNarrow extends Component {
               </li>
             </Tooltip>
             <Tooltip placement="right" title="测试执行">
-              <li id="DESCRIPTION-test2" className={`c7n-li ${this.state.nav === 'test2' ? 'c7n-li-active' : ''}`}>
+              <li id="DESCRIPTION-test2" className={`c7ntest-li ${this.state.nav === 'test2' ? 'c7ntest-li-active' : ''}`}>
                 <Icon
-                  type="explicit2 c7n-icon-li"
+                  type="explicit2 c7ntest-icon-li"
                   role="none"
                   onClick={() => {
                     this.setState({ nav: 'test2' });
@@ -1117,9 +1032,9 @@ class EditIssueNarrow extends Component {
               </li>
             </Tooltip>
             <Tooltip placement="right" title="附件">
-              <li id="COMMENT-nav" className={`c7n-li ${this.state.nav === 'attachment' ? 'c7n-li-active' : ''}`}>
+              <li id="COMMENT-nav" className={`c7ntest-li ${this.state.nav === 'attachment' ? 'c7ntest-li-active' : ''}`}>
                 <Icon
-                  type="attach_file c7n-icon-li"
+                  type="attach_file c7ntest-icon-li"
                   role="none"
                   onClick={() => {
                     this.setState({ nav: 'attachment' });
@@ -1129,9 +1044,9 @@ class EditIssueNarrow extends Component {
               </li>
             </Tooltip>
             <Tooltip placement="right" title="评论">
-              <li id="ATTACHMENT-nav" className={`c7n-li ${this.state.nav === 'commit' ? 'c7n-li-active' : ''}`}>
+              <li id="ATTACHMENT-nav" className={`c7ntest-li ${this.state.nav === 'commit' ? 'c7ntest-li-active' : ''}`}>
                 <Icon
-                  type="sms_outline c7n-icon-li"
+                  type="sms_outline c7ntest-icon-li"
                   role="none"
                   onClick={() => {
                     this.setState({ nav: 'commit' });
@@ -1140,22 +1055,10 @@ class EditIssueNarrow extends Component {
                 />
               </li>
             </Tooltip>
-            <Tooltip placement="right" title="工作日志">
-              <li id="LOG-nav" className={`c7n-li ${this.state.nav === 'log' ? 'c7n-li-active' : ''}`}>
-                <Icon
-                  type="work_log c7n-icon-li"
-                  role="none"
-                  onClick={() => {
-                    this.setState({ nav: 'log' });
-                    this.scrollToAnchor('log');
-                  }}
-                />
-              </li>
-            </Tooltip>
             <Tooltip placement="right" title="活动日志">
-              <li id="DATA_LOG-nav" className={`c7n-li ${this.state.nav === 'data_log' ? 'c7n-li-active' : ''}`}>
+              <li id="DATA_LOG-nav" className={`c7ntest-li ${this.state.nav === 'data_log' ? 'c7ntest-li-active' : ''}`}>
                 <Icon
-                  type="insert_invitation c7n-icon-li"
+                  type="insert_invitation c7ntest-icon-li"
                   role="none"
                   onClick={() => {
                     this.setState({ nav: 'data_log' });
@@ -1165,9 +1068,9 @@ class EditIssueNarrow extends Component {
               </li>
             </Tooltip>
             <Tooltip placement="right" title="相关任务">
-              <li id="LINK_TASKS-nav" className={`c7n-li ${this.state.nav === 'link_task' ? 'c7n-li-active' : ''}`}>
+              <li id="LINK_TASKS-nav" className={`c7ntest-li ${this.state.nav === 'link_task' ? 'c7ntest-li-active' : ''}`}>
                 <Icon
-                  type="link c7n-icon-li"
+                  type="link c7ntest-icon-li"
                   role="none"
                   onClick={() => {
                     this.setState({ nav: 'link_task' });
@@ -1178,10 +1081,10 @@ class EditIssueNarrow extends Component {
             </Tooltip>
           </ul>
         </div>
-        <div className="c7n-content">
-          <div className="c7n-content-top">
-            <div className="c7n-header-editIssue">
-              <div className="c7n-content-editIssue" style={{ overflowY: 'hidden' }}>
+        <div className="c7ntest-content">
+          <div className="c7ntest-content-top">
+            <div className="c7ntest-header-editIssue">
+              <div className="c7ntest-content-editIssue" style={{ overflowY: 'hidden' }}>
                 <div
                   className="line-justify"
                   style={{
@@ -1238,7 +1141,7 @@ class EditIssueNarrow extends Component {
                     onOk={this.updateIssue.bind(this, 'summary')}
                     onCancel={this.resetSummary.bind(this)}
                     readModeContent={(
-                      <div className="c7n-summary">
+                      <div className="c7ntest-summary">
                         {this.state.summary}
                       </div>
                     )}
@@ -1264,43 +1167,7 @@ class EditIssueNarrow extends Component {
                       <Button icon="more_vert" />
                     </Dropdown>
                   </div>
-                </div>
-                {/* {mode === 'narrow' && this.state.issueId && this.state.typeCode !== 'issue_epic' ? (
-                  <div style={{ display: 'flex' }}>
-                    <span>预估时间：</span>
-                    <div>
-                      <ReadAndEdit
-                        callback={this.changeRae.bind(this)}
-                        thisType="remainingTime"
-                        current={this.state.currentRae}
-                        handleEnter
-                        origin={this.state.remainingTime}
-                        onInit={() => this.setAnIssueToState(this.state.origin)}
-                        onOk={this.updateIssue.bind(this, 'remainingTime')}
-                        onCancel={this.resetRemainingTime.bind(this)}
-                        readModeContent={(
-                          <span>
-                            {this.state.remainingTime === undefined || this.state.remainingTime === null ? '无' : `${this.state.remainingTime} 小时`}
-                          </span>
-                        )}
-                      >
-                        <NumericInput
-                          maxLength="3"
-                          value={this.state.remainingTime}
-                          // size="large"
-                          autoFocus
-                          onChange={this.handleRemainingTimeChange.bind(this)}
-                          onPressEnter={() => {
-                            this.updateIssue('remainingTime');
-                            this.setState({
-                              currentRae: undefined,
-                            });
-                          }}
-                        />
-                      </ReadAndEdit>
-                    </div>
-                  </div>
-                ) : null */}
+                </div>                
                 {/* 状态 */}
                 {mode === 'wide' && (
                   <div className="line-start" style={{ alignItems: 'center' }}>
@@ -1434,7 +1301,7 @@ class EditIssueNarrow extends Component {
                                 {
                                   this.state.priorityCode ? (
                                     <div
-                                      className="c7n-level"
+                                      className="c7ntest-level"
                                       style={{
                                         // backgroundColor: COLOR[this.state.priorityCode].bgColor,
                                         color: COLOR[this.state.priorityCode].color,
@@ -1485,7 +1352,7 @@ class EditIssueNarrow extends Component {
                                     <Option key={onetype.valueCode} value={onetype.valueCode}>
                                       <div style={{ display: 'inline-flex', alignItems: 'center', padding: '2px' }}>
                                         <div
-                                          className="c7n-level"
+                                          className="c7ntest-level"
                                           style={{
                                             // backgroundColor: COLOR[type.valueCode].bgColor,
                                             color: COLOR[onetype.valueCode].color,
@@ -1544,14 +1411,14 @@ class EditIssueNarrow extends Component {
               </div>
             </div>
           </div>
-          <div className="c7n-content-bottom" id="scroll-area" style={{ position: 'relative' }}>
-            <section className="c7n-body-editIssue">
-              <div className="c7n-content-editIssue">
-                <div className="c7n-details">
+          <div className="c7ntest-content-bottom" id="scroll-area" style={{ position: 'relative' }}>
+            <section className="c7ntest-body-editIssue">
+              <div className="c7ntest-content-editIssue">
+                <div className="c7ntest-details">
                   <div id="detail">
-                    <div className="c7n-title-wrapper" style={{ marginTop: 0 }}>
-                      <div className="c7n-title-left">
-                        <Icon type="error_outline c7n-icon-title" />
+                    <div className="c7ntest-title-wrapper" style={{ marginTop: 0 }}>
+                      <div className="c7ntest-title-left">
+                        <Icon type="error_outline c7ntest-icon-title" />
                         <FormattedMessage id="detail" />
                       </div>
                       <div style={{
@@ -1559,19 +1426,19 @@ class EditIssueNarrow extends Component {
                       }}
                       />
                     </div>
-                    <div className="c7n-content-wrapper" style={{ display: 'flex', flexWrap: 'wrap' }}>
+                    <div className="c7ntest-content-wrapper" style={{ display: 'flex', flexWrap: 'wrap' }}>
                       {/* 状态 */}
                       <div style={{ flex: 1 }}>
                         {mode === 'narrow'
                           && (
                             <div>
                               <div className="line-start mt-10 ht-20">
-                                <div className="c7n-property-wrapper">
-                                  <span className="c7n-property">
+                                <div className="c7ntest-property-wrapper">
+                                  <span className="c7ntest-property">
                                     {'状态：'}
                                   </span>
                                 </div>
-                                <div className="c7n-value-wrapper">
+                                <div className="c7ntest-value-wrapper">
                                   <ReadAndEdit
                                     callback={this.changeRae.bind(this)}
                                     thisType="statusId"
@@ -1645,10 +1512,10 @@ class EditIssueNarrow extends Component {
                               </div>
                               {/* 优先级 */}
                               <div className="line-start mt-10 ht-20">
-                                <div className="c7n-property-wrapper">
-                                  <span className="c7n-property">优先级：</span>
+                                <div className="c7ntest-property-wrapper">
+                                  <span className="c7ntest-property">优先级：</span>
                                 </div>
-                                <div className="c7n-value-wrapper">
+                                <div className="c7ntest-value-wrapper">
                                   <ReadAndEdit
                                     callback={this.changeRae.bind(this)}
                                     thisType="priorityCode"
@@ -1669,7 +1536,7 @@ class EditIssueNarrow extends Component {
                                         {
                                           this.state.priorityCode ? (
                                             <div
-                                              className="c7n-level"
+                                              className="c7ntest-level"
                                               style={{
                                                 backgroundColor: COLOR[this.state.priorityCode].bgColor,
                                                 color: COLOR[this.state.priorityCode].color,
@@ -1717,7 +1584,7 @@ class EditIssueNarrow extends Component {
                                           <Option key={priorityType.valueCode} value={priorityType.valueCode}>
                                             <div style={{ display: 'inline-flex', alignItems: 'center', padding: '2px' }}>
                                               <div
-                                                className="c7n-level"
+                                                className="c7ntest-level"
                                                 style={{
                                                   backgroundColor: COLOR[priorityType.valueCode].bgColor,
                                                   color: COLOR[priorityType.valueCode].color,
@@ -1743,13 +1610,13 @@ class EditIssueNarrow extends Component {
                         {
                           this.state.typeCode !== 'sub_task' ? (
                             <div className="line-start mt-10 ht-20">
-                              <div className="c7n-property-wrapper">
-                                <span className="c7n-property">
+                              <div className="c7ntest-property-wrapper">
+                                <span className="c7ntest-property">
                                   <FormattedMessage id="summary_component" />
                                   {'：'}
                                 </span>
                               </div>
-                              <div className="c7n-value-wrapper">
+                              <div className="c7ntest-value-wrapper">
                                 <ReadAndEdit
                                   callback={this.changeRae.bind(this)}
                                   thisType="componentIssueRelDTOList"
@@ -1805,13 +1672,13 @@ class EditIssueNarrow extends Component {
                         }
                         {/* 标签 */}
                         <div className="line-start mt-10 ht-20">
-                          <div className="c7n-property-wrapper">
-                            <span className="c7n-property">
+                          <div className="c7ntest-property-wrapper">
+                            <span className="c7ntest-property">
                               <FormattedMessage id="summary_label" />
                               {'：'}
                             </span>
                           </div>
-                          <div className="c7n-value-wrapper">
+                          <div className="c7ntest-value-wrapper">
 
                             <ReadAndEdit
                               callback={this.changeRae.bind(this)}
@@ -1887,13 +1754,13 @@ class EditIssueNarrow extends Component {
                         {/* 版本 */}
                         {mode === 'narrow' && (
                           <div className="line-start mt-10 ht-20">
-                            <div className="c7n-property-wrapper">
-                              <span className="c7n-property">
+                            <div className="c7ntest-property-wrapper">
+                              <span className="c7ntest-property">
                                 <FormattedMessage id="issue_create_content_version" />
                                 {'：'}
                               </span>
                             </div>
-                            <div className="c7n-value-wrapper">
+                            <div className="c7ntest-value-wrapper">
                               <div>
                                 {
                                   !this.state.fixVersionsFixed.length && !this.state.fixVersions.length ? '无' : (
@@ -1912,20 +1779,20 @@ class EditIssueNarrow extends Component {
                           </div>
                         )}
                         <div className="line-start mt-10">
-                          <div className="c7n-property-wrapper">
-                            <span className="c7n-subtitle">
+                          <div className="c7ntest-property-wrapper">
+                            <span className="c7ntest-subtitle">
                               <FormattedMessage id="issue_edit_person" />
                             </span>
                           </div>
                         </div>
                         <div className="line-start mt-10 assignee ht-20">
-                          <div className="c7n-property-wrapper">
-                            <span className="c7n-property">
+                          <div className="c7ntest-property-wrapper">
+                            <span className="c7ntest-property">
                               <FormattedMessage id="issue_edit_reporter" />
                               {'：'}
                             </span>
                           </div>
-                          <div className="c7n-value-wrapper" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
+                          <div className="c7ntest-value-wrapper" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
                             <ReadAndEdit
                               style={{ marginBottom: 5 }}
                               callback={this.changeRae.bind(this)}
@@ -2029,13 +1896,13 @@ class EditIssueNarrow extends Component {
                           </div>
                         </div>
                         <div className="line-start mt-10 assignee ht-20">
-                          <div className="c7n-property-wrapper">
-                            <span className="c7n-property">
+                          <div className="c7ntest-property-wrapper">
+                            <span className="c7ntest-property">
                               <FormattedMessage id="issue_edit_manager" />
                               {'：'}
                             </span>
                           </div>
-                          <div className="c7n-value-wrapper" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
+                          <div className="c7ntest-value-wrapper" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
                             <ReadAndEdit
                               style={{ marginBottom: 5 }}
                               callback={this.changeRae.bind(this)}
@@ -2143,32 +2010,32 @@ class EditIssueNarrow extends Component {
                       <div style={{ flex: 1, marginTop: mode === 'wide' && 62 }}>
                         {/* 日期 */}
                         <div className="line-start mt-10">
-                          <div className="c7n-property-wrapper">
-                            <span className="c7n-subtitle">
+                          <div className="c7ntest-property-wrapper">
+                            <span className="c7ntest-subtitle">
                               <FormattedMessage id="issue_edit_date" />
                             </span>
                           </div>
                         </div>
 
                         <div className="line-start mt-10 ht-20">
-                          <div className="c7n-property-wrapper">
-                            <span className="c7n-property">
+                          <div className="c7ntest-property-wrapper">
+                            <span className="c7ntest-property">
                               <FormattedMessage id="issue_edit_createDate" />
                               {'：'}
                             </span>
                           </div>
-                          <div className="c7n-value-wrapper">
+                          <div className="c7ntest-value-wrapper">
                             {formatDate(this.state.creationDate)}
                           </div>
                         </div>
                         <div className="line-start mt-10 ht-20">
-                          <div className="c7n-property-wrapper">
-                            <span className="c7n-property">
+                          <div className="c7ntest-property-wrapper">
+                            <span className="c7ntest-property">
                               <FormattedMessage id="issue_edit_updateDate" />
                               {'：'}
                             </span>
                           </div>
-                          <div className="c7n-value-wrapper">
+                          <div className="c7ntest-value-wrapper">
                             {formatDate(this.state.lastUpdateDate)}
                           </div>
                         </div>
@@ -2177,22 +2044,22 @@ class EditIssueNarrow extends Component {
                   </div>
 
                   <div id="des">
-                    <div className="c7n-title-wrapper">
-                      <div className="c7n-title-left">
-                        <Icon type="subject c7n-icon-title" />
+                    <div className="c7ntest-title-wrapper">
+                      <div className="c7ntest-title-left">
+                        <Icon type="subject c7ntest-icon-title" />
                         <span><FormattedMessage id="execute_description" /></span>
                       </div>
                       <div style={{
                         flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px',
                       }}
                       />
-                      <div className="c7n-title-right" style={{ marginLeft: '14px', position: 'relative' }}>
+                      <div className="c7ntest-title-right" style={{ marginLeft: '14px', position: 'relative' }}>
                         <Button className="leftBtn" funcType="flat" onClick={() => this.setState({ edit: true })}>
                           <Icon type="zoom_out_map icon" style={{ marginRight: 2 }} />
                           <span><FormattedMessage id="execute_edit_fullScreen" /></span>
                         </Button>
                         <Icon
-                          className="c7n-des-edit"
+                          className="c7ntest-des-edit"
                           style={{ position: 'absolute', top: 8, right: -20 }}
                           role="none"
                           type="mode_edit mlr-3 pointer"
@@ -2211,23 +2078,23 @@ class EditIssueNarrow extends Component {
                 </div>
 
                 <div id="test1">
-                  <div className="c7n-title-wrapper">
-                    <div className="c7n-title-left">
-                      <Icon type="compass c7n-icon-title" />
+                  <div className="c7ntest-title-wrapper">
+                    <div className="c7ntest-title-left">
+                      <Icon type="compass c7ntest-icon-title" />
                       <FormattedMessage id="issue_edit_testDetail" />
                     </div>
                     <div style={{
                       flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px',
                     }}
                     />
-                    <div className="c7n-title-right" style={{ marginLeft: '14px', position: 'relative' }}>
+                    <div className="c7ntest-title-right" style={{ marginLeft: '14px', position: 'relative' }}>
                       <Button className="leftBtn" funcTyp="flat" onClick={() => this.setState({ createTestStepShow: true })}>
                         <Icon type="playlist_add icon" style={{ marginRight: 2 }} />
                         <FormattedMessage id="issue_edit_addTestDetail" />
                       </Button>
                     </div>
                   </div>
-                  <div className="c7n-content-wrapper" style={{ paddingLeft: 0 }}>
+                  <div className="c7ntest-content-wrapper" style={{ paddingLeft: 0 }}>
                     <TestStepTable
                       mode={mode}
                       issueId={this.state.origin.issueId}
@@ -2250,9 +2117,9 @@ class EditIssueNarrow extends Component {
                 </div>
 
                 <div id="test2">
-                  <div className="c7n-title-wrapper">
-                    <div className="c7n-title-left">
-                      <Icon type="explicit2 c7n-icon-title" />
+                  <div className="c7ntest-title-wrapper">
+                    <div className="c7ntest-title-left">
+                      <Icon type="explicit2 c7ntest-icon-title" />
                       <FormattedMessage id="execute_cycle_execute" />
                     </div>
                     <div style={{
@@ -2260,7 +2127,7 @@ class EditIssueNarrow extends Component {
                     }}
                     />
                   </div>
-                  <div className="c7n-content-wrapper" style={{ paddingLeft: 0 }}>
+                  <div className="c7ntest-content-wrapper" style={{ paddingLeft: 0 }}>
                     <TestExecuteTable
                       mode={mode}
                       issueId={this.state.origin.issueId}
@@ -2284,9 +2151,9 @@ class EditIssueNarrow extends Component {
 
 
                 <div id="attachment">
-                  <div className="c7n-title-wrapper">
-                    <div className="c7n-title-left">
-                      <Icon type="attach_file c7n-icon-title" />
+                  <div className="c7ntest-title-wrapper">
+                    <div className="c7ntest-title-left">
+                      <Icon type="attach_file c7ntest-icon-title" />
                       <FormattedMessage id="attachment" />
                     </div>
                     <div style={{
@@ -2294,7 +2161,7 @@ class EditIssueNarrow extends Component {
                     }}
                     />
                   </div>
-                  <div className="c7n-content-wrapper" style={{ marginTop: '-47px' }}>
+                  <div className="c7ntest-content-wrapper" style={{ marginTop: '-47px' }}>
                     <UploadButtonNow
                       onRemove={this.setFileList}
                       onBeforeUpload={this.setFileList}
@@ -2305,16 +2172,16 @@ class EditIssueNarrow extends Component {
                 </div>
 
                 <div id="commit">
-                  <div className="c7n-title-wrapper">
-                    <div className="c7n-title-left">
-                      <Icon type="sms_outline c7n-icon-title" />
+                  <div className="c7ntest-title-wrapper">
+                    <div className="c7ntest-title-left">
+                      <Icon type="sms_outline c7ntest-icon-title" />
                       <FormattedMessage id="issue_edit_comment" />
                     </div>
                     <div style={{
                       flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px',
                     }}
                     />
-                    <div className="c7n-title-right" style={{ marginLeft: '14px' }}>
+                    <div className="c7ntest-title-right" style={{ marginLeft: '14px' }}>
                       <Button className="leftBtn" funcType="flat" onClick={() => this.setState({ addCommit: true })}>
                         <Icon type="playlist_add icon" />
                         <FormattedMessage id="issue_edit_addComment" />
@@ -2323,31 +2190,10 @@ class EditIssueNarrow extends Component {
                   </div>
                   {this.renderCommits()}
                 </div>
-
-                {/* <div id="log">
-                  <div className="c7n-title-wrapper">
-                    <div className="c7n-title-left">
-                      <Icon type="work_log c7n-icon-title" />
-                      <FormattedMessage id="issue_edit_workLog" />
-                    </div>
-                    <div style={{
-                      flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px',
-                    }}
-                    />
-                    <div className="c7n-title-right" style={{ marginLeft: '14px' }}>
-                      <Button className="leftBtn" funcType="flat" onClick={() => this.setState({ dailyLogShow: true })}>
-                        <Icon type="playlist_add icon" />
-                        <FormattedMessage id="issue_edit_registrationWork" />
-                      </Button>
-                    </div>
-                  </div>
-                  {this.renderLogs()}
-                </div> */}
-
                 <div id="data_log">
-                  <div className="c7n-title-wrapper">
-                    <div className="c7n-title-left">
-                      <Icon type="insert_invitation c7n-icon-title" />
+                  <div className="c7ntest-title-wrapper">
+                    <div className="c7ntest-title-left">
+                      <Icon type="insert_invitation c7ntest-icon-title" />
                       <FormattedMessage id="issue_edit_activeLog" />
                     </div>
                     <div style={{
@@ -2361,16 +2207,16 @@ class EditIssueNarrow extends Component {
                 {
                   this.state.origin.typeCode !== 'sub_task' && (
                     <div id="link_task">
-                      <div className="c7n-title-wrapper">
-                        <div className="c7n-title-left">
-                          <Icon type="link c7n-icon-title" />
+                      <div className="c7ntest-title-wrapper">
+                        <div className="c7ntest-title-left">
+                          <Icon type="link c7ntest-icon-title" />
                           <FormattedMessage id="issue_edit_linkIssue" />
                         </div>
                         <div style={{
                           flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px',
                         }}
                         />
-                        <div className="c7n-title-right" style={{ marginLeft: '14px' }}>
+                        <div className="c7ntest-title-right" style={{ marginLeft: '14px' }}>
                           <Button className="leftBtn" funcType="flat" onClick={() => this.setState({ createLinkTaskShow: true })}>
                             <Icon type="playlist_add icon" />
                             <FormattedMessage id="issue_edit_addLinkIssue" />
@@ -2395,28 +2241,6 @@ class EditIssueNarrow extends Component {
             />
           ) : null
         }
-        {
-          this.state.dailyLogShow ? (
-            <DailyLog
-              issueId={this.state.origin.issueId}
-              issueNum={this.state.issueNum}
-              visible={this.state.dailyLogShow}
-              onCancel={() => this.setState({ dailyLogShow: false })}
-              onOk={() => {
-                loadWorklogs(this.state.issueId).then((res) => {
-                  this.setState({
-                    worklogs: res,
-                  });
-                });
-                loadIssue(this.state.issueId).then((res) => {
-                  this.setAnIssueToState(res);
-                });
-                this.setState({ dailyLogShow: false });
-              }}
-            />
-          ) : null
-        }
-
         {
           this.state.createLinkTaskShow ? (
             <CreateLinkTask

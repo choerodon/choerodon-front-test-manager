@@ -5,7 +5,7 @@ import { store, stores, axios } from 'choerodon-front-boot';
 import {
   loadIssues, loadVersions, getIssuesByFolder, getIssuesByIds, getSingleIssues,
   getIssuesByVersion, getAllIssues,
-} from '../../../api/IssueApi';
+} from '../../../api/IssueManageApi';
 import IssueTreeStore from '../treeStore/IssueTreeStore';
 
 const { AppState } = stores;

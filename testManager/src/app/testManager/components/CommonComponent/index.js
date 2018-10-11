@@ -7,8 +7,12 @@ import DefectSelect from './DefectSelect';
 import CreateIssueTiny from './CreateIssueTiny';
 import SelectCreateIssueFooter from './SelectCreateIssueFooter';
 import RadioButton from './RadioButton';
-import StatusTags from './StatusTags'
+import StatusTags from './StatusTags';
+import FullEditor from './FullEditor';
+import WYSIWYGEditor from './WYSIWYGEditor';
+import DragTable from './DragTable';
+
 export {
   TextEditToggle, RichTextShow, SelectFocusLoad, User, UploadInTable, DefectSelect, CreateIssueTiny,
-  SelectCreateIssueFooter, RadioButton, StatusTags
+  SelectCreateIssueFooter, RadioButton, StatusTags, FullEditor, WYSIWYGEditor, DragTable,
 };

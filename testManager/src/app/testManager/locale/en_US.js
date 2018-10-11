@@ -161,7 +161,8 @@ const enUS = {
   testPlan_createStageIn: 'add test stage in cycle “{cycleName}”',
   testPlan_EditStage_title: 'EditStage',
   testPlan_EditStage: 'edit stage “{cycleName}”',
-  // 测试循环
+  // 测试执行
+  cycle_title: 'Test Execute',
   cycle_name: 'Test cycle',
   cycle_my: 'my cycles',
   cycle_all: 'all cycles',
@@ -172,7 +173,7 @@ const enUS = {
   cycle_environment: 'Environment',
   cycle_createBy: 'Created by',
   cycle_startTime: 'Started on',
-  cycle_cycleExecute: 'Cycle Execute',
+  cycle_ExecuteDetail: 'Cycle Execute',
   cycle_endTime: 'Ended on',
   cycle_totalExecute: 'Total Execute',
   cycle_totalExecuted: 'Total Executed',

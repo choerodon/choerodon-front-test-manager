@@ -1,4 +1,4 @@
-.c7n-plan-tree-title {
+.c7ntest-plan-tree-title {
   display: flex;
   align-items: center;
   &-text {
@@ -10,7 +10,7 @@
   &-actionButton {
     height: 28px;
     margin-top: -2px;
-    .c7n-add-folder {
+    .c7ntest-add-folder {
       transition: none;
       // margin-left: 43px;
       padding-right: 7px;
@@ -19,8 +19,8 @@
   }
 }
 
-.c7n-plan-tree-title:hover {
-  .c7n-add-folder {
+.c7ntest-plan-tree-title:hover {
+  .c7ntest-add-folder {
     visibility: visible;
   }
 }

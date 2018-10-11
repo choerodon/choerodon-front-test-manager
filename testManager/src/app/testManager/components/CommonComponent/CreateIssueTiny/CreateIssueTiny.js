@@ -6,7 +6,7 @@ import { Button, Input, Icon } from 'choerodon-ui';
 import {
   STATUS, COLOR, TYPE, ICON, TYPE_NAME, 
 } from '../../../common/Constant';
-import { createIssue } from '../../../api/IssueApi';
+import { createIssue } from '../../../api/IssueManageApi';
 import './CreateIssueTiny.scss';
 
 const { AppState } = stores;
@@ -56,11 +56,11 @@ class CreateIssueTiny extends Component {
     const { create, createLoading, createIssueValue } = this.state;
     const { typeCode } = this.props;
     return (create ? (
-      <div className="c7n-CreateIssueTiny" style={{ display: 'block', width: '100%' }}>
+      <div className="c7ntest-CreateIssueTiny" style={{ display: 'block', width: '100%' }}>
         <div style={{ display: 'flex' }}>
           <div style={{ display: 'flex', alignItem: 'center' }}>
             <div
-              className="c7n-sign"
+              className="c7ntest-sign"
               style={{
                 backgroundColor: TYPE[typeCode],
                 marginRight: 2,
@@ -130,7 +130,7 @@ class CreateIssueTiny extends Component {
 }
 
 CreateIssueTiny.propTypes = {
-
+  typeCode: PropTypes.string,
 };
 
 export default CreateIssueTiny;

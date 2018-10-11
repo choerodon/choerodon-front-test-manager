@@ -1,4 +1,4 @@
-.c7n-report-test {
+.c7ntest-report-test {
   .page-head-title {
     width: auto;
     margin-right: 50px;
@@ -16,11 +16,11 @@
   .ant-collapse-content {
     padding: 0;
   }
-  .c7n-collapse-header-container {
+  .c7ntest-collapse-header-container {
     display: flex;
     align-items: center;
     user-select: none;
-    .c7n-collapse-header-icon {
+    .c7ntest-collapse-header-icon {
       span {
         margin-left: 10px;
         border: 1px solid; // color: #4D90FE;
@@ -31,19 +31,19 @@
       }
     }
   }
-  .c7n-collapse-icon {
+  .c7ntest-collapse-icon {
     transition: all 0.3s ease-in-out;
   }
   .ant-collapse-item-active {
-    .c7n-collapse-icon {
+    .c7ntest-collapse-icon {
       transform: rotateZ(90deg);
     }
   }
-  .c7n-collapse-show-item {
+  .c7ntest-collapse-show-item {
     display: flex;
     align-items: center;
     user-select: none;
-    .c7n-collapse-header-icon {
+    .c7ntest-collapse-header-icon {
       span {
         margin-left: 10px;
         border: 1px solid; // color: #4D90FE;
@@ -54,11 +54,11 @@
       }
     }
   }
-  td.c7n-table-white {
+  td.c7ntest-table-white {
     // padding-top: 0;
     background: white !important;
   }
-  .c7n-collapse-text-icon {
+  .c7ntest-collapse-text-icon {
     width: 60px;
     height: 20px;
     line-height: 20px;
@@ -69,17 +69,17 @@
     user-select: none;
     text-align: center;
   }
-  .c7n-cycle-show-container {
+  .c7ntest-cycle-show-container {
     height: 50px;
     display: flex;
     padding: 10px 0 20px 0;
     align-items: flex-start;
   }
-  .c7n-issue-show-container {
+  .c7ntest-issue-show-container {
     height: 50px;
     padding: 6px 0 0 0;
   }
-  .c7n-showId {
+  .c7ntest-showId {
     user-select: none;
     font-size: 13px;
     width: 80px;
@@ -87,7 +87,7 @@
     overflow: hidden;
     text-overflow: ellipsis; // color: #303F9F;
   }
-  .c7n-report-summary {
+  .c7ntest-report-summary {
     width: 160px;
     margin-top: 5px;
     font-size: 13px;

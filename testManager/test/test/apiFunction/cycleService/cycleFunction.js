@@ -180,7 +180,7 @@ const cycleFunction = {
    * @param {*} executeId
    * @returns
    */
-  getCycleExecute(executeId) {
+  getExecuteDetail(executeId) {
     // console.log('token', global.user.token);
     return chai.request(utils.config.gateway)
       .get(`/test/v1/projects/${projectId}/cycle/case/query/one/${executeId}`)

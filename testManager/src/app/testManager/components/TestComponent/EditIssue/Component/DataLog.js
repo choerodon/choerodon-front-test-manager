@@ -1,10 +1,8 @@
 import React, { Component } from 'react';
 import { Icon, Popconfirm, Popover } from 'choerodon-ui';
-import { AppState } from 'choerodon-front-boot';
 import _ from 'lodash';
 import UserHead from '../../UserHead';
 import { formatDate } from '../../../../common/utils';
-import { getUser } from '../../../../api/CommonApi';
 import './DataLog.scss';
 
 const PROP = {
@@ -348,9 +346,9 @@ class DataLog extends Component {
       <div>
         {
           i > 4 && !expand ? null : (
-            <div className="c7n-datalog" key={datalog.logId}>
+            <div className="c7ntest-datalog" key={datalog.logId}>
               <div className="line-justify">
-                <div className="c7n-title-log" style={{ flexShrink: 0 }}>
+                <div className="c7ntest-title-log" style={{ flexShrink: 0 }}>
                   <div
                     style={{
                       width: 40,

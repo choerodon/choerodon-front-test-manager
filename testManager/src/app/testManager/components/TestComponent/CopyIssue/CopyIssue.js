@@ -5,7 +5,7 @@ import { FormattedMessage } from 'react-intl';
 import {
   Modal, Form, Input, Checkbox, 
 } from 'choerodon-ui';
-import { cloneIssue, copyIssues } from '../../../api/IssueApi';
+import { cloneIssue, copyIssues } from '../../../api/IssueManageApi';
 import './CopyIssue.scss';
 
 const { AppState } = stores;
@@ -60,7 +60,7 @@ class CopyIssue extends Component {
   
     return (
       <Modal
-        className="c7n-copyIssue"
+        className="c7ntest-copyIssue"
         title={<FormattedMessage id="issue_copy_title" values={{ issueNum }} />}
         visible={visible || false}
         onOk={this.handleCopyIssue}

@@ -165,6 +165,7 @@ const zhCN = {
   testPlan_EditStage_title: '编辑测试阶段',
   testPlan_EditStage: '编辑测试阶段“{cycleName}”',
   // 测试循环
+  cycle_title: '测试执行',
   cycle_name: '测试循环',
   cycle_my: '我的执行',
   cycle_all: '所有执行',
@@ -175,7 +176,7 @@ const zhCN = {
   cycle_environment: '环境',
   cycle_createBy: '创建人',
   cycle_startTime: '开始时间',
-  cycle_cycleExecute: '循环层执行数',
+  cycle_ExecuteDetail: '循环层执行数',
   cycle_endTime: '结束时间',
   cycle_totalExecute: '执行数',
   cycle_totalExecuted: '已执行数',

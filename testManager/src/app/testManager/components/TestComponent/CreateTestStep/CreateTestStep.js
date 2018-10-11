@@ -18,8 +18,6 @@ class CreateTestStep extends Component {
     };
   }
 
-  componentDidMount() {
-  }
 
   handleCreateTest = () => {
     this.props.form.validateFields((err, values) => {

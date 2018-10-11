@@ -6,11 +6,10 @@ import _ from 'lodash';
 import {
   delta2Html, text2Delta, beforeTextUpload, formatDate, 
 } from '../../../../common/utils';
-import { deleteLink, updateCommit } from '../../../../api/IssueApi';
+import { deleteLink } from '../../../../api/IssueManageApi';
 import PriorityTag from '../../PriorityTag';
 import StatusTag from '../../StatusTag';
 import TypeTag from '../../TypeTag';
-import './IssueList.scss';
 import { issueLink } from '../../../../common/utils';
 
 class LinkList extends Component {

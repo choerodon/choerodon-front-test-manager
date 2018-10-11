@@ -4,131 +4,52 @@ import {
 } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 import _ from 'lodash';
-import { editCycleStep, addDefects } from '../../../api/CycleExecuteApi';
+import { editCycleStep, addDefects } from '../../../api/ExecuteDetailApi';
 import {
-  TextEditToggle, UploadInTable, DefectSelect,StatusTags
+  TextEditToggle, UploadInTable, DefectSelect, StatusTags,
 } from '../../CommonComponent';
 import { delta2Text } from '../../../common/utils';
-
-import EditTestDetail from '../EditTestDetail';
 import './StepTable.scss';
-import CycleExecuteStore from '../../../store/project/cycle/CycleExecuteStore';
+import ExecuteDetailStore from '../../../store/project/cycle/ExecuteDetailStore';
 
 const { TextArea } = Input;
 const Option = Select.Option;
-const styles = {
-  cardTitle: {
-    fontWeight: 500,
-    display: 'flex',
-  },
-  cardTitleText: {
-    lineHeight: '20px',
-    marginLeft: '5px',
-  },
-  cardBodyStyle: {
-    // maxHeight: '100%',
-    padding: 12,
-    overflow: 'visible',
-  },
-  cardContent: {
-
-  },
-  carsContentItemPrefix: {
-    width: 105,
-    color: 'rgba(0,0,0,0.65)',
-    fontSize: 13,
-  },
-  cardContentItem: {
-    display: 'flex',
-    marginLeft: 24,
-    marginTop: 10,
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    whiteSpace: 'nowrap',
-    fontSize: 13,
-    lineHeight: '20px',
-    color: 'rgba(0, 0, 0, 0.65)',
-  },
-  statusOption: {
-    width: 60,
-    textAlign: 'center',
-    borderRadius: '2px',
-    display: 'inline-block',
-    color: 'white',
-  },
-  userOption: {
-    background: '#c5cbe8',
-    color: '#6473c3',
-    width: '20px',
-    height: '20px',
-    textAlign: 'center',
-    lineHeight: '20px',
-    borderRadius: '50%',
-    marginRight: '8px',
-  },
-};
 const { Text, Edit } = TextEditToggle;
-// const FormItem = Form.Item;
+
 class StepTable extends Component {
-  state = {
-    editVisible: false,
-    editing: null,
-    // issueList: [],
-  }
-
   editCycleStep = (values) => {
-    // this.setState({ loading: true });
-
-    // const formData = new FormData();
     const data = { ...values };
-    // window.console.log(data);
-    // Object.keys(data).forEach((key) => {
-    //   formData.append(key, JSON.stringify(data[key]));
-    // });
+
     delete data.defects;
     delete data.caseAttachment;
     delete data.stepAttachment;
     editCycleStep([data]).then(() => {
-      // this.setState({
-      //   loading: false,
-      // });
-      CycleExecuteStore.loadDetailList();
+      ExecuteDetailStore.loadDetailList();
     }).catch((error) => {
       window.console.log(error);
-      // this.setState({
-      //   loading: false,
-      // });
       Choerodon.prompt('网络错误');
     });
   };
 
   render() {
     const that = this;
-    // const { onOk, enterLoad, leaveLoad } = this.props;
     const { disabled } = this.props;
-    const stepStatusList = CycleExecuteStore.getStepStatusList;
-    const detailList = CycleExecuteStore.getDetailList;
-    const detailPagination = CycleExecuteStore.getDetailPagination;
-    // const { getFieldDecorator } = this.props.form;
-    const { editVisible, editing } = this.state;
+    const stepStatusList = ExecuteDetailStore.getStepStatusList;
+    const detailList = ExecuteDetailStore.getDetailList;
+    const detailPagination = ExecuteDetailStore.getDetailPagination;
+
+
     const options = stepStatusList.map((status) => {
       const { statusName, statusId, statusColor } = status;
       return (
         <Option value={statusId} key={statusId}>
-        <StatusTags
-          color={statusColor}
-          name={statusName}
-          />
-          {/* <div style={{ ...styles.statusOption, ...{ background: statusColor } }}>
-            {statusName}
-          </div> */}
+          <StatusTags
+            color={statusColor}
+            name={statusName}
+          />          
         </Option>
       );
     });
-    // const defectsOptions =
-    //   issueList.map(issue => (<Option key={issue.issueId} value={issue.issueId.toString()}>
-    //     {issue.issueNum} {issue.summary}
-    //   </Option>));
     const columns = [{
       title: <FormattedMessage id="execute_testStep" />,
       dataIndex: 'testStep',
@@ -177,7 +98,7 @@ class StepTable extends Component {
               }}
               >
                 <Icon type="attach_file" style={{ fontSize: '12px', color: 'rgba(0,0,0,0.65)' }} />
-                <a className="c7n-text-dot" style={{ margin: '2px 5px', fontSize: '13px' }} href={attachment.url} target="_blank" rel="noopener noreferrer">{attachment.attachmentName}</a>
+                <a className="c7ntest-text-dot" style={{ margin: '2px 5px', fontSize: '13px' }} href={attachment.url} target="_blank" rel="noopener noreferrer">{attachment.attachmentName}</a>
               </div>
             ))
                 }
@@ -204,13 +125,10 @@ class StepTable extends Component {
               originData={stepStatus}
             >
               <Text>
-              <StatusTags
-          color={statusColor}
-          name={statusName}
-          />
-                {/* <div style={{ ...styles.statusOption, ...{ background: statusColor } }}>
-                  {statusName}
-                </div> */}
+                <StatusTags
+                  color={statusColor}
+                  name={statusName}
+                />
               </Text>
               <Edit>
                 <Select autoFocus style={{ width: 85 }}>
@@ -226,7 +144,6 @@ class StepTable extends Component {
       dataIndex: 'comment',
       key: 'comment',
       render(comment, record) {
-        // window.console.log(comment, delta2Text(comment));
         return (
         // <Tooltip title={<RichTextShow data={comment} />}>
           <TextEditToggle
@@ -253,29 +170,6 @@ class StepTable extends Component {
       dataIndex: 'stepAttachment',
       key: 'caseAttachment',
       render(stepAttachment, record) {
-        // return (<Tooltip title={
-        //   <div>
-        //     {caseAttachment.map((attachment, i) => (
-        //       <div style={{
-        //         fontSize: '13px',
-        //         color: 'white',
-        //       }}
-        //       >
-        //         {attachment.attachmentName}
-        //       </div>))}
-        //   </div>}
-        // >
-        //   <div
-        //     style={{
-        //       width: 100,
-        //       display: 'flex',
-        //       alignItems: 'center',
-        //     }}
-        //     className="c7n-text-dot"
-        //   >
-        //     {caseAttachment.map((attachment, i) => attachment.attachmentName).join(',')}
-        //   </div>
-        // </Tooltip>);
         return (
           <TextEditToggle
             disabled={disabled}
@@ -288,7 +182,7 @@ class StepTable extends Component {
                   }}
                   >
                     <Icon type="attach_file" style={{ fontSize: '12px', color: 'rgba(0,0,0,0.65)' }} />
-                    <a className="c7n-text-dot" style={{ margin: '2px 5px', fontSize: '13px' }} href={attachment.url} target="_blank" rel="noopener noreferrer">{attachment.attachmentName}</a>
+                    <a className="c7ntest-text-dot" style={{ margin: '2px 5px', fontSize: '13px' }} href={attachment.url} target="_blank" rel="noopener noreferrer">{attachment.attachmentName}</a>
                   </div>
                 ))
                 }
@@ -297,9 +191,9 @@ class StepTable extends Component {
             <Edit>
               <UploadInTable
                 fileList={stepAttachment.filter(attachment => attachment.attachmentType === 'CYCLE_STEP')}
-                onOk={CycleExecuteStore.loadDetailList}
-                enterLoad={CycleExecuteStore.enterloading}
-                leaveLoad={CycleExecuteStore.unloading}
+                onOk={ExecuteDetailStore.loadDetailList}
+                enterLoad={ExecuteDetailStore.enterloading}
+                leaveLoad={ExecuteDetailStore.unloading}
                 config={{
                   attachmentLinkId: record.executeStepId,
                   attachmentType: 'CYCLE_STEP',
@@ -319,16 +213,16 @@ class StepTable extends Component {
           disabled={disabled}
           onSubmit={() => {   
             if (that.needAdd.length > 0) {
-              CycleExecuteStore.enterloading();
+              ExecuteDetailStore.enterloading();
               addDefects(that.needAdd).then((res) => {
-                CycleExecuteStore.loadDetailList();
+                ExecuteDetailStore.loadDetailList();
               });
             } else {
-              CycleExecuteStore.loadDetailList();
+              ExecuteDetailStore.loadDetailList();
             }
           }}
           // originData={{ defects }}
-          onCancel={CycleExecuteStore.loadDetailList}
+          onCancel={ExecuteDetailStore.loadDetailList}
         >
           <Text>
             {
@@ -369,45 +263,15 @@ class StepTable extends Component {
         </TextEditToggle>
       ),
     },
-      // {
-      //   title: null,
-      //   dataIndex: 'executeId',
-      //   key: 'executeId',
-      //   render(executeId, recorder) {
-      //     return (<Icon
-      //       type="mode_edit"
-      //       style={{ cursor: 'pointer' }}
-      //       onClick={() => {
-      //         that.setState({
-      //           editVisible: true,
-      //           editing: { ...recorder, ...{ stepStatusList:
-      //  CycleExecuteStore.getStepStatusList } },
-      //         });
-      //       }}
-      //     />);
-      //   },
-      // },
     ];
     return (
       <div className="StepTable">
-        <EditTestDetail
-          visible={editVisible}
-          onCancel={() => {
-            this.setState({ editVisible: false });
-            CycleExecuteStore.loadDetailList();
-          }}
-          onOk={(data) => {
-            this.setState({ editVisible: false });
-            CycleExecuteStore.loadDetailList();
-          }}
-          editing={editing}
-        />
         <Table
           filterBar={false}
           dataSource={detailList}
           columns={columns}
           pagination={detailPagination}
-          onChange={CycleExecuteStore.loadDetailList}
+          onChange={ExecuteDetailStore.loadDetailList}
         />
       </div>);
   }

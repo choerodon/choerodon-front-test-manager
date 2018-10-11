@@ -6,7 +6,7 @@ import {
 import { FormattedMessage } from 'react-intl';
 import './PlanTreeTitle.scss';
 import { editFolder, deleteCycleOrFolder } from '../../../api/cycleApi';
-import { syncFolder, syncFoldersInCycle, syncFoldersInVersion } from '../../../api/IssueApi';
+import { syncFolder, syncFoldersInCycle, syncFoldersInVersion } from '../../../api/IssueManageApi';
 import TestPlanStore from '../../../store/project/TestPlan/TestPlanStore';
 
 @observer
@@ -149,7 +149,7 @@ class PlanTreeTitle extends Component {
 
 
     return (
-      <div className="c7n-plan-tree-title">
+      <div className="c7ntest-plan-tree-title">
         {editing
           ? (
             <Input
@@ -167,7 +167,7 @@ class PlanTreeTitle extends Component {
             />
           )
           : (
-            <div className="c7n-plan-tree-title-text" style={{ width: !data.type && '120px' }}>
+            <div className="c7ntest-plan-tree-title-text" style={{ width: !data.type && '120px' }}>
               <Tooltip title={title}>
                 {title}
               </Tooltip>
@@ -175,7 +175,7 @@ class PlanTreeTitle extends Component {
           )}   
         {
     
-          <div role="none" className="c7n-plan-tree-title-actionButton" style={{ marginLeft: data.type === 'cycle' || data.type === 'temp' ? '18px' : 0 }} onClick={e => e.stopPropagation()}>
+          <div role="none" className="c7ntest-plan-tree-title-actionButton" style={{ marginLeft: data.type === 'cycle' || data.type === 'temp' ? '18px' : 0 }} onClick={e => e.stopPropagation()}>
             {/* {data.type === 'temp'
               ? null : */}
             {data.type
@@ -186,7 +186,7 @@ class PlanTreeTitle extends Component {
               )
               : (
                 <Tooltip title={<FormattedMessage id="cycle_sync" />}>
-                  <Icon type="sync" className="c7n-add-folder" onClick={this.sync.bind(this, data)} />
+                  <Icon type="sync" className="c7ntest-add-folder" onClick={this.sync.bind(this, data)} />
                 </Tooltip>
               )
                 }

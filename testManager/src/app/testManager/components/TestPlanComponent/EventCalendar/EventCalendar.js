@@ -13,7 +13,7 @@ import EventItem from './EventItem';
 const moment = extendMoment(Moment);
 class EventCalendar extends Component {
   state = {
-    currentDate:null,
+    currentDate: null,
     baseDate: moment(),
     mode: 'month',
     pos: 0,
@@ -27,7 +27,7 @@ class EventCalendar extends Component {
     if (times && times.length > 0) {
       this.setState({
         pos: 0,
-        currentDate:null,
+        currentDate: null,
         baseDate: times[0].start ? moment(times[0].start).startOf(mode) : moment(),
       });
     }
@@ -45,7 +45,7 @@ class EventCalendar extends Component {
     this.setState({
       pos: 0,
       mode: e.target.value,
-      currentDate:null,
+      currentDate: null,
       baseDate: times[0].start ? moment(times[0].start).startOf(e.target.value) : moment(),
     });
   }
@@ -54,18 +54,20 @@ class EventCalendar extends Component {
     this.setState({
       pos: 0,
       baseDate: date,
-      currentDate:null
+      currentDate: null,
     });
   }
-  handleCalendarChange=(date)=>{
+
+  handleCalendarChange=(date) => {
     this.setState({
-      currentDate:date,
+      currentDate: date,
       pos: 0,
       baseDate: date,
-    })
+    });
   }
+
   render() {
-    const { mode,currentDate } = this.state;
+    const { mode, currentDate } = this.state;
     const { showMode, times } = this.props;
     const { start, end } = this.calculateTime();
     const range = moment.range(start, end);
@@ -92,11 +94,11 @@ class EventCalendar extends Component {
       // }
     ];
     return (
-      <div className="c7n-EventCalendar" style={{ height: showMode === 'multi' ? '100%' : '162px' }}>
-        <div className="c7n-EventCalendar-header">
+      <div className="c7ntest-EventCalendar" style={{ height: showMode === 'multi' ? '100%' : '162px' }}>
+        <div className="c7ntest-EventCalendar-header">
           <div style={{ fontWeight: 500 }}>{moment(start).format('YYYY年M月')}</div>
-          <div className="c7n-flex-space" />
-          <div className="c7n-EventCalendar-header-skip">
+          <div className="c7ntest-flex-space" />
+          <div className="c7ntest-EventCalendar-header-skip">
             <span style={{ color: 'rgba(0,0,0,0.65)', marginRight: 7 }}>跳转到</span>
             {/* <Button
               onClick={() => { this.handleBaseChange(moment()); }}
@@ -106,11 +108,11 @@ class EventCalendar extends Component {
 
             </Button> */}
             {
-              currentDate&&currentDate.format("LL")
+              currentDate && currentDate.format('LL')
             }
-            <DatePicker allowClear={false} onChange={this.handleCalendarChange} value={currentDate}/>
+            <DatePicker allowClear={false} onChange={this.handleCalendarChange} value={currentDate} />
           </div>
-          <div className="c7n-EventCalendar-header-radio">
+          <div className="c7ntest-EventCalendar-header-radio">
             <RadioButton
               defaultValue={mode}
               onChange={this.handleModeChange}
@@ -123,36 +125,36 @@ class EventCalendar extends Component {
               }]}
             />
           </div>
-          <div className="c7n-EventCalendar-header-page">
+          <div className="c7ntest-EventCalendar-header-page">
             <Icon
-              className="c7n-pointer"
+              className="c7ntest-pointer"
               type="keyboard_arrow_left"
               onClick={() => {
                 this.setState({
-                  currentDate:null,
+                  currentDate: null,
                   pos: this.state.pos - 1,
                 });
               }}
             />
             <Icon
-              className="c7n-pointer"
+              className="c7ntest-pointer"
               type="keyboard_arrow_right"
               onClick={() => {
                 this.setState({
-                  currentDate:null,
+                  currentDate: null,
                   pos: this.state.pos + 1,
                 });
               }}
             />
           </div>
         </div>
-        <div className="c7n-EventCalendar-content">
-          <div className="c7n-EventCalendar-BackItems">
+        <div className="c7ntest-EventCalendar-content">
+          <div className="c7ntest-EventCalendar-BackItems">
             {
               timeArray.map(m => <CalendarBackItem date={m} />)
             }
           </div>
-          <div className="c7n-EventCalendar-eventContainer">
+          <div className="c7ntest-EventCalendar-eventContainer">
             {times.map(event => (
               <EventItem
                 onClick={this.props.onItemClick}

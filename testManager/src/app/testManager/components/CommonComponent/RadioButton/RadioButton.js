@@ -9,7 +9,7 @@ class RadioButton extends Component {
       style, defaultValue, onChange, data, 
     } = this.props;
     return (
-      <div className="c7n-radio-button" style={style}>
+      <div className="c7ntest-radio-button" style={style}>
         <Radio.Group defaultValue={defaultValue} onChange={onChange}>
           {
             data.map(button => (

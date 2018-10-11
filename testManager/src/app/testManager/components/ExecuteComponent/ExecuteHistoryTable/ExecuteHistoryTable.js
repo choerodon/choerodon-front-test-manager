@@ -3,7 +3,7 @@ import { FormattedMessage } from 'react-intl';
 import { Table, Tooltip } from 'choerodon-ui';
 import { delta2Html, delta2Text } from '../../../common/utils';
 import { RichTextShow } from '../../CommonComponent';
-import { getCycleHistiorys } from '../../../api/CycleExecuteApi';
+import { getCycleHistiorys } from '../../../api/ExecuteDetailApi';
 
 class ExecuteHistoryTable extends PureComponent {
   state={
@@ -53,7 +53,7 @@ class ExecuteHistoryTable extends PureComponent {
                 }}
               >
                 <span
-                  className="c7n-avatar"
+                  className="c7ntest-avatar"
                 >
                   {user.realName.slice(0, 1)}
                 </span>

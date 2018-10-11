@@ -1,4 +1,4 @@
-.c7n-TestStepTable {
+.c7ntest-TestStepTable {
   tbody {
     tr {
       // align-items: flex-start !important;
@@ -10,11 +10,11 @@
       padding: 5px 0;
       min-height: 34px;
     }
-    td .c7n-text-dot {
+    td .c7ntest-text-dot {
       line-height: 19px;
       min-height: 19px;
     }
-    td .c7n-text-wrap {
+    td .c7ntest-text-wrap {
       min-height: 19px;
       line-height: 19px;
       white-space: pre-wrap;

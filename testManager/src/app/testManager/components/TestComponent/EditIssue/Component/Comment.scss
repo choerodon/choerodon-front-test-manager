@@ -1,4 +1,4 @@
-.c7n-comment {
+.c7ntest-comment {
   padding: 14px 10px 14px 27px;
   border-left: 3px solid transparent;
   border-bottom: 1px solid rgba(0, 0, 0, 0.12);
@@ -9,12 +9,12 @@
     justify-content: space-between;
     align-items: center;
 
-    .c7n-title-commit {
+    .c7ntest-title-commit {
       display: flex;
       align-items: center;
     }
 
-    .c7n-action {
+    .c7ntest-action {
       display: flex;
       align-items: center;
       opacity: 0;
@@ -36,7 +36,7 @@
     align-items: flex-start;
   }
 
-  .c7n-conent-commit {
+  .c7ntest-conent-commit {
     p {
       margin-bottom: 0;
     }
@@ -52,14 +52,14 @@
     border-left-color: #303f9f;
     transition: all 1s;
 
-    .c7n-action {
+    .c7ntest-action {
       opacity: 1;
       transition: opacity 2s;
     }
   }
 }
 
-.c7n-comment-focus {
+.c7ntest-comment-focus {
   background: rgba(0, 0, 0, 0.03);
   border-left-color: #303f9f;
 }

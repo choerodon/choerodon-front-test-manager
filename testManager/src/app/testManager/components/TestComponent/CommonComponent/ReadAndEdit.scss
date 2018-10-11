@@ -1,4 +1,4 @@
-.c7n-readAndEdit {
+.c7ntest-readAndEdit {
   position: relative;
   line-height: 20px;
   padding: 2px 30px 2px 5px;
@@ -74,15 +74,15 @@
   color: rgba(0, 0, 0, 0.65);
 }
 
-.c7n-readAndEdit:hover {
+.c7ntest-readAndEdit:hover {
   // box-shadow: 0 0 0 1px #ccc;
   border-bottom-color: rgba(0, 0, 0, 0.54);
 }
 
-.c7n-readAndEdit:hover .edit {
+.c7ntest-readAndEdit:hover .edit {
   display: flex !important;
 }
 
-.c7n-readAndEdit:hover .close {
+.c7ntest-readAndEdit:hover .close {
   display: block !important;
 }

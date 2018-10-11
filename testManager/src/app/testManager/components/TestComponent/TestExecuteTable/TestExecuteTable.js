@@ -7,10 +7,11 @@ import { stores, axios } from 'choerodon-front-boot';
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import TimeAgo from 'timeago-react';
-import { cycleLink, issueLink } from '../../../common/utils';
+import { cycleLink, issueLink, executeDetailShowLink } from '../../../common/utils';
 import './TestExecuteTable.scss';
-import { editCycle } from '../../../api/CycleExecuteApi';
-import {StatusTags} from '../../CommonComponent';
+import { editCycle } from '../../../api/ExecuteDetailApi';
+import { StatusTags } from '../../CommonComponent';
+
 const { AppState } = stores;
 
 class TestExecuteTable extends Component {
@@ -134,9 +135,9 @@ class TestExecuteTable extends Component {
       dataIndex: 'cycleName',
       key: 'cycleName',
       render: (cycleName, item) => (
-        <div className="c7n-text-dot">
+        <div className="c7ntest-text-dot">
           <Tooltip title={cycleName} placement="topLeft">
-            <Link className="c7n-showId" to={cycleLink(item.cycleId)} target="_blank">
+            <Link className="c7ntest-showId" to={cycleLink(item.cycleId)} target="_blank">
               {cycleName || ''}
             </Link>
           </Tooltip>
@@ -147,9 +148,9 @@ class TestExecuteTable extends Component {
       dataIndex: 'folderName',
       key: 'folderName',
       render: (folderName, item) => (
-        <div className="c7n-text-dot">
+        <div className="c7ntest-text-dot">
           <Tooltip title={item.folderName} placement="topLeft">
-            <Link className="c7n-showId" to={cycleLink(item.cycleId)} target="_blank">
+            <Link className="c7ntest-showId" to={cycleLink(item.cycleId)} target="_blank">
               {item.folderName || ''}
             </Link>
           </Tooltip>
@@ -164,8 +165,8 @@ class TestExecuteTable extends Component {
         const status = _.find(this.state.status, { statusId: item.executionStatus }) || {};
         return (   
           <StatusTags
-          color={status.statusColor}
-          name={status.statusName}
+            color={status.statusColor}
+            name={status.statusName}
           />      
           // <div style={{
           //   width: 60, height: 20, borderRadius: '2px', background: status.statusColor, display: 'inline-block', lineHeight: '20px', textAlign: 'center', color: '#fff',
@@ -206,7 +207,7 @@ class TestExecuteTable extends Component {
                   </div>
                   )}
               >
-                <div className="c7n-text-dot">
+                <div className="c7ntest-text-dot">
                   {item.defects.map((defect, i) => defect.issueInfosDTO.issueNum).join(',')}
                 </div>
               </Tooltip>
@@ -224,7 +225,7 @@ class TestExecuteTable extends Component {
       dataIndex: 'executeTime',
       key: 'executeTime',
       render: (a, item) => (
-        <div style={{ flex: 2, lineHeight: '34px' }} className="c7n-text-dot">
+        <div style={{ flex: 2, lineHeight: '34px' }} className="c7ntest-text-dot">
           <TimeAgo
             datetime={item.lastUpdateDate}
             locale={Choerodon.getMessage('zh_CN', 'en')}
@@ -235,21 +236,19 @@ class TestExecuteTable extends Component {
       title: null,
       dataIndex: 'action',
       key: 'action',
-      render: (caction, item) => {
-        const urlParams = AppState.currentMenuType;
-        return (
-          <div style={{ lineHeight: '34px', textAlign: 'center' }}>
-            {/* <Tooltip title={<FormattedMessage id="execute_quickPass" />}>
+      render: (caction, item) => (
+        <div style={{ lineHeight: '34px', textAlign: 'center' }}>
+          {/* <Tooltip title={<FormattedMessage id="execute_quickPass" />}>
               <Icon type="pass mlr-3 pointer" onClick={this.quickPass.bind(this, item)} />
             </Tooltip> */}
 
-            <Link to={`/testManager/TestPlan/executeShow/${item.executeId}?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}>
-              <Icon
-                type="explicit2 pointer"
-                style={{ color: 'black' }}
-              />
-            </Link>
-            {/* <Popconfirm
+          <Link to={executeDetailShowLink(item.executeId)}>
+            <Icon
+              type="explicit2 pointer"
+              style={{ color: 'black' }}
+            />
+          </Link>
+          {/* <Popconfirm
               title={Choerodon.getMessage('确认删除吗?', 'Confirm delete')}
               placement="left"
               onConfirm={this.confirm.bind(this, item.executeId)}
@@ -260,12 +259,11 @@ class TestExecuteTable extends Component {
             >
               <Icon type="delete_forever mlr-3 pointer" />
             </Popconfirm> */}
-          </div>
-        );
-      },
+        </div>
+      ),
     }];
     return (
-      <div className="c7n-TestExecuteTable">
+      <div className="c7ntest-TestExecuteTable">
         <Table
           pagination={false}
           filterBar={false}

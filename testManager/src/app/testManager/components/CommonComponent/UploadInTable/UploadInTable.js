@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Button, Upload } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
-import { uploadFile, deleteAttachment } from '../../../api/CommonApi';
+import { uploadFile, deleteAttachment } from '../../../api/FileApi';
 import './UploadInTable.scss';
 
 class UploadInTable extends Component {
@@ -10,7 +10,7 @@ class UploadInTable extends Component {
     return (
       <Upload
       // multiple
-        className="c7n-upload-reverse"
+        className="c7ntest-upload-reverse"
         fileList={fileList.map(attachment => ({
           uid: attachment.id,
           name: attachment.attachmentName,

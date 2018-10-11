@@ -1,4 +1,4 @@
-.c7n-issue-tree-title {
+.c7ntest-issue-tree-title {
   display: flex;
   align-items: center;
   min-width: 132px;
@@ -11,7 +11,7 @@
   &-actionButton {
     height: 28px;
     margin-top: -2px;
-    .c7n-add-folder {
+    .c7ntest-add-folder {
       transition: none;
       margin-left: 30px;
       padding-right: 3px;
@@ -21,8 +21,8 @@
 
 }
 
-.c7n-issue-tree-title:hover {
-  .c7n-add-folder {
+.c7ntest-issue-tree-title:hover {
+  .c7ntest-add-folder {
     visibility: visible;
   }
 }

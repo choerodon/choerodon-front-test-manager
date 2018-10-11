@@ -5,10 +5,6 @@ export function getCycles(assignedTo) {
   const projectId = AppState.currentMenuType.id;
   return axios.get(`/test/v1/projects/${projectId}/cycle/query${assignedTo ? `?assignedTo=${assignedTo}` : ''}`);
 }
-export function getStatusList(statusType) {
-  const projectId = AppState.currentMenuType.id;
-  return axios.post(`/test/v1/projects/${projectId}/status/query`, { statusType, projectId });
-}
 export function getCycleById(pagination, cycleId, filters, type) {
   const projectId = AppState.currentMenuType.id;
   const { size, page } = pagination;
@@ -29,7 +25,7 @@ export function addCycle(data) {
   const projectId = AppState.currentMenuType.id;
   return axios.post(`/test/v1/projects/${projectId}/cycle`, data);
 }
-export function editCycleExecute(data) {
+export function editExecuteDetail(data) {
   const projectId = AppState.currentMenuType.id;
   return axios.post(`/test/v1/projects/${projectId}/cycle/case/update`, data);
 }
@@ -59,37 +55,6 @@ export function editFolder(data) {
   const projectId = AppState.currentMenuType.id;
   return axios.put(`/test/v1/projects/${projectId}/cycle`, data);
 }
-/**
- *批量添加执行，后台接口已删
- *
- * @export
- * @param {*} data
- * @returns
- */
-export function createCycleExecute(data) {
-  const projectId = AppState.currentMenuType.id;
-  return axios.post(`/test/v1/projects/${projectId}/cycle/case/insert/batch`, data);
-}
-export function createCycleExecuteFromCycle(fromCycleId, toCycleId, assignee, filter) {
-  const projectId = AppState.currentMenuType.id;
-  return axios.post(`/test/v1/projects/${projectId}/cycle/case/insert/case/filter/${fromCycleId}/to/${toCycleId}/assigneeTo/${assignee}`, filter);
-}
-/**
- *获取版本下的循环，后台接口已删
- *
- * @export
- * @param {*} versionId
- * @returns
- */
-export function getCyclesByVersionId(versionId) {
-  const projectId = AppState.currentMenuType.id;
-  return axios.post(`/test/v1/projects/${projectId}/cycle/query/cycle/versionId/${versionId}`);
-}
-export function getFoldersByCycleId(cycleId) {
-  const projectId = AppState.currentMenuType.id;
-  return axios.post(`/test/v1/projects/${projectId}/cycle/query/folder/cycleId/${cycleId}`);
-}
-
 export function exportCycle(cycleId) {
   const projectId = AppState.currentMenuType.id;
   return axios.get(`/test/v1/projects/${projectId}/cycle/case/download/excel/${cycleId}`, { responseType: 'arraybuffer' });

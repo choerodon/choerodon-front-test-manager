@@ -8,7 +8,7 @@ import moment from 'moment';
 import { Content, stores } from 'choerodon-front-boot';
 import { FormattedMessage } from 'react-intl';
 import { editFolder } from '../../../api/cycleApi';
-import { getFoldersByVersion } from '../../../api/IssueApi';
+import { getFoldersByVersion } from '../../../api/IssueManageApi';
 import TestPlanStore from '../../../store/project/TestPlan/TestPlanStore';
 
 // const { RangePicker } = DatePicker;

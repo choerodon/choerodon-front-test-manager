@@ -4,10 +4,13 @@ import './CalendarBackItem.scss';
 
 class CalendarBackItem extends Component {
   render() {
-    const { date } = this.props;
+    const { date } = this.props;    
     return (
       // 周末字体颜色不同
-      <div className="CalendarBackItem" style={{ color: moment(date).day() >= 5 && '#303F9F' }}>
+      <div
+        className="CalendarBackItem"
+        style={{ color: moment(date).day() === 6 || moment(date).day() === 0 ? '#303F9F' : 'black' }}
+      >
         <div>
           {moment(date).format('dd')}
         </div>

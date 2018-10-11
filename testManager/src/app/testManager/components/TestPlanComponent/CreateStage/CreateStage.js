@@ -6,7 +6,7 @@ import moment from 'moment';
 import { Content, stores } from 'choerodon-front-boot';
 import { FormattedMessage } from 'react-intl';
 import { addFolder } from '../../../api/cycleApi';
-import { getFoldersByVersion } from '../../../api/IssueApi';
+import { getFoldersByVersion } from '../../../api/IssueManageApi';
 
 const { Option } = Select;
 const { AppState } = stores;

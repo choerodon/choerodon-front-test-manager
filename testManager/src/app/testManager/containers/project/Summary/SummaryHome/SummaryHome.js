@@ -4,9 +4,6 @@ import {
   Table, Button, Icon, Spin, Popover,
 } from 'choerodon-ui';
 import { Page, Header } from 'choerodon-front-boot';
-import {
-  Chart, Axis, Geom, Tooltip,
-} from 'bizcharts';
 import { FormattedMessage } from 'react-intl';
 import moment from 'moment';
 import _ from 'lodash';
@@ -18,8 +15,7 @@ import {
 import {
   getProjectVersion, getLabels, getModules, getIssueCount,
 } from '../../../../api/agileApi';
-import './SummaryHome.less';
-
+import './SummaryHome.scss';
 
 class SummaryHome extends Component {
   constructor() {
@@ -360,7 +356,7 @@ class SummaryHome extends Component {
 
   render() {
     const {
-      loading, range, excuteList, createList, totalExcute,
+      loading, range, totalExcute,
       totalCreate, totalTest, notPlan, notRun, caseNum, versionTable,
       labelTable, componentTable,
     } = this.state;
@@ -392,16 +388,6 @@ class SummaryHome extends Component {
       dataIndex: 'num',
       key: 'num',
     }];
-    const createScale = {      
-      value: { type: 'linear', alias: Choerodon.getMessage('创建数', 'Created') },
-      time: { alias: '日期', tickCount: 10 },
-    };
-    const executeScale = {     
-      value: { type: 'linear', alias: Choerodon.getMessage('执行数', 'Executed') },
-      time: { alias: '日期', tickCount: 10 },
-    };
-    const width = parseInt((window.innerWidth - 320) / 2, 10);
-
     return (
       <Page>
         <Header title={<FormattedMessage id="summary_title" />}>
@@ -411,18 +397,18 @@ class SummaryHome extends Component {
           </Button>
         </Header>
         <Spin spinning={loading}>
-          <div className="c7n-content-container">
-            <div className="c7n-statistic-container">
+          <div className="c7ntest-content-container">
+            <div className="c7ntest-statistic-container">              
               <Popover
                 placement="topLeft"
                 content={<div><FormattedMessage id="summary_totalTest_tip" /></div>}
                 title={null}
               >
-                <div className="c7n-statistic-item-container">
-                  <div className="c7n-statistic-item-colorBar" />
+                <div className="c7ntest-statistic-item-container">
+                  <div className="c7ntest-statistic-item-colorBar" />
                   <div>
-                    <div className="c7n-statistic-item-title"><FormattedMessage id="summary_totalTest" /></div>
-                    <div className="c7n-statistic-item-num">{totalTest}</div>
+                    <div className="c7ntest-statistic-item-title"><FormattedMessage id="summary_totalTest" /></div>
+                    <div className="c7ntest-statistic-item-num">{totalTest}</div>
                   </div>
                 </div>
               </Popover>
@@ -442,11 +428,11 @@ class SummaryHome extends Component {
                 }
                 title={null}
               >
-                <div className="c7n-statistic-item-container">
-                  <div className="c7n-statistic-item-colorBar" style={{ borderColor: '#FFB100' }} />
+                <div className="c7ntest-statistic-item-container">
+                  <div className="c7ntest-statistic-item-colorBar" style={{ borderColor: '#FFB100' }} />
                   <div>
-                    <div className="c7n-statistic-item-title"><FormattedMessage id="summary_totalRest" /></div>
-                    <div className="c7n-statistic-item-num">{notRun}</div>
+                    <div className="c7ntest-statistic-item-title"><FormattedMessage id="summary_totalRest" /></div>
+                    <div className="c7ntest-statistic-item-num">{notRun}</div>
                   </div>
                 </div>
               </Popover>
@@ -466,11 +452,11 @@ class SummaryHome extends Component {
                 }
                 title={null}
               >
-                <div className="c7n-statistic-item-container">
-                  <div className="c7n-statistic-item-colorBar" style={{ borderColor: '#00BFA5' }} />
+                <div className="c7ntest-statistic-item-container">
+                  <div className="c7ntest-statistic-item-colorBar" style={{ borderColor: '#00BFA5' }} />
                   <div>
-                    <div className="c7n-statistic-item-title"><FormattedMessage id="summary_totalExexute" /></div>
-                    <div className="c7n-statistic-item-num">{caseNum - notRun}</div>
+                    <div className="c7ntest-statistic-item-title"><FormattedMessage id="summary_totalExexute" /></div>
+                    <div className="c7ntest-statistic-item-num">{caseNum - notRun}</div>
                   </div>
                 </div>
               </Popover>
@@ -479,18 +465,18 @@ class SummaryHome extends Component {
                 content={<div><FormattedMessage id="summary_totalNotPlan_tip" /></div>}
                 title={null}
               >
-                <div className="c7n-statistic-item-container">
-                  <div className="c7n-statistic-item-colorBar" style={{ borderColor: '#FF7043' }} />
+                <div className="c7ntest-statistic-item-container">
+                  <div className="c7ntest-statistic-item-colorBar" style={{ borderColor: '#FF7043' }} />
                   <div>
-                    <div className="c7n-statistic-item-title"><FormattedMessage id="summary_totalNotPlan" /></div>
-                    <div className="c7n-statistic-item-num">{totalTest - notPlan}</div>
+                    <div className="c7ntest-statistic-item-title"><FormattedMessage id="summary_totalNotPlan" /></div>
+                    <div className="c7ntest-statistic-item-num">{totalTest - notPlan}</div>
                   </div>
                 </div>
               </Popover>
-            </div>
-            <div className="c7n-tableArea-container">
-              <div className="c7n-table-container">
-                <div className="c7n-table-title">
+            </div>         
+            <div className="c7ntest-tableArea-container">
+              <div className="c7ntest-table-container">
+                <div className="c7ntest-table-title">
                   <FormattedMessage id="summary_testSummary" />
                   {'（'}
                   <FormattedMessage id="summary_summaryByVersion" />
@@ -505,8 +491,8 @@ class SummaryHome extends Component {
                   filterBar={false}
                 />
               </div>
-              <div className="c7n-table-container" style={{ margin: '0 15px' }}>
-                <div className="c7n-table-title">
+              <div className="c7ntest-table-container" style={{ margin: '0 15px' }}>
+                <div className="c7ntest-table-title">
                   <FormattedMessage id="summary_testSummary" />
                   {'（'}
                   <FormattedMessage id="summary_summaryByComponent" />
@@ -521,8 +507,8 @@ class SummaryHome extends Component {
                   filterBar={false}
                 />
               </div>
-              <div className="c7n-table-container">
-                <div className="c7n-table-title">
+              <div className="c7ntest-table-container">
+                <div className="c7ntest-table-title">
                   <FormattedMessage id="summary_testSummary" />
                   {'（'}
                   <FormattedMessage id="summary_summaryByLabel" />
@@ -559,9 +545,9 @@ class SummaryHome extends Component {
                 }]}
               />
             </div>
-            <div className="c7n-chartArea-container">
+            <div className="c7ntest-chartArea-container">
 
-              <div className="c7n-chart-container">
+              <div className="c7ntest-chart-container">
                 <div style={{ fontWeight: 500, margin: '12px 12px 0 12px' }}><FormattedMessage id="summary_testCreate" /></div>
                 <div style={{ height: 260 }}>
                   <ReactEcharts
@@ -582,7 +568,7 @@ class SummaryHome extends Component {
                   <FormattedMessage id="day" />
                 </div>
               </div>
-              <div className="c7n-chart-container" style={{ marginLeft: 16 }}>
+              <div className="c7ntest-chart-container" style={{ marginLeft: 16 }}>
                 <div style={{ fontWeight: 500, margin: '12px 12px 0 12px' }}><FormattedMessage id="summary_testExecute" /></div>
                 <div style={{ height: 260 }}>
                   <ReactEcharts

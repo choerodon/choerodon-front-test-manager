@@ -90,7 +90,7 @@ class RichTextShow extends Component {
 
   render() {
     return (
-      <div className="c7n-read-delta" style={{ width: '100%' }}>
+      <div className="c7ntest-read-delta" style={{ width: '100%' }}>
         <div dangerouslySetInnerHTML={{ __html: `${this.escape(this.props.data)}` }} />
         {
           this.state.open ? (

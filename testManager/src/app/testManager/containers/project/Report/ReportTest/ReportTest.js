@@ -10,8 +10,8 @@ import {
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import { getReportsFromDefect, getReportsFromDefectByIssueIds } from '../../../../api/reportApi';
-import { getStatusList } from '../../../../api/cycleApi';
-import { issueLink, cycleLink } from '../../../../common/utils';
+import { getStatusList } from '../../../../api/TestStatusApi';
+import { issueLink, cycleLink, executeDetailShowLink } from '../../../../common/utils';
 import './ReportTest.scss';
 
 const { AppState } = stores;
@@ -218,7 +218,7 @@ class ReportTest extends Component {
       </Menu>
     );
     const columns = [{
-      className: 'c7n-table-white',
+      className: 'c7ntest-table-white',
       title: <FormattedMessage id="bug" />,
       dataIndex: 'a',
       key: 'a',
@@ -239,14 +239,14 @@ class ReportTest extends Component {
               showArrow={false}
               header={(
                 <div>
-                  <div className="c7n-collapse-show-item">
-                    <Icon type="navigate_next" className="c7n-collapse-icon" />
+                  <div className="c7ntest-collapse-show-item">
+                    <Icon type="navigate_next" className="c7ntest-collapse-icon" />
                     <Tooltip title={issueName}>
-                      <Link className="c7n-showId" to={issueLink(issueId, typeCode)} target="_blank">
+                      <Link className="c7ntest-showId" to={issueLink(issueId, typeCode)} target="_blank">
                         {issueName}
                       </Link>
                     </Tooltip>
-                    <div className="c7n-collapse-header-icon">
+                    <div className="c7ntest-collapse-header-icon">
                       <span style={{ color: issueColor, borderColor: issueColor }}>
                         {issueStatusName}
                       </span>
@@ -261,7 +261,7 @@ class ReportTest extends Component {
         );
       },
     }, {
-      className: 'c7n-table-white',
+      className: 'c7ntest-table-white',
       title: <FormattedMessage id="execute" />,
       dataIndex: 'execute',
       key: 'execute',
@@ -295,24 +295,24 @@ class ReportTest extends Component {
           }
 
           return (
-            <div className="c7n-cycle-show-container">
+            <div className="c7ntest-cycle-show-container">
               <div>
                 <Tooltip title={`${execute.cycleName}${execute.folderName ? `/${execute.folderName}` : ''}`}>
-                  <Link className="c7n-showId" style={{ display: 'inline-block' }} to={cycleLink(execute.cycleId)} target="_blank">
+                  <Link className="c7ntest-showId" style={{ display: 'inline-block' }} to={cycleLink(execute.cycleId)} target="_blank">
                     {execute.cycleName}
                     {execute.folderName ? `/${execute.folderName}` : ''}
                   </Link>
                 </Tooltip>
               </div>
               <div
-                className="c7n-collapse-text-icon"
+                className="c7ntest-collapse-text-icon"
                 style={{ color: statusColor, borderColor: statusColor }}
               >
                 {statusName}
               </div>
               <Link
                 style={{ lineHeight: '13px' }}
-                to={`/testManager/TestPlan/executeShow/${execute.executeId}?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}
+                to={executeDetailShowLink(execute.executeId)}
               >
                 <Icon type="explicit2" style={{ marginLeft: 10, color: 'black' }} />
               </Link>
@@ -370,7 +370,7 @@ class ReportTest extends Component {
           );
       },
     }, {
-      className: 'c7n-table-white',
+      className: 'c7ntest-table-white',
       title: <FormattedMessage id="test" />,
       dataIndex: 'cycleId',
       key: 'cycleId',
@@ -385,20 +385,20 @@ class ReportTest extends Component {
             issueColor, issueName, issueStatusName, summary, typeCode,
           } = issueInfosDTO || {};
           return (
-            <div className="c7n-issue-show-container">
-              <div className="c7n-collapse-show-item">
+            <div className="c7ntest-issue-show-container">
+              <div className="c7ntest-collapse-show-item">
                 <Tooltip title={issueName}>
-                  <Link className="c7n-showId" to={issueLink(issueInfosDTO && issueInfosDTO.issueId, typeCode)} target="_blank">
+                  <Link className="c7ntest-showId" to={issueLink(issueInfosDTO && issueInfosDTO.issueId, typeCode)} target="_blank">
                     {issueName}
                   </Link>
                 </Tooltip>
-                <div className="c7n-collapse-header-icon">
+                <div className="c7ntest-collapse-header-icon">
                   <span style={{ color: issueColor, borderColor: issueColor }}>
                     {issueStatusName}
                   </span>
                 </div>
               </div>
-              <div className="c7n-report-summary">{summary}</div>
+              <div className="c7ntest-report-summary">{summary}</div>
             </div>
           );
         });
@@ -420,7 +420,7 @@ class ReportTest extends Component {
           );
       },
     }, {
-      className: 'c7n-table-white',
+      className: 'c7ntest-table-white',
       title: <FormattedMessage id="demand" />,
       dataIndex: 'demand',
       key: 'demand',
@@ -436,20 +436,20 @@ class ReportTest extends Component {
               statusColor, statusName, issueNum, summary,
             } = link;
             return (
-              <div className="c7n-issue-show-container">
-                <div className="c7n-collapse-show-item">
+              <div className="c7ntest-issue-show-container">
+                <div className="c7ntest-collapse-show-item">
                   <Tooltip title={issueNum}>
-                    <Link className="c7n-showId" to={issueLink(link.linkedIssueId, link.typeCode)} target="_blank">
+                    <Link className="c7ntest-showId" to={issueLink(link.linkedIssueId, link.typeCode)} target="_blank">
                       {issueNum}
                     </Link>
                   </Tooltip>
-                  <div className="c7n-collapse-header-icon">
+                  <div className="c7ntest-collapse-header-icon">
                     <span style={{ color: statusColor, borderColor: statusColor }}>
                       {statusName}
                     </span>
                   </div>
                 </div>
-                <div className="c7n-report-summary">{summary}</div>
+                <div className="c7ntest-report-summary">{summary}</div>
               </div>
             );
           });
@@ -581,7 +581,7 @@ class ReportTest extends Component {
       // },
     ];
     return (
-      <Page className="c7n-report-test">
+      <Page className="c7ntest-report-test">
         <Header
           title={<FormattedMessage id="report_defectToDemand" />}
           backPath={`/testManager/report?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}
@@ -626,27 +626,7 @@ class ReportTest extends Component {
           link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management/test-report/report/"
         >
           <div style={{ display: 'flex' }} />
-          {/* <ReportSelectIssue
-            visible={selectVisible}
-            onCancel={() => { this.setState({ selectVisible: false }); }}
-            onOk={(issueIds) => {
-              this.setState({
-                selectVisible: false,
-                pagination: {
-                  current: 1,
-                  total: 0,
-                  pageSize: 10,
-                },
-                issueIds,
-              });
-              this.getReportsFromDefect({
-                current: 1,
-                total: 0,
-                pageSize: 10,
-              }, issueIds);
-            }}
-          /> */}
-          <div className="c7n-report-test-filter-table">
+          <div className="c7ntest-report-test-filter-table">
             <Table
               rowKey={record => record.id}
               columns={filterColumns}

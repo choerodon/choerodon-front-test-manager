@@ -10,7 +10,7 @@ import './IssueTree.scss';
 import { IssueTreeStore } from '../../../store/project/treeStore';
 import {
   getIssueTree, addFolder,  moveFolder, copyFolder,
-} from '../../../api/IssueApi';
+} from '../../../api/IssueManageApi';
 import IssueTreeTitle from './IssueTreeTitle';
 import IssueStore from '../../../store/project/IssueStore';
 
@@ -298,25 +298,25 @@ class IssueTree extends Component {
     const selectedKeys = IssueTreeStore.getSelectedKeys;
     const currentCycle = IssueTreeStore.getCurrentCycle;
     return (
-      <div className="c7n-IssueTree">
+      <div className="c7ntest-IssueTree">
         <div id="template_folder_copy" style={{ display: 'none' }}>
           当前状态：<span style={{fontWeight:500}}>复制</span>
 </div>
         <div id="template_folder_move" style={{ display: 'none' }}>
           当前状态：<span style={{fontWeight:500}}>移动</span>
 </div>
-        <div className="c7n-treeTop">
+        <div className="c7ntest-treeTop">
           <Input
             prefix={<Icon type="filter_list" style={{ color: 'black' }} />}
             placeholder="过滤"
             style={{ marginTop: 2 }}
             onChange={e => _.debounce(this.filterCycle, 200).call(null, e.target.value)}
           />
-          <Icon type="close" className="c7n-pointer" onClick={onClose} />
+          <Icon type="close" className="c7ntest-pointer" onClick={onClose} />
         </div>
         <Spin spinning={loading}>
           <div
-            className="c7n-IssueTree-tree"
+            className="c7ntest-IssueTree-tree"
           >
             <DragDropContext onDragEnd={this.onDragEnd} onDragStart={this.onDragStart}>
               <Tree

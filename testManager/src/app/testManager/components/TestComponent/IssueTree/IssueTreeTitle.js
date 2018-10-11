@@ -10,7 +10,7 @@ import { Draggable, Droppable } from 'react-beautiful-dnd';
 import { IssueTreeStore } from '../../../store/project/treeStore';
 import {
   editFolder, deleteFolder, moveIssues, copyIssues, 
-} from '../../../api/IssueApi';
+} from '../../../api/IssueManageApi';
 import IssueStore from '../../../store/project/IssueStore';
 import './IssueTreeTitle.scss';
 
@@ -212,7 +212,7 @@ class IssueTreeTitle extends Component {
     }
     const treeTitle = (
       <div
-        className="c7n-issue-tree-title"
+        className="c7ntest-issue-tree-title"
       >        
         {editing
           ? (
@@ -237,18 +237,18 @@ class IssueTreeTitle extends Component {
             />
           )
           : (
-            <div className="c7n-issue-tree-title-text">
+            <div className="c7ntest-issue-tree-title-text">
               <Tooltip title={title} placement="topLeft">
                 {title}
               </Tooltip>
             </div>
           )}
-        <div role="none" className="c7n-issue-tree-title-actionButton" onClick={e => e.stopPropagation()}>
+        <div role="none" className="c7ntest-issue-tree-title-actionButton" onClick={e => e.stopPropagation()}>
           {/* {data.type === 'temp'
         ? null : */}
           {
             type === 'version'
-              ? <Tooltip title="添加文件夹"><Icon type="create_new_folder" className="c7n-add-folder" onClick={this.addFolder.bind(this, data)} /></Tooltip>
+              ? <Tooltip title="添加文件夹"><Icon type="create_new_folder" className="c7ntest-add-folder" onClick={this.addFolder.bind(this, data)} /></Tooltip>
               : null
           }
           {

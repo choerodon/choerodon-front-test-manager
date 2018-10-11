@@ -1,3 +1,3 @@
-import TestPlanHome from './TestPlanHomeIndex';
+import TestPlanIndex from './TestPlanIndex';
 
-export default TestPlanHome;
+export default TestPlanIndex;
