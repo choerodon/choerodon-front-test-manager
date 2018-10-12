@@ -5,11 +5,9 @@ import {
 } from 'choerodon-ui';
 import TimeAgo from 'timeago-react';
 import { FormattedMessage } from 'react-intl';
-
 import { User } from '../../../../components/CommonComponent';
 import { getAppList, getTestHistoryByApp } from '../../../../api/AutoTestApi';
 import { CiStatus, TestResult } from './AutoTestTags';
-
 
 const { Option } = Select;
 class AutoTestList extends Component {
@@ -118,6 +116,7 @@ class AutoTestList extends Component {
         );
       },
     }];
+    
     return (
       <Page className="c7ntest-AutoTestList">
         <Header title={<FormattedMessage id="autotestlist_title" />}>
@@ -134,7 +133,7 @@ class AutoTestList extends Component {
           description={<FormattedMessage id="autotestlist_content_description" />}
         // link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management/test-report/report/"
         >
-          <Spin spinning={loading}>
+          <Spin spinning={loading}>             
             <Select
               label="选择应用"
               style={{ width: 512, marginBottom: 16 }}
