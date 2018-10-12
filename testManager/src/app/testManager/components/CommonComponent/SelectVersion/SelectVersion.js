@@ -9,6 +9,15 @@ class SelectVersion extends Component {
     loading: false,
     List: [],
   }
+
+  componentDidMount() {
+    getProjectVersion().then((Data) => {
+      this.setState({
+        List: Data,
+        loading: false,
+      });
+    });
+  }
   
   render() {
     const { loading, List } = this.state;

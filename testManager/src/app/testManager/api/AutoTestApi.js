@@ -15,3 +15,6 @@ export function getAppList() {
 export function getTestHistoryByApp() {
   return axios.get('/getTestHistoryByApp');
 }
+export function getYaml() {
+  return axios.get('/getYaml');
+}

@@ -72,13 +72,13 @@ class DeployAppHome extends Component {
       ),
 
     }, {
-      title: <FormattedMessage id="app.name" />,
+      title: <FormattedMessage id="app_name" />,
       dataIndex: 'name',
       key: 'name',
       sorter: true,
       filters: [],
     }, {
-      title: <FormattedMessage id="app.code" />,
+      title: <FormattedMessage id="app_code" />,
       dataIndex: 'code',
       key: 'code',
       sorter: true,
@@ -316,7 +316,7 @@ class DeployAppHome extends Component {
     const loading = SelectAppStore.getLoading;
     return (
       <SideBar
-        title={<FormattedMessage id="autotest.step.one.app" />}
+        title={<FormattedMessage id="autoteststep_one_app" />}
         visible={show}
         onOk={this.handleOk}
         okText={formatMessage({ id: 'ok' })}
@@ -336,7 +336,7 @@ class DeployAppHome extends Component {
               onChange={this.changeTab}
 
             >
-              <TabPane className="c7ntest-autotest-tabpane" tab={formatMessage({ id: 'autotest.sidebar.project' })} key="1">
+              <TabPane className="c7ntest-autotest-tabpane" tab={formatMessage({ id: 'autotest_sidebar_project' })} key="1">
                 {view === 'list' && this.getProjectTable()}
                 {view === 'card' && (
                   <React.Fragment>
@@ -347,7 +347,7 @@ class DeployAppHome extends Component {
                         suffix={suffix}
                         onChange={this.handleSearch}
                         onPressEnter={this.handleSearch}
-                        placeholder={formatMessage({ id: 'autotest.sidebar.search' })}
+                        placeholder={formatMessage({ id: 'autotest_sidebar_search' })}
                         // eslint-disable-next-line no-return-assign
                         ref={node => this.searchInput = node}
                       />
@@ -394,13 +394,13 @@ class DeployAppHome extends Component {
                 )}
 
               </TabPane>
-              <TabPane className="c7ntest-autotest-tabpane" tab={formatMessage({ id: 'autotest.sidebar.market' })} key="2">
+              {/* <TabPane className="c7ntest-autotest-tabpane" tab={formatMessage({ id: 'autotest_sidebar_market' })} key="2">
                 {view === 'list' && this.getMarketTable()}
                 {view === 'card' && (
                   <React.Fragment>
                     <div className="c7ntest-store-search">
                       <Input
-                        placeholder={formatMessage({ id: 'autotest.sidebar.search' })}
+                        placeholder={formatMessage({ id: 'autotest_sidebar_search' })}
                         value={val}
                         prefix={prefix}
                         suffix={suffix}
@@ -450,7 +450,7 @@ class DeployAppHome extends Component {
                     )}
                   </React.Fragment>
                 )}
-              </TabPane>
+              </TabPane> */}
             </Tabs>
           </div>
         </Content>

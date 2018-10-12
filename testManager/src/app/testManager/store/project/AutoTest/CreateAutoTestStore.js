@@ -1,5 +1,6 @@
 import { observable, action, computed } from 'mobx';
 import { axios, store, stores } from 'choerodon-front-boot';
+import { getYaml } from '../../../api/AutoTestApi';
 
 const { AppState } = stores;
 
@@ -55,14 +56,13 @@ class CreateAutoTestStore {
   }
 
   loadValue(appId, verId, envId, projectId = AppState.currentMenuType.id) {
-    return axios.get(`/devops/v1/projects/${projectId}/app_instances/value?appId=${appId}&appVersionId=${verId}&envId=${envId}`)
-      .then((data) => {
-        const res = this.handleProptError(data);
-        if (res) {
-          this.setValue(res);
-        }
-        return res;
-      });
+    return getYaml().then((data) => {
+      const res = this.handleProptError(data);
+      if (res) {
+        this.setValue(res);
+      }
+      return res;
+    });
   }
 
   checkYaml = (value, projectId = AppState.currentMenuType.id) => axios.post(`/devops/v1/projects/${projectId}/app_instances/value_format`, { yaml: value });

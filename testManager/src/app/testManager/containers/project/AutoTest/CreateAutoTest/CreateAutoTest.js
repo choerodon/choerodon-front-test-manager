@@ -3,10 +3,10 @@ import { observer } from 'mobx-react';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { withRouter } from 'react-router-dom';
 import {
-  Select, Button, Radio, Steps, Icon, Tooltip, 
+  Select, Button, Radio, Steps, Icon, Tooltip, Form,
 } from 'choerodon-ui';
 import {
-  Content, Header, Page, Permission, stores, axios, 
+  Content, Header, Page, stores, axios, 
 } from 'choerodon-front-boot';
 import _ from 'lodash';
 import YAML from 'yamljs';
@@ -26,7 +26,8 @@ class CreateAutoTest extends Component {
     this.state = {
       is_project: !props.match.params.appId && (props.location.search.indexOf('isProject') === -1),
       appId: props.location.search.split('appId=')[1] ? Number(props.location.search.split('appId=')[1].split('&')[0]) : props.match.params.appId,
-      versionId: props.location.search.split('verId=')[1] ? Number(props.location.search.split('verId=')[1]) : props.match.params.verId,
+      appVersionId: props.location.search.split('verId=')[1] ? Number(props.location.search.split('verId=')[1]) : props.match.params.verId,
+      versionId: null,
       current: props.match.params.appId || (props.location.search.indexOf('isProject') === -1 && props.location.search.split('appId=')[1]) ? 2 : 1,
       envId: props.location.search.split('envId=')[1] ? Number(props.location.search.split('envId=')[1]) : undefined,
       mode: 'new',
@@ -45,22 +46,22 @@ class CreateAutoTest extends Component {
         .then((data) => {
           this.setState({ app: data });
         });
-      const versionId = parseInt(this.state.versionId, 10);
+      const appVersionId = parseInt(this.state.appVersionId, 10);
       if (this.state.is_project) {
         CreateAutoTestStore.loadVersion(this.state.appId, this.state.projectId, '')
           .then((data) => {
-            this.setState({ versionDto: _.filter(data, v => v.id === versionId)[0] });
+            this.setState({ versionDto: _.filter(data, v => v.id === appVersionId)[0] });
           });
       } else if (this.props.location.search.split('verId=')[1]) {
         CreateAutoTestStore.loadVersion(this.state.appId, this.state.projectId, true)
           .then((data) => {
-            this.setState({ versionDto: _.filter(data, v => v.id === versionId)[0] });
+            this.setState({ versionDto: _.filter(data, v => v.id === appVersionId)[0] });
           });
-        this.setState({ versionId: undefined });
+        this.setState({ appVersionId: undefined });
       } else {
         CreateAutoTestStore.loadVersion(this.state.appId, this.state.projectId, true)
           .then((data) => {
-            this.setState({ versionDto: _.filter(data, v => v.id === versionId)[0] });
+            this.setState({ versionDto: _.filter(data, v => v.id === appVersionId)[0] });
           });
       }
     } else {
@@ -95,13 +96,14 @@ class CreateAutoTest extends Component {
   changeStep = (index) => {
     const { CreateAutoTestStore } = this.props;
     const {
-      appId, versionId, envId, mode, 
+      appId, appVersionId, envId, mode, 
     } = this.state;
     this.setState({ current: index });
     this.loadReview();
-    if (index === 2 && appId && versionId && envId) {
+    // 加载yaml
+    if (index === 2 && appId) {
       CreateAutoTestStore.setValue(null);
-      CreateAutoTestStore.loadValue(appId, versionId, envId)
+      CreateAutoTestStore.loadValue(appId, appVersionId, envId)
         .then((data) => {
           this.setState({ errorLine: data.errorLines });
         });
@@ -115,7 +117,7 @@ class CreateAutoTest extends Component {
     if (this.props.match.params.appId) {
       this.setState({ show: true });
     } else {
-      this.setState({ show: true, versionId: undefined, versionDto: null });
+      this.setState({ show: true, appVersionId: undefined, versionDto: null });
     }
   };
 
@@ -141,7 +143,7 @@ class CreateAutoTest extends Component {
           appId: app.id,
           show: false,
           is_project: true,
-          versionId: undefined,
+          appVersionId: undefined,
           versionDto: null,
         });
       } else {
@@ -151,7 +153,7 @@ class CreateAutoTest extends Component {
           appId: app.appId,
           show: false,
           is_project: false,
-          versionId: undefined,
+          appVersionId: undefined,
           versionDto: null,
         });
       }
@@ -171,10 +173,10 @@ class CreateAutoTest extends Component {
     this.setState({
       envId: value, envDto, value: null, yaml: null, changeYaml: false, mode: 'new', 
     });
-    const { appId, versionId } = this.state;
+    const { appId, appVersionId } = this.state;
     CreateAutoTestStore.setValue(null);
     this.setState({ value: null, markers: [] });
-    CreateAutoTestStore.loadValue(appId, versionId, value)
+    CreateAutoTestStore.loadValue(appId, appVersionId, value)
       .then((data) => {
         this.setState({ errorLine: data.errorLines });
       });
@@ -191,7 +193,7 @@ class CreateAutoTest extends Component {
     const versionDto = _.filter(versions, v => v.id === value)[0];
     CreateAutoTestStore.setValue(null);
     this.setState({
-      versionId: value, versionDto, value: null, markers: [], 
+      appVersionId: value, versionDto, value: null, markers: [], 
     });
     if (this.state.envId) {
       this.handleSelectEnv(this.state.envId);
@@ -244,6 +246,18 @@ class CreateAutoTest extends Component {
   };
 
   /**
+   *选择目标版本
+   *
+   * @param {*} versionId
+   * @memberof CreateAutoTest
+   */
+  handleVersionSelect=(versionId) => {
+    this.setState({
+      versionId,
+    });
+  }
+
+  /**
    * 取消第一步
    */
   clearStepOne = () => {
@@ -254,7 +268,7 @@ class CreateAutoTest extends Component {
       current: 1,
       appId: undefined,
       app: null,
-      versionId: undefined,
+      appVersionId: undefined,
       versionDto: null,
       envId: undefined,
       envDto: null,
@@ -278,7 +292,7 @@ class CreateAutoTest extends Component {
       current: 1,
       appId: undefined,
       app: null,
-      versionId: undefined,
+      appVersionId: undefined,
       versionDto: null,
       envId: undefined,
       envDto: null,
@@ -307,7 +321,7 @@ class CreateAutoTest extends Component {
     const value = this.state.value || CreateAutoTestStore.value.yaml;
     const applicationDeployDTO = {
       appId: this.state.appId,
-      appVerisonId: this.state.versionId,
+      appVerisonId: this.state.appVersionId,
       environmentId: this.state.envId,
       values: value,
       type: this.state.mode === 'new' ? 'create' : 'update',
@@ -333,9 +347,9 @@ class CreateAutoTest extends Component {
 
 
   loadReview = async () => {
-    const { value, versionId, projectId } = this.state;
+    const { value, appVersionId, projectId } = this.state;
     if (value) {
-      const yaml = await axios.post(`/devops/v1/projects/${projectId}/app_instances/previewValue?appVersionId=${versionId}`, { yaml: value })
+      const yaml = await axios.post(`/devops/v1/projects/${projectId}/app_instances/previewValue?appappVersionId=${appVersionId}`, { yaml: value })
         .then(data => data);
       this.setState({ yaml });
     }
@@ -346,8 +360,10 @@ class CreateAutoTest extends Component {
    */
   handleRenderApp = () => {
     const { CreateAutoTestStore, intl } = this.props;
+    const { versionId } = this.state;
     const { formatMessage } = intl;
     const versions = CreateAutoTestStore.versions;
+    const envs = CreateAutoTestStore.envs;
     return (
       <div className="deployApp-app">
         <p>
@@ -388,8 +404,8 @@ class CreateAutoTest extends Component {
             <span className="section-title">{formatMessage({ id: 'autoteststep_one_version_title' })}</span>
           </div>
           <Select
-            notFoundContent={formatMessage({ id: 'network.form.version.disable' })}
-            value={this.state.versionId ? parseInt(this.state.versionId, 10) : undefined}
+            // notFoundContent={formatMessage({ id: 'select_app_first' })}
+            value={this.state.appVersionId ? parseInt(this.state.appVersionId, 10) : undefined}
             label={<FormattedMessage id="autoteststep_one_version" />}
             className="section-text-margin"
             onSelect={this.handleSelectVersion}
@@ -405,10 +421,11 @@ class CreateAutoTest extends Component {
         {/* 选择目标版本 */}
         <section className="deployApp-section">
           <div className="autotest-title">
-            <i className="icon icon-version section-title-icon " />
+            <i className="icon icon-publish2 section-title-icon " />
             <span className="section-title">{formatMessage({ id: 'autoteststep_one_targetversion' })}</span>
           </div>
           <SelectVersion 
+            value={versionId}
             className="section-text-margin"
             style={{ width: 482 }}
             onChange={this.handleVersionSelect}
@@ -417,60 +434,12 @@ class CreateAutoTest extends Component {
         {/* 选择环境 */}
         <section className="deployApp-section">
           <div className="autotest-title">
-            <i className="icon icon-version section-title-icon " />
+            <i className="icon icon-donut_large section-title-icon " />
             <span className="section-title">{formatMessage({ id: 'autoteststep_one_environment' })}</span>
           </div>
           <Select
-            notFoundContent={formatMessage({ id: 'network.form.version.disable' })}
-            value={this.state.versionId ? parseInt(this.state.versionId, 10) : undefined}
-            label={<FormattedMessage id="autoteststep_one_version" />}
-            className="section-text-margin"
-            onSelect={this.handleSelectVersion}
-            style={{ width: 482 }}
-            optionFilterProp="children"
-            filterOption={(input, option) => option.props.children
-              .toLowerCase().indexOf(input.toLowerCase()) >= 0}
-            filter
-          >
-            {versions.map(v => <Option key={v.id} value={v.id}>{v.version}</Option>)}
-          </Select>
-        </section>
-        <section className="deployApp-section">
-          <Button
-            type="primary"
-            funcType="raised"
-            // disabled={!(this.state.appId && this.state.versionId)}
-            onClick={this.changeStep.bind(this, 2)}
-          >
-            {formatMessage({ id: 'next' })}
-          </Button>
-          <Button funcType="raised" className="c7ntest-autotest-clear" onClick={this.clearStepOneBack}>{formatMessage({ id: 'cancel' })}</Button>
-        </section>
-      </div>
-    );
-  };
-
-  /**
-   * 渲染第二步
-   */
-  handleRenderEnv = () => {
-    const { CreateAutoTestStore, intl } = this.props;
-    const { formatMessage } = intl;
-    const envs = CreateAutoTestStore.envs;
-    const data = this.state.yaml || CreateAutoTestStore.value;
-    return (
-      <div className="deployApp-env">
-        <p>
-          {formatMessage({ id: 'autoteststep.two.description' })}
-        </p>
-        <section className="deployApp-section">
-          <div className="autotest-title">
-            <i className="icon icon-donut_large section-title-icon " />
-            <span className="section-title">{formatMessage({ id: 'autoteststep.two.env.title' })}</span>
-          </div>
-          <Select
             value={this.state.envId}
-            label={<span className="autotest-text">{formatMessage({ id: 'autoteststep.two.env' })}</span>}
+            label={<span className="autotest-text">{formatMessage({ id: 'autoteststep_one_environment' })}</span>}
             className="section-text-margin"
             onSelect={this.handleSelectEnv}
             style={{ width: 482 }}
@@ -488,9 +457,38 @@ class CreateAutoTest extends Component {
           </Select>
         </section>
         <section className="deployApp-section">
+          <Button
+            type="primary"
+            funcType="raised"
+            disabled={!(this.state.appId)}
+            onClick={this.changeStep.bind(this, 2)}
+          >
+            {formatMessage({ id: 'next' })}
+          </Button>
+          <Button funcType="raised" className="c7ntest-autotest-clear" onClick={this.clearStepOneBack}>{formatMessage({ id: 'cancel' })}</Button>
+        </section>
+      </div>
+    );
+  };
+
+  /**
+   * 渲染第二步
+   */
+  handleRenderEnv = () => {
+    const { CreateAutoTestStore, intl } = this.props;
+    const { formatMessage } = intl;
+    
+    const data = this.state.yaml || CreateAutoTestStore.value;
+    return (
+      <div className="deployApp-env">
+        <p>
+          {formatMessage({ id: 'autoteststep_two_description' })}
+        </p>
+
+        <section className="deployApp-section">
           <div className="autotest-title">
             <i className="icon icon-description section-title-icon " />
-            <span className="section-title">{formatMessage({ id: 'autoteststep.two.config' })}</span>
+            <span className="section-title">{formatMessage({ id: 'autoteststep_two_config' })}</span>
           </div>
           {data && (
           <AceForYaml
@@ -605,7 +603,7 @@ class CreateAutoTest extends Component {
     const { formatMessage } = intl;
     const data = this.state.yaml || CreateAutoTestStore.value;
     const {
-      app, versionId, envId, instanceId, mode, 
+      app, appVersionId, envId, instanceId, mode, 
     } = this.state;
     const options = {
       theme: 'neat',
@@ -620,21 +618,15 @@ class CreateAutoTest extends Component {
             <div className="deployApp-title">
               <Icon type="widgets" />
               <span className="deployApp-title-text">
-                {formatMessage({ id: 'autoteststep.four.app' })}
-
-
+                {formatMessage({ id: 'autoteststep_three_app' })}
                 {'：'}
               </span>
             </div>
             <div className="deployApp-text">
               {this.state.app && this.state.app.name}
               <span className="deployApp-value">
-
-
                 {'('}
                 {this.state.app && this.state.app.code}
-
-
                 {')'}
               </span>
             </div>
@@ -643,9 +635,7 @@ class CreateAutoTest extends Component {
             <div className="deployApp-title">
               <Icon type="version" />
               <span className="deployApp-title-text">
-                {formatMessage({ id: 'autoteststep.four.version' })}
-
-
+                {formatMessage({ id: 'autoteststep_three_version' })}
                 {'：'}
               </span>
             </div>
@@ -655,60 +645,24 @@ class CreateAutoTest extends Component {
             <div className="deployApp-title">
               <Icon type="donut_large" />
               <span className="deployApp-title-text">
-                {formatMessage({ id: 'autoteststep.two.env.title' })}
-
-
+                {formatMessage({ id: 'autoteststep_one_env_title' })}
                 {'：'}
               </span>
             </div>
             <div className="deployApp-text">
               {this.state.envDto && this.state.envDto.name}
               <span className="deployApp-value">
-
-
                 {'('}
                 {this.state.envDto && this.state.envDto.code}
-
-
                 {')'}
               </span>
             </div>
           </div>
           <div>
             <div className="deployApp-title">
-              <Icon type="jsfiddle" />
-              <span className="deployApp-title-text">
-                {formatMessage({ id: 'autoteststep.three.mode' })}
-
-
-                {'：'}
-              </span>
-            </div>
-            <div className="deployApp-text">
-              {this.state.mode === 'new' ? formatMessage({ id: 'autoteststep.three.mode.new' }) : formatMessage({ id: 'autoteststep.three.mode.replace' })} 
-              {' '}
-              {this.state.mode === 'replace'
-            && (
-            <span className="deployApp-value">
-
-
-              {'('}
-              { this.state.instanceId ? this.state.instanceDto.code : (instances && instances.length === 1 && instances[0].code)}
-
-
-              {')'}
-            </span>
-            )}
-
-            </div>
-          </div>
-          <div>
-            <div className="deployApp-title">
               <Icon type="description" />
               <span className="deployApp-title-text">
-                {formatMessage({ id: 'autoteststep.two.config' })}
-
-
+                {formatMessage({ id: 'autoteststep_two_config' })}
                 {'：'}
               </span>
             </div>
@@ -726,7 +680,7 @@ class CreateAutoTest extends Component {
           )}
         </section>
         <section className="deployApp-section">
-          <Button type="primary" funcType="raised" disabled={!(app && versionId && envId && mode)} onClick={this.handleDeploy} loading={this.state.loading}>{formatMessage({ id: 'autotestbtn.autotest' })}</Button>
+          <Button type="primary" funcType="raised" disabled={!(app && appVersionId && envId && mode)} onClick={this.handleDeploy} loading={this.state.loading}>{formatMessage({ id: 'autotestbtn_autotest' })}</Button>
        
           <Button funcType="raised" onClick={this.changeStep.bind(this, 2)}>{formatMessage({ id: 'previous' })}</Button>
           <Button funcType="raised" className="c7ntest-autotest-clear" onClick={this.clearStepOne}>{formatMessage({ id: 'cancel' })}</Button>
@@ -753,7 +707,7 @@ class CreateAutoTest extends Component {
     const data = CreateAutoTestStore.value;
     const projectName = AppState.currentMenuType.name;
     const {
-      appId, versionId, envId, instanceId, mode, value, current, 
+      appId, appVersionId, envId, instanceId, mode, value, current, 
     } = this.state;
     // console.log(window.getComputedStyle(document.body));
     return (
@@ -770,7 +724,7 @@ class CreateAutoTest extends Component {
                 status={this.getStatus(1)}
               />
               <Step
-                className={!(appId && versionId) ? 'step-disabled' : ''}
+                className={!(appId && appVersionId) ? 'step-disabled' : ''}
                 title={<span style={{ color: current === 2 ? '#3F51B5' : '', fontSize: 14 }}>{formatMessage({ id: 'autoteststep_two_title' })}</span>}
                 onClick={this.changeStep.bind(this, 2)}
                 status={this.getStatus(2)}
