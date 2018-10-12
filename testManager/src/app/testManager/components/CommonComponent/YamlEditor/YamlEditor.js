@@ -1,12 +1,12 @@
 /**
- * yaml 编辑框的高亮效果
+ * yaml 编辑器
  */
 import React, { Component } from 'react';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import CodeMirror from 'react-codemirror';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-import './yamlCodeMirror.scss';
+import './YamlEditor.scss';
 
 require('codemirror/lib/codemirror.css');
 require('codemirror/mode/yaml/yaml');
@@ -14,7 +14,7 @@ require('codemirror/theme/neat.css');
 
 require('codemirror/addon/fold/foldgutter.css');
 /* eslint-disable */
-class NewEditor extends Component {
+class YamlEditor extends Component {
   static propTypes = {
     value: PropTypes.string.isRequired,
     options: PropTypes.object,
@@ -170,4 +170,4 @@ class NewEditor extends Component {
   }
 }
 
-export default injectIntl(NewEditor);
+export default injectIntl(YamlEditor);

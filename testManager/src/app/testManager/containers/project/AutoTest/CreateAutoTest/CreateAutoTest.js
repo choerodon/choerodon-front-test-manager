@@ -11,7 +11,7 @@ import {
 import _ from 'lodash';
 import YAML from 'yamljs';
 import './CreateAutoTest.scss';
-import { AceForYaml, SelectVersion } from '../../../../components/CommonComponent';
+import { YamlEditor, SelectVersion } from '../../../../components/CommonComponent';
 import SelectApp from './selectApp';
 
 const RadioGroup = Radio.Group;
@@ -491,7 +491,7 @@ class CreateAutoTest extends Component {
             <span className="section-title">{formatMessage({ id: 'autoteststep_two_config' })}</span>
           </div>
           {data && (
-          <AceForYaml
+          <YamlEditor
             newLines={data.newLines}
             isFileError={!!data.errorLines}
             totalLine={data.totalLine}
@@ -669,7 +669,7 @@ class CreateAutoTest extends Component {
           </div>
           {data && (
           <div>
-            {<AceForYaml
+            {<YamlEditor
               options={options}
               newLines={data.newLines}
               readOnly={this.state.current === 3}

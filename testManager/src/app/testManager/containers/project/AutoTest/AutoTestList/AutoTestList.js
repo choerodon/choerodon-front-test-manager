@@ -5,6 +5,7 @@ import {
 } from 'choerodon-ui';
 import TimeAgo from 'timeago-react';
 import { FormattedMessage } from 'react-intl';
+
 import { User } from '../../../../components/CommonComponent';
 import { getAppList, getTestHistoryByApp } from '../../../../api/AutoTestApi';
 import { CiStatus, TestResult } from './AutoTestTags';
@@ -12,7 +13,7 @@ import { CiStatus, TestResult } from './AutoTestTags';
 
 const { Option } = Select;
 class AutoTestList extends Component {
-  state={
+  state = {
     appList: [],
     historyList: [],
     currentApp: null,
@@ -24,7 +25,7 @@ class AutoTestList extends Component {
     this.getAppList();
   }
 
-  getAppList=(value) => {
+  getAppList = (value) => {
     const { currentApp } = this.state;
     this.setState({
       selectLoading: true,
@@ -38,7 +39,7 @@ class AutoTestList extends Component {
           selectLoading: false,
         });
         this.getTestHistoryByApp(List[0].id);
-      } else {        
+      } else {
         this.setState({
           appList: List,
           selectLoading: false,
@@ -47,7 +48,7 @@ class AutoTestList extends Component {
     });
   }
 
-  getTestHistoryByApp=(appId = this.state.currentApp) => {
+  getTestHistoryByApp = (appId = this.state.currentApp) => {
     this.setState({
       loading: true,
     });
@@ -111,7 +112,7 @@ class AutoTestList extends Component {
           <div>
             <Tooltip title={status === 'failed' ? '重试' : '重新执行'}>
               <Icon type="replay" className="c7ntest-icon-in-table" />
-            </Tooltip>            
+            </Tooltip>
             <Icon type="exit_to_app" className="c7ntest-icon-in-table" style={{ marginLeft: 8 }} />
           </div>
         );
@@ -119,25 +120,25 @@ class AutoTestList extends Component {
     }];
     return (
       <Page className="c7ntest-AutoTestList">
-        <Header title={<FormattedMessage id="autotestlist_title" />}>       
+        <Header title={<FormattedMessage id="autotestlist_title" />}>
           <Button onClick={this.getTestHistoryByApp}>
             <Icon type="autorenew icon" />
             <span><FormattedMessage id="refresh" /></span>
           </Button>
         </Header>
         <Content
-      // style={{
-      //   padding: '0 0 10px 0',
-      // }}
+          // style={{
+          //   padding: '0 0 10px 0',
+          // }}
           title={<FormattedMessage id="autotestlist_content_title" />}
           description={<FormattedMessage id="autotestlist_content_description" />}
-          // link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management/test-report/report/"
+        // link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management/test-report/report/"
         >
           <Spin spinning={loading}>
             <Select
               label="选择应用"
-              style={{ width: 512, marginBottom: 16 }}     
-              filter             
+              style={{ width: 512, marginBottom: 16 }}
+              filter
               value={currentApp}
               loading={selectLoading}
               onChange={this.handleDefectsChange}
