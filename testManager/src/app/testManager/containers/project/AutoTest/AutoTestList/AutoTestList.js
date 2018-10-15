@@ -107,7 +107,8 @@ class AutoTestList extends Component {
       render: (action, record) => {
         const { id, status } = record;
         return (
-          <div>
+          <div style={{ display: 'flex' }}>
+            <div className="c7ntest-flex-space" />
             <Tooltip title={status === 'failed' ? '重试' : '重新执行'}>
               <Icon type="replay" className="c7ntest-icon-in-table" />
             </Tooltip>
@@ -136,7 +137,7 @@ class AutoTestList extends Component {
           <Spin spinning={loading}>             
             <Select
               label="选择应用"
-              style={{ width: 512, marginBottom: 16 }}
+              style={{ width: 512, marginBottom: 20 }}
               filter
               value={currentApp}
               loading={selectLoading}
