@@ -7,7 +7,9 @@ import { observer } from 'mobx-react';
 import { withRouter } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
 import { RichTextShow, User } from '../../../../components/CommonComponent';
-import { delta2Html, delta2Text } from '../../../../common/utils';
+import {
+  delta2Html, delta2Text, executeDetailLink, executeDetailShowLink, 
+} from '../../../../common/utils';
 import './ExecuteDetail.scss';
 import { StepTable, TestExecuteInfo } from '../../../../components/ExecuteComponent';
 import ExecuteDetailStore from '../../../../store/project/cycle/ExecuteDetailStore';
@@ -35,11 +37,27 @@ class ExecuteDetail extends Component {
     ExecuteDetailStore.getInfo(id);
   }
 
+  goExecute=(mode) => {
+    const cycleData = ExecuteDetailStore.getCycleData;
+    const { nextExecuteId, lastExecuteId } = cycleData;
+    const { disabled, history } = this.props;
+    const toExecuteId = mode === 'pre' ? lastExecuteId : nextExecuteId;
+    if (toExecuteId) {
+      if (disabled) {
+        history.replace(executeDetailShowLink(toExecuteId));
+      } else {
+        history.replace(executeDetailLink(toExecuteId));
+      }
+    }
+  }
+
   render() {
     const { disabled } = this.props;  
     const loading = ExecuteDetailStore.loading;
     const historyList = ExecuteDetailStore.getHistoryList;
     const historyPagination = ExecuteDetailStore.getHistoryPagination;
+    const cycleData = ExecuteDetailStore.getCycleData;
+    const { nextExecuteId, lastExecuteId } = cycleData;
     const columnsHistory = [{
       title: <FormattedMessage id="execute_executive" />,
       dataIndex: 'user',
@@ -146,13 +164,33 @@ class ExecuteDetail extends Component {
         )}
         >
 
+
+          <Button
+            disabled={lastExecuteId === null}
+            onClick={() => {
+              this.goExecute('pre');
+            }}
+          >
+            <Icon type="navigate_before" />
+            <span><FormattedMessage id="execute_pre" /></span>
+          </Button>
+          <Button 
+            disabled={nextExecuteId === null}
+            onClick={() => {
+              this.goExecute('next');
+            }}
+          >            
+            <span><FormattedMessage id="execute_next" /></span>
+            <Icon type="navigate_next" />
+          </Button>
           <Button onClick={() => {
             // this.props.history.replace('55');
             ExecuteDetailStore.getInfo();
           }}
-          >
+          >            
             <Icon type="autorenew icon" />
             <span><FormattedMessage id="refresh" /></span>
+            
           </Button>
         </Header>
 

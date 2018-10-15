@@ -207,8 +207,8 @@ class CreateAutoTest extends Component {
   handleSelectInstance = (value) => {
     const { CreateAutoTestStore } = this.props;
     const instance = CreateAutoTestStore.currentInstance;
-    const instanceDto = _.filter(instance, v => v.id === value)[0];
-    this.setState({ instanceId: value, instanceDto });
+    // const instanceDto = _.filter(instance, v => v.id === value)[0];
+    this.setState({ instanceId: value });
   };
 
   /**

@@ -69,6 +69,8 @@ const zhCN = {
   filter: '过滤表',
   // 执行详情
   execute_detail: '执行详情',
+  execute_pre: '上一个执行',
+  execute_next: '下一个执行',
   execute_cycle_execute: '测试执行',
   execute_description: '描述',
   execute_edit_fullScreen: '全屏编辑',

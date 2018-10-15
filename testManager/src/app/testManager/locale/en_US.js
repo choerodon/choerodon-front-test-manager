@@ -65,6 +65,8 @@ const enUS = {
   previous: 'pre step',
   // 测试执行
   execute_detail: 'Execution details',
+  execute_pre: 'last execute',
+  execute_next: 'next execute',
   execute_cycle_execute: 'Test execution',
   execute_description: 'Description',
   execute_edit_fullScreen: 'Edit fullScreen',
