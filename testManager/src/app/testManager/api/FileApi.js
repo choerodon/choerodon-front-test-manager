@@ -1,7 +1,7 @@
 import { stores, axios } from 'choerodon-front-boot';
 
 const { AppState } = stores;
-//敏捷接口
+// 敏捷接口
 /**
  * 删除文件
  * @param {number} resourceId 资源id
@@ -46,7 +46,7 @@ export function uploadFileAgile(data, config) {
     axiosConfig,
   );
 }
-//测试管理接口
+// 测试管理接口
 
 /**
  *文件上传

@@ -7,7 +7,7 @@ const CustomStatusHome = asyncRouter(() => import('./CustomStatusHome'));
 const CustomStatusIndex = ({ match }) => (
   <Switch>
     <Route exact path={match.url} component={CustomStatusHome} />        
-    <Route path={'*'} component={nomatch} />
+    <Route path="*" component={nomatch} />
   </Switch>
 );
 

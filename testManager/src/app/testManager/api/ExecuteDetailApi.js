@@ -53,4 +53,3 @@ export function getCycleHistiorys(pagination, cycleCaseId) {
   const projectId = AppState.currentMenuType.id;
   return axios.get(`test/v1/projects/${projectId}/cycle/case/history/${cycleCaseId}?size=${size}&page=${page}`);
 }
-
