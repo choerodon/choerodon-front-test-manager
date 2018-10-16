@@ -229,3 +229,7 @@ export function cloneIssue(issueId, copyConditionDTO) {
   const projectId = AppState.currentMenuType.id;
   return axios.put(`/test/v1/projects/${projectId}/issueFolderRel/copy/issue/${issueId}`, copyConditionDTO);
 }
+export function exportIssues(versionId, folderId) {
+  const projectId = AppState.currentMenuType.id;
+  return axios.get(`/test/v1/projects/${projectId}/case/download/excel${versionId ? `?versionId=${versionId}` : ''}${folderId ? `?folderId=${folderId}` : ''}`, { responseType: 'arraybuffer', timeout: 300000 });
+}

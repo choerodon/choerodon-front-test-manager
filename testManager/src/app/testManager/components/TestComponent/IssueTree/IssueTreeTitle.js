@@ -7,9 +7,10 @@ import {
 } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 import { Draggable, Droppable } from 'react-beautiful-dnd';
+import FileSaver from 'file-saver';
 import { IssueTreeStore } from '../../../store/project/treeStore';
 import {
-  editFolder, deleteFolder, moveIssues, copyIssues, 
+  editFolder, deleteFolder, moveIssues, copyIssues, exportIssues,
 } from '../../../api/IssueManageApi';
 import IssueStore from '../../../store/project/IssueStore';
 import './IssueTreeTitle.scss';
@@ -29,7 +30,7 @@ class IssueTreeTitle extends Component {
 
   handleItemClick = ({ item, key, keyPath }) => {
     const { data, refresh } = this.props;
-    const { type, cycleId } = data;
+    const { type, cycleId, title } = data;
     switch (key) {
       case 'rename': {
         this.setState({
@@ -79,6 +80,14 @@ class IssueTreeTitle extends Component {
         // this.props.callback(data, 'CLONE_FOLDER');
         // cloneFolder(cycleId, data).then((data) => {
         // this.props.refresh();
+        break;
+      }
+      case 'export': {
+        exportIssues(null, cycleId).then((excel) => {
+          const blob = new Blob([excel], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+          const fileName = `${AppState.currentMenuType.name}-${title}.xls`;
+          FileSaver.saveAs(blob, fileName);
+        });
         break;
       }
       default: break;
@@ -166,6 +175,14 @@ class IssueTreeTitle extends Component {
     }
   }
 
+  exportIssueFromVersion=(data) => {
+    exportIssues(data.versionId).then((excel) => {
+      const blob = new Blob([excel], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      const fileName = `${AppState.currentMenuType.name}-${data.title}.xls`;
+      FileSaver.saveAs(blob, fileName);
+    });
+  }
+
   render() {
     const menu = AppState.currentMenuType;
     const {
@@ -187,9 +204,9 @@ class IssueTreeTitle extends Component {
             <FormattedMessage id="issue_tree_delete" />
           </Menu.Item>
         </Permission>,
-        // <Menu.Item key="copy">
-        //   <FormattedMessage id="issue_tree_copy" />
-        // </Menu.Item>,
+        <Menu.Item key="export">
+          导出
+        </Menu.Item>,
         // <Menu.Item key="paste">
         //   <FormattedMessage id="issue_tree_paste" />
         // </Menu.Item>,
@@ -248,7 +265,12 @@ class IssueTreeTitle extends Component {
         ? null : */}
           {
             type === 'version'
-              ? <Tooltip title="添加文件夹"><Icon type="create_new_folder" className="c7ntest-add-folder" onClick={this.addFolder.bind(this, data)} /></Tooltip>
+              ? (
+                <div>
+                  <Tooltip title="导出"><Icon type="export" className="c7ntest-add-folder" onClick={this.exportIssueFromVersion.bind(this, data)} /></Tooltip>
+                  <Tooltip title="添加文件夹"><Icon type="create_new_folder" className="c7ntest-add-folder" onClick={this.addFolder.bind(this, data)} /></Tooltip>                
+                </div>
+              )
               : null
           }
           {

@@ -15,7 +15,7 @@ import './IssueManage.scss';
 import IssueStore from '../../../../store/project/IssueStore';
 import IssueTreeStore from '../../../../store/project/treeStore/IssueTreeStore';
 import pic from '../../../../assets/问题管理－空.png';
-import { loadIssue, createIssue } from '../../../../api/IssueManageApi';
+import { loadIssue, createIssue, exportIssues } from '../../../../api/IssueManageApi';
 import EmptyBlock from '../../../../components/TestComponent/EmptyBlock';
 import CreateIssue from '../../../../components/TestComponent/CreateIssue';
 import EditIssue from '../../../../components/TestComponent/EditIssue';
@@ -243,14 +243,11 @@ class Test extends Component {
   }
 
   exportExcel() {
-    const projectId = AppState.currentMenuType.id;
-    const searchParam = IssueStore.getFilter;
-    axios.post(`/zuul/agile/v1/projects/${projectId}/issues/export`, searchParam, { responseType: 'arraybuffer' })
-      .then((data) => {
-        const blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-        const fileName = `${AppState.currentMenuType.name}.xls`;
-        FileSaver.saveAs(blob, fileName);
-      });
+    exportIssues(null, null).then((excel) => {
+      const blob = new Blob([excel], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      const fileName = `${AppState.currentMenuType.name}.xls`;
+      FileSaver.saveAs(blob, fileName);
+    });
   }
 
 
@@ -396,10 +393,10 @@ class Test extends Component {
             <Icon type="playlist_add icon" />
             <FormattedMessage id="issue_createTestIssue" />
           </Button>
-          {/* <Button className="leftBtn" onClick={() => this.exportExcel()}>
+          <Button className="leftBtn" onClick={() => this.exportExcel()}>
             <Icon type="file_upload icon" />
             <FormattedMessage id="export" />
-          </Button> */}
+          </Button>
           <Button
             onClick={() => {
               if (this.EditIssue) {
@@ -685,7 +682,7 @@ class Test extends Component {
 
               />
             ) : null
-          }      
+          }
         </Content>
       </Page>
     );
