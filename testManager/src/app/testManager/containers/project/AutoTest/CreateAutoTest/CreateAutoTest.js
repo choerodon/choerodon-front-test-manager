@@ -613,7 +613,10 @@ class CreateAutoTest extends Component {
     };
     return (
       <section className="deployApp-review">
-        <section>
+        <p>
+          {formatMessage({ id: 'autoteststep_three_description' })}
+        </p>
+        <section className="deployApp-section">
           <div>
             <div className="deployApp-title">
               <Icon type="widgets" />

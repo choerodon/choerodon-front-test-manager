@@ -356,6 +356,7 @@ const zhCN = {
   autoteststep_three_title: '确认信息并执行',
   autoteststep_three_app: '应用名称',
   autoteststep_three_version: '应用版本',
+  autoteststep_three_description: '在此页面预览配置信息，确认后执行测试。',
   autotestbtn_autotest: '执行测试',
   app_name: '名称',
   app_code: '编码',
