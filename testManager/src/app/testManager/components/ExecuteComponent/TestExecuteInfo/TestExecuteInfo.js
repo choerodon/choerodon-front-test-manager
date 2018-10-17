@@ -13,7 +13,7 @@ import { delta2Html } from '../../../common/utils';
 import {
   addDefects, editCycle, removeDefect,
 } from '../../../api/ExecuteDetailApi';
-import { FullEditor } from '../../CommonComponent';
+import { FullEditor, Upload as UploadButton } from '../../CommonComponent';
 import ExecuteDetailStore from '../../../store/project/cycle/ExecuteDetailStore';
 import './TestExecuteInfo.scss';
 
@@ -77,10 +77,10 @@ class TestExecuteInfo extends Component {
     edit: false,
   }
 
-  handleUpload = (e) => {
-    if (beforeUpload(e.target.files[0])) {
+  handleUpload = (files) => {
+    if (beforeUpload(files[0])) {
       const formData = new FormData();
-      [].forEach.call(e.target.files, (file) => {
+      [].forEach.call(files, (file) => {
         formData.append('file', file);
       });
       const config = {
@@ -426,7 +426,15 @@ class TestExecuteInfo extends Component {
               </div>
               <div style={{ flex: 1, visibility: 'hidden' }} />
               {/* {!disabled && ( */}
-              <Button className="c7ntest-upload-button" onClick={() => this.uploadInput.click()}>
+              <UploadButton 
+                handleUpload={this.handleUpload}
+              >
+                <Icon type="file_upload" />
+                {' '}
+                <FormattedMessage id="upload_attachment" />
+
+              </UploadButton>
+              {/* <Button className="c7ntest-upload-button" onClick={() => this.uploadInput.click()}>
                 <Icon type="file_upload" />
                 {' '}
                 <FormattedMessage id="upload_attachment" />
@@ -439,7 +447,7 @@ class TestExecuteInfo extends Component {
                   onChange={this.handleUpload}
                   style={{ display: 'none' }}
                 />
-              </Button>
+              </Button> */}
               {/* )} */}
             </div>
             <div style={{ marginTop: -10 }}>

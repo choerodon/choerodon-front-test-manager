@@ -85,7 +85,7 @@ class IssueTreeTitle extends Component {
       case 'export': {
         exportIssues(null, cycleId).then((excel) => {
           const blob = new Blob([excel], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-          const fileName = `${AppState.currentMenuType.name}-${title}.xls`;
+          const fileName = `${AppState.currentMenuType.name}-${title}.xlsx`;
           FileSaver.saveAs(blob, fileName);
         });
         break;
@@ -178,7 +178,7 @@ class IssueTreeTitle extends Component {
   exportIssueFromVersion=(data) => {
     exportIssues(data.versionId).then((excel) => {
       const blob = new Blob([excel], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-      const fileName = `${AppState.currentMenuType.name}-${data.title}.xls`;
+      const fileName = `${AppState.currentMenuType.name}-${data.title}.xlsx`;
       FileSaver.saveAs(blob, fileName);
     });
   }

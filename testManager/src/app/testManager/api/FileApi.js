@@ -38,7 +38,7 @@ export function uploadFileAgile(data, config) {
     issueType, issueId, fileName, projectId,
   } = config;
   const axiosConfig = {
-    headers: { 'content-type': 'multipart/form-datal' },
+    headers: { 'content-type': 'multipart/form-data' },
   };
   return axios.post(
     `/zuul/agile/v1/projects/${projectId}/issue_attachment?projectId=${projectId}&issueId=${issueId}`,
@@ -60,7 +60,7 @@ export function uploadFile(data, config) {
   const { bucketName, attachmentLinkId, attachmentType } = config;
   const projectId = AppState.currentMenuType.id;
   const axiosConfig = {
-    headers: { 'content-type': 'multipart/form-datal' },
+    headers: { 'content-type': 'multipart/form-data' },
   };
 
   return axios.post(
@@ -79,4 +79,11 @@ export function uploadFile(data, config) {
 export function deleteAttachment(id) {
   const projectId = AppState.currentMenuType.id;
   return axios.delete(`test/v1/projects/${projectId}/test/case/attachment/delete/bucket/test/attach/${id}`);
+}
+export function importIssue(data) {
+  const projectId = AppState.currentMenuType.id;
+  const axiosConfig = {
+    headers: { 'content-type': 'multipart/form-data' },
+  };
+  return axios.post(`/zuul/test/v1/projects/${projectId}/case/import/testCase`, data, axiosConfig);
 }

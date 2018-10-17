@@ -16,12 +16,13 @@ import IssueStore from '../../../../store/project/IssueStore';
 import IssueTreeStore from '../../../../store/project/treeStore/IssueTreeStore';
 import pic from '../../../../assets/问题管理－空.png';
 import { loadIssue, createIssue, exportIssues } from '../../../../api/IssueManageApi';
+import { importIssue } from '../../../../api/FileApi';
 import EmptyBlock from '../../../../components/TestComponent/EmptyBlock';
 import CreateIssue from '../../../../components/TestComponent/CreateIssue';
 import EditIssue from '../../../../components/TestComponent/EditIssue';
 import IssueTree from '../../../../components/TestComponent/IssueTree';
 import IssueTable from '../../../../components/TestComponent/IssueTable';
-
+import { Upload } from '../../../../components/CommonComponent';
 
 const { AppState } = stores;
 const { Option } = Select;
@@ -244,9 +245,21 @@ class Test extends Component {
 
   exportExcel() {
     exportIssues(null, null).then((excel) => {
-      const blob = new Blob([excel], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-      const fileName = `${AppState.currentMenuType.name}.xls`;
+      const blob = new Blob([excel], { type: 'application/vnd.ms-excel' });
+      const fileName = `${AppState.currentMenuType.name}.xlsx`;
       FileSaver.saveAs(blob, fileName);
+    });
+  }
+
+  importIssue = (files) => {
+    const formData = new FormData();
+    [].forEach.call(files, (file) => {
+      formData.append('file', file);
+    });
+    importIssue(formData).then(() => {
+
+    }).catch(() => {
+
     });
   }
 
@@ -397,6 +410,13 @@ class Test extends Component {
             <Icon type="file_upload icon" />
             <FormattedMessage id="export" />
           </Button>
+          <Upload
+            handleUpload={this.importIssue}
+          >
+            <Icon type="file_upload" />
+            {' '}
+            <FormattedMessage id="issue_importIssue" />
+          </Upload>
           <Button
             onClick={() => {
               if (this.EditIssue) {

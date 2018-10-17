@@ -228,6 +228,7 @@ const enUS = {
   issue_noIssueTitle: 'No issues were found based on current search criteria',
   issue_noIssueDescription: 'Try modifying your filtering options or creating a new issue below',
   issue_createTestIssue: 'Create test issue',
+  issue_importIssue: 'Import Issue',
   issue_filterTestIssue: 'Filter',
   issue_issueTotal: '{total} issues in total',
   issue_issueSort: 'Sort',
