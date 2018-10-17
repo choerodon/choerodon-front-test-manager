@@ -47,7 +47,7 @@ export default class TestSurvey extends Component {
     const option = {
       series: [
         {
-          color: ['#FFB100', '#4D90FE', '#00BFA5'],
+          color: ['#FFB100', '#00BFA5', '#FF7043'],
           type: 'pie',
           radius: ['38px', '68px'],
           avoidLabelOverlap: false,

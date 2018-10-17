@@ -267,7 +267,7 @@ class IssueTreeTitle extends Component {
             type === 'version'
               ? (
                 <div>
-                  <Tooltip title="导出"><Icon type="export" className="c7ntest-add-folder" onClick={this.exportIssueFromVersion.bind(this, data)} /></Tooltip>
+                  <Tooltip title="导出"><Icon type="file_upload" className="c7ntest-add-folder" onClick={this.exportIssueFromVersion.bind(this, data)} /></Tooltip>
                   <Tooltip title="添加文件夹"><Icon type="create_new_folder" className="c7ntest-add-folder" onClick={this.addFolder.bind(this, data)} /></Tooltip>                
                 </div>
               )
