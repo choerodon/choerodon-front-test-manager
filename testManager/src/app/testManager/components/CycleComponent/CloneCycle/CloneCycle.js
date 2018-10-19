@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-  Modal, Select, Form, Input, Spin, 
+  Modal, Select, Form, Input, Spin,
 } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 import { getProjectVersion } from '../../../api/agileApi';
@@ -15,12 +15,13 @@ class CloneCycle extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { resetFields } = this.props.form;
+    const { resetFields, setFieldsValue } = this.props.form;
     if (this.props.visible === false && nextProps.visible === true) {
-      resetFields();
+      resetFields(); 
+      setFieldsValue({ cycleName: nextProps.currentCloneCycle.title });
     }
   }
-  
+
   loadVersions = () => {
     this.setState({
       selectLoading: true,
@@ -41,12 +42,12 @@ class CloneCycle extends Component {
         this.setState({
           loading: true,
         });
-        clone(this.props.currentCloneCycle, { cycleName, versionId }, 'CLONE_CYCLE').then((data) => {
+        clone(this.props.currentCloneCycle.cycleId, { cycleName, versionId }, 'CLONE_CYCLE').then((data) => {
           this.setState({
             loading: false,
           });
           if (data.failed) {
-            Choerodon.prompt('名字重复');           
+            Choerodon.prompt('名字重复');
           } else {
             this.props.onOk();
           }
@@ -54,7 +55,7 @@ class CloneCycle extends Component {
           Choerodon.prompt('网络出错');
           this.setState({
             loading: false,
-          });         
+          });
         });
       }
     });
@@ -84,7 +85,7 @@ class CloneCycle extends Component {
                 }],
               })(
                 <Select
-                // style={{ width: 500, margin: '0 0 10px 0' }}
+                  // style={{ width: 500, margin: '0 0 10px 0' }}
                   label={<FormattedMessage id="version" />}
 
                   loading={selectLoading}
@@ -101,7 +102,7 @@ class CloneCycle extends Component {
                 }],
               })(
                 <Input
-                // style={{ width: 500, margin: '0 0 10px 0' }}
+                  // style={{ width: 500, margin: '0 0 10px 0' }}
                   label={<FormattedMessage id="cycle_cycleName" />}
                 />,
               )}
