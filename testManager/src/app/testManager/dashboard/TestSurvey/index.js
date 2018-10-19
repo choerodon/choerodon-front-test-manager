@@ -90,7 +90,7 @@ export default class TestSurvey extends Component {
     const { type, id: projectId, name } = menu;
    
     return (
-      <div className="c7ntest-dashboard-announcement">
+      <div className="c7ntest-dashboard-TestSurvey">
         <div className="c7ntest-charts">
           <ReactEcharts
             style={{ height: 200 }}

@@ -6,7 +6,7 @@ import './index.scss';
 export default class Announcement extends Component {
   render() {
     return (
-      <div className="c7ntest-dashboard-announcement">
+      <div className="c7ntest-dashboard-Test">
         <ul>
           <li>           
             <a target="choerodon" href="http://choerodon.io/zh/docs/user-guide/test-management/case-management/">

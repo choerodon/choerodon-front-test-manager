@@ -1,52 +1,29 @@
-.c7ntest-dashboard-announcement {
-  ul {
-    padding: 0 20px;
-    list-style: none;
-  }
-  li {
+.c7ntest-dashboard-TestProgress {
+  .switchVersion{
+    position: absolute;
+     top: 25px;
+     right: 16px;
+   
+   .ant-dropdown-link{
+     font-size: 13px;
+     // color: #3F51B5;
+     // font-weight: 600;
+     line-height: 15px;
+   }
+   .ant-dropdown-link:hover{
+     color: #000;
+   }
+   .versionProgress-select {
+    display: flex;
+    align-items: center;
     font-size: 13px;
-    line-height: 20px;
-    margin-bottom: 18px;
-    a {
-      vertical-align: middle;
-      margin-left: 15px;
-      color: inherit;
-    }
+    line-height: 15px;
+    cursor: pointer;
+    color: #000;
   }
+  
+ }
+
 }
 
-.c7ntest-charts {
-  position: relative; // margin-bottom: -120px;
-  &-legend {
-    list-style: none;
-    position: absolute;
-    right: 15%;
-    top: 28px;
-    li {
-      margin-bottom: 29px;
-      display: flex;
-      div {
-        width: 20px;
-        height: 20px; // background-color: aquamarine;
-        border-radius: 2px;
-        margin-right: 16px;
-      }
-      font-size: 13px;
-    }
-    li:first-child {
-      div {
-        background-color: #FFB100;
-      }
-    }
-    li:nth-child(2) {
-      div {
-        background-color: #00BFA5;
-      }
-    }
-    li:last-child {
-      div {
-        background-color: #FF7043;
-      }
-    }
-  }
-}
+
