@@ -176,7 +176,7 @@ export default class IssueAndExecute extends Component {
         data: this.state.excuteList.map(execute => execute.value),
       },
     ],
-    color: ['#5266D4'],
+    color: ['#5266D4', '#00BFA5'],
   })
 
   render() {

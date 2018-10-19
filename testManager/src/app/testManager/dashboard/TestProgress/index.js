@@ -58,8 +58,8 @@ export default class TestProgress extends Component {
                 },
               },
               color: '#cc99cc',
-              borderWidth: 3,
-              borderColor: '#996699',
+              // borderWidth: 3,
+              // borderColor: '#996699',
             },
           },
           data: [

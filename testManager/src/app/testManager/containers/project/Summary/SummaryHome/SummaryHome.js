@@ -351,7 +351,7 @@ class SummaryHome extends Component {
         data: this.state.excuteList.map(execute => execute.value),
       },
     ],
-    color: ['#5266D4'],
+    color: ['#00BFA5'],
   })
 
   render() {
