@@ -10,7 +10,7 @@ import { Draggable, Droppable } from 'react-beautiful-dnd';
 import FileSaver from 'file-saver';
 import { IssueTreeStore } from '../../../store/project/treeStore';
 import {
-  editFolder, deleteFolder, moveIssues, copyIssues, exportIssues,
+  editFolder, deleteFolder, moveIssues, copyIssues, exportIssuesFromFolder, exportIssuesFromVersion,
 } from '../../../api/IssueManageApi';
 import IssueStore from '../../../store/project/IssueStore';
 import './IssueTreeTitle.scss';
@@ -83,7 +83,7 @@ class IssueTreeTitle extends Component {
         break;
       }
       case 'export': {
-        exportIssues(null, cycleId).then((excel) => {
+        exportIssuesFromFolder(cycleId).then((excel) => {
           const blob = new Blob([excel], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
           const fileName = `${AppState.currentMenuType.name}-${title}.xlsx`;
           FileSaver.saveAs(blob, fileName);
@@ -176,7 +176,7 @@ class IssueTreeTitle extends Component {
   }
 
   exportIssueFromVersion=(data) => {
-    exportIssues(data.versionId).then((excel) => {
+    exportIssuesFromVersion(data.versionId).then((excel) => {
       const blob = new Blob([excel], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
       const fileName = `${AppState.currentMenuType.name}-${data.title}.xlsx`;
       FileSaver.saveAs(blob, fileName);

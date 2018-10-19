@@ -15,7 +15,9 @@ import './IssueManage.scss';
 import IssueStore from '../../../../store/project/IssueStore';
 import IssueTreeStore from '../../../../store/project/treeStore/IssueTreeStore';
 import pic from '../../../../assets/问题管理－空.png';
-import { loadIssue, createIssue, exportIssues } from '../../../../api/IssueManageApi';
+import {
+  loadIssue, createIssue, exportIssues, downloadTemplate, 
+} from '../../../../api/IssueManageApi';
 import { importIssue } from '../../../../api/FileApi';
 import EmptyBlock from '../../../../components/TestComponent/EmptyBlock';
 import CreateIssue from '../../../../components/TestComponent/CreateIssue';
@@ -245,8 +247,16 @@ class Test extends Component {
 
   exportExcel() {
     exportIssues(null, null).then((excel) => {
-      const blob = new Blob([excel], { type: 'application/vnd.ms-excel' });
+      const blob = new Blob([excel], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
       const fileName = `${AppState.currentMenuType.name}.xlsx`;
+      FileSaver.saveAs(blob, fileName);
+    });
+  }
+
+  downloadTemplate() {
+    downloadTemplate().then((excel) => {
+      const blob = new Blob([excel], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      const fileName = `${'模板'}.xlsx`;
       FileSaver.saveAs(blob, fileName);
     });
   }
@@ -409,6 +419,10 @@ class Test extends Component {
           <Button className="leftBtn" onClick={() => this.exportExcel()}>
             <Icon type="file_upload icon" />
             <FormattedMessage id="export" />
+          </Button>
+          <Button className="leftBtn" onClick={() => this.downloadTemplate()}>
+            <Icon type="file_upload icon" />
+            下载模板
           </Button>
           <Upload
             handleUpload={this.importIssue}
