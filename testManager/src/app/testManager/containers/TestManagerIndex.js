@@ -13,6 +13,7 @@ const CustomStatusIndex = asyncRouter(() => import('./project/CustomStatus'));
 const ReportIndex = asyncRouter(() => import('./project/Report'));
 const SummaryIndex = asyncRouter(() => import('./project/Summary'));
 const IssueManageIndex = asyncRouter(() => import('./project/IssueManage'));
+const AutoTestIndex = asyncRouter(() => import('./project/AutoTest'));
 @inject('AppState')
 class TestManagerIndex extends React.Component {
   render() {
@@ -32,7 +33,7 @@ class TestManagerIndex extends React.Component {
           <Route path={`${match.url}/TestPlan`} component={TestPlanIndex} />
           <Route path={`${match.url}/report`} component={ReportIndex} />
           <Route path={`${match.url}/status`} component={CustomStatusIndex} />
-
+          <Route path={`${match.url}/AutoTest`} component={AutoTestIndex} />
           <Route path="*" component={nomatch} />
         </Switch>
       </IntlProviderAsync>

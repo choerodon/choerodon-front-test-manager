@@ -6,3 +6,5 @@
 'test-manager.report':  report
 'test-manager.status':  status
 'test-manager.cycle':  cycle
+'test-manager.createautotest':  add test
+'test-manager.autotestlist':  test record

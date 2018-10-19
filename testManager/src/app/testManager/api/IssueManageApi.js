@@ -229,3 +229,19 @@ export function cloneIssue(issueId, copyConditionDTO) {
   const projectId = AppState.currentMenuType.id;
   return axios.put(`/test/v1/projects/${projectId}/issueFolderRel/copy/issue/${issueId}`, copyConditionDTO);
 }
+export function exportIssues() {
+  const projectId = AppState.currentMenuType.id;
+  return axios.get(`/zuul/test/v1/projects/${projectId}/case/download/excel`, { responseType: 'arraybuffer', timeout: 3000000 });
+}
+export function exportIssuesFromVersion(versionId) {
+  const projectId = AppState.currentMenuType.id;
+  return axios.get(`/zuul/test/v1/projects/${projectId}/case/download/excel/version?versionId=${versionId}`, { responseType: 'arraybuffer', timeout: 3000000 });
+}
+export function exportIssuesFromFolder(folderId) {
+  const projectId = AppState.currentMenuType.id;
+  return axios.get(`/zuul/test/v1/projects/${projectId}/case/download/excel/folder?folderId=${folderId}`, { responseType: 'arraybuffer', timeout: 3000000 });
+}
+export function downloadTemplate() {
+  const projectId = AppState.currentMenuType.id;
+  return axios.get(`/zuul/test/v1/projects/${projectId}/case/download/excel/template`, { responseType: 'arraybuffer' });
+}

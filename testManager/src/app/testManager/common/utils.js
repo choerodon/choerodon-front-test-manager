@@ -235,31 +235,31 @@ export function issueLink(issueId, typeCode) {
   const menu = AppState.currentMenuType;
   const { type, id: projectId, name } = menu;
   if (typeCode === 'issue_test') {
-    return `/testManager/IssueManage?type=${type}&id=${projectId}&name=${name}&paramIssueId=${issueId}`;
+    return encodeURI(`/testManager/IssueManage?type=${type}&id=${projectId}&name=${name}&paramIssueId=${issueId}`);
   } else {
-    return `/agile/issue?type=${type}&id=${projectId}&name=${name}&paramIssueId=${issueId}`;
+    return encodeURI(`/agile/issue?type=${type}&id=${projectId}&name=${name}&paramIssueId=${issueId}`);
   }
 }
 export function createIssueLink() {
   const menu = AppState.currentMenuType;
   const { type, id: projectId, name } = menu;
-  return `/agile/issue?type=${type}&id=${projectId}&name=${name}`;
+  return encodeURI(`/agile/issue?type=${type}&id=${projectId}&name=${name}`);
 }
 export function cycleLink(cycleId) {
   const menu = AppState.currentMenuType;
   const { type, id: projectId, name } = menu;
  
-  return `/testManager/TestExecute?type=${type}&id=${projectId}&name=${name}&cycleId=${cycleId}`;
+  return encodeURI(`/testManager/TestExecute?type=${type}&id=${projectId}&name=${name}&cycleId=${cycleId}`);
 }
 export function executeDetailLink(executeId) {
   const menu = AppState.currentMenuType;
   const { type, id: projectId, name } = menu;
  
-  return `/testManager/TestExecute/execute/${executeId}?type=${type}&id=${projectId}&name=${name}`;
+  return encodeURI(`/testManager/TestExecute/execute/${executeId}?type=${type}&id=${projectId}&name=${name}`);
 }
 export function executeDetailShowLink(executeId) {
   const menu = AppState.currentMenuType;
   const { type, id: projectId, name } = menu;
  
-  return `/testManager/TestPlan/executeShow/${executeId}?type=${type}&id=${projectId}&name=${name}`;
+  return encodeURI(`/testManager/TestPlan/executeShow/${executeId}?type=${type}&id=${projectId}&name=${name}`);
 }

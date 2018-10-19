@@ -1,21 +1,42 @@
 .c7ntest-text-dot {
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
-.c7ntest-pointer{
+
+.c7ntest-center {
+  display: flex;
+  align-items: center;
+}
+
+.c7ntest-pointer {
   cursor: pointer;
 }
+
 .c7ntest-flex-space {
-    flex: 1;
-    visibility: hidden;
+  flex: 1;
+  visibility: hidden;
 }
 
 .page-head-title {
-    width: auto;
-    margin-right: 50px;
+  width: auto;
+  margin-right: 50px;
 }
 
 .page-content-header .description>span {
-    color: black;
+  color: black;
+}
+
+.c7ntest-icon-in-table {
+  cursor: pointer;
+  border-radius: 50%;
+  display: inline-block;
+  width: 25px;
+  height: 25px;
+  line-height: 25px;
+  text-align: center;
+}
+
+.c7ntest-icon-in-table:hover {
+  background: rgba(0, 0, 0, 0.08);
 }

@@ -6,8 +6,8 @@ import './statusService/statusApi';
 import './cycleService/cycleApi';
 import './summaryService/summaryApi';
 import './issueService/issueApi';
-import './fileService/FileApi';
-import './reportService/reportApi';
+// import './fileService/FileApi';
+// import './reportService/reportApi';
 chai.should();
 chai.use(chaiHttp);
 global.before(function () {

@@ -292,7 +292,7 @@ class TestExecuteHome extends Component {
       case 'EXPORT_CYCLE': {
         exportCycle(item.cycleId).then((data) => {
           const blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-          const fileName = `${AppState.currentMenuType.name}.xls`;
+          const fileName = `${AppState.currentMenuType.name}.xlsx`;
           FileSaver.saveAs(blob, fileName);
         });
         break;

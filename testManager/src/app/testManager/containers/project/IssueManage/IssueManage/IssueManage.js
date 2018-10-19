@@ -15,13 +15,16 @@ import './IssueManage.scss';
 import IssueStore from '../../../../store/project/IssueStore';
 import IssueTreeStore from '../../../../store/project/treeStore/IssueTreeStore';
 import pic from '../../../../assets/问题管理－空.png';
-import { loadIssue, createIssue } from '../../../../api/IssueManageApi';
+import {
+  loadIssue, createIssue, exportIssues, downloadTemplate, 
+} from '../../../../api/IssueManageApi';
+import { importIssue } from '../../../../api/FileApi';
 import EmptyBlock from '../../../../components/TestComponent/EmptyBlock';
 import CreateIssue from '../../../../components/TestComponent/CreateIssue';
 import EditIssue from '../../../../components/TestComponent/EditIssue';
 import IssueTree from '../../../../components/TestComponent/IssueTree';
 import IssueTable from '../../../../components/TestComponent/IssueTable';
-
+import { Upload } from '../../../../components/CommonComponent';
 
 const { AppState } = stores;
 const { Option } = Select;
@@ -243,14 +246,31 @@ class Test extends Component {
   }
 
   exportExcel() {
-    const projectId = AppState.currentMenuType.id;
-    const searchParam = IssueStore.getFilter;
-    axios.post(`/zuul/agile/v1/projects/${projectId}/issues/export`, searchParam, { responseType: 'arraybuffer' })
-      .then((data) => {
-        const blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-        const fileName = `${AppState.currentMenuType.name}.xls`;
-        FileSaver.saveAs(blob, fileName);
-      });
+    exportIssues(null, null).then((excel) => {
+      const blob = new Blob([excel], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      const fileName = `${AppState.currentMenuType.name}.xlsx`;
+      FileSaver.saveAs(blob, fileName);
+    });
+  }
+
+  downloadTemplate() {
+    downloadTemplate().then((excel) => {
+      const blob = new Blob([excel], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      const fileName = `${'模板'}.xlsx`;
+      FileSaver.saveAs(blob, fileName);
+    });
+  }
+
+  importIssue = (files) => {
+    const formData = new FormData();
+    [].forEach.call(files, (file) => {
+      formData.append('file', file);
+    });
+    importIssue(formData).then(() => {
+
+    }).catch(() => {
+
+    });
   }
 
 
@@ -396,10 +416,21 @@ class Test extends Component {
             <Icon type="playlist_add icon" />
             <FormattedMessage id="issue_createTestIssue" />
           </Button>
-          {/* <Button className="leftBtn" onClick={() => this.exportExcel()}>
+          <Button className="leftBtn" onClick={() => this.exportExcel()}>
             <Icon type="file_upload icon" />
             <FormattedMessage id="export" />
-          </Button> */}
+          </Button>
+          <Button className="leftBtn" onClick={() => this.downloadTemplate()}>
+            <Icon type="file_upload icon" />
+            下载模板
+          </Button>
+          <Upload
+            handleUpload={this.importIssue}
+          >
+            <Icon type="file_upload" />
+            {' '}
+            <FormattedMessage id="issue_importIssue" />
+          </Upload>
           <Button
             onClick={() => {
               if (this.EditIssue) {
@@ -685,7 +716,7 @@ class Test extends Component {
 
               />
             ) : null
-          }      
+          }
         </Content>
       </Page>
     );
