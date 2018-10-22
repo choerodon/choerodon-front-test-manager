@@ -143,7 +143,7 @@ class IssueTreeTitle extends Component {
     this.setState({
       enter: false,
     });
-    console.log(e.ctrlKey, cycleId, IssueStore.getDraggingTableItems);
+    // console.log(e.ctrlKey, cycleId, IssueStore.getDraggingTableItems);
     const isCopy = e.ctrlKey || e.metaKey;
     const issueLinks = IssueStore.getDraggingTableItems.map(issue => ({
       issueId: issue.issueId,
@@ -188,6 +188,7 @@ class IssueTreeTitle extends Component {
     const {
       type: Menutype, id: projectId, organizationId: orgId, name,
     } = menu;   
+    const selectedKeys = IssueTreeStore.getSelectedKeys;
     const getMenu = () => {
       let items = [];
       // if (type === 'temp') {
@@ -289,8 +290,8 @@ class IssueTreeTitle extends Component {
         <Droppable droppableId={data.versionId}>
           {(provided, snapshot) => (
             <div
-              ref={provided.innerRef}
-              style={{ border: snapshot.isDraggingOver && JSON.parse(snapshot.draggingOverWith).versionId !== data.versionId && '2px dashed green', height: 30 }}
+              ref={provided.innerRef}// && JSON.parse(snapshot.draggingOverWith).versionId !== data.versionId 
+              style={{ border: snapshot.isDraggingOver && '2px dashed green', height: 30 }}
             >
               {treeTitle}
               {provided.placeholder}
@@ -344,7 +345,23 @@ class IssueTreeTitle extends Component {
                       >
                         {treeTitle}
                         {snapshotinner.isDragging
-                        && (
+                        && ([
+                          <div style={{
+                            position: 'absolute',
+                            width: 20,
+                            height: 20,
+                            lineHeight: '20px',
+                            background: 'red',
+                            textAlign: 'center',
+                            color: 'white',
+                            borderRadius: '50%',
+                            top: 0,
+                            left: -20,
+                          }}
+                          >
+                            {/* 直接拖动会显示0，所以这里||1 */}
+                            {selectedKeys.length || 1}
+                          </div>,
                           <div className="IssueTree-drag-prompt">
                             <div>复制或移动文件夹</div>
                             <div>按下ctrl/command复制</div>
@@ -356,8 +373,8 @@ class IssueTreeTitle extends Component {
                                 <span style={{ fontWeight: 500 }}>移动</span>
                               </div>
                             </div>
-                          </div>
-                        )
+                          </div>,
+                        ])
                       }
                       </div>
                     </div>

@@ -36,6 +36,20 @@ class BaseTreeProto {
     return toJS(this.currentCycle);
   }
 
+  getItemByKey(key) {
+    const arr = key.split('-');
+    let temp = this.treeData;
+    arr.forEach((index, i) => {
+      // window.console.log(temp);
+      if (i === 0) {
+        temp = temp[index];
+      } else {
+        temp = temp.children[index];
+      }
+    });
+    return toJS(temp);
+  }
+
   @action setExpandedKeys(expandedKeys) {
     // window.console.log(expandedKeys);
     this.expandedKeys = expandedKeys;
