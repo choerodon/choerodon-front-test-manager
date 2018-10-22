@@ -1,29 +1,24 @@
-import axios from 'axios';
 import {
-  observable, action, computed, toJS, 
+  observable, action, computed, toJS,
 } from 'mobx';
-import { store, stores } from 'choerodon-front-boot';
-import { getCycles } from '../../../api/cycleApi';
 
-const { AppState } = stores;
-
-@store('CycleStore')
-class CycleStore {
+class BaseTreeProto {
   @observable treeData = [
-    { title: '所有版本', key: '0' },
+    {
+      title: '所有版本',
+      key: '0',
+      children: [],
+    },
   ]
 
-  @observable expandedKeys=['0'];
+  @observable expandedKeys = ['0'];
 
-  @observable selectedKeys=[];
+  @observable selectedKeys = [];
 
   @observable addingParent = null;
 
-  @observable currentCycle={};
+  @observable currentCycle = {};
 
-  axiosGetColorLookupValue() {
-    return axios.get(`/agile/v1/project/${AppState.currentMenuType.id}/lookup_values/epic_color`);
-  }
 
   @computed get getTreeData() {
     return toJS(this.treeData);
@@ -46,7 +41,7 @@ class CycleStore {
     this.expandedKeys = expandedKeys;
   }
 
-  @action setSelectedKeys(selectedKeys) { 
+  @action setSelectedKeys(selectedKeys) {
     this.selectedKeys = selectedKeys;
   }
 
@@ -81,5 +76,4 @@ class CycleStore {
   }
 }
 
-const cycleStore = new CycleStore();
-export default cycleStore;
+export default BaseTreeProto;

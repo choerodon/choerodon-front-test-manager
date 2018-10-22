@@ -1,17 +1,17 @@
 import {
   observable, action, computed, toJS,
 } from 'mobx';
-import { store, stores, axios } from 'choerodon-front-boot';
+import { stores, axios } from 'choerodon-front-boot';
 import {
-  loadIssues, loadVersions, getIssuesByFolder, getIssuesByIds, getSingleIssues,
+  loadVersions, getIssuesByFolder, getIssuesByIds, getSingleIssues,
   getIssuesByVersion, getAllIssues,
 } from '../../../api/IssueManageApi';
-import IssueTreeStore from '../treeStore/IssueTreeStore';
+import IssueTreeStore from './IssueTreeStore';
 
 const { AppState } = stores;
 
-@store('SprintCommonStore')
-class SprintCommonStore {
+
+class IssueStore {
   @observable issues = [];
 
   @observable issueIds = [];
@@ -317,5 +317,4 @@ class SprintCommonStore {
     return toJS(this.draggingTableItems);
   }
 }
-const sprintCommonStore = new SprintCommonStore();
-export default sprintCommonStore;
+export default new IssueStore();

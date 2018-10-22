@@ -10,7 +10,7 @@ import {
 } from '../../CommonComponent';
 import { delta2Text } from '../../../common/utils';
 import './StepTable.scss';
-import ExecuteDetailStore from '../../../store/project/cycle/ExecuteDetailStore';
+import ExecuteDetailStore from '../../../store/project/TestExecute/ExecuteDetailStore';
 
 const { TextArea } = Input;
 const Option = Select.Option;

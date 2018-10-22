@@ -8,11 +8,11 @@ import {
 import { FormattedMessage } from 'react-intl';
 import { Draggable, Droppable } from 'react-beautiful-dnd';
 import FileSaver from 'file-saver';
-import { IssueTreeStore } from '../../../store/project/treeStore';
+import IssueTreeStore from '../../../store/project/IssueManage/IssueTreeStore';
 import {
   editFolder, deleteFolder, moveIssues, copyIssues, exportIssuesFromFolder, exportIssuesFromVersion,
 } from '../../../api/IssueManageApi';
-import IssueStore from '../../../store/project/IssueStore';
+import IssueStore from '../../../store/project/IssueManage/IssueStore';
 import './IssueTreeTitle.scss';
 
 const { AppState } = stores;

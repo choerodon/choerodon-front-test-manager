@@ -71,8 +71,8 @@ class PlanTree extends Component {
         break;
       }
       case 'CLONE_CYCLE': {
-        // const parentKey = this.getParentKey(item.key, CycleStore.getTreeData);
-        // CycleStore.addItemByParentKey(parentKey, 
+        // const parentKey = this.getParentKey(item.key, TestExecuteStore.getTreeData);
+        // TestExecuteStore.addItemByParentKey(parentKey, 
         // { ...item, ...{ key: `${parentKey}-CLONE_CYCLE`, type: 'CLONE_CYCLE' } });
         this.setState({
           currentCloneCycle: item,

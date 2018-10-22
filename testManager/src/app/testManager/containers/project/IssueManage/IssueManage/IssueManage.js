@@ -12,8 +12,8 @@ import { FormattedMessage } from 'react-intl';
 import FileSaver from 'file-saver';
 import '../../../../assets/main.scss';
 import './IssueManage.scss';
-import IssueStore from '../../../../store/project/IssueStore';
-import IssueTreeStore from '../../../../store/project/treeStore/IssueTreeStore';
+import IssueStore from '../../../../store/project/IssueManage/IssueStore';
+import IssueTreeStore from '../../../../store/project/IssueManage/IssueTreeStore';
 import pic from '../../../../assets/问题管理－空.png';
 import {
   loadIssue, createIssue, exportIssues, downloadTemplate, 

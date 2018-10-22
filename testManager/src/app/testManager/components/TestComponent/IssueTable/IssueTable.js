@@ -5,7 +5,7 @@ import { observer } from 'mobx-react';
 import { Spin } from 'choerodon-ui';
 import { Draggable, Droppable, DragDropContext } from 'react-beautiful-dnd';
 
-import IssueStore from '../../../store/project/IssueStore';
+import IssueStore from '../../../store/project/IssueManage/IssueStore';
 
 import {
   renderType, renderIssueNum, renderSummary, renderPriority, renderVersions, renderFolder,

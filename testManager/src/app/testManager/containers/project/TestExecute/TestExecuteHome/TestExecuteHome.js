@@ -29,7 +29,7 @@ import {
 import {
   delta2Html, delta2Text, issueLink, getParams, executeDetailLink,
 } from '../../../../common/utils';
-import CycleStore from '../../../../store/project/cycle/CycleStore';
+import TestExecuteStore from '../../../../store/project/TestExecute/TestExecuteStore';
 import noRight from '../../../../assets/noright.svg';
 
 const { AppState } = stores;
@@ -72,7 +72,7 @@ class TestExecuteHome extends Component {
   }
 
   onExpand = (expandedKeys) => {
-    CycleStore.setExpandedKeys(expandedKeys);
+    TestExecuteStore.setExpandedKeys(expandedKeys);
     this.setState({
       autoExpandParent: false,
     });
@@ -85,12 +85,12 @@ class TestExecuteHome extends Component {
   } = {}, flag) => {
     // window.console.log(selectedNodes, node, event);
     if (selectedKeys) {
-      CycleStore.setSelectedKeys(selectedKeys);
+      TestExecuteStore.setSelectedKeys(selectedKeys);
     }
     const { executePagination, filters } = this.state;
-    const data = node ? node.props.data : CycleStore.getCurrentCycle;
+    const data = node ? node.props.data : TestExecuteStore.getCurrentCycle;
     if (data.cycleId) {
-      CycleStore.setCurrentCycle(data);
+      TestExecuteStore.setCurrentCycle(data);
       // window.console.log(data);
       if (data.type === 'folder' || data.type === 'cycle') {
         if (!flag) {
@@ -135,11 +135,11 @@ class TestExecuteHome extends Component {
       const { key, title } = node;
       // 找出url上的cycleId
       const { cycleId } = getParams(window.location.href);
-      const currentCycle = CycleStore.getCurrentCycle;
+      const currentCycle = TestExecuteStore.getCurrentCycle;
       if (!currentCycle.cycleId && Number(cycleId) === node.cycleId) {
         this.setExpandDefault(node);
       } else if (currentCycle.cycleId === node.cycleId) {
-        CycleStore.setCurrentCycle(node);
+        TestExecuteStore.setCurrentCycle(node);
       }
       dataList.push({ key, title });
       if (node.children) {
@@ -186,7 +186,7 @@ class TestExecuteHome extends Component {
       this.setState({ statusList });
     });
     getCycles(assignedTo).then((data) => {
-      CycleStore.setTreeData([{ title: '所有版本', key: '0', children: data.versions }]);
+      TestExecuteStore.setTreeData([{ title: '所有版本', key: '0', children: data.versions }]);
       this.setState({
         // treeData: [
         //   { title: '所有版本', key: '0', children: data.versions },
@@ -201,8 +201,8 @@ class TestExecuteHome extends Component {
     });
 
     // 如果选中了项，就刷新table数据
-    const currentCycle = CycleStore.getCurrentCycle;
-    const selectedKeys = CycleStore.getSelectedKeys;
+    const currentCycle = TestExecuteStore.getCurrentCycle;
+    const selectedKeys = TestExecuteStore.getSelectedKeys;
     if (currentCycle.cycleId) {
       this.loadCycle(selectedKeys, { node: { props: { data: currentCycle } } }, true);
     }
@@ -213,11 +213,11 @@ class TestExecuteHome extends Component {
     if (value !== '') {
       const expandedKeys = dataList.map((item) => {
         if (item.title.indexOf(value) > -1) {
-          return this.getParentKey(item.key, CycleStore.getTreeData);
+          return this.getParentKey(item.key, TestExecuteStore.getTreeData);
         }
         return null;
       }).filter((item, i, self) => item && self.indexOf(item) === i);
-      CycleStore.setExpandedKeys(expandedKeys);
+      TestExecuteStore.setExpandedKeys(expandedKeys);
     }
     this.setState({
       searchValue: value,
@@ -228,9 +228,9 @@ class TestExecuteHome extends Component {
   // 默认展开并加载右侧数据
   setExpandDefault = (defaultExpandKeyItem) => {
     if (defaultExpandKeyItem) {
-      CycleStore.setExpandedKeys([defaultExpandKeyItem.key]);
-      CycleStore.setSelectedKeys([defaultExpandKeyItem.key]);
-      CycleStore.setCurrentCycle(defaultExpandKeyItem);
+      TestExecuteStore.setExpandedKeys([defaultExpandKeyItem.key]);
+      TestExecuteStore.setSelectedKeys([defaultExpandKeyItem.key]);
+      TestExecuteStore.setCurrentCycle(defaultExpandKeyItem);
       this.setState({
         autoExpandParent: true,
         rightLoading: true,
@@ -258,13 +258,13 @@ class TestExecuteHome extends Component {
   callback = (item, code) => {
     switch (code) {
       case 'CLONE_FOLDER': {
-        const parentKey = this.getParentKey(item.key, CycleStore.getTreeData);
-        CycleStore.addItemByParentKey(parentKey, { ...item, ...{ key: `${parentKey}-CLONE_FOLDER`, type: 'CLONE_FOLDER' } });
+        const parentKey = this.getParentKey(item.key, TestExecuteStore.getTreeData);
+        TestExecuteStore.addItemByParentKey(parentKey, { ...item, ...{ key: `${parentKey}-CLONE_FOLDER`, type: 'CLONE_FOLDER' } });
         break;
       }
       case 'CLONE_CYCLE': {
-        // const parentKey = this.getParentKey(item.key, CycleStore.getTreeData);
-        // CycleStore.addItemByParentKey(parentKey, 
+        // const parentKey = this.getParentKey(item.key, TestExecuteStore.getTreeData);
+        // TestExecuteStore.addItemByParentKey(parentKey, 
         // { ...item, ...{ key: `${parentKey}-CLONE_CYCLE`, type: 'CLONE_CYCLE' } });
         this.setState({
           currentCloneCycle: item.cycleId,
@@ -273,13 +273,13 @@ class TestExecuteHome extends Component {
         break;
       }
       case 'ADD_FOLDER': {
-        CycleStore.addItemByParentKey(item.key, { ...item, ...{ title: Choerodon.getMessage('新文件夹', 'New folder'), key: `${item.key}-ADD_FOLDER`, type: 'ADD_FOLDER' } });
+        TestExecuteStore.addItemByParentKey(item.key, { ...item, ...{ title: Choerodon.getMessage('新文件夹', 'New folder'), key: `${item.key}-ADD_FOLDER`, type: 'ADD_FOLDER' } });
         // 自动展开当前项
-        const expandedKeys = CycleStore.getExpandedKeys;
+        const expandedKeys = TestExecuteStore.getExpandedKeys;
         if (expandedKeys.indexOf(item.key) === -1) {
           expandedKeys.push(item.key);
         }
-        CycleStore.setExpandedKeys(expandedKeys);
+        TestExecuteStore.setExpandedKeys(expandedKeys);
         break;
       }
       case 'EDIT_CYCLE': {
@@ -307,7 +307,7 @@ class TestExecuteHome extends Component {
     // e.target.focus();
     if (value === item.title) {
       Choerodon.prompt('请更改名字');
-      CycleStore.removeAdding();
+      TestExecuteStore.removeAdding();
     } else {
       this.setState({
         loading: true,
@@ -318,7 +318,7 @@ class TestExecuteHome extends Component {
         });
         if (data.failed) {
           Choerodon.prompt('名字重复');
-          CycleStore.removeAdding();
+          TestExecuteStore.removeAdding();
         } else {
           this.refresh();
         }
@@ -327,7 +327,7 @@ class TestExecuteHome extends Component {
         this.setState({
           loading: false,
         });
-        CycleStore.removeAdding();
+        TestExecuteStore.removeAdding();
       });
     }
   }
@@ -350,7 +350,7 @@ class TestExecuteHome extends Component {
         this.setState({
           loading: false,
         });
-        CycleStore.removeAdding();
+        TestExecuteStore.removeAdding();
       } else {
         this.setState({
           loading: false,
@@ -362,7 +362,7 @@ class TestExecuteHome extends Component {
       this.setState({
         loading: false,
       });
-      CycleStore.removeAdding();
+      TestExecuteStore.removeAdding();
     });
   }
 
@@ -374,7 +374,7 @@ class TestExecuteHome extends Component {
         executePagination: pagination,
         filters,
       });
-      const currentCycle = CycleStore.getCurrentCycle;
+      const currentCycle = TestExecuteStore.getCurrentCycle;
       getCycleById({
         size: pagination.pageSize,
         page: pagination.current - 1,
@@ -404,7 +404,7 @@ class TestExecuteHome extends Component {
     } = item;
     // debugger;
     const { searchValue } = this.state;
-    const expandedKeys = CycleStore.getExpandedKeys;
+    const expandedKeys = TestExecuteStore.getExpandedKeys;
     const index = item.title.indexOf(searchValue);
     const beforeStr = item.title.substr(0, index);
     const afterStr = item.title.substr(index + searchValue.length);
@@ -535,10 +535,10 @@ class TestExecuteHome extends Component {
       executePagination,
       statusList,
     } = this.state;
-    const treeData = CycleStore.getTreeData;
-    const expandedKeys = CycleStore.getExpandedKeys;
-    const selectedKeys = CycleStore.getSelectedKeys;
-    const currentCycle = CycleStore.getCurrentCycle;
+    const treeData = TestExecuteStore.getTreeData;
+    const expandedKeys = TestExecuteStore.getExpandedKeys;
+    const selectedKeys = TestExecuteStore.getSelectedKeys;
+    const currentCycle = TestExecuteStore.getCurrentCycle;
     const { cycleId, title, type } = currentCycle;
     const prefix = <Icon type="filter_list" />;
     const columns = [{

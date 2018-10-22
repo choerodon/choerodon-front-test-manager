@@ -6,7 +6,7 @@ import {
 import { FormattedMessage } from 'react-intl';
 import './TreeTitle.scss';
 import { editFolder, deleteCycleOrFolder } from '../../../api/cycleApi';
-import CycleStore from '../../../store/project/cycle/CycleStore';
+import TestExecuteStore from '../../../store/project/TestExecute/TestExecuteStore';
 
 class TreeTitle extends Component {
   state = {
@@ -51,7 +51,7 @@ class TreeTitle extends Component {
           if (res.failed) {
             Choerodon.prompt('删除失败');
           } else {
-            CycleStore.setCurrentCycle({});
+            TestExecuteStore.setCurrentCycle({});
             refresh();
           }
         }).catch((err) => {

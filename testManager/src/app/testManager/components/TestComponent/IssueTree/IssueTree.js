@@ -7,12 +7,12 @@ import {
 import _ from 'lodash';
 import {  DragDropContext } from 'react-beautiful-dnd';
 import './IssueTree.scss';
-import { IssueTreeStore } from '../../../store/project/treeStore';
+import  IssueTreeStore  from '../../../store/project/IssueManage/IssueTreeStore';
 import {
   getIssueTree, addFolder,  moveFolder, copyFolder,
 } from '../../../api/IssueManageApi';
 import IssueTreeTitle from './IssueTreeTitle';
-import IssueStore from '../../../store/project/IssueStore';
+import IssueStore from '../../../store/project/IssueManage/IssueStore';
 
 const { TreeNode } = Tree;
 const dataList = [];
