@@ -22,7 +22,7 @@ import { getStatusList } from '../../../../api/TestStatusApi';
 import { editCycle } from '../../../../api/ExecuteDetailApi';
 import {
   TreeTitle, CreateCycle, EditCycle, ShowCycleData, CloneCycle,
-} from '../../../../components/CycleComponent';
+} from '../../../../components/TestExecuteComponent';
 import {
   RichTextShow, SelectFocusLoad, RadioButton, StatusTags,
 } from '../../../../components/CommonComponent';

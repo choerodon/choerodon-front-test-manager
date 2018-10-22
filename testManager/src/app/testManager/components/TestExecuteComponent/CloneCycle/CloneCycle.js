@@ -15,9 +15,10 @@ class CloneCycle extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { resetFields } = this.props.form;
+    const { resetFields, setFieldsValue } = this.props.form;
     if (this.props.visible === false && nextProps.visible === true) {
       resetFields();
+      setFieldsValue({ cycleName: nextProps.currentCloneCycle.title });
     }
   }
   
@@ -41,7 +42,7 @@ class CloneCycle extends Component {
         this.setState({
           loading: true,
         });
-        clone(this.props.currentCloneCycle, { cycleName, versionId }, 'CLONE_CYCLE').then((data) => {
+        clone(this.props.currentCloneCycle.cycleId, { cycleName, versionId }, 'CLONE_CYCLE').then((data) => {
           this.setState({
             loading: false,
           });

@@ -1,11 +1,7 @@
-import axios from 'axios';
 import {
   observable, action, computed, toJS,
 } from 'mobx';
-import { store, stores } from 'choerodon-front-boot';
-import { getCycles } from '../../../api/cycleApi';
-
-const { AppState } = stores;
+import { store } from 'choerodon-front-boot';
 
 @store('IssueTreeStore')
 class IssueTreeStore {

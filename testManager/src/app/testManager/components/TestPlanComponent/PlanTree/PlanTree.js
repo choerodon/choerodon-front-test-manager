@@ -6,7 +6,7 @@ import _ from 'lodash';
 import './PlanTree.scss';
 import FileSaver from 'file-saver';
 import TestPlanStore from '../../../store/project/TestPlan/TestPlanStore';
-import { CloneCycle } from '../../CycleComponent';
+import CloneCycle from '../CloneCycle';
 import {  
   clone, addFolder, exportCycle,
 } from '../../../api/cycleApi';
@@ -75,7 +75,7 @@ class PlanTree extends Component {
         // CycleStore.addItemByParentKey(parentKey, 
         // { ...item, ...{ key: `${parentKey}-CLONE_CYCLE`, type: 'CLONE_CYCLE' } });
         this.setState({
-          currentCloneCycle: item.cycleId,
+          currentCloneCycle: item,
           CloneCycleVisible: true,
         });
         break;
