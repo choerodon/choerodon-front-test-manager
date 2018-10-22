@@ -8,7 +8,7 @@ import { DragDropContext } from 'react-beautiful-dnd';
 import './IssueTree.scss';
 import IssueTreeStore from '../../../store/project/IssueManage/IssueTreeStore';
 import {
-  getIssueTree, addFolder, moveFolder, copyFolder,
+  getIssueTree, addFolder, moveFolders, copyFolders,
 } from '../../../api/IssueManageApi';
 import IssueTreeTitle from './IssueTreeTitle';
 import IssueStore from '../../../store/project/IssueManage/IssueStore';
@@ -293,43 +293,44 @@ class IssueTree extends Component {
     if (filteredItems.length > 0) {
       const data = filteredItems.map(item => ({ versionId: destination.droppableId, folderId: item.cycleId, objectVersionNumber: item.objectVersionNumber }));
       console.log(data);
+      this.setState({
+        loading: true,
+      });
+      if (IssueTreeStore.isCopy) {
+        copyFolders(data, destination.droppableId).then((res) => {
+          if (res.failed) {
+            this.setState({
+              loading: false,
+            });
+            Choerodon.prompt('存在同名文件夹');
+            return;
+          }
+          this.getTree();
+        }).catch((err) => {
+          this.setState({
+            loading: false,
+          });
+          Choerodon.prompt('网络错误');
+        });
+      } else {
+        moveFolders(data).then((res) => {
+          if (res.failed) {
+            this.setState({
+              loading: false,
+            });
+            Choerodon.prompt('存在同名文件夹');
+            return;
+          }
+          this.getTree();
+        }).catch((err) => {
+          this.setState({
+            loading: false,
+          });
+          Choerodon.prompt('网络错误');
+        });
+      }
     }
-    // this.setState({
-    //   loading: true,
-    // });
-    // if (IssueTreeStore.isCopy) {
-    //   copyFolder(data).then((res) => {
-    //     if (res.failed) {
-    //       this.setState({
-    //         loading: false,
-    //       });
-    //       Choerodon.prompt('存在同名文件夹');
-    //       return;
-    //     }
-    //     this.getTree();
-    //   }).catch((err) => {
-    //     this.setState({
-    //       loading: false,
-    //     });
-    //     Choerodon.prompt('网络错误');
-    //   });
-    // } else {
-    //   moveFolder(data).then((res) => {
-    //     if (res.failed) {
-    //       this.setState({
-    //         loading: false,
-    //       });
-    //       Choerodon.prompt('存在同名文件夹');
-    //       return;
-    //     }
-    //     this.getTree();
-    //   }).catch((err) => {
-    //     this.setState({
-    //       loading: false,
-    //     });
-    //     Choerodon.prompt('网络错误');
-    //   });
-    // }
+    
 
     // console.log(result);
   }

@@ -195,14 +195,14 @@ export function copyIssues(versionId, folderId, issueLinks) {
   const projectId = AppState.currentMenuType.id;
   return axios.put(`/test/v1/projects/${projectId}/issueFolderRel/copy?versionId=${versionId}&folderId=${folderId}`, issueLinks);
 }
-export function moveFolder(data) {
+export function moveFolders(data) {
   const projectId = AppState.currentMenuType.id;
   return axios.put(`/test/v1/projects/${projectId}/issueFolder/move`, data);
 }
-export function copyFolder(data) {
+export function copyFolders(data, versionId) {
   const projectId = AppState.currentMenuType.id;
-  const { folderId, versionId } = data;
-  return axios.put(`/test/v1/projects/${projectId}/issueFolder/copy?folderId=${folderId}&versionId=${versionId}`);
+  const folderIds = data.map(item => item.folderId);
+  return axios.put(`/test/v1/projects/${projectId}/issueFolder/copy?versionId=${versionId}`, folderIds);
 }
 
 export function getFoldersByVersion(versionId) {
