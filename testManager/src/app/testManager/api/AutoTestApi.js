@@ -1,5 +1,6 @@
 import { stores, axios } from 'choerodon-front-boot';
 import './AutoTestApiMock';
+import { handleProptError } from '../common/utils';
 
 const { AppState } = stores;
 
@@ -17,4 +18,8 @@ export function getTestHistoryByApp() {
 }
 export function getYaml() {
   return axios.get('/getYaml');
+}
+export function loadPodParam(projectId, id, type) {
+  return axios.get(`devops/v1/projects/${projectId}/app_pod/${5}/containers/logs`)
+    .then(datas => handleProptError(datas));
 }

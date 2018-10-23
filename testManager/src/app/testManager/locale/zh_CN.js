@@ -32,6 +32,7 @@ const zhCN = {
   create: '创建',
   cancel: '取消',
   ok: '确定',
+  close: '关闭',
   delete: '删除',
   clone: '克隆',
   copy: '复制',

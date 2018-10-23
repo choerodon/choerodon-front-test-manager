@@ -7,13 +7,13 @@ import {
 } from 'choerodon-ui';
 import TimeAgo from 'timeago-react';
 import { FormattedMessage } from 'react-intl';
+import _ from 'lodash';
 import CodeMirror from 'react-codemirror';
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/base16-dark.css';
 import { User } from '../../../../components/CommonComponent';
-import { getAppList, getTestHistoryByApp } from '../../../../api/AutoTestApi';
+import { getAppList, getTestHistoryByApp, loadPodParam } from '../../../../api/AutoTestApi';
 import { CiStatus, TestResult } from './AutoTestTags';
-import ContainerStore from '../../../../store/project/AutoTest/ContainerStore';
 import './AutoTestList.scss';
 
 const Sidebar = Modal.Sidebar;
@@ -21,7 +21,7 @@ const { Option } = Select;
 const { AppState } = stores;
 class AutoTestList extends Component {
   state = {
-    showSide: true,
+    showSide: false,
     following: true,
     fullscreen: false,
     containerArr: [],
@@ -126,7 +126,7 @@ class AutoTestList extends Component {
    */
   showLog = (record) => {
     const projectId = AppState.currentMenuType.id;
-    ContainerStore.loadPodParam(projectId, record.id)
+    loadPodParam(projectId, record.id)
       .then((data) => {
         if (data && data.length) {
           this.setState({
