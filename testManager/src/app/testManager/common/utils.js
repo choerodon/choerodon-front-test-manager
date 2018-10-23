@@ -263,3 +263,16 @@ export function executeDetailShowLink(executeId) {
  
   return encodeURI(`/testManager/TestPlan/executeShow/${executeId}?type=${type}&id=${projectId}&name=${name}`);
 }
+/**
+ * 处理数据请求错误
+ * @param data
+ * @returns {*}
+ */
+export function handleProptError(data) {
+  if (data && data.failed) {
+    Choerodon.prompt(data.message);
+    return false;
+  } else {
+    return data;
+  }
+}

@@ -378,6 +378,31 @@ const zhCN = {
   autotestlist_title: '测试记录',
   autotestlist_content_title: `项目“${projectName}”的测试记录`,
   autotestlist_content_description: '测试记录保存了自动化测试的所有记录',
+  // container
+  'container.title': '项目"{name}"的容器',
+  'container.description': '容器便于您查看和管理Kubernetes中应用实例生成的容器， 可以实时查看相关容器的地址、创建时间、状态，确定容器是否正常运行且通过健康检查，并且可以查看容器日志进行错误定位和状态监控。',
+  'container.link': `${docServer}/user-guide/deployment-pipeline/container/`,
+  'container.log.title': '查看容器"{name}"的日志',
+  'container.term.title': '在容器组"{name}"中运行命令',
+  'container.log.description': '您可在此查看该容器的日志进行错误定位和状态监控。',
+  'container.term.description': '您可在此选择容器组下的Pod运行命令进行相关信息实时查看。',
+  
+  // container
+  'container.header.title': '容器',
+  'container.status': '状态',
+  'container.name': '容器名称',
+  'container.app': '应用',
+  'container.ip': '容器地址',
+  'container.usable': '可用',
+  'container.disable': '不可用',
+  'container.createTime': '已创建',
+  'container.log': '容器日志',
+  'container.term': '运行命令',
+  'container.term.ex': '命令行',
+  'container.term.log': '日志',
+  'container.log.header.title': '查看容器日志',
+  'container.chooseEnv': '选择环境',
+
 };
 
 export default zhCN;
