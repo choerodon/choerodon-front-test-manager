@@ -17,8 +17,8 @@ const LoadingBarRequiredProps = {
 
 function LoadingBar({ display = false }) {
   const spinClass = classNames({
-    'spin-hidden': !display,
-    'spin-container': display,
+    'c7ntest-spin-hidden': !display,
+    'c7ntest-spin-container': display,
   });
   return (
     <div className={spinClass}>

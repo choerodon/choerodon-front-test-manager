@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-  Page, Header, Content, stores, 
+  Page, Header, Content, stores,
 } from 'choerodon-front-boot';
 import {
   Icon, Button, Table, Select, Spin, Tooltip, Modal,
@@ -168,7 +168,7 @@ class AutoTestList extends Component {
   // @action
   loadLog = (followingOK) => {
     const {
-      namespace, envId, logId, podName, containerName, following, 
+      namespace, envId, logId, podName, containerName, following,
     } = this.state;
     const authToken = document.cookie.split('=')[1];
     const logs = [];
@@ -260,9 +260,26 @@ class AutoTestList extends Component {
     }
   };
 
+  /**
+   * top log following
+   */
+  stopFollowing = () => {
+    const { ws } = this.state;
+    if (ws) {
+      ws.close();
+    }
+    if (this.timer) {
+      clearInterval(this.timer);
+      this.timer = null;
+    }
+    this.setState({
+      following: false,
+    });
+  };
+
   render() {
     const {
-      appList, selectLoading, currentApp, historyList, loading, showSide, following, 
+      appList, selectLoading, currentApp, historyList, loading, showSide, following,
       containerArr, containerName, fullscreen, podName,
     } = this.state;
     const appOptions = appList.map(app => <Option value={app.id}>{app.name}</Option>);
@@ -347,7 +364,7 @@ class AutoTestList extends Component {
           description={<FormattedMessage id="autotestlist_content_description" />}
         // link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management/test-report/report/"
         >
-          <Spin spinning={loading}>             
+          <Spin spinning={loading}>
             <Select
               label="选择应用"
               style={{ width: 512, marginBottom: 20 }}
@@ -373,15 +390,15 @@ class AutoTestList extends Component {
                   <div className="c7ntest-podLog-hei-wrap">
                     <div className="c7ntest-podShell-title">
                       <FormattedMessage id="container.term.log" />
-                      { }
+                      {}
                       <Select value={containerName} onChange={this.containerChange}>
                         {containerDom}
                       </Select>
                       <Button type="primary" funcType="flat" shape="circle" icon="fullscreen" onClick={this.setFullscreen} />
-                    </div>     
+                    </div>
                     {' '}
                     {following ? <div className={`c7ntest-podLog-action log-following ${fullscreen ? 'f-top' : ''}`} onClick={this.stopFollowing} role="none">Stop Following</div>
-                      : <div className={`c7ntest-podLog-action log-following ${fullscreen ? 'f-top' : ''}`} onClick={this.loadLog.bind(this, true)} role="none">Start Following</div>} 
+                      : <div className={`c7ntest-podLog-action log-following ${fullscreen ? 'f-top' : ''}`} onClick={this.loadLog.bind(this, true)} role="none">Start Following</div>}
                     <CodeMirror
                       ref={(editor) => { this.editorLog = editor; }}
                       value="Loading..."

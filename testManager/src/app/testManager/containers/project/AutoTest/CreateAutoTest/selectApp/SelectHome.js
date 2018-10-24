@@ -6,10 +6,9 @@ import {
   Button, Tabs, Icon, Modal, Input, Table, Pagination,
 } from 'choerodon-ui';
 import { stores, Content } from 'choerodon-front-boot';
-import Loadingbar from '../../../../../components/loadingBar';
+import { LoadingBar } from '../../../../../components/CommonComponent';
 import './SelectApp.scss';
 import SelectAppStore from '../../../../../store/project/AutoTest/SelectAppStore';
-import MouserOverWrapper from '../../../../../components/MouseOverWrapper';
 
 const { TabPane } = Tabs;
 const ButtonGroup = Button.Group;
@@ -352,7 +351,7 @@ class DeployAppHome extends Component {
                         ref={node => this.searchInput = node}
                       />
                     </div>
-                    {loading ? <Loadingbar display /> : (
+                    {loading ? <LoadingBar display /> : (
                       <React.Fragment>
                         <div>
                           {localDataSource.length >= 1 && localDataSource.map(card => (
@@ -364,13 +363,8 @@ class DeployAppHome extends Component {
                             >
                               {app && !isMarket && app.id === card.id && <span className="span-icon-check"><i className="icon icon-check" /></span> }
                               <div className="c7ntest-store-card-icon" />
-                              <div className="c7ntest-store-card-name">
-                                <MouserOverWrapper
-                                  text={card.name}
-                                  width={0.15}
-                                >
-                                  {card.name}
-                                </MouserOverWrapper>
+                              <div className="c7ntest-store-card-name">                               
+                                {card.name}                                
                               </div>
                               <div title={card.code} className="c7ntest-store-card-des-60">
                                 {card.code}
