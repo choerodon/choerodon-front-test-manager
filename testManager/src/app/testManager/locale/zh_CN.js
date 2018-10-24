@@ -333,6 +333,9 @@ const zhCN = {
   issue_tree_delete: '删除',
   issue_tree_copy: '复制',
   issue_tree_paste: '粘贴',
+  // 侧边上传导入
+  upload_side_content_title: `在项目“${projectName}”中导入用例`,
+  upload_side_content_description: '您可以在此将文件中的用例信息导入到平台中去。注：您必须使用上传模板，点击“下载”下载模板。',
   // dashboard
   dashboard_issue: '测试用例管理',
   dashboard_cycle: '测试循环',

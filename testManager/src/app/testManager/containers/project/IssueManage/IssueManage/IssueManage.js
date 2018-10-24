@@ -24,7 +24,7 @@ import CreateIssue from '../../../../components/TestComponent/CreateIssue';
 import EditIssue from '../../../../components/TestComponent/EditIssue';
 import IssueTree from '../../../../components/TestComponent/IssueTree';
 import IssueTable from '../../../../components/TestComponent/IssueTable';
-import { Upload } from '../../../../components/CommonComponent';
+import UploadSide from '../../../../components/TestComponent/UploadSide';
 
 const { AppState } = stores;
 const { Option } = Select;
@@ -125,21 +125,6 @@ class Test extends Component {
 
   handleIssueUpdate(issueId = this.state.selectedIssue.issueId) {
     loadIssue(issueId).then((res) => {
-      // const obj = {
-      //   assigneeId: res.assigneeId,
-      //   assigneeName: res.assigneeName,
-      //   imageUrl: res.imageUrl || '',
-      //   issueId: res.issueId,
-      //   issueNum: res.issueNum,
-      //   priorityCode: res.priorityCode,
-      //   priorityName: res.priorityName,
-      //   projectId: res.projectId,
-      //   statusCode: res.statusCode,
-      //   statusColor: res.statusColor,
-      //   statusName: res.statusName,
-      //   summary: res.summary,
-      //   typeCode: res.typeCode,
-      // };
       const originIssues = _.slice(IssueStore.issues);
       const index = _.findIndex(originIssues, { issueId: res.issueId });
       originIssues[index] = { ...originIssues[index], ...res };
@@ -273,6 +258,9 @@ class Test extends Component {
     });
   }
 
+  saveRef=name => (ref) => {
+    this[name] = ref;
+  }
 
   render() {
     const { expand } = this.state;
@@ -416,21 +404,18 @@ class Test extends Component {
             <Icon type="playlist_add icon" />
             <FormattedMessage id="issue_createTestIssue" />
           </Button>
-          <Button className="leftBtn" onClick={() => this.exportExcel()}>
+          <Button className="leftBtn" onClick={() => { this.exportExcel(); }}>
             <Icon type="file_upload icon" />
             <FormattedMessage id="export" />
           </Button>
           <Button className="leftBtn" onClick={() => this.downloadTemplate()}>
-            <Icon type="file_upload icon" />
+            <Icon type="get_app icon" />
             下载模板
           </Button>
-          <Upload
-            handleUpload={this.importIssue}
-          >
-            <Icon type="file_upload" />
-            {' '}
-            <FormattedMessage id="issue_importIssue" />
-          </Upload>
+          <Button className="leftBtn" onClick={() => this.UploadSide.open()}>
+            <Icon type="file_upload icon" />
+            上传
+          </Button>          
           <Button
             onClick={() => {
               if (this.EditIssue) {
@@ -664,15 +649,13 @@ class Test extends Component {
             </section>
 
           </div>
-
+          <UploadSide ref={this.saveRef('UploadSide')} />
           <div
             className="c7ntest-sidebar"
             style={{
               // width: this.state.expand ? '72%' : 0,
               // width: this.state.expand ? 440 : 0,              
               display: this.state.expand ? '' : 'none',
-              overflowY: 'hidden',
-              overflowX: 'hidden',
               width: treeShow ? 440 : '72%',
             }}
           >
