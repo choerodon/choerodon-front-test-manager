@@ -68,6 +68,8 @@ const zhCN = {
   next: '下一步',
   previous: '上一步',
   filter: '过滤表',
+  import: '导入',
+  upload: '上传',
   // 执行详情
   execute_detail: '执行详情',
   execute_pre: '上一个执行',
@@ -336,6 +338,9 @@ const zhCN = {
   // 侧边上传导入
   upload_side_content_title: `在项目“${projectName}”中导入用例`,
   upload_side_content_description: '您可以在此将文件中的用例信息导入到平台中去。注：您必须使用上传模板，点击“下载”下载模板。',
+  // 侧边导出
+  export_side_content_title: `在项目“${projectName}”中导出用例`,
+  export_side_content_description: '您可以在此将项目的用例信息导出到文件中去。',
   // dashboard
   dashboard_issue: '测试用例管理',
   dashboard_cycle: '测试循环',
