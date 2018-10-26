@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { Content } from 'choerodon-front-boot';
 import { Modal, Progress } from 'choerodon-ui';
+import Cookies from 'universal-cookie';
 import { importIssue } from '../../../api/FileApi';
 import './UploadSide.scss';
 
@@ -26,7 +27,8 @@ class UploadSide extends Component {
     this.setState({
       visible: true,
     });
-    const ws = new WebSocket(`ws://${process.env.API_HOST}:3000`);
+    const token = new Cookies().get('access_token');  
+    const ws = new WebSocket(`ws://10.211.96.153:8080/choerodon:msg/test/websocket/progressBar?token=${token}`);
 
     ws.onopen = function (evt) {
       console.log('Connection open ...');

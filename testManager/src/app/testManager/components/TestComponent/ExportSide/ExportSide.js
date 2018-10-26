@@ -144,16 +144,12 @@ class ExportSide extends Component {
         >
           <div className="c7ntest-ExportSide"> 
             <Select label="版本" placeholder="Please Select" allowClear style={{ width: 200 }} onChange={this.handleChange}>
-              <Option value="jack">Jack</Option>
-              <Option value="lucy">Lucy</Option>
-              <Option value="disabled" disabled>Disabled</Option>
-              <Option value="Yiminghe">yiminghe</Option>
+              <Option value="jack">1.0.0</Option>
+              <Option value="lucy">2.0.0</Option>            
             </Select>
             <Select label="文件夹" placeholder="Please Select" allowClear style={{ width: 200 }} onChange={this.handleChange}>
-              <Option value="jack">Jack</Option>
-              <Option value="lucy">Lucy</Option>
-              <Option value="disabled" disabled>Disabled</Option>
-              <Option value="Yiminghe">yiminghe</Option>
+              <Option value="jack">文件夹1</Option>
+              <Option value="lucy">文件夹2</Option>
             </Select>   
             <Button type="primary" funcType="raised">新建导出</Button>       
             {/* {this.renderRecord()} */}
