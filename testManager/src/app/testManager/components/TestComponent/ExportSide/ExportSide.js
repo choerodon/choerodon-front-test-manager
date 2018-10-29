@@ -7,29 +7,29 @@ import {
 import FileSaver from 'file-saver';
 import moment from 'moment';
 import { SelectVersion, SelectFolder } from '../../CommonComponent';
-import { exportIssues } from '../../../api/IssueManageApi';
+import { exportIssues, exportIssuesFromVersion, exportIssuesFromFolder } from '../../../api/IssueManageApi';
 import './ExportSide.scss';
 
 const Option = Select.Option;
 const { Sidebar } = Modal;
 const { AppState } = stores;
-function humanizeDuration(timeInMillisecond) {
+function humanizeDuration(seconds) {
   let result = '';
-  if (timeInMillisecond) {
-    if ((result = Math.round(timeInMillisecond / (60 * 60 * 24 * 30 * 12))) > 0) { // year
+  if (seconds) {
+    if ((result = Math.round(seconds / (60 * 60 * 24 * 30 * 12))) > 0) { // year
       result = `${result} 年`;
-    } else if ((result = Math.round(timeInMillisecond / (60 * 60 * 24 * 30))) > 0) { // months
+    } else if ((result = Math.round(seconds / (60 * 60 * 24 * 30))) > 0) { // months
       result = `${result} 月`;
-    } else if ((result = Math.round(timeInMillisecond / (60 * 60 * 24))) > 0) { // days
+    } else if ((result = Math.round(seconds / (60 * 60 * 24))) > 0) { // days
       result = `${result} 天`;
-    } else if ((result = Math.round(timeInMillisecond / (60 * 60))) > 0) { // Hours
+    } else if ((result = Math.round(seconds / (60 * 60))) > 0) { // Hours
       result = `${result} 小时`;
-    } else if ((result = Math.round(timeInMillisecond / (60))) > 0) { // minute
+    } else if ((result = Math.round(seconds / (60))) > 0) { // minute
       result = `${result} 分钟`;
-    } else if ((result = Math.round(timeInMillisecond)) > 0) { // second
+    } else if ((result = Math.round(seconds)) > 0) { // second
       result = `${result} 秒`;
     } else {
-      result = `${timeInMillisecond} 毫秒`;
+      result = `${seconds} 毫秒`;
     }
   }
   return result;
@@ -68,14 +68,6 @@ class ExportSide extends Component {
     // };
   }
 
-  renderRecord = () => {
-    const { importRecord } = this.state;
-    if (!importRecord) {
-      return <div className="c7ntest-ExportSide-record-normal-text">当前没有导入用例记录</div>;
-    }
-    return <div className="c7ntest-ExportSide-record-normal-text">上次导入完成时间2018-10-24 15:31:01（耗时9秒）</div>;
-  }
-
   exportExcel() {
     exportIssues(null, null).then((excel) => {
       const blob = new Blob([excel], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
@@ -103,10 +95,27 @@ class ExportSide extends Component {
     });
   }
 
+  createExport = () => {
+    const { versionId, folderId } = this.state;
+    if (folderId) {
+      exportIssuesFromFolder(folderId).then((data) => {
+
+      });
+    } else if (versionId) {
+      exportIssuesFromVersion(versionId).then((data) => {
+
+      });
+    } else {
+      exportIssues().then((data) => {
+
+      });
+    }
+  }
+
   render() {
     const { visible, versionId, folderId } = this.state;
     const data = [{
-      source: '项目：测试管理开发项目',
+      source: { type: 'project', name: '测试管理开发项目' },
       version: '0.1.0',
       folder: '文件夹',
       num: 10,
@@ -118,7 +127,7 @@ class ExportSide extends Component {
         url: 'http://minio.staging.saas.hand-china.com/error-member-role/file_414d93294456483aa81fbfefef92d79e_errorMemberRole.xls',
       },
     }, {
-      source: '版本：0.1.0',
+      source: { type: 'version', name: '0.1.0' },
       version: '0.1.0',
       folder: '文件夹',
       num: 10,
@@ -130,7 +139,7 @@ class ExportSide extends Component {
         url: 'http://minio.staging.saas.hand-china.com/error-member-role/file_414d93294456483aa81fbfefef92d79e_errorMemberRole.xls',
       },
     }, {
-      source: '文件夹：新文件夹',
+      source: { type: 'folder', name: '新文件夹' },
       version: '0.1.0',
       folder: '文件夹',
       num: 10,
@@ -146,8 +155,21 @@ class ExportSide extends Component {
       title: '导出来源',
       dataIndex: 'source',
       key: 'source',
-      width: 100,
-      render: source => <div className="c7ntest-text-dot">{source}</div>,
+      // width: 100,
+      render: (source) => {
+        const { type, name } = source;
+        const ICONS = {
+          project: 'project',
+          version: 'version',
+          folder: 'folder',
+        };
+        return (
+          <div className="c7ntest-center">
+            <Icon type={ICONS[type]} />          
+            <span className="c7ntest-text-dot" style={{ marginLeft: 10 }}>{name}</span>
+          </div>
+        );
+      },
     },
     // {
     //   title: '版本',
@@ -162,18 +184,18 @@ class ExportSide extends Component {
       title: '用例个数',
       dataIndex: 'num',
       key: 'num',
-      width: 100,
+      // width: 100,
     }, {
       title: '导出时间',
       dataIndex: 'time',
       key: 'time',
-      width: 160,
+      // width: 160,
       render: () => moment().format('YYYY-MM-DD h:mm:ss'),
     }, {
       title: '耗时',
       dataIndex: 'during',
       key: 'during',
-      width: 100,
+      // width: 100,
       render: during => <div>{humanizeDuration(during)}</div>,
     }, {
       title: '进度',
@@ -182,20 +204,17 @@ class ExportSide extends Component {
       render: progress => (progress === 100
         ? <div>已完成</div>
         : (
-          <div>
-            {progress}
-            %
-          </div>
+          <Progress percent={progress} showInfo={false} />
         )),
     }, {
-      title: '下载',
+      title: '',
       dataIndex: 'file',
       key: 'file',
       render: (file, record) => (
         // <a className="c7ntext-text-dot" href={file.url}>
-
-        <Button shape="circle" funcType="flat" icon="get_app" disabled={record.progress < 100} />
-
+        <div style={{ textAlign: 'right' }}>
+          <Button style={{ marginRight: -3 }} shape="circle" funcType="flat" icon="get_app" disabled={record.progress < 100} />
+        </div>
         // </a>
       ),
     }];
@@ -217,12 +236,11 @@ class ExportSide extends Component {
           link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management"
         >
           <div className="c7ntest-ExportSide">
-            <SelectVersion allowClear value={versionId} onChange={this.handleVersionChange} />
-            <SelectFolder label="文件夹" versionId={versionId} value={folderId} allowClear onChange={this.handleFolderChange} />
-
-
-            <Button type="primary" funcType="raised">新建导出</Button>
-            {/* {this.renderRecord()} */}
+            <div style={{ marginBottom: 24 }}>
+              <SelectVersion allowClear value={versionId} onChange={this.handleVersionChange} />
+              <SelectFolder style={{ width: 200, margin: '0 24px' }} label="文件夹" versionId={versionId} value={folderId} allowClear onChange={this.handleFolderChange} />
+              <Button type="primary" icon="playlist_add">新建导出</Button>
+            </div>
             <Table columns={columns} dataSource={data} />
           </div>
         </Content>
