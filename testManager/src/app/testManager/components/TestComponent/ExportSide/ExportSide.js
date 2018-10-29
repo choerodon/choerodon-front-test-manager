@@ -2,9 +2,10 @@ import React, { Component } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { Content, stores } from 'choerodon-front-boot';
 import {
-  Modal, Progress, Table, Select, Button,
+  Modal, Progress, Table, Select, Button, Icon,
 } from 'choerodon-ui';
 import FileSaver from 'file-saver';
+import { SelectVersion, SelectFolder } from '../../CommonComponent';
 import { exportIssues } from '../../../api/IssueManageApi';
 import './ExportSide.scss';
 
@@ -14,6 +15,8 @@ const { AppState } = stores;
 class ExportSide extends Component {
   state = {
     visible: false,
+    versionId: null,
+    folderId: null,
   }
 
   handleClose = () => {
@@ -65,10 +68,23 @@ class ExportSide extends Component {
     });
   }
 
+  handleVersionChange=(versionId) => {
+    this.setState({
+      versionId,
+      folderId: null,
+    });
+  }
+
+  handleFolderChange=(folderId) => {
+    this.setState({
+      folderId,
+    });
+  }
+
   render() {
-    const { visible } = this.state;
+    const { visible, versionId, folderId } = this.state;
     const data = [{
-      type: 'all',
+      source: '测试管理开发项目',
       version: '0.1.0',
       folder: '文件夹',
       num: 10,
@@ -81,10 +97,11 @@ class ExportSide extends Component {
       },
     }];
     const columns = [{
-      title: '导出类型',
-      dataIndex: 'type',
-      key: 'type',
+      title: '导出来源',
+      dataIndex: 'source',
+      key: 'source',
       width: 100,
+      render: source => <div className="c7ntest-text-dot">{source}</div>,
     }, 
     // {
     //   title: '版本',
@@ -116,13 +133,15 @@ class ExportSide extends Component {
       key: 'progress',
       render: () => <Progress percent={50} status="active" size="small" showInfo={false} />,
     }, {
-      title: '文件',
+      title: '下载',
       dataIndex: 'file',
       key: 'file',
       render: file => (
-        <a className="c7ntext-text-dot" href={file.url}>
-          {file.name}
-        </a>
+        // <a className="c7ntext-text-dot" href={file.url}>
+        
+        <Button shape="circle" funcType="flat" icon="get_app" />
+        
+        // </a>
       ),
     }];
     return (
@@ -143,14 +162,10 @@ class ExportSide extends Component {
           link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management"
         >
           <div className="c7ntest-ExportSide"> 
-            <Select label="版本" placeholder="Please Select" allowClear style={{ width: 200 }} onChange={this.handleChange}>
-              <Option value="jack">1.0.0</Option>
-              <Option value="lucy">2.0.0</Option>            
-            </Select>
-            <Select label="文件夹" placeholder="Please Select" allowClear style={{ width: 200 }} onChange={this.handleChange}>
-              <Option value="jack">文件夹1</Option>
-              <Option value="lucy">文件夹2</Option>
-            </Select>   
+            <SelectVersion allowClear value={versionId} onChange={this.handleVersionChange} />            
+            <SelectFolder label="文件夹" versionId={versionId} value={folderId} allowClear onChange={this.handleFolderChange} />
+             
+           
             <Button type="primary" funcType="raised">新建导出</Button>       
             {/* {this.renderRecord()} */}
             <Table columns={columns} dataSource={data} />          

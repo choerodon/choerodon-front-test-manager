@@ -83,10 +83,16 @@ class IssueTreeTitle extends Component {
         break;
       }
       case 'export': {
-        exportIssuesFromFolder(cycleId).then((excel) => {
-          const blob = new Blob([excel], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-          const fileName = `${AppState.currentMenuType.name}-${title}.xlsx`;
-          FileSaver.saveAs(blob, fileName);
+        exportIssuesFromFolder(cycleId).then((url) => {
+          // const ele = document.createElement('a');
+          // ele.href = url;
+          // document.body.appendChild(ele);
+          // ele.click();
+          // document.body.removeChild(ele);
+          console.log(url);
+          // const blob = new Blob([excel], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+          // const fileName = `${AppState.currentMenuType.name}-${title}.xlsx`;
+          // FileSaver.saveAs(blob, fileName);
         });
         break;
       }
