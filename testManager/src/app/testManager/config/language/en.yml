@@ -3,7 +3,7 @@
 'test-manager.manager': manager
 'test-manager.TestPlan': TestPlan
 'test-manager.TestExecute': TestExecute
-'test-manager.report':  report
+'test-manager.report':  test manager report
 'test-manager.status':  status
 'test-manager.cycle':  cycle
 'test-manager.createautotest':  add test
