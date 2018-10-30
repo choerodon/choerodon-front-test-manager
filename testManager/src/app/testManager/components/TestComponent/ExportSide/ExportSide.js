@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { Content, stores } from 'choerodon-front-boot';
 import {
-  Modal, Progress, Table, Select, Button, Icon,
+  Modal, Progress, Table, Button, Icon,
 } from 'choerodon-ui';
 import FileSaver from 'file-saver';
 import moment from 'moment';
@@ -10,7 +10,6 @@ import { SelectVersion, SelectFolder } from '../../CommonComponent';
 import { exportIssues, exportIssuesFromVersion, exportIssuesFromFolder } from '../../../api/IssueManageApi';
 import './ExportSide.scss';
 
-const Option = Select.Option;
 const { Sidebar } = Modal;
 const { AppState } = stores;
 function humanizeDuration(seconds) {
@@ -222,10 +221,11 @@ class ExportSide extends Component {
       <Sidebar
         title="导出用例"
         visible={visible}
-        okText={<FormattedMessage id="close" />}
-        cancelText={<FormattedMessage id="close" />}
-        onOk={this.handleOk}
-        onCancel={this.handleClose}
+        // okText={null}
+        // cancelText={<FormattedMessage id="close" />}
+        // onOk={this.handleOk}
+        footer={<Button onClick={this.handleClose} type="primary" funcType="raised"><FormattedMessage id="close" /></Button>}
+        // onCancel={this.handleClose}
       >
         <Content
           style={{
@@ -237,9 +237,9 @@ class ExportSide extends Component {
         >
           <div className="c7ntest-ExportSide">
             <div style={{ marginBottom: 24 }}>
-              <SelectVersion allowClear value={versionId} onChange={this.handleVersionChange} />
-              <SelectFolder style={{ width: 200, margin: '0 24px' }} label="文件夹" versionId={versionId} value={folderId} allowClear onChange={this.handleFolderChange} />
-              <Button type="primary" icon="playlist_add">新建导出</Button>
+              <SelectVersion allowClear value={versionId || '所有版本'} onChange={this.handleVersionChange} />
+              <SelectFolder style={{ width: 200, margin: '0 24px' }} label="文件夹" disabled={!versionId} versionId={versionId} value={folderId} allowClear onChange={this.handleFolderChange} />
+              <Button type="primary" icon="playlist_add" onClick={this.createExport}>新建导出</Button>
             </div>
             <Table columns={columns} dataSource={data} />
           </div>
