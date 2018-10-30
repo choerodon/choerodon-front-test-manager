@@ -57,15 +57,4 @@
     #     Routes: /testManager/AutoTest/list
     #     sort: 8
     #     permission:
-    #       - 'test-manager-service.test-cycle.getTestCycle'    
-"platform-reports":
-  icon: bar_chart
-  sort: 99
-  project:
-    - "test-report":
-        icon: baseline-list_alt
-        Routes: /testManager/report
-        sort: 5
-        permission:
-          - 'test-manager-service.test-cycle.getTestCycle'
-
+    #       - 'test-manager-service.test-cycle.getTestCycle'
