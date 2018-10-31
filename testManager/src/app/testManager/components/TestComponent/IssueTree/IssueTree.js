@@ -383,7 +383,6 @@ class IssueTree extends Component {
             </DragDropContext>
           </Spin>
         </div>
-
       </div>
     );
   }
