@@ -5,18 +5,19 @@
   width: 250px;
   display: flex;
   flex-direction: column;
-  .ant-spin-nested-loading,
-  .ant-spin-container {
-    // height: 100%;
-    flex: 1;
-    overflow-x: hidden;
-    overflow-y: auto;
-  }
+  // .ant-spin-nested-loading {
+  //   flex: 1;
+  // }
+  // .ant-spin-container {
+  //   height: 100%; // flex: 1; // overflow-x: hidden;
+  //   // overflow-y: auto;
+  // }
   .c7n-treeTop {
     padding: 0 16px;
     font-size: 13px;
     height: 44px;
     display: flex;
+    flex-shrink: 0;
     align-items: center;
     border-bottom: 1px solid rgba(0, 0, 0, 0.12);
     .ant-input-wrapper {
@@ -30,6 +31,8 @@
   }
   &-tree {
     height: calc(100% - 44px);
+    overflow-x: hidden;
+    overflow-y: auto;
   }
   .ant-tree li .ant-tree-node-content-wrapper.ant-tree-node-selected {
     background: rgba(0, 0, 0, 0.04);

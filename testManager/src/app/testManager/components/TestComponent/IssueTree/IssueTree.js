@@ -314,10 +314,11 @@ class IssueTree extends Component {
           />
           <Icon type="close" className="c7n-pointer" onClick={onClose} />
         </div>
-        <Spin spinning={loading}>
-          <div
+        <div
             className="c7n-IssueTree-tree"
           >
+        <Spin spinning={loading}>
+          
             <DragDropContext onDragEnd={this.onDragEnd} onDragStart={this.onDragStart}>
               <Tree
                 selectedKeys={selectedKeys}
@@ -330,8 +331,9 @@ class IssueTree extends Component {
                 {this.renderTreeNodes(treeData)}
               </Tree>
             </DragDropContext>
-          </div>
+         
         </Spin>
+        </div>
       </div>
     );
   }
