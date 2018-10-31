@@ -34,13 +34,13 @@ class IssueTree extends Component {
     document.removeEventListener('keyup', this.leaveMulti);
   }
 
-  enterMulti=(e) => {
+  enterMulti = (e) => {
     if (e.keyCode === 17 || e.keyCode === 93 || e.keyCode === 91 || e.keyCode === 224) {
       this.multi = true;
     }
   }
 
-  leaveMulti=() => {
+  leaveMulti = () => {
     this.multi = false;
   }
 
@@ -169,14 +169,14 @@ class IssueTree extends Component {
                 callback={this.callback}
               />
             )
-            : title}          
+            : title}
           key={key}
           data={item}
           showIcon
           icon={icon}
         >
           {this.renderTreeNodes(children)}
-        </TreeNode>   
+        </TreeNode>
       );
     }
     return (
@@ -237,7 +237,7 @@ class IssueTree extends Component {
 
   getIssuesByFolder = (selectedKeys, {
     selected, selectedNodes, node, event,
-  } = {}) => {    
+  } = {}) => {
     const { executePagination, filters } = this.state;
     const data = node.props.data;
     // console.log(data);
@@ -262,7 +262,7 @@ class IssueTree extends Component {
         filteredKeys = selectedKeys.length > 0 ? selectedKeys.slice(-1) : preSelectedKeys;
       } else {
         filteredKeys = preSelectedKeys.filter(key => !selectedKeys.includes(key));
-      }  
+      }
       IssueTreeStore.setSelectedKeys(filteredKeys);
     }
     IssueTreeStore.setCurrentCycle(data);
@@ -289,7 +289,7 @@ class IssueTree extends Component {
       return;
     }
     const draggingItems = IssueTreeStore.getDraggingFolders;
-    const filteredItems = draggingItems.filter(item => destination.droppableId !== item.versionId);    
+    const filteredItems = draggingItems.filter(item => destination.droppableId !== item.versionId);
     if (filteredItems.length > 0) {
       const data = filteredItems.map(item => ({ versionId: destination.droppableId, folderId: item.cycleId, objectVersionNumber: item.objectVersionNumber }));
       console.log(data);
@@ -330,7 +330,7 @@ class IssueTree extends Component {
         });
       }
     }
-    
+
 
     // console.log(result);
   }
@@ -363,25 +363,27 @@ class IssueTree extends Component {
           />
           <Icon type="close" className="c7ntest-pointer" onClick={onClose} />
         </div>
-        {/* <Spin spinning={loading}> */}
+
         <div
           className="c7ntest-IssueTree-tree"
         >
-          <DragDropContext onDragEnd={this.onDragEnd} onDragStart={this.onDragStart}>
-            <Tree  
-              multiple              
-              selectedKeys={selectedKeys}
-              expandedKeys={expandedKeys}
-              showIcon
-              onExpand={this.onExpand}
-              onSelect={this.getIssuesByFolder}
-              autoExpandParent={autoExpandParent}
-            >
-              {this.renderTreeNodes(treeData)}
-            </Tree>
-          </DragDropContext>
+          <Spin spinning={loading}>
+            <DragDropContext onDragEnd={this.onDragEnd} onDragStart={this.onDragStart}>
+              <Tree
+                multiple
+                selectedKeys={selectedKeys}
+                expandedKeys={expandedKeys}
+                showIcon
+                onExpand={this.onExpand}
+                onSelect={this.getIssuesByFolder}
+                autoExpandParent={autoExpandParent}
+              >
+                {this.renderTreeNodes(treeData)}
+              </Tree>
+            </DragDropContext>
+          </Spin>
         </div>
-        {/* </Spin> */}
+
       </div>
     );
   }

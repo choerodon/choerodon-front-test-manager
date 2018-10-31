@@ -5,15 +5,14 @@
   width: 250px;
   display: flex;
   flex-direction: column;
-      overflow-x: hidden;
-    overflow-y: auto;
-  .ant-spin-nested-loading,
-  .ant-spin-container {
-    // height: 100%;
-    flex: 1;
-    // overflow-x: hidden;
-    // overflow-y: auto;
-  }
+
+  // .ant-spin-nested-loading,
+  // .ant-spin-container {
+  //   // height: 100%;
+  //   flex: 1;
+  //   // overflow-x: hidden;
+  //   // overflow-y: auto;
+  // }
   .c7ntest-treeTop {
     padding: 0 16px;
     font-size: 13px;
@@ -32,6 +31,8 @@
   }
   &-tree {
     height: calc(100% - 44px);
+    overflow-x: hidden;
+    overflow-y: auto;
   }
   .ant-tree li .ant-tree-node-content-wrapper.ant-tree-node-selected {
     background: rgba(0, 0, 0, 0.04);
