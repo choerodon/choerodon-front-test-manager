@@ -249,8 +249,5 @@ class ExportSide extends Component {
   }
 }
 
-ExportSide.propTypes = {
-
-};
 
 export default ExportSide;

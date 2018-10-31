@@ -363,25 +363,25 @@ class IssueTree extends Component {
           />
           <Icon type="close" className="c7ntest-pointer" onClick={onClose} />
         </div>
-        <Spin spinning={loading}>
-          <div
-            className="c7ntest-IssueTree-tree"
-          >
-            <DragDropContext onDragEnd={this.onDragEnd} onDragStart={this.onDragStart}>
-              <Tree  
-                multiple              
-                selectedKeys={selectedKeys}
-                expandedKeys={expandedKeys}
-                showIcon
-                onExpand={this.onExpand}
-                onSelect={this.getIssuesByFolder}
-                autoExpandParent={autoExpandParent}
-              >
-                {this.renderTreeNodes(treeData)}
-              </Tree>
-            </DragDropContext>
-          </div>
-        </Spin>
+        {/* <Spin spinning={loading}> */}
+        <div
+          className="c7ntest-IssueTree-tree"
+        >
+          <DragDropContext onDragEnd={this.onDragEnd} onDragStart={this.onDragStart}>
+            <Tree  
+              multiple              
+              selectedKeys={selectedKeys}
+              expandedKeys={expandedKeys}
+              showIcon
+              onExpand={this.onExpand}
+              onSelect={this.getIssuesByFolder}
+              autoExpandParent={autoExpandParent}
+            >
+              {this.renderTreeNodes(treeData)}
+            </Tree>
+          </DragDropContext>
+        </div>
+        {/* </Spin> */}
       </div>
     );
   }
