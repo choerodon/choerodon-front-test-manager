@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-  Table, Tabs, Button, Icon, Spin,
+  Table, Tabs, Button, Icon, Spin, Modal,
 } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 import { Page, Header, Content } from 'choerodon-front-boot';
@@ -9,6 +9,7 @@ import { CreateStatus, EditStatusSide } from '../../../../components/CustomStatu
 import { getStatusList, deleteStatus } from '../../../../api/TestStatusApi';
 
 const TabPane = Tabs.TabPane;
+const { confirm } = Modal;
 class CustomStatusHome extends Component {
   state = {
     loading: false,
@@ -66,22 +67,28 @@ class CustomStatusHome extends Component {
   }
 
   deleteStatus = (data) => {
-    this.setState({
-      loading: true,
+    confirm({
+      title: '确定要删除状态?',
+      onOk: () => {
+        this.setState({
+          loading: true,
+        });
+        deleteStatus(data.statusId).then((res) => {
+          if (res.failed) {
+            Choerodon.prompt('状态已被使用，不可删除');
+          }
+          this.setState({
+            loading: false,
+          });
+          this.getList();
+        }).catch(() => {
+          this.setState({
+            loading: false,
+          });
+        });
+      },         
     });
-    deleteStatus(data.statusId).then((res) => {
-      if (res.failed) {
-        Choerodon.prompt('状态已被使用，不可删除');
-      }
-      this.setState({
-        loading: false,
-      });
-      this.getList();
-    }).catch(() => {
-      this.setState({
-        loading: false,
-      });
-    });
+    
     // window.console.log(data);
   }
 

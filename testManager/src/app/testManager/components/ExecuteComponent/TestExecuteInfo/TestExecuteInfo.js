@@ -14,7 +14,7 @@ import {
   addDefects, editCycle, removeDefect,
 } from '../../../api/ExecuteDetailApi';
 import { FullEditor, Upload as UploadButton } from '../../CommonComponent';
-import ExecuteDetailStore from '../../../store/project/cycle/ExecuteDetailStore';
+import ExecuteDetailStore from '../../../store/project/TestExecute/ExecuteDetailStore';
 import './TestExecuteInfo.scss';
 
 

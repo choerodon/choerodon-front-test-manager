@@ -1,18 +1,17 @@
-/*eslint-disable */
 import React, { Component } from 'react';
 import { observer } from 'mobx-react';
 import {
   Input, Icon, Spin, Tree,
 } from 'choerodon-ui';
 import _ from 'lodash';
-import {  DragDropContext } from 'react-beautiful-dnd';
+import { DragDropContext } from 'react-beautiful-dnd';
 import './IssueTree.scss';
-import { IssueTreeStore } from '../../../store/project/treeStore';
+import IssueTreeStore from '../../../store/project/IssueManage/IssueTreeStore';
 import {
-  getIssueTree, addFolder,  moveFolder, copyFolder,
+  getIssueTree, addFolder, moveFolders, copyFolders,
 } from '../../../api/IssueManageApi';
 import IssueTreeTitle from './IssueTreeTitle';
-import IssueStore from '../../../store/project/IssueStore';
+import IssueStore from '../../../store/project/IssueManage/IssueStore';
 
 const { TreeNode } = Tree;
 const dataList = [];
@@ -26,6 +25,23 @@ class IssueTree extends Component {
 
   componentDidMount() {
     this.getTree();
+    document.addEventListener('keydown', this.enterMulti);
+    document.addEventListener('keyup', this.leaveMulti);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('keydown', this.enterMulti);
+    document.removeEventListener('keyup', this.leaveMulti);
+  }
+
+  enterMulti = (e) => {
+    if (e.keyCode === 17 || e.keyCode === 93 || e.keyCode === 91 || e.keyCode === 224) {
+      this.multi = true;
+    }
+  }
+
+  leaveMulti = () => {
+    this.multi = false;
   }
 
   addFolder = (item, e, type) => {
@@ -103,8 +119,9 @@ class IssueTree extends Component {
 
   renderTreeNodes = data => data.map((item) => {
     const {
-      children, key, cycleCaseList, type,
+      children, cycleCaseList, type,
     } = item;
+    const key = type === 'temp' ? `${item.key}temp` : item.key;
     const { searchValue } = this.state;
     const expandedKeys = IssueTreeStore.getExpandedKeys;
     const index = item.title.indexOf(searchValue);
@@ -226,64 +243,94 @@ class IssueTree extends Component {
     // console.log(data);
     // if (data.versionId) {
     if (selectedKeys) {
-      IssueTreeStore.setSelectedKeys(selectedKeys);
+      // 多选过滤，因为只有文件夹可拖动，所以把其他层级和临时去掉.
+      const preSelectedKeys = IssueTreeStore.getSelectedKeys;
+      let filteredKeys = selectedKeys;
+      const reg = /temp/g;
+      const newKey = selectedKeys.slice(-1);
+      if (this.multi) {
+        // 增加
+        if (selected) {
+          filteredKeys = [...new Set(preSelectedKeys.concat(newKey))].filter(key => key.split('-').length === 4 && !reg.test(key));
+        } else {
+          // 减少
+          filteredKeys = preSelectedKeys.filter(key => selectedKeys.includes(key));
+          // preSelectedKeys.split(preSelectedKeys.indexOf(newKey), 1);
+        }
+        // 单击的处理
+      } else if (selected) {
+        filteredKeys = selectedKeys.length > 0 ? selectedKeys.slice(-1) : preSelectedKeys;
+      } else {
+        filteredKeys = preSelectedKeys.filter(key => !selectedKeys.includes(key));
+      }
+      IssueTreeStore.setSelectedKeys(filteredKeys);
     }
     IssueTreeStore.setCurrentCycle(data);
     IssueStore.loadIssues();
     // }
   }
-  onDragStart=()=>{
-    IssueTreeStore.setCopy(false)
+
+  onDragStart = (source) => {
+    const selectedKeys = IssueTreeStore.getSelectedKeys;
+    const draggingItems = selectedKeys.map(key => IssueTreeStore.getItemByKey(key));
+    const { draggableId } = source;
+    const item = JSON.parse(draggableId);
+    if (!_.find(draggingItems, { cycleId: item.folderId })) {
+      draggingItems.push(item);
+    }
+    IssueTreeStore.setDraggingFolders(draggingItems);
+    IssueTreeStore.setCopy(false);
   }
+
   onDragEnd = (result) => {
     // console.log(IssueTreeStore.isCopy);
     const { destination } = result;
     if (!destination) {
       return;
     }
-    const { folderId, versionId, objectVersionNumber } = JSON.parse(result.draggableId);
-    if (destination.droppableId === versionId) {
-      return;
-    }
-    // console.log(folderId, '=>', destination.droppableId);
-    const data = { versionId: destination.droppableId, folderId, objectVersionNumber };
-    // debugger;
-    this.setState({
-      loading: true,
-    });
-    if (IssueTreeStore.isCopy) {
-      copyFolder(data).then((res) => {
-        if (res.failed) {
+    const draggingItems = IssueTreeStore.getDraggingFolders;
+    const filteredItems = draggingItems.filter(item => destination.droppableId !== item.versionId);
+    if (filteredItems.length > 0) {
+      const data = filteredItems.map(item => ({ versionId: destination.droppableId, folderId: item.cycleId, objectVersionNumber: item.objectVersionNumber }));
+      console.log(data);
+      this.setState({
+        loading: true,
+      });
+      if (IssueTreeStore.isCopy) {
+        copyFolders(data, destination.droppableId).then((res) => {
+          if (res.failed) {
+            this.setState({
+              loading: false,
+            });
+            Choerodon.prompt('存在同名文件夹');
+            return;
+          }
+          this.getTree();
+        }).catch((err) => {
           this.setState({
             loading: false,
           });
-          Choerodon.prompt('存在同名文件夹');
-          return;
-        }
-        this.getTree();
-      }).catch((err) => {
-        this.setState({
-          loading: false,
+          Choerodon.prompt('网络错误');
         });
-        Choerodon.prompt('网络错误');
-      });
-    } else {
-      moveFolder(data).then((res) => {
-        if (res.failed) {
+      } else {
+        moveFolders(data).then((res) => {
+          if (res.failed) {
+            this.setState({
+              loading: false,
+            });
+            Choerodon.prompt('存在同名文件夹');
+            return;
+          }
+          this.getTree();
+        }).catch((err) => {
           this.setState({
             loading: false,
           });
-          Choerodon.prompt('存在同名文件夹');
-          return;
-        }
-        this.getTree();
-      }).catch((err) => {
-        this.setState({
-          loading: false,
+          Choerodon.prompt('网络错误');
         });
-        Choerodon.prompt('网络错误');
-      });
+      }
     }
+
 
     // console.log(result);
   }
@@ -300,11 +347,13 @@ class IssueTree extends Component {
     return (
       <div className="c7ntest-IssueTree">
         <div id="template_folder_copy" style={{ display: 'none' }}>
-          当前状态：<span style={{fontWeight:500}}>复制</span>
-</div>
+          当前状态：
+          <span style={{ fontWeight: 500 }}>复制</span>
+        </div>
         <div id="template_folder_move" style={{ display: 'none' }}>
-          当前状态：<span style={{fontWeight:500}}>移动</span>
-</div>
+          当前状态：
+          <span style={{ fontWeight: 500 }}>移动</span>
+        </div>
         <div className="c7ntest-treeTop">
           <Input
             prefix={<Icon type="filter_list" style={{ color: 'black' }} />}
@@ -314,12 +363,14 @@ class IssueTree extends Component {
           />
           <Icon type="close" className="c7ntest-pointer" onClick={onClose} />
         </div>
-        <Spin spinning={loading}>
-          <div
-            className="c7ntest-IssueTree-tree"
-          >
+
+        <div
+          className="c7ntest-IssueTree-tree"
+        >
+          <Spin spinning={loading}>
             <DragDropContext onDragEnd={this.onDragEnd} onDragStart={this.onDragStart}>
               <Tree
+                multiple
                 selectedKeys={selectedKeys}
                 expandedKeys={expandedKeys}
                 showIcon
@@ -330,8 +381,8 @@ class IssueTree extends Component {
                 {this.renderTreeNodes(treeData)}
               </Tree>
             </DragDropContext>
-          </div>
-        </Spin>
+          </Spin>
+        </div>
       </div>
     );
   }

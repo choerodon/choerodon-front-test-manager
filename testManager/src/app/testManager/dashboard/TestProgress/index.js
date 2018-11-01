@@ -1,22 +1,46 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import {
+  Menu, Dropdown, Icon, Spin, Tooltip,
+} from 'choerodon-ui';
 import { DashBoardNavBar, stores } from 'choerodon-front-boot';
 import ReactEcharts from 'echarts-for-react';
-
+import _ from 'lodash';
+import { getProjectVersion } from '../../api/agileApi';
+import { loadProgressByVersion } from '../../api/DashBoardApi';
 import './index.scss';
 
 const { AppState } = stores;
 export default class TestProgress extends Component {
   state = {
-
+    noVersion: false,
+    currentVersion: null,
+    versionList: [],
+    VersionProgress: [],
   }
 
   componentDidMount() {
-    // this.getInfo();
+    this.loadData();
   }
 
-  getInfo = () => {   
-
+  loadData = () => {
+    getProjectVersion().then((res) => {
+      if (res && res.length > 0) {
+        const latestVersionId = Math.max.apply(null, res.map(item => item.versionId));
+        // console.log(latestVersionId);
+        if (latestVersionId !== -Infinity) {
+          this.loadProgressByVersion(latestVersionId);
+        }
+        this.setState({
+          versionList: res,
+          noVersion: false,
+        });
+      } else {
+        this.setState({
+          noVersion: true,
+        });
+      }
+    });
   }
 
   getOption() {
@@ -28,201 +52,98 @@ export default class TestProgress extends Component {
       hoverable: true,
       series: [
         {
-          name: '矩形图',
+          name: '执行进度',
           type: 'treemap',
+          nodeClick: false,
+          breadcrumb: { // 显示当前路径，面包屑
+            show: false,
+          },
           itemStyle: {
             normal: {
               label: {
                 show: true,
                 formatter: '{b}: {c}',
                 textStyle: {
-                  color: '#00ffdd',
-                  fontFamily: 'Times New Roman",Georgia,Serif',
-                  fontSize: 20,
-                  fontStyle: 'italic',
-                  fontWeight: 'bolder',
+                  color: 'white',
+                  fontSize: 14,
                 },
               },
-              borderWidth: 1,
-              borderColor: '#000',
-            },
-            emphasis: {
-              label: {
-                show: true,
-                textStyle: {
-                  color: '#0000ff',
-                  fontFamily: 'Times New Roman",Georgia,Serif',
-                  fontSize: 18,
-                  fontStyle: 'normal',
-                  fontWeight: 'bold',
-                },
-              },
-              color: '#cc99cc',
-              borderWidth: 3,
-              borderColor: '#996699',
             },
           },
-          data: [
-            {
-              name: '三星',
-              value: 6,
-              itemStyle: {
-                normal: {
-                  label: {
-                    show: true,
-                    formatter: '{b}最多',
-                    x: 60,
-                    y: 65,
-                    textStyle: {
-                      color: '#ccc',
-                      fontSize: 16,
-                    },
-                  },
-                  color: '#ccff99',
-                  borderWidth: 1,
-                },
-                emphasis: {
-                  label: {
-                    show: true,
-                    formatter: '{b}-{c}',
-                    x: 80,
-                    y: 85,
-                    textStyle: {
-                      color: 'red',
-                      fontSize: 18,
-                    },
-                  },
-                  color: '#cc9999',
-                  borderWidth: 3,
-                  borderColor: '#999999',
-                },
-              },
-              children: [
-                {
-                  name: 'S4',
-                  value: 6,
-                  children: [
-                    {
-                      name: '2012',
-                      value: 6,
-                    },
-                    {
-                      name: '2013',
-                      value: 4,
-                    },
-                    {
-                      name: '2014',
-                      value: 3,
-                    },
-                  ],
-                },
-                {
-                  name: 'note 3',
-                  value: 6,
-                },
-                {
-                  name: 'S5',
-                  value: 4,
-                },
-                {
-                  name: 'S6',
-                  value: 3,
-                },
-              ],
-            },
-            {
-              name: '小米',
-              value: 4,
-              itemStyle: {
-                normal: {
-                  color: '#99ccff',
-                },
-                emphasis: {
-                  label: {
-                    show: false,
-                  },
-                },
-              },
-            },
-            {
-              name: '苹果',
-              value: 4,
-              itemStyle: {
-                normal: {
-                  color: '#9999cc',
-                },
-              },
-            },
-            {
-              name: '魅族',
-              value: 3,
-              itemStyle: {
-                normal: {
-                  color: '#99cccc',
-                },
-              },
-            },
-            {
-              name: '华为',
-              value: 2,
-              itemStyle: {
-                normal: {
-                  color: '#ccffcc',
-                },
-              },
-            },
-            {
-              name: '联想',
-              value: 2,
-              itemStyle: {
-                normal: {
-                  color: '#ccccff',
-                },
-              },
-            },
-            {
-              name: '中兴',
-              value: 1,
-              itemStyle: {
-                normal: {
-                  label: {
-                    show: true,
-                    formatter: '{b}: {c}',
-                  },
-                  borderWidth: 3,
-                },
-                emphasis: {
-                  label: {
-                    show: true,
-                  },
-                  color: '#cc9999',
-                  borderWidth: 3,
-                  borderColor: '#999999',
-                },
-              },
-            },
-          ],
+          data: this.state.VersionProgress.map(item => ({
+            name: item.name,
+            value: item.value,
+            itemStyle: {                
+              color: item.color,              
+            },  
+          })),
+          // [
+          //   {
+          //     name: '未执行',
+          //     value: 6,
+          //     itemStyle: {                
+          //       color: 'rgba(0, 0, 0, 0.18)',              
+          //     },  
+          //   }]
         },
       ],
     };
-                      
+
     return option;
+  }
+
+  loadProgressByVersion = (versionId) => {
+    // console.log('load', versionId);
+    loadProgressByVersion(versionId).then((res) => {
+      this.setState({
+        currentVersion: versionId,
+        VersionProgress: res,
+      });
+    });
+  }
+
+  handleMenuClick = (e) => {
+    this.loadProgressByVersion(e.key);
+  }
+
+
+  renderContent = () => {
+    const { versionList, currentVersion } = this.state;
+    const menu = (
+      <Menu onClick={this.handleMenuClick} className="menu">
+        {
+          versionList.map(item => <Menu.Item key={item.versionId}><Tooltip title={item.name} placement="topRight"><span className="c7n-menuItem">{item.name}</span></Tooltip></Menu.Item>)
+        }
+      </Menu>
+    );
+    return [
+      <div className="switchVersion">
+        <Dropdown overlay={menu} trigger={['click']} getPopupContainer={triggerNode => triggerNode.parentNode}>
+          <a className="ant-dropdown-link versionProgress-select">
+            {_.find(versionList, { versionId: currentVersion }) ? _.find(versionList, { versionId: currentVersion }).name : '切换版本'}
+            
+            <Icon type="arrow_drop_down" />
+          </a>
+        </Dropdown>
+      </div>,
+      <div className="c7ntest-charts">
+        <ReactEcharts
+          style={{ height: 200 }}
+          option={this.getOption()}
+        />
+      </div>,
+    ];
   }
 
   render() {
     const menu = AppState.currentMenuType;
     const { type, id: projectId, name } = menu;
-   
+
     return (
-      <div className="c7ntest-dashboard-announcement">
-        <div className="c7ntest-charts">
-          <ReactEcharts
-            style={{ height: 200 }}
-            option={this.getOption()}
-          />
-        </div>
+      <div className="c7ntest-dashboard-TestProgress">
+        {this.renderContent()}
         <DashBoardNavBar>
-          <Link to={encodeURI(`/testManager/summary?type=${type}&id=${projectId}&name=${name}`)}>{Choerodon.getMessage('转至测试摘要', 'review test summary')}</Link>
+          <Link to={encodeURI(`/testManager/TestExecute?type=${type}&id=${projectId}&name=${name}`)}>{Choerodon.getMessage('转至测试执行', 'review test execute')}</Link>
         </DashBoardNavBar>
       </div>
     );

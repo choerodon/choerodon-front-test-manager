@@ -7,7 +7,6 @@ import 'moment/locale/zh-cn';
 import 'moment/locale/en-nz';
 import _ from 'lodash';
 import { getCycleRange, getCreateRange } from '../../api/summaryApi';
-import './index.scss';
 
 const { AppState } = stores;
 const langauge = AppState.currentLanguage;
@@ -176,7 +175,7 @@ export default class IssueAndExecute extends Component {
         data: this.state.excuteList.map(execute => execute.value),
       },
     ],
-    color: ['#5266D4'],
+    color: ['#5266D4', '#00BFA5'],
   })
 
   render() {
@@ -185,7 +184,7 @@ export default class IssueAndExecute extends Component {
 
     return (
       <div className="c7ntest-dashboard-announcement">
-        <div className="c7ntest-charts">
+        <div>
           <ReactEcharts
             style={{ height: 200 }}
             option={this.getOption()}

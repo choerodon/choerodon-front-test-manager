@@ -12,7 +12,7 @@ import {
 } from '../../../../common/utils';
 import './ExecuteDetail.scss';
 import { StepTable, TestExecuteInfo } from '../../../../components/ExecuteComponent';
-import ExecuteDetailStore from '../../../../store/project/cycle/ExecuteDetailStore';
+import ExecuteDetailStore from '../../../../store/project/TestExecute/ExecuteDetailStore';
 
 const styles = {
   cardTitle: {

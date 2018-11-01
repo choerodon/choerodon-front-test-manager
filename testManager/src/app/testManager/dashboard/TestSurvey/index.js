@@ -4,8 +4,6 @@ import { DashBoardNavBar, stores } from 'choerodon-front-boot';
 import ReactEcharts from 'echarts-for-react';
 import { getCaseNotPlain, getCaseNotRun, getCaseNum } from '../../api/summaryApi';
 import { getIssueCount } from '../../api/agileApi';
-import TestProgress from '../TestProgress';
-import IssueAndExecute from '../IssueAndExecute';
 import './index.scss';
 
 const { AppState } = stores;
@@ -92,8 +90,8 @@ export default class TestSurvey extends Component {
     const { type, id: projectId, name } = menu;
    
     return (
-      <div className="c7ntest-dashboard-announcement">
-        {/* <div className="c7ntest-charts">
+      <div className="c7ntest-dashboard-TestSurvey">
+        <div className="c7ntest-charts">
           <ReactEcharts
             style={{ height: 200 }}
             option={this.getOption()}
@@ -112,12 +110,12 @@ export default class TestSurvey extends Component {
               {'未规划数量'}
             </li>
           </ul>
-        </div> */}
-        {/* <TestProgress /> */}
-        <IssueAndExecute />
-        {/* <DashBoardNavBar>
+        </div>
+        {' '}
+
+        <DashBoardNavBar>
           <Link to={encodeURI(`/testManager/summary?type=${type}&id=${projectId}&name=${name}`)}>{Choerodon.getMessage('转至测试摘要', 'review test summary')}</Link>
-        </DashBoardNavBar> */}
+        </DashBoardNavBar>
       </div>
     );
   }

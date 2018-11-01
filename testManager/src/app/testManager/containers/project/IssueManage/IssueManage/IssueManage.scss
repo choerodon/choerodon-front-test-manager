@@ -176,6 +176,7 @@
   .c7ntest-sidebar {
     height: calc(100vh - 106px);
     border-left: 3px solid #d3d3d3;
+    overflow: hidden;
   }
 
   .c7ntest-hoverTitle {

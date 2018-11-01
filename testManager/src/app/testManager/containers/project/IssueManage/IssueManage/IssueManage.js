@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { observer } from 'mobx-react';
 import _ from 'lodash';
 import {
-  Page, Header, Content, stores, axios,
+  Page, Header, Content, stores, 
 } from 'choerodon-front-boot';
 import {
   Table, Button, Input, Dropdown, Menu, Pagination,
@@ -12,19 +12,19 @@ import { FormattedMessage } from 'react-intl';
 import FileSaver from 'file-saver';
 import '../../../../assets/main.scss';
 import './IssueManage.scss';
-import IssueStore from '../../../../store/project/IssueStore';
-import IssueTreeStore from '../../../../store/project/treeStore/IssueTreeStore';
+import IssueStore from '../../../../store/project/IssueManage/IssueStore';
+import IssueTreeStore from '../../../../store/project/IssueManage/IssueTreeStore';
 import pic from '../../../../assets/问题管理－空.png';
 import {
   loadIssue, createIssue, exportIssues, downloadTemplate, 
 } from '../../../../api/IssueManageApi';
-import { importIssue } from '../../../../api/FileApi';
 import EmptyBlock from '../../../../components/TestComponent/EmptyBlock';
 import CreateIssue from '../../../../components/TestComponent/CreateIssue';
 import EditIssue from '../../../../components/TestComponent/EditIssue';
 import IssueTree from '../../../../components/TestComponent/IssueTree';
 import IssueTable from '../../../../components/TestComponent/IssueTable';
-import { Upload } from '../../../../components/CommonComponent';
+import UploadSide from '../../../../components/TestComponent/UploadSide';
+import ExportSide from '../../../../components/TestComponent/ExportSide';
 
 const { AppState } = stores;
 const { Option } = Select;
@@ -125,21 +125,6 @@ class Test extends Component {
 
   handleIssueUpdate(issueId = this.state.selectedIssue.issueId) {
     loadIssue(issueId).then((res) => {
-      // const obj = {
-      //   assigneeId: res.assigneeId,
-      //   assigneeName: res.assigneeName,
-      //   imageUrl: res.imageUrl || '',
-      //   issueId: res.issueId,
-      //   issueNum: res.issueNum,
-      //   priorityCode: res.priorityCode,
-      //   priorityName: res.priorityName,
-      //   projectId: res.projectId,
-      //   statusCode: res.statusCode,
-      //   statusColor: res.statusColor,
-      //   statusName: res.statusName,
-      //   summary: res.summary,
-      //   typeCode: res.typeCode,
-      // };
       const originIssues = _.slice(IssueStore.issues);
       const index = _.findIndex(originIssues, { issueId: res.issueId });
       originIssues[index] = { ...originIssues[index], ...res };
@@ -245,13 +230,6 @@ class Test extends Component {
     IssueStore.loadIssues(current - 1, pageSize);
   }
 
-  exportExcel() {
-    exportIssues(null, null).then((excel) => {
-      const blob = new Blob([excel], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-      const fileName = `${AppState.currentMenuType.name}.xlsx`;
-      FileSaver.saveAs(blob, fileName);
-    });
-  }
 
   downloadTemplate() {
     downloadTemplate().then((excel) => {
@@ -261,18 +239,10 @@ class Test extends Component {
     });
   }
 
-  importIssue = (files) => {
-    const formData = new FormData();
-    [].forEach.call(files, (file) => {
-      formData.append('file', file);
-    });
-    importIssue(formData).then(() => {
 
-    }).catch(() => {
-
-    });
+  saveRef=name => (ref) => {
+    this[name] = ref;
   }
-
 
   render() {
     const { expand } = this.state;
@@ -280,28 +250,28 @@ class Test extends Component {
     const versions = IssueStore.getVersions;
     const selectedVersion = IssueTreeStore.currentCycle.versionId || IssueStore.getSeletedVersion;
 
-    const ORDER = [
-      {
-        code: 'summary',
-        showName: <FormattedMessage id="issue_issueSortByName" />,
-      },
-      // {
-      //   code: 'typeCode',
-      //   showName: <FormattedMessage id="issue_issueSortByType" />,
-      // },
-      {
-        code: 'priorityCode',
-        showName: <FormattedMessage id="issue_issueSortByPriority" />,
-      },
-      {
-        code: 'statusId',
-        showName: <FormattedMessage id="issue_issueSortByStatus" />,
-      },
-      {
-        code: 'assigneeId',
-        showName: <FormattedMessage id="issue_issueSortByPerson" />,
-      },
-    ];
+    // const ORDER = [
+    //   {
+    //     code: 'summary',
+    //     showName: <FormattedMessage id="issue_issueSortByName" />,
+    //   },
+    //   // {
+    //   //   code: 'typeCode',
+    //   //   showName: <FormattedMessage id="issue_issueSortByType" />,
+    //   // },
+    //   {
+    //     code: 'priorityCode',
+    //     showName: <FormattedMessage id="issue_issueSortByPriority" />,
+    //   },
+    //   {
+    //     code: 'statusId',
+    //     showName: <FormattedMessage id="issue_issueSortByStatus" />,
+    //   },
+    //   {
+    //     code: 'assigneeId',
+    //     showName: <FormattedMessage id="issue_issueSortByPerson" />,
+    //   },
+    // ];
     const filterColumns = [
       {
         title: <FormattedMessage id="issue_issueFilterByNum" />,
@@ -357,54 +327,54 @@ class Test extends Component {
         filteredValue: IssueStore.filteredInfo.statusCode || null,
       },
     ];
-    const columns = [
-      {
-        title: 'summary',
-        dataIndex: 'summary',
-        render: (summary, record) => (
-          expand ? this.renderNarrowIssue(record) : this.renderTestIssue(record)
-        ),
-      },
-    ];
-    const sort = (
-      <Menu onClick={this.handleSort.bind(this)}>
-        {
-          ORDER.map(v => (
-            <Menu.Item key={v.code}>
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  color: IssueStore.order.orderField === v.code ? 'blue' : '#000',
-                }}
-              >
-                <span style={{ width: 100 }}>
-                  {v.showName}
-                </span>
-                <div style={{ display: 'flex', flexDirection: 'column' }}>
-                  {
-                    IssueStore.order.orderField === v.code && IssueStore.order.orderType === 'asc' && (
-                      <Icon
-                        type="arrow_upward"
-                      />
-                    )
-                  }
-                  {
-                    IssueStore.order.orderField === v.code && IssueStore.order.orderType === 'desc' && (
-                      <Icon
-                        type="arrow_downward"
-                      />
-                    )
-                  }
-                </div>
-              </div>
-            </Menu.Item>
-          ))
-        }
+    // const columns = [
+    //   {
+    //     title: 'summary',
+    //     dataIndex: 'summary',
+    //     render: (summary, record) => (
+    //       expand ? this.renderNarrowIssue(record) : this.renderTestIssue(record)
+    //     ),
+    //   },
+    // ];
+    // const sort = (
+    //   <Menu onClick={this.handleSort.bind(this)}>
+    //     {
+    //       ORDER.map(v => (
+    //         <Menu.Item key={v.code}>
+    //           <div
+    //             style={{
+    //               display: 'flex',
+    //               justifyContent: 'space-between',
+    //               alignItems: 'center',
+    //               color: IssueStore.order.orderField === v.code ? 'blue' : '#000',
+    //             }}
+    //           >
+    //             <span style={{ width: 100 }}>
+    //               {v.showName}
+    //             </span>
+    //             <div style={{ display: 'flex', flexDirection: 'column' }}>
+    //               {
+    //                 IssueStore.order.orderField === v.code && IssueStore.order.orderType === 'asc' && (
+    //                   <Icon
+    //                     type="arrow_upward"
+    //                   />
+    //                 )
+    //               }
+    //               {
+    //                 IssueStore.order.orderField === v.code && IssueStore.order.orderType === 'desc' && (
+    //                   <Icon
+    //                     type="arrow_downward"
+    //                   />
+    //                 )
+    //               }
+    //             </div>
+    //           </div>
+    //         </Menu.Item>
+    //       ))
+    //     }
 
-      </Menu>
-    );
+    //   </Menu>
+    // );
 
     return (
       <Page className="c7ntest-Issue c7ntest-region">
@@ -416,21 +386,18 @@ class Test extends Component {
             <Icon type="playlist_add icon" />
             <FormattedMessage id="issue_createTestIssue" />
           </Button>
-          <Button className="leftBtn" onClick={() => this.exportExcel()}>
-            <Icon type="file_upload icon" />
+          <Button className="leftBtn" onClick={() => this.ExportSide.open()}>
+            <Icon type="export icon" />
             <FormattedMessage id="export" />
           </Button>
-          <Button className="leftBtn" onClick={() => this.downloadTemplate()}>
+          <Button className="leftBtn" onClick={() => this.UploadSide.open()}>
             <Icon type="file_upload icon" />
-            下载模板
+            <FormattedMessage id="import" />
           </Button>
-          <Upload
-            handleUpload={this.importIssue}
-          >
-            <Icon type="file_upload" />
-            {' '}
-            <FormattedMessage id="issue_importIssue" />
-          </Upload>
+          <Button className="leftBtn" onClick={() => this.downloadTemplate()}>
+            <Icon type="get_app icon" />
+            下载模板
+          </Button>          
           <Button
             onClick={() => {
               if (this.EditIssue) {
@@ -664,15 +631,14 @@ class Test extends Component {
             </section>
 
           </div>
-
+          <UploadSide ref={this.saveRef('UploadSide')} />
+          <ExportSide ref={this.saveRef('ExportSide')} />
           <div
             className="c7ntest-sidebar"
             style={{
               // width: this.state.expand ? '72%' : 0,
               // width: this.state.expand ? 440 : 0,              
               display: this.state.expand ? '' : 'none',
-              overflowY: 'hidden',
-              overflowX: 'hidden',
               width: treeShow ? 440 : '72%',
             }}
           >

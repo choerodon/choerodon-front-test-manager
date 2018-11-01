@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { observer } from 'mobx-react';
 import {
-  Menu, Input, Dropdown, Button, Popover, Tooltip, Icon,
+  Menu, Input, Dropdown, Button, Popover, Tooltip, Icon, Modal,
 } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 import './PlanTreeTitle.scss';
@@ -9,6 +9,7 @@ import { editFolder, deleteCycleOrFolder } from '../../../api/cycleApi';
 import { syncFolder, syncFoldersInCycle, syncFoldersInVersion } from '../../../api/IssueManageApi';
 import TestPlanStore from '../../../store/project/TestPlan/TestPlanStore';
 
+const { confirm } = Modal;
 @observer
 class PlanTreeTitle extends Component {
   state = {
@@ -56,16 +57,23 @@ class PlanTreeTitle extends Component {
         break;
       }
       case 'delete': {
-        deleteCycleOrFolder(cycleId).then((res) => {
-          if (res.failed) {
-            Choerodon.prompt('删除失败');
-          } else {
-            TestPlanStore.setCurrentCycle({});
-            refresh();
-          }
-        }).catch((err) => {
-
+        confirm({
+          title: '确定要删除阶段?',
+          content: '阶段内所有执行将被删除',
+          onOk() {
+            deleteCycleOrFolder(cycleId).then((res) => {
+              if (res.failed) {
+                Choerodon.prompt('删除失败');
+              } else {
+                TestPlanStore.setCurrentCycle({});
+                refresh();
+              }
+            }).catch((err) => {
+    
+            });
+          },         
         });
+       
         break;
       }
       case 'clone': {

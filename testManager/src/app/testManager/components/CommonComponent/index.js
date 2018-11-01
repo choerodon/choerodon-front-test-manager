@@ -13,10 +13,12 @@ import WYSIWYGEditor from './WYSIWYGEditor';
 import DragTable from './DragTable';
 import YamlEditor from './YamlEditor';
 import SelectVersion from './SelectVersion';
+import SelectFolder from './SelectFolder';
 import Upload from './Upload';
+import LoadingBar from './LoadingBar';
 
 export {
   TextEditToggle, RichTextShow, SelectFocusLoad, User, UploadInTable, DefectSelect, CreateIssueTiny,
   SelectCreateIssueFooter, RadioButton, StatusTags, FullEditor, WYSIWYGEditor, DragTable, YamlEditor,
-  SelectVersion, Upload,
+  SelectVersion, Upload, LoadingBar, SelectFolder,
 };

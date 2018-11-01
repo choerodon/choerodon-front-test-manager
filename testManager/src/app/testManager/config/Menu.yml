@@ -46,15 +46,15 @@
         delete: true
         permission:
           - 'test-manager-service.test-cycle.getTestCycle'
-    - "createautotest":
-        icon: note_add
-        Routes: /testManager/AutoTest/create
-        sort: 7
-        permission:
-          - 'test-manager-service.test-cycle.getTestCycle'
-    - "autotestlist":
-        icon: record_test
-        Routes: /testManager/AutoTest/list
-        sort: 8
-        permission:
-          - 'test-manager-service.test-cycle.getTestCycle'    
+    # - "createautotest":
+    #     icon: note_add
+    #     Routes: /testManager/AutoTest/create
+    #     sort: 7
+    #     permission:
+    #       - 'test-manager-service.test-cycle.getTestCycle'
+    # - "autotestlist":
+    #     icon: record_test
+    #     Routes: /testManager/AutoTest/list
+    #     sort: 8
+    #     permission:
+    #       - 'test-manager-service.test-cycle.getTestCycle'
