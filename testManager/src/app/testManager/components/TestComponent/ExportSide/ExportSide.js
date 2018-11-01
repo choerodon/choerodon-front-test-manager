@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { Content, stores } from 'choerodon-front-boot';
 import {
-  Modal, Progress, Table, Button, Icon,
+  Modal, Progress, Table, Button, Icon, Tooltip,
 } from 'choerodon-ui';
 import FileSaver from 'file-saver';
 import moment from 'moment';
@@ -111,6 +111,10 @@ class ExportSide extends Component {
     }
   }
 
+  handleDownload=() => {
+
+  }
+
   render() {
     const { visible, versionId, folderId } = this.state;
     const data = [{
@@ -212,7 +216,9 @@ class ExportSide extends Component {
       render: (file, record) => (
         // <a className="c7ntext-text-dot" href={file.url}>
         <div style={{ textAlign: 'right' }}>
-          <Button style={{ marginRight: -3 }} shape="circle" funcType="flat" icon="get_app" disabled={record.progress < 100} />
+          <Tooltip title="下载文件">
+            <Button style={{ marginRight: -3 }} shape="circle" funcType="flat" icon="get_app" disabled={record.progress < 100} onClick={this.handleDownload.bind(this, record)} />
+          </Tooltip>
         </div>
         // </a>
       ),

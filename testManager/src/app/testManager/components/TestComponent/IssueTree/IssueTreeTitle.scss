@@ -13,11 +13,11 @@
     margin-top: -2px;
     .c7ntest-add-folder {
       transition: none;
-      margin:0 4px;
+      margin-left: 30px;
+      padding-right: 3px;
       visibility: hidden;
     }
   }
-
 }
 
 .c7ntest-issue-tree-title:hover {
@@ -25,12 +25,13 @@
     visibility: visible;
   }
 }
-.IssueTree-drag-prompt{
+
+.IssueTree-drag-prompt {
   position: absolute;
   margin-top: 3px;
   top: 0;
   left: 100%;
   background: white;
-  box-shadow: 0 2px 8px rgba(0,0,0,.12);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .12);
   padding: 10px;
 }

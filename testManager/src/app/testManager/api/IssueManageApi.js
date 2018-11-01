@@ -119,7 +119,7 @@ export function createLink(issueId, issueLinkCreateDTOList) {
   const projectId = AppState.currentMenuType.id;
   return axios.post(`/agile/v1/projects/${projectId}/issue_links/${issueId}`, issueLinkCreateDTOList);
 }
-
+// 需要更新
 export function loadLinkIssues(issueId) {
   const projectId = AppState.currentMenuType.id;
   return axios.get(`/agile/v1/projects/${projectId}/issue_links/${issueId}`);
