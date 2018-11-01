@@ -9,7 +9,7 @@ import { TYPE_NAME } from '../../../common/Constant';
 
 const styles = {
   issueNum: {
-    paddingRight: 12, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+    padding: '0 12px 0 5px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
   },
 };
 export function renderType(typeCode) {

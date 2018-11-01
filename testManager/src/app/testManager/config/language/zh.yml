@@ -1,6 +1,6 @@
 "test-manager": 测试管理
 'test-manager.summary': 测试摘要
-'test-manager.manager': 测试用例管理
+'test-manager.manager': 测试用例
 'test-manager.TestPlan': 测试计划
 'test-manager.TestExecute': 测试执行
 'test-manager.report':  测试管理报表

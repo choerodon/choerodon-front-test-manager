@@ -233,35 +233,45 @@ export function getParams(url) {
 }
 export function issueLink(issueId, typeCode) {
   const menu = AppState.currentMenuType;
-  const { type, id: projectId, name } = menu;
+  const {
+    type, id: projectId, name, organizationId, 
+  } = menu;
   if (typeCode === 'issue_test') {
-    return encodeURI(`/testManager/IssueManage?type=${type}&id=${projectId}&name=${name}&paramIssueId=${issueId}`);
+    return encodeURI(`/testManager/IssueManage?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}&paramIssueId=${issueId}`);
   } else {
-    return encodeURI(`/agile/issue?type=${type}&id=${projectId}&name=${name}&paramIssueId=${issueId}`);
+    return encodeURI(`/agile/issue?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}&paramIssueId=${issueId}`);
   }
 }
 export function createIssueLink() {
   const menu = AppState.currentMenuType;
-  const { type, id: projectId, name } = menu;
-  return encodeURI(`/agile/issue?type=${type}&id=${projectId}&name=${name}`);
+  const {
+    type, id: projectId, name, organizationId, 
+  } = menu;
+  return encodeURI(`/agile/issue?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}`);
 }
 export function cycleLink(cycleId) {
   const menu = AppState.currentMenuType;
-  const { type, id: projectId, name } = menu;
+  const {
+    type, id: projectId, name, organizationId, 
+  } = menu;
  
-  return encodeURI(`/testManager/TestExecute?type=${type}&id=${projectId}&name=${name}&cycleId=${cycleId}`);
+  return encodeURI(`/testManager/TestExecute?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}&cycleId=${cycleId}`);
 }
 export function executeDetailLink(executeId) {
   const menu = AppState.currentMenuType;
-  const { type, id: projectId, name } = menu;
+  const {
+    type, id: projectId, name, organizationId, 
+  } = menu;
  
-  return encodeURI(`/testManager/TestExecute/execute/${executeId}?type=${type}&id=${projectId}&name=${name}`);
+  return encodeURI(`/testManager/TestExecute/execute/${executeId}?type=${type}&id=${projectId}&organizationId=${organizationId}&name=${name}`);
 }
 export function executeDetailShowLink(executeId) {
   const menu = AppState.currentMenuType;
-  const { type, id: projectId, name } = menu;
+  const {
+    type, id: projectId, name, organizationId, 
+  } = menu;
  
-  return encodeURI(`/testManager/TestPlan/executeShow/${executeId}?type=${type}&id=${projectId}&name=${name}`);
+  return encodeURI(`/testManager/TestPlan/executeShow/${executeId}?type=${type}&id=${projectId}&organizationId=${organizationId}&name=${name}`);
 }
 /**
  * 处理数据请求错误

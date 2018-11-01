@@ -232,8 +232,8 @@ const zhCN = {
   cycle_createExecute_defectStatus: '缺陷状态',
 
 
-  // 测试用例管理
-  issue_name: '测试用例管理',
+  // 测试用例
+  issue_name: '测试用例',
   issue_noIssueTitle: '根据当前搜索条件没有查询到问题',
   issue_noIssueDescription: '尝试修改您的过滤选项或者在下面创建新的问题',
   issue_createTestIssue: '创建测试用例',
@@ -342,7 +342,7 @@ const zhCN = {
   export_side_content_title: `在项目“${projectName}”中导出用例`,
   export_side_content_description: '您可以在此将项目的用例信息导出到文件中去。',
   // dashboard
-  dashboard_issue: '测试用例管理',
+  dashboard_issue: '测试用例',
   dashboard_cycle: '测试循环',
   dashboard_execute: '执行测试',
   dashboard_report: '测试报告',

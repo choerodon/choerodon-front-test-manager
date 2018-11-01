@@ -1,7 +1,23 @@
+/*
+ * @Author: LainCarl 
+ * @Date: 2018-11-01 14:56:06 
+ * @Last Modified by:   LainCarl 
+ * @Last Modified time: 2018-11-01 14:56:06 
+ * @Feature:  
+ */
+
 import { stores, axios } from 'choerodon-front-boot';
 
 const { AppState } = stores;
 
+/**
+ *创建issue
+ *
+ * @export
+ * @param {*} issueObj
+ * @param {*} folderId
+ * @returns
+ */
 export function createIssue(issueObj, folderId) {
   const projectId = AppState.currentMenuType.id;
   const issue = {

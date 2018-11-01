@@ -34,7 +34,7 @@ class IssueTable extends Component {
           display: 'flex', marginBottom: '5px', width: '100%', flex: 1,
         }}
         >
-          {/* {{renderType(typeCode)}} */}
+          {renderType(typeCode)}
           {renderIssueNum(issueNum)}
           {renderSummary(summary)}
         </div>
@@ -63,7 +63,7 @@ class IssueTable extends Component {
         display: 'flex', flex: 1, marginTop: '3px', marginBottom: '3px', cursor: 'pointer',
       }}
       >
-        {/* {renderType(typeCode)} */}
+        {renderType(typeCode)}
         {renderIssueNum(issueNum)}
         {renderSummary(summary)}
         <div className="c7ntest-flex-space" />
@@ -93,7 +93,7 @@ class IssueTable extends Component {
           display: 'flex', marginBottom: '5px', width: '100%', flex: 1,
         }}
         >
-          {/* {{renderType(typeCode)}} */}
+          {renderType(typeCode)}
           {renderIssueNum(issueNum)}
           {renderSummary(summary)}
         </div>

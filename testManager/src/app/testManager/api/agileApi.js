@@ -89,14 +89,16 @@ export function getLabels() {
   return axios.get(`agile/v1/projects/${projectId}/issue_labels`);
 }
 /**
- *获取当前项目的issue优先级
+ *获取当前组织的issue优先级
  *
  * @export
  * @returns
  */
 export function getPrioritys() {
-  const projectId = AppState.currentMenuType.id;
-  return axios.get(`agile/v1/projects/${projectId}/lookup_values/priority`);
+  // const projectId = AppState.currentMenuType.id;
+  // return axios.get(`agile/v1/projects/${projectId}/lookup_values/priority`);
+  const orgId = AppState.currentMenuType.organizationId;
+  return axios.get(`/issue/v1/organizations/${orgId}/priority/list_by_org`);
 }
 /**
  *获取当前项目的issue状态列表
