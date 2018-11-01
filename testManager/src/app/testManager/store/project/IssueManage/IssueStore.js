@@ -3,9 +3,10 @@ import {
 } from 'mobx';
 import { stores, axios } from 'choerodon-front-boot';
 import {
-  loadVersions, getIssuesByFolder, getIssuesByIds, getSingleIssues,
+  getIssuesByFolder, getIssuesByIds, getSingleIssues,
   getIssuesByVersion, getAllIssues,
 } from '../../../api/IssueManageApi';
+import { getProjectVersion } from '../../../api/agileApi';
 import IssueTreeStore from './IssueTreeStore';
 
 const { AppState } = stores;
@@ -79,7 +80,7 @@ class IssueStore {
     this.setLoading(true);
     const { orderField, orderType } = this.order;
     const funcArr = [];
-    funcArr.push(loadVersions());
+    funcArr.push(getProjectVersion());
     const currentCycle = IssueTreeStore.currentCycle;
     const types = ['all', 'topversion', 'version', 'folder'];
     const type = currentCycle.key ? types[currentCycle.key.split('-').length - 1] : 'allissue';

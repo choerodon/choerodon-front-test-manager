@@ -21,7 +21,7 @@ import {
 import {
   RichTextShow, SelectFocusLoad, StatusTags, DragTable, 
 } from '../../../../components/CommonComponent';
-import { getUsers } from '../../../../api/CommonApi';
+import { getUsers } from '../../../../api/IamApi';
 import TestPlanStore from '../../../../store/project/TestPlan/TestPlanStore';
 import {
   delta2Html, delta2Text, issueLink, executeDetailShowLink,

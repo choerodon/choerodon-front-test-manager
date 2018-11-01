@@ -219,7 +219,7 @@ const zhCN = {
   cycle_createExecute_me: '我',
   cycle_createExecute_others: '其他人',
   cycle_createExecute_selectAssign: '选择指派人',
-  cycle_createExecute_folder: '测试步骤',
+  cycle_createExecute_folder: '测试阶段',
   cycle_createExecute_assigned: '被指定人',
   cycle_createExecute_filter: '筛选器',
   cycle_createExecute_priority: '优先级',

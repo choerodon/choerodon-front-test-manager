@@ -17,11 +17,11 @@ import {
   delta2Html, handleFileUpload, text2Delta, beforeTextUpload, formatDate, returnBeforeTextUpload,
 } from '../../../common/utils';
 import {
-  loadDatalogs, loadLinkIssues, loadLabels, loadIssue,
-  updateIssue, loadPriorities, loadComponents,
-  createCommit, deleteIssue, loadStatus, cloneIssue,
+  loadDatalogs, loadLinkIssues, loadIssue,
+  updateIssue, createCommit, deleteIssue, loadStatus, cloneIssue,
 } from '../../../api/IssueManageApi';
-import { getSelf, getUsers, getUser } from '../../../api/CommonApi';
+import { getLabels, getPrioritys, getModules } from '../../../api/agileApi';
+import { getSelf, getUsers, getUser } from '../../../api/IamApi';
 import { FullEditor, WYSIWYGEditor } from '../../CommonComponent';
 import CreateLinkTask from '../CreateLinkTask';
 import UserHead from '../UserHead';
@@ -741,10 +741,10 @@ class EditIssueNarrow extends Component {
       width: 560,
       title: `删除测试用例${this.state.issueNum}`,
       content:
-  <div style={{ marginBottom: 32 }}>
-    <p style={{ marginBottom: 10 }}>请确认您要删除这个测试用例。</p>
-    <p style={{ marginBottom: 10 }}>这个测试用例将会被彻底删除。包括所有步骤和相关执行。</p>
-  </div>,
+        <div style={{ marginBottom: 32 }}>
+          <p style={{ marginBottom: 10 }}>请确认您要删除这个测试用例。</p>
+          <p style={{ marginBottom: 10 }}>这个测试用例将会被彻底删除。包括所有步骤和相关执行。</p>
+        </div>,
       onOk() {
         return deleteIssue(issueId)
           .then((res) => {
@@ -1167,7 +1167,7 @@ class EditIssueNarrow extends Component {
                       <Button icon="more_vert" />
                     </Dropdown>
                   </div>
-                </div>                
+                </div>
                 {/* 状态 */}
                 {mode === 'wide' && (
                   <div className="line-start" style={{ alignItems: 'center' }}>
@@ -1290,7 +1290,7 @@ class EditIssueNarrow extends Component {
                             onCancel={this.resetPriorityCode.bind(this)}
                             onInit={() => {
                               this.setAnIssueToState();
-                              loadPriorities().then((res) => {
+                              getPrioritys().then((res) => {
                                 this.setState({
                                   originpriorities: res.lookupValues,
                                 });
@@ -1330,7 +1330,7 @@ class EditIssueNarrow extends Component {
                                 this.setState({
                                   selectLoading: true,
                                 });
-                                loadPriorities().then((res) => {
+                                getPrioritys().then((res) => {
                                   this.setState({
                                     originpriorities: res.lookupValues,
                                     selectLoading: false,
@@ -1525,7 +1525,7 @@ class EditIssueNarrow extends Component {
                                     onCancel={this.resetPriorityCode.bind(this)}
                                     onInit={() => {
                                       this.setAnIssueToState();
-                                      loadPriorities().then((res) => {
+                                      getPrioritys().then((res) => {
                                         this.setState({
                                           originpriorities: res.lookupValues,
                                         });
@@ -1563,7 +1563,7 @@ class EditIssueNarrow extends Component {
                                         this.setState({
                                           selectLoading: true,
                                         });
-                                        loadPriorities().then((res) => {
+                                        getPrioritys().then((res) => {
                                           this.setState({
                                             originpriorities: res.lookupValues,
                                             selectLoading: false,
@@ -1645,7 +1645,7 @@ class EditIssueNarrow extends Component {
                                       this.setState({
                                         selectLoading: true,
                                       });
-                                      loadComponents().then((res) => {
+                                      getModules().then((res) => {
                                         this.setState({
                                           originComponents: res,
                                           selectLoading: false,
@@ -1730,7 +1730,7 @@ class EditIssueNarrow extends Component {
                                   this.setState({
                                     selectLoading: true,
                                   });
-                                  loadLabels().then((res) => {
+                                  getLabels().then((res) => {
                                     this.setState({
                                       originLabels: res,
                                       selectLoading: false,

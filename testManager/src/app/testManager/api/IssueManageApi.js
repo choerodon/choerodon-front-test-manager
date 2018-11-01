@@ -1,8 +1,8 @@
 /*
  * @Author: LainCarl 
  * @Date: 2018-11-01 14:56:06 
- * @Last Modified by:   LainCarl 
- * @Last Modified time: 2018-11-01 14:56:06 
+ * @Last Modified by: LainCarl
+ * @Last Modified time: 2018-11-01 15:25:27
  * @Feature:  
  */
 
@@ -27,19 +27,6 @@ export function createIssue(issueObj, folderId) {
   const versionId = issue.versionIssueRelDTOList[0].versionId;
   return axios.post(`/test/v1/projects/${projectId}/issueFolderRel/testAndRelationship?versionId=${versionId}${folderId ? `&folderId=${folderId}` : ''}`, issue);
 }
-
-export function loadLabels() {
-  const projectId = AppState.currentMenuType.id;
-  return axios.get(
-    `/agile/v1/projects/${projectId}/issue_labels`,
-  );
-}
-
-export function loadVersions(arr = []) {
-  const projectId = AppState.currentMenuType.id;
-  return axios.post(`/agile/v1/projects/${projectId}/product_version/names`, arr);
-}
-
 export function createCommit(commitObj, projectId = AppState.currentMenuType.id) {
   return axios.post(`/agile/v1/projects/${projectId}/issue_comment`, commitObj);
 }
@@ -52,43 +39,12 @@ export function deleteCommit(commitId, projectId = AppState.currentMenuType.id) 
   return axios.delete(`/agile/v1/projects/${projectId}/issue_comment/${commitId}`);
 }
 
-export function loadComponents() {
-  const projectId = AppState.currentMenuType.id;
-  return axios.get(
-    `/agile/v1/projects/${projectId}/component`,
-  );
-}
-
-export function loadEpics() {
-  const projectId = AppState.currentMenuType.id;
-  return axios.get(
-    `/agile/v1/projects/${projectId}/issues/epics/select_data`,
-  );
-}
-
-/**
- * 根据冲刺状态获取冲刺，["started", "sprint_planning", "closed"]
- * @param {*} arr 
- */
-export function loadSprints(arr = []) {
-  const projectId = AppState.currentMenuType.id;
-  return axios.post(`/agile/v1/projects/${projectId}/sprint/names`, arr);
-}
-
 export function loadStatus() {
   const projectId = AppState.currentMenuType.id;
   return axios.get(
     `/agile/v1/projects/${projectId}/issue_status/list`,
   );
 }
-
-export function loadPriorities() {
-  const projectId = AppState.currentMenuType.id;
-  return axios.get(
-    `/agile/v1/projects/${projectId}/lookup_values/priority`,
-  );
-}
-
 export function loadIssue(issueId, projectId = AppState.currentMenuType.id) {
   return axios.get(`/agile/v1/projects/${projectId}/issues/${issueId}`);
 }

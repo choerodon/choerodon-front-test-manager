@@ -22,7 +22,7 @@ class CloneCycle extends Component {
     }
   }
   
-  loadVersions = () => {
+  getProjectVersion = () => {
     this.setState({
       selectLoading: true,
     });
@@ -89,7 +89,7 @@ class CloneCycle extends Component {
                   label={<FormattedMessage id="version" />}
 
                   loading={selectLoading}
-                  onFocus={this.loadVersions}
+                  onFocus={this.getProjectVersion}
                 >
                   {versionOptions}
                 </Select>,

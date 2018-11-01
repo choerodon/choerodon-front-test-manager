@@ -13,7 +13,7 @@ import { FormattedMessage } from 'react-intl';
 import FileSaver from 'file-saver';
 import moment from 'moment';
 import './TestExecuteHome.scss';
-import { getUsers } from '../../../../api/CommonApi';
+import { getUsers } from '../../../../api/IamApi';
 import {
   getCycles, deleteExecute, getCycleById,
   clone, addFolder, exportCycle,

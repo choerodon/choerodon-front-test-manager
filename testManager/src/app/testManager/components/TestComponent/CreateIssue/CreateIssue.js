@@ -10,11 +10,9 @@ import './CreateIssue.scss';
 import '../../../assets/main.scss';
 import { UploadButton } from '../CommonComponent';
 import { handleFileUpload, beforeTextUpload } from '../../../common/utils';
-import {
-  createIssue, loadLabels, loadPriorities, loadVersions, loadComponents, 
-  getFoldersByVersion,
-} from '../../../api/IssueManageApi';
-import { getUsers } from '../../../api/CommonApi';
+import { createIssue, getFoldersByVersion } from '../../../api/IssueManageApi';
+import { getLabels, getModules, getPrioritys, getProjectVersion } from '../../../api/agileApi';
+import { getUsers } from '../../../api/IamApi';
 import { COLOR } from '../../../common/Constant';
 import { FullEditor, WYSIWYGEditor } from '../../CommonComponent';
 import UserHead from '../UserHead';
@@ -38,7 +36,7 @@ class CreateIssue extends Component {
       originLabels: [],
       originComponents: [],
       originPriorities: [],
-      originFixVersions: [],  
+      originFixVersions: [],
       originUsers: [],
 
       origin: {},
@@ -47,7 +45,7 @@ class CreateIssue extends Component {
   }
 
   componentDidMount() {
-    this.loadPriorities();
+    this.getPrioritys();
     this.getProjectSetting();
   }
 
@@ -93,8 +91,8 @@ class CreateIssue extends Component {
     this.setState({ fileList: data });
   }
 
-  loadPriorities() {
-    loadPriorities().then((res) => {
+  getPrioritys() {
+    getPrioritys().then((res) => {
       this.setState({
         originPriorities: res.lookupValues,
       });
@@ -163,7 +161,7 @@ class CreateIssue extends Component {
           }
         });
         const exitFixVersions = this.state.originFixVersions;
-        const version = values.versionId;       
+        const version = values.versionId;
         const target = _.find(exitFixVersions, { versionId: version });
         let fixVersionIssueRelDTOList = [];
         if (target) {
@@ -175,7 +173,7 @@ class CreateIssue extends Component {
           Choerodon.prompt('版本错误');
           return null;
         }
-        
+
         // return;
         // const fixVersionIssueRelDTOList = _.map(values.fixVersionIssueRel, (version) => {
         //   const target = _.find(exitFixVersions, { name: version });
@@ -215,7 +213,7 @@ class CreateIssue extends Component {
         }
         this.props.onOk(extra);
       }
-      
+
     });
   };
 
@@ -383,71 +381,6 @@ class CreateIssue extends Component {
                 }}
               />
             </Tooltip>
-
-            {/* {
-              this.props.form.getFieldValue('typeCode') !== 'issue_epic' && (
-                <FormItem style={{ width: 520 }}>
-                  {getFieldDecorator('epicId', {})(
-                    <Select
-                      label={<FormattedMessage id="issue_create_content_epic" />}
-                      allowClear
-                      filter
-                      filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
-                      getPopupContainer={triggerNode => triggerNode.parentNode}
-                      loading={this.state.selectLoading}
-                      onFocus={() => {
-                        this.setState({
-                          selectLoading: true,
-                        });
-                        loadEpics().then((res) => {
-                          this.setState({
-                            originEpics: res,
-                            selectLoading: false,
-                          });
-                        });
-                      }}
-                    >
-                      {this.state.originEpics.map(epic => <Option key={epic.issueId} value={epic.issueId}>{epic.epicName}</Option>)}
-                    </Select>,
-                  )}
-                </FormItem>
-              )
-            }
-
-            <FormItem style={{ width: 520 }}>
-              {getFieldDecorator('sprintId', {})(
-                <Select
-                  label={<FormattedMessage id="issue_create_content_sprint" />}
-                  allowClear
-                  filter
-                  filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
-                  getPopupContainer={triggerNode => triggerNode.parentNode}
-                  loading={this.state.selectLoading}
-                  onFocus={() => {
-                    this.setState({
-                      selectLoading: true,
-                    });
-                    loadSprints(['sprint_planning', 'started']).then((res) => {
-                      this.setState({
-                        originSprints: res,
-                        selectLoading: false,
-                      });
-                    });
-                  }}
-                >
-                  {this.state.originSprints.map(sprint => (
-                    <Option
-                      key={sprint.sprintId}
-                      value={sprint.sprintId}
-                    >
-                      {sprint.sprintName}
-
-                    </Option>
-                  ))}
-                </Select>,
-              )}
-            </FormItem> */}
-
             <FormItem style={{ width: 520 }}>
               {getFieldDecorator('versionId', {
                 rules: [
@@ -472,7 +405,7 @@ class CreateIssue extends Component {
                     this.setState({
                       selectLoading: true,
                     });
-                    loadVersions(['version_planning', 'released']).then((res) => {
+                    getProjectVersion(['version_planning', 'released']).then((res) => {
                       this.setState({
                         originFixVersions: res,
                         selectLoading: false,
@@ -486,7 +419,7 @@ class CreateIssue extends Component {
             </FormItem>
             <FormItem
               style={{ width: 520 }}
-                  // {...formItemLayout}
+              // {...formItemLayout}
               label={null}
             >
               {getFieldDecorator('folderId', {
@@ -496,11 +429,11 @@ class CreateIssue extends Component {
               })(
                 <Select
                   loading={selectLoading}
-                  onFocus={this.loadFolders}                 
+                  onFocus={this.loadFolders}
                   label={<FormattedMessage id="issue_folder" />}
                 >
                   {folderOptions}
-                </Select>,                    
+                </Select>,
               )}
             </FormItem>
             <FormItem style={{ width: 520 }}>
@@ -517,7 +450,7 @@ class CreateIssue extends Component {
                     this.setState({
                       selectLoading: true,
                     });
-                    loadComponents().then((res) => {
+                    getModules().then((res) => {
                       this.setState({
                         originComponents: res,
                         selectLoading: false,
@@ -544,7 +477,7 @@ class CreateIssue extends Component {
                     this.setState({
                       selectLoading: true,
                     });
-                    loadLabels().then((res) => {
+                    getLabels().then((res) => {
                       this.setState({
                         originLabels: res,
                         selectLoading: false,
