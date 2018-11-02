@@ -39,16 +39,25 @@ export function deleteCommit(commitId, projectId = AppState.currentMenuType.id) 
   return axios.delete(`/agile/v1/projects/${projectId}/issue_comment/${commitId}`);
 }
 
-export function loadStatus() {
+// export function loadStatus() {
+//   const projectId = AppState.currentMenuType.id;
+//   return axios.get(
+//     `/agile/v1/projects/${projectId}/issue_status/list`,
+//   );
+// }
+export function loadStatus(statusId, issueId, typeId) {
   const projectId = AppState.currentMenuType.id;
   return axios.get(
-    `/agile/v1/projects/${projectId}/issue_status/list`,
+    `/issue/v1/projects/${projectId}/schemes/query_transforms?current_status_id=${statusId}&issue_id=${issueId}&issue_type_id=${typeId}&scheme_type=agile`,
   );
 }
 export function loadIssue(issueId, projectId = AppState.currentMenuType.id) {
-  return axios.get(`/agile/v1/projects/${projectId}/issues/${issueId}`);
+  const { organizationId } = AppState.currentMenuType;
+  return axios.get(`/agile/v1/projects/${projectId}/issues/${issueId}?organizationId=${organizationId}`);
 }
-
+export function updateStatus(transformId, issueId, objVerNum, proId = AppState.currentMenuType.id) {
+  return axios.put(`/agile/v1/projects/${proId}/issues/update_status?transformId=${transformId}&issueId=${issueId}&objectVersionNumber=${objVerNum}`);
+}
 export function updateIssue(data, projectId = AppState.currentMenuType.id) {
   return axios.put(`/agile/v1/projects/${projectId}/issues`, data);
 }
@@ -203,17 +212,21 @@ export function cloneIssue(issueId, copyConditionDTO) {
 }
 export function exportIssues() {
   const projectId = AppState.currentMenuType.id;
-  return axios.get(`/zuul/test/v1/projects/${projectId}/case/download/excel`, { responseType: 'arraybuffer', timeout: 3000000 });
+  return axios.get(`/zuul/test/v1/projects/${projectId}/case/download/excel`);
 }
 export function exportIssuesFromVersion(versionId) {
   const projectId = AppState.currentMenuType.id;
-  return axios.get(`/zuul/test/v1/projects/${projectId}/case/download/excel/version?versionId=${versionId}`, { responseType: 'arraybuffer', timeout: 3000000 });
+  return axios.get(`/zuul/test/v1/projects/${projectId}/case/download/excel/version?versionId=${versionId}`);
 }
 export function exportIssuesFromFolder(folderId) {
   const projectId = AppState.currentMenuType.id;
-  return axios.get(`/zuul/test/v1/projects/${projectId}/case/download/excel/folder?folderId=${folderId}`, { responseType: 'arraybuffer', timeout: 3000000 });
+  return axios.get(`/zuul/test/v1/projects/${projectId}/case/download/excel/folder?folderId=${folderId}&userId=${AppState.userInfo.id}`);
 }
 export function downloadTemplate() {
   const projectId = AppState.currentMenuType.id;
   return axios.get(`/zuul/test/v1/projects/${projectId}/case/download/excel/template`, { responseType: 'arraybuffer' });
+}
+export function getExportList() {
+  const projectId = AppState.currentMenuType.id;
+  return axios.get(`/test/v1/projects/${projectId}/test/fileload/history`);
 }

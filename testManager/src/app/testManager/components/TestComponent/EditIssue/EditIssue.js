@@ -17,7 +17,7 @@ import {
   delta2Html, handleFileUpload, text2Delta, beforeTextUpload, formatDate, returnBeforeTextUpload,
 } from '../../../common/utils';
 import {
-  loadDatalogs, loadLinkIssues, loadIssue,
+  loadDatalogs, loadLinkIssues, loadIssue, updateStatus,
   updateIssue, createCommit, deleteIssue, loadStatus, cloneIssue,
 } from '../../../api/IssueManageApi';
 import { getLabels, getPrioritys, getModules } from '../../../api/agileApi';
@@ -91,8 +91,9 @@ class EditIssueNarrow extends Component {
       epicName: '',
       issueNum: undefined,
       typeCode: 'issue_test',
+      issueTypeDTO: {},
       parentIssueId: undefined,
-      priorityCode: undefined,
+  
       reporterId: undefined,
       reporterImageUrl: undefined,
       sprintId: undefined,
@@ -103,7 +104,7 @@ class EditIssueNarrow extends Component {
       creationDate: undefined,
       lastUpdateDate: undefined,
       statusName: '',
-      priorityName: '',
+      priorityDTO: null,
       reporterName: '',
       summary: '',
       description: '',
@@ -211,8 +212,7 @@ class EditIssueNarrow extends Component {
       objectVersionNumber,
       parentIssueId,
       parentIssueNum,
-      priorityCode,
-      priorityName,
+      priorityDTO,
       projectId,
       remainingTime,
       reporterId,
@@ -227,6 +227,7 @@ class EditIssueNarrow extends Component {
       storyPoints,
       summary,
       typeCode,
+      issueTypeDTO,
       versionIssueRelDTOList,
       subIssueDTOList,
     } = issue;
@@ -266,8 +267,7 @@ class EditIssueNarrow extends Component {
       objectVersionNumber,
       parentIssueId,
       parentIssueNum,
-      priorityCode,
-      priorityName,
+      priorityDTO,
       projectId,
       remainingTime,
       reporterId,
@@ -282,6 +282,7 @@ class EditIssueNarrow extends Component {
       storyPoints,
       summary,
       typeCode,
+      issueTypeDTO,
       versionIssueRelDTOList,
       subIssueDTOList,
       fixVersions,
@@ -478,9 +479,14 @@ class EditIssueNarrow extends Component {
   }
 
   updateIssue = (pro) => {
+    const {
+      origin,
+      issueId,
+      transformId,
+    } = this.state;
     const obj = {
-      issueId: this.state.issueId,
-      objectVersionNumber: this.state.origin.objectVersionNumber,
+      issueId,
+      objectVersionNumber: origin.objectVersionNumber,
     };
     if ((pro === 'description') || (pro === 'editDes')) {
       if (this.state[pro]) {
@@ -501,6 +507,14 @@ class EditIssueNarrow extends Component {
     } else if (pro === 'storyPoints' || pro === 'remainingTime') {
       obj[pro] = this.state[pro] === '' ? null : this.state[pro];
       updateIssue(obj)
+        .then((res) => {
+          this.reloadIssue();
+          if (this.props.onUpdate) {
+            this.props.onUpdate();
+          }
+        });
+    } else if (pro === 'statusId') {
+      updateStatus(transformId, issueId, origin.objectVersionNumber)
         .then((res) => {
           this.reloadIssue();
           if (this.props.onUpdate) {
@@ -659,17 +673,17 @@ class EditIssueNarrow extends Component {
     }
   }
 
-  transformPriorityCode(originpriorityCode) {
-    if (!originpriorityCode.length) {
-      return [];
-    } else {
-      const arr = [];
-      arr[0] = _.find(originpriorityCode, { valueCode: 'high' });
-      arr[1] = _.find(originpriorityCode, { valueCode: 'medium' });
-      arr[2] = _.find(originpriorityCode, { valueCode: 'low' });
-      return arr;
-    }
-  }
+  // transformPriorityCode(originpriorityCode) {
+  //   if (!originpriorityCode.length) {
+  //     return [];
+  //   } else {
+  //     const arr = [];
+  //     arr[0] = _.find(originpriorityCode, { valueCode: 'high' });
+  //     arr[1] = _.find(originpriorityCode, { valueCode: 'medium' });
+  //     arr[2] = _.find(originpriorityCode, { valueCode: 'low' });
+  //     return arr;
+  //   }
+  // }
 
 
   handleCreateLinkIssue() {
@@ -909,7 +923,25 @@ class EditIssueNarrow extends Component {
     }
   }
 
+  loadIssueStatus = () => {
+    const {
+      issueTypeDTO,
+      issueId,
+      origin,
+    } = this.state;
+    const typeId = issueTypeDTO.id;
+    this.setAnIssueToState();
+    loadStatus(origin.statusId, issueId, typeId).then((res) => {
+      this.setState({
+        originStatus: res,
+        selectLoading: false,
+      });
+    });
+  }
+
   render() {
+    const { priorityDTO, originpriorities, originStatus } = this.state;
+    const { name: priorityName, id: priorityId, colour: priorityColor } = priorityDTO || {};
     const menu = AppState.currentMenuType;
     const {
       type, id: projectId, organizationId: orgId, name,
@@ -940,7 +972,24 @@ class EditIssueNarrow extends Component {
         this.updateIssue('description');
       });
     };
-
+    const priorityOptions = originpriorities.map(priority => (
+      <Option key={priority.id} value={priority.id}>
+        <div style={{ display: 'inline-flex', alignItems: 'center', padding: '2px' }}>
+          <div
+            className="c7ntest-level"
+            style={{
+              // backgroundColor: priorityColor,
+              color: priority.colour,
+              borderRadius: '2px',
+              padding: '0 8px',
+              display: 'inline-block',
+            }}
+          >
+            {priority.name}
+          </div>
+        </div>
+      </Option>
+    ))
     return (
       <div className="choerodon-modal-editIssue">
         {
@@ -1205,14 +1254,7 @@ class EditIssueNarrow extends Component {
                             origin={this.state.statusId}
                             onOk={this.updateIssue.bind(this, 'statusId')}
                             onCancel={this.resetStatusId.bind(this)}
-                            onInit={() => {
-                              this.setAnIssueToState();
-                              loadStatus().then((res) => {
-                                this.setState({
-                                  originStatus: res,
-                                });
-                              });
-                            }}
+                            onInit={this.loadIssueStatus}
                             readModeContent={(
                               <div>
                                 {
@@ -1232,33 +1274,34 @@ class EditIssueNarrow extends Component {
                             )}
                           >
                             <Select
-                              value={this.state.originStatus.length
+                              value={originStatus.length
                                 ? this.state.statusId : this.state.statusName}
                               style={{ width: 150 }}
                               loading={this.state.selectLoading}
                               autoFocus
                               // getPopupContainer={triggerNode => triggerNode.parentNode}
                               onFocus={() => {
-                                this.setState({
-                                  selectLoading: true,
-                                });
-                                loadStatus().then((res) => {
-                                  this.setState({
-                                    originStatus: res,
-                                    selectLoading: false,
-                                  });
-                                });
+                                // this.setState({
+                                //   selectLoading: true,
+                                // });
+                                // loadStatus().then((res) => {
+                                //   this.setState({
+                                //     originStatus: res,
+                                //     selectLoading: false,
+                                //   });
+                                // });
                               }}
-                              onChange={(value) => {
+                              onChange={(value, item) => {
                                 this.setState({
                                   statusId: value,
+                                  transformId: item.key,
                                 });
                               }}
                             >
                               {
-                                this.state.originStatus.map(status => (
-                                  <Option key={status.id} value={status.id}>
-                                    {status.name}
+                                originStatus.map(transform => (
+                                  <Option key={transform.id} value={transform.endStatusId}>
+                                    {transform.statusDTO.name}
                                   </Option>
                                 ))
                               }
@@ -1285,14 +1328,14 @@ class EditIssueNarrow extends Component {
                             callback={this.changeRae.bind(this)}
                             thisType="priorityCode"
                             current={this.state.currentRae}
-                            origin={this.state.priorityCode}
+                            origin={priorityId}
                             onOk={this.updateIssue.bind(this, 'priorityCode')}
                             onCancel={this.resetPriorityCode.bind(this)}
                             onInit={() => {
                               this.setAnIssueToState();
                               getPrioritys().then((res) => {
                                 this.setState({
-                                  originpriorities: res.lookupValues,
+                                  originpriorities: res,
                                 });
                               });
                             }}
@@ -1304,7 +1347,7 @@ class EditIssueNarrow extends Component {
                                       className="c7ntest-level"
                                       style={{
                                         // backgroundColor: COLOR[this.state.priorityCode].bgColor,
-                                        color: COLOR[this.state.priorityCode].color,
+                                        color: priorityColor,
                                         // borderRadius: '2px',
                                         // padding: '0 8px',
                                         // display: 'inline-block',
@@ -1312,7 +1355,7 @@ class EditIssueNarrow extends Component {
                                         lineHeight: '18px',
                                       }}
                                     >
-                                      {this.state.priorityName}
+                                      {priorityName}
                                     </div>
                                   ) : '无'
                                 }
@@ -1320,8 +1363,8 @@ class EditIssueNarrow extends Component {
                             )}
                           >
                             <Select
-                              value={this.state.originpriorities.length
-                                ? this.state.priorityCode : this.state.priorityName}
+                              value={originpriorities.length
+                                ? priorityId : priorityName}
                               style={{ width: '150px' }}
                               loading={this.state.selectLoading}
                               autoFocus
@@ -1332,43 +1375,21 @@ class EditIssueNarrow extends Component {
                                 });
                                 getPrioritys().then((res) => {
                                   this.setState({
-                                    originpriorities: res.lookupValues,
+                                    originpriorities: res,
                                     selectLoading: false,
                                   });
                                 });
                               }}
                               onChange={(value) => {
-                                const priority = _.find(this.state.originpriorities,
-                                  { valueCode: value });
+                                const priority = _.find(originpriorities,
+                                  { id: value });
                                 this.setState({
                                   priorityCode: value,
                                   priorityName: priority.name,
                                 });
                               }}
                             >
-                              {
-                                this.transformPriorityCode(this.state.originpriorities)
-                                  .map(onetype => (
-                                    <Option key={onetype.valueCode} value={onetype.valueCode}>
-                                      <div style={{ display: 'inline-flex', alignItems: 'center', padding: '2px' }}>
-                                        <div
-                                          className="c7ntest-level"
-                                          style={{
-                                            // backgroundColor: COLOR[type.valueCode].bgColor,
-                                            color: COLOR[onetype.valueCode].color,
-                                            // borderRadius: '2px',
-                                            // padding: '0 8px',
-                                            // display: 'inline-block',
-                                            fontSize: '16px',
-                                            lineHeight: '18px',
-                                          }}
-                                        >
-                                          {onetype.name}
-                                        </div>
-                                      </div>
-                                    </Option>
-                                  ))
-                              }
+                              {priorityOptions}
                             </Select>
                           </ReadAndEdit>
                         </div>
@@ -1446,14 +1467,7 @@ class EditIssueNarrow extends Component {
                                     origin={this.state.statusId}
                                     onOk={this.updateIssue.bind(this, 'statusId')}
                                     onCancel={this.resetStatusId.bind(this)}
-                                    onInit={() => {
-                                      this.setAnIssueToState();
-                                      loadStatus().then((res) => {
-                                        this.setState({
-                                          originStatus: res,
-                                        });
-                                      });
-                                    }}
+                                    onInit={this.loadIssueStatus}
                                     readModeContent={(
                                       <div>
                                         {
@@ -1476,33 +1490,34 @@ class EditIssueNarrow extends Component {
                                     )}
                                   >
                                     <Select
-                                      value={this.state.originStatus.length
+                                      value={originStatus.length
                                         ? this.state.statusId : this.state.statusName}
                                       style={{ width: 150 }}
                                       loading={this.state.selectLoading}
                                       autoFocus
                                       getPopupContainer={triggerNode => triggerNode.parentNode}
                                       onFocus={() => {
-                                        this.setState({
-                                          selectLoading: true,
-                                        });
-                                        loadStatus().then((res) => {
-                                          this.setState({
-                                            originStatus: res,
-                                            selectLoading: false,
-                                          });
-                                        });
+                                        // this.setState({
+                                        //   selectLoading: true,
+                                        // });
+                                        // loadStatus().then((res) => {
+                                        //   this.setState({
+                                        //     originStatus: res,
+                                        //     selectLoading: false,
+                                        //   });
+                                        // });
                                       }}
-                                      onChange={(value) => {
+                                      onChange={(value, item) => {
                                         this.setState({
                                           statusId: value,
+                                          transformId: item.key,
                                         });
                                       }}
                                     >
                                       {
-                                        this.state.originStatus.map(status => (
-                                          <Option key={status.id} value={status.id}>
-                                            {status.name}
+                                        originStatus.map(transform => (
+                                          <Option key={transform.id} value={transform.endStatusId}>
+                                            {transform.statusDTO.name}
                                           </Option>
                                         ))
                                       }
@@ -1520,32 +1535,32 @@ class EditIssueNarrow extends Component {
                                     callback={this.changeRae.bind(this)}
                                     thisType="priorityCode"
                                     current={this.state.currentRae}
-                                    origin={this.state.priorityCode}
+                                    origin={priorityId}
                                     onOk={this.updateIssue.bind(this, 'priorityCode')}
                                     onCancel={this.resetPriorityCode.bind(this)}
                                     onInit={() => {
                                       this.setAnIssueToState();
                                       getPrioritys().then((res) => {
                                         this.setState({
-                                          originpriorities: res.lookupValues,
+                                          originpriorities: res,
                                         });
                                       });
                                     }}
                                     readModeContent={(
                                       <div>
                                         {
-                                          this.state.priorityCode ? (
+                                          priorityId ? (
                                             <div
                                               className="c7ntest-level"
                                               style={{
-                                                backgroundColor: COLOR[this.state.priorityCode].bgColor,
-                                                color: COLOR[this.state.priorityCode].color,
+                                                // backgroundColor: priorityColor,
+                                                color: priorityColor,
                                                 borderRadius: '2px',
                                                 padding: '0 8px',
                                                 display: 'inline-block',
                                               }}
                                             >
-                                              {this.state.priorityName}
+                                              {priorityName}
                                             </div>
                                           ) : '无'
                                         }
@@ -1553,8 +1568,8 @@ class EditIssueNarrow extends Component {
                                     )}
                                   >
                                     <Select
-                                      value={this.state.originpriorities.length
-                                        ? this.state.priorityCode : this.state.priorityName}
+                                      value={originpriorities.length
+                                        ? priorityId : priorityName}
                                       style={{ width: '150px' }}
                                       loading={this.state.selectLoading}
                                       autoFocus
@@ -1565,40 +1580,21 @@ class EditIssueNarrow extends Component {
                                         });
                                         getPrioritys().then((res) => {
                                           this.setState({
-                                            originpriorities: res.lookupValues,
+                                            originpriorities: res,
                                             selectLoading: false,
                                           });
                                         });
                                       }}
                                       onChange={(value) => {
-                                        const priority = _.find(this.state.originpriorities,
-                                          { valueCode: value });
+                                        const priority = _.find(originpriorities,
+                                          { id: value });
                                         this.setState({
                                           priorityCode: value,
                                           priorityName: priority.name,
                                         });
                                       }}
                                     >
-                                      {
-                                        this.transformPriorityCode(this.state.originpriorities).map(priorityType => (
-                                          <Option key={priorityType.valueCode} value={priorityType.valueCode}>
-                                            <div style={{ display: 'inline-flex', alignItems: 'center', padding: '2px' }}>
-                                              <div
-                                                className="c7ntest-level"
-                                                style={{
-                                                  backgroundColor: COLOR[priorityType.valueCode].bgColor,
-                                                  color: COLOR[priorityType.valueCode].color,
-                                                  borderRadius: '2px',
-                                                  padding: '0 8px',
-                                                  display: 'inline-block',
-                                                }}
-                                              >
-                                                {priorityType.name}
-                                              </div>
-                                            </div>
-                                          </Option>
-                                        ))
-                                      }
+                                      {priorityOptions}
                                     </Select>
                                   </ReadAndEdit>
                                 </div>

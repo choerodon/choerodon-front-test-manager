@@ -48,16 +48,17 @@ export function renderSummary(summary) {
     </div>
   );
 }
-export function renderPriority(priorityCode, priorityName) {
+export function renderPriority(priorityDTO) {
+  if (!priorityDTO) {
+    return null;
+  }
+  const { name } = priorityDTO;
   return (
     <div>
-      <Tooltip mouseEnterDelay={0.5} title={`优先级： ${priorityName}`}>
+      <Tooltip mouseEnterDelay={0.5} title={`优先级： ${name}`}>
         <div style={{ margin: '0 5px' }}>
           <PriorityTag
-            priority={{
-              priorityCode,
-              priorityName,
-            }}
+            priority={priorityDTO}
           />
         </div>
       </Tooltip>

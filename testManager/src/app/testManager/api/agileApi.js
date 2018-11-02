@@ -2,11 +2,6 @@ import { stores, axios } from 'choerodon-front-boot';
 
 const { AppState } = stores;
 
-// export function getVersionCode() {
-//   const projectId = AppState.currentMenuType.id;
-//   return axios.get(`agile/v1/projects/${projectId}/lookup_values/version`);
-// }
-
 /**
  *获取当前项目的所有版本
  *

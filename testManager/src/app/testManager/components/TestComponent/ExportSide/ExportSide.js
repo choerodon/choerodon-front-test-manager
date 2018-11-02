@@ -1,13 +1,15 @@
 import React, { Component } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { Content, stores } from 'choerodon-front-boot';
+import { Content, stores, WSHandler } from 'choerodon-front-boot';
 import {
   Modal, Progress, Table, Button, Icon, Tooltip,
 } from 'choerodon-ui';
 import FileSaver from 'file-saver';
 import moment from 'moment';
 import { SelectVersion, SelectFolder } from '../../CommonComponent';
-import { exportIssues, exportIssuesFromVersion, exportIssuesFromFolder } from '../../../api/IssueManageApi';
+import {
+  exportIssues, exportIssuesFromVersion, exportIssuesFromFolder, getExportList,
+} from '../../../api/IssueManageApi';
 import './ExportSide.scss';
 
 const { Sidebar } = Modal;
@@ -38,8 +40,10 @@ class ExportSide extends Component {
     visible: false,
     versionId: null,
     folderId: null,
+    exportList: [],
   }
 
+  
   handleClose = () => {
     this.setState({
       visible: false,
@@ -50,21 +54,11 @@ class ExportSide extends Component {
     this.setState({
       visible: true,
     });
-    // const ws = new WebSocket(`ws://${process.env.API_HOST}:3000`);
-
-    // ws.onopen = function (evt) {
-    //   console.log('Connection open ...');
-    //   // ws.send("Hello WebSockets!");
-    // };
-
-    // ws.onmessage = function (evt) {
-    //   console.log(`Received Message: ${evt.data}`);
-    //   // ws.close();
-    // };
-
-    // ws.onclose = function (evt) {
-    //   console.log('Connection closed.');
-    // };
+    getExportList().then((exportList) => {
+      this.setState({
+        exportList,
+      });
+    });
   }
 
   exportExcel() {
@@ -98,7 +92,7 @@ class ExportSide extends Component {
     const { versionId, folderId } = this.state;
     if (folderId) {
       exportIssuesFromFolder(folderId).then((data) => {
-
+        
       });
     } else if (versionId) {
       exportIssuesFromVersion(versionId).then((data) => {
@@ -111,12 +105,25 @@ class ExportSide extends Component {
     }
   }
 
-  handleDownload=() => {
+  handleDownload = (record) => {
+    const { fileUrl } = record;
+    if (fileUrl) {
+      const ele = document.createElement('a');
+      ele.href = fileUrl;
+      document.body.appendChild(ele);
+      ele.click();
+      document.removeChild(ele);
+    }
+  }
 
+  handleMessage=(data) => {
+    console.log(data);
   }
 
   render() {
-    const { visible, versionId, folderId } = this.state;
+    const {
+      visible, versionId, folderId, exportList,
+    } = this.state;
     const data = [{
       source: { type: 'project', name: '测试管理开发项目' },
       version: '0.1.0',
@@ -168,7 +175,7 @@ class ExportSide extends Component {
         };
         return (
           <div className="c7ntest-center">
-            <Icon type={ICONS[type]} />          
+            <Icon type={ICONS[type]} />
             <span className="c7ntest-text-dot" style={{ marginLeft: 10 }}>{name}</span>
           </div>
         );
@@ -211,8 +218,8 @@ class ExportSide extends Component {
         )),
     }, {
       title: '',
-      dataIndex: 'file',
-      key: 'file',
+      dataIndex: 'fileUrl',
+      key: 'fileUrl',
       render: (file, record) => (
         // <a className="c7ntext-text-dot" href={file.url}>
         <div style={{ textAlign: 'right' }}>
@@ -227,11 +234,12 @@ class ExportSide extends Component {
       <Sidebar
         title="导出用例"
         visible={visible}
+        destroyOnClose
         // okText={null}
         // cancelText={<FormattedMessage id="close" />}
         // onOk={this.handleOk}
         footer={<Button onClick={this.handleClose} type="primary" funcType="raised"><FormattedMessage id="close" /></Button>}
-        // onCancel={this.handleClose}
+      // onCancel={this.handleClose}
       >
         <Content
           style={{
@@ -247,7 +255,12 @@ class ExportSide extends Component {
               <SelectFolder style={{ width: 200, margin: '0 24px' }} label="文件夹" disabled={!versionId} versionId={versionId} value={folderId} allowClear onChange={this.handleFolderChange} />
               <Button type="primary" icon="playlist_add" onClick={this.createExport}>新建导出</Button>
             </div>
-            <Table columns={columns} dataSource={data} />
+            <WSHandler
+              messageKey={`choerodon:msg:test-issue-export:${AppState.userInfo.id}`}
+              onMessage={this.handleMessage}
+            >
+              <Table columns={columns} dataSource={exportList} />
+            </WSHandler>
           </div>
         </Content>
       </Sidebar>

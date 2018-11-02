@@ -1,9 +1,4 @@
 import React, { Component } from 'react';
-import {
-  Button, Table, Spin, Popover, Tooltip, Icon, Avatar, 
-} from 'choerodon-ui';
-import { COLOR } from '../../../common/Constant';
-
 
 class PriorityTag extends Component {
   constructor(props) {
@@ -17,13 +12,14 @@ class PriorityTag extends Component {
 
   render() {
     const { priority } = this.props; 
+    const { colour, name } = priority;
     return (
       <div
         className=""
         style={{
           ...this.props.style,
-          backgroundColor: COLOR[priority.priorityCode].bgColor,
-          color: COLOR[priority.priorityCode].color,
+          backgroundColor: colour,
+          color: colour,
           borderRadius: '2px',
           padding: '0 8px',
           display: 'inline-block',
@@ -32,7 +28,7 @@ class PriorityTag extends Component {
           textAlign: 'center',
         }}
       >
-        { `${priority.priorityName}` }
+        { `${name}` }
       </div>
     );
   }

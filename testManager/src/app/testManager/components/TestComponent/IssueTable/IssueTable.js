@@ -24,7 +24,7 @@ class IssueTable extends Component {
     const {
       issueId,
       typeCode, issueNum, summary, assigneeId, assigneeName, assigneeImageUrl, reporterId,
-      reporterName, reporterImageUrl, statusName, statusColor, priorityName, priorityCode,
+      reporterName, reporterImageUrl, statusName, statusColor, priorityDTO,
       folderName, epicColor, componentIssueRelDTOList, labelIssueRelDTOList,
       versionIssueRelDTOList, creationDate, lastUpdateDate,
     } = issue;
@@ -39,7 +39,7 @@ class IssueTable extends Component {
           {renderSummary(summary)}
         </div>
         <div style={{ display: 'flex' }}>
-          {renderPriority(priorityCode, priorityName)}
+          {renderPriority(priorityDTO)}
           {renderVersions(versionIssueRelDTOList)}
           {renderFolder(folderName)}
           <div className="c7ntest-flex-space" />
@@ -54,7 +54,7 @@ class IssueTable extends Component {
     const {
       issueId,
       typeCode, issueNum, summary, assigneeId, assigneeName, assigneeImageUrl, reporterId,
-      reporterName, reporterImageUrl, statusName, statusColor, priorityName, priorityCode,
+      reporterName, reporterImageUrl, statusName, statusColor, priorityDTO,
       folderName, epicColor, componentIssueRelDTOList, labelIssueRelDTOList,
       versionIssueRelDTOList, creationDate, lastUpdateDate,
     } = issue;
@@ -67,7 +67,7 @@ class IssueTable extends Component {
         {renderIssueNum(issueNum)}
         {renderSummary(summary)}
         <div className="c7ntest-flex-space" />
-        {renderPriority(priorityCode, priorityName)}
+        {renderPriority(priorityDTO)}
         {renderVersions(versionIssueRelDTOList)}
         {renderFolder(folderName)}
         {/* {renderComponents(componentIssueRelDTOList)} */}
@@ -83,7 +83,7 @@ class IssueTable extends Component {
     const {
       issueId,
       typeCode, issueNum, summary, assigneeId, assigneeName, assigneeImageUrl, reporterId,
-      reporterName, reporterImageUrl, statusName, statusColor, priorityName, priorityCode,
+      reporterName, reporterImageUrl, statusName, statusColor, priorityDTO,
       folderName, epicColor, componentIssueRelDTOList, labelIssueRelDTOList,
       versionIssueRelDTOList, creationDate, lastUpdateDate,
     } = issue;
