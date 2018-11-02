@@ -1,14 +1,12 @@
-import { axios, stores } from 'choerodon-front-boot';
 
-const { AppState } = stores;
+import { getProjectId, getOrganizationId, request } from '../common/utils';
+
 export function getCycles(assignedTo) {
-  const projectId = AppState.currentMenuType.id;
-  return axios.get(`/test/v1/projects/${projectId}/cycle/query${assignedTo ? `?assignedTo=${assignedTo}` : ''}`);
+  return request.get(`/test/v1/projects/${getProjectId()}/cycle/query${assignedTo ? `?assignedTo=${assignedTo}` : ''}`);
 }
 export function getCycleById(pagination, cycleId, filters, type) {
-  const { id: projectId, organizationId } = AppState.currentMenuType;
   const { size, page } = pagination;
-  //   return axios.get(`/test/v1/cycle/case/query/${cycleId}`);
+  //   return request.get(`/test/v1/cycle/case/query/${cycleId}`);
   const Filters = { ...filters };
   if (Filters) {
     Object.keys(Filters).forEach((filter) => {
@@ -16,46 +14,38 @@ export function getCycleById(pagination, cycleId, filters, type) {
     });
   }
   // if (type === 'cycle') {
-  //   return axios.post(`/test/v1/projects/${projectId}/cycle/case/query/folderCycleId?size=${size}&page=${page}`, { cycleId, ...Filters });
+  //   return request.post(`/test/v1/projects/${getProjectId()}/cycle/case/query/folderCycleId?size=${size}&page=${page}`, { cycleId, ...Filters });
   // } else {
-  return axios.post(`/test/v1/projects/${projectId}/cycle/case/query/cycleId?size=${size}&page=${page}&organizationId=${organizationId}`, { cycleId, ...Filters });
+  return request.post(`/test/v1/projects/${getProjectId()}/cycle/case/query/cycleId?size=${size}&page=${page}&organizationId=${getOrganizationId()}`, { cycleId, ...Filters });
   // }
 }
 export function addCycle(data) {
-  const projectId = AppState.currentMenuType.id;
-  return axios.post(`/test/v1/projects/${projectId}/cycle`, data);
+  return request.post(`/test/v1/projects/${getProjectId()}/cycle`, data);
 }
 export function editExecuteDetail(data) {
-  const projectId = AppState.currentMenuType.id;
-  return axios.post(`/test/v1/projects/${projectId}/cycle/case/update`, data);
+  return request.post(`/test/v1/projects/${getProjectId()}/cycle/case/update`, data);
 }
 export function deleteExecute(executeId) {
-  const projectId = AppState.currentMenuType.id;
-  return axios.delete(`/test/v1/projects/${projectId}/cycle/case?cycleCaseId=${executeId}`);
+  return request.delete(`/test/v1/projects/${getProjectId()}/cycle/case?cycleCaseId=${executeId}`);
 }
 export function deleteCycleOrFolder(cycleId) {
-  const projectId = AppState.currentMenuType.id;
-  return axios.delete(`/test/v1/projects/${projectId}/cycle/delete/${cycleId}`);
+  return request.delete(`/test/v1/projects/${getProjectId()}/cycle/delete/${cycleId}`);
 }
 export function clone(cycleId, data, type) {
-  const projectId = AppState.currentMenuType.id;
   if (type === 'CLONE_FOLDER') {
-    return axios.post(`/test/v1/projects/${projectId}/cycle/clone/folder/${cycleId}`, data);
+    return request.post(`/test/v1/projects/${getProjectId()}/cycle/clone/folder/${cycleId}`, data);
   } else if (type === 'CLONE_CYCLE') {
-    return axios.post(`/test/v1/projects/${projectId}/cycle/clone/cycle/${cycleId}`, data);
+    return request.post(`/test/v1/projects/${getProjectId()}/cycle/clone/cycle/${cycleId}`, data);
   }
-  return axios.post(`/test/v1/projects/${projectId}/cycle/clone/folder/${cycleId}`, data);
+  return request.post(`/test/v1/projects/${getProjectId()}/cycle/clone/folder/${cycleId}`, data);
 }
 
 export function addFolder(data) {
-  const projectId = AppState.currentMenuType.id;
-  return axios.post(`/test/v1/projects/${projectId}/cycle`, data);
+  return request.post(`/test/v1/projects/${getProjectId()}/cycle`, data);
 }
 export function editFolder(data) {
-  const projectId = AppState.currentMenuType.id;
-  return axios.put(`/test/v1/projects/${projectId}/cycle`, data);
+  return request.put(`/test/v1/projects/${getProjectId()}/cycle`, data);
 }
 export function exportCycle(cycleId) {
-  const projectId = AppState.currentMenuType.id;
-  return axios.get(`/test/v1/projects/${projectId}/cycle/case/download/excel/${cycleId}`, { responseType: 'arraybuffer' });
+  return request.get(`/test/v1/projects/${getProjectId()}/cycle/case/download/excel/${cycleId}`, { responseType: 'arraybuffer' });
 }

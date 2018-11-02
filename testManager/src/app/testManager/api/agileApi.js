@@ -1,6 +1,4 @@
-import { stores, axios } from 'choerodon-front-boot';
-
-const { AppState } = stores;
+import { getProjectId, getOrganizationId, request } from '../common/utils';
 
 /**
  *获取当前项目的所有版本
@@ -9,8 +7,7 @@ const { AppState } = stores;
  * @returns
  */
 export function getProjectVersion() {
-  const projectId = AppState.currentMenuType.id;
-  return axios.get(`agile/v1/projects/${projectId}/product_version/versions`);
+  return request.get(`agile/v1/projects/${getProjectId()}/product_version/versions`);
 }
 /**
  *获取
@@ -20,8 +17,7 @@ export function getProjectVersion() {
  * @returns
  */
 export function getIssues(search) {
-  const { id: projectId, organizationId } = AppState.currentMenuType;
-  return axios.post(`agile/v1/projects/${projectId}/issues/test_component/no_sub_detail?organizationId=${organizationId}`, search);
+  return request.post(`agile/v1/projects/${getProjectId()}/issues/test_component/no_sub_detail?organizationId=${getOrganizationId()}`, search);
 }
 /**
  *获取缺陷列表（排除test类型）
@@ -69,19 +65,6 @@ export function getIssueList(summary, type) {
 export function getIssueCount(search) {
   return getIssues(search);
 }
-// /**
-//  *获取根据筛选条件获取issues
-//  *
-//  * @export
-//  * @param {*} search
-//  * @param {*} pagination
-//  * @returns
-//  */
-// export function getIssueListSearch(search, pagination) {
-//   const projectId = AppState.currentMenuType.id;
-//   const { page, size } = pagination;
-//   return axios.post(`agile/v1/projects/${projectId}/issues/test_component/no_sub?size=${size}&page=${page}`, search);
-// }
 /**
  *获取当前项目的模块
  *
@@ -89,8 +72,7 @@ export function getIssueCount(search) {
  * @returns
  */
 export function getModules() {
-  const projectId = AppState.currentMenuType.id;
-  return axios.get(`agile/v1/projects/${projectId}/component`);
+  return request.get(`agile/v1/projects/${getProjectId()}/component`);
 }
 /**
  *获取当前项目的标签
@@ -99,8 +81,7 @@ export function getModules() {
  * @returns
  */
 export function getLabels() {
-  const projectId = AppState.currentMenuType.id;
-  return axios.get(`agile/v1/projects/${projectId}/issue_labels`);
+  return request.get(`agile/v1/projects/${getProjectId()}/issue_labels`);
 }
 /**
  *获取当前组织的issue优先级
@@ -109,10 +90,7 @@ export function getLabels() {
  * @returns
  */
 export function getPrioritys() {
-  // const projectId = AppState.currentMenuType.id;
-  // return axios.get(`agile/v1/projects/${projectId}/lookup_values/priority`);
-  const orgId = AppState.currentMenuType.organizationId;
-  return axios.get(`/issue/v1/organizations/${orgId}/priority/list_by_org`);
+  return request.get(`/issue/v1/organizations/${getOrganizationId()}/priority/list_by_org`);
 }
 /**
  *获取当前项目的issue状态列表
@@ -121,7 +99,5 @@ export function getPrioritys() {
  * @returns
  */
 export function getIssueStatus() {
-  const projectId = AppState.currentMenuType.id;
-  return axios.get(`agile/v1/projects/${projectId}/issue_status/list`);
+  return request.get(`agile/v1/projects/${getProjectId()}/issue_status/list`);
 }
-

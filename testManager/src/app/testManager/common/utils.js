@@ -1,4 +1,4 @@
-import { stores } from 'choerodon-front-boot';
+import { stores, axios } from 'choerodon-front-boot';
 import QuillDeltaToHtmlConverter from 'quill-delta-to-html';
 import { uploadImage, uploadFileAgile } from '../api/FileApi';
 import { SERVICES_URL } from './Constant';
@@ -31,7 +31,7 @@ export function delta2Html(description, config) {
     // console.log(description, error);
     temp = JSON.stringify([{ insert: description }]);
   }
-  
+
   const delta = text2Delta(temp);
   const converter = new QuillDeltaToHtmlConverter(delta, config);
   const text = converter.convert();
@@ -234,7 +234,7 @@ export function getParams(url) {
 export function issueLink(issueId, typeCode) {
   const menu = AppState.currentMenuType;
   const {
-    type, id: projectId, name, organizationId, 
+    type, id: projectId, name, organizationId,
   } = menu;
   if (typeCode === 'issue_test') {
     return encodeURI(`/testManager/IssueManage?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}&paramIssueId=${issueId}`);
@@ -245,32 +245,32 @@ export function issueLink(issueId, typeCode) {
 export function createIssueLink() {
   const menu = AppState.currentMenuType;
   const {
-    type, id: projectId, name, organizationId, 
+    type, id: projectId, name, organizationId,
   } = menu;
   return encodeURI(`/agile/issue?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}`);
 }
 export function cycleLink(cycleId) {
   const menu = AppState.currentMenuType;
   const {
-    type, id: projectId, name, organizationId, 
+    type, id: projectId, name, organizationId,
   } = menu;
- 
+
   return encodeURI(`/testManager/TestExecute?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}&cycleId=${cycleId}`);
 }
 export function executeDetailLink(executeId) {
   const menu = AppState.currentMenuType;
   const {
-    type, id: projectId, name, organizationId, 
+    type, id: projectId, name, organizationId,
   } = menu;
- 
+
   return encodeURI(`/testManager/TestExecute/execute/${executeId}?type=${type}&id=${projectId}&organizationId=${organizationId}&name=${name}`);
 }
 export function executeDetailShowLink(executeId) {
   const menu = AppState.currentMenuType;
   const {
-    type, id: projectId, name, organizationId, 
+    type, id: projectId, name, organizationId,
   } = menu;
- 
+
   return encodeURI(`/testManager/TestPlan/executeShow/${executeId}?type=${type}&id=${projectId}&organizationId=${organizationId}&name=${name}`);
 }
 /**
@@ -286,3 +286,22 @@ export function handleProptError(data) {
     return data;
   }
 }
+export const getProjectId = () => AppState.currentMenuType.id;
+export const getOrganizationId = () => AppState.currentMenuType.organizationId;
+
+export function request() { }
+['get', 'post', 'options', 'delete', 'put'].forEach((type) => {
+  request[type] = (...args) => new Promise((resolve, reject) => {
+    axios[type](...args).then((data) => {
+      if (data && data.failed) {
+        Choerodon.prompt(data.message);
+        reject(data.failed);
+      } else {
+        resolve(data);
+      }
+    }).catch((error) => {
+      Choerodon.prompt('请求错误');
+      reject(error);
+    });
+  });
+});

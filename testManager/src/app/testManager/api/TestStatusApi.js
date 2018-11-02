@@ -1,19 +1,14 @@
-import { stores, axios } from 'choerodon-front-boot';
+import { getProjectId, request } from '../common/utils';
 
-const { AppState } = stores;
 export function getStatusList(statusType) {
-  const projectId = AppState.currentMenuType.id;
-  return axios.post(`/test/v1/projects/${projectId}/status/query`, { statusType, projectId });
+  return request.post(`/test/v1/projects/${getProjectId()}/status/query`, { statusType, projectId: getProjectId() });
 }
 export function editStatus(data) {
-  const projectId = AppState.currentMenuType.id;
-  return axios.put(`/test/v1/projects/${projectId}/status/update`, { ...data, ...{ projectId: Number(projectId) } });
+  return request.put(`/test/v1/projects/${getProjectId()}/status/update`, { ...data, ...{ projectId: Number(getProjectId()) } });
 }
 export function createStatus(data) {
-  const projectId = AppState.currentMenuType.id;
-  return axios.post(`/test/v1/projects/${projectId}/status`, { ...data, ...{ projectId: Number(projectId) } });
+  return request.post(`/test/v1/projects/${getProjectId()}/status`, { ...data, ...{ projectId: Number(getProjectId()) } });
 }
 export function deleteStatus(statusId) {
-  const projectId = AppState.currentMenuType.id;
-  return axios.delete(`/test/v1/projects/${projectId}/status/${statusId}`);
+  return request.delete(`/test/v1/projects/${getProjectId()}/status/${statusId}`);
 }

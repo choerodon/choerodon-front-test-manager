@@ -1,8 +1,5 @@
-import { axios, stores } from 'choerodon-front-boot';
-
-const { AppState } = stores;
+import { getProjectId, request } from '../common/utils';
 
 export function loadProgressByVersion(versionId) {
-  const projectId = AppState.currentMenuType.id;
-  return axios.get(`/test/v1/projects/${projectId}/cycle/count/color/in/version/${versionId}`);
+  return request.get(`/test/v1/projects/${getProjectId()}/cycle/count/color/in/version/${versionId}`);
 }

@@ -1,6 +1,5 @@
-import { stores, axios } from 'choerodon-front-boot';
+import { getProjectId, request } from '../common/utils';
 
-const { AppState } = stores;
 
 /**
  *获取当前用户
@@ -9,7 +8,7 @@ const { AppState } = stores;
  * @returns
  */
 export function getSelf() {
-  return axios.get('/iam/v1/users/self');
+  return request.get('/iam/v1/users/self');
 }
 /**
  *获取指定用户
@@ -19,8 +18,7 @@ export function getSelf() {
  * @returns
  */
 export function getUser(userId) {
-  const projectId = AppState.currentMenuType.id;
-  return axios.get(`iam/v1/projects/${projectId}/users?id=${userId}`);
+  return request.get(`iam/v1/projects/${getProjectId()}/users?id=${userId}`);
 }
 /**
  *获取用户列表
@@ -30,9 +28,8 @@ export function getUser(userId) {
  * @returns
  */
 export function getUsers(param) {
-  const projectId = AppState.currentMenuType.id;
   if (param) {
-    return axios.get(`/iam/v1/projects/${projectId}/users?param=${param}`);
+    return request.get(`/iam/v1/projects/${getProjectId()}/users?param=${param}`);
   }
-  return axios.get(`/iam/v1/projects/${projectId}/users`);
+  return request.get(`/iam/v1/projects/${getProjectId()}/users`);
 }

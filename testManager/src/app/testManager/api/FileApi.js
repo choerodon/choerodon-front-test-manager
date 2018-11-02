@@ -1,6 +1,6 @@
-import { stores, axios } from 'choerodon-front-boot';
+import { getProjectId, request } from '../common/utils';
 
-const { AppState } = stores;
+
 // 敏捷接口
 /**
  * 删除文件
@@ -8,8 +8,7 @@ const { AppState } = stores;
  * @param {string} 文件id
  */
 export function deleteFileAgile(id) {
-  const projectId = AppState.currentMenuType.id;
-  return axios.delete(`/agile/v1/projects/${projectId}/issue_attachment/${id}`);
+  return request.delete(`/agile/v1/projects/${getProjectId()}/issue_attachment/${id}`);
 }
 
 /**
@@ -20,9 +19,9 @@ export function uploadImage(data) {
   const axiosConfig = {
     headers: { 'content-type': 'multipart/form-data' },
   };
-  const projectId = AppState.currentMenuType.id;
-  return axios.post(
-    `/agile/v1/projects/${projectId}/issue_attachment/upload_for_address`,
+  
+  return request.post(
+    `/agile/v1/projects/${getProjectId()}/issue_attachment/upload_for_address`,
     data,
     axiosConfig,
   );
@@ -35,13 +34,13 @@ export function uploadImage(data) {
  */
 export function uploadFileAgile(data, config) {
   const {
-    issueType, issueId, fileName, projectId,
+    issueType, issueId, fileName,
   } = config;
   const axiosConfig = {
     headers: { 'content-type': 'multipart/form-data' },
   };
-  return axios.post(
-    `/zuul/agile/v1/projects/${projectId}/issue_attachment?projectId=${projectId}&issueId=${issueId}`,
+  return request.post(
+    `/zuul/agile/v1/projects/${getProjectId()}/issue_attachment?projectId=${getProjectId()}&issueId=${issueId}`,
     data,
     axiosConfig,
   );
@@ -58,13 +57,13 @@ export function uploadFileAgile(data, config) {
  */
 export function uploadFile(data, config) {
   const { bucketName, attachmentLinkId, attachmentType } = config;
-  const projectId = AppState.currentMenuType.id;
+  
   const axiosConfig = {
     headers: { 'content-type': 'multipart/form-data' },
   };
 
-  return axios.post(
-    `/zuul/test/v1/projects/${projectId}/test/case/attachment?bucket_name=${'test'}&attachmentLinkId=${attachmentLinkId}&attachmentType=${attachmentType}`,
+  return request.post(
+    `/zuul/test/v1/projects/${getProjectId()}/test/case/attachment?bucket_name=${'test'}&attachmentLinkId=${attachmentLinkId}&attachmentType=${attachmentType}`,
     data,
     axiosConfig,
   );
@@ -77,13 +76,11 @@ export function uploadFile(data, config) {
  * @returns
  */
 export function deleteAttachment(id) {
-  const projectId = AppState.currentMenuType.id;
-  return axios.delete(`test/v1/projects/${projectId}/test/case/attachment/delete/bucket/test/attach/${id}`);
+  return request.delete(`test/v1/projects/${getProjectId()}/test/case/attachment/delete/bucket/test/attach/${id}`);
 }
 export function importIssue(data) {
-  const projectId = AppState.currentMenuType.id;
   const axiosConfig = {
     headers: { 'content-type': 'multipart/form-data' },
   };
-  return axios.post(`/zuul/test/v1/projects/${projectId}/case/import/testCase`, data, axiosConfig);
+  return request.post(`/zuul/test/v1/projects/${getProjectId()}/case/import/testCase`, data, axiosConfig);
 }

@@ -1,36 +1,23 @@
-import { axios, stores } from 'choerodon-front-boot';
-
-const { AppState } = stores;
+import { getProjectId, request } from '../common/utils';
 
 export function getCaseNotPlain() {
-  const projectId = AppState.currentMenuType.id;
-
-  return axios.get(`/test/v1/projects/${projectId}/cycle/case/countCaseNotPlain`);
+  return request.get(`/test/v1/projects/${getProjectId()}/cycle/case/countCaseNotPlain`);
 }
 
 export function getCaseNotRun() {
-  const projectId = AppState.currentMenuType.id;
-
-  return axios.get(`/test/v1/projects/${projectId}/cycle/case/countCaseNotRun`);
+  return request.get(`/test/v1/projects/${getProjectId()}/cycle/case/countCaseNotRun`);
 }
 export function getCaseNum() {
-  const projectId = AppState.currentMenuType.id;
-
-  return axios.get(`/test/v1/projects/${projectId}/cycle/case/countCaseSum`);
+  return request.get(`/test/v1/projects/${getProjectId()}/cycle/case/countCaseSum`);
 }
 
 export function getCycleRange(day, range) {
-  const projectId = AppState.currentMenuType.id;
-
-  return axios.post(`/test/v1/projects/${projectId}/cycle/case/range/${day}/${range}`);
+  return request.post(`/test/v1/projects/${getProjectId()}/cycle/case/range/${day}/${range}`);
 }
 export function getCreateRange(range) {
-  const projectId = AppState.currentMenuType.id;
-
-  return axios.get(`/agile/v1/projects/${projectId}/issues/type/issue_test?timeSlot=${range}`);
+  return request.get(`/agile/v1/projects/${getProjectId()}/issues/type/issue_test?timeSlot=${range}`);
 }
 export function getIssueStatistic(type) {
-  const projectId = AppState.currentMenuType.id;
-  return axios.post(`/agile/v1/projects/${projectId}/issues/test_component/statistic?type=${type}`,
+  return request.post(`/agile/v1/projects/${getProjectId()}/issues/test_component/statistic?type=${type}`,
     ['sub_task', 'story', 'task', 'issue_epic', 'bug']);
 }
