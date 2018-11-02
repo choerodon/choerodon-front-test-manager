@@ -11,9 +11,10 @@ import '../../../assets/main.scss';
 import { UploadButton } from '../CommonComponent';
 import { handleFileUpload, beforeTextUpload } from '../../../common/utils';
 import { createIssue, getFoldersByVersion } from '../../../api/IssueManageApi';
-import { getLabels, getModules, getPrioritys, getProjectVersion } from '../../../api/agileApi';
+import {
+  getLabels, getModules, getPrioritys, getProjectVersion, 
+} from '../../../api/agileApi';
 import { getUsers } from '../../../api/IamApi';
-import { COLOR } from '../../../common/Constant';
 import { FullEditor, WYSIWYGEditor } from '../../CommonComponent';
 import UserHead from '../UserHead';
 
@@ -92,9 +93,9 @@ class CreateIssue extends Component {
   }
 
   getPrioritys() {
-    getPrioritys().then((res) => {
+    getPrioritys().then((priorities) => {
       this.setState({
-        originPriorities: res.lookupValues,
+        originPriorities: priorities,
       });
     });
   }
@@ -119,18 +120,6 @@ class CreateIssue extends Component {
       delta,
       edit: false,
     });
-  }
-
-  transformPriorityCode(originpriorityCode) {
-    if (!originpriorityCode.length) {
-      return [];
-    } else {
-      const arr = [];
-      arr[0] = _.find(originpriorityCode, { valueCode: 'high' });
-      arr[1] = _.find(originpriorityCode, { valueCode: 'medium' });
-      arr[2] = _.find(originpriorityCode, { valueCode: 'low' });
-      return arr;
-    }
   }
 
   handleCreateIssue = () => {
@@ -193,7 +182,7 @@ class CreateIssue extends Component {
         const extra = {
           typeCode: 'issue_test',
           summary: values.summary,
-          priorityCode: values.priorityCode,
+          priorityId: values.priorityId,
           sprintId: values.sprintId || 0,
           epicId: values.epicId || 0,
           epicName: values.epicName,
@@ -213,7 +202,7 @@ class CreateIssue extends Component {
         }
         this.props.onOk(extra);
       }
-
+      return null;
     });
   };
 
@@ -246,7 +235,25 @@ class CreateIssue extends Component {
     const {
       initValue, visible, onCancel, onOk,
     } = this.props;
-    const { folders, selectLoading } = this.state;
+    const { originPriorities, folders, selectLoading } = this.state;
+    const priorityOptions = originPriorities.map(priority => (
+      <Option key={priority.id} value={priority.id}>
+        <div style={{ display: 'inline-flex', alignItems: 'center', padding: '2px' }}>
+          <div
+            className="c7ntest-level"
+            style={{
+              // backgroundColor: priorityColor,
+              color: priority.colour,
+              borderRadius: '2px',
+              padding: '0 8px',
+              display: 'inline-block',
+            }}
+          >
+            {priority.name}
+          </div>
+        </div>
+      </Option>
+    ));
     const folderOptions = folders.map(folder => (
       <Option value={folder.folderId} key={folder.folderId}>
         {folder.name}
@@ -288,7 +295,7 @@ class CreateIssue extends Component {
             </FormItem>
 
             <FormItem style={{ width: 520 }}>
-              {getFieldDecorator('priorityCode', {
+              {getFieldDecorator('priorityId', {
                 rules: [{ required: true, message: '优先级为必选项' }],
                 initialValue: this.state.origin.defaultPriorityCode,
               })(
@@ -296,23 +303,7 @@ class CreateIssue extends Component {
                   label={<FormattedMessage id="issue_issueFilterByPriority" />}
                   getPopupContainer={triggerNode => triggerNode.parentNode}
                 >
-                  {this.transformPriorityCode(this.state.originPriorities).map(type => (
-                    <Option key={type.valueCode} value={type.valueCode}>
-                      <div style={{ display: 'inline-flex', alignItems: 'center', padding: 2 }}>
-                        <div
-                          style={{
-                            color: COLOR[type.valueCode].color, width: 20, height: 20, textAlign: 'center', lineHeight: '20px', borderRadius: '50%', marginRight: 8,
-                          }}
-                        >
-                          <Icon
-                            type="flag"
-                            style={{ fontSize: '13px' }}
-                          />
-                        </div>
-                        <span>{type.name}</span>
-                      </div>
-                    </Option>
-                  ))}
+                  {priorityOptions}
                 </Select>,
               )}
             </FormItem>

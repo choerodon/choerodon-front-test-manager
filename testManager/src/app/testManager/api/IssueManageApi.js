@@ -39,12 +39,6 @@ export function deleteCommit(commitId, projectId = AppState.currentMenuType.id) 
   return axios.delete(`/agile/v1/projects/${projectId}/issue_comment/${commitId}`);
 }
 
-// export function loadStatus() {
-//   const projectId = AppState.currentMenuType.id;
-//   return axios.get(
-//     `/agile/v1/projects/${projectId}/issue_status/list`,
-//   );
-// }
 export function loadStatus(statusId, issueId, typeId) {
   const projectId = AppState.currentMenuType.id;
   return axios.get(
@@ -62,7 +56,6 @@ export function updateIssue(data, projectId = AppState.currentMenuType.id) {
   return axios.put(`/agile/v1/projects/${projectId}/issues`, data);
 }
 
-
 export function deleteIssue(issueId, projectId = AppState.currentMenuType.id) {
   return axios.delete(`/agile/v1/projects/${projectId}/issues/${issueId}`);
 }
@@ -71,20 +64,8 @@ export function deleteLink(issueLinkId, projectId = AppState.currentMenuType.id)
   return axios.delete(`/agile/v1/projects/${projectId}/issue_links/${issueLinkId}`);
 }
 
-
 export function loadDatalogs(issueId, projectId = AppState.currentMenuType.id) {
   return axios.get(`agile/v1/projects/${projectId}/data_log?issueId=${issueId}`);
-}
-
-export function loadIssues(page = 0, size = 10, search, orderField, orderType) {
-  const searchDTO = { ...search };
-  searchDTO.advancedSearchArgs.typeCode = ['issue_test'];
-  const projectId = AppState.currentMenuType.id;
-  return axios.post(`/agile/v1/projects/${projectId}/issues/test_component/no_sub_detail?page=${page}&size=${size}`, searchDTO, {
-    params: {
-      sort: `${orderField && orderType ? `${orderField},${orderType}` : ''}`,
-    },
-  });
 }
 
 export function loadIssuesInLink(page = 0, size = 10, issueId, content) {
@@ -121,13 +102,23 @@ export function deleteFolder(folderId) {
   const projectId = AppState.currentMenuType.id;
   return axios.delete(`/test/v1/projects/${projectId}/issueFolder/${folderId}`);
 }
-
+/**
+ *获取单个issue,地址栏跳转情况
+ *
+ * @export
+ * @param {number} [page=0]
+ * @param {number} [size=10]
+ * @param {*} search
+ * @param {*} orderField
+ * @param {*} orderType
+ * @returns
+ */
 export function getSingleIssues(page = 0, size = 10, search, orderField, orderType) {
   // console.log(search);
   const searchDTO = { ...search };
   searchDTO.advancedSearchArgs.typeCode = ['issue_test'];
-  const projectId = AppState.currentMenuType.id;
-  return axios.post(`/test/v1/projects/${projectId}/issueFolderRel/query?page=${page}&size=${size}`, { versionIds: [], searchDTO }, {
+  const { id: projectId, organizationId } = AppState.currentMenuType;
+  return axios.post(`/test/v1/projects/${projectId}/issueFolderRel/query?page=${page}&size=${size}&organizationId=${organizationId}`, { versionIds: [], searchDTO }, {
     params: {
       sort: `${orderField && orderType ? `${orderField},${orderType}` : ''}`,
     },
@@ -137,8 +128,8 @@ export function getAllIssues(page = 0, size = 10, search, orderField, orderType)
   // console.log(search);
   const searchDTO = { ...search, otherArgs: search.searchArgs };
   searchDTO.advancedSearchArgs.typeCode = ['issue_test'];
-  const projectId = AppState.currentMenuType.id;
-  return axios.post(`/test/v1/projects/${projectId}/issueFolderRel/query?page=${page}&size=${size}`, { versionIds: [], searchDTO }, {
+  const { id: projectId, organizationId } = AppState.currentMenuType;
+  return axios.post(`/test/v1/projects/${projectId}/issueFolderRel/query?page=${page}&size=${size}&organizationId=${organizationId}`, { versionIds: [], searchDTO }, {
     params: {
       sort: `${orderField && orderType ? `${orderField},${orderType}` : ''}`,
     },
@@ -147,8 +138,8 @@ export function getAllIssues(page = 0, size = 10, search, orderField, orderType)
 export function getIssuesByFolder(folderId, page = 0, size = 10, search, orderField, orderType) {
   const searchDTO = { ...search, otherArgs: search.searchArgs };
   searchDTO.advancedSearchArgs.typeCode = ['issue_test'];
-  const projectId = AppState.currentMenuType.id;
-  return axios.post(`/test/v1/projects/${projectId}/issueFolderRel/query?folderId=${folderId}&page=${page}&size=${size}`, { versionIds: [], searchDTO }, {
+  const { id: projectId, organizationId } = AppState.currentMenuType;
+  return axios.post(`/test/v1/projects/${projectId}/issueFolderRel/query?folderId=${folderId}&page=${page}&size=${size}&organizationId=${organizationId}`, { versionIds: [], searchDTO }, {
     params: {
       sort: `${orderField && orderType ? `${orderField},${orderType}` : ''}`,
     },
@@ -165,8 +156,8 @@ export function getIssuesByVersion(versionIds, page = 0, size = 10, search, orde
   });
 }
 export function getIssuesByIds(versionId, folderId, ids) {
-  const projectId = AppState.currentMenuType.id;
-  return axios.post(`/test/v1/projects/${projectId}/issueFolderRel/query/by/issueId${versionId ? `?versionId=${versionId}` : ''}${folderId ? `&folderId=${folderId}` : ''}`, ids);
+  const { id: projectId, organizationId } = AppState.currentMenuType;
+  return axios.post(`/test/v1/projects/${projectId}/issueFolderRel/query/by/issueId${versionId ? `?versionId=${versionId}` : ''}&organizationId=${organizationId}${folderId ? `&folderId=${folderId}` : ''}`, ids);
 }
 export function moveIssues(versionId, folderId, issueLinks) {
   const projectId = AppState.currentMenuType.id;
@@ -211,16 +202,16 @@ export function cloneIssue(issueId, copyConditionDTO) {
   return axios.put(`/test/v1/projects/${projectId}/issueFolderRel/copy/issue/${issueId}`, copyConditionDTO);
 }
 export function exportIssues() {
-  const projectId = AppState.currentMenuType.id;
-  return axios.get(`/zuul/test/v1/projects/${projectId}/case/download/excel`);
+  const { id: projectId, organizationId } = AppState.currentMenuType;
+  return axios.get(`/zuul/test/v1/projects/${projectId}/case/download/excel&organizationId=${organizationId}`);
 }
 export function exportIssuesFromVersion(versionId) {
-  const projectId = AppState.currentMenuType.id;
-  return axios.get(`/zuul/test/v1/projects/${projectId}/case/download/excel/version?versionId=${versionId}`);
+  const { id: projectId, organizationId } = AppState.currentMenuType;
+  return axios.get(`/zuul/test/v1/projects/${projectId}/case/download/excel/version?versionId=${versionId}&organizationId=${organizationId}`);
 }
 export function exportIssuesFromFolder(folderId) {
-  const projectId = AppState.currentMenuType.id;
-  return axios.get(`/zuul/test/v1/projects/${projectId}/case/download/excel/folder?folderId=${folderId}&userId=${AppState.userInfo.id}`);
+  const { id: projectId, organizationId } = AppState.currentMenuType;
+  return axios.get(`/zuul/test/v1/projects/${projectId}/case/download/excel/folder?folderId=${folderId}&userId=${AppState.userInfo.id}&organizationId=${organizationId}`);
 }
 export function downloadTemplate() {
   const projectId = AppState.currentMenuType.id;

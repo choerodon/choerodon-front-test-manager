@@ -15,7 +15,7 @@ import CreateStage from '../CreateStage';
 
 const { AppState } = stores;
 const { TreeNode } = Tree;
-const dataList = [];
+
 @observer
 class PlanTree extends Component {
   state = {
@@ -224,20 +224,6 @@ class PlanTree extends Component {
     });
   }
 
-  getIssuesByFolder = (selectedKeys, {
-    selected, selectedNodes, node, event,
-  } = {}) => {
-    if (selectedKeys) {
-      TestPlanStore.setSelectedKeys(selectedKeys);
-    }
-    // const { executePagination, filters } = this.state;
-    // const data = node.props.data;
-    // // console.log(data);
-    // if (data.cycleId) {
-    //   TestPlanStore.setCurrentCycle(data);
-    //   IssueStore.loadIssues();
-    // }
-  }
 
   Clone = (item, e, type) => {
     const { value } = e.target;

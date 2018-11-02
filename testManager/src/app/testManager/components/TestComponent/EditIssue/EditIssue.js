@@ -5,9 +5,7 @@ import { FormattedMessage } from 'react-intl';
 import {
   Select, Input, Button, Modal, Tooltip, Dropdown, Menu, Spin, Icon,
 } from 'choerodon-ui';
-import {
-  STATUS, COLOR, TYPE, ICON, TYPE_NAME,
-} from '../../../common/Constant';
+import { STATUS } from '../../../common/Constant';
 import './EditIssue.scss';
 import '../../../assets/main.scss';
 import {
@@ -89,11 +87,10 @@ class EditIssueNarrow extends Component {
       estimateTime: undefined,
       remainingTime: undefined,
       epicName: '',
-      issueNum: undefined,
-      typeCode: 'issue_test',
+      issueNum: undefined,      
       issueTypeDTO: {},
       parentIssueId: undefined,
-  
+
       reporterId: undefined,
       reporterImageUrl: undefined,
       sprintId: undefined,
@@ -226,7 +223,6 @@ class EditIssueNarrow extends Component {
       statusColor,
       storyPoints,
       summary,
-      typeCode,
       issueTypeDTO,
       versionIssueRelDTOList,
       subIssueDTOList,
@@ -281,7 +277,6 @@ class EditIssueNarrow extends Component {
       statusColor,
       storyPoints,
       summary,
-      typeCode,
       issueTypeDTO,
       versionIssueRelDTOList,
       subIssueDTOList,
@@ -755,7 +750,7 @@ class EditIssueNarrow extends Component {
       width: 560,
       title: `删除测试用例${this.state.issueNum}`,
       content:
-        <div style={{ marginBottom: 32 }}>
+  <div style={{ marginBottom: 32 }}>
           <p style={{ marginBottom: 10 }}>请确认您要删除这个测试用例。</p>
           <p style={{ marginBottom: 10 }}>这个测试用例将会被彻底删除。包括所有步骤和相关执行。</p>
         </div>,
@@ -940,8 +935,14 @@ class EditIssueNarrow extends Component {
   }
 
   render() {
-    const { priorityDTO, originpriorities, originStatus } = this.state;
+    const {
+ priorityDTO, originpriorities, originStatus, issueTypeDTO 
+} = this.state;
     const { name: priorityName, id: priorityId, colour: priorityColor } = priorityDTO || {};
+    const typeCode = issueTypeDTO ? issueTypeDTO.typeCode : '';
+    const typeColor = issueTypeDTO ? issueTypeDTO.colour : '#fab614';
+    const typeIcon = issueTypeDTO ? issueTypeDTO.icon : 'help';
+
     const menu = AppState.currentMenuType;
     const {
       type, id: projectId, organizationId: orgId, name,
@@ -989,7 +990,7 @@ class EditIssueNarrow extends Component {
           </div>
         </div>
       </Option>
-    ))
+    ));
     return (
       <div className="choerodon-modal-editIssue">
         {
@@ -1021,12 +1022,12 @@ class EditIssueNarrow extends Component {
               <div
                 className="radius"
                 style={{
-                  background: TYPE[this.state.typeCode], color: '#fff', width: '20px', height: '20px', textAlign: 'center', fontSize: '14px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  background: typeColor, color: '#fff', width: '20px', height: '20px', textAlign: 'center', fontSize: '14px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
                 }}
               >
                 <Icon
                   style={{ fontSize: '14px' }}
-                  type={ICON[this.state.typeCode]}
+                  type={typeIcon}
                 />
               </div>
             </div>
@@ -1148,7 +1149,7 @@ class EditIssueNarrow extends Component {
                 >
                   <div style={{ fontSize: 16, lineHeight: '28px', fontWeight: 500 }}>
                     {
-                      this.state.typeCode === 'sub_task' ? (
+                      typeCode === 'sub_task' ? (
                         <span>
                           <span
                             role="none"
@@ -1165,8 +1166,6 @@ class EditIssueNarrow extends Component {
                     }
                     <span>{this.state.issueNum}</span>
                   </div>
-
-
                   <div
                     style={{
                       cursor: 'pointer', fontSize: '13px', lineHeight: '20px', display: 'flex', alignItems: 'center',
@@ -1313,10 +1312,10 @@ class EditIssueNarrow extends Component {
                     <div style={{ display: 'flex', flex: 1 }}>
                       <span
                         style={{
-                          width: 30, height: 30, borderRadius: '50%', background: COLOR[this.state.priorityCode] ? COLOR[this.state.priorityCode].bgColor : 'rgba(77, 144, 254, 0.2)', marginRight: 12, flexShrink: 0, display: 'flex', justifyContent: 'center', alignItems: 'center',
+                          width: 30, height: 30, borderRadius: '50%', background: 'rgba(77, 144, 254, 0.2)', marginRight: 12, flexShrink: 0, display: 'flex', justifyContent: 'center', alignItems: 'center',
                         }}
                       >
-                        <Icon type="flag" style={{ fontSize: '24px', color: COLOR[this.state.priorityCode] ? COLOR[this.state.priorityCode].color : '#3575df' }} />
+                        <Icon type="flag" style={{ fontSize: '24px', color: priorityColor || '#3575df' }} />
                       </span>
                       <div>
                         <div style={{ fontSize: '12px', color: 'rgba(0, 0, 0, 0.54)', marginBottom: 4 }}>
@@ -1604,7 +1603,7 @@ class EditIssueNarrow extends Component {
                         }
                         {/* 模块 */}
                         {
-                          this.state.typeCode !== 'sub_task' ? (
+                          typeCode !== 'sub_task' ? (
                             <div className="line-start mt-10 ht-20">
                               <div className="c7ntest-property-wrapper">
                                 <span className="c7ntest-property">

@@ -4,20 +4,6 @@ export const STATUS = {
   done: '#00bfa5',
 };
 
-export const COLOR = {
-  medium: {
-    color: '#3575df',
-    bgColor: 'rgba(77, 144, 254, 0.2)',
-  },
-  high: {
-    color: '#F44336',
-    bgColor: 'rgba(244,67,54,0.20)',
-  },
-  low: {
-    color: 'rgba(0, 0, 0, 0.36)',
-    bgColor: 'rgba(0, 0, 0, 0.08)',
-  },
-};
 
 export const TYPE = {
   story: '#00bfa5',

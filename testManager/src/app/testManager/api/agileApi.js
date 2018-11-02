@@ -13,6 +13,17 @@ export function getProjectVersion() {
   return axios.get(`agile/v1/projects/${projectId}/product_version/versions`);
 }
 /**
+ *获取
+ *
+ * @export
+ * @param {*} summary
+ * @returns
+ */
+export function getIssues(search) {
+  const { id: projectId, organizationId } = AppState.currentMenuType;
+  return axios.post(`agile/v1/projects/${projectId}/issues/test_component/no_sub_detail?organizationId=${organizationId}`, search);
+}
+/**
  *获取缺陷列表（排除test类型）
  *
  * @export
@@ -20,7 +31,6 @@ export function getProjectVersion() {
  * @returns
  */
 export function getIssuesForDefects(summary) {
-  const projectId = AppState.currentMenuType.id;
   const advancedSearchArgs = {
     typeCode: ['sub_task', 'story', 'task', 'issue_epic', 'bug'],
   };
@@ -28,7 +38,7 @@ export function getIssuesForDefects(summary) {
   if (summary) {
     searchArgs.summary = summary;
   }
-  return axios.post(`agile/v1/projects/${projectId}/issues/test_component/no_sub`, { advancedSearchArgs, searchArgs });
+  return getIssues({ advancedSearchArgs, searchArgs });
 }
 /**
  *获取根据筛选条件获取issues
@@ -39,7 +49,6 @@ export function getIssuesForDefects(summary) {
  * @returns
  */
 export function getIssueList(summary, type) {
-  const projectId = AppState.currentMenuType.id;
   const advancedSearchArgs = {};
   const searchArgs = {};
   if (type) {
@@ -48,21 +57,31 @@ export function getIssueList(summary, type) {
   if (summary) {
     searchArgs.summary = summary;
   }
-  return axios.post(`agile/v1/projects/${projectId}/issues/test_component/no_sub`, { advancedSearchArgs, searchArgs });
+  return getIssues({ advancedSearchArgs, searchArgs });
 }
 /**
- *获取根据筛选条件获取issues
+ *获取测试类型issue数量
  *
  * @export
  * @param {*} search
- * @param {*} pagination
  * @returns
  */
-export function getIssueListSearch(search, pagination) {
-  const projectId = AppState.currentMenuType.id;
-  const { page, size } = pagination;
-  return axios.post(`agile/v1/projects/${projectId}/issues/test_component/no_sub?size=${size}&page=${page}`, search);
+export function getIssueCount(search) {
+  return getIssues(search);
 }
+// /**
+//  *获取根据筛选条件获取issues
+//  *
+//  * @export
+//  * @param {*} search
+//  * @param {*} pagination
+//  * @returns
+//  */
+// export function getIssueListSearch(search, pagination) {
+//   const projectId = AppState.currentMenuType.id;
+//   const { page, size } = pagination;
+//   return axios.post(`agile/v1/projects/${projectId}/issues/test_component/no_sub?size=${size}&page=${page}`, search);
+// }
 /**
  *获取当前项目的模块
  *
@@ -105,15 +124,4 @@ export function getIssueStatus() {
   const projectId = AppState.currentMenuType.id;
   return axios.get(`agile/v1/projects/${projectId}/issue_status/list`);
 }
-/**
- *获取测试类型issue数量
- *
- * @export
- * @param {*} search
- * @returns
- */
-export function getIssueCount(search) {
-  const projectId = AppState.currentMenuType.id;
 
-  return axios.post(`agile/v1/projects/${projectId}/issues/test_component/no_sub`, search);
-}

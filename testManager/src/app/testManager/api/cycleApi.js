@@ -6,19 +6,19 @@ export function getCycles(assignedTo) {
   return axios.get(`/test/v1/projects/${projectId}/cycle/query${assignedTo ? `?assignedTo=${assignedTo}` : ''}`);
 }
 export function getCycleById(pagination, cycleId, filters, type) {
-  const projectId = AppState.currentMenuType.id;
+  const { id: projectId, organizationId } = AppState.currentMenuType;
   const { size, page } = pagination;
   //   return axios.get(`/test/v1/cycle/case/query/${cycleId}`);
   const Filters = { ...filters };
   if (Filters) {
     Object.keys(Filters).forEach((filter) => {
-      Filters[filter] = Filters[filter][0]; 
+      Filters[filter] = Filters[filter][0];
     });
   }
   // if (type === 'cycle') {
   //   return axios.post(`/test/v1/projects/${projectId}/cycle/case/query/folderCycleId?size=${size}&page=${page}`, { cycleId, ...Filters });
   // } else {
-  return axios.post(`/test/v1/projects/${projectId}/cycle/case/query/cycleId?size=${size}&page=${page}`, { cycleId, ...Filters });
+  return axios.post(`/test/v1/projects/${projectId}/cycle/case/query/cycleId?size=${size}&page=${page}&organizationId=${organizationId}`, { cycleId, ...Filters });
   // }
 }
 export function addCycle(data) {
