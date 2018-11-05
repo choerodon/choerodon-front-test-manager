@@ -101,3 +101,12 @@ export function getPrioritys() {
 export function getIssueStatus() {
   return request.get(`agile/v1/projects/${getProjectId()}/issue_status/list`);
 }
+/**
+ *获取当前项目的issue类型列表
+ *
+ * @export
+ * @returns
+ */
+export function getIssueTypes() {
+  return request.get(`issue/v1/projects/${getProjectId()}/schemes/query_issue_types_with_sm_id?scheme_type=test`);
+}

@@ -18,7 +18,7 @@ class PriorityTag extends Component {
         className=""
         style={{
           ...this.props.style,
-          backgroundColor: colour,
+          // backgroundColor: colour,
           color: colour,
           borderRadius: '2px',
           padding: '0 8px',

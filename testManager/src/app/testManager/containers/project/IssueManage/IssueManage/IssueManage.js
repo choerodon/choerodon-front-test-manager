@@ -69,10 +69,10 @@ class Test extends Component {
         searchArgs: {},
       };
       const a = [paramStatus];
-      obj.advancedSearchArgs.statusCode = a || [];
+      obj.advancedSearchArgs.statusId = a || [];
       IssueStore.setBarFilters(arr);
       IssueStore.setFilter(obj);
-      IssueStore.setFilteredInfo({ statusCode: [paramStatus] });
+      IssueStore.setFilteredInfo({ statusId: [paramStatus] });
       IssueStore.loadIssues();
     } else if (paramIssueId) {
       IssueStore.setBarFilters(arr);
@@ -218,11 +218,11 @@ class Test extends Component {
       advancedSearchArgs: {},
       searchArgs: {},
     };
-    const { statusCode, priorityCode, typeCode } = filters;
+    const { statusId, priorityId, typeId } = filters;
     const { issueNum, summary } = filters;
-    obj.advancedSearchArgs.statusCode = statusCode || [];
-    obj.advancedSearchArgs.priorityCode = priorityCode || [];
-    obj.advancedSearchArgs.typeCode = ['issue_test'];
+    obj.advancedSearchArgs.statusId = statusId || [];
+    obj.advancedSearchArgs.priorityId = priorityId || [];
+    // obj.advancedSearchArgs.typeId = ['issue_test'];
     obj.searchArgs.issueNum = issueNum && issueNum.length ? issueNum[0] : barFilters[0];
     obj.searchArgs.summary = summary && summary.length ? summary[0] : '';
     IssueStore.setFilter(obj);
@@ -248,6 +248,9 @@ class Test extends Component {
     const { expand } = this.state;
     const treeShow = IssueStore.treeShow;
     const versions = IssueStore.getVersions;
+    const prioritys = IssueStore.getPrioritys;
+    const issueTypes = IssueStore.getIssueTypes;
+    const issueStatusList = IssueStore.getIssueStatus; 
     const selectedVersion = IssueTreeStore.currentCycle.versionId || IssueStore.getSeletedVersion;
 
     // const ORDER = [
@@ -287,44 +290,18 @@ class Test extends Component {
       },
       {
         title: <FormattedMessage id="issue_issueFilterByPriority" />,
-        dataIndex: 'priorityCode',
-        key: 'priorityCode',
-        filters: [
-          {
-            text: Choerodon.getMessage('高', 'high'),
-            value: 'high',
-          },
-          {
-            text: Choerodon.getMessage('中', 'medium'),
-            value: 'medium',
-          },
-          {
-            text: Choerodon.getMessage('低', 'low'),
-            value: 'low',
-          },
-        ],
+        dataIndex: 'priorityId',
+        key: 'priorityId',
+        filters: prioritys.map(priority => ({ text: priority.name, value: priority.id })), 
         filterMultiple: true,
       },
       {
         title: <FormattedMessage id="issue_issueFilterByStatus" />,
-        dataIndex: 'statusCode',
-        key: 'statusCode',
-        filters: [
-          {
-            text: Choerodon.getMessage('待处理', 'todo'),
-            value: 'todo',
-          },
-          {
-            text: Choerodon.getMessage('处理中', 'doing'),
-            value: 'doing',
-          },
-          {
-            text: Choerodon.getMessage('已完成', 'done'),
-            value: 'done',
-          },
-        ],
+        dataIndex: 'statusId',
+        key: 'statusId',
+        filters: issueStatusList.map(status => ({ text: status.name, value: status.id })),
         filterMultiple: true,
-        filteredValue: IssueStore.filteredInfo.statusCode || null,
+        filteredValue: IssueStore.filteredInfo.statusId || null,
       },
     ];
     // const columns = [

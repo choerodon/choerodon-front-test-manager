@@ -24,7 +24,7 @@ class IssueTable extends Component {
     const {
       issueId,
       typeCode, issueNum, summary, assigneeId, assigneeName, assigneeImageUrl, reporterId,
-      reporterName, reporterImageUrl, statusName, statusColor, priorityDTO,
+      reporterName, reporterImageUrl, statusMapDTO, priorityDTO,
       folderName, epicColor, componentIssueRelDTOList, labelIssueRelDTOList,
       versionIssueRelDTOList, creationDate, lastUpdateDate,
     } = issue;
@@ -44,7 +44,7 @@ class IssueTable extends Component {
           {renderFolder(folderName)}
           <div className="c7ntest-flex-space" />
           {renderAssigned(assigneeId, assigneeName, assigneeImageUrl)}
-          {renderStatus(statusName, statusColor)}
+          {renderStatus(statusMapDTO)}
         </div>
       </div>
     );
@@ -54,7 +54,7 @@ class IssueTable extends Component {
     const {
       issueId,
       typeCode, issueNum, summary, assigneeId, assigneeName, assigneeImageUrl, reporterId,
-      reporterName, reporterImageUrl, statusName, statusColor, priorityDTO,
+      reporterName, reporterImageUrl, priorityDTO, statusMapDTO,
       folderName, epicColor, componentIssueRelDTOList, labelIssueRelDTOList,
       versionIssueRelDTOList, creationDate, lastUpdateDate,
     } = issue;
@@ -74,7 +74,7 @@ class IssueTable extends Component {
         {/* 标签 */}
         {/* {renderLabels(labelIssueRelDTOList)} */}
         {renderAssigned(assigneeId, assigneeName, assigneeImageUrl)}
-        {renderStatus(statusName, statusColor)}
+        {renderStatus(statusMapDTO)}
       </div>
     );
   }
@@ -83,7 +83,7 @@ class IssueTable extends Component {
     const {
       issueId,
       typeCode, issueNum, summary, assigneeId, assigneeName, assigneeImageUrl, reporterId,
-      reporterName, reporterImageUrl, statusName, statusColor, priorityDTO,
+      reporterName, reporterImageUrl, statusMapDTO, priorityDTO,
       folderName, epicColor, componentIssueRelDTOList, labelIssueRelDTOList,
       versionIssueRelDTOList, creationDate, lastUpdateDate,
     } = issue;
@@ -103,7 +103,7 @@ class IssueTable extends Component {
           {renderFolder(folderName)}
           <div className="c7ntest-flex-space" />
           {/* {renderAssigned(assigneeId, assigneeName, assigneeImageUrl)} */}
-          {renderStatus(statusName, statusColor)}
+          {renderStatus(statusMapDTO)}
         </div>
       </div>
     );

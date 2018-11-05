@@ -182,7 +182,8 @@ export function renderAssigned(assigneeId, assigneeName, imageUrl) {
     ) : null
   );
 }
-export function renderStatus(statusName, statusColor) {
+export function renderStatus(statusMapDTO) {
+  const { name: statusName, colour: statusColor } = statusMapDTO;
   return (
     <div style={{ margin: '0 5px' }}>
       <Tooltip mouseEnterDelay={0.5} title={`任务状态： ${statusName}`}>

@@ -300,7 +300,7 @@ export function request() { }
         resolve(data);
       }
     }).catch((error) => {
-      Choerodon.prompt('请求错误');
+      Choerodon.prompt(error.message);
       reject(error);
     });
   });

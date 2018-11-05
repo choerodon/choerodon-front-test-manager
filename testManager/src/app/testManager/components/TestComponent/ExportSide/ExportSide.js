@@ -92,15 +92,27 @@ class ExportSide extends Component {
     const { versionId, folderId } = this.state;
     if (folderId) {
       exportIssuesFromFolder(folderId).then((data) => {
-        
+        getExportList().then((exportList) => {
+          this.setState({
+            exportList,
+          });
+        });
       });
     } else if (versionId) {
       exportIssuesFromVersion(versionId).then((data) => {
-
+        getExportList().then((exportList) => {
+          this.setState({
+            exportList,
+          });
+        });
       });
     } else {
       exportIssues().then((data) => {
-
+        getExportList().then((exportList) => {
+          this.setState({
+            exportList,
+          });
+        });
       });
     }
   }
@@ -110,6 +122,7 @@ class ExportSide extends Component {
     if (fileUrl) {
       const ele = document.createElement('a');
       ele.href = fileUrl;
+      ele.target = '_blank';
       document.body.appendChild(ele);
       ele.click();
       document.removeChild(ele);
@@ -118,65 +131,37 @@ class ExportSide extends Component {
 
   handleMessage=(data) => {
     console.log(data);
+    const { exportList } = this.state;
+    const { historyId, rate } = data;
+    for (let item of exportList) {
+      if (item.id === historyId) {
+        item = { ...item, ...data };
+        this.setState({
+          exportList,
+        });
+      }
+    }
   }
 
   render() {
     const {
       visible, versionId, folderId, exportList,
     } = this.state;
-    const data = [{
-      source: { type: 'project', name: '测试管理开发项目' },
-      version: '0.1.0',
-      folder: '文件夹',
-      num: 10,
-      time: '2018-10-25',
-      during: 30,
-      progress: 50,
-      file: {
-        name: '测试管理开发项目.xlsx',
-        url: 'http://minio.staging.saas.hand-china.com/error-member-role/file_414d93294456483aa81fbfefef92d79e_errorMemberRole.xls',
-      },
-    }, {
-      source: { type: 'version', name: '0.1.0' },
-      version: '0.1.0',
-      folder: '文件夹',
-      num: 10,
-      time: '2018-10-25',
-      during: 100,
-      progress: 100,
-      file: {
-        name: '测试管理开发项目.xlsx',
-        url: 'http://minio.staging.saas.hand-china.com/error-member-role/file_414d93294456483aa81fbfefef92d79e_errorMemberRole.xls',
-      },
-    }, {
-      source: { type: 'folder', name: '新文件夹' },
-      version: '0.1.0',
-      folder: '文件夹',
-      num: 10,
-      time: '2018-10-25',
-      during: 1000,
-      progress: 100,
-      file: {
-        name: '测试管理开发项目.xlsx',
-        url: 'http://minio.staging.saas.hand-china.com/error-member-role/file_414d93294456483aa81fbfefef92d79e_errorMemberRole.xls',
-      },
-    }];
     const columns = [{
       title: '导出来源',
-      dataIndex: 'source',
-      key: 'source',
+      dataIndex: 'sourceType',
+      key: 'sourceType',
       // width: 100,
-      render: (source) => {
-        const { type, name } = source;
+      render: (sourceType) => {        
         const ICONS = {
-          project: 'project',
-          version: 'version',
-          folder: 'folder',
+          1: 'project',
+          2: 'version',
+          4: 'folder',
         };
         return (
           <div className="c7ntest-center">
-            <Icon type={ICONS[type]} />
-            <span className="c7ntest-text-dot" style={{ marginLeft: 10 }}>{name}</span>
+            <Icon type={ICONS[sourceType]} />
+            <span className="c7ntest-text-dot" style={{ marginLeft: 10 }}>name</span>
           </div>
         );
       },
@@ -209,12 +194,12 @@ class ExportSide extends Component {
       render: during => <div>{humanizeDuration(during)}</div>,
     }, {
       title: '进度',
-      dataIndex: 'progress',
-      key: 'progress',
-      render: progress => (progress === 100
+      dataIndex: 'rate',
+      key: 'rate',
+      render: rate => (rate === 100
         ? <div>已完成</div>
         : (
-          <Progress percent={progress} showInfo={false} />
+          <Progress percent={rate} showInfo={false} />
         )),
     }, {
       title: '',

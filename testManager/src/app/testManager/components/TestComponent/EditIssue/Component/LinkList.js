@@ -23,11 +23,12 @@ class LinkList extends Component {
   render() {
     const { issue, i } = this.props;
     const {
-      priorityDTO, typeDTO, issueNum, summary, issueId, linkedIssueId, 
-      linkId, ward, statusColor, statusName,
+      priorityDTO, issueTypeDTO, issueNum, summary, issueId, linkedIssueId, 
+      linkId, ward, statusMapDTO,
     } = issue;
-    const { priorityColor, priorityName } = priorityDTO;
-    const { typeCode } = typeDTO;
+    const { colour: priorityColor, name: priorityName } = priorityDTO || {};
+    const { colour: typeColor, name: typeName, typeCode } = issueTypeDTO || {};
+    const { colour: statusColor, name: statusName } = statusMapDTO || {};
     const Reg = /被/g;
     return (
       <div
@@ -40,9 +41,9 @@ class LinkList extends Component {
           borderTop: !i ? '1px solid rgba(0, 0, 0, 0.12)' : '',
         }}
       >
-        <Tooltip mouseEnterDelay={0.5} title={`任务类型： ${typeCode}`}>
+        <Tooltip mouseEnterDelay={0.5} title={`任务类型： ${typeName}`}>
           <div>
-            <TypeTag type={{ typeCode }} />
+            <TypeTag type={issueTypeDTO} />
           </div>
         </Tooltip>
         <Tooltip title={`编号概要： ${issueNum} ${summary}`}>

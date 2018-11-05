@@ -15,8 +15,8 @@ import {
   delta2Html, handleFileUpload, text2Delta, beforeTextUpload, formatDate, returnBeforeTextUpload,
 } from '../../../common/utils';
 import {
-  loadDatalogs, loadLinkIssues, loadIssue, updateStatus,
-  updateIssue, createCommit, deleteIssue, loadStatus, cloneIssue,
+  loadDatalogs, loadLinkIssues, loadIssue, updateStatus, updateIssue, 
+  createCommit, deleteIssue, loadStatus, cloneIssue, getIssueSteps, getIssueExecutes,
 } from '../../../api/IssueManageApi';
 import { getLabels, getPrioritys, getModules } from '../../../api/agileApi';
 import { getSelf, getUsers, getUser } from '../../../api/IamApi';
@@ -449,18 +449,16 @@ class EditIssueNarrow extends Component {
           datalogs: res,
         });
       });
-      axios.get(`/test/v1/projects/${AppState.currentMenuType.id}/case/step/query/${issueId}`)
-        .then((res) => {
-          this.setState({ testStepData: res }, () => {
-            this.setState({ testStepData: res });
-          });
+      getIssueSteps(issueId).then((res) => {
+        this.setState({ testStepData: res }, () => {
+          this.setState({ testStepData: res });
         });
-      axios.get(`/test/v1/projects/${AppState.currentMenuType.id}/cycle/case/query/issue/${issueId}`)
-        .then((res) => {
-          this.setState({ testExecuteData: res }, () => {
-            this.setState({ testExecuteData: res });
-          });
+      });
+      getIssueExecutes(issueId).then((res) => {
+        this.setState({ testExecuteData: res }, () => {
+          this.setState({ testExecuteData: res });
         });
+      });
       this.setState({
         editDesShow: false,
       });
@@ -751,9 +749,9 @@ class EditIssueNarrow extends Component {
       title: `删除测试用例${this.state.issueNum}`,
       content:
   <div style={{ marginBottom: 32 }}>
-          <p style={{ marginBottom: 10 }}>请确认您要删除这个测试用例。</p>
-          <p style={{ marginBottom: 10 }}>这个测试用例将会被彻底删除。包括所有步骤和相关执行。</p>
-        </div>,
+    <p style={{ marginBottom: 10 }}>请确认您要删除这个测试用例。</p>
+    <p style={{ marginBottom: 10 }}>这个测试用例将会被彻底删除。包括所有步骤和相关执行。</p>
+  </div>,
       onOk() {
         return deleteIssue(issueId)
           .then((res) => {
@@ -821,6 +819,7 @@ class EditIssueNarrow extends Component {
 
   renderLinkIssues() {
     const group = _.groupBy(this.state.linkIssues, 'ward');
+    console.log(group)
     return (
       <div className="c7ntest-tasks">
         {
@@ -842,10 +841,7 @@ class EditIssueNarrow extends Component {
     return (
       <LinkList
         key={link.linkId}
-        issue={{
-          ...link,
-          typeCode: link.typeCode,
-        }}
+        issue={link}
         i={i}
         // onOpen={(issueId, linkedIssueId) => {
         //   const menu = AppState.currentMenuType;
@@ -936,8 +932,8 @@ class EditIssueNarrow extends Component {
 
   render() {
     const {
- priorityDTO, originpriorities, originStatus, issueTypeDTO 
-} = this.state;
+      priorityDTO, originpriorities, originStatus, issueTypeDTO, 
+    } = this.state;
     const { name: priorityName, id: priorityId, colour: priorityColor } = priorityDTO || {};
     const typeCode = issueTypeDTO ? issueTypeDTO.typeCode : '';
     const typeColor = issueTypeDTO ? issueTypeDTO.colour : '#fab614';
