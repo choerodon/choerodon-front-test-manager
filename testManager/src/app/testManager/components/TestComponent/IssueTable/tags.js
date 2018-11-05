@@ -5,21 +5,19 @@ import UserHead from '../UserHead';
 import PriorityTag from '../PriorityTag';
 import StatusTag from '../StatusTag';
 import TypeTag from '../TypeTag';
-import { TYPE_NAME } from '../../../common/Constant';
 
 const styles = {
   issueNum: {
     padding: '0 12px 0 5px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
   },
 };
-export function renderType(typeCode) {
+export function renderType(issueTypeDTO) {
+  const { name } = issueTypeDTO || {};
   return (
-    <Tooltip mouseEnterDelay={0.5} title={`任务类型： ${TYPE_NAME[typeCode]}`}>
+    <Tooltip mouseEnterDelay={0.5} title={`任务类型： ${name}`}>
       <div>
         <TypeTag
-          type={{
-            typeCode,
-          }}
+          type={issueTypeDTO}
         />
       </div>
     </Tooltip>

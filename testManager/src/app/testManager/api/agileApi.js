@@ -17,7 +17,7 @@ export function getProjectVersion() {
  * @returns
  */
 export function getIssues(search) {
-  return request.post(`agile/v1/projects/${getProjectId()}/issues/test_component/no_sub_detail?organizationId=${getOrganizationId()}`, search);
+  return request.post(`agile/v1/projects/${getProjectId()}/issues/test_component/no_sub?organizationId=${getOrganizationId()}`, search);
 }
 /**
  *获取缺陷列表（排除test类型）

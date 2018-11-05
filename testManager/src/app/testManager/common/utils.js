@@ -292,6 +292,16 @@ export const getOrganizationId = () => AppState.currentMenuType.organizationId;
 export function request() { }
 ['get', 'post', 'options', 'delete', 'put'].forEach((type) => {
   request[type] = (...args) => new Promise((resolve, reject) => {
+    // const ARGS = [...args];
+    let url = args[0];
+
+    if (Object.keys(getParams(url)).length > 0) {
+      url += `&organizationId=${getOrganizationId()}`;
+    } else {
+      url += `?organizationId=${getOrganizationId()}`;
+    }
+    args[0] = url;
+
     axios[type](...args).then((data) => {
       if (data && data.failed) {
         Choerodon.prompt(data.message);

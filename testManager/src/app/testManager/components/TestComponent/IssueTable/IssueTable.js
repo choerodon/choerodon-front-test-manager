@@ -23,7 +23,7 @@ class IssueTable extends Component {
   renderTestIssue(issue) {
     const {
       issueId,
-      typeCode, issueNum, summary, assigneeId, assigneeName, assigneeImageUrl, reporterId,
+      issueTypeDTO, issueNum, summary, assigneeId, assigneeName, assigneeImageUrl, reporterId,
       reporterName, reporterImageUrl, statusMapDTO, priorityDTO,
       folderName, epicColor, componentIssueRelDTOList, labelIssueRelDTOList,
       versionIssueRelDTOList, creationDate, lastUpdateDate,
@@ -34,7 +34,7 @@ class IssueTable extends Component {
           display: 'flex', marginBottom: '5px', width: '100%', flex: 1,
         }}
         >
-          {renderType(typeCode)}
+          {renderType(issueTypeDTO)}
           {renderIssueNum(issueNum)}
           {renderSummary(summary)}
         </div>
@@ -52,8 +52,7 @@ class IssueTable extends Component {
 
   renderWideIssue(issue) {
     const {
-      issueId,
-      typeCode, issueNum, summary, assigneeId, assigneeName, assigneeImageUrl, reporterId,
+      issueId,issueTypeDTO, issueNum, summary, assigneeId, assigneeName, assigneeImageUrl, reporterId,
       reporterName, reporterImageUrl, priorityDTO, statusMapDTO,
       folderName, epicColor, componentIssueRelDTOList, labelIssueRelDTOList,
       versionIssueRelDTOList, creationDate, lastUpdateDate,
@@ -63,7 +62,7 @@ class IssueTable extends Component {
         display: 'flex', flex: 1, marginTop: '3px', marginBottom: '3px', cursor: 'pointer',
       }}
       >
-        {renderType(typeCode)}
+        {renderType(issueTypeDTO)}
         {renderIssueNum(issueNum)}
         {renderSummary(summary)}
         <div className="c7ntest-flex-space" />
@@ -82,7 +81,7 @@ class IssueTable extends Component {
   renderNarrowIssue(issue) {
     const {
       issueId,
-      typeCode, issueNum, summary, assigneeId, assigneeName, assigneeImageUrl, reporterId,
+      issueTypeDTO, issueNum, summary, assigneeId, assigneeName, assigneeImageUrl, reporterId,
       reporterName, reporterImageUrl, statusMapDTO, priorityDTO,
       folderName, epicColor, componentIssueRelDTOList, labelIssueRelDTOList,
       versionIssueRelDTOList, creationDate, lastUpdateDate,
@@ -93,7 +92,7 @@ class IssueTable extends Component {
           display: 'flex', marginBottom: '5px', width: '100%', flex: 1,
         }}
         >
-          {renderType(typeCode)}
+          {renderType(issueTypeDTO)}
           {renderIssueNum(issueNum)}
           {renderSummary(summary)}
         </div>

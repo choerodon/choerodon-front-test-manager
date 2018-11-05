@@ -290,7 +290,7 @@ export function getIssuesByVersion(versionIds, page = 0, size = 10, search, orde
   const searchDTO = { ...search, otherArgs: search.searchArgs };
   // searchDTO.advancedSearchArgs.typeCode = ['issue_test'];
 
-  return request.post(`/test/v1/projects/${getProjectId()}/issueFolderRel/query?page=${page}&size=${size}`, { versionIds, searchDTO }, {
+  return request.post(`/test/v1/projects/${getProjectId()}/issueFolderRel/query?page=${page}&size=${size}&organizationId=${getOrganizationId()}`, { versionIds, searchDTO }, {
     params: {
       sort: `${orderField && orderType ? `${orderField},${orderType}` : ''}`,
     },

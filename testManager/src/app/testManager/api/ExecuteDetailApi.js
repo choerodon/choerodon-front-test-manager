@@ -1,7 +1,7 @@
-import { getProjectId, request } from '../common/utils';
+import { getProjectId, getOrganizationId, request } from '../common/utils';
 
 export function getCycle(id) {
-  return request.get(`/test/v1/projects/${getProjectId()}/cycle/case/query/one/${id}`);
+  return request.get(`/test/v1/projects/${getProjectId()}/cycle/case/query/one/${id}?organizationId=${getOrganizationId()}`);
 }
 
 export function editCycle(cycle) {
@@ -31,7 +31,7 @@ export function editCycleSide(data) {
   const axiosConfig = {
     headers: { 'content-type': 'multipart/form-datal' },
   };
-  
+
   return request.post(`/zuul/test/v1/projects/${getProjectId()}/cycle/case/step/updateWithAttach`, data, axiosConfig);
 }
 export function editCycleStep(data) {
@@ -39,11 +39,11 @@ export function editCycleStep(data) {
 }
 export function getCycleDetails(pagination, cycleCaseId) {
   const { size, page } = pagination;
-  
+
   return request.get(`test/v1/projects/${getProjectId()}/cycle/case/step/query/${cycleCaseId}?size=${size}&page=${page}`);
 }
 export function getCycleHistiorys(pagination, cycleCaseId) {
   const { size, page } = pagination;
-  
+
   return request.get(`test/v1/projects/${getProjectId()}/cycle/case/history/${cycleCaseId}?size=${size}&page=${page}`);
 }

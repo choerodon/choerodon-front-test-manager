@@ -15,7 +15,7 @@ import {
   delta2Html, handleFileUpload, text2Delta, beforeTextUpload, formatDate, returnBeforeTextUpload,
 } from '../../../common/utils';
 import {
-  loadDatalogs, loadLinkIssues, loadIssue, updateStatus, updateIssue, 
+  loadDatalogs, loadLinkIssues, loadIssue, updateStatus, updateIssue,
   createCommit, deleteIssue, loadStatus, cloneIssue, getIssueSteps, getIssueExecutes,
 } from '../../../api/IssueManageApi';
 import { getLabels, getPrioritys, getModules } from '../../../api/agileApi';
@@ -87,7 +87,7 @@ class EditIssueNarrow extends Component {
       estimateTime: undefined,
       remainingTime: undefined,
       epicName: '',
-      issueNum: undefined,      
+      issueNum: undefined,
       issueTypeDTO: {},
       parentIssueId: undefined,
 
@@ -217,10 +217,7 @@ class EditIssueNarrow extends Component {
       reporterImageUrl,
       sprintId,
       sprintName,
-      statusId,
-      statusCode,
-      statusName,
-      statusColor,
+      statusMapDTO,
       storyPoints,
       summary,
       issueTypeDTO,
@@ -271,11 +268,7 @@ class EditIssueNarrow extends Component {
       reporterImageUrl,
       sprintId,
       sprintName,
-      statusId,
-      statusCode,
-      statusName,
-      statusColor,
-      storyPoints,
+      statusMapDTO,
       summary,
       issueTypeDTO,
       versionIssueRelDTOList,
@@ -393,8 +386,8 @@ class EditIssueNarrow extends Component {
     this.setState({ epicName: value });
   }
 
-  resetPriorityCode(value) {
-    this.setState({ priorityCode: value });
+  resetPriorityId(value) {
+    this.setState({ priorityId: value });
   }
 
   resetStatusId(value) {
@@ -666,18 +659,6 @@ class EditIssueNarrow extends Component {
     }
   }
 
-  // transformPriorityCode(originpriorityCode) {
-  //   if (!originpriorityCode.length) {
-  //     return [];
-  //   } else {
-  //     const arr = [];
-  //     arr[0] = _.find(originpriorityCode, { valueCode: 'high' });
-  //     arr[1] = _.find(originpriorityCode, { valueCode: 'medium' });
-  //     arr[2] = _.find(originpriorityCode, { valueCode: 'low' });
-  //     return arr;
-  //   }
-  // }
-
 
   handleCreateLinkIssue() {
     this.reloadIssue();
@@ -749,9 +730,9 @@ class EditIssueNarrow extends Component {
       title: `删除测试用例${this.state.issueNum}`,
       content:
   <div style={{ marginBottom: 32 }}>
-    <p style={{ marginBottom: 10 }}>请确认您要删除这个测试用例。</p>
-    <p style={{ marginBottom: 10 }}>这个测试用例将会被彻底删除。包括所有步骤和相关执行。</p>
-  </div>,
+          <p style={{ marginBottom: 10 }}>请确认您要删除这个测试用例。</p>
+          <p style={{ marginBottom: 10 }}>这个测试用例将会被彻底删除。包括所有步骤和相关执行。</p>
+        </div>,
       onOk() {
         return deleteIssue(issueId)
           .then((res) => {
@@ -818,8 +799,7 @@ class EditIssueNarrow extends Component {
   }
 
   renderLinkIssues() {
-    const group = _.groupBy(this.state.linkIssues, 'ward');
-    console.log(group)
+    const group = _.groupBy(this.state.linkIssues, 'ward');   
     return (
       <div className="c7ntest-tasks">
         {
@@ -932,9 +912,12 @@ class EditIssueNarrow extends Component {
 
   render() {
     const {
-      priorityDTO, originpriorities, originStatus, issueTypeDTO, 
+      priorityDTO, originpriorities, originStatus, issueTypeDTO, statusMapDTO,
     } = this.state;
     const { name: priorityName, id: priorityId, colour: priorityColor } = priorityDTO || {};
+    const {
+ name: statusName, id: statusId, colour: statusColor, icon: statusIcon 
+} = statusMapDTO || {};
     const typeCode = issueTypeDTO ? issueTypeDTO.typeCode : '';
     const typeColor = issueTypeDTO ? issueTypeDTO.colour : '#fab614';
     const typeIcon = issueTypeDTO ? issueTypeDTO.icon : 'help';
@@ -1221,7 +1204,7 @@ class EditIssueNarrow extends Component {
                           width: 30,
                           height: 30,
                           borderRadius: '50%',
-                          background: ICON_COLOR[this.state.statusCode],
+                          background: statusColor,
                           marginRight: 12,
                           flexShrink: 0,
                           display: 'flex',
@@ -1230,10 +1213,10 @@ class EditIssueNarrow extends Component {
                         }}
                       >
                         <Icon
-                          type={STATUS_ICON[this.state.statusCode] ? STATUS_ICON[this.state.statusCode].icon : 'timelapse'}
+                          type={statusIcon}
                           style={{
                             fontSize: '24px',
-                            color: this.state.statusColor || '#ffae02',
+                            color: statusColor || '#ffae02',
                           }}
                         />
                       </span>
@@ -1246,22 +1229,22 @@ class EditIssueNarrow extends Component {
                             callback={this.changeRae.bind(this)}
                             thisType="statusId"
                             current={this.state.currentRae}
-                            origin={this.state.statusId}
+                            origin={statusId}
                             onOk={this.updateIssue.bind(this, 'statusId')}
                             onCancel={this.resetStatusId.bind(this)}
                             onInit={this.loadIssueStatus}
                             readModeContent={(
                               <div>
                                 {
-                                  this.state.statusId ? (
+                                  statusId ? (
                                     <div
                                       style={{
-                                        color: this.state.statusColor,
+                                        color: statusColor,
                                         fontSize: '16px',
                                         lineHeight: '18px',
                                       }}
                                     >
-                                      {this.state.statusName}
+                                      {statusName}
                                     </div>
                                   ) : '无'
                                 }
@@ -1270,7 +1253,7 @@ class EditIssueNarrow extends Component {
                           >
                             <Select
                               value={originStatus.length
-                                ? this.state.statusId : this.state.statusName}
+                                ? statusId : statusName}
                               style={{ width: 150 }}
                               loading={this.state.selectLoading}
                               autoFocus
@@ -1321,11 +1304,11 @@ class EditIssueNarrow extends Component {
                           {/* 优先级 */}
                           <ReadAndEdit
                             callback={this.changeRae.bind(this)}
-                            thisType="priorityCode"
+                            thisType="priorityId"
                             current={this.state.currentRae}
                             origin={priorityId}
-                            onOk={this.updateIssue.bind(this, 'priorityCode')}
-                            onCancel={this.resetPriorityCode.bind(this)}
+                            onOk={this.updateIssue.bind(this, 'priorityId')}
+                            onCancel={this.resetPriorityId.bind(this)}
                             onInit={() => {
                               this.setAnIssueToState();
                               getPrioritys().then((res) => {
@@ -1337,11 +1320,11 @@ class EditIssueNarrow extends Component {
                             readModeContent={(
                               <div>
                                 {
-                                  this.state.priorityCode ? (
+                                  priorityId ? (
                                     <div
                                       className="c7ntest-level"
                                       style={{
-                                        // backgroundColor: COLOR[this.state.priorityCode].bgColor,
+                                        // backgroundColor: COLOR[priorityId].bgColor,
                                         color: priorityColor,
                                         // borderRadius: '2px',
                                         // padding: '0 8px',
@@ -1379,7 +1362,7 @@ class EditIssueNarrow extends Component {
                                 const priority = _.find(originpriorities,
                                   { id: value });
                                 this.setState({
-                                  priorityCode: value,
+                                  priorityId: value,
                                   priorityName: priority.name,
                                 });
                               }}
@@ -1528,11 +1511,11 @@ class EditIssueNarrow extends Component {
                                 <div className="c7ntest-value-wrapper">
                                   <ReadAndEdit
                                     callback={this.changeRae.bind(this)}
-                                    thisType="priorityCode"
+                                    thisType="priorityId"
                                     current={this.state.currentRae}
                                     origin={priorityId}
-                                    onOk={this.updateIssue.bind(this, 'priorityCode')}
-                                    onCancel={this.resetPriorityCode.bind(this)}
+                                    onOk={this.updateIssue.bind(this, 'priorityId')}
+                                    onCancel={this.resetPriorityId.bind(this)}
                                     onInit={() => {
                                       this.setAnIssueToState();
                                       getPrioritys().then((res) => {
@@ -1584,7 +1567,7 @@ class EditIssueNarrow extends Component {
                                         const priority = _.find(originpriorities,
                                           { id: value });
                                         this.setState({
-                                          priorityCode: value,
+                                          priorityId: value,
                                           priorityName: priority.name,
                                         });
                                       }}
