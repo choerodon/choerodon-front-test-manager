@@ -23,7 +23,7 @@ export function createIssue(issueObj, folderId) {
     ...issueObj,
   };
   const versionId = issue.versionIssueRelDTOList[0].versionId;
-  return request.post(`/test/v1/projects/${getProjectId()}/issueFolderRel/testAndRelationship?versionId=${versionId}${folderId ? `&folderId=${folderId}` : ''}`, issue);
+  return request.post(`/test/v1/projects/${getProjectId()}/issueFolderRel/testAndRelationship?versionId=${versionId}${folderId ? `&folderId=${folderId}` : ''}&applyType=test`, issue);
 }
 /**
  *创建评论
@@ -99,7 +99,7 @@ export function updateStatus(transformId, issueId, objVerNum) {
  * @returns
  */
 export function updateIssue(data) {
-  return request.put(`/agile/v1/projects/${getProjectId()}/issues`, data);
+  return request.put(`/agile/v1/projects/${getProjectId()}/issues?applyType=test`, data);
 }
 /**
  *用例删除
@@ -218,6 +218,16 @@ export function deleteFolder(folderId) {
  */
 export function getIssueSteps(issueId) {
   return request.get(`/test/v1/projects/${getProjectId()}/case/step/query/${issueId}`);
+}
+/**
+ *获取用例的步骤
+ *
+ * @export
+ * @param {*} issueId
+ * @returns
+ */
+export function createIssueStep(testCaseStepDTO) {
+  return request.put(`/test/v1/projects/${getProjectId()}/case/step/change`, testCaseStepDTO);
 }
 /**
  *获取用例关联的执行

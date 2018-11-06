@@ -49,3 +49,15 @@ export function editFolder(data) {
 export function exportCycle(cycleId) {
   return request.get(`/test/v1/projects/${getProjectId()}/cycle/case/download/excel/${cycleId}`, { responseType: 'arraybuffer' });
 }
+export function getFoldersByCycleId(data) {
+  return request.put(`/test/v1/projects/${getProjectId()}/cycle`, data);
+}
+/**
+ *获取导出历史
+ *
+ * @export
+ * @returns
+ */
+export function getExportList() {
+  return request.get(`/test/v1/projects/${getProjectId()}/test/fileload/history`);
+}

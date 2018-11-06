@@ -16,7 +16,7 @@ import {
 } from '../../../../api/cycleApi';
 import { getStatusList } from '../../../../api/TestStatusApi';
 import {
-  EventCalendar, PlanTree, CreateCycle, EditStage, EditCycle,
+  EventCalendar, PlanTree, CreateCycle, EditStage, EditCycle, ExportSide,
 } from '../../../../components/TestPlanComponent';
 import {
   RichTextShow, SelectFocusLoad, StatusTags, DragTable, 
@@ -45,6 +45,10 @@ class TestPlanHome extends Component {
     TestPlanStore.setAssignedTo(null);
     TestPlanStore.setLastUpdatedBy(null);
     this.refresh();
+  }
+
+  saveRef = name => (ref) => {
+    this[name] = ref;
   }
 
   refresh = () => {
@@ -180,7 +184,7 @@ class TestPlanHome extends Component {
   render() {
     console.log('render');
     const {
-      treeShow, CreateCycleVisible, statusList,
+      treeShow, CreateCycleVisible, statusList, 
     } = this.state;
     const {
       testList, executePagination, loading, rightLoading, times, calendarShowMode,
@@ -464,6 +468,10 @@ class TestPlanHome extends Component {
               <FormattedMessage id="cycle_create_title" />
             </span>
           </Button>
+          <Button className="leftBtn" onClick={() => this.ExportSide.open()}>
+            <Icon type="export icon" />
+            <FormattedMessage id="export" />
+          </Button>
           <Button onClick={this.refresh}>
             <Icon type="autorenew icon" />
             <span>
@@ -485,6 +493,7 @@ class TestPlanHome extends Component {
                 onCancel={() => { this.setState({ CreateCycleVisible: false }); }}
                 onOk={() => { this.setState({ CreateCycleVisible: false }); this.refresh(); }}
               />
+              <ExportSide ref={this.saveRef('ExportSide')} />
               {!treeShow && (
                 <div className="c7ntest-TestPlan-bar">
                   <div

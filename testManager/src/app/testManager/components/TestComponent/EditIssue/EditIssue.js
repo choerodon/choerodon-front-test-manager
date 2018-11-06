@@ -15,7 +15,7 @@ import {
   delta2Html, handleFileUpload, text2Delta, beforeTextUpload, formatDate, returnBeforeTextUpload,
 } from '../../../common/utils';
 import {
-  loadDatalogs, loadLinkIssues, loadIssue, updateStatus, updateIssue,
+  loadDatalogs, loadLinkIssues, loadIssue, updateStatus, updateIssue, createIssueStep,
   createCommit, deleteIssue, loadStatus, cloneIssue, getIssueSteps, getIssueExecutes,
 } from '../../../api/IssueManageApi';
 import { getLabels, getPrioritys, getModules } from '../../../api/agileApi';
@@ -30,7 +30,6 @@ import PriorityTag from '../PriorityTag';
 import CopyIssue from '../CopyIssue';
 import TestStepTable from '../TestStepTable';
 import TestExecuteTable from '../TestExecuteTable';
-import CreateTestStep from '../CreateTestStep';
 import TypeTag from '../TypeTag';
 
 const { AppState } = stores;
@@ -39,28 +38,7 @@ const { TextArea } = Input;
 const { confirm } = Modal;
 let sign = true;
 let filterSign = false;
-const STATUS_ICON = {
-  done: {
-    icon: 'check_circle',
-    color: '#1bb06e',
-    bgColor: '',
-  },
-  todo: {
-    icon: 'watch_later',
-    color: '#4a93fc',
-    bgColor: '',
-  },
-  doing: {
-    icon: 'timelapse',
-    color: '#ffae02',
-    bgColor: '',
-  },
-};
-const ICON_COLOR = {
-  todo: 'rgba(255, 177, 0, 0.2)',
-  doing: 'rgba(77,144,254,0.2)',
-  done: 'rgba(0,191,165,0.2)',
-};
+
 class EditIssueNarrow extends Component {
   constructor(props) {
     super(props);
@@ -74,7 +52,7 @@ class EditIssueNarrow extends Component {
       addCommit: false,
       addCommitDes: '',
       createLinkTaskShow: false,
-      createTestStepShow: false,
+
       editDesShow: false,
       origin: {},
       loading: true,
@@ -804,7 +782,7 @@ class EditIssueNarrow extends Component {
   }
 
   renderLinkIssues() {
-    const group = _.groupBy(this.state.linkIssues, 'ward');   
+    const group = _.groupBy(this.state.linkIssues, 'ward');
     return (
       <div className="c7ntest-tasks">
         {
@@ -915,13 +893,31 @@ class EditIssueNarrow extends Component {
     });
   }
 
+  createIssueStep = () => {
+    const issueId = this.state.origin.issueId;
+    const lastRank = this.state.testStepData.length
+      ? this.state.testStepData[this.state.testStepData.length - 1].rank : null;
+    const testCaseStepDTO = {
+      attachments: [],
+      issueId,
+      lastRank,
+      nextRank: null,
+      testStep: '测试步骤',
+      testData: '测试数据',
+      expectedResult: '预期结果',
+    };
+    createIssueStep(testCaseStepDTO).then(() => {
+      this.reloadIssue();
+    });
+  }
+
   render() {
     const {
-      priorityDTO,priorityId,priorityName,priorityColor, originpriorities, originStatus, issueTypeDTO, statusMapDTO,
+      priorityDTO, priorityId, priorityName, priorityColor, originpriorities, originStatus, issueTypeDTO, statusMapDTO,
     } = this.state;
     // const { name: priorityName, id: priorityId, colour: priorityColor } = priorityDTO || {};
     const {
-      name: statusName, id: statusId, colour: statusColor, icon: statusIcon, 
+      name: statusName, id: statusId, colour: statusColor, icon: statusIcon,
     } = statusMapDTO || {};
     const typeCode = issueTypeDTO ? issueTypeDTO.typeCode : '';
     const typeColor = issueTypeDTO ? issueTypeDTO.colour : '#fab614';
@@ -2018,7 +2014,7 @@ class EditIssueNarrow extends Component {
                     }}
                     />
                     <div className="c7ntest-title-right" style={{ marginLeft: '14px', position: 'relative' }}>
-                      <Button className="leftBtn" funcTyp="flat" onClick={() => this.setState({ createTestStepShow: true })}>
+                      <Button className="leftBtn" funcTyp="flat" onClick={this.createIssueStep}>
                         <Icon type="playlist_add icon" style={{ marginRight: 2 }} />
                         <FormattedMessage id="issue_edit_addTestDetail" />
                       </Button>
@@ -2192,22 +2188,6 @@ class EditIssueNarrow extends Component {
               visible={this.state.copyIssueShow}
               onCancel={() => this.setState({ copyIssueShow: false })}
               onOk={this.handleCopyIssue.bind(this)}
-            />
-          ) : null
-        }
-        {
-          this.state.createTestStepShow ? (
-            <CreateTestStep
-              issueId={this.state.origin.issueId}
-              issueName={this.state.origin.issueNum}
-              visible={this.state.createTestStepShow}
-              lastRank={this.state.testStepData.length
-                ? this.state.testStepData[this.state.testStepData.length - 1].rank : null}
-              onCancel={() => this.setState({ createTestStepShow: false })}
-              onOk={() => {
-                this.setState({ createTestStepShow: false });
-                this.reloadIssue();
-              }}
             />
           ) : null
         }
