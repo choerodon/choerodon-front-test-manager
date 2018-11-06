@@ -66,7 +66,7 @@ export function deleteCommit(commitId) {
  */
 export function loadStatus(statusId, issueId, typeId) {
   return request.get(
-    `/issue/v1/projects/${getProjectId()}/schemes/query_transforms?current_status_id=${statusId}&issue_id=${issueId}&issue_type_id=${typeId}&scheme_type=agile`,
+    `/issue/v1/projects/${getProjectId()}/schemes/query_transforms?current_status_id=${statusId}&issue_id=${issueId}&issue_type_id=${typeId}&apply_type=agile`,
   );
 }
 /**
@@ -244,7 +244,7 @@ export function getIssueExecutes(issueId) {
 export function getSingleIssues(page = 0, size = 10, search, orderField, orderType) {
   // console.log(search);
   const searchDTO = { ...search };
-  searchDTO.advancedSearchArgs.typeCode = ['issue_test'];
+  // searchDTO.advancedSearchArgs.typeCode = ['issue_test'];
 
   return request.post(`/test/v1/projects/${getProjectId()}/issueFolderRel/query?page=${page}&size=${size}&organizationId=${getOrganizationId()}`, { versionIds: [], searchDTO }, {
     params: {

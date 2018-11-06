@@ -4,6 +4,7 @@ import { Content, stores, WSHandler } from 'choerodon-front-boot';
 import {
   Modal, Progress, Table, Button, Icon, Tooltip,
 } from 'choerodon-ui';
+import _ from 'lodash';
 import FileSaver from 'file-saver';
 import moment from 'moment';
 import { SelectVersion, SelectFolder } from '../../CommonComponent';
@@ -92,27 +93,15 @@ class ExportSide extends Component {
     const { versionId, folderId } = this.state;
     if (folderId) {
       exportIssuesFromFolder(folderId).then((data) => {
-        getExportList().then((exportList) => {
-          this.setState({
-            exportList,
-          });
-        });
+
       });
     } else if (versionId) {
       exportIssuesFromVersion(versionId).then((data) => {
-        getExportList().then((exportList) => {
-          this.setState({
-            exportList,
-          });
-        });
+
       });
     } else {
       exportIssues().then((data) => {
-        getExportList().then((exportList) => {
-          this.setState({
-            exportList,
-          });
-        });
+
       });
     }
   }
@@ -131,16 +120,18 @@ class ExportSide extends Component {
 
   handleMessage=(data) => {
     console.log(data);
-    const { exportList } = this.state;
-    const { historyId, rate } = data;
-    for (let item of exportList) {
-      if (item.id === historyId) {
-        item = { ...item, ...data };
-        this.setState({
-          exportList,
-        });
-      }
+    const exportList = [...this.state.exportList];
+    const { id, rate } = data;
+    data.rate = parseInt(data.rate);
+    const index = _.findIndex(exportList, { id });
+    if (index >= 0) {
+      exportList[index] = data;
+    } else {
+      exportList.unshift(data);
     }
+    this.setState({
+      exportList,
+    });
   }
 
   render() {
@@ -152,7 +143,7 @@ class ExportSide extends Component {
       dataIndex: 'sourceType',
       key: 'sourceType',
       // width: 100,
-      render: (sourceType) => {        
+      render: (sourceType, record) => {        
         const ICONS = {
           1: 'project',
           2: 'version',
@@ -161,7 +152,7 @@ class ExportSide extends Component {
         return (
           <div className="c7ntest-center">
             <Icon type={ICONS[sourceType]} />
-            <span className="c7ntest-text-dot" style={{ marginLeft: 10 }}>name</span>
+            <span className="c7ntest-text-dot" style={{ marginLeft: 10 }}>{record.name}</span>
           </div>
         );
       },
@@ -196,20 +187,22 @@ class ExportSide extends Component {
       title: '进度',
       dataIndex: 'rate',
       key: 'rate',
-      render: rate => (rate === 100
+      render: (rate, record) => (record.status === 2
         ? <div>已完成</div>
         : (
-          <Progress percent={rate} showInfo={false} />
+          <Tooltip title={`进度：${rate}%`}>
+            <Progress percent={rate} showInfo={false} />
+          </Tooltip>
         )),
     }, {
       title: '',
       dataIndex: 'fileUrl',
       key: 'fileUrl',
-      render: (file, record) => (
+      render: (fileUrl, record) => (
         // <a className="c7ntext-text-dot" href={file.url}>
         <div style={{ textAlign: 'right' }}>
           <Tooltip title="下载文件">
-            <Button style={{ marginRight: -3 }} shape="circle" funcType="flat" icon="get_app" disabled={record.progress < 100} onClick={this.handleDownload.bind(this, record)} />
+            <Button style={{ marginRight: -3 }} shape="circle" funcType="flat" icon="get_app" disabled={!record.fileUrl} onClick={this.handleDownload.bind(this, record)} />
           </Tooltip>
         </div>
         // </a>

@@ -48,7 +48,7 @@ export function getIssueList(summary, type) {
   const advancedSearchArgs = {};
   const searchArgs = {};
   if (type) {
-    advancedSearchArgs.typeCode = ['issue_test'];
+    // advancedSearchArgs.typeCode = ['issue_test'];
   }
   if (summary) {
     searchArgs.summary = summary;
@@ -108,5 +108,5 @@ export function getIssueStatus() {
  * @returns
  */
 export function getIssueTypes() {
-  return request.get(`issue/v1/projects/${getProjectId()}/schemes/query_issue_types_with_sm_id?scheme_type=test`);
+  return request.get(`issue/v1/projects/${getProjectId()}/schemes/query_issue_types_with_sm_id?apply_type=test`);
 }

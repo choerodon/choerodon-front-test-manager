@@ -46,10 +46,10 @@ class SummaryHome extends Component {
     const { date, range } = this.state;
     Promise.all([getIssueCount({
       advancedSearchArgs: {
-        typeCode: [
-          'issue_test',
-        ],
-        
+        // typeCode: [
+        //   'issue_test',
+        // ],
+        typeId: [18],
       },
       otherArgs: {
         // issueIds: ['13378'],

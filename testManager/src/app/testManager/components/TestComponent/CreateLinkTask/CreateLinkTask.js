@@ -194,9 +194,7 @@ class CreateLinkTask extends Component {
                         <div className="c7ntest-link-select-item">
                           <div>
                             <TypeTag
-                              type={{
-                                typeCode: issue.typeCode,
-                              }}
+                              type={issue.issueTypeDTO}
                             />
                           </div>
                           <div style={{

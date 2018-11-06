@@ -7,13 +7,21 @@ import {
 import { FormattedMessage } from 'react-intl';
 import { importIssue } from '../../../../api/FileApi';
 import { commonLink } from '../../../../common/utils';
+import { SelectVersion } from '../../../../components/CommonComponent';
 
 class ImportIssue extends Component {
   state = {
+    visible: false,
     uploading: false,
     importing: false,
     progress: 0,
     importRecord: null,
+  }
+
+  handleClose = () => {
+    this.setState({
+      visible: false,
+    });
   }
 
   importIssue = (e) => {
@@ -79,6 +87,12 @@ class ImportIssue extends Component {
     </div>
   )
 
+  handleOk = () => {
+    this.setState({
+      visible: false,
+    });
+  }
+
   render() {
     const { visible, uploading, importing } = this.state;
     const okText = uploading ? <FormattedMessage id="upload" /> : <FormattedMessage id="import" />;
@@ -103,6 +117,17 @@ class ImportIssue extends Component {
           description={<FormattedMessage id="upload_side_content_description" />}
           link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management"
         >
+          <Modal
+            title="导入用例"
+            visible={visible}
+            okText={uploading ? okText : this.getUploadOkText()}
+            confirmLoading={uploading}
+            cancelText={<FormattedMessage id="close" />}
+            onOk={uploading ? this.handleOk : this.upload}
+            onCancel={this.handleClose}
+          >
+            <SelectVersion />            
+          </Modal>
           <div className="c7ntest-UploadSide">
             <div style={{ width: '512px' }}>
               {!uploading && !importing && this.renderRecord()}
@@ -111,19 +136,8 @@ class ImportIssue extends Component {
             </div>
           </div>
           <Divider />
-          <Button type="primary" funcType="raised" onClick={uploading ? this.handleOk : this.upload}>
-            <span>
-              <input
-                ref={
-                  (uploadInput) => { this.uploadInput = uploadInput; }
-                }
-                type="file"
-                onChange={this.importIssue}
-                style={{ display: 'none' }}
-              />
-              <FormattedMessage id="upload" />
-            </span>
-
+          <Button type="primary" funcType="raised" onClick={() => { this.setState({ visible: true }); }}>
+            <FormattedMessage id="upload" />
           </Button>
         </Content>
       </Page>

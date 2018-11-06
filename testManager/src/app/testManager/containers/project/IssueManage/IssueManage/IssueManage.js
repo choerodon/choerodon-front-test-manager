@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { observer } from 'mobx-react';
 import _ from 'lodash';
 import {
-  Page, Header, Content, stores, 
+  Page, Header, Content, stores,
 } from 'choerodon-front-boot';
 import {
   Table, Button, Input, Dropdown, Menu, Pagination,
@@ -16,7 +16,7 @@ import IssueStore from '../../../../store/project/IssueManage/IssueStore';
 import IssueTreeStore from '../../../../store/project/IssueManage/IssueTreeStore';
 import pic from '../../../../assets/问题管理－空.png';
 import {
-  loadIssue, createIssue, exportIssues, downloadTemplate, 
+  loadIssue, createIssue, exportIssues, downloadTemplate,
 } from '../../../../api/IssueManageApi';
 import { commonLink } from '../../../../common/utils';
 import EmptyBlock from '../../../../components/TestComponent/EmptyBlock';
@@ -148,12 +148,16 @@ class Test extends Component {
         versionId: selectedVersion,
         relationType: 'fix',
       });
+      const testType = IssueStore.getTestType;
+      const mediumPriority=IssueStore.getMediumPriority;
       const data = {
         priorityCode: 'medium',
+        priorityId:mediumPriority,
+        typeCode: 'issue_test',
+        typeId: testType,
         projectId: AppState.currentMenuType.id,
         sprintId: 0,
         summary: this.state.createIssueValue,
-        typeCode: 'issue_test',
         epicId: 0,
         parentIssueId: 0,
         versionIssueRelDTOList,
@@ -241,7 +245,7 @@ class Test extends Component {
   }
 
 
-  saveRef=name => (ref) => {
+  saveRef = name => (ref) => {
     this[name] = ref;
   }
 
@@ -251,7 +255,7 @@ class Test extends Component {
     const versions = IssueStore.getVersions;
     const prioritys = IssueStore.getPrioritys;
     const issueTypes = IssueStore.getIssueTypes;
-    const issueStatusList = IssueStore.getIssueStatus; 
+    const issueStatusList = IssueStore.getIssueStatus;
     const selectedVersion = IssueTreeStore.currentCycle.versionId || IssueStore.getSeletedVersion;
 
     // const ORDER = [
@@ -293,7 +297,7 @@ class Test extends Component {
         title: <FormattedMessage id="issue_issueFilterByPriority" />,
         dataIndex: 'priorityId',
         key: 'priorityId',
-        filters: prioritys.map(priority => ({ text: priority.name, value: priority.id })), 
+        filters: prioritys.map(priority => ({ text: priority.name, value: priority.id })),
         filterMultiple: true,
       },
       {
@@ -375,7 +379,7 @@ class Test extends Component {
           <Button className="leftBtn" onClick={() => this.downloadTemplate()}>
             <Icon type="get_app icon" />
             下载模板
-          </Button>          
+          </Button>
           <Button
             onClick={() => {
               if (this.EditIssue) {
@@ -469,22 +473,22 @@ class Test extends Component {
                     des={<FormattedMessage id="issue_noIssueDescription" />}
                   />
                 ) : (
-                  <IssueTable
-                    setExpand={(value) => {
-                      this.setState({
-                        expand: value,
-                      });
-                    }}
-                    setSelectIssue={(value) => {
-                      this.setState({
-                        selectedIssue: value,
-                      });
-                    }}
-                    selectedIssue={this.state.selectedIssue}
-                    expand={expand}
-                    treeShow={treeShow}
-                  />
-                )
+                    <IssueTable
+                      setExpand={(value) => {
+                        this.setState({
+                          expand: value,
+                        });
+                      }}
+                      setSelectIssue={(value) => {
+                        this.setState({
+                          selectedIssue: value,
+                        });
+                      }}
+                      selectedIssue={this.state.selectedIssue}
+                      expand={expand}
+                      treeShow={treeShow}
+                    />
+                  )
               }
 
               <div className="c7ntest-backlog-sprintIssue">
@@ -569,21 +573,21 @@ class Test extends Component {
                       </div>
                     </div>
                   ) : (
-                    <Button
-                      className="leftBtn"
-                      style={{ color: '#3f51b5' }}
-                      funcType="flat"
-                      onClick={() => {
-                        this.setState({
-                          createIssue: true,
-                          createIssueValue: '',
-                        });
-                      }}
-                    >
-                      <Icon type="playlist_add icon" style={{ marginRight: -2 }} />
-                      <span><FormattedMessage id="issue_issueCreate" /></span>
-                    </Button>
-                  )}
+                      <Button
+                        className="leftBtn"
+                        style={{ color: '#3f51b5' }}
+                        funcType="flat"
+                        onClick={() => {
+                          this.setState({
+                            createIssue: true,
+                            createIssueValue: '',
+                          });
+                        }}
+                      >
+                        <Icon type="playlist_add icon" style={{ marginRight: -2 }} />
+                        <span><FormattedMessage id="issue_issueCreate" /></span>
+                      </Button>
+                    )}
                 </div>
               </div>
               {

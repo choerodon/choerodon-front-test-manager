@@ -6,14 +6,13 @@ class TypeTag extends Component {
     const { type } = this.props;
     const {
       colour: typeColor, name: typeName, typeCode, icon,
-    } = type || {};
-    console.log(typeColor);
+    } = type || {}; 
     return (
       <div style={{ display: 'flex' }}>
         <div
           className=""
           style={{
-            backgroundColor: typeColor,
+            backgroundColor: `#${typeColor}`,
             display: 'flex',
             width: 20,
             height: 20,

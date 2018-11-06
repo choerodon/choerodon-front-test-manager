@@ -31,6 +31,7 @@ import CopyIssue from '../CopyIssue';
 import TestStepTable from '../TestStepTable';
 import TestExecuteTable from '../TestExecuteTable';
 import CreateTestStep from '../CreateTestStep';
+import TypeTag from '../TypeTag';
 
 const { AppState } = stores;
 const { Option } = Select;
@@ -262,6 +263,9 @@ class EditIssueNarrow extends Component {
       parentIssueId,
       parentIssueNum,
       priorityDTO,
+      priorityId: priorityDTO.id,
+      priorityName: priorityDTO.name,
+      priorityColor: priorityDTO.colour,
       projectId,
       remainingTime,
       reporterId,
@@ -913,9 +917,9 @@ class EditIssueNarrow extends Component {
 
   render() {
     const {
-      priorityDTO, originpriorities, originStatus, issueTypeDTO, statusMapDTO,
+      priorityDTO,priorityId,priorityName,priorityColor, originpriorities, originStatus, issueTypeDTO, statusMapDTO,
     } = this.state;
-    const { name: priorityName, id: priorityId, colour: priorityColor } = priorityDTO || {};
+    // const { name: priorityName, id: priorityId, colour: priorityColor } = priorityDTO || {};
     const {
       name: statusName, id: statusId, colour: statusColor, icon: statusIcon, 
     } = statusMapDTO || {};
@@ -988,17 +992,7 @@ class EditIssueNarrow extends Component {
               height: 44, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', borderBottom: '1px solid rgba(0,0,0,0.26)',
             }}
             >
-              <div
-                className="radius"
-                style={{
-                  background: typeColor, color: '#fff', width: '20px', height: '20px', textAlign: 'center', fontSize: '14px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                }}
-              >
-                <Icon
-                  style={{ fontSize: '14px' }}
-                  type={typeIcon}
-                />
-              </div>
+              <TypeTag type={issueTypeDTO} />
             </div>
           </div>
           <ul className="c7ntest-nav-ul">

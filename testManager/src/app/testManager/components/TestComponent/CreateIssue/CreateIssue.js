@@ -11,6 +11,7 @@ import '../../../assets/main.scss';
 import { UploadButton } from '../CommonComponent';
 import { handleFileUpload, beforeTextUpload } from '../../../common/utils';
 import { createIssue, getFoldersByVersion } from '../../../api/IssueManageApi';
+import IssueStore from '../../../store/project/IssueManage/IssueStore';
 import {
   getLabels, getModules, getPrioritys, getProjectVersion, 
 } from '../../../api/agileApi';
@@ -179,8 +180,10 @@ class CreateIssue extends Component {
         //     });
         //   }
         // });
+        const testType = IssueStore.getTestType;
         const extra = {
           typeCode: 'issue_test',
+          typeId: testType,
           summary: values.summary,
           priorityId: values.priorityId,
           sprintId: values.sprintId || 0,
