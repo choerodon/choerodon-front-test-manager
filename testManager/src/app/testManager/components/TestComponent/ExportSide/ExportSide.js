@@ -142,7 +142,11 @@ class ExportSide extends Component {
     const startTime = moment(creationDate);
     const lastTime = moment(lastUpdateDate);
 
-    const diff = lastTime.diff(startTime);
+    let diff = lastTime.diff(startTime);
+    // console.log(diff);
+    if (diff <= 0) {
+      diff = moment().diff(startTime);
+    }
     return creationDate && lastUpdateDate
       ? humanizeDuration(diff / 1000) 
       : null;
@@ -171,12 +175,12 @@ class ExportSide extends Component {
         );
       },
     },
-    // {
-    //   title: '用例个数',
-    //   dataIndex: 'num',
-    //   key: 'num',
-    //   // width: 100,
-    // }, 
+    {
+      title: '用例个数',
+      dataIndex: 'successfulCount',
+      key: 'successfulCount',
+      // width: 100,
+    }, 
     {
       title: '导出时间',
       dataIndex: 'creationDate',
