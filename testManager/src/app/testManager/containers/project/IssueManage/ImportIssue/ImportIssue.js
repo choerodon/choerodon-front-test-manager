@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Page, Header, Content } from 'choerodon-front-boot';
 import {
   Table, Button, Input, Dropdown, Menu, Pagination, Modal, Progress,
-  Spin, Icon, Select, Divider,
+  Spin, Icon, Select, Divider, Tooltip,
 } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 import { importIssue } from '../../../../api/FileApi';
@@ -16,6 +16,8 @@ class ImportIssue extends Component {
     importing: false,
     progress: 0,
     importRecord: null,
+    file: null,
+    version: null,
   }
 
   handleClose = () => {
@@ -24,16 +26,18 @@ class ImportIssue extends Component {
     });
   }
 
-  importIssue = (e) => {
+  upload = () => {
+    const { file, version } = this.state;
+    if (!file || !version) {
+      Choerodon.prompt('请选择文件和目标版本');
+      return;
+    }
     const formData = new FormData();
-    [].forEach.call(e.target.files, (file) => {
-      formData.append('file', file);
-    });
-    this.uploadInput.value = '';
+    formData.append('file', file);
     this.setState({
       uploading: true,
     });
-    importIssue(formData).then(() => {
+    importIssue(formData, version).then(() => {
       this.setState({
         uploading: false,
         importing: true,
@@ -44,24 +48,6 @@ class ImportIssue extends Component {
       });
       Choerodon.prompt('网络错误');
     });
-  }
-
-  getUploadOkText = () => (
-    <span>
-      <input
-        ref={
-          (uploadInput) => { this.uploadInput = uploadInput; }
-        }
-        type="file"
-        onChange={this.importIssue}
-        style={{ display: 'none' }}
-      />
-      <FormattedMessage id="upload" />
-    </span>
-  );
-
-  upload = () => {
-    this.uploadInput.click();
   }
 
   renderRecord = () => {
@@ -93,9 +79,18 @@ class ImportIssue extends Component {
     });
   }
 
+  beforeUpload=(e) => {
+    if (e.target.files[0]) {
+      this.setState({
+        file: e.target.files[0],
+      });
+    }
+  }
+
   render() {
-    const { visible, uploading, importing } = this.state;
-    const okText = uploading ? <FormattedMessage id="upload" /> : <FormattedMessage id="import" />;
+    const {
+      visible, uploading, importing, file, version,
+    } = this.state; 
     return (
       <Page className="c7ntest-Issue c7ntest-region">
         <Header
@@ -120,13 +115,31 @@ class ImportIssue extends Component {
           <Modal
             title="导入用例"
             visible={visible}
-            okText={uploading ? okText : this.getUploadOkText()}
+            okText={<FormattedMessage id="upload" />}
             confirmLoading={uploading}
             cancelText={<FormattedMessage id="close" />}
-            onOk={uploading ? this.handleOk : this.upload}
+            onOk={this.upload}
             onCancel={this.handleClose}
           >
-            <SelectVersion />            
+            <div className="c7ntest-center" style={{ marginBottom: 20 }}>
+              <SelectVersion value={version} onChange={(versionId) => { this.setState({ version: versionId }); }} style={{ width: 120 }} />
+              <Input
+                style={{ width: 340, margin: '17px 0 0 18px' }}
+                value={file && file.name}
+                prefix={<Icon type="attach_file" style={{ color: 'black', fontSize: '14px' }} />}
+                suffix={<Tooltip title="选择文件"><Icon type="create_new_folder" style={{ color: 'black', cursor: 'pointer' }} onClick={() => { this.uploadInput.click(); }} /></Tooltip>}
+               
+              /> 
+            </div>
+            <input
+              ref={
+                  (uploadInput) => { this.uploadInput = uploadInput; }
+                }
+              type="file"
+              onChange={this.beforeUpload}
+              style={{ display: 'none' }}
+              accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            />            
           </Modal>
           <div className="c7ntest-UploadSide">
             <div style={{ width: '512px' }}>

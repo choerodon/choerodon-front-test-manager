@@ -149,12 +149,12 @@ class Test extends Component {
         relationType: 'fix',
       });
       const testType = IssueStore.getTestType;
-      const mediumPriority=IssueStore.getMediumPriority;
+      const mediumPriority = IssueStore.getMediumPriority;
       const data = {
         priorityCode: 'medium',
-        priorityId:mediumPriority,
+        priorityId: mediumPriority,
         typeCode: 'issue_test',
-        typeId: testType,
+        issueTypeId: testType,
         projectId: AppState.currentMenuType.id,
         sprintId: 0,
         summary: this.state.createIssueValue,
@@ -473,22 +473,22 @@ class Test extends Component {
                     des={<FormattedMessage id="issue_noIssueDescription" />}
                   />
                 ) : (
-                    <IssueTable
-                      setExpand={(value) => {
-                        this.setState({
-                          expand: value,
-                        });
-                      }}
-                      setSelectIssue={(value) => {
-                        this.setState({
-                          selectedIssue: value,
-                        });
-                      }}
-                      selectedIssue={this.state.selectedIssue}
-                      expand={expand}
-                      treeShow={treeShow}
-                    />
-                  )
+                  <IssueTable
+                    setExpand={(value) => {
+                      this.setState({
+                        expand: value,
+                      });
+                    }}
+                    setSelectIssue={(value) => {
+                      this.setState({
+                        selectedIssue: value,
+                      });
+                    }}
+                    selectedIssue={this.state.selectedIssue}
+                    expand={expand}
+                    treeShow={treeShow}
+                  />
+                )
               }
 
               <div className="c7ntest-backlog-sprintIssue">
@@ -573,21 +573,21 @@ class Test extends Component {
                       </div>
                     </div>
                   ) : (
-                      <Button
-                        className="leftBtn"
-                        style={{ color: '#3f51b5' }}
-                        funcType="flat"
-                        onClick={() => {
-                          this.setState({
-                            createIssue: true,
-                            createIssueValue: '',
-                          });
-                        }}
-                      >
-                        <Icon type="playlist_add icon" style={{ marginRight: -2 }} />
-                        <span><FormattedMessage id="issue_issueCreate" /></span>
-                      </Button>
-                    )}
+                    <Button
+                      className="leftBtn"
+                      style={{ color: '#3f51b5' }}
+                      funcType="flat"
+                      onClick={() => {
+                        this.setState({
+                          createIssue: true,
+                          createIssueValue: '',
+                        });
+                      }}
+                    >
+                      <Icon type="playlist_add icon" style={{ marginRight: -2 }} />
+                      <span><FormattedMessage id="issue_issueCreate" /></span>
+                    </Button>
+                  )}
                 </div>
               </div>
               {

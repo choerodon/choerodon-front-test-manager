@@ -99,7 +99,7 @@ export function getPrioritys() {
  * @returns
  */
 export function getIssueStatus() {
-  return request.get(`agile/v1/projects/${getProjectId()}/issue_status/list`);
+  return request.get(`/issue/v1/projects/${getProjectId()}/schemes/query_status_by_project_id?apply_type=test`);
 }
 /**
  *获取当前项目的issue类型列表
@@ -108,5 +108,5 @@ export function getIssueStatus() {
  * @returns
  */
 export function getIssueTypes() {
-  return request.get(`issue/v1/projects/${getProjectId()}/schemes/query_issue_types_with_sm_id?apply_type=test`);
+  return request.get(`/issue/v1/projects/${getProjectId()}/schemes/query_issue_types_with_sm_id?apply_type=test`);
 }

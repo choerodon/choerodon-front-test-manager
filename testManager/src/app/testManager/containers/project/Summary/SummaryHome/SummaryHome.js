@@ -49,7 +49,7 @@ class SummaryHome extends Component {
         // typeCode: [
         //   'issue_test',
         // ],
-        typeId: [18],
+        issueTypeId: [18],
       },
       otherArgs: {
         // issueIds: ['13378'],

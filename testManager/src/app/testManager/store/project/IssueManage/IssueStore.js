@@ -87,7 +87,7 @@ class IssueStore {
   }
 
   loadIssues = (page, size = 10) => {
-    page = isNaN(page) ? 0 : page;
+    page = isNaN(page) ? 0 : Math.max(page, 0);
     this.setLoading(true);
     const { orderField, orderType } = this.order;
     const funcArr = [];
@@ -320,6 +320,7 @@ class IssueStore {
   @computed get getPrioritys() {
     return toJS(this.prioritys);
   }
+
   @computed get getMediumPriority() {
     const priority = _.find(this.prioritys, { default: true });
     if (priority) {
@@ -327,6 +328,7 @@ class IssueStore {
     }
     return null;
   }
+
   @computed get getIssueTypes() {
     return toJS(this.issueTypes);
   }

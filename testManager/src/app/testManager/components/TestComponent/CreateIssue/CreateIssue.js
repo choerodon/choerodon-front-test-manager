@@ -183,7 +183,7 @@ class CreateIssue extends Component {
         const testType = IssueStore.getTestType;
         const extra = {
           typeCode: 'issue_test',
-          typeId: testType,
+          issueTypeId: testType,
           summary: values.summary,
           priorityId: values.priorityId,
           sprintId: values.sprintId || 0,

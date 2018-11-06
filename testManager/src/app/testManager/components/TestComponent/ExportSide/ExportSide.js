@@ -18,6 +18,7 @@ const { AppState } = stores;
 function humanizeDuration(seconds) {
   let result = '';
   if (seconds) {
+    /** eslint-disable no-constant-condition */
     if ((result = Math.round(seconds / (60 * 60 * 24 * 30 * 12))) > 0) { // year
       result = `${result} 年`;
     } else if ((result = Math.round(seconds / (60 * 60 * 24 * 30))) > 0) { // months
@@ -38,13 +39,14 @@ function humanizeDuration(seconds) {
 }
 class ExportSide extends Component {
   state = {
+    loading: true,
     visible: false,
     versionId: null,
     folderId: null,
     exportList: [],
   }
 
-  
+
   handleClose = () => {
     this.setState({
       visible: false,
@@ -54,10 +56,12 @@ class ExportSide extends Component {
   open = () => {
     this.setState({
       visible: true,
+      loading: true,
     });
     getExportList().then((exportList) => {
       this.setState({
         exportList,
+        loading: false,
       });
     });
   }
@@ -106,8 +110,7 @@ class ExportSide extends Component {
     }
   }
 
-  handleDownload = (record) => {
-    const { fileUrl } = record;
+  handleDownload = (fileUrl) => {
     if (fileUrl) {
       const ele = document.createElement('a');
       ele.href = fileUrl;
@@ -118,14 +121,14 @@ class ExportSide extends Component {
     }
   }
 
-  handleMessage=(data) => {
+  handleMessage = (data) => {
     console.log(data);
     const exportList = [...this.state.exportList];
     const { id, rate } = data;
-    data.rate = parseInt(data.rate);
     const index = _.findIndex(exportList, { id });
+    // 存在记录就更新，不存在则新增记录
     if (index >= 0) {
-      exportList[index] = data;
+      exportList[index] = { ...data, rate: Math.floor(data.rate) };
     } else {
       exportList.unshift(data);
     }
@@ -134,16 +137,27 @@ class ExportSide extends Component {
     });
   }
 
+  humanizeDuration=(record) => {
+    const { creationDate, lastUpdateDate } = record;
+    const startTime = moment(creationDate);
+    const lastTime = moment(lastUpdateDate);
+
+    const diff = lastTime.diff(startTime);
+    return creationDate && lastUpdateDate
+      ? humanizeDuration(diff / 1000) 
+      : null;
+  }
+
   render() {
     const {
-      visible, versionId, folderId, exportList,
+      visible, versionId, folderId, exportList, loading,
     } = this.state;
     const columns = [{
       title: '导出来源',
       dataIndex: 'sourceType',
       key: 'sourceType',
       // width: 100,
-      render: (sourceType, record) => {        
+      render: (sourceType, record) => {
         const ICONS = {
           1: 'project',
           2: 'version',
@@ -158,31 +172,23 @@ class ExportSide extends Component {
       },
     },
     // {
-    //   title: '版本',
-    //   dataIndex: 'version',
-    //   key: 'version',
-    // }, {
-    //   title: '文件夹',
-    //   dataIndex: 'folder',
-    //   key: 'folder',
+    //   title: '用例个数',
+    //   dataIndex: 'num',
+    //   key: 'num',
+    //   // width: 100,
     // }, 
     {
-      title: '用例个数',
-      dataIndex: 'num',
-      key: 'num',
-      // width: 100,
-    }, {
       title: '导出时间',
-      dataIndex: 'time',
-      key: 'time',
+      dataIndex: 'creationDate',
+      key: 'creationDate',
       // width: 160,
-      render: () => moment().format('YYYY-MM-DD h:mm:ss'),
+      render: creationDate => moment(creationDate).format('YYYY-MM-DD h:mm:ss'),
     }, {
       title: '耗时',
       dataIndex: 'during',
       key: 'during',
       // width: 100,
-      render: during => <div>{humanizeDuration(during)}</div>,
+      render: (during, record) => <div>{this.humanizeDuration(record)}</div>,
     }, {
       title: '进度',
       dataIndex: 'rate',
@@ -198,14 +204,12 @@ class ExportSide extends Component {
       title: '',
       dataIndex: 'fileUrl',
       key: 'fileUrl',
-      render: (fileUrl, record) => (
-        // <a className="c7ntext-text-dot" href={file.url}>
+      render: fileUrl => (  
         <div style={{ textAlign: 'right' }}>
           <Tooltip title="下载文件">
-            <Button style={{ marginRight: -3 }} shape="circle" funcType="flat" icon="get_app" disabled={!record.fileUrl} onClick={this.handleDownload.bind(this, record)} />
+            <Button style={{ marginRight: -3 }} shape="circle" funcType="flat" icon="get_app" disabled={!fileUrl} onClick={this.handleDownload.bind(this, fileUrl)} />
           </Tooltip>
         </div>
-        // </a>
       ),
     }];
     return (
@@ -213,11 +217,7 @@ class ExportSide extends Component {
         title="导出用例"
         visible={visible}
         destroyOnClose
-        // okText={null}
-        // cancelText={<FormattedMessage id="close" />}
-        // onOk={this.handleOk}
         footer={<Button onClick={this.handleClose} type="primary" funcType="raised"><FormattedMessage id="close" /></Button>}
-      // onCancel={this.handleClose}
       >
         <Content
           style={{
@@ -237,7 +237,7 @@ class ExportSide extends Component {
               messageKey={`choerodon:msg:test-issue-export:${AppState.userInfo.id}`}
               onMessage={this.handleMessage}
             >
-              <Table columns={columns} dataSource={exportList} />
+              <Table columns={columns} dataSource={exportList} loading={loading} />
             </WSHandler>
           </div>
         </Content>

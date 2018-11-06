@@ -78,9 +78,9 @@ export function uploadFile(data, config) {
 export function deleteAttachment(id) {
   return request.delete(`test/v1/projects/${getProjectId()}/test/case/attachment/delete/bucket/test/attach/${id}`);
 }
-export function importIssue(data) {
+export function importIssue(data, versionId) {
   const axiosConfig = {
     headers: { 'content-type': 'multipart/form-data' },
   };
-  return request.post(`/zuul/test/v1/projects/${getProjectId()}/case/import/testCase`, data, axiosConfig);
+  return request.post(`/zuul/test/v1/projects/${getProjectId()}/case/import/testCase?versionId=${versionId}`, data, axiosConfig);
 }
