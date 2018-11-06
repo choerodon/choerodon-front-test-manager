@@ -2,12 +2,12 @@ import React, { Component } from 'react';
 import { Icon } from 'choerodon-ui';
 
 class TypeTag extends Component {
-
   render() {
     const { type } = this.props;
     const {
       colour: typeColor, name: typeName, typeCode, icon,
     } = type || {};
+    console.log(typeColor);
     return (
       <div style={{ display: 'flex' }}>
         <div

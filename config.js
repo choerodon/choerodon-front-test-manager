@@ -10,10 +10,10 @@ const config = {
     // server:'https://api.choerodon.com.cn',
     // server: 'http://api.staging.saas.hand-china.com', // 后端接口服务器地址
     // server: 'http://api.alpha.saas.hand-china.com', // 后端接口服务器地址
-    server:'http://10.211.101.46:8080',
+    server:'http://10.211.108.232:8080',
     webSocketServer: 'ws://10.211.108.232:18085',
     // server:'http://172.20.1.50:8080',
-    port: 3030,// 端口
+    port: 9090,// 端口
     dashboard: {
         'testManager': 'src/app/testManager/dashboard/*',
     },

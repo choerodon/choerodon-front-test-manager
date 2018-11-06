@@ -1,14 +1,6 @@
 import React, { Component } from 'react';
 
 class StatusTag extends Component {
-  shouldComponentUpdate(nextProps, nextState) {
-    if (nextProps.status.statusName === this.props.status.statusName 
-      && nextProps.status.statusColor === this.props.status.statusColor) {
-      return false;
-    }
-    return true;
-  }
-
   render() {
     const { status } = this.props; 
     return (
@@ -16,7 +8,7 @@ class StatusTag extends Component {
         className=""
         style={{
           background: status.statusColor,
-          color: '#fff',
+          // color: '#fff',
           overflow: 'hidden',
           textOverflow: 'ellipsis',
           whiteSpace: 'nowrap',

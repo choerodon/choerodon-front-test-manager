@@ -92,7 +92,7 @@ class IssueStore {
     const funcArr = [];
     funcArr.push(getProjectVersion());
     funcArr.push(getPrioritys());
-    funcArr.push(getIssueTypes());    
+    // funcArr.push(getIssueTypes());    
     funcArr.push(getIssueStatus());    
     const currentCycle = IssueTreeStore.currentCycle;
     const types = ['all', 'topversion', 'version', 'folder'];
@@ -154,10 +154,10 @@ class IssueStore {
     // } else {
     //   funcArr.push(getAllIssues(page, size, this.getFilter, orderField, orderType));
     // }
-    return Promise.all(funcArr).then(([versions, prioritys, issueTypes, issueStatusList, res]) => {
+    return Promise.all(funcArr).then(([versions, prioritys, issueStatusList, res]) => {
       this.setVersions(versions);
       this.setPrioritys(prioritys);
-      this.setIssueTypes(issueTypes);
+      // this.setIssueTypes(issueTypes);
       this.setIssueStatusList(issueStatusList);
       if (versions && versions.length > 0) {
         this.selectVersion(versions[0].versionId);

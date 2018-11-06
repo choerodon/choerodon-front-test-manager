@@ -1,15 +1,7 @@
 import React, { Component } from 'react';
+import { color2rgba } from '../../../common/utils';
 
 class PriorityTag extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-    };
-  }
-
-  componentWillMount() {
-  }
-
   render() {
     const { priority } = this.props; 
     const { colour, name } = priority;
@@ -18,7 +10,7 @@ class PriorityTag extends Component {
         className=""
         style={{
           ...this.props.style,
-          // backgroundColor: colour,
+          backgroundColor: color2rgba(colour, 0.18),
           color: colour,
           borderRadius: '2px',
           padding: '0 8px',

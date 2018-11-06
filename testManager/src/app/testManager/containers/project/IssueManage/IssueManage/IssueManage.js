@@ -18,12 +18,13 @@ import pic from '../../../../assets/问题管理－空.png';
 import {
   loadIssue, createIssue, exportIssues, downloadTemplate, 
 } from '../../../../api/IssueManageApi';
+import { commonLink } from '../../../../common/utils';
 import EmptyBlock from '../../../../components/TestComponent/EmptyBlock';
 import CreateIssue from '../../../../components/TestComponent/CreateIssue';
 import EditIssue from '../../../../components/TestComponent/EditIssue';
 import IssueTree from '../../../../components/TestComponent/IssueTree';
 import IssueTable from '../../../../components/TestComponent/IssueTable';
-import UploadSide from '../../../../components/TestComponent/UploadSide';
+// import UploadSide from '../../../../components/TestComponent/UploadSide';
 import ExportSide from '../../../../components/TestComponent/ExportSide';
 
 const { AppState } = stores;
@@ -367,7 +368,7 @@ class Test extends Component {
             <Icon type="export icon" />
             <FormattedMessage id="export" />
           </Button>
-          <Button className="leftBtn" onClick={() => this.UploadSide.open()}>
+          <Button className="leftBtn" onClick={() => { this.props.history.push(commonLink('/IssueManage/import')); }}>
             <Icon type="file_upload icon" />
             <FormattedMessage id="import" />
           </Button>
@@ -608,7 +609,7 @@ class Test extends Component {
             </section>
 
           </div>
-          <UploadSide ref={this.saveRef('UploadSide')} />
+          {/* <UploadSide ref={this.saveRef('UploadSide')} /> */}
           <ExportSide ref={this.saveRef('ExportSide')} />
           <div
             className="c7ntest-sidebar"

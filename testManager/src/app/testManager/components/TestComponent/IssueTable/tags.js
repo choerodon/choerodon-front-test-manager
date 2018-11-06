@@ -17,7 +17,7 @@ export function renderType(issueTypeDTO) {
     <Tooltip mouseEnterDelay={0.5} title={`任务类型： ${name}`}>
       <div>
         <TypeTag
-          type={issueTypeDTO}
+          type={issueTypeDTO || { name: '待处理', colour: 'red', icon: 'autorenew' }}
         />
       </div>
     </Tooltip>

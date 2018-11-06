@@ -26,6 +26,7 @@ import UserHead from '../UserHead';
 import Comment from './Component/Comment';
 import DataLogs from './Component/DataLogs';
 import LinkList from './Component/LinkList';
+import PriorityTag from '../PriorityTag';
 import CopyIssue from '../CopyIssue';
 import TestStepTable from '../TestStepTable';
 import TestExecuteTable from '../TestExecuteTable';
@@ -730,9 +731,9 @@ class EditIssueNarrow extends Component {
       title: `删除测试用例${this.state.issueNum}`,
       content:
   <div style={{ marginBottom: 32 }}>
-          <p style={{ marginBottom: 10 }}>请确认您要删除这个测试用例。</p>
-          <p style={{ marginBottom: 10 }}>这个测试用例将会被彻底删除。包括所有步骤和相关执行。</p>
-        </div>,
+    <p style={{ marginBottom: 10 }}>请确认您要删除这个测试用例。</p>
+    <p style={{ marginBottom: 10 }}>这个测试用例将会被彻底删除。包括所有步骤和相关执行。</p>
+  </div>,
       onOk() {
         return deleteIssue(issueId)
           .then((res) => {
@@ -916,8 +917,8 @@ class EditIssueNarrow extends Component {
     } = this.state;
     const { name: priorityName, id: priorityId, colour: priorityColor } = priorityDTO || {};
     const {
- name: statusName, id: statusId, colour: statusColor, icon: statusIcon 
-} = statusMapDTO || {};
+      name: statusName, id: statusId, colour: statusColor, icon: statusIcon, 
+    } = statusMapDTO || {};
     const typeCode = issueTypeDTO ? issueTypeDTO.typeCode : '';
     const typeColor = issueTypeDTO ? issueTypeDTO.colour : '#fab614';
     const typeIcon = issueTypeDTO ? issueTypeDTO.icon : 'help';
@@ -955,18 +956,7 @@ class EditIssueNarrow extends Component {
     const priorityOptions = originpriorities.map(priority => (
       <Option key={priority.id} value={priority.id}>
         <div style={{ display: 'inline-flex', alignItems: 'center', padding: '2px' }}>
-          <div
-            className="c7ntest-level"
-            style={{
-              // backgroundColor: priorityColor,
-              color: priority.colour,
-              borderRadius: '2px',
-              padding: '0 8px',
-              display: 'inline-block',
-            }}
-          >
-            {priority.name}
-          </div>
+          <PriorityTag priority={priority} />
         </div>
       </Option>
     ));
@@ -1320,22 +1310,7 @@ class EditIssueNarrow extends Component {
                             readModeContent={(
                               <div>
                                 {
-                                  priorityId ? (
-                                    <div
-                                      className="c7ntest-level"
-                                      style={{
-                                        // backgroundColor: COLOR[priorityId].bgColor,
-                                        color: priorityColor,
-                                        // borderRadius: '2px',
-                                        // padding: '0 8px',
-                                        // display: 'inline-block',
-                                        fontSize: '16px',
-                                        lineHeight: '18px',
-                                      }}
-                                    >
-                                      {priorityName}
-                                    </div>
-                                  ) : '无'
+                                  priorityId ? <PriorityTag priority={priorityDTO} /> : '无'
                                 }
                               </div>
                             )}
@@ -1527,20 +1502,7 @@ class EditIssueNarrow extends Component {
                                     readModeContent={(
                                       <div>
                                         {
-                                          priorityId ? (
-                                            <div
-                                              className="c7ntest-level"
-                                              style={{
-                                                // backgroundColor: priorityColor,
-                                                color: priorityColor,
-                                                borderRadius: '2px',
-                                                padding: '0 8px',
-                                                display: 'inline-block',
-                                              }}
-                                            >
-                                              {priorityName}
-                                            </div>
-                                          ) : '无'
+                                          priorityId ? <PriorityTag priority={priorityDTO} /> : '无'
                                         }
                                       </div>
                                     )}

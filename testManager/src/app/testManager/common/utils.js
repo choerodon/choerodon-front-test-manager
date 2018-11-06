@@ -273,6 +273,14 @@ export function executeDetailShowLink(executeId) {
 
   return encodeURI(`/testManager/TestPlan/executeShow/${executeId}?type=${type}&id=${projectId}&organizationId=${organizationId}&name=${name}`);
 }
+export function commonLink(link) {
+  const menu = AppState.currentMenuType;
+  const {
+    type, id: projectId, name, organizationId,
+  } = menu;
+
+  return encodeURI(`/testManager${link}?type=${type}&id=${projectId}&organizationId=${organizationId}&name=${name}`);
+}
 /**
  * 处理数据请求错误
  * @param data
@@ -285,6 +293,13 @@ export function handleProptError(data) {
   } else {
     return data;
   }
+}
+
+export function color2rgba(color, alpha = 1) {
+  const r = parseInt(color.slice(1, 3), 16);
+  const g = parseInt(color.slice(3, 5), 16);
+  const b = parseInt(color.slice(5, 7), 16);
+  return `rgba(${r},${g},${b},${alpha})`;
 }
 export const getProjectId = () => AppState.currentMenuType.id;
 export const getOrganizationId = () => AppState.currentMenuType.organizationId;
