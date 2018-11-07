@@ -838,7 +838,9 @@ class TestExecuteHome extends Component {
         <Content
           // title={<FormattedMessage id="cycle_title" />}
           // description={<FormattedMessage id="cycle_description" />}
-          style={{ paddingBottom: 0, paddingRight: 0, display: 'flex' }}
+          style={{ 
+            paddingLeft: 0, paddingBottom: 0, paddingRight: 0, display: 'flex', 
+          }}
         >
           <Spin spinning={loading}>
             <CreateCycle
