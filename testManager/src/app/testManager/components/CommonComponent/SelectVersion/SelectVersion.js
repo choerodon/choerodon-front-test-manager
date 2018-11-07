@@ -28,7 +28,7 @@ class SelectVersion extends Component {
     ));
     return (
       <Select       
-        getPopupContainer={ele => ele.parentNode}
+        // getPopupContainer={ele => ele.parentNode}
         label="版本" 
         loading={loading}   
         style={{ width: 200 }}       

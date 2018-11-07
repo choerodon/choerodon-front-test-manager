@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
-import { stores, axios, Permission } from 'choerodon-front-boot';
+import { stores, Permission } from 'choerodon-front-boot';
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import {
   Select, Input, Button, Modal, Tooltip, Dropdown, Menu, Spin, Icon,
 } from 'choerodon-ui';
-import { STATUS } from '../../../common/Constant';
 import './EditIssue.scss';
 import '../../../assets/main.scss';
 import {
@@ -46,8 +45,6 @@ class EditIssueNarrow extends Component {
       issueLoading: false,
       flag: undefined,
       selectLoading: true,
-      saveLoading: false,
-
       edit: false,
       addCommit: false,
       addCommitDes: '',
@@ -55,7 +52,6 @@ class EditIssueNarrow extends Component {
 
       editDesShow: false,
       origin: {},
-      loading: true,
       nav: 'detail',
       editDes: undefined,
       currentRae: undefined,
@@ -107,13 +103,11 @@ class EditIssueNarrow extends Component {
       originStatus: [],
       originpriorities: [],
       originComponents: [],
-      originVersions: [],
+
       originLabels: [],
-      originEpics: [],
       originUsers: [],
-      originSprints: [],
-      originFixVersions: [],
-      originInfluenceVersions: [],
+
+
     };
   }
 
@@ -712,10 +706,10 @@ class EditIssueNarrow extends Component {
       width: 560,
       title: `删除测试用例${this.state.issueNum}`,
       content:
-  <div style={{ marginBottom: 32 }}>
-    <p style={{ marginBottom: 10 }}>请确认您要删除这个测试用例。</p>
-    <p style={{ marginBottom: 10 }}>这个测试用例将会被彻底删除。包括所有步骤和相关执行。</p>
-  </div>,
+        <div style={{ marginBottom: 32 }}>
+          <p style={{ marginBottom: 10 }}>请确认您要删除这个测试用例。</p>
+          <p style={{ marginBottom: 10 }}>这个测试用例将会被彻底删除。包括所有步骤和相关执行。</p>
+        </div>,
       onOk() {
         return deleteIssue(issueId)
           .then((res) => {
@@ -1219,7 +1213,7 @@ class EditIssueNarrow extends Component {
                                   statusId ? (
                                     <div
                                       style={{
-                                        color: statusColor,
+                                        color: statusColor || 'black',
                                         fontSize: '16px',
                                         lineHeight: '18px',
                                       }}
@@ -1407,17 +1401,17 @@ class EditIssueNarrow extends Component {
                                     callback={this.changeRae.bind(this)}
                                     thisType="statusId"
                                     current={this.state.currentRae}
-                                    origin={this.state.statusId}
+                                    origin={statusId}
                                     onOk={this.updateIssue.bind(this, 'statusId')}
                                     onCancel={this.resetStatusId.bind(this)}
                                     onInit={this.loadIssueStatus}
                                     readModeContent={(
                                       <div>
                                         {
-                                          this.state.statusId ? (
+                                          statusId ? (
                                             <div
                                               style={{
-                                                background: this.state.origin.statusColor || STATUS[this.state.statusCode],
+                                                background: statusColor || 'black',
                                                 color: '#fff',
                                                 borderRadius: '2px',
                                                 padding: '0 8px',
@@ -1425,7 +1419,7 @@ class EditIssueNarrow extends Component {
                                                 margin: '2px auto 2px 0',
                                               }}
                                             >
-                                              {this.state.statusName}
+                                              {statusName}
                                             </div>
                                           ) : '无'
                                         }

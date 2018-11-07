@@ -449,7 +449,7 @@ export function cloneIssue(issueId, copyConditionDTO) {
  * @returns
  */
 export function exportIssues() {
-  return request.get(`/zuul/test/v1/projects/${getProjectId()}/case/download/excel`);
+  return request.get(`/test/v1/projects/${getProjectId()}/case/download/excel`);
 }
 /**
  *版本下的用例导出
@@ -459,7 +459,7 @@ export function exportIssues() {
  * @returns
  */
 export function exportIssuesFromVersion(versionId) {
-  return request.get(`/zuul/test/v1/projects/${getProjectId()}/case/download/excel/version?versionId=${versionId}`);
+  return request.get(`/test/v1/projects/${getProjectId()}/case/download/excel/version?versionId=${versionId}`);
 }
 /**
  *文件夹下的用例导出
@@ -469,7 +469,7 @@ export function exportIssuesFromVersion(versionId) {
  * @returns
  */
 export function exportIssuesFromFolder(folderId) {
-  return request.get(`/zuul/test/v1/projects/${getProjectId()}/case/download/excel/folder?folderId=${folderId}&userId=${AppState.userInfo.id}`);
+  return request.get(`/test/v1/projects/${getProjectId()}/case/download/excel/folder?folderId=${folderId}&userId=${AppState.userInfo.id}`);
 }
 /**
  *下载导入模板
@@ -478,7 +478,7 @@ export function exportIssuesFromFolder(folderId) {
  * @returns
  */
 export function downloadTemplate() {
-  return request.get(`/zuul/test/v1/projects/${getProjectId()}/case/download/excel/template`, { responseType: 'arraybuffer' });
+  return request.get(`/v1/projects/${getProjectId()}/case/download/excel/import_template`, { responseType: 'arraybuffer' });
 }
 /**
  *获取导出历史
@@ -489,6 +489,13 @@ export function downloadTemplate() {
 export function getExportList() {
   return request.get(`/test/v1/projects/${getProjectId()}/test/fileload/history`);
 }
+/**
+ *导出失败重试
+ *
+ * @export
+ * @param {*} historyId
+ * @returns
+ */
 export function exportRetry(historyId) {
   return request.get(`/test/v1/projects/${getProjectId()}/download/excel/fail?historyId=${historyId}`);
 }
