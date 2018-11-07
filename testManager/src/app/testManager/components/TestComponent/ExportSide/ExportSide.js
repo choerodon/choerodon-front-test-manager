@@ -196,7 +196,7 @@ class ExportSide extends Component {
       render: (fileUrl, record) => (
         <div style={{ textAlign: 'right' }}>
           <Tooltip title={record.status === 3 ? '重试' : '下载文件'} getPopupContainer={ele => ele.parentNode}>
-            <Button style={{ marginRight: -3 }} disabled={record.status !== 2 || (record.status !== 3 && !fileUrl)} shape="circle" funcType="flat" icon={record.status === 3 ? 'refresh' : 'get_app'} onClick={this.handleDownload.bind(this, record)} />
+            <Button style={{ marginRight: -3 }} disabled={record.status === 1 || (record.status !== 3 && !fileUrl)} shape="circle" funcType="flat" icon={record.status === 3 ? 'refresh' : 'get_app'} onClick={this.handleDownload.bind(this, record)} />
           </Tooltip>
         </div>
       ),

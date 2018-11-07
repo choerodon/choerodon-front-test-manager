@@ -11,6 +11,7 @@ import { FormattedMessage } from 'react-intl';
 import { importIssue } from '../../../../api/FileApi';
 import { commonLink, humanizeDuration } from '../../../../common/utils';
 import { SelectVersion } from '../../../../components/CommonComponent';
+import { getImportHistory } from '../../../../api/IssueManageApi';
 import './ImportIssue.scss';
 
 const { AppState } = stores;
@@ -24,6 +25,18 @@ class ImportIssue extends Component {
     importRecord: null,
     file: null,
     version: null,
+  }
+
+  componentDidMount() {
+    this.getImportHistory();
+  }
+
+  getImportHistory = () => {
+    getImportHistory().then((data) => {
+      this.setState({
+        importRecord: data,
+      });
+    });
   }
 
   handleClose = () => {
@@ -161,7 +174,7 @@ class ImportIssue extends Component {
           backPath={commonLink('/IssueManage')}
         >
           <Button
-            onClick={() => { }}
+            onClick={this.getImportHistory}
           >
             <Icon type="autorenew icon" />
             <FormattedMessage id="refresh" />

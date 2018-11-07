@@ -196,7 +196,7 @@ class TextEditToggle extends Component {
 
   render() {
     return (
-      <div>
+      <div {...this.props}>
         {this.renderChild()}
       </div>
     );

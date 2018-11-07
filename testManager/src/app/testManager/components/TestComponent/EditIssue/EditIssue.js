@@ -10,6 +10,7 @@ import '../../../assets/main.scss';
 import {
   UploadButtonNow, ReadAndEdit, IssueDescription,
 } from '../CommonComponent';
+import { TextEditToggle } from '../../CommonComponent';
 import {
   delta2Html, handleFileUpload, text2Delta, beforeTextUpload, formatDate, returnBeforeTextUpload,
 } from '../../../common/utils';
@@ -37,7 +38,7 @@ const { TextArea } = Input;
 const { confirm } = Modal;
 let sign = true;
 let filterSign = false;
-
+const { Text, Edit } = TextEditToggle;
 class EditIssueNarrow extends Component {
   constructor(props) {
     super(props);
@@ -496,6 +497,34 @@ class EditIssueNarrow extends Component {
     }
   }
 
+  editIssue = (newValue) => {
+    let issue = {
+      issueId: this.state.issueId,
+      objectVersionNumber: this.state.origin.objectVersionNumber,
+    };
+    if (newValue.statusId) {
+      const targetStatus = _.find(this.state.originStatus, { endStatusId: newValue.statusId });
+      if (targetStatus) {
+        updateStatus(targetStatus.id, issue.issueId, issue.objectVersionNumber)
+          .then((res) => {
+            this.reloadIssue();
+            if (this.props.onUpdate) {
+              this.props.onUpdate();
+            }
+          });
+      }
+    } else {
+      issue = { ...issue, ...newValue };
+      updateIssue(issue)
+        .then((res) => {
+          this.reloadIssue();
+          if (this.props.onUpdate) {
+            this.props.onUpdate();
+          }
+        });
+    }
+  }
+
   updateIssueSelect = (originPros, pros) => {
     const obj = {
       issueId: this.state.issueId,
@@ -706,10 +735,10 @@ class EditIssueNarrow extends Component {
       width: 560,
       title: `删除测试用例${this.state.issueNum}`,
       content:
-        <div style={{ marginBottom: 32 }}>
-          <p style={{ marginBottom: 10 }}>请确认您要删除这个测试用例。</p>
-          <p style={{ marginBottom: 10 }}>这个测试用例将会被彻底删除。包括所有步骤和相关执行。</p>
-        </div>,
+  <div style={{ marginBottom: 32 }}>
+    <p style={{ marginBottom: 10 }}>请确认您要删除这个测试用例。</p>
+    <p style={{ marginBottom: 10 }}>这个测试用例将会被彻底删除。包括所有步骤和相关执行。</p>
+  </div>,
       onOk() {
         return deleteIssue(issueId)
           .then((res) => {
@@ -880,6 +909,22 @@ class EditIssueNarrow extends Component {
     const typeId = issueTypeDTO.id;
     this.setAnIssueToState();
     loadStatus(origin.statusId, issueId, typeId).then((res) => {
+      this.setState({
+        originStatus: res,
+        selectLoading: false,
+      });
+    });
+  }
+
+  loadTransformsByStatusId = (statusId) => {
+    const {
+      issueTypeDTO,
+      issueId,
+      origin,
+    } = this.state;
+    const typeId = issueTypeDTO.id;
+    // this.setAnIssueToState();
+    loadStatus(statusId, issueId, typeId).then((res) => {
       this.setState({
         originStatus: res,
         selectLoading: false,
@@ -1131,38 +1176,24 @@ class EditIssueNarrow extends Component {
                   </div>
                 </div>
                 <div className="line-justify" style={{ marginBottom: 5, alignItems: 'center', marginTop: 10 }}>
-                  <ReadAndEdit
-                    callback={this.changeRae.bind(this)}
-                    thisType="summary"
-                    line
-                    current={this.state.currentRae}
-                    handleEnter
-                    origin={this.state.summary}
-                    onInit={() => this.setAnIssueToState()}
-                    onOk={this.updateIssue.bind(this, 'summary')}
-                    onCancel={this.resetSummary.bind(this)}
-                    readModeContent={(
-                      <div className="c7ntest-summary">
-                        {this.state.summary}
-                      </div>
-                    )}
+
+                  <TextEditToggle
+                    style={{ width: '100%' }}
+                    formKey="summary"
+                    onSubmit={(value) => { this.editIssue({ summary: value }); }}
+                    originData={this.state.summary}
                   >
-                    <TextArea
-                      // style={{ width: 290 }}
-                      maxLength={44}
-                      value={this.state.summary}
-                      size="small"
-                      autoFocus
-                      onChange={this.handleTitleChange.bind(this)}
-                      // autosize
-                      onPressEnter={() => {
-                        this.updateIssue('summary');
-                        this.setState({
-                          currentRae: undefined,
-                        });
-                      }}
-                    />
-                  </ReadAndEdit>
+                    <Text>
+                      {data => (
+                        <div className="c7ntest-summary">
+                          {data}
+                        </div>
+                      )}
+                    </Text>
+                    <Edit>
+                      <TextArea maxLength={44} size="small" autoFocus />
+                    </Edit>
+                  </TextEditToggle>
                   <div style={{ flexShrink: 0, color: 'rgba(0, 0, 0, 0.65)' }}>
                     <Dropdown overlay={getMenu()} trigger={['click']}>
                       <Button icon="more_vert" />
@@ -1199,7 +1230,53 @@ class EditIssueNarrow extends Component {
                           <FormattedMessage id="issue_issueFilterByStatus" />
                         </div>
                         <div>
-                          <ReadAndEdit
+                          <TextEditToggle
+                            style={{ width: '100%' }}
+                            formKey="statusId"
+                            onSubmit={(value) => { this.editIssue({ statusId: value }); }}
+                            originData={originStatus.length
+                              ? statusId : statusName}
+                          >
+                            <Text>
+                              {(data) => {
+                                const targetStatus = _.find(originStatus, { endStatusId: data });
+                                return (
+                                  <div>
+                                    {
+                                  targetStatus ? (
+                                    <div
+                                      style={{
+                                        color: targetStatus.statusDTO.colour || 'black',
+                                        fontSize: '16px',
+                                        lineHeight: '18px',
+                                      }}
+                                    >
+                                      {targetStatus.statusDTO.name}
+                                    </div>
+                                  ) : statusName
+                                }
+                                  </div>
+                                );
+                              }}
+                            </Text>
+                            <Edit>
+                              <Select                                
+                                style={{ width: 150 }}
+                                loading={this.state.selectLoading}
+                                autoFocus
+                                onFocus={() => { this.loadIssueStatus(statusId); }}                   
+                              >
+                                {
+                                  originStatus.map(transform => (
+                                    <Option key={transform.id} value={transform.endStatusId}>
+                                      {transform.statusDTO.name}
+                                    </Option>
+                                  ))
+                                }
+                              </Select>
+                            </Edit>
+                          </TextEditToggle>
+                          {/* <ReadAndEdit
                             callback={this.changeRae.bind(this)}
                             thisType="statusId"
                             current={this.state.currentRae}
@@ -1230,19 +1307,7 @@ class EditIssueNarrow extends Component {
                                 ? statusId : statusName}
                               style={{ width: 150 }}
                               loading={this.state.selectLoading}
-                              autoFocus
-                              // getPopupContainer={triggerNode => triggerNode.parentNode}
-                              onFocus={() => {
-                                // this.setState({
-                                //   selectLoading: true,
-                                // });
-                                // loadStatus().then((res) => {
-                                //   this.setState({
-                                //     originStatus: res,
-                                //     selectLoading: false,
-                                //   });
-                                // });
-                              }}
+                              autoFocus                          
                               onChange={(value, item) => {
                                 this.setState({
                                   statusId: value,
@@ -1258,7 +1323,7 @@ class EditIssueNarrow extends Component {
                                 ))
                               }
                             </Select>
-                          </ReadAndEdit>
+                          </ReadAndEdit> */}
                         </div>
                       </div>
                     </div>

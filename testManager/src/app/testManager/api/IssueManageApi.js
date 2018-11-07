@@ -89,7 +89,7 @@ export function loadIssue(issueId) {
  * @returns
  */
 export function updateStatus(transformId, issueId, objVerNum) {
-  return request.put(`/agile/v1/projects/${getOrganizationId()}/issues/update_status?transformId=${transformId}&issueId=${issueId}&objectVersionNumber=${objVerNum}`);
+  return request.put(`/agile/v1/projects/${getOrganizationId()}/issues/update_status?transformId=${transformId}&issueId=${issueId}&objectVersionNumber=${objVerNum}&applyType=test`);
 }
 /**
  *更新用例信息
@@ -488,6 +488,15 @@ export function downloadTemplate() {
  */
 export function getExportList() {
   return request.get(`/test/v1/projects/${getProjectId()}/test/fileload/history`);
+}
+/**
+ *获取导出历史
+ *
+ * @export
+ * @returns
+ */
+export function getImportHistory() {
+  return request.get(`/test/v1/projects/${getProjectId()}/test/fileload/history/latest`);
 }
 /**
  *导出失败重试
