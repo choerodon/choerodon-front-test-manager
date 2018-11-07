@@ -110,7 +110,11 @@ class ExportSide extends Component {
     }
   }
 
-  handleDownload = (fileUrl) => {
+  handleDownload = (record) => {
+    const { fileUrl, status } = record;
+    if (status === 3) {
+      return;
+    }
     if (fileUrl) {
       const ele = document.createElement('a');
       ele.href = fileUrl;
@@ -128,7 +132,7 @@ class ExportSide extends Component {
     const index = _.findIndex(exportList, { id });
     // 存在记录就更新，不存在则新增记录
     if (index >= 0) {
-      exportList[index] = { ...data, rate: Math.floor(data.rate) };
+      exportList[index] = data;
     } else {
       exportList.unshift(data);
     }
@@ -137,7 +141,7 @@ class ExportSide extends Component {
     });
   }
 
-  humanizeDuration=(record) => {
+  humanizeDuration = (record) => {
     const { creationDate, lastUpdateDate } = record;
     const startTime = moment(creationDate);
     const lastTime = moment(lastUpdateDate);
@@ -148,7 +152,7 @@ class ExportSide extends Component {
       diff = moment().diff(startTime);
     }
     return creationDate && lastUpdateDate
-      ? humanizeDuration(diff / 1000) 
+      ? humanizeDuration(diff / 1000)
       : null;
   }
 
@@ -180,7 +184,7 @@ class ExportSide extends Component {
       dataIndex: 'successfulCount',
       key: 'successfulCount',
       // width: 100,
-    }, 
+    },
     {
       title: '导出时间',
       dataIndex: 'creationDate',
@@ -200,7 +204,7 @@ class ExportSide extends Component {
       render: (rate, record) => (record.status === 2
         ? <div>已完成</div>
         : (
-          <Tooltip title={`进度：${rate}%`}>
+          <Tooltip title={`进度：${rate.toFixed(1) || 0}%`} getPopupContainer={ele => ele.parentNode}>
             <Progress percent={rate} showInfo={false} />
           </Tooltip>
         )),
@@ -208,10 +212,10 @@ class ExportSide extends Component {
       title: '',
       dataIndex: 'fileUrl',
       key: 'fileUrl',
-      render: fileUrl => (  
+      render: (fileUrl, record) => (
         <div style={{ textAlign: 'right' }}>
-          <Tooltip title="下载文件">
-            <Button style={{ marginRight: -3 }} shape="circle" funcType="flat" icon="get_app" disabled={!fileUrl} onClick={this.handleDownload.bind(this, fileUrl)} />
+          <Tooltip title={record.status === 3 ? '重试' : '下载文件'} getPopupContainer={ele => ele.parentNode}>
+            <Button style={{ marginRight: -3 }} shape="circle" funcType="flat" icon={record.status === 3 ? 'retry' : 'get_app'} disabled={!fileUrl} onClick={this.handleDownload.bind(this, record)} />
           </Tooltip>
         </div>
       ),

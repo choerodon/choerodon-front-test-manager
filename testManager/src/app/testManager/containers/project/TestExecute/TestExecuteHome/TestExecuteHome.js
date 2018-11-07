@@ -15,7 +15,7 @@ import moment from 'moment';
 import './TestExecuteHome.scss';
 import { getUsers } from '../../../../api/IamApi';
 import {
-  getCycles, deleteExecute, getCycleById,
+  getCycleTree, deleteExecute, getExecutesByCycleId,
   clone, addFolder, exportCycle,
 } from '../../../../api/cycleApi';
 import { getStatusList } from '../../../../api/TestStatusApi';
@@ -100,7 +100,7 @@ class TestExecuteHome extends Component {
           });
         }
         // console.log(this.treeAssignedTo);
-        getCycleById({
+        getExecutesByCycleId({
           page: 0,
           size: executePagination.pageSize,
         }, data.cycleId,
@@ -185,7 +185,7 @@ class TestExecuteHome extends Component {
     getStatusList('CYCLE_CASE').then((statusList) => {
       this.setState({ statusList });
     });
-    getCycles(assignedTo).then((data) => {
+    getCycleTree(assignedTo).then((data) => {
       TestExecuteStore.setTreeData([{ title: '所有版本', key: '0', children: data.versions }]);
       this.setState({
         // treeData: [
@@ -236,7 +236,7 @@ class TestExecuteHome extends Component {
         rightLoading: true,
       });
       const { executePagination } = this.state;
-      getCycleById({
+      getExecutesByCycleId({
         page: executePagination.current - 1,
         size: executePagination.pageSize,
       }, defaultExpandKeyItem.cycleId,
@@ -375,7 +375,7 @@ class TestExecuteHome extends Component {
         filters,
       });
       const currentCycle = TestExecuteStore.getCurrentCycle;
-      getCycleById({
+      getExecutesByCycleId({
         size: pagination.pageSize,
         page: pagination.current - 1,
       }, currentCycle.cycleId,

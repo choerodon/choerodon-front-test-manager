@@ -12,7 +12,7 @@ import {
 } from 'choerodon-ui';
 import { Link } from 'react-router-dom';
 import {
-  getCycleById, editExecuteDetail, deleteExecute,
+  getExecutesByCycleId, editExecuteDetail, deleteExecute,
 } from '../../../../api/cycleApi';
 import { getStatusList } from '../../../../api/TestStatusApi';
 import {
@@ -74,7 +74,7 @@ class TestPlanHome extends Component {
       TestPlanStore.rightEnterLoading();
       TestPlanStore.setExecutePagination(pagination);
       const currentCycle = TestPlanStore.getCurrentCycle;
-      getCycleById({
+      getExecutesByCycleId({
         size: pagination.pageSize,
         page: pagination.current - 1,
       }, currentCycle.cycleId,
@@ -123,7 +123,7 @@ class TestPlanHome extends Component {
     }).then((res) => {
       const { executePagination } = TestPlanStore;
       const currentCycle = TestPlanStore.getCurrentCycle;
-      getCycleById({
+      getExecutesByCycleId({
         page: executePagination.current - 1,
         size: executePagination.pageSize,
       }, currentCycle.cycleId).then((cycle) => {
@@ -157,7 +157,7 @@ class TestPlanHome extends Component {
           .then((res) => {
             const { executePagination } = TestPlanStore;
             const currentCycle = TestPlanStore.getCurrentCycle;
-            getCycleById({
+            getExecutesByCycleId({
               page: executePagination.current - 1,
               size: executePagination.pageSize,
             }, currentCycle.cycleId).then((cycle) => {

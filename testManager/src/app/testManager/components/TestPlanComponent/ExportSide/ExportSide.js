@@ -7,9 +7,9 @@ import {
 import _ from 'lodash';
 import FileSaver from 'file-saver';
 import moment from 'moment';
-import { SelectVersion, SelectFolder } from '../../CommonComponent';
+import { SelectVersion, SelectFolder, SimpleSelect } from '../../CommonComponent';
 import {
-  exportIssues, exportIssuesFromVersion, exportIssuesFromFolder, getExportList,
+  exportIssues, exportIssuesFromVersion, exportIssuesFromFolder, getExportList, getFoldersByCycleId,
 } from '../../../api/cycleApi';
 import './ExportSide.scss';
 
@@ -129,7 +129,7 @@ class ExportSide extends Component {
     const index = _.findIndex(exportList, { id });
     // 存在记录就更新，不存在则新增记录
     if (index >= 0) {
-      exportList[index] = { ...data, rate: Math.floor(data.rate) };
+      exportList[index] = { ...data, rate: data.rate.toFixed(1) };
     } else {
       exportList.unshift(data);
     }
@@ -138,14 +138,14 @@ class ExportSide extends Component {
     });
   }
 
-  humanizeDuration=(record) => {
+  humanizeDuration = (record) => {
     const { creationDate, lastUpdateDate } = record;
     const startTime = moment(creationDate);
     const lastTime = moment(lastUpdateDate);
 
     const diff = lastTime.diff(startTime);
     return creationDate && lastUpdateDate
-      ? humanizeDuration(diff / 1000) 
+      ? humanizeDuration(diff / 1000)
       : null;
   }
 
@@ -205,7 +205,7 @@ class ExportSide extends Component {
       title: '',
       dataIndex: 'fileUrl',
       key: 'fileUrl',
-      render: fileUrl => (  
+      render: fileUrl => (
         <div style={{ textAlign: 'right' }}>
           <Tooltip title="下载文件">
             <Button style={{ marginRight: -3 }} shape="circle" funcType="flat" icon="get_app" disabled={!fileUrl} onClick={this.handleDownload.bind(this, fileUrl)} />
@@ -231,8 +231,24 @@ class ExportSide extends Component {
           <div className="c7ntest-ExportSide">
             <div style={{ marginBottom: 24 }}>
               <SelectVersion allowClear style={{ width: 100 }} value={versionId || '所有版本'} onChange={this.handleVersionChange} />
-              <SelectFolder style={{ width: 200, margin: '0 24px' }} label="测试循环" disabled={!versionId} versionId={versionId} value={cycleId} allowClear onChange={this.handleFolderChange} />
-              <SelectFolder style={{ width: 200 }} label="测试阶段" disabled={!versionId} versionId={versionId} value={stageId} allowClear onChange={this.handleFolderChange} />
+              <SimpleSelect         
+                disabled={!versionId}
+                label="测试循环"
+                value={cycleId}
+                allowClear
+                request={() => getFoldersByCycleId(versionId)}
+                onChange={this.handleCycleChange}
+                option={{ value: 'cycleId', text: 'cycleName' }}
+              />
+              <SimpleSelect  
+                disabled={!cycleId}
+                label="测试阶段"
+                value={stageId}
+                allowClear
+                request={() => getFoldersByCycleId(cycleId)}
+                onChange={this.handleStageChange}
+                option={{ value: 'cycleId', text: 'cycleName' }}
+              />
               <Button type="primary" icon="playlist_add" onClick={this.createExport}>新建导出</Button>
             </div>
             <WSHandler

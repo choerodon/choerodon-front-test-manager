@@ -29,6 +29,7 @@ class SelectFolder extends Component {
     return (
       <Select
         label="文件夹"
+        getPopupContainer={ele => ele.parentNode}
         loading={loading}
         style={{ width: 200 }}
         onFocus={() => {

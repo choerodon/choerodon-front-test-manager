@@ -1,23 +1,18 @@
 
 import { getProjectId, getOrganizationId, request } from '../common/utils';
 
-export function getCycles(assignedTo) {
+export function getCycleTree(assignedTo) {
   return request.get(`/test/v1/projects/${getProjectId()}/cycle/query${assignedTo ? `?assignedTo=${assignedTo}` : ''}`);
 }
-export function getCycleById(pagination, cycleId, filters, type) {
+export function getExecutesByCycleId(pagination, cycleId, filters, type) {
   const { size, page } = pagination;
-  //   return request.get(`/test/v1/cycle/case/query/${cycleId}`);
   const Filters = { ...filters };
   if (Filters) {
     Object.keys(Filters).forEach((filter) => {
       Filters[filter] = Filters[filter][0];
     });
   }
-  // if (type === 'cycle') {
-  //   return request.post(`/test/v1/projects/${getProjectId()}/cycle/case/query/folderCycleId?size=${size}&page=${page}`, { cycleId, ...Filters });
-  // } else {
   return request.post(`/test/v1/projects/${getProjectId()}/cycle/case/query/cycleId?size=${size}&page=${page}&organizationId=${getOrganizationId()}`, { cycleId, ...Filters });
-  // }
 }
 export function addCycle(data) {
   return request.post(`/test/v1/projects/${getProjectId()}/cycle`, data);
@@ -49,8 +44,11 @@ export function editFolder(data) {
 export function exportCycle(cycleId) {
   return request.get(`/test/v1/projects/${getProjectId()}/cycle/case/download/excel/${cycleId}`, { responseType: 'arraybuffer' });
 }
-export function getFoldersByCycleId(data) {
-  return request.put(`/test/v1/projects/${getProjectId()}/cycle`, data);
+export function getCyclesByVersionId(versionId) {
+  return request.put(`/v1/projects/${getProjectId()}/cycle/get/cycles/all/in/version/${versionId}`);
+}
+export function getFoldersByCycleId(cycleId) {
+  return request.put(`/v1/projects/${getProjectId()}/cycle/query/folder/cycleId/${cycleId}`);
 }
 /**
  *获取导出历史

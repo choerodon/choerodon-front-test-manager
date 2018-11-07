@@ -5,8 +5,9 @@ import { findDOMNode } from 'react-dom';
 import PropTypes from 'prop-types';
 import { observer } from 'mobx-react';
 import './TextEditToggle.scss';
+// 防止提交前变回原值
+const Text = props => (typeof (props.children) === 'function' ? props.children(props.newData || props.originData) : props.children);
 
-const Text = props => props.children;
 const Edit = props => props.children;
 const FormItem = Form.Item;
 function contains(root, n) {
@@ -25,6 +26,7 @@ class TextEditToggle extends Component {
   state = {
     editing: false,
     originData: null,
+    newData: null,
   }
 
   static defaultProps = {
@@ -65,9 +67,12 @@ class TextEditToggle extends Component {
       this.props.form.validateFields((err, values) => {
         if (!err) {
           if (this.props.formKey) {
-            const newValue = values[this.props.formKey];
-            if (this.props.onSubmit && newValue !== this.props.originData) {
-              this.props.onSubmit(this.props.formKey ? newValue : null);
+            const newData = values[this.props.formKey];
+            if (this.props.onSubmit && newData !== this.props.originData) {
+              this.setState({
+                newData,
+              });
+              this.props.onSubmit(this.props.formKey ? newData : null);
             }
           } else {
             this.props.onSubmit();
@@ -137,8 +142,17 @@ class TextEditToggle extends Component {
     }));
   }
 
+  renderTextChild=(children) => {
+    const childrenArray = React.Children.toArray(children);
+    // console.log(childrenArray);
+    return childrenArray.map(child => React.cloneElement(child, {
+      newData: this.state.newData,
+      originData: this.props.originData,
+    }));
+  }
+
   renderChild = () => {
-    const { editing } = this.state;
+    const { editing, newData } = this.state;
     const { disabled } = this.props;
     const { originData, formKey, rules } = this.props;
     const { getFieldDecorator } = this.props.form;
@@ -174,7 +188,7 @@ class TextEditToggle extends Component {
         onClick={this.enterEditing}
         role="none"
       >
-        {children}
+        {this.renderTextChild(children)}
         <Icon type="mode_edit" className="c7ntest-TextEditToggle-text-icon" />
       </div>
     );

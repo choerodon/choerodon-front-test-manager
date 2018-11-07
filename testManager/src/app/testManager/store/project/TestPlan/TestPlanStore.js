@@ -2,7 +2,7 @@ import {
   observable, action, computed, toJS,
 } from 'mobx';
 import moment from 'moment';
-import { getCycles, getCycleById } from '../../../api/cycleApi';
+import { getCycleTree, getExecutesByCycleId } from '../../../api/cycleApi';
 import { getStatusList } from '../../../api/TestStatusApi';
 import { BaseTreeProto } from '../prototype';
 
@@ -46,7 +46,7 @@ class TestPlanStore extends BaseTreeProto {
     getStatusList('CYCLE_CASE').then((statusList) => {
       this.setStatusList({ statusList });
     });
-    getCycles().then((data) => {
+    getCycleTree().then((data) => {
       this.setTreeData([{ title: '所有版本', key: '0', children: data.versions }]);
 
       this.generateList([
@@ -73,7 +73,7 @@ class TestPlanStore extends BaseTreeProto {
     const data = this.getCurrentCycle;
     const { executePagination, filters } = this;
     if (data.type === 'folder') {
-      getCycleById({
+      getExecutesByCycleId({
         page: executePagination.current - 1,
         size: executePagination.pageSize,
       }, data.cycleId,
@@ -120,7 +120,7 @@ class TestPlanStore extends BaseTreeProto {
     this.setCurrentCycle(data);
     // window.console.log(data);
     if (data.type === 'folder') {
-      getCycleById({
+      getExecutesByCycleId({
         page: 0,
         size: executePagination.pageSize,
       }, data.cycleId,

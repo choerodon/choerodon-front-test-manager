@@ -32,7 +32,7 @@ const cycleFunction = {
    * @param {*} cycleId
    * @returns
    */
-  getCycleById(cycleId) {
+  getExecutesByCycleId(cycleId) {
     // console.log('token', global.user.token);
     return chai.request(utils.config.gateway)
       .post(`/test/v1/projects/${projectId}/cycle/case/query/cycleId?size=${5}&page=${0}`)
