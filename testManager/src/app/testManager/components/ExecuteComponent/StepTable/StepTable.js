@@ -112,10 +112,6 @@ class StepTable extends Component {
       key: 'stepStatus',
       // width: 120,
       render(stepStatus, record) {
-        const statusColor = _.find(stepStatusList, { statusId: stepStatus })
-          ? _.find(stepStatusList, { statusId: stepStatus }).statusColor : '';
-        const statusName = _.find(stepStatusList, { statusId: stepStatus })
-          && _.find(stepStatusList, { statusId: stepStatus }).statusName;
         return (
           <div style={{ width: 85 }}>
             <TextEditToggle
@@ -125,10 +121,18 @@ class StepTable extends Component {
               originData={stepStatus}
             >
               <Text>
-                <StatusTags
-                  color={statusColor}
-                  name={statusName}
-                />
+                {(data) => {
+                  const targetStatus = _.find(stepStatusList, { statusId: data });
+                  const statusColor = targetStatus && targetStatus.statusColor;
+                  const statusName = targetStatus && targetStatus.statusName;
+                  return (
+                    <StatusTags
+                      color={statusColor}
+                      name={statusName}
+                    />
+                  );
+                }}
+                
               </Text>
               <Edit>
                 <Select autoFocus style={{ width: 85 }}>
@@ -153,10 +157,12 @@ class StepTable extends Component {
             originData={delta2Text(comment)}
           >
             <Text>
-              <div 
-                style={{ minHeight: 20 }}
-                dangerouslySetInnerHTML={{ __html: delta2Text(comment) && delta2Text(comment).replace(/\n/g, '<br />') }}
-              />
+              {data => (
+                <div 
+                  style={{ minHeight: 20 }}
+                  dangerouslySetInnerHTML={{ __html: delta2Text(data) && delta2Text(data).replace(/\n/g, '<br />') }}
+                />
+              )}              
             </Text>
             <Edit>
               <TextArea autosize autoFocus />

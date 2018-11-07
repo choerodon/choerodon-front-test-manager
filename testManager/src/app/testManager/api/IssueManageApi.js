@@ -77,7 +77,7 @@ export function loadStatus(statusId, issueId, typeId) {
  * @returns
  */
 export function loadIssue(issueId) {
-  return request.get(`/agile/v1/projects/${getProjectId()}/issues/${issueId}?organizationId=${getOrganizationId()}`);
+  return request.get(`/agile/v1/projects/${getProjectId()}/issues/${issueId}`);
 }
 /**
  *更新用例状态
@@ -237,7 +237,7 @@ export function createIssueStep(testCaseStepDTO) {
  * @returns
  */
 export function getIssueExecutes(issueId) {
-  return request.get(`/test/v1/projects/${getProjectId()}/cycle/case/query/issue/${issueId}?organizationId=${getOrganizationId()}`);
+  return request.get(`/test/v1/projects/${getProjectId()}/cycle/case/query/issue/${issueId}`);
 }
 
 /**
@@ -256,7 +256,7 @@ export function getSingleIssues(page = 0, size = 10, search, orderField, orderTy
   const searchDTO = { ...search };
   // searchDTO.advancedSearchArgs.typeCode = ['issue_test'];
 
-  return request.post(`/test/v1/projects/${getProjectId()}/issueFolderRel/query?page=${page}&size=${size}&organizationId=${getOrganizationId()}`, { versionIds: [], searchDTO }, {
+  return request.post(`/test/v1/projects/${getProjectId()}/issueFolderRel/query?page=${page}&size=${size}`, { versionIds: [], searchDTO }, {
     params: {
       sort: `${orderField && orderType ? `${orderField},${orderType}` : ''}`,
     },
@@ -278,7 +278,7 @@ export function getAllIssues(page = 0, size = 10, search, orderField, orderType)
   const searchDTO = { ...search, otherArgs: search.searchArgs };
   // searchDTO.advancedSearchArgs.typeCode = ['issue_test'];
 
-  return request.post(`/test/v1/projects/${getProjectId()}/issueFolderRel/query?page=${page}&size=${size}&organizationId=${getOrganizationId()}`, { versionIds: [], searchDTO }, {
+  return request.post(`/test/v1/projects/${getProjectId()}/issueFolderRel/query?page=${page}&size=${size}`, { versionIds: [], searchDTO }, {
     params: {
       sort: `${orderField && orderType ? `${orderField},${orderType}` : ''}`,
     },
@@ -300,7 +300,7 @@ export function getIssuesByVersion(versionIds, page = 0, size = 10, search, orde
   const searchDTO = { ...search, otherArgs: search.searchArgs };
   // searchDTO.advancedSearchArgs.typeCode = ['issue_test'];
 
-  return request.post(`/test/v1/projects/${getProjectId()}/issueFolderRel/query?page=${page}&size=${size}&organizationId=${getOrganizationId()}`, { versionIds, searchDTO }, {
+  return request.post(`/test/v1/projects/${getProjectId()}/issueFolderRel/query?page=${page}&size=${size}`, { versionIds, searchDTO }, {
     params: {
       sort: `${orderField && orderType ? `${orderField},${orderType}` : ''}`,
     },
@@ -322,7 +322,7 @@ export function getIssuesByFolder(folderId, page = 0, size = 10, search, orderFi
   const searchDTO = { ...search, otherArgs: search.searchArgs };
   // searchDTO.advancedSearchArgs.typeCode = ['issue_test'];
 
-  return request.post(`/test/v1/projects/${getProjectId()}/issueFolderRel/query?folderId=${folderId}&page=${page}&size=${size}&organizationId=${getOrganizationId()}`, { versionIds: [], searchDTO }, {
+  return request.post(`/test/v1/projects/${getProjectId()}/issueFolderRel/query?folderId=${folderId}&page=${page}&size=${size}`, { versionIds: [], searchDTO }, {
     params: {
       sort: `${orderField && orderType ? `${orderField},${orderType}` : ''}`,
     },
@@ -338,7 +338,7 @@ export function getIssuesByFolder(folderId, page = 0, size = 10, search, orderFi
  * @returns
  */
 export function getIssuesByIds(versionId, folderId, ids) {
-  return request.post(`/test/v1/projects/${getProjectId()}/issueFolderRel/query/by/issueId${versionId ? `?versionId=${versionId}` : ''}&organizationId=${getOrganizationId()}${folderId ? `&folderId=${folderId}` : ''}`, ids);
+  return request.post(`/test/v1/projects/${getProjectId()}/issueFolderRel/query/by/issueId${versionId ? `?versionId=${versionId}` : ''}${folderId ? `&folderId=${folderId}` : ''}`, ids);
 }
 /**
  *用例移动
@@ -449,7 +449,7 @@ export function cloneIssue(issueId, copyConditionDTO) {
  * @returns
  */
 export function exportIssues() {
-  return request.get(`/zuul/test/v1/projects/${getProjectId()}/case/download/excel?organizationId=${getOrganizationId()}`);
+  return request.get(`/zuul/test/v1/projects/${getProjectId()}/case/download/excel`);
 }
 /**
  *版本下的用例导出
@@ -459,7 +459,7 @@ export function exportIssues() {
  * @returns
  */
 export function exportIssuesFromVersion(versionId) {
-  return request.get(`/zuul/test/v1/projects/${getProjectId()}/case/download/excel/version?versionId=${versionId}&organizationId=${getOrganizationId()}`);
+  return request.get(`/zuul/test/v1/projects/${getProjectId()}/case/download/excel/version?versionId=${versionId}`);
 }
 /**
  *文件夹下的用例导出
@@ -469,7 +469,7 @@ export function exportIssuesFromVersion(versionId) {
  * @returns
  */
 export function exportIssuesFromFolder(folderId) {
-  return request.get(`/zuul/test/v1/projects/${getProjectId()}/case/download/excel/folder?folderId=${folderId}&userId=${AppState.userInfo.id}&organizationId=${getOrganizationId()}`);
+  return request.get(`/zuul/test/v1/projects/${getProjectId()}/case/download/excel/folder?folderId=${folderId}&userId=${AppState.userInfo.id}`);
 }
 /**
  *下载导入模板
@@ -488,4 +488,7 @@ export function downloadTemplate() {
  */
 export function getExportList() {
   return request.get(`/test/v1/projects/${getProjectId()}/test/fileload/history`);
+}
+export function exportRetry(historyId) {
+  return request.get(`/test/v1/projects/${getProjectId()}/download/excel/fail?historyId=${historyId}`);
 }

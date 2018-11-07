@@ -184,7 +184,7 @@ class TestExecuteInfo extends Component {
     } = cycleData;
     const fileList = ExecuteDetailStore.getFileList;
     const defectIds = ExecuteDetailStore.getDefectIds;
-    const { statusColor, statusName } = ExecuteDetailStore.getStatusById(executionStatus);
+    
     const props = {
       onRemove: (file) => {
         if (file.url) {
@@ -262,16 +262,15 @@ class TestExecuteInfo extends Component {
                 originData={executionStatus}
               >
                 <Text>
-                  <StatusTags
-                    color={statusColor}
-                    name={statusName}
-                  />
-                  {/* <div style={{
-                    background: statusColor, width: 60, textAlign: 'center', borderRadius: '2px', display: 'inline-block', color: 'white',
-                  }}
-                  >
-                    {statusName}
-                  </div> */}
+                  {(data) => {
+                    const { statusColor, statusName } = ExecuteDetailStore.getStatusById(data);
+                    return (
+                      <StatusTags
+                        color={statusColor}
+                        name={statusName}
+                      />
+                    );
+                  }}                  
                 </Text>
                 <Edit>
                   <Select
@@ -298,7 +297,7 @@ class TestExecuteInfo extends Component {
               >
                 <Text>
                   {assigneeUser ? <User user={assigneeUser} />
-                    : '无'}
+                    : '无'}    
                 </Text>
                 <Edit>
                   <Select

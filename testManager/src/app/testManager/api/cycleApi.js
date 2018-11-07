@@ -1,5 +1,5 @@
 
-import { getProjectId, getOrganizationId, request } from '../common/utils';
+import { getProjectId, request } from '../common/utils';
 
 export function getCycleTree(assignedTo) {
   return request.get(`/test/v1/projects/${getProjectId()}/cycle/query${assignedTo ? `?assignedTo=${assignedTo}` : ''}`);
@@ -12,7 +12,7 @@ export function getExecutesByCycleId(pagination, cycleId, filters, type) {
       Filters[filter] = Filters[filter][0];
     });
   }
-  return request.post(`/test/v1/projects/${getProjectId()}/cycle/case/query/cycleId?size=${size}&page=${page}&organizationId=${getOrganizationId()}`, { cycleId, ...Filters });
+  return request.post(`/test/v1/projects/${getProjectId()}/cycle/case/query/cycleId?size=${size}&page=${page}`, { cycleId, ...Filters });
 }
 export function addCycle(data) {
   return request.post(`/test/v1/projects/${getProjectId()}/cycle`, data);
@@ -45,7 +45,7 @@ export function exportCycle(cycleId) {
   return request.get(`/test/v1/projects/${getProjectId()}/cycle/case/download/excel/${cycleId}`, { responseType: 'arraybuffer' });
 }
 export function getCyclesByVersionId(versionId) {
-  return request.put(`/v1/projects/${getProjectId()}/cycle/get/cycles/all/in/version/${versionId}`);
+  return request.get(`/v1/projects/${getProjectId()}/cycle/get/cycles/all/in/version/${versionId}`);
 }
 export function getFoldersByCycleId(cycleId) {
   return request.put(`/v1/projects/${getProjectId()}/cycle/query/folder/cycleId/${cycleId}`);

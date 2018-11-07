@@ -1,7 +1,7 @@
-import { getProjectId, getOrganizationId, request } from '../common/utils';
+import { getProjectId, request } from '../common/utils';
 
 export function getCycle(id) {
-  return request.get(`/test/v1/projects/${getProjectId()}/cycle/case/query/one/${id}?organizationId=${getOrganizationId()}`);
+  return request.get(`/test/v1/projects/${getProjectId()}/cycle/case/query/one/${id}`);
 }
 
 export function editCycle(cycle) {

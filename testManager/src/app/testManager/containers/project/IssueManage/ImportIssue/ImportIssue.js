@@ -9,32 +9,12 @@ import {
 import moment from 'moment';
 import { FormattedMessage } from 'react-intl';
 import { importIssue } from '../../../../api/FileApi';
-import { commonLink } from '../../../../common/utils';
+import { commonLink, humanizeDuration } from '../../../../common/utils';
 import { SelectVersion } from '../../../../components/CommonComponent';
+import './ImportIssue.scss';
 
 const { AppState } = stores;
-function humanizeDuration(seconds) {
-  let result = '';
-  if (seconds) {
-    /** eslint-disable no-constant-condition */
-    if ((result = Math.round(seconds / (60 * 60 * 24 * 30 * 12))) > 0) { // year
-      result = `${result} 年`;
-    } else if ((result = Math.round(seconds / (60 * 60 * 24 * 30))) > 0) { // months
-      result = `${result} 月`;
-    } else if ((result = Math.round(seconds / (60 * 60 * 24))) > 0) { // days
-      result = `${result} 天`;
-    } else if ((result = Math.round(seconds / (60 * 60))) > 0) { // Hours
-      result = `${result} 小时`;
-    } else if ((result = Math.round(seconds / (60))) > 0) { // minute
-      result = `${result} 分钟`;
-    } else if ((result = Math.round(seconds)) > 0) { // second
-      result = `${result} 秒`;
-    } else {
-      result = `${seconds} 毫秒`;
-    }
-  }
-  return result;
-}
+
 class ImportIssue extends Component {
   state = {
     visible: false,
@@ -65,6 +45,7 @@ class ImportIssue extends Component {
     });
     importIssue(formData, version).then(() => {
       this.setState({
+        file: null,
         uploading: false,
         importing: true,
         visible: false,
@@ -82,11 +63,9 @@ class ImportIssue extends Component {
     const startTime = moment(creationDate);
     const lastTime = moment(lastUpdateDate);
 
-    let diff = lastTime.diff(startTime);
-    // console.log(diff);
-    if (diff <= 0) {
-      diff = moment().diff(startTime);
-    }
+    const diff = lastTime.diff(startTime);
+
+    console.log(diff);
     return creationDate && lastUpdateDate
       ? humanizeDuration(diff / 1000)
       : null;
@@ -95,37 +74,54 @@ class ImportIssue extends Component {
   renderRecord = () => {
     const { importRecord } = this.state;
     if (!importRecord) {
-      return <div className="c7ntest-UploadSide-record-normal-text">当前没有导入用例记录</div>;
+      return <div className="c7ntest-ImportIssue-record-normal-text">当前没有导入用例记录</div>;
     }
-    const { lastUpdateDate, successfulCount, failedCount } = importRecord;
+    const {
+      lastUpdateDate, successfulCount, failedCount, fileUrl,
+    } = importRecord;
     return (
-      <div className="c7ntest-UploadSide-record-normal-text">
+      <div className="c7ntest-ImportIssue-record-normal-text">
         上次导入完成时间
-        {moment(lastUpdateDate).format('YYYY-MM-DD hh:mm:ss')}
+        <span style={{ color: 'black' }}>
+          {moment(lastUpdateDate).format('YYYY-MM-DD hh:mm:ss')}
+        </span>
         （耗时
-        {this.humanizeDuration.bind(this, importRecord)}
+        <span style={{ color: 'black' }}>
+          {this.humanizeDuration(importRecord)}
+        </span>
         ）
+        <br />
         共导入
-        {successfulCount}
+        <span style={{ color: '#23B2B1' }}>
+          {successfulCount}
+        </span>
         条数据成功，
-        {failedCount}
+        <span style={{ color: '#F44336' }}>
+          {failedCount}
+        </span>
         条数据失败
+        {fileUrl && (
+          <a href={fileUrl}>
+            {' '}
+            点击下载失败详情
+          </a>
+        )}
       </div>
     );
   }
 
   renderUploading = () => (
-    <div className="c7ntest-UploadSide-progress-area">
+    <div className="c7ntest-ImportIssue-progress-area">
       <Progress width={80} strokeLinecap="square" type="circle" percent={25} strokeWidth={10} />
-      <div className="c7ntest-UploadSide-progress-area-text">上传...</div>
+      <div className="c7ntest-ImportIssue-progress-area-text">上传...</div>
     </div>
   )
 
   renderImporting = () => (
-    <div className="c7ntest-UploadSide-progress-area">
+    <div className="c7ntest-ImportIssue-progress-area">
       <Progress width={80} strokeLinecap="square" type="circle" percent={this.state.progress} strokeWidth={10} />
-      <div className="c7ntest-UploadSide-progress-area-text">正在导入...</div>
-      <div className="c7ntest-UploadSide-progress-area-prompt">（本次导入可能会耗时较长，您可以先返回进行其他操作）</div>
+      <div className="c7ntest-ImportIssue-progress-area-text">正在导入...</div>
+      <div className="c7ntest-ImportIssue-progress-area-prompt">（本次导入可能会耗时较长，您可以先返回进行其他操作）</div>
     </div>
   )
 
@@ -152,18 +148,6 @@ class ImportIssue extends Component {
       importing: status === 1,
       importRecord: data,
     });
-    // const exportList = [...this.state.exportList];
-    // const { id, rate } = data;
-    // const index = _.findIndex(exportList, { id });
-    // // 存在记录就更新，不存在则新增记录
-    // if (index >= 0) {
-    //   exportList[index] = { ...data, rate: data.rate.toFixed(1) };
-    // } else {
-    //   exportList.unshift(data);
-    // }
-    // this.setState({
-    //   exportList,
-    // });
   }
 
   render() {
@@ -224,17 +208,15 @@ class ImportIssue extends Component {
             messageKey={`choerodon:msg:test-issue-import:${AppState.userInfo.id}`}
             onMessage={this.handleMessage}
           >
-            <div className="c7ntest-UploadSide">
-              <div style={{ width: '512px' }}>
-                {!uploading && !importing && this.renderRecord()}
-                {/* {uploading && this.renderUploading()} */}
-                {importing && this.renderImporting()}
-              </div>
+            <div className="c7ntest-ImportIssue">
+              {!uploading && !importing && this.renderRecord()}
+              {/* {uploading && this.renderUploading()} */}
+              {importing && this.renderImporting()}
             </div>
           </WSHandler>
 
           <Divider />
-          <Button type="primary" funcType="raised" onClick={() => { this.setState({ visible: true }); }}>
+          <Button type="primary" funcType="raised" onClick={() => { this.setState({ visible: true }); }} disabled={importing}>
             <FormattedMessage id="upload" />
           </Button>
         </Content>

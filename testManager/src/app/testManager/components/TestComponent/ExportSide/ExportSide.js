@@ -9,34 +9,14 @@ import FileSaver from 'file-saver';
 import moment from 'moment';
 import { SelectVersion, SelectFolder } from '../../CommonComponent';
 import {
-  exportIssues, exportIssuesFromVersion, exportIssuesFromFolder, getExportList,
+  exportIssues, exportIssuesFromVersion, exportIssuesFromFolder, getExportList, exportRetry,
 } from '../../../api/IssueManageApi';
+import { humanizeDuration } from '../../../common/utils';
 import './ExportSide.scss';
 
 const { Sidebar } = Modal;
 const { AppState } = stores;
-function humanizeDuration(seconds) {
-  let result = '';
-  if (seconds) {
-    /** eslint-disable no-constant-condition */
-    if ((result = Math.round(seconds / (60 * 60 * 24 * 30 * 12))) > 0) { // year
-      result = `${result} 年`;
-    } else if ((result = Math.round(seconds / (60 * 60 * 24 * 30))) > 0) { // months
-      result = `${result} 月`;
-    } else if ((result = Math.round(seconds / (60 * 60 * 24))) > 0) { // days
-      result = `${result} 天`;
-    } else if ((result = Math.round(seconds / (60 * 60))) > 0) { // Hours
-      result = `${result} 小时`;
-    } else if ((result = Math.round(seconds / (60))) > 0) { // minute
-      result = `${result} 分钟`;
-    } else if ((result = Math.round(seconds)) > 0) { // second
-      result = `${result} 秒`;
-    } else {
-      result = `${seconds} 毫秒`;
-    }
-  }
-  return result;
-}
+
 class ExportSide extends Component {
   state = {
     loading: true,
@@ -111,8 +91,9 @@ class ExportSide extends Component {
   }
 
   handleDownload = (record) => {
-    const { fileUrl, status } = record;
+    const { fileUrl, status, id } = record;
     if (status === 3) {
+      exportRetry(id);
       return;
     }
     if (fileUrl) {

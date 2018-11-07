@@ -301,6 +301,28 @@ export function color2rgba(color, alpha = 1) {
   const b = parseInt(color.slice(5, 7), 16);
   return `rgba(${r},${g},${b},${alpha})`;
 }
+export function humanizeDuration(seconds) {
+  let result = '';
+  if (seconds) {
+    /** eslint-disable no-constant-condition */
+    if ((result = Math.round(seconds / (60 * 60 * 24 * 30 * 12))) > 0) { // year
+      result = `${result}年`;
+    } else if ((result = Math.round(seconds / (60 * 60 * 24 * 30))) > 0) { // months
+      result = `${result}月`;
+    } else if ((result = Math.round(seconds / (60 * 60 * 24))) > 0) { // days
+      result = `${result}天`;
+    } else if ((result = Math.round(seconds / (60 * 60))) > 0) { // Hours
+      result = `${result}小时`;
+    } else if ((result = Math.round(seconds / (60))) > 0) { // minute
+      result = `${result}分钟`;
+    } else if ((result = Math.round(seconds)) > 0) { // second
+      result = `${result}秒`;
+    } else {
+      result = `${seconds}毫秒`;
+    }
+  }
+  return result;
+}
 export const getProjectId = () => AppState.currentMenuType.id;
 export const getOrganizationId = () => AppState.currentMenuType.organizationId;
 

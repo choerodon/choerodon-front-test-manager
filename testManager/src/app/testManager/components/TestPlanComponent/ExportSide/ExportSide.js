@@ -9,7 +9,7 @@ import FileSaver from 'file-saver';
 import moment from 'moment';
 import { SelectVersion, SelectFolder, SimpleSelect } from '../../CommonComponent';
 import {
-  exportIssues, exportIssuesFromVersion, exportIssuesFromFolder, getExportList, getFoldersByCycleId,
+  getCyclesByVersionId, getExportList, getFoldersByCycleId,
 } from '../../../api/cycleApi';
 import './ExportSide.scss';
 
@@ -94,22 +94,22 @@ class ExportSide extends Component {
     });
   }
 
-  createExport = () => {
-    const { versionId, folderId } = this.state;
-    if (folderId) {
-      exportIssuesFromFolder(folderId).then((data) => {
+  // createExport = () => {
+  //   const { versionId, folderId } = this.state;
+  //   if (folderId) {
+  //     exportIssuesFromFolder(folderId).then((data) => {
 
-      });
-    } else if (versionId) {
-      exportIssuesFromVersion(versionId).then((data) => {
+  //     });
+  //   } else if (versionId) {
+  //     exportIssuesFromVersion(versionId).then((data) => {
 
-      });
-    } else {
-      exportIssues().then((data) => {
+  //     });
+  //   } else {
+  //     exportIssues().then((data) => {
 
-      });
-    }
-  }
+  //     });
+  //   }
+  // }
 
   handleDownload = (fileUrl) => {
     if (fileUrl) {
@@ -236,7 +236,7 @@ class ExportSide extends Component {
                 label="测试循环"
                 value={cycleId}
                 allowClear
-                request={() => getFoldersByCycleId(versionId)}
+                request={() => getCyclesByVersionId(versionId)}
                 onChange={this.handleCycleChange}
                 option={{ value: 'cycleId', text: 'cycleName' }}
               />
