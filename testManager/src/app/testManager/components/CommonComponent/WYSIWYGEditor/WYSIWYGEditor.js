@@ -93,7 +93,7 @@ class WYSIWYGEditor extends Component {
             >
               <Button
                 type="primary"
-                onClick={() => this.props.handleDelete()}
+                onClick={() => this.props.handleDelete && this.props.handleDelete()}
               >
                 {Choerodon.getMessage('取消', 'Cancle')}
               </Button>

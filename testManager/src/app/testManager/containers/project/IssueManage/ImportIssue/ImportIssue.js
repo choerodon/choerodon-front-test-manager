@@ -20,7 +20,6 @@ class ImportIssue extends Component {
   state = {
     visible: false,
     uploading: false,
-    importing: false,
     progress: 0,
     importRecord: null,
     file: null,
@@ -57,10 +56,10 @@ class ImportIssue extends Component {
       uploading: true,
     });
     importIssue(formData, version).then(() => {
+      this.uploadInput.value = '';
       this.setState({
         file: null,
         uploading: false,
-        importing: true,
         visible: false,
       });
     }).catch(() => {
@@ -77,8 +76,6 @@ class ImportIssue extends Component {
     const lastTime = moment(lastUpdateDate);
 
     const diff = lastTime.diff(startTime);
-
-    console.log(diff);
     return creationDate && lastUpdateDate
       ? humanizeDuration(diff / 1000)
       : null;
@@ -154,19 +151,20 @@ class ImportIssue extends Component {
 
   handleMessage = (data) => {
     console.log(data);
-    const { rate, status } = data;
+    const { rate } = data;
 
     this.setState({
-      progress: rate.toFixed(1),
-      importing: status === 1,
+      progress: rate.toFixed(1),  
       importRecord: data,
     });
   }
 
   render() {
     const {
-      visible, uploading, importing, file, version,
+      visible, uploading, file, version, importRecord,
     } = this.state;
+    const { status } = importRecord || {};
+    const importing = status === 1;
     return (
       <Page className="c7ntest-Issue c7ntest-region">
         <Header
