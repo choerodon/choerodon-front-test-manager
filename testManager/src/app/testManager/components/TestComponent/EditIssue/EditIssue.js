@@ -7,9 +7,7 @@ import {
 } from 'choerodon-ui';
 import './EditIssue.scss';
 import '../../../assets/main.scss';
-import {
-  UploadButtonNow, ReadAndEdit, IssueDescription,
-} from '../CommonComponent';
+import { UploadButtonNow, IssueDescription } from '../CommonComponent';
 import { TextEditToggle, User } from '../../CommonComponent';
 import {
   delta2Html, handleFileUpload, text2Delta, beforeTextUpload, formatDate, returnBeforeTextUpload,
@@ -19,7 +17,7 @@ import {
   createCommit, deleteIssue, loadStatus, cloneIssue, getIssueSteps, getIssueExecutes,
 } from '../../../api/IssueManageApi';
 import { getLabels, getPrioritys, getModules } from '../../../api/agileApi';
-import { getSelf, getUsers, getUser } from '../../../api/IamApi';
+import { getUsers } from '../../../api/IamApi';
 import { FullEditor, WYSIWYGEditor } from '../../CommonComponent';
 import CreateLinkTask from '../CreateLinkTask';
 import UserHead from '../UserHead';
@@ -40,77 +38,56 @@ let sign = true;
 let filterSign = false;
 const { Text, Edit } = TextEditToggle;
 class EditIssueNarrow extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      issueLoading: false,
-      flag: undefined,
-      selectLoading: true,
-      edit: false,
-      addCommit: false,
-      addCommitDes: '',
-      createLinkTaskShow: false,
+  state = {
+    // 子组件显示控制
+    issueLoading: false,
+    selectLoading: true,
+    FullEditorShow: false,
+    createLinkTaskShow: false,
+    editDescriptionShow: false,
+    addCommit: false,
 
-      editDesShow: false,
-      origin: {},
-      nav: 'detail',
-      editDes: undefined,
-      currentRae: undefined,
-      issueId: undefined,
-      assigneeId: undefined,
-      assigneeName: '',
-      assigneeImageUrl: undefined,
-      epicId: undefined,
-      estimateTime: undefined,
-      remainingTime: undefined,
-      epicName: '',
-      issueNum: undefined,
-      issueTypeDTO: {},
-      parentIssueId: undefined,
+    addCommitDes: '',
 
-      reporterId: undefined,
-      reporterImageUrl: undefined,
-      sprintId: undefined,
-      sprintName: '',
-      statusId: undefined,
-      statusCode: undefined,
-      storyPoints: undefined,
-      creationDate: undefined,
-      lastUpdateDate: undefined,
-      statusName: '',
-      priorityDTO: null,
-      reporterName: '',
-      summary: '',
-      description: '',
-      versionIssueRelDTOList: [],
-      componentIssueRelDTOList: [],
-      activeSprint: {},
-      closeSprint: [],
-      datalogs: [],
-      fileList: [],
-      testStepData: [],
-      testExecute: [],
-      branchs: {},
-      issueCommentDTOList: [],
-      issueLinkDTOList: [],
-      labelIssueRelDTOList: [],
-      subIssueDTOList: [],
-      linkIssues: [],
-      fixVersions: [],
-      influenceVersions: [],
-      fixVersionsFixed: [],
-      influenceVersionsFixed: [],
+    origin: {},
+    nav: 'detail',
+    // issue信息
 
-      originStatus: [],
-      originpriorities: [],
-      originComponents: [],
+    issueInfo: {},
 
-      originLabels: [],
-      originUsers: [],
+    issueId: undefined,
+    assigneeId: undefined,
+    assigneeName: '',
+    assigneeImageUrl: undefined,
+    issueNum: undefined,
+    issueTypeDTO: {},
+    reporterId: undefined,
+    reporterImageUrl: undefined,
+    creationDate: undefined,
+    lastUpdateDate: undefined,
+    priorityDTO: null,
+    reporterName: '',
+    summary: '',
+    description: '',
+    componentIssueRelDTOList: [],
+    datalogs: [],
+    fileList: [],
+    testStepData: [],
+    issueCommentDTOList: [],
+    labelIssueRelDTOList: [],
+    linkIssues: [],
+    fixVersions: [],
+    fixVersionsFixed: [],
+
+    StatusList: [],
+    priorityList: [],
+    componentList: [],
+    labelList: [],
+    userList: [],
 
 
-    };
   }
+
 
   componentDidMount() {
     if (this.props.onRef) {
@@ -131,9 +108,6 @@ class EditIssueNarrow extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.issueId !== this.props.issueId) {
-      this.setState({
-        currentRae: undefined,
-      });
       this.reloadIssue(nextProps.issueId);
     }
   }
@@ -144,8 +118,8 @@ class EditIssueNarrow extends Component {
   onChangeFileList = (arr) => {
     if (arr.length > 0 && arr.some(one => !one.url)) {
       const config = {
-        issueType: this.state.origin.typeCode,
-        issueId: this.state.origin.issueId,
+        issueType: this.state.typeCode,
+        issueId: this.state.issueId,
         fileName: arr[0].name || 'AG_ATTACHMENT',
         projectId: AppState.currentMenuType.id,
       };
@@ -161,45 +135,30 @@ class EditIssueNarrow extends Component {
     this.reloadIssue();
   }
 
-  setAnIssueToState = (issue = this.state.origin) => {
+  setAnIssueToState = (issue = this.state) => {
     const {
-      activeSprint,
       assigneeId,
       assigneeName,
       assigneeImageUrl,
-      closeSprint,
       componentIssueRelDTOList,
       creationDate,
       description,
-      epicId,
-      epicName,
-      epicColor,
-      estimateTime,
       issueCommentDTOList,
       issueId,
-      issueLinkDTOList,
       issueNum,
       labelIssueRelDTOList,
       lastUpdateDate,
-      objectVersionNumber,
-      parentIssueId,
-      parentIssueNum,
       priorityDTO,
-      projectId,
-      remainingTime,
       reporterId,
       reporterName,
       reporterImageUrl,
-      sprintId,
-      sprintName,
       statusMapDTO,
-      storyPoints,
       summary,
       issueTypeDTO,
       versionIssueRelDTOList,
-      subIssueDTOList,
+      issueAttachmentDTOList,
     } = issue;
-    const fileList = _.map(issue.issueAttachmentDTOList, issueAttachment => ({
+    const fileList = _.map(issueAttachmentDTOList, issueAttachment => ({
       uid: issueAttachment.attachmentId,
       name: issueAttachment.fileName,
       url: issueAttachment.url,
@@ -207,54 +166,30 @@ class EditIssueNarrow extends Component {
     const fixVersionsTotal = _.filter(versionIssueRelDTOList, { relationType: 'fix' }) || [];
     const fixVersionsFixed = _.filter(fixVersionsTotal, { statusCode: 'archived' }) || [];
     const fixVersions = _.filter(fixVersionsTotal, v => v.statusCode !== 'archived') || [];
-    const influenceVersionsTotal = _.filter(versionIssueRelDTOList, { relationType: 'influence' }) || [];
-    const influenceVersionsFixed = _.filter(influenceVersionsTotal, { statusCode: 'archived' }) || [];
-    const influenceVersions = _.filter(influenceVersionsTotal, v => v.statusCode !== 'archived') || [];
+
     this.setState({
-      origin: issue,
-      activeSprint: activeSprint || {},
-      assigneeId,
-      assigneeName,
-      assigneeImageUrl,
-      closeSprint,
-      componentIssueRelDTOList,
-      creationDate,
-      editDes: description,
-      description,
-      epicId,
-      epicName,
-      epicColor,
-      estimateTime,
-      fileList,
-      issueCommentDTOList,
-      issueId,
-      issueLinkDTOList,
-      issueNum,
-      labelIssueRelDTOList,
-      lastUpdateDate,
-      objectVersionNumber,
-      parentIssueId,
-      parentIssueNum,
-      priorityDTO,
-      priorityId: priorityDTO.id,
-      priorityName: priorityDTO.name,
-      priorityColor: priorityDTO.colour,
-      projectId,
-      remainingTime,
-      reporterId,
-      reporterName,
-      reporterImageUrl,
-      sprintId,
-      sprintName,
-      statusMapDTO,
-      summary,
-      issueTypeDTO,
-      versionIssueRelDTOList,
-      subIssueDTOList,
-      fixVersions,
-      influenceVersions,
-      fixVersionsFixed,
-      influenceVersionsFixed,
+      issueInfo: issue,
+      // assigneeId,
+      // assigneeName,
+      // assigneeImageUrl,
+      // componentIssueRelDTOList,
+      // creationDate,
+      // description,
+      // fileList,
+      // issueCommentDTOList,
+      // issueId,
+      // issueNum,
+      // labelIssueRelDTOList,
+      // lastUpdateDate,
+      // priorityDTO,
+      // reporterId,
+      // reporterName,
+      // reporterImageUrl,
+      // statusMapDTO,
+      // summary,
+      // issueTypeDTO,
+      // fixVersions,
+      // fixVersionsFixed,
       issueLoading: false,
     });
   }
@@ -295,7 +230,7 @@ class EditIssueNarrow extends Component {
       });
       getUsers(input).then((res) => {
         this.setState({
-          originUsers: res.content,
+          userList: res.content,
           selectLoading: false,
         });
       });
@@ -318,52 +253,17 @@ class EditIssueNarrow extends Component {
     });
     getUsers(input).then((res) => {
       this.setState({
-        originUsers: res.content,
+        userList: res.content,
         selectLoading: false,
       });
     });
   }, 500);
 
-  resetAssigneeId(value) {
-    this.setState({ assigneeId: value });
-  }
-
-  resetReporterId(value) {
-    this.setState({ reporterId: value });
-  }
-
-
-  resetPriorityId(value) {
-    this.setState({ priorityId: value });
-  }
-
-  resetStatusId(value) {
-    this.setState({ statusId: value });
-  }
-
-
-  resetComponentIssueRelDTOList(value) {
-    this.setState({ componentIssueRelDTOList: value });
-  }
-
-  resetInfluenceVersions(value) {
-    this.setState({ influenceVersions: value });
-  }
-
-
-  resetlabelIssueRelDTOList(value) {
-    this.setState({ labelIssueRelDTOList: value });
-  }
-
-
-  reloadIssue(issueId = this.state.origin.issueId) {
+  reloadIssue(issueId = this.state.issueId) {
     this.setState({
       addCommit: false,
       addCommitDes: '',
-      editDesShow: undefined,
-      editDes: undefined,
-
-
+      editDescriptionShow: undefined,
       issueLoading: true,
     }, () => {
       loadIssue(issueId).then((res) => {
@@ -390,64 +290,9 @@ class EditIssueNarrow extends Component {
         });
       });
       this.setState({
-        editDesShow: false,
+        editDescriptionShow: false,
       });
     });
-  }
-
-  updateIssue = (pro) => {
-    const {
-      origin,
-      issueId,
-      transformId,
-    } = this.state;
-    const obj = {
-      issueId,
-      objectVersionNumber: origin.objectVersionNumber,
-    };
-    if ((pro === 'description') || (pro === 'editDes')) {
-      if (this.state[pro]) {
-        returnBeforeTextUpload(this.state[pro], obj, updateIssue, 'description')
-          .then((res) => {
-            this.reloadIssue(this.state.origin.issueId);
-          });
-      }
-    } else if (pro === 'assigneeId' || pro === 'reporterId') {
-      obj[pro] = this.state[pro] ? JSON.parse(this.state[pro]).id || 0 : 0;
-      updateIssue(obj)
-        .then((res) => {
-          this.reloadIssue();
-          if (this.props.onUpdate) {
-            this.props.onUpdate();
-          }
-        });
-    } else if (pro === 'storyPoints' || pro === 'remainingTime') {
-      obj[pro] = this.state[pro] === '' ? null : this.state[pro];
-      updateIssue(obj)
-        .then((res) => {
-          this.reloadIssue();
-          if (this.props.onUpdate) {
-            this.props.onUpdate();
-          }
-        });
-    } else if (pro === 'statusId') {
-      updateStatus(transformId, issueId, origin.objectVersionNumber)
-        .then((res) => {
-          this.reloadIssue();
-          if (this.props.onUpdate) {
-            this.props.onUpdate();
-          }
-        });
-    } else {
-      obj[pro] = this.state[pro] || 0;
-      updateIssue(obj)
-        .then((res) => {
-          this.reloadIssue();
-          if (this.props.onUpdate) {
-            this.props.onUpdate();
-          }
-        });
-    }
   }
 
   /**
@@ -473,115 +318,80 @@ class EditIssueNarrow extends Component {
    * @memberof EditIssueNarrow
    */
   editIssue = (newValue) => {
-    const { originComponents, originLabels } = this.state;
+    const key = Object.keys(newValue)[0];
+    const value = newValue[key];
+    const {
+      issueId, objectVersionNumber, StatusList, componentList, labelList, 
+    } = this.state;
     let issue = {
-      issueId: this.state.issueId,
-      objectVersionNumber: this.state.origin.objectVersionNumber,
+      issueId,
+      objectVersionNumber,
     };
-    if (newValue.statusId) {
-      const targetStatus = _.find(this.state.originStatus, { endStatusId: newValue.statusId });
-      if (targetStatus) {
-        updateStatus(targetStatus.id, issue.issueId, issue.objectVersionNumber)
+    switch (key) {
+      case 'statusId': {
+        const targetStatus = _.find(StatusList, { endStatusId: value });
+        if (targetStatus) {
+          updateStatus(targetStatus.id, issue.issueId, issue.objectVersionNumber)
+            .then((res) => {
+              this.reloadIssue();
+              if (this.props.onUpdate) {
+                this.props.onUpdate();
+              }
+            });
+        }
+        break;
+      }
+      case 'componentIssueRelDTOList': {
+        issue.componentIssueRelDTOList = this.prepareMutilSelectValueBeforeSubmit(value, componentList, 'name');
+        updateIssue(issue)
           .then((res) => {
             this.reloadIssue();
             if (this.props.onUpdate) {
               this.props.onUpdate();
             }
           });
+        break;
       }
-    } else if (newValue.componentIssueRelDTOList) {
-      issue.componentIssueRelDTOList = this.prepareMutilSelectValueBeforeSubmit(newValue.componentIssueRelDTOList, originComponents, 'name');
-      updateIssue(issue)
-        .then((res) => {
-          this.reloadIssue();
-          if (this.props.onUpdate) {
-            this.props.onUpdate();
-          }
-        });
-    } else if (newValue.labelIssueRelDTOList) {
-      issue.labelIssueRelDTOList = this.prepareMutilSelectValueBeforeSubmit(newValue.labelIssueRelDTOList, originLabels, 'labelName');
-      updateIssue(issue)
-        .then((res) => {
-          this.reloadIssue();
-          if (this.props.onUpdate) {
-            this.props.onUpdate();
-          }
-        });
-    } else {
-      issue = { ...issue, ...newValue };
-      updateIssue(issue)
-        .then((res) => {
-          this.reloadIssue();
-          if (this.props.onUpdate) {
-            this.props.onUpdate();
-          }
-        });
-    }
-  }
-
-  updateIssueSelect = (originPros, pros) => {
-    const obj = {
-      issueId: this.state.issueId,
-      objectVersionNumber: this.state.origin.objectVersionNumber,
-    };
-    const origin = this.state[originPros];
-    let target;
-    let transPros;
-    if (originPros === 'originLabels') {
-      if (!this.state[pros].length) {
-        transPros = [];
-      } else if (typeof this.state[pros][0] !== 'string') {
-        transPros = this.transToArr(this.state[pros], 'labelName', 'array');
-      } else {
-        transPros = this.state[pros];
+      case 'labelIssueRelDTOList': {
+        issue.labelIssueRelDTOList = this.prepareMutilSelectValueBeforeSubmit(value, labelList, 'labelName');
+        updateIssue(issue)
+          .then((res) => {
+            this.reloadIssue();
+            if (this.props.onUpdate) {
+              this.props.onUpdate();
+            }
+          });
+        break;
       }
-    } else if (!this.state[pros].length) {
-      transPros = [];
-    } else if (typeof this.state[pros][0] !== 'string') {
-      transPros = this.transToArr(this.state[pros], 'name', 'array');
-    } else {
-      transPros = this.state[pros];
-    }
-    const out = _.map(transPros, (pro) => {
-      if (origin.length && origin[0].name) {
-        target = _.find(origin, { name: pro });
-      } else {
-        target = _.find(origin, { labelName: pro });
-      }
-      // const target = _.find(origin, { name: pro });
-      if (target) {
-        return target;
-      } else if (originPros === 'originLabels') {
-        return ({
-          labelName: pro,
-          // created: true,
-          projectId: AppState.currentMenuType.id,
-        });
-      } else {
-        return ({
-          name: pro,
-          // created: true,
-          projectId: AppState.currentMenuType.id,
-        });
-      }
-    });
-    obj[pros] = out;
-    updateIssue(obj)
-      .then((res) => {
-        this.reloadIssue();
-        if (this.props.onUpdate) {
-          this.props.onUpdate();
+      case 'description': {
+        if (value) {
+          returnBeforeTextUpload(value, issue, updateIssue, 'description')
+            .then((res) => {
+              this.reloadIssue();
+            });
         }
-      });
+        break;
+      }
+      default: {
+        issue = { ...issue, ...newValue };
+        updateIssue(issue)
+          .then((res) => {
+            this.reloadIssue();
+            if (this.props.onUpdate) {
+              this.props.onUpdate();
+            }
+          });
+        break;
+      }
+    }
   }
-
 
   /**
    * Comment
    */
   handleCreateCommit() {
     const extra = {
-      issueId: this.state.origin.issueId,
+      issueId: this.state.issueId,
     };
     const { addCommitDes } = this.state;
     if (addCommitDes) {
@@ -653,7 +463,7 @@ class EditIssueNarrow extends Component {
         this.setState({
           issueLoading: true,
         });
-        cloneIssue(this.state.origin.issueId, copyConditionDTO).then((res) => {
+        cloneIssue(this.state.issueId, copyConditionDTO).then((res) => {
           this.handleCopyIssue();
         }).catch((err) => {
           this.setState({
@@ -665,17 +475,11 @@ class EditIssueNarrow extends Component {
         break;
       }
       case 'item_1': {
-        this.handleDeleteIssue(this.state.origin.issueId);
+        this.handleDeleteIssue(this.state.issueId);
         break;
       }
       default: break;
     }
-  }
-
-  changeRae(currentRae) {
-    this.setState({
-      currentRae,
-    });
   }
 
   handleDeleteIssue = (issueId) => {
@@ -684,18 +488,11 @@ class EditIssueNarrow extends Component {
     confirm({
       width: 560,
       title: `删除测试用例${this.state.issueNum}`,
-      content:
-        <div style={{ marginBottom: 32 }}>
-          <p style={{ marginBottom: 10 }}>请确认您要删除这个测试用例。</p>
-          <p style={{ marginBottom: 10 }}>这个测试用例将会被彻底删除。包括所有步骤和相关执行。</p>
-        </div>,
-      onOk() {
-        return deleteIssue(issueId)
-          .then((res) => {
-            that.props.onDeleteIssue();
-          });
-      },
-      onCancel() { },
+      content: '这个测试用例将会被彻底删除。包括所有步骤和相关执行',
+      onOk: () => deleteIssue(issueId)
+        .then((res) => {
+          this.props.onDeleteIssue();
+        }),
       okText: '删除',
       okType: 'danger',
     });
@@ -784,10 +581,10 @@ class EditIssueNarrow extends Component {
         //   const { type, id: projectId, name } = menu;
         //   this.props.history.push(`/agile/issue?
         // type=${type}&id=${projectId}&name=${name}&paramIssueId=${linkedIssueId}`);
-        //   // this.reloadIssue(issueId === this.state.origin.issueId ? linkedIssueId : issueId);
+        //   // this.reloadIssue(issueId === this.state.issueId ? linkedIssueId : issueId);
         // }}
         onRefresh={() => {
-          this.reloadIssue(this.state.origin.issueId);
+          this.reloadIssue(this.state.issueId);
         }}
       />
 
@@ -795,42 +592,41 @@ class EditIssueNarrow extends Component {
   }
 
   /**
-   * Des
+   * 用例描述
+   *
+   * @returns
+   * @memberof EditIssueNarrow
    */
-  renderDes() {
+  renderDescription() {
+    const { description, editDescriptionShow } = this.state;
     let delta;
-    if (this.state.editDesShow === undefined) {
+    if (editDescriptionShow === undefined) {
       return null;
     }
-    if (!this.state.description || this.state.editDesShow) {
-      delta = text2Delta(this.state.editDes);
+    if (!description || editDescriptionShow) {
+      delta = text2Delta(description);
       return (
         <div className="line-start mt-10">
           <WYSIWYGEditor
             bottomBar
-            value={text2Delta(this.state.editDes)}
+            value={text2Delta(description)}
             style={{ height: 200, width: '100%' }}
-            onChange={(value) => {
-              this.setState({ editDes: value });
-            }}
             handleDelete={() => {
               this.setState({
-                editDesShow: false,
-                editDes: this.state.description,
+                editDescriptionShow: false,
               });
             }}
-            handleSave={() => {
+            handleSave={(value) => {
               this.setState({
-                editDesShow: false,
-                description: this.state.editDes || '',
+                editDescriptionShow: false,
               });
-              this.updateIssue('editDes');
+              this.editIssue({ description: value });
             }}
           />
         </div>
       );
     } else {
-      delta = delta2Html(this.state.description);
+      delta = delta2Html(description);
       return (
         <div className="c7ntest-content-wrapper">
           <div
@@ -838,8 +634,7 @@ class EditIssueNarrow extends Component {
             role="none"
             onClick={() => {
               this.setState({
-                // editDesShow: true,
-                // editDes: this.state.description,
+                editDescriptionShow: true,
               });
             }}
           >
@@ -850,40 +645,27 @@ class EditIssueNarrow extends Component {
     }
   }
 
-  loadIssueStatus = () => {
-    const {
-      issueTypeDTO,
-      issueId,
-      origin,
-    } = this.state;
-    const typeId = issueTypeDTO.id;
-    this.setAnIssueToState();
-    loadStatus(origin.statusId, issueId, typeId).then((res) => {
-      this.setState({
-        originStatus: res,
-        selectLoading: false,
-      });
-    });
-  }
-
+  /**
+   * 加载可以转换的状态
+   *
+   * @memberof EditIssueNarrow
+   */
   loadTransformsByStatusId = (statusId) => {
     const {
       issueTypeDTO,
       issueId,
-      origin,
     } = this.state;
     const typeId = issueTypeDTO.id;
-    // this.setAnIssueToState();
     loadStatus(statusId, issueId, typeId).then((res) => {
       this.setState({
-        originStatus: res,
+        StatusList: res,
         selectLoading: false,
       });
     });
   }
 
   createIssueStep = () => {
-    const issueId = this.state.origin.issueId;
+    const issueId = this.state.issueId;
     const lastRank = this.state.testStepData.length
       ? this.state.testStepData[this.state.testStepData.length - 1].rank : null;
     const testCaseStepDTO = {
@@ -900,8 +682,13 @@ class EditIssueNarrow extends Component {
     });
   }
 
+  /**
+   *用例状态更改
+   *
+   * @memberof EditIssueNarrow
+   */
   renderSelectStatus = () => {
-    const { originStatus, statusMapDTO } = this.state;
+    const { StatusList, statusMapDTO } = this.state;
     const {
       name: statusName, id: statusId, colour: statusColor, icon: statusIcon,
     } = statusMapDTO || {};
@@ -910,12 +697,12 @@ class EditIssueNarrow extends Component {
         style={{ width: '100%' }}
         formKey="statusId"
         onSubmit={(value) => { this.editIssue({ statusId: value }); }}
-        originData={originStatus.length
+        originData={StatusList.length
           ? statusId : statusName}
       >
         <Text>
           {(data) => {
-            const targetStatus = _.find(originStatus, { endStatusId: data });
+            const targetStatus = _.find(StatusList, { endStatusId: data });
             return (
               <div>
                 {
@@ -940,10 +727,10 @@ class EditIssueNarrow extends Component {
             style={{ width: 150 }}
             loading={this.state.selectLoading}
             autoFocus
-            onFocus={() => { this.loadIssueStatus(statusId); }}
+            onFocus={() => { this.loadTransformsByStatusId(statusId); }}
           >
             {
-              originStatus.map(transform => (
+              StatusList.map(transform => (
                 <Option key={transform.id} value={transform.endStatusId}>
                   {transform.statusDTO.name}
                 </Option>
@@ -955,10 +742,15 @@ class EditIssueNarrow extends Component {
     );
   }
 
+  /**
+   *用例优先级更改
+   *
+   * @memberof EditIssueNarrow
+   */
   renderSelectPriority = () => {
-    const { priorityDTO, originpriorities } = this.state;
+    const { priorityDTO, priorityList } = this.state;
     const { name: priorityName, id: priorityId, colour: priorityColor } = priorityDTO || {};
-    const priorityOptions = originpriorities.map(priority => (
+    const priorityOptions = priorityList.map(priority => (
       <Option key={priority.id} value={priority.id}>
         <div style={{ display: 'inline-flex', alignItems: 'center', padding: '2px' }}>
           <PriorityTag priority={priority} />
@@ -970,12 +762,12 @@ class EditIssueNarrow extends Component {
         style={{ width: '100%' }}
         formKey="priorityId"
         onSubmit={(value) => { this.editIssue({ priorityId: value }); }}
-        originData={originpriorities.length
+        originData={priorityList.length
           ? priorityId : priorityName}
       >
         <Text>
           {(data) => {
-            const targetPriority = _.find(originpriorities, { id: data });
+            const targetPriority = _.find(priorityList, { id: data });
             return (
               <div>
                 {
@@ -998,7 +790,7 @@ class EditIssueNarrow extends Component {
               });
               getPrioritys().then((res) => {
                 this.setState({
-                  originpriorities: res,
+                  priorityList: res,
                   selectLoading: false,
                 });
               });
@@ -1011,8 +803,13 @@ class EditIssueNarrow extends Component {
     );
   }
 
+  /**
+   *模块更改
+   *
+   * @memberof EditIssueNarrow
+   */
   renderSelectModule = () => {
-    const { componentIssueRelDTOList, originComponents, selectLoading } = this.state;
+    const { componentIssueRelDTOList, componentList, selectLoading } = this.state;
     return (
       <TextEditToggle
         style={{ width: '100%' }}
@@ -1043,13 +840,13 @@ class EditIssueNarrow extends Component {
               });
               getModules().then((res) => {
                 this.setState({
-                  originComponents: res,
+                  componentList: res,
                   selectLoading: false,
                 });
               });
             }}
           >
-            {originComponents.map(component => (
+            {componentList.map(component => (
               <Option
                 key={component.name}
                 value={component.name}
@@ -1063,8 +860,13 @@ class EditIssueNarrow extends Component {
     );
   }
 
+  /**
+   *标签更改
+   *
+   * @memberof EditIssueNarrow
+   */
   renderSelectLabel = () => {
-    const { labelIssueRelDTOList, originLabels, selectLoading } = this.state;
+    const { labelIssueRelDTOList, labelList, selectLoading } = this.state;
     return (
       <TextEditToggle
         style={{ width: '100%' }}
@@ -1113,13 +915,13 @@ class EditIssueNarrow extends Component {
               });
               getLabels().then((res) => {
                 this.setState({
-                  originLabels: res,
+                  labelList: res,
                   selectLoading: false,
                 });
               });
             }}
           >
-            {originLabels.map(label => (
+            {labelList.map(label => (
               <Option
                 key={label.labelName}
                 value={label.labelName}
@@ -1133,11 +935,16 @@ class EditIssueNarrow extends Component {
     );
   }
 
+  /**
+   *报告人更改
+   *
+   * @memberof EditIssueNarrow
+   */
   renderSelectPerson = (type) => {
     const {
-      originUsers, reporterId, reporterName, reporterImageUrl, selectLoading,
+      userList, reporterId, reporterName, reporterImageUrl, selectLoading,
     } = this.state;
-    const userOptions = originUsers.map(user => (
+    const userOptions = userList.map(user => (
       <Option key={user.id} value={user.id}>
         <User user={user} />
       </Option>
@@ -1146,7 +953,7 @@ class EditIssueNarrow extends Component {
       <TextEditToggle
         formKey="reporterId"
         onSubmit={(id) => { this.editIssue({ reporterId: id || 0 }); }}
-        originData={originUsers.length > 0 ? reporterId : (
+        originData={userList.length > 0 ? reporterId : (
           <UserHead
             user={{
               id: reporterId,
@@ -1159,8 +966,8 @@ class EditIssueNarrow extends Component {
       >
         <Text>
           {(data) => {
-            if (originUsers.length > 0) {
-              const targetUser = _.find(originUsers, { id: data });
+            if (userList.length > 0) {
+              const targetUser = _.find(userList, { id: data });
               return targetUser ? (
                 <User user={targetUser} />
               ) : '无';
@@ -1190,7 +997,7 @@ class EditIssueNarrow extends Component {
               });
               getUsers(value).then((res) => {
                 this.setState({
-                  originUsers: res.content,
+                  userList: res.content,
                   selectLoading: false,
                 });
               });
@@ -1203,7 +1010,7 @@ class EditIssueNarrow extends Component {
               });
               getUsers().then((res) => {
                 this.setState({
-                  originUsers: res.content,
+                  userList: res.content,
                   selectLoading: false,
                 });
               });
@@ -1216,11 +1023,16 @@ class EditIssueNarrow extends Component {
     );
   }
 
+  /**
+   *指派人更改
+   *
+   * @memberof EditIssueNarrow
+   */
   renderSelectAssign = () => {
     const {
-      originUsers, assigneeId, assigneeName, assigneeImageUrl, selectLoading,
+      userList, assigneeId, assigneeName, assigneeImageUrl, selectLoading,
     } = this.state;
-    const userOptions = originUsers.map(user => (
+    const userOptions = userList.map(user => (
       <Option key={user.id} value={user.id}>
         <User user={user} />
       </Option>
@@ -1229,7 +1041,7 @@ class EditIssueNarrow extends Component {
       <TextEditToggle
         formKey="assigneeId"
         onSubmit={(id) => { this.editIssue({ assigneeId: id || 0 }); }}
-        originData={originUsers.length > 0 ? assigneeId : (
+        originData={userList.length > 0 ? assigneeId : (
           <UserHead
             user={{
               id: assigneeId,
@@ -1242,8 +1054,8 @@ class EditIssueNarrow extends Component {
       >
         <Text>
           {(data) => {
-            if (originUsers.length > 0) {
-              const targetUser = _.find(originUsers, { id: data });
+            if (userList.length > 0) {
+              const targetUser = _.find(userList, { id: data });
               return targetUser ? (
                 <User user={targetUser} />
               ) : '无';
@@ -1273,7 +1085,7 @@ class EditIssueNarrow extends Component {
               });
               getUsers(value).then((res) => {
                 this.setState({
-                  originUsers: res.content,
+                  userList: res.content,
                   selectLoading: false,
                 });
               });
@@ -1286,7 +1098,7 @@ class EditIssueNarrow extends Component {
               });
               getUsers().then((res) => {
                 this.setState({
-                  originUsers: res.content,
+                  userList: res.content,
                   selectLoading: false,
                 });
               });
@@ -1300,12 +1112,11 @@ class EditIssueNarrow extends Component {
   }
 
   render() {
-    const {
-      priorityDTO, priorityId, priorityName, priorityColor, originpriorities, originStatus, issueTypeDTO, statusMapDTO,
-    } = this.state;
+    const { priorityDTO, issueTypeDTO, statusMapDTO } = this.state;
     const {
       name: statusName, id: statusId, colour: statusColor, icon: statusIcon,
     } = statusMapDTO || {};
+    const { colour: priorityColor } = priorityDTO || {};
     const typeCode = issueTypeDTO ? issueTypeDTO.typeCode : '';
     const typeColor = issueTypeDTO ? issueTypeDTO.colour : '#fab614';
     const typeIcon = issueTypeDTO ? issueTypeDTO.icon : 'help';
@@ -1314,9 +1125,7 @@ class EditIssueNarrow extends Component {
     const {
       type, id: projectId, organizationId: orgId, name,
     } = menu;
-    const {
-      initValue, visible, onCancel, onOk, mode,
-    } = this.props;
+    const { mode } = this.props;
     const getMenu = () => (
       <Menu onClick={this.handleClickMenu.bind(this)}>
         {/* <Menu.Item key="add_worklog">
@@ -1332,15 +1141,6 @@ class EditIssueNarrow extends Component {
         </Permission>
       </Menu>
     );
-    const callback = (value) => {
-      this.setState({
-        description: value,
-        edit: false,
-      }, () => {
-        this.updateIssue('description');
-      });
-    };
-
     return (
       <div className="choerodon-modal-editIssue">
         {
@@ -1487,23 +1287,8 @@ class EditIssueNarrow extends Component {
                     height: 44,
                   }}
                 >
+                  {/* issueNum 用例编号 */}
                   <div style={{ fontSize: 16, lineHeight: '28px', fontWeight: 500 }}>
-                    {
-                      typeCode === 'sub_task' ? (
-                        <span>
-                          <span
-                            role="none"
-                            style={{ color: 'rgb(63, 81, 181)', cursor: 'pointer' }}
-                            onClick={() => {
-                              this.reloadIssue(this.state.parentIssueId);
-                            }}
-                          >
-                            {this.state.parentIssueNum}
-                          </span>
-                          <span style={{ paddingLeft: 10, paddingRight: 10 }}>/</span>
-                        </span>
-                      ) : null
-                    }
                     <span>{this.state.issueNum}</span>
                   </div>
                   <div
@@ -1756,18 +1541,7 @@ class EditIssueNarrow extends Component {
                                 marginBottom: 5,
                               }}
                               onClick={() => {
-                                getSelf().then((res) => {
-                                  if (res.id !== this.state.reporterId) {
-                                    this.setState({
-                                      currentRae: undefined,
-                                      reporterId: JSON.stringify(res),
-                                      reporterName: `${res.loginName}${res.realName}`,
-                                      reporterImageUrl: res.imageUrl,
-                                    }, () => {
-                                      this.updateIssue('reporterId');
-                                    });
-                                  }
-                                });
+                                this.editIssue({ reporterId: AppState.userInfo.id });
                               }}
                             >
                               <FormattedMessage id="issue_edit_assignToMe" />
@@ -1783,80 +1557,6 @@ class EditIssueNarrow extends Component {
                           </div>
                           <div className="c7ntest-value-wrapper" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
                             {this.renderSelectAssign()}
-                            {/* <ReadAndEdit
-                              style={{ marginBottom: 5 }}
-                              callback={this.changeRae.bind(this)}
-                              thisType="assigneeId"
-                              current={this.state.currentRae}
-                              origin={this.state.assigneeId}
-                              onOk={this.updateIssue.bind(this, 'assigneeId')}
-                              onCancel={this.resetAssigneeId.bind(this)}
-                              onInit={() => {
-                                this.setAnIssueToState(this.state.origin);
-                                if (this.state.assigneeId) {
-                                  this.setState({
-                                    flag: 'loading',
-                                  });
-                                  getUser(this.state.assigneeId).then((res) => {
-                                    this.setState({
-                                      assigneeId: JSON.stringify(res.content[0]),
-                                      originUsers: [res.content[0]],
-                                      flag: 'finish',
-                                    });
-                                  });
-                                } else {
-                                  this.setState({
-                                    assigneeId: undefined,
-                                    originUsers: [],
-                                  });
-                                }
-                              }}
-                              readModeContent={(
-                                <div>
-                                  {
-                                    this.state.assigneeId && this.state.assigneeName ? (
-                                      <UserHead
-                                        user={{
-                                          id: this.state.assigneeId,
-                                          loginName: '',
-                                          realName: this.state.assigneeName,
-                                          avatar: this.state.assigneeImageUrl,
-                                        }}
-                                      />
-                                    ) : '无'
-                                  }
-                                </div>
-                              )}
-                            >
-                              <Select
-                                value={this.state.flag === 'loading' ? undefined : this.state.assigneeId || undefined}
-                                style={{ width: 150 }}
-                                loading={this.state.selectLoading}
-                                allowClear
-                                autoFocus
-                                filter
-                                onFilterChange={this.onFilterChange.bind(this)}
-                                getPopupContainer={triggerNode => triggerNode.parentNode}
-                                onChange={(value) => {
-                                  this.setState({ assigneeId: value });
-                                }}
-                              >
-                                {this.state.originUsers.map(user => (
-                                  <Option key={JSON.stringify(user)} value={JSON.stringify(user)}>
-                                    <div style={{ display: 'inline-flex', alignItems: 'center', padding: '2px' }}>
-                                      <UserHead
-                                        user={{
-                                          id: user.id,
-                                          loginName: user.loginName,
-                                          realName: user.realName,
-                                          avatar: user.imageUrl,
-                                        }}
-                                      />
-                                    </div>
-                                  </Option>
-                                ))}
-                              </Select>
-                            </ReadAndEdit> */}
                             <span
                               role="none"
                               style={{
@@ -1867,18 +1567,7 @@ class EditIssueNarrow extends Component {
                                 marginBottom: 5,
                               }}
                               onClick={() => {
-                                getSelf().then((res) => {
-                                  if (res.id !== this.state.assigneeId) {
-                                    this.setState({
-                                      currentRae: undefined,
-                                      assigneeId: JSON.stringify(res),
-                                      assigneeName: `${res.loginName}${res.realName}`,
-                                      assigneeImageUrl: res.imageUrl,
-                                    }, () => {
-                                      this.updateIssue('assigneeId');
-                                    });
-                                  }
-                                });
+                                this.editIssue({ assigneeId: AppState.userInfo.id });
                               }}
                             >
                               <FormattedMessage id="issue_edit_assignToMe" />
@@ -1934,7 +1623,7 @@ class EditIssueNarrow extends Component {
                       }}
                       />
                       <div className="c7ntest-title-right" style={{ marginLeft: '14px', position: 'relative' }}>
-                        <Button className="leftBtn" funcType="flat" onClick={() => this.setState({ edit: true })}>
+                        <Button className="leftBtn" funcType="flat" onClick={() => this.setState({ FullEditorShow: true })}>
                           <Icon type="zoom_out_map icon" style={{ marginRight: 2 }} />
                           <span><FormattedMessage id="execute_edit_fullScreen" /></span>
                         </Button>
@@ -1945,18 +1634,17 @@ class EditIssueNarrow extends Component {
                           type="mode_edit mlr-3 pointer"
                           onClick={() => {
                             this.setState({
-                              editDesShow: true,
-                              editDes: this.state.description,
+                              editDescriptionShow: true,
                             });
                           }}
                         />
                       </div>
                     </div>
-                    {this.renderDes()}
+                    {this.renderDescription()}
                   </div>
 
                 </div>
-
+                {/* 测试步骤 */}
                 <div id="test1">
                   <div className="c7ntest-title-wrapper">
                     <div className="c7ntest-title-left">
@@ -1977,7 +1665,7 @@ class EditIssueNarrow extends Component {
                   <div className="c7ntest-content-wrapper" style={{ paddingLeft: 0 }}>
                     <TestStepTable
                       mode={mode}
-                      issueId={this.state.origin.issueId}
+                      issueId={this.state.issueId}
                       data={this.state.testStepData}
                       enterLoad={() => {
                         this.setState({
@@ -1995,7 +1683,7 @@ class EditIssueNarrow extends Component {
                     />
                   </div>
                 </div>
-
+                {/* 测试执行 */}
                 <div id="test2">
                   <div className="c7ntest-title-wrapper">
                     <div className="c7ntest-title-left">
@@ -2010,7 +1698,7 @@ class EditIssueNarrow extends Component {
                   <div className="c7ntest-content-wrapper" style={{ paddingLeft: 0 }}>
                     <TestExecuteTable
                       mode={mode}
-                      issueId={this.state.origin.issueId}
+                      issueId={this.state.issueId}
                       data={this.state.testExecuteData}
                       enterLoad={() => {
                         this.setState({
@@ -2029,7 +1717,7 @@ class EditIssueNarrow extends Component {
                   </div>
                 </div>
 
-
+                {/* 附件 */}
                 <div id="attachment">
                   <div className="c7ntest-title-wrapper">
                     <div className="c7ntest-title-left">
@@ -2050,7 +1738,7 @@ class EditIssueNarrow extends Component {
                     />
                   </div>
                 </div>
-
+                {/* 评论 */}
                 <div id="commit">
                   <div className="c7ntest-title-wrapper">
                     <div className="c7ntest-title-left">
@@ -2070,6 +1758,7 @@ class EditIssueNarrow extends Component {
                   </div>
                   {this.renderCommits()}
                 </div>
+                {/* 修改日志 */}
                 <div id="data_log">
                   <div className="c7ntest-title-wrapper">
                     <div className="c7ntest-title-left">
@@ -2084,47 +1773,48 @@ class EditIssueNarrow extends Component {
                   {this.renderDataLogs()}
                 </div>
 
-                {
-                  this.state.origin.typeCode !== 'sub_task' && (
-                    <div id="link_task">
-                      <div className="c7ntest-title-wrapper">
-                        <div className="c7ntest-title-left">
-                          <Icon type="link c7ntest-icon-title" />
-                          <FormattedMessage id="issue_edit_linkIssue" />
-                        </div>
-                        <div style={{
-                          flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px',
-                        }}
-                        />
-                        <div className="c7ntest-title-right" style={{ marginLeft: '14px' }}>
-                          <Button className="leftBtn" funcType="flat" onClick={() => this.setState({ createLinkTaskShow: true })}>
-                            <Icon type="playlist_add icon" />
-                            <FormattedMessage id="issue_edit_addLinkIssue" />
-                          </Button>
-                        </div>
-                      </div>
-                      {this.renderLinkIssues()}
+                {/* 关联用例 */}
+                <div id="link_task">
+                  <div className="c7ntest-title-wrapper">
+                    <div className="c7ntest-title-left">
+                      <Icon type="link c7ntest-icon-title" />
+                      <FormattedMessage id="issue_edit_linkIssue" />
                     </div>
-                  )
-                }
+                    <div style={{
+                      flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px',
+                    }}
+                    />
+                    <div className="c7ntest-title-right" style={{ marginLeft: '14px' }}>
+                      <Button className="leftBtn" funcType="flat" onClick={() => this.setState({ createLinkTaskShow: true })}>
+                        <Icon type="playlist_add icon" />
+                        <FormattedMessage id="issue_edit_addLinkIssue" />
+                      </Button>
+                    </div>
+                  </div>
+                  {this.renderLinkIssues()}
+                </div>
+
               </div>
             </section>
           </div>
         </div>
         {
-          this.state.edit ? (
-            <FullEditor
-              initValue={text2Delta(this.state.editDes)}
-              visible={this.state.edit}
-              onCancel={() => this.setState({ edit: false })}
-              onOk={callback}
-            />
-          ) : null
+          <FullEditor
+            initValue={this.state.description}
+            visible={this.state.FullEditorShow}
+            onCancel={() => this.setState({ FullEditorShow: false })}
+            onOk={(value) => {
+              this.setState({
+                FullEditorShow: false,
+              });
+              this.editIssue({ description: value });
+            }}
+          />
         }
         {
           this.state.createLinkTaskShow ? (
             <CreateLinkTask
-              issueId={this.state.origin.issueId}
+              issueId={this.state.issueId}
               visible={this.state.createLinkTaskShow}
               onCancel={() => this.setState({ createLinkTaskShow: false })}
               onOk={this.handleCreateLinkIssue.bind(this)}
@@ -2134,11 +1824,11 @@ class EditIssueNarrow extends Component {
         {
           this.state.copyIssueShow ? (
             <CopyIssue
-              issueId={this.state.origin.issueId}
-              issueNum={this.state.origin.issueNum}
-              issue={this.state.origin}
+              issueId={this.state.issueId}
+              issueNum={this.state.issueNum}
+              issue={this.state}
               issueLink={this.state.linkIssues}
-              issueSummary={this.state.origin.summary}
+              issueSummary={this.state.summary}
               visible={this.state.copyIssueShow}
               onCancel={() => this.setState({ copyIssueShow: false })}
               onOk={this.handleCopyIssue.bind(this)}
