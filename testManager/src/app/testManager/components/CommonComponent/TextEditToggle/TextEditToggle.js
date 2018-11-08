@@ -28,7 +28,7 @@ class TextEditToggle extends Component {
     originData: null,
     newData: null,
   }
-
+  
   static defaultProps = {
     // hasFeedback: false,
     // prefixCls: 'ant-form',
@@ -49,6 +49,15 @@ class TextEditToggle extends Component {
     // colon: PropTypes.bool,
   };
 
+  static getDerivedStateFromProps(props, state) {
+    if (props.originData !== state.originData) {
+      return {
+        originData: props.originData,
+        newData: null,
+      };
+    }
+    return null;
+  }
 
   onDocumentClick = (event) => {
     const target = event.target;

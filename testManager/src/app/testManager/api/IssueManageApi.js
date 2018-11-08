@@ -478,7 +478,7 @@ export function exportIssuesFromFolder(folderId) {
  * @returns
  */
 export function downloadTemplate() {
-  return request.get(`/v1/projects/${getProjectId()}/case/download/excel/import_template`, { responseType: 'arraybuffer' });
+  return request.get(`/test/v1/projects/${getProjectId()}/case/download/excel/import_template`, { responseType: 'arraybuffer' });
 }
 /**
  *获取导出历史
@@ -506,5 +506,5 @@ export function getImportHistory() {
  * @returns
  */
 export function exportRetry(historyId) {
-  return request.get(`/test/v1/projects/${getProjectId()}/download/excel/fail?historyId=${historyId}`);
+  return request.get(`/test/v1/projects/${getProjectId()}/case/download/excel/fail?historyId=${historyId}`);
 }
