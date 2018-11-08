@@ -10,7 +10,7 @@ import '../../../assets/main.scss';
 import { UploadButtonNow, IssueDescription } from '../CommonComponent';
 import { TextEditToggle, User } from '../../CommonComponent';
 import {
-  delta2Html, handleFileUpload, text2Delta, beforeTextUpload, formatDate, returnBeforeTextUpload,
+  delta2Html, handleFileUpload, text2Delta, beforeTextUpload, formatDate, returnBeforeTextUpload, color2rgba,
 } from '../../../common/utils';
 import {
   loadDatalogs, loadLinkIssues, loadIssue, updateStatus, updateIssue, createIssueStep,
@@ -1251,7 +1251,7 @@ class EditIssueNarrow extends Component {
                     <div style={{ display: 'flex', flex: 1 }}>
                       <span
                         style={{
-                          width: 30, height: 30, borderRadius: '50%', background: 'rgba(77, 144, 254, 0.2)', marginRight: 12, flexShrink: 0, display: 'flex', justifyContent: 'center', alignItems: 'center',
+                          width: 30, height: 30, borderRadius: '50%', background: priorityColor ? color2rgba(priorityColor) : 'rgba(77, 144, 254, 0.2)', marginRight: 12, flexShrink: 0, display: 'flex', justifyContent: 'center', alignItems: 'center',
                         }}
                       >
                         <Icon type="flag" style={{ fontSize: '24px', color: priorityColor || '#3575df' }} />
@@ -1422,10 +1422,9 @@ class EditIssueNarrow extends Component {
                               role="none"
                               style={{
                                 color: '#3f51b5',
-                                cursor: 'pointer',
-                                marginTop: '-5px',
-                                display: 'inline-block',
-                                marginBottom: 5,
+                                cursor: 'pointer',  
+                                marginTop: '-2px',
+                                display: 'inline-block',           
                               }}
                               onClick={() => {
                                 this.editIssue({ reporterId: AppState.userInfo.id });
@@ -1449,9 +1448,8 @@ class EditIssueNarrow extends Component {
                               style={{
                                 color: '#3f51b5',
                                 cursor: 'pointer',
-                                marginTop: '-5px',
-                                display: 'inline-block',
-                                marginBottom: 5,
+                                marginTop: '-2px',
+                                display: 'inline-block',                         
                               }}
                               onClick={() => {
                                 this.editIssue({ assigneeId: AppState.userInfo.id });

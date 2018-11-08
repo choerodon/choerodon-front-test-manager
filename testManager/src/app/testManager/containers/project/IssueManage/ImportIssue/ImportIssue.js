@@ -11,11 +11,11 @@ import { FormattedMessage } from 'react-intl';
 import { importIssue } from '../../../../api/FileApi';
 import { commonLink, humanizeDuration } from '../../../../common/utils';
 import { SelectVersion } from '../../../../components/CommonComponent';
-import { getImportHistory } from '../../../../api/IssueManageApi';
+import { getImportHistory, cancelImport } from '../../../../api/IssueManageApi';
 import './ImportIssue.scss';
 
 const { AppState } = stores;
-
+const { confirm } = Modal;
 class ImportIssue extends Component {
   state = {
     visible: false,
@@ -87,8 +87,12 @@ class ImportIssue extends Component {
       return <div className="c7ntest-ImportIssue-record-normal-text">当前没有导入用例记录</div>;
     }
     const {
-      lastUpdateDate, successfulCount, failedCount, fileUrl,
+      lastUpdateDate, successfulCount, failedCount, fileUrl, status,
     } = importRecord;
+    // 如果用户已取消
+    if (status === 3) {
+      return <div className="c7ntest-ImportIssue-record-normal-text">导入已取消</div>;
+    }
     return (
       <div className="c7ntest-ImportIssue-record-normal-text">
         上次导入完成时间
@@ -154,8 +158,21 @@ class ImportIssue extends Component {
     const { rate } = data;
 
     this.setState({
-      progress: rate.toFixed(1),  
+      progress: rate.toFixed(1),
       importRecord: data,
+    });
+  }
+
+  handleCancelImport=() => {
+    confirm({
+      title: '取消导入',
+      content: '取消导入不会删除已经导入的数据。',
+      onOk: () => {
+        // 取消之后重取一下数据
+        cancelImport().then((res) => {
+          this.getImportHistory();
+        });
+      },
     });
   }
 
@@ -221,7 +238,6 @@ class ImportIssue extends Component {
           >
             <div className="c7ntest-ImportIssue">
               {!uploading && !importing && this.renderRecord()}
-              {/* {uploading && this.renderUploading()} */}
               {importing && this.renderImporting()}
             </div>
           </WSHandler>
@@ -230,6 +246,12 @@ class ImportIssue extends Component {
           <Button type="primary" funcType="raised" onClick={() => { this.setState({ visible: true }); }} disabled={importing}>
             <FormattedMessage id="upload" />
           </Button>
+          {/* 取消导入 */}
+          {importing && (
+          <Button type="primary" funcType="raised" onClick={this.handleCancelImport}>
+            <FormattedMessage id="cancel" />
+          </Button>
+          )}
         </Content>
       </Page>
     );
