@@ -1251,7 +1251,7 @@ class EditIssueNarrow extends Component {
                     <div style={{ display: 'flex', flex: 1 }}>
                       <span
                         style={{
-                          width: 30, height: 30, borderRadius: '50%', background: priorityColor ? color2rgba(priorityColor) : 'rgba(77, 144, 254, 0.2)', marginRight: 12, flexShrink: 0, display: 'flex', justifyContent: 'center', alignItems: 'center',
+                          width: 30, height: 30, borderRadius: '50%', background: priorityColor ? color2rgba(priorityColor, 0.18) : 'rgba(77, 144, 254, 0.2)', marginRight: 12, flexShrink: 0, display: 'flex', justifyContent: 'center', alignItems: 'center',
                         }}
                       >
                         <Icon type="flag" style={{ fontSize: '24px', color: priorityColor || '#3575df' }} />

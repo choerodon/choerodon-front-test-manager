@@ -89,7 +89,7 @@ export function loadIssue(issueId) {
  * @returns
  */
 export function updateStatus(transformId, issueId, objVerNum) {
-  return request.put(`/agile/v1/projects/${getOrganizationId()}/issues/update_status?transformId=${transformId}&issueId=${issueId}&objectVersionNumber=${objVerNum}&applyType=test`);
+  return request.put(`/agile/v1/projects/${getProjectId()}/issues/update_status?transformId=${transformId}&issueId=${issueId}&objectVersionNumber=${objVerNum}&applyType=test`);
 }
 /**
  *更新用例信息

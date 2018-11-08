@@ -50,11 +50,17 @@ class TextEditToggle extends Component {
   };
 
   static getDerivedStateFromProps(props, state) {
+    console.log(props.originData, state.originData, state.editing);
+    // if (!state.editing) {
+    //   return {
+    //     newData:state.originData
+    //   };
+    // } else 
     if (props.originData !== state.originData) {
       return {
         originData: props.originData,
         newData: null,
-      };
+      };      
     }
     return null;
   }
@@ -79,6 +85,7 @@ class TextEditToggle extends Component {
             const newData = values[this.props.formKey];
             if (this.props.onSubmit && newData !== this.props.originData) {
               this.setState({
+                // originData: newData,
                 newData,
               });
               this.props.onSubmit(this.props.formKey ? newData : null);
