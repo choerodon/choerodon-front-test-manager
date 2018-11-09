@@ -96,7 +96,7 @@ class TestExecuteHome extends Component {
     filters: {},
   };
 
-  treeAssignedTo = 0;
+  treeAssignedTo = AppState.userInfo.id;
 
   componentDidMount() {
     this.refresh();
@@ -434,6 +434,9 @@ class TestExecuteHome extends Component {
     const {
       children, key, cycleCaseList, type,
     } = item;
+    if (this.treeAssignedTo !== 0 && cycleCaseList && Object.keys(cycleCaseList).length === 0) {
+      return null;
+    }
     // debugger;
     const { searchValue } = this.state;
     const expandedKeys = TestExecuteStore.getExpandedKeys;
@@ -930,7 +933,7 @@ class TestExecuteHome extends Component {
                 <RadioButton
                   style={{ marginBottom: 20 }}
                   onChange={this.handleTreeAssignedToChange}
-                  defaultValue="all"
+                  defaultValue="my"
                   data={[{
                     value: 'my',
                     text: 'cycle_my',

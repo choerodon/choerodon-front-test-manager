@@ -228,8 +228,7 @@ class IssueStore {
     this.selectedVersion = selectedVersion;
   }
 
-  @action setPagination(data) {
-    console.log(data);
+  @action setPagination(data) {  
     this.pagination = data;
   }
 
