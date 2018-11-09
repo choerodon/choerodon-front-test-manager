@@ -10,6 +10,7 @@ import {
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import { getReportsFromStory } from '../../../../api/reportApi';
+import { getIssueTypes } from '../../../../api/agileApi';
 import { getStatusList } from '../../../../api/TestStatusApi';
 import { issueLink, cycleLink, executeDetailShowLink } from '../../../../common/utils';
 import './ReportStory.scss';
@@ -38,6 +39,7 @@ class ReportStory extends Component {
 
   componentDidMount() {
     this.getInfo();
+    getIssueTypes();
   }
 
   getInfo = () => {
@@ -81,7 +83,6 @@ class ReportStory extends Component {
       this.setState({
         loading: false,
       });
-      Choerodon.prompt('网络异常');
     });
   }
 
@@ -134,21 +135,22 @@ class ReportStory extends Component {
       statusList, openId,
     } = this.state;
     const urlParams = AppState.currentMenuType;
+    const { organizationId } = AppState.currentMenuType;
     const that = this;
     const menu = (
       <Menu style={{ marginTop: 35 }}>
         <Menu.Item key="0">
-          <Link to={`/testManager/report/story?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}>
+          <Link to={`/testManager/report/story?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}&organizationId=${organizationId}`}>
             <FormattedMessage id="report_dropDown_demand" />
           </Link>
         </Menu.Item>
         <Menu.Item key="1">
-          <Link to={`/testManager/report/test?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}>
+          <Link to={`/testManager/report/test?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}&organizationId=${organizationId}`}>
             <FormattedMessage id="report_dropDown_defect" />
           </Link>
         </Menu.Item>
         <Menu.Item key="2">
-          <Link to={`/testManager/report?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}>
+          <Link to={`/testManager/report?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}&organizationId=${organizationId}`}>
             <FormattedMessage id="report_dropDown_home" />
           </Link>
         </Menu.Item>
@@ -281,8 +283,9 @@ class ReportStory extends Component {
       render(issue, record) {
         const { defectInfo, defectCount } = record;
         const {
-          issueStatusName, issueName, issueColor, issueId, typeCode, summary,
+          statusMapDTO, issueStatusName, issueName, issueId, typeCode, summary,
         } = defectInfo;
+        const { name: statusName, colour: statusColor } = statusMapDTO || {};
         return (
           <div>
             <div className="c7ntest-collapse-header-container">
@@ -298,8 +301,8 @@ class ReportStory extends Component {
                 </Link>
               </Tooltip>
               <div className="c7ntest-issue-status-icon">
-                <span style={{ color: issueColor, borderColor: issueColor }}>
-                  {issueStatusName}
+                <span style={{ color: statusColor, borderColor: statusColor }}>
+                  {statusName}
                 </span>
               </div>
 
@@ -565,7 +568,7 @@ class ReportStory extends Component {
       <Page className="c7ntest-report-story">
         <Header
           title={<FormattedMessage id="report_demandToDefect" />}
-          backPath={`/testManager/report?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}
+          backPath={`/testManager/report?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}&organizationId=${organizationId}`}
         >
           <Dropdown overlay={menu} trigger={['click']}>
             <a className="ant-dropdown-link" href="#">

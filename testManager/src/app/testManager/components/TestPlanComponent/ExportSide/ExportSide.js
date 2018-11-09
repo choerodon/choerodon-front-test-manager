@@ -7,22 +7,43 @@ import {
 import _ from 'lodash';
 import FileSaver from 'file-saver';
 import moment from 'moment';
-import { SelectVersion, SelectFolder } from '../../CommonComponent';
+import { SelectVersion, SelectFolder, SimpleSelect } from '../../CommonComponent';
 import {
-  exportIssues, exportIssuesFromVersion, exportIssuesFromFolder, getExportList, exportRetry,
-} from '../../../api/IssueManageApi';
-import { humanizeDuration } from '../../../common/utils';
+  getCyclesByVersionId, getExportList, getFoldersByCycleId,
+} from '../../../api/cycleApi';
 import './ExportSide.scss';
 
 const { Sidebar } = Modal;
 const { AppState } = stores;
-
+function humanizeDuration(seconds) {
+  let result = '';
+  if (seconds) {
+    /** eslint-disable no-constant-condition */
+    if ((result = Math.round(seconds / (60 * 60 * 24 * 30 * 12))) > 0) { // year
+      result = `${result} 年`;
+    } else if ((result = Math.round(seconds / (60 * 60 * 24 * 30))) > 0) { // months
+      result = `${result} 月`;
+    } else if ((result = Math.round(seconds / (60 * 60 * 24))) > 0) { // days
+      result = `${result} 天`;
+    } else if ((result = Math.round(seconds / (60 * 60))) > 0) { // Hours
+      result = `${result} 小时`;
+    } else if ((result = Math.round(seconds / (60))) > 0) { // minute
+      result = `${result} 分钟`;
+    } else if ((result = Math.round(seconds)) > 0) { // second
+      result = `${result} 秒`;
+    } else {
+      result = `${seconds} 毫秒`;
+    }
+  }
+  return result;
+}
 class ExportSide extends Component {
   state = {
     loading: true,
     visible: false,
     versionId: null,
-    folderId: null,
+    cycleId: null,
+    stageId: null,
     exportList: [],
   }
 
@@ -73,29 +94,24 @@ class ExportSide extends Component {
     });
   }
 
-  createExport = () => {
-    const { versionId, folderId } = this.state;
-    if (folderId) {
-      exportIssuesFromFolder(folderId).then((data) => {
+  // createExport = () => {
+  //   const { versionId, folderId } = this.state;
+  //   if (folderId) {
+  //     exportIssuesFromFolder(folderId).then((data) => {
 
-      });
-    } else if (versionId) {
-      exportIssuesFromVersion(versionId).then((data) => {
+  //     });
+  //   } else if (versionId) {
+  //     exportIssuesFromVersion(versionId).then((data) => {
 
-      });
-    } else {
-      exportIssues().then((data) => {
+  //     });
+  //   } else {
+  //     exportIssues().then((data) => {
 
-      });
-    }
-  }
+  //     });
+  //   }
+  // }
 
-  handleDownload = (record) => {
-    const { fileUrl, status, id } = record;
-    if (status === 3) {
-      exportRetry(id);
-      return;
-    }
+  handleDownload = (fileUrl) => {
     if (fileUrl) {
       const ele = document.createElement('a');
       ele.href = fileUrl;
@@ -113,7 +129,7 @@ class ExportSide extends Component {
     const index = _.findIndex(exportList, { id });
     // 存在记录就更新，不存在则新增记录
     if (index >= 0) {
-      exportList[index] = data;
+      exportList[index] = { ...data, rate: data.rate.toFixed(1) };
     } else {
       exportList.unshift(data);
     }
@@ -127,11 +143,7 @@ class ExportSide extends Component {
     const startTime = moment(creationDate);
     const lastTime = moment(lastUpdateDate);
 
-    let diff = lastTime.diff(startTime);
-    // console.log(diff);
-    if (diff <= 0) {
-      diff = moment().diff(startTime);
-    }
+    const diff = lastTime.diff(startTime);
     return creationDate && lastUpdateDate
       ? humanizeDuration(diff / 1000)
       : null;
@@ -139,7 +151,7 @@ class ExportSide extends Component {
 
   render() {
     const {
-      visible, versionId, folderId, exportList, loading,
+      visible, versionId, cycleId, stageId, exportList, loading,
     } = this.state;
     const columns = [{
       title: '导出来源',
@@ -160,12 +172,12 @@ class ExportSide extends Component {
         );
       },
     },
-    {
-      title: '用例个数',
-      dataIndex: 'successfulCount',
-      key: 'successfulCount',
-      // width: 100,
-    },
+    // {
+    //   title: '用例个数',
+    //   dataIndex: 'num',
+    //   key: 'num',
+    //   // width: 100,
+    // }, 
     {
       title: '导出时间',
       dataIndex: 'creationDate',
@@ -185,7 +197,7 @@ class ExportSide extends Component {
       render: (rate, record) => (record.status === 2
         ? <div>已完成</div>
         : (
-          <Tooltip title={`进度：${rate ? rate.toFixed(1) : 0}%`} getPopupContainer={ele => ele.parentNode}>
+          <Tooltip title={`进度：${rate}%`}>
             <Progress percent={rate} showInfo={false} />
           </Tooltip>
         )),
@@ -193,17 +205,17 @@ class ExportSide extends Component {
       title: '',
       dataIndex: 'fileUrl',
       key: 'fileUrl',
-      render: (fileUrl, record) => (
+      render: fileUrl => (
         <div style={{ textAlign: 'right' }}>
-          <Tooltip title={record.status === 3 ? '重试' : '下载文件'} getPopupContainer={ele => ele.parentNode}>
-            <Button style={{ marginRight: -3 }} disabled={record.status === 1 || (record.status !== 3 && !fileUrl)} shape="circle" funcType="flat" icon={record.status === 3 ? 'refresh' : 'get_app'} onClick={this.handleDownload.bind(this, record)} />
+          <Tooltip title="下载文件">
+            <Button style={{ marginRight: -3 }} shape="circle" funcType="flat" icon="get_app" disabled={!fileUrl} onClick={this.handleDownload.bind(this, fileUrl)} />
           </Tooltip>
         </div>
       ),
     }];
     return (
       <Sidebar
-        title="导出用例"
+        title="导出测试执行"
         visible={visible}
         destroyOnClose
         footer={<Button onClick={this.handleClose} type="primary" funcType="raised"><FormattedMessage id="close" /></Button>}
@@ -212,14 +224,31 @@ class ExportSide extends Component {
           style={{
             padding: '0 0 10px 0',
           }}
-          title={<FormattedMessage id="export_side_content_title" />}
+          title="导出测试执行"
           description={<FormattedMessage id="export_side_content_description" />}
           link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management"
         >
           <div className="c7ntest-ExportSide">
             <div style={{ marginBottom: 24 }}>
-              <SelectVersion allowClear value={versionId || '所有版本'} onChange={this.handleVersionChange} />
-              <SelectFolder style={{ width: 200, margin: '0 24px' }} label="文件夹" disabled={!versionId} versionId={versionId} value={folderId} allowClear onChange={this.handleFolderChange} />
+              <SelectVersion allowClear style={{ width: 100 }} value={versionId || '所有版本'} onChange={this.handleVersionChange} />
+              <SimpleSelect         
+                disabled={!versionId}
+                label="测试循环"
+                value={cycleId}
+                allowClear
+                request={() => getCyclesByVersionId(versionId)}
+                onChange={this.handleCycleChange}
+                option={{ value: 'cycleId', text: 'cycleName' }}
+              />
+              <SimpleSelect  
+                disabled={!cycleId}
+                label="测试阶段"
+                value={stageId}
+                allowClear
+                request={() => getFoldersByCycleId(cycleId)}
+                onChange={this.handleStageChange}
+                option={{ value: 'cycleId', text: 'cycleName' }}
+              />
               <Button type="primary" icon="playlist_add" onClick={this.createExport}>新建导出</Button>
             </div>
             <WSHandler

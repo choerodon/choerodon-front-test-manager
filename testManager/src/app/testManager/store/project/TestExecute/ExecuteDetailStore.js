@@ -8,7 +8,7 @@ import {
   getCycle, getCycleDetails, getCycleHistiorys,
 } from '../../../api/ExecuteDetailApi';
 import { getStatusList } from '../../../api/TestStatusApi';
-import { getUsers } from '../../../api/CommonApi';
+import { getUsers } from '../../../api/IamApi';
 import { getIssueList, getIssuesForDefects } from '../../../api/agileApi';
 
 @store('ExecuteDetailStore')

@@ -10,7 +10,7 @@ export default class Announcement extends Component {
         <ul>
           <li>           
             <a target="choerodon" href="http://choerodon.io/zh/docs/user-guide/test-management/case-management/">
-              {Choerodon.getMessage('测试用例管理', 'issue manage')}
+              {Choerodon.getMessage('测试用例', 'issue manage')}
             </a>
           </li>
           <li>           

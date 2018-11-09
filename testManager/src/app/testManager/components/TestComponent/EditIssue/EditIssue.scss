@@ -73,7 +73,7 @@
     .c7ntest-summary {
         font-size: 13px;
         line-height: 20px;
-        font-weight: 600;
+        font-weight: 600;       
         overflow: hidden;
         text-overflow: ellipsis;
         -webkit-line-clamp: 2;
@@ -235,8 +235,7 @@
         padding-left: 20px;
         padding-right: 20px;
         padding-bottom: 5px;
-        flex: 1;
-        overflow-y: hidden;
+        flex: 1;       
         box-sizing: border-box;
         width: 100%;
     }

@@ -9,14 +9,6 @@
   .ant-spin-container {
     height: 100%;
   }
-  .icon-folder_open,
-  .icon-folder_open2 {
-    // margin-top: -3px;
-  }
-  .ant-tree-child-tree li {
-    // display: flex;
-    // align-items: center;
-  }
   .ant-tree li .ant-tree-node-content-wrapper {
     display: inline-flex;
     align-items: center;
@@ -35,9 +27,6 @@
       text-overflow: ellipsis;
       padding: 5px 0 5px 18px;
     }
-    // .ant-table-columns-chooser {
-    //   display: none;
-    // }
   }
   .drag-cell {
     cursor: move;
@@ -71,6 +60,7 @@
     // height: 100%;
   }
   .c7ntest-ch-left {
+    margin-left: 24px;
     height: 100%;
     // margin-left: 10px;
     width: 310px; // border-right: 1px solid rgba(0, 0, 0, 0.36);
@@ -79,6 +69,9 @@
       margin-left: -4px;
     }
     overflow: hidden;
+    .c7ntest-TestExecuteHome-button{
+      margin: 0 7px;
+    }
   }
   .c7ntest-chl-head {
     display: flex;
@@ -90,9 +83,6 @@
   .c7ntest-chlh-button {
     margin: 0 5px 0 10px;
     display: flex;
-  }
-  .c7ntest-chlhb-left {
-    // width: 400px;
   }
   .c7ntest-chlh-tree {
     height: calc(100% - 75px);
@@ -106,7 +96,7 @@
     flex: 1;
     overflow-y: auto;
     overflow-x: hidden;
-    padding: 0 20px;
+    padding: 0 20px 30px 20px;
   }
   .c7ntest-avatar {
     width: 18px;
@@ -126,7 +116,7 @@
     color: white;
     text-align: center;
     line-height: 19px;
-    margin: 0 7px;
+    // margin: 0 7px;
     border-radius: 3px;
   }
   .ant-tree-icon__customize {

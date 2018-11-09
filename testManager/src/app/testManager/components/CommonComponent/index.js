@@ -4,7 +4,6 @@ import SelectFocusLoad from './SelectFocusLoad';
 import User from './User/User';
 import UploadInTable from './UploadInTable';
 import DefectSelect from './DefectSelect';
-import CreateIssueTiny from './CreateIssueTiny';
 import SelectCreateIssueFooter from './SelectCreateIssueFooter';
 import RadioButton from './RadioButton';
 import StatusTags from './StatusTags';
@@ -16,9 +15,10 @@ import SelectVersion from './SelectVersion';
 import SelectFolder from './SelectFolder';
 import Upload from './Upload';
 import LoadingBar from './LoadingBar';
+import SimpleSelect from './SimpleSelect';
 
 export {
-  TextEditToggle, RichTextShow, SelectFocusLoad, User, UploadInTable, DefectSelect, CreateIssueTiny,
+  TextEditToggle, RichTextShow, SelectFocusLoad, User, UploadInTable, DefectSelect, 
   SelectCreateIssueFooter, RadioButton, StatusTags, FullEditor, WYSIWYGEditor, DragTable, YamlEditor,
-  SelectVersion, Upload, LoadingBar, SelectFolder,
+  SelectVersion, Upload, LoadingBar, SelectFolder, SimpleSelect,
 };

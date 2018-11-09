@@ -4,8 +4,8 @@ import { withRouter } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
 import { Select, Form, Input, Button, Modal, Icon, Tooltip, Radio } from 'choerodon-ui';
 import UserHead from '../UserHead';
-import { getUsers, getSelf } from '../../../api/CommonApi';
-import { loadVersions } from '../../../api/IssueManageApi';
+import { getUsers, getSelf } from '../../../api/IamApi';
+import { getProjectVersion } from '../../../api/agileApi';
 
 import './ExecuteTest.scss';
 
@@ -128,7 +128,7 @@ class ExecuteTest extends Component {
                     this.setState({
                       selectLoading: true,
                     });
-                    loadVersions().then((res) => {
+                    getProjectVersion().then((res) => {
                       this.setState({
                         versions: res,
                         selectLoading: false,

@@ -5,21 +5,19 @@ import UserHead from '../UserHead';
 import PriorityTag from '../PriorityTag';
 import StatusTag from '../StatusTag';
 import TypeTag from '../TypeTag';
-import { TYPE_NAME } from '../../../common/Constant';
 
 const styles = {
   issueNum: {
-    paddingRight: 12, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+    padding: '0 12px 0 5px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
   },
 };
-export function renderType(typeCode) {
+export function renderType(issueTypeDTO) {
+  const { name } = issueTypeDTO || {};
   return (
-    <Tooltip mouseEnterDelay={0.5} title={`任务类型： ${TYPE_NAME[typeCode]}`}>
+    <Tooltip mouseEnterDelay={0.5} title={`任务类型： ${name}`}>
       <div>
         <TypeTag
-          type={{
-            typeCode,
-          }}
+          type={issueTypeDTO || {}}
         />
       </div>
     </Tooltip>
@@ -48,16 +46,17 @@ export function renderSummary(summary) {
     </div>
   );
 }
-export function renderPriority(priorityCode, priorityName) {
+export function renderPriority(priorityDTO) {
+  if (!priorityDTO) {
+    return null;
+  }
+  const { name } = priorityDTO;
   return (
     <div>
-      <Tooltip mouseEnterDelay={0.5} title={`优先级： ${priorityName}`}>
+      <Tooltip mouseEnterDelay={0.5} title={`优先级： ${name}`}>
         <div style={{ margin: '0 5px' }}>
           <PriorityTag
-            priority={{
-              priorityCode,
-              priorityName,
-            }}
+            priority={priorityDTO}
           />
         </div>
       </Tooltip>
@@ -181,7 +180,8 @@ export function renderAssigned(assigneeId, assigneeName, imageUrl) {
     ) : null
   );
 }
-export function renderStatus(statusName, statusColor) {
+export function renderStatus(statusMapDTO) {
+  const { name: statusName, colour: statusColor } = statusMapDTO;
   return (
     <div style={{ margin: '0 5px' }}>
       <Tooltip mouseEnterDelay={0.5} title={`任务状态： ${statusName}`}>

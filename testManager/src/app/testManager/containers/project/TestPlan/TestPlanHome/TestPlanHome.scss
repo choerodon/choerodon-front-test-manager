@@ -19,7 +19,10 @@
       width: 100%;
       display: flex;
       flex-direction: column;
+      overflow-x: hidden;
+      overflow-y: auto;
       &-bottom {
+        margin-bottom: 30px;
         // display: none;
         // height: 400px;
       }

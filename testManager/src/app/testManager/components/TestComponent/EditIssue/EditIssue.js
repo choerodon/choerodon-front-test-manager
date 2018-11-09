@@ -1,37 +1,34 @@
 import React, { Component } from 'react';
-import { stores, axios, Permission } from 'choerodon-front-boot';
+import { stores, Permission } from 'choerodon-front-boot';
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import {
   Select, Input, Button, Modal, Tooltip, Dropdown, Menu, Spin, Icon,
 } from 'choerodon-ui';
-import {
-  STATUS, COLOR, TYPE, ICON, TYPE_NAME,
-} from '../../../common/Constant';
 import './EditIssue.scss';
 import '../../../assets/main.scss';
+import { UploadButtonNow, IssueDescription } from '../CommonComponent';
+import { TextEditToggle, User } from '../../CommonComponent';
 import {
-  UploadButtonNow, ReadAndEdit, IssueDescription,
-} from '../CommonComponent';
-import {
-  delta2Html, handleFileUpload, text2Delta, beforeTextUpload, formatDate, returnBeforeTextUpload,
+  delta2Html, handleFileUpload, text2Delta, beforeTextUpload, formatDate, returnBeforeTextUpload, color2rgba,
 } from '../../../common/utils';
 import {
-  loadDatalogs, loadLinkIssues, loadLabels, loadIssue,
-  updateIssue, loadPriorities, loadComponents,
-  createCommit, deleteIssue, loadStatus, cloneIssue,
+  loadDatalogs, loadLinkIssues, loadIssue, updateStatus, updateIssue, createIssueStep,
+  createCommit, deleteIssue, loadStatus, cloneIssue, getIssueSteps, getIssueExecutes,
 } from '../../../api/IssueManageApi';
-import { getSelf, getUsers, getUser } from '../../../api/CommonApi';
+import { getLabels, getPrioritys, getModules } from '../../../api/agileApi';
+import { getUsers } from '../../../api/IamApi';
 import { FullEditor, WYSIWYGEditor } from '../../CommonComponent';
 import CreateLinkTask from '../CreateLinkTask';
 import UserHead from '../UserHead';
 import Comment from './Component/Comment';
 import DataLogs from './Component/DataLogs';
 import LinkList from './Component/LinkList';
+import PriorityTag from '../PriorityTag';
 import CopyIssue from '../CopyIssue';
 import TestStepTable from '../TestStepTable';
 import TestExecuteTable from '../TestExecuteTable';
-import CreateTestStep from '../CreateTestStep';
+import TypeTag from '../TypeTag';
 
 const { AppState } = stores;
 const { Option } = Select;
@@ -39,105 +36,45 @@ const { TextArea } = Input;
 const { confirm } = Modal;
 let sign = true;
 let filterSign = false;
-const STATUS_ICON = {
-  done: {
-    icon: 'check_circle',
-    color: '#1bb06e',
-    bgColor: '',
-  },
-  todo: {
-    icon: 'watch_later',
-    color: '#4a93fc',
-    bgColor: '',
-  },
-  doing: {
-    icon: 'timelapse',
-    color: '#ffae02',
-    bgColor: '',
-  },
-};
-const ICON_COLOR = {
-  todo: 'rgba(255, 177, 0, 0.2)',
-  doing: 'rgba(77,144,254,0.2)',
-  done: 'rgba(0,191,165,0.2)',
-};
+const { Text, Edit } = TextEditToggle;
+const navs = [
+  { code: 'detail', tooltip: '详情', icon: 'error_outline' },
+  { code: 'des', tooltip: '描述', icon: 'subject' },
+  { code: 'test1', tooltip: '测试详细信息', icon: 'compass' },
+  { code: 'test2', tooltip: '测试执行', icon: 'explicit2' },
+  { code: 'attachment', tooltip: '附件', icon: 'attach_file' },
+  { code: 'commit', tooltip: '评论', icon: 'sms_outline' },
+  { code: 'data_log', tooltip: '活动日志', icon: 'insert_invitation' },
+  { code: 'link_task', tooltip: '相关任务', icon: 'link' },
+];
 class EditIssueNarrow extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      issueLoading: false,
-      flag: undefined,
-      selectLoading: true,
-      saveLoading: false,
+  state = {
+    // 子组件显示控制
+    issueLoading: false,
+    selectLoading: true,
+    FullEditorShow: false,
+    createLinkTaskShow: false,
+    editDescriptionShow: false,
+    addingComment: false,
 
-      edit: false,
-      addCommit: false,
-      addCommitDes: '',
-      createLinkTaskShow: false,
-      createTestStepShow: false,
-      editDesShow: false,
-      origin: {},
-      loading: true,
-      nav: 'detail',
-      editDes: undefined,
-      currentRae: undefined,
-      issueId: undefined,
-      assigneeId: undefined,
-      assigneeName: '',
-      assigneeImageUrl: undefined,
-      epicId: undefined,
-      estimateTime: undefined,
-      remainingTime: undefined,
-      epicName: '',
-      issueNum: undefined,
-      typeCode: 'issue_test',
-      parentIssueId: undefined,
-      priorityCode: undefined,
-      reporterId: undefined,
-      reporterImageUrl: undefined,
-      sprintId: undefined,
-      sprintName: '',
-      statusId: undefined,
-      statusCode: undefined,
-      storyPoints: undefined,
-      creationDate: undefined,
-      lastUpdateDate: undefined,
-      statusName: '',
-      priorityName: '',
-      reporterName: '',
-      summary: '',
-      description: '',
-      versionIssueRelDTOList: [],
-      componentIssueRelDTOList: [],
-      activeSprint: {},
-      closeSprint: [],
-      datalogs: [],
-      fileList: [],
-      testStepData: [],
-      testExecute: [],
-      branchs: {},
-      issueCommentDTOList: [],
-      issueLinkDTOList: [],
-      labelIssueRelDTOList: [],
-      subIssueDTOList: [],
-      linkIssues: [],
-      fixVersions: [],
-      influenceVersions: [],
-      fixVersionsFixed: [],
-      influenceVersionsFixed: [],
+    currentNav: 'detail',
 
-      originStatus: [],
-      originpriorities: [],
-      originComponents: [],
-      originVersions: [],
-      originLabels: [],
-      originEpics: [],
-      originUsers: [],
-      originSprints: [],
-      originFixVersions: [],
-      originInfluenceVersions: [],
-    };
+    // issue信息
+    issueInfo: {},
+
+    datalogs: [],
+    fileList: [],
+    testStepData: [],
+    testExecuteData: [],
+
+    linkIssues: [],
+    StatusList: [],
+    priorityList: [],
+    componentList: [],
+    labelList: [],
+    userList: [],
   }
+
 
   componentDidMount() {
     if (this.props.onRef) {
@@ -147,9 +84,9 @@ class EditIssueNarrow extends Component {
     document.getElementById('scroll-area').addEventListener('scroll', (e) => {
       if (sign) {
         const currentNav = this.getCurrentNav(e);
-        if (this.state.nav !== currentNav && currentNav) {
+        if (this.state.currentNav !== currentNav && currentNav) {
           this.setState({
-            nav: currentNav,
+            currentNav,
           });
         }
       }
@@ -158,9 +95,6 @@ class EditIssueNarrow extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.issueId !== this.props.issueId) {
-      this.setState({
-        currentRae: undefined,
-      });
       this.reloadIssue(nextProps.issueId);
     }
   }
@@ -171,8 +105,8 @@ class EditIssueNarrow extends Component {
   onChangeFileList = (arr) => {
     if (arr.length > 0 && arr.some(one => !one.url)) {
       const config = {
-        issueType: this.state.origin.typeCode,
-        issueId: this.state.origin.issueId,
+        issueType: this.state.typeCode,
+        issueId: this.state.issueId,
         fileName: arr[0].name || 'AG_ATTACHMENT',
         projectId: AppState.currentMenuType.id,
       };
@@ -188,113 +122,24 @@ class EditIssueNarrow extends Component {
     this.reloadIssue();
   }
 
-  setAnIssueToState = (issue = this.state.origin) => {
+  setIssueToState = (issue) => {
     const {
-      activeSprint,
-      assigneeId,
-      assigneeName,
-      assigneeImageUrl,
-      closeSprint,
-      componentIssueRelDTOList,
-      creationDate,
-      description,
-      epicId,
-      epicName,
-      epicColor,
-      estimateTime,
-      issueCommentDTOList,
-      issueId,
-      issueLinkDTOList,
-      issueNum,
-      labelIssueRelDTOList,
-      lastUpdateDate,
-      objectVersionNumber,
-      parentIssueId,
-      parentIssueNum,
-      priorityCode,
-      priorityName,
-      projectId,
-      remainingTime,
-      reporterId,
-      reporterName,
-      reporterImageUrl,
-      sprintId,
-      sprintName,
-      statusId,
-      statusCode,
-      statusName,
-      statusColor,
-      storyPoints,
-      summary,
-      typeCode,
-      versionIssueRelDTOList,
-      subIssueDTOList,
+      issueAttachmentDTOList,
     } = issue;
-    const fileList = _.map(issue.issueAttachmentDTOList, issueAttachment => ({
+    const fileList = _.map(issueAttachmentDTOList, issueAttachment => ({
       uid: issueAttachment.attachmentId,
       name: issueAttachment.fileName,
       url: issueAttachment.url,
     }));
-    const fixVersionsTotal = _.filter(versionIssueRelDTOList, { relationType: 'fix' }) || [];
-    const fixVersionsFixed = _.filter(fixVersionsTotal, { statusCode: 'archived' }) || [];
-    const fixVersions = _.filter(fixVersionsTotal, v => v.statusCode !== 'archived') || [];
-    const influenceVersionsTotal = _.filter(versionIssueRelDTOList, { relationType: 'influence' }) || [];
-    const influenceVersionsFixed = _.filter(influenceVersionsTotal, { statusCode: 'archived' }) || [];
-    const influenceVersions = _.filter(influenceVersionsTotal, v => v.statusCode !== 'archived') || [];
     this.setState({
-      origin: issue,
-      activeSprint: activeSprint || {},
-      assigneeId,
-      assigneeName,
-      assigneeImageUrl,
-      closeSprint,
-      componentIssueRelDTOList,
-      creationDate,
-      editDes: description,
-      description,
-      epicId,
-      epicName,
-      epicColor,
-      estimateTime,
+      issueInfo: issue,
       fileList,
-      issueCommentDTOList,
-      issueId,
-      issueLinkDTOList,
-      issueNum,
-      labelIssueRelDTOList,
-      lastUpdateDate,
-      objectVersionNumber,
-      parentIssueId,
-      parentIssueNum,
-      priorityCode,
-      priorityName,
-      projectId,
-      remainingTime,
-      reporterId,
-      reporterName,
-      reporterImageUrl,
-      sprintId,
-      sprintName,
-      statusId,
-      statusCode,
-      statusName,
-      statusColor,
-      storyPoints,
-      summary,
-      typeCode,
-      versionIssueRelDTOList,
-      subIssueDTOList,
-      fixVersions,
-      influenceVersions,
-      fixVersionsFixed,
-      influenceVersionsFixed,
       issueLoading: false,
     });
   }
 
   getCurrentNav(e) {
-    const eles = ['detail', 'des', 'test1', 'test2', 'attachment', 'commit', 'data_log', 'link_task'];
-    return _.find(eles, i => this.isInLook(document.getElementById(i)));
+    return _.find(navs.map(nav => nav.code), i => this.isInLook(document.getElementById(i)));
   }
 
   isInLook(ele) {
@@ -328,7 +173,7 @@ class EditIssueNarrow extends Component {
       });
       getUsers(input).then((res) => {
         this.setState({
-          originUsers: res.content,
+          userList: res.content,
           selectLoading: false,
         });
       });
@@ -351,285 +196,163 @@ class EditIssueNarrow extends Component {
     });
     getUsers(input).then((res) => {
       this.setState({
-        originUsers: res.content,
+        userList: res.content,
         selectLoading: false,
       });
     });
   }, 500);
 
-  handleTitleChange = (e) => {
-    this.setState({ summary: e.target.value });
-  }
-
-  handleEpicNameChange = (e) => {
-    this.setState({ epicName: e.target.value });
-  }
-
-  handleStoryPointsChange = (e) => {
-    this.setState({ storyPoints: e });
-  }
-
-  handleRemainingTimeChange = (e) => {
-    this.setState({ remainingTime: e });
-  }
-
-  resetStoryPoints(value) {
-    this.setState({ storyPoints: value });
-  }
-
-  resetRemainingTime(value) {
-    this.setState({ remainingTime: value });
-  }
-
-  resetAssigneeId(value) {
-    this.setState({ assigneeId: value });
-  }
-
-  resetReporterId(value) {
-    this.setState({ reporterId: value });
-  }
-
-  resetSummary(value) {
-    this.setState({ summary: value });
-  }
-
-  resetEpicName(value) {
-    this.setState({ epicName: value });
-  }
-
-  resetPriorityCode(value) {
-    this.setState({ priorityCode: value });
-  }
-
-  resetStatusId(value) {
-    this.setState({ statusId: value });
-  }
-
-  resetEpicId(value) {
-    this.setState({ epicId: value });
-  }
-
-  resetSprintId(value) {
-    this.setState({ sprintId: value });
-  }
-
-  resetComponentIssueRelDTOList(value) {
-    this.setState({ componentIssueRelDTOList: value });
-  }
-
-  resetInfluenceVersions(value) {
-    this.setState({ influenceVersions: value });
-  }
-
-  resetFixVersions(value) {
-    this.setState({ fixVersions: value });
-  }
-
-  resetlabelIssueRelDTOList(value) {
-    this.setState({ labelIssueRelDTOList: value });
-  }
-
-
-  reloadIssue(issueId = this.state.origin.issueId) {
+  /**
+   *加载issue以及相关信息
+   *
+   * @param {*} [issueId=this.state.issueInfo.issueId]
+   * @memberof EditIssueNarrow
+   */
+  reloadIssue(issueId = this.state.issueInfo.issueId) {
     this.setState({
-      addCommit: false,
-      addCommitDes: '',
-      editDesShow: undefined,
-      editDes: undefined,
-
-
+      addingComment: false,
+      editDescriptionShow: false,
       issueLoading: true,
-    }, () => {
-      loadIssue(issueId).then((res) => {
-        this.setAnIssueToState(res);
-      });
-      loadLinkIssues(issueId).then((res) => {
-        this.setState({
-          linkIssues: res,
-        });
-      });
-      loadDatalogs(issueId).then((res) => {
-        this.setState({
-          datalogs: res,
-        });
-      });
-      axios.get(`/test/v1/projects/${AppState.currentMenuType.id}/case/step/query/${issueId}`)
-        .then((res) => {
-          this.setState({ testStepData: res }, () => {
-            this.setState({ testStepData: res });
-          });
-        });
-      axios.get(`/test/v1/projects/${AppState.currentMenuType.id}/cycle/case/query/issue/${issueId}`)
-        .then((res) => {
-          this.setState({ testExecuteData: res }, () => {
-            this.setState({ testExecuteData: res });
-          });
-        });
+    });
+    Promise.all([
+      loadIssue(issueId),
+      loadLinkIssues(issueId),
+      loadDatalogs(issueId),
+      getIssueSteps(issueId),
+      getIssueExecutes(issueId),
+    ]).then(([issue, linkIssues, datalogs, testStepData, testExecuteData]) => {
+      const {
+        issueAttachmentDTOList,
+      } = issue;
+      const fileList = _.map(issueAttachmentDTOList, issueAttachment => ({
+        uid: issueAttachment.attachmentId,
+        name: issueAttachment.fileName,
+        url: issueAttachment.url,
+      }));
       this.setState({
-        editDesShow: false,
+        issueInfo: issue,
+        fileList,
+        linkIssues,
+        datalogs,
+        testStepData,
+        testExecuteData,
+        issueLoading: false,
       });
     });
   }
 
-  refresh = () => {
-    loadIssue(this.state.origin.issueId).then((res) => {
-      this.setAnIssueToState(res);
-    });
-  }
+  /**
+   *多选提交前的准备，因为可以手动输入，所以会有原先不存在的值提交，后台会自动新建
+   *
+   * @memberof EditIssueNarrow
+   */
+  prepareMutilSelectValueBeforeSubmit = (selected, fromList, key) => selected.map((item) => {
+    const exist = _.find(fromList, { name: item });
+    // 如果已有则返回已有值，如果不存在，则返回name和projectId
+    if (exist) {
+      return exist;
+    } else {
+      const prepared = { projectId: AppState.currentMenuType.id };
+      prepared[key] = item;
+      return prepared;
+    }
+  })
 
-  updateIssue = (pro) => {
-    const obj = {
-      issueId: this.state.issueId,
-      objectVersionNumber: this.state.origin.objectVersionNumber,
+  /**
+   *更新用例信息
+   * @param newValue 例 { statusId: 1 }
+   * @memberof EditIssueNarrow
+   */
+  editIssue = (newValue, done) => {
+    const key = Object.keys(newValue)[0];
+    const value = newValue[key];
+    const {
+      issueInfo, StatusList, componentList, labelList,
+    } = this.state;
+    const { issueId, objectVersionNumber } = issueInfo;
+
+    let issue = {
+      issueId,
+      objectVersionNumber,
     };
-    if ((pro === 'description') || (pro === 'editDes')) {
-      if (this.state[pro]) {
-        returnBeforeTextUpload(this.state[pro], obj, updateIssue, 'description')
+    switch (key) {
+      case 'statusId': {
+        const targetStatus = _.find(StatusList, { endStatusId: value });
+        if (targetStatus) {
+          updateStatus(targetStatus.id, issue.issueId, issue.objectVersionNumber)
+            .then((res) => {
+              this.reloadIssue();
+              if (this.props.onUpdate) {
+                this.props.onUpdate();
+              }
+            }).finally(() => {
+              done();
+            });
+        }
+        break;
+      }
+      case 'componentIssueRelDTOList': {
+        issue.componentIssueRelDTOList = this.prepareMutilSelectValueBeforeSubmit(value, componentList, 'name');
+        updateIssue(issue)
           .then((res) => {
-            this.reloadIssue(this.state.origin.issueId);
+            this.reloadIssue();
+            if (this.props.onUpdate) {
+              this.props.onUpdate();
+            }
+          }).finally(() => {
+            done();
           });
+        break;
       }
-    } else if (pro === 'assigneeId' || pro === 'reporterId') {
-      obj[pro] = this.state[pro] ? JSON.parse(this.state[pro]).id || 0 : 0;
-      updateIssue(obj)
-        .then((res) => {
-          this.reloadIssue();
-          if (this.props.onUpdate) {
-            this.props.onUpdate();
-          }
-        });
-    } else if (pro === 'storyPoints' || pro === 'remainingTime') {
-      obj[pro] = this.state[pro] === '' ? null : this.state[pro];
-      updateIssue(obj)
-        .then((res) => {
-          this.reloadIssue();
-          if (this.props.onUpdate) {
-            this.props.onUpdate();
-          }
-        });
-    } else {
-      obj[pro] = this.state[pro] || 0;
-      updateIssue(obj)
-        .then((res) => {
-          this.reloadIssue();
-          if (this.props.onUpdate) {
-            this.props.onUpdate();
-          }
-        });
-    }
-  }
-
-  updateIssueSelect = (originPros, pros) => {
-    const obj = {
-      issueId: this.state.issueId,
-      objectVersionNumber: this.state.origin.objectVersionNumber,
-    };
-    const origin = this.state[originPros];
-    let target;
-    let transPros;
-    if (originPros === 'originLabels') {
-      if (!this.state[pros].length) {
-        transPros = [];
-      } else if (typeof this.state[pros][0] !== 'string') {
-        transPros = this.transToArr(this.state[pros], 'labelName', 'array');
-      } else {
-        transPros = this.state[pros];
+      case 'labelIssueRelDTOList': {
+        issue.labelIssueRelDTOList = this.prepareMutilSelectValueBeforeSubmit(value, labelList, 'labelName');
+        updateIssue(issue)
+          .then((res) => {
+            this.reloadIssue();
+            if (this.props.onUpdate) {
+              this.props.onUpdate();
+            }
+          }).finally(() => {
+            done();
+          });
+        break;
       }
-    } else if (!this.state[pros].length) {
-      transPros = [];
-    } else if (typeof this.state[pros][0] !== 'string') {
-      transPros = this.transToArr(this.state[pros], 'name', 'array');
-    } else {
-      transPros = this.state[pros];
-    }
-    const out = _.map(transPros, (pro) => {
-      if (origin.length && origin[0].name) {
-        target = _.find(origin, { name: pro });
-      } else {
-        target = _.find(origin, { labelName: pro });
-      }
-      // const target = _.find(origin, { name: pro });
-      if (target) {
-        return target;
-      } else if (originPros === 'originLabels') {
-        return ({
-          labelName: pro,
-          // created: true,
-          projectId: AppState.currentMenuType.id,
-        });
-      } else {
-        return ({
-          name: pro,
-          // created: true,
-          projectId: AppState.currentMenuType.id,
-        });
-      }
-    });
-    obj[pros] = out;
-    updateIssue(obj)
-      .then((res) => {
-        this.reloadIssue();
-        if (this.props.onUpdate) {
-          this.props.onUpdate();
+      case 'description': {
+        if (value) {
+          returnBeforeTextUpload(value, issue, updateIssue, 'description')
+            .then((res) => {
+              this.reloadIssue();
+            }).finally(() => {
+              done();
+            });
         }
-      });
-  }
-
-  updateVersionSelect = (originPros, pros) => {
-    const obj = {
-      issueId: this.state.issueId,
-      objectVersionNumber: this.state.origin.objectVersionNumber,
-      versionType: pros === 'fixVersions' ? 'fix' : 'influence',
-    };
-    const origin = this.state[originPros];
-    let target;
-    let transPros;
-    if (!this.state[pros].length) {
-      transPros = [];
-    } else if (typeof this.state[pros][0] !== 'string') {
-      transPros = this.transToArr(this.state[pros], 'name', 'array');
-    } else {
-      transPros = this.state[pros];
+        break;
+      }
+      default: {
+        issue = { ...issue, ...newValue };
+        updateIssue(issue)
+          .then((res) => {
+            this.reloadIssue();
+            if (this.props.onUpdate) {
+              this.props.onUpdate();
+            }
+          }).finally(() => {
+            done();
+          });
+        break;
+      }
     }
-    const out = _.map(transPros, (pro) => {
-      if (origin.length && origin[0].name) {
-        target = _.find(origin, { name: pro });
-      }
-      if (target) {
-        return ({
-          ...target,
-          relationType: pros === 'fixVersions' ? 'fix' : 'influence',
-        });
-      } else {
-        return ({
-          name: pro,
-          relationType: pros === 'fixVersions' ? 'fix' : 'influence',
-          projectId: AppState.currentMenuType.id,
-        });
-      }
-    });
-    obj.versionIssueRelDTOList = out;
-    // obj.versionIssueRelDTOList = out.concat(this.state[pros === 'fixVersions' 
-    // ? 'influenceVersions' : 'fixVersions']);
-    updateIssue(obj)
-      .then((res) => {
-        this.reloadIssue();
-        if (this.props.onUpdate) {
-          this.props.onUpdate();
-        }
-      });
   }
 
   /**
    * Comment
    */
-  handleCreateCommit() {
-    const extra = {
-      issueId: this.state.origin.issueId,
-    };
-    const { addCommitDes } = this.state;
-    if (addCommitDes) {
-      beforeTextUpload(addCommitDes, extra, this.createCommit, 'commentText');
+  handleCreateCommit(newComment) {
+    const { issueInfo } = this.state;
+    const { issueId } = issueInfo;
+    const extra = { issueId };
+    if (newComment) {
+      beforeTextUpload(newComment, extra, this.createCommit, 'commentText');
     } else {
       extra.commentText = '';
       this.createCommit(extra);
@@ -643,31 +366,21 @@ class EditIssueNarrow extends Component {
     createCommit(commit).then((res) => {
       this.reloadIssue();
       this.setState({
-        addCommit: false,
-        addCommitDes: '',
+        addingComment: false,
       });
     });
   }
 
   transToArr(arr, pro, type = 'string') {
+    if (typeof arr !== 'object') {
+      return '';
+    }
     if (!arr.length) {
       return type === 'string' ? '无' : [];
     } else if (typeof arr[0] === 'object') {
       return type === 'string' ? _.map(arr, pro).join() : _.map(arr, pro);
     } else {
       return type === 'string' ? arr.join() : arr;
-    }
-  }
-
-  transformPriorityCode(originpriorityCode) {
-    if (!originpriorityCode.length) {
-      return [];
-    } else {
-      const arr = [];
-      arr[0] = _.find(originpriorityCode, { valueCode: 'high' });
-      arr[1] = _.find(originpriorityCode, { valueCode: 'medium' });
-      arr[2] = _.find(originpriorityCode, { valueCode: 'low' });
-      return arr;
     }
   }
 
@@ -697,7 +410,8 @@ class EditIssueNarrow extends Component {
 
 
   handleClickMenu(e) {
-    // console.log(e.key);
+    const { issueInfo } = this.state;
+    const { issueId } = issueInfo;
     switch (e.key) {
       case 'copy': {
         const copyConditionDTO = {
@@ -709,7 +423,7 @@ class EditIssueNarrow extends Component {
         this.setState({
           issueLoading: true,
         });
-        cloneIssue(this.state.origin.issueId, copyConditionDTO).then((res) => {
+        cloneIssue(issueId, copyConditionDTO).then((res) => {
           this.handleCopyIssue();
         }).catch((err) => {
           this.setState({
@@ -721,37 +435,22 @@ class EditIssueNarrow extends Component {
         break;
       }
       case 'item_1': {
-        this.handleDeleteIssue(this.state.origin.issueId);
+        this.handleDeleteIssue(issueId);
         break;
       }
       default: break;
     }
   }
 
-  changeRae(currentRae) {
-    this.setState({
-      currentRae,
-    });
-  }
-
   handleDeleteIssue = (issueId) => {
-    // console.log(issueId);
-    const that = this;
+    const { issueInfo } = this.state;
+    const { issueNum } = issueInfo;
     confirm({
       width: 560,
-      title: `删除测试用例${this.state.issueNum}`,
-      content:
-  <div style={{ marginBottom: 32 }}>
-    <p style={{ marginBottom: 10 }}>请确认您要删除这个测试用例。</p>
-    <p style={{ marginBottom: 10 }}>这个测试用例将会被彻底删除。包括所有步骤和相关执行。</p>
-  </div>,
-      onOk() {
-        return deleteIssue(issueId)
-          .then((res) => {
-            that.props.onDeleteIssue();
-          });
-      },
-      onCancel() { },
+      title: `删除测试用例${issueNum}`,
+      content: '这个测试用例将会被彻底删除。包括所有步骤和相关执行',
+      onOk: () => deleteIssue(issueId)
+        .then((res) => { this.props.onDeleteIssue(); }),
       okText: '删除',
       okType: 'danger',
     });
@@ -761,32 +460,23 @@ class EditIssueNarrow extends Component {
    * Comment
    */
   renderCommits() {
-    const delta = text2Delta(this.state.addCommitDes);
+    const { addingComment } = this.state;
+    const { issueCommentDTOList } = this.state.issueInfo;
     return (
       <div>
         {
-          this.state.addCommit && (
+          addingComment && (
             <div className="line-start mt-10">
               <WYSIWYGEditor
                 bottomBar
-                value={delta}
                 style={{ height: 200, width: '100%' }}
-                onChange={(value) => {
-                  this.setState({ addCommitDes: value });
-                }}
-                handleDelete={() => {
-                  this.setState({
-                    addCommit: false,
-                    addCommitDes: '',
-                  });
-                }}
-                handleSave={() => this.handleCreateCommit()}
+                handleSave={value => this.handleCreateCommit(value)}
               />
             </div>
           )
         }
         {
-          this.state.issueCommentDTOList.map(comment => (
+          issueCommentDTOList && issueCommentDTOList.map(comment => (
             <Comment
               key={comment.commentId}
               comment={comment}
@@ -803,15 +493,17 @@ class EditIssueNarrow extends Component {
    * DataLog
    */
   renderDataLogs() {
+    const { datalogs } = this.state;
     return (
       <DataLogs
-        datalogs={this.state.datalogs}
+        datalogs={datalogs}
       />
     );
   }
 
   renderLinkIssues() {
-    const group = _.groupBy(this.state.linkIssues, 'ward');
+    const { linkIssues } = this.state;
+    const group = _.groupBy(linkIssues, 'ward');
     return (
       <div className="c7ntest-tasks">
         {
@@ -830,23 +522,22 @@ class EditIssueNarrow extends Component {
 
 
   renderLinkList(link, i) {
+    const { issueInfo } = this.state;
+    const { issueId } = issueInfo;
     return (
       <LinkList
         key={link.linkId}
-        issue={{
-          ...link,
-          typeCode: link.typeCode,
-        }}
+        issue={link}
         i={i}
         // onOpen={(issueId, linkedIssueId) => {
         //   const menu = AppState.currentMenuType;
         //   const { type, id: projectId, name } = menu;
         //   this.props.history.push(`/agile/issue?
         // type=${type}&id=${projectId}&name=${name}&paramIssueId=${linkedIssueId}`);
-        //   // this.reloadIssue(issueId === this.state.origin.issueId ? linkedIssueId : issueId);
+        //   // this.reloadIssue(issueId === this.state.issueId ? linkedIssueId : issueId);
         // }}
         onRefresh={() => {
-          this.reloadIssue(this.state.origin.issueId);
+          this.reloadIssue(issueId);
         }}
       />
 
@@ -854,42 +545,42 @@ class EditIssueNarrow extends Component {
   }
 
   /**
-   * Des
+   * 用例描述
+   *
+   * @returns
+   * @memberof EditIssueNarrow
    */
-  renderDes() {
+  renderDescription() {
+    const { issueInfo, editDescriptionShow } = this.state;
+    const { description } = issueInfo;
     let delta;
-    if (this.state.editDesShow === undefined) {
+    if (editDescriptionShow === undefined) {
       return null;
     }
-    if (!this.state.description || this.state.editDesShow) {
-      delta = text2Delta(this.state.editDes);
+    if (!description || editDescriptionShow) {
+      delta = text2Delta(description);
       return (
         <div className="line-start mt-10">
           <WYSIWYGEditor
             bottomBar
-            value={text2Delta(this.state.editDes)}
+            value={text2Delta(description)}
             style={{ height: 200, width: '100%' }}
-            onChange={(value) => {
-              this.setState({ editDes: value });
-            }}
             handleDelete={() => {
               this.setState({
-                editDesShow: false,
-                editDes: this.state.description,
+                editDescriptionShow: false,
               });
             }}
-            handleSave={() => {
+            handleSave={(value) => {
               this.setState({
-                editDesShow: false,
-                description: this.state.editDes || '',
+                editDescriptionShow: false,
               });
-              this.updateIssue('editDes');
+              this.editIssue({ description: value });
             }}
           />
         </div>
       );
     } else {
-      delta = delta2Html(this.state.description);
+      delta = delta2Html(description);
       return (
         <div className="c7ntest-content-wrapper">
           <div
@@ -897,8 +588,7 @@ class EditIssueNarrow extends Component {
             role="none"
             onClick={() => {
               this.setState({
-                // editDesShow: true,
-                // editDes: this.state.description,
+                editDescriptionShow: true,
               });
             }}
           >
@@ -909,14 +599,523 @@ class EditIssueNarrow extends Component {
     }
   }
 
+  /**
+   * 加载可以转换的状态
+   *
+   * @memberof EditIssueNarrow
+   */
+  loadTransformsByStatusId = (statusId) => {
+    const { issueInfo } = this.state;
+    const { issueTypeDTO, issueId } = issueInfo;
+
+    const typeId = issueTypeDTO.id;
+    loadStatus(statusId, issueId, typeId).then((res) => {
+      this.setState({
+        StatusList: res,
+        selectLoading: false,
+      });
+    });
+  }
+
+  createIssueStep = () => {
+    const { issueInfo, testStepData } = this.state;
+    const { issueId } = issueInfo;
+    const lastRank = testStepData.length
+      ? testStepData[testStepData.length - 1].rank : null;
+    const testCaseStepDTO = {
+      attachments: [],
+      issueId,
+      lastRank,
+      nextRank: null,
+      testStep: '测试步骤',
+      testData: '测试数据',
+      expectedResult: '预期结果',
+    };
+    createIssueStep(testCaseStepDTO).then(() => {
+      this.reloadIssue();
+    });
+  }
+
+  /**
+   *左侧导航锚点
+   *
+   * @memberof EditIssueNarrow
+   */
+  renderNavs = () => navs.map(nav => (
+    <Tooltip placement="right" title={nav.tooltip}>
+      <li id="DETAILS-nav" className={`c7ntest-li ${this.state.currentNav === nav.code ? 'c7ntest-li-active' : ''}`}>
+        <Icon
+          type={`${nav.icon} c7ntest-icon-li`}
+          role="none"
+          onClick={() => {
+            this.setState({ currentNav: nav.code });
+            this.scrollToAnchor(nav.code);
+          }}
+        />
+      </li>
+    </Tooltip>
+  ))
+
+  /**
+   *用例状态更改
+   *
+   * @memberof EditIssueNarrow
+   */
+  renderSelectStatus = () => {
+    const { issueInfo, StatusList, selectLoading } = this.state;
+    const { statusMapDTO } = issueInfo;
+    const {
+      name: statusName, id: statusId, colour: statusColor, icon: statusIcon,
+    } = statusMapDTO || {};
+
+    return (
+      <TextEditToggle
+        style={{ width: '100%' }}
+        formKey="statusId"
+        onSubmit={(value, done) => { this.editIssue({ statusId: value }, done); }}
+        originData={StatusList.length ? statusId : statusName}
+      >
+        <Text>
+          {(data) => {
+            const targetStatus = _.find(StatusList, { endStatusId: data });
+            return (
+              <div>
+                {
+                  targetStatus ? (
+                    <div
+                      style={{
+                        color: targetStatus.statusDTO.colour || 'black',
+                        fontSize: '16px',
+                        lineHeight: '18px',
+                      }}
+                    >
+                      {targetStatus.statusDTO.name}
+                    </div>
+                  ) : statusName
+                }
+              </div>
+            );
+          }}
+        </Text>
+        <Edit>
+          <Select
+            style={{ width: 150 }}
+            loading={selectLoading}
+            autoFocus
+            onFocus={() => { this.loadTransformsByStatusId(statusId); }}
+          >
+            {
+              StatusList.map(transform => (
+                <Option key={transform.id} value={transform.endStatusId}>
+                  {transform.statusDTO.name}
+                </Option>
+              ))
+            }
+          </Select>
+        </Edit>
+      </TextEditToggle>
+    );
+  }
+
+  /**
+   *用例优先级更改
+   *
+   * @memberof EditIssueNarrow
+   */
+  renderSelectPriority = () => {
+    const { issueInfo, priorityList, selectLoading } = this.state;
+    const { priorityDTO } = issueInfo;
+    const { name: priorityName, id: priorityId, colour: priorityColor } = priorityDTO || {};
+    const priorityOptions = priorityList.map(priority => (
+      <Option key={priority.id} value={priority.id}>
+        <div style={{ display: 'inline-flex', alignItems: 'center', padding: '2px' }}>
+          <PriorityTag priority={priority} />
+        </div>
+      </Option>
+    ));
+    return (
+      <TextEditToggle
+        style={{ width: '100%' }}
+        formKey="priorityId"
+        onSubmit={(value, done) => { this.editIssue({ priorityId: value }, done); }}
+        originData={priorityList.length
+          ? priorityId : priorityName}
+      >
+        <Text>
+          {(data) => {
+            const targetPriority = _.find(priorityList, { id: data });
+            return (
+              <div>
+                {
+                  targetPriority ? (
+                    <PriorityTag priority={targetPriority} />
+                  ) : <PriorityTag priority={priorityDTO || {}} />
+                }
+              </div>
+            );
+          }}
+        </Text>
+        <Edit>
+          <Select
+            style={{ width: 150 }}
+            loading={selectLoading}
+            autoFocus
+            onFocus={() => {
+              this.setState({
+                selectLoading: true,
+              });
+              getPrioritys().then((res) => {
+                this.setState({
+                  priorityList: res,
+                  selectLoading: false,
+                });
+              });
+            }}
+          >
+            {priorityOptions}
+          </Select>
+        </Edit>
+      </TextEditToggle>
+    );
+  }
+
+  /**
+   *模块更改
+   *
+   * @memberof EditIssueNarrow
+   */
+  renderSelectModule = () => {
+    const { issueInfo, componentList, selectLoading } = this.state;
+    const { componentIssueRelDTOList } = issueInfo;
+    return (
+      <TextEditToggle
+        style={{ width: '100%' }}
+        formKey="componentIssueRelDTOList"
+        onSubmit={(value, done) => { this.editIssue({ componentIssueRelDTOList: value }, done); }}
+        originData={this.transToArr(componentIssueRelDTOList, 'name', 'array')}
+      >
+        <Text>
+          {data => (
+            <div style={{ color: '#3f51b5' }}>
+              <p style={{ color: '#3f51b5', wordBreak: 'break-word', marginBottom: 0 }}>
+                {this.transToArr(data, 'name')}
+              </p>
+            </div>
+          )}
+        </Text>
+        <Edit>
+          <Select
+            loading={selectLoading}
+            mode="tags"
+            autoFocus
+            getPopupContainer={triggerNode => triggerNode.parentNode}
+            tokenSeparators={[',']}
+            style={{ width: '200px', marginTop: 0, paddingTop: 0 }}
+            onFocus={() => {
+              this.setState({
+                selectLoading: true,
+              });
+              getModules().then((res) => {
+                this.setState({
+                  componentList: res,
+                  selectLoading: false,
+                });
+              });
+            }}
+          >
+            {componentList.map(component => (
+              <Option
+                key={component.name}
+                value={component.name}
+              >
+                {component.name}
+              </Option>
+            ))}
+          </Select>
+        </Edit>
+      </TextEditToggle>
+    );
+  }
+
+  /**
+   *标签更改
+   *
+   * @memberof EditIssueNarrow
+   */
+  renderSelectLabel = () => {
+    const { issueInfo, labelList, selectLoading } = this.state;
+    const { labelIssueRelDTOList } = issueInfo;
+    return (
+      <TextEditToggle
+        style={{ width: '100%' }}
+        formKey="labelIssueRelDTOList"
+        onSubmit={(value, done) => { this.editIssue({ labelIssueRelDTOList: value }, done); }}
+        originData={this.transToArr(labelIssueRelDTOList, 'labelName', 'array')}
+      >
+        <Text>
+          {data => (
+            data.length > 0 ? (
+              <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+                {
+                  this.transToArr(data, 'labelName', 'array').map(label => (
+                    <div
+                      key={label}
+                      style={{
+                        color: '#000',
+                        borderRadius: '100px',
+                        fontSize: '13px',
+                        lineHeight: '24px',
+                        padding: '2px 12px',
+                        background: 'rgba(0, 0, 0, 0.08)',
+                        marginRight: '8px',
+                        marginBottom: 3,
+                      }}
+                    >
+                      {label}
+                    </div>
+                  ))
+                }
+              </div>
+            ) : '无'
+          )}
+        </Text>
+        <Edit>
+          <Select
+            loading={selectLoading}
+            mode="tags"
+            autoFocus
+            getPopupContainer={triggerNode => triggerNode.parentNode}
+            tokenSeparators={[',']}
+            style={{ width: '200px', marginTop: 0, paddingTop: 0 }}
+            onFocus={() => {
+              this.setState({
+                selectLoading: true,
+              });
+              getLabels().then((res) => {
+                this.setState({
+                  labelList: res,
+                  selectLoading: false,
+                });
+              });
+            }}
+          >
+            {labelList.map(label => (
+              <Option
+                key={label.labelName}
+                value={label.labelName}
+              >
+                {label.labelName}
+              </Option>
+            ))}
+          </Select>
+        </Edit>
+      </TextEditToggle>
+    );
+  }
+
+  /**
+   *报告人更改
+   *
+   * @memberof EditIssueNarrow
+   */
+  renderSelectPerson = (type) => {
+    const { issueInfo, userList, selectLoading } = this.state;
+    const { reporterId, reporterName, reporterImageUrl } = issueInfo;
+
+    const userOptions = userList.map(user => (
+      <Option key={user.id} value={user.id}>
+        <User user={user} />
+      </Option>
+    ));
+    return (
+      <TextEditToggle
+        formKey="reporterId"
+        onSubmit={(id, done) => { this.editIssue({ reporterId: id || 0 }, done); }}
+        originData={userList.length > 0 ? reporterId : (
+          <UserHead
+            user={{
+              id: reporterId,
+              loginName: '',
+              realName: reporterName,
+              avatar: reporterImageUrl,
+            }}
+          />
+        )}
+      >
+        <Text>
+          {(data) => {
+            if (userList.length > 0) {
+              const targetUser = _.find(userList, { id: data });
+              return targetUser ? (
+                <User user={targetUser} />
+              ) : '无';
+            } else {
+              return (
+                <UserHead
+                  user={{
+                    id: reporterId,
+                    loginName: '',
+                    realName: reporterName,
+                    avatar: reporterImageUrl,
+                  }}
+                />
+              );
+            }
+          }}
+        </Text>
+        <Edit>
+          <Select
+            filter
+            allowClear
+            autoFocus
+            filterOption={false}
+            onFilterChange={(value) => {
+              this.setState({
+                selectLoading: true,
+              });
+              getUsers(value).then((res) => {
+                this.setState({
+                  userList: res.content,
+                  selectLoading: false,
+                });
+              });
+            }}
+            loading={selectLoading}
+            style={{ width: 200 }}
+            onFocus={() => {
+              this.setState({
+                selectLoading: true,
+              });
+              getUsers().then((res) => {
+                this.setState({
+                  userList: res.content,
+                  selectLoading: false,
+                });
+              });
+            }}
+          >
+            {userOptions}
+          </Select>
+        </Edit>
+      </TextEditToggle>
+    );
+  }
+
+  /**
+   *指派人更改
+   *
+   * @memberof EditIssueNarrow
+   */
+  renderSelectAssign = () => {
+    const { issueInfo, userList, selectLoading } = this.state;
+    const { assigneeId, assigneeName, assigneeImageUrl } = issueInfo;
+    const userOptions = userList.map(user => (
+      <Option key={user.id} value={user.id}>
+        <User user={user} />
+      </Option>
+    ));
+    return (
+      <TextEditToggle
+        formKey="assigneeId"
+        onSubmit={(id, done) => { this.editIssue({ assigneeId: id || 0 }, done); }}
+        originData={userList.length > 0 ? assigneeId : (
+          <UserHead
+            user={{
+              id: assigneeId,
+              loginName: '',
+              realName: assigneeName,
+              avatar: assigneeImageUrl,
+            }}
+          />
+        )}
+      >
+        <Text>
+          {(data) => {
+            if (userList.length > 0) {
+              const targetUser = _.find(userList, { id: data });
+              return targetUser ? (
+                <User user={targetUser} />
+              ) : '无';
+            } else {
+              return (
+                <UserHead
+                  user={{
+                    id: assigneeId,
+                    loginName: '',
+                    realName: assigneeName,
+                    avatar: assigneeImageUrl,
+                  }}
+                />
+              );
+            }
+          }}
+        </Text>
+        <Edit>
+          <Select
+            filter
+            allowClear
+            autoFocus
+            filterOption={false}
+            onFilterChange={(value) => {
+              this.setState({
+                selectLoading: true,
+              });
+              getUsers(value).then((res) => {
+                this.setState({
+                  userList: res.content,
+                  selectLoading: false,
+                });
+              });
+            }}
+            loading={selectLoading}
+            style={{ width: 200 }}
+            onFocus={() => {
+              this.setState({
+                selectLoading: true,
+              });
+              getUsers().then((res) => {
+                this.setState({
+                  userList: res.content,
+                  selectLoading: false,
+                });
+              });
+            }}
+          >
+            {userOptions}
+          </Select>
+        </Edit>
+      </TextEditToggle>
+    );
+  }
+
   render() {
+    const {
+      issueInfo, issueLoading, FullEditorShow, createLinkTaskShow,
+      copyIssueShow, currentNav, testStepData, testExecuteData,
+      linkIssues, fileList,
+    } = this.state;
+    const {
+      issueId, issueNum, summary, creationDate, lastUpdateDate, description,
+      priorityDTO, issueTypeDTO, statusMapDTO, versionIssueRelDTOList,
+      issueAttachmentDTOList,
+    } = issueInfo;
+    const {
+      name: statusName, id: statusId, colour: statusColor, icon: statusIcon,
+    } = statusMapDTO || {};
+    const { colour: priorityColor } = priorityDTO || {};
+    const typeCode = issueTypeDTO ? issueTypeDTO.typeCode : '';
+    const typeColor = issueTypeDTO ? issueTypeDTO.colour : '#fab614';
+    const typeIcon = issueTypeDTO ? issueTypeDTO.icon : 'help';
+
+
+    const fixVersionsTotal = _.filter(versionIssueRelDTOList, { relationType: 'fix' }) || [];
+    const fixVersionsFixed = _.filter(fixVersionsTotal, { statusCode: 'archived' }) || [];
+    const fixVersions = _.filter(fixVersionsTotal, v => v.statusCode !== 'archived') || [];
     const menu = AppState.currentMenuType;
     const {
       type, id: projectId, organizationId: orgId, name,
     } = menu;
-    const {
-      initValue, visible, onCancel, onOk, mode,
-    } = this.props;
+    const { mode } = this.props;
     const getMenu = () => (
       <Menu onClick={this.handleClickMenu.bind(this)}>
         {/* <Menu.Item key="add_worklog">
@@ -932,19 +1131,10 @@ class EditIssueNarrow extends Component {
         </Permission>
       </Menu>
     );
-    const callback = (value) => {
-      this.setState({
-        description: value,
-        edit: false,
-      }, () => {
-        this.updateIssue('description');
-      });
-    };
-
     return (
       <div className="choerodon-modal-editIssue">
         {
-          this.state.issueLoading ? (
+          issueLoading ? (
             <div
               style={{
                 position: 'absolute',
@@ -969,116 +1159,12 @@ class EditIssueNarrow extends Component {
               height: 44, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', borderBottom: '1px solid rgba(0,0,0,0.26)',
             }}
             >
-              <div
-                className="radius"
-                style={{
-                  background: TYPE[this.state.typeCode], color: '#fff', width: '20px', height: '20px', textAlign: 'center', fontSize: '14px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                }}
-              >
-                <Icon
-                  style={{ fontSize: '14px' }}
-                  type={ICON[this.state.typeCode]}
-                />
-              </div>
+              <TypeTag type={issueTypeDTO} />
             </div>
           </div>
           <ul className="c7ntest-nav-ul">
-            <Tooltip placement="right" title="详情">
-              <li id="DETAILS-nav" className={`c7ntest-li ${this.state.nav === 'detail' ? 'c7ntest-li-active' : ''}`}>
-                <Icon
-                  type="error_outline c7ntest-icon-li"
-                  role="none"
-                  onClick={() => {
-                    this.setState({ nav: 'detail' });
-                    this.scrollToAnchor('detail');
-                  }}
-                />
-              </li>
-            </Tooltip>
-            <Tooltip placement="right" title="描述">
-              <li id="DESCRIPTION-nav" className={`c7ntest-li ${this.state.nav === 'des' ? 'c7ntest-li-active' : ''}`}>
-                <Icon
-                  type="subject c7ntest-icon-li"
-                  role="none"
-                  onClick={() => {
-                    this.setState({ nav: 'des' });
-                    this.scrollToAnchor('des');
-                  }}
-                />
-              </li>
-            </Tooltip>
-            <Tooltip placement="right" title="测试详细信息">
-              <li id="DESCRIPTION-test1" className={`c7ntest-li ${this.state.nav === 'test1' ? 'c7ntest-li-active' : ''}`}>
-                <Icon
-                  type="compass c7ntest-icon-li"
-                  role="none"
-                  onClick={() => {
-                    this.setState({ nav: 'test1' });
-                    this.scrollToAnchor('test1');
-                  }}
-                />
-              </li>
-            </Tooltip>
-            <Tooltip placement="right" title="测试执行">
-              <li id="DESCRIPTION-test2" className={`c7ntest-li ${this.state.nav === 'test2' ? 'c7ntest-li-active' : ''}`}>
-                <Icon
-                  type="explicit2 c7ntest-icon-li"
-                  role="none"
-                  onClick={() => {
-                    this.setState({ nav: 'test2' });
-                    this.scrollToAnchor('test2');
-                  }}
-                />
-              </li>
-            </Tooltip>
-            <Tooltip placement="right" title="附件">
-              <li id="COMMENT-nav" className={`c7ntest-li ${this.state.nav === 'attachment' ? 'c7ntest-li-active' : ''}`}>
-                <Icon
-                  type="attach_file c7ntest-icon-li"
-                  role="none"
-                  onClick={() => {
-                    this.setState({ nav: 'attachment' });
-                    this.scrollToAnchor('attachment');
-                  }}
-                />
-              </li>
-            </Tooltip>
-            <Tooltip placement="right" title="评论">
-              <li id="ATTACHMENT-nav" className={`c7ntest-li ${this.state.nav === 'commit' ? 'c7ntest-li-active' : ''}`}>
-                <Icon
-                  type="sms_outline c7ntest-icon-li"
-                  role="none"
-                  onClick={() => {
-                    this.setState({ nav: 'commit' });
-                    this.scrollToAnchor('commit');
-                  }}
-                />
-              </li>
-            </Tooltip>
-            <Tooltip placement="right" title="活动日志">
-              <li id="DATA_LOG-nav" className={`c7ntest-li ${this.state.nav === 'data_log' ? 'c7ntest-li-active' : ''}`}>
-                <Icon
-                  type="insert_invitation c7ntest-icon-li"
-                  role="none"
-                  onClick={() => {
-                    this.setState({ nav: 'data_log' });
-                    this.scrollToAnchor('data_log');
-                  }}
-                />
-              </li>
-            </Tooltip>
-            <Tooltip placement="right" title="相关任务">
-              <li id="LINK_TASKS-nav" className={`c7ntest-li ${this.state.nav === 'link_task' ? 'c7ntest-li-active' : ''}`}>
-                <Icon
-                  type="link c7ntest-icon-li"
-                  role="none"
-                  onClick={() => {
-                    this.setState({ nav: 'link_task' });
-                    this.scrollToAnchor('link_task');
-                  }}
-                />
-              </li>
-            </Tooltip>
+            {this.renderNavs()}
+
           </ul>
         </div>
         <div className="c7ntest-content">
@@ -1097,27 +1183,10 @@ class EditIssueNarrow extends Component {
                     height: 44,
                   }}
                 >
+                  {/* issueNum 用例编号 */}
                   <div style={{ fontSize: 16, lineHeight: '28px', fontWeight: 500 }}>
-                    {
-                      this.state.typeCode === 'sub_task' ? (
-                        <span>
-                          <span
-                            role="none"
-                            style={{ color: 'rgb(63, 81, 181)', cursor: 'pointer' }}
-                            onClick={() => {
-                              this.reloadIssue(this.state.parentIssueId);
-                            }}
-                          >
-                            {this.state.parentIssueNum}
-                          </span>
-                          <span style={{ paddingLeft: 10, paddingRight: 10 }}>/</span>
-                        </span>
-                      ) : null
-                    }
-                    <span>{this.state.issueNum}</span>
+                    <span>{issueNum}</span>
                   </div>
-
-
                   <div
                     style={{
                       cursor: 'pointer', fontSize: '13px', lineHeight: '20px', display: 'flex', alignItems: 'center',
@@ -1130,44 +1199,30 @@ class EditIssueNarrow extends Component {
                   </div>
                 </div>
                 <div className="line-justify" style={{ marginBottom: 5, alignItems: 'center', marginTop: 10 }}>
-                  <ReadAndEdit
-                    callback={this.changeRae.bind(this)}
-                    thisType="summary"
-                    line
-                    current={this.state.currentRae}
-                    handleEnter
-                    origin={this.state.summary}
-                    onInit={() => this.setAnIssueToState()}
-                    onOk={this.updateIssue.bind(this, 'summary')}
-                    onCancel={this.resetSummary.bind(this)}
-                    readModeContent={(
-                      <div className="c7ntest-summary">
-                        {this.state.summary}
-                      </div>
-                    )}
+
+                  <TextEditToggle
+                    style={{ width: '100%' }}
+                    formKey="summary"
+                    onSubmit={(value, done) => { this.editIssue({ summary: value }, done); }}
+                    originData={summary}
                   >
-                    <TextArea
-                      // style={{ width: 290 }}
-                      maxLength={44}
-                      value={this.state.summary}
-                      size="small"
-                      autoFocus
-                      onChange={this.handleTitleChange.bind(this)}
-                      // autosize
-                      onPressEnter={() => {
-                        this.updateIssue('summary');
-                        this.setState({
-                          currentRae: undefined,
-                        });
-                      }}
-                    />
-                  </ReadAndEdit>
+                    <Text>
+                      {data => (
+                        <div className="c7ntest-summary">
+                          {data}
+                        </div>
+                      )}
+                    </Text>
+                    <Edit>
+                      <TextArea maxLength={44} size="small" autoFocus />
+                    </Edit>
+                  </TextEditToggle>
                   <div style={{ flexShrink: 0, color: 'rgba(0, 0, 0, 0.65)' }}>
                     <Dropdown overlay={getMenu()} trigger={['click']}>
                       <Button icon="more_vert" />
                     </Dropdown>
                   </div>
-                </div>                
+                </div>
                 {/* 状态 */}
                 {mode === 'wide' && (
                   <div className="line-start" style={{ alignItems: 'center' }}>
@@ -1177,7 +1232,7 @@ class EditIssueNarrow extends Component {
                           width: 30,
                           height: 30,
                           borderRadius: '50%',
-                          background: ICON_COLOR[this.state.statusCode],
+                          background: statusColor,
                           marginRight: 12,
                           flexShrink: 0,
                           display: 'flex',
@@ -1186,10 +1241,10 @@ class EditIssueNarrow extends Component {
                         }}
                       >
                         <Icon
-                          type={STATUS_ICON[this.state.statusCode] ? STATUS_ICON[this.state.statusCode].icon : 'timelapse'}
+                          type={statusIcon}
                           style={{
                             fontSize: '24px',
-                            color: this.state.statusColor || '#ffae02',
+                            color: statusColor || '#ffae02',
                           }}
                         />
                       </span>
@@ -1198,82 +1253,17 @@ class EditIssueNarrow extends Component {
                           <FormattedMessage id="issue_issueFilterByStatus" />
                         </div>
                         <div>
-                          <ReadAndEdit
-                            callback={this.changeRae.bind(this)}
-                            thisType="statusId"
-                            current={this.state.currentRae}
-                            origin={this.state.statusId}
-                            onOk={this.updateIssue.bind(this, 'statusId')}
-                            onCancel={this.resetStatusId.bind(this)}
-                            onInit={() => {
-                              this.setAnIssueToState();
-                              loadStatus().then((res) => {
-                                this.setState({
-                                  originStatus: res,
-                                });
-                              });
-                            }}
-                            readModeContent={(
-                              <div>
-                                {
-                                  this.state.statusId ? (
-                                    <div
-                                      style={{
-                                        color: this.state.statusColor,
-                                        fontSize: '16px',
-                                        lineHeight: '18px',
-                                      }}
-                                    >
-                                      {this.state.statusName}
-                                    </div>
-                                  ) : '无'
-                                }
-                              </div>
-                            )}
-                          >
-                            <Select
-                              value={this.state.originStatus.length
-                                ? this.state.statusId : this.state.statusName}
-                              style={{ width: 150 }}
-                              loading={this.state.selectLoading}
-                              autoFocus
-                              // getPopupContainer={triggerNode => triggerNode.parentNode}
-                              onFocus={() => {
-                                this.setState({
-                                  selectLoading: true,
-                                });
-                                loadStatus().then((res) => {
-                                  this.setState({
-                                    originStatus: res,
-                                    selectLoading: false,
-                                  });
-                                });
-                              }}
-                              onChange={(value) => {
-                                this.setState({
-                                  statusId: value,
-                                });
-                              }}
-                            >
-                              {
-                                this.state.originStatus.map(status => (
-                                  <Option key={status.id} value={status.id}>
-                                    {status.name}
-                                  </Option>
-                                ))
-                              }
-                            </Select>
-                          </ReadAndEdit>
+                          {this.renderSelectStatus()}
                         </div>
                       </div>
                     </div>
                     <div style={{ display: 'flex', flex: 1 }}>
                       <span
                         style={{
-                          width: 30, height: 30, borderRadius: '50%', background: COLOR[this.state.priorityCode] ? COLOR[this.state.priorityCode].bgColor : 'rgba(77, 144, 254, 0.2)', marginRight: 12, flexShrink: 0, display: 'flex', justifyContent: 'center', alignItems: 'center',
+                          width: 30, height: 30, borderRadius: '50%', background: priorityColor ? color2rgba(priorityColor, 0.18) : 'rgba(77, 144, 254, 0.2)', marginRight: 12, flexShrink: 0, display: 'flex', justifyContent: 'center', alignItems: 'center',
                         }}
                       >
-                        <Icon type="flag" style={{ fontSize: '24px', color: COLOR[this.state.priorityCode] ? COLOR[this.state.priorityCode].color : '#3575df' }} />
+                        <Icon type="flag" style={{ fontSize: '24px', color: priorityColor || '#3575df' }} />
                       </span>
                       <div>
                         <div style={{ fontSize: '12px', color: 'rgba(0, 0, 0, 0.54)', marginBottom: 4 }}>
@@ -1281,96 +1271,7 @@ class EditIssueNarrow extends Component {
                         </div>
                         <div>
                           {/* 优先级 */}
-                          <ReadAndEdit
-                            callback={this.changeRae.bind(this)}
-                            thisType="priorityCode"
-                            current={this.state.currentRae}
-                            origin={this.state.priorityCode}
-                            onOk={this.updateIssue.bind(this, 'priorityCode')}
-                            onCancel={this.resetPriorityCode.bind(this)}
-                            onInit={() => {
-                              this.setAnIssueToState();
-                              loadPriorities().then((res) => {
-                                this.setState({
-                                  originpriorities: res.lookupValues,
-                                });
-                              });
-                            }}
-                            readModeContent={(
-                              <div>
-                                {
-                                  this.state.priorityCode ? (
-                                    <div
-                                      className="c7ntest-level"
-                                      style={{
-                                        // backgroundColor: COLOR[this.state.priorityCode].bgColor,
-                                        color: COLOR[this.state.priorityCode].color,
-                                        // borderRadius: '2px',
-                                        // padding: '0 8px',
-                                        // display: 'inline-block',
-                                        fontSize: '16px',
-                                        lineHeight: '18px',
-                                      }}
-                                    >
-                                      {this.state.priorityName}
-                                    </div>
-                                  ) : '无'
-                                }
-                              </div>
-                            )}
-                          >
-                            <Select
-                              value={this.state.originpriorities.length
-                                ? this.state.priorityCode : this.state.priorityName}
-                              style={{ width: '150px' }}
-                              loading={this.state.selectLoading}
-                              autoFocus
-                              // getPopupContainer={triggerNode => triggerNode.parentNode}
-                              onFocus={() => {
-                                this.setState({
-                                  selectLoading: true,
-                                });
-                                loadPriorities().then((res) => {
-                                  this.setState({
-                                    originpriorities: res.lookupValues,
-                                    selectLoading: false,
-                                  });
-                                });
-                              }}
-                              onChange={(value) => {
-                                const priority = _.find(this.state.originpriorities,
-                                  { valueCode: value });
-                                this.setState({
-                                  priorityCode: value,
-                                  priorityName: priority.name,
-                                });
-                              }}
-                            >
-                              {
-                                this.transformPriorityCode(this.state.originpriorities)
-                                  .map(onetype => (
-                                    <Option key={onetype.valueCode} value={onetype.valueCode}>
-                                      <div style={{ display: 'inline-flex', alignItems: 'center', padding: '2px' }}>
-                                        <div
-                                          className="c7ntest-level"
-                                          style={{
-                                            // backgroundColor: COLOR[type.valueCode].bgColor,
-                                            color: COLOR[onetype.valueCode].color,
-                                            // borderRadius: '2px',
-                                            // padding: '0 8px',
-                                            // display: 'inline-block',
-                                            fontSize: '16px',
-                                            lineHeight: '18px',
-                                          }}
-                                        >
-                                          {onetype.name}
-                                        </div>
-                                      </div>
-                                    </Option>
-                                  ))
-                              }
-                            </Select>
-                          </ReadAndEdit>
+                          {this.renderSelectPriority()}
                         </div>
                       </div>
                     </div>
@@ -1390,13 +1291,13 @@ class EditIssueNarrow extends Component {
                         <div>
                           <div>
                             {
-                              !this.state.fixVersionsFixed.length && !this.state.fixVersions.length ? '无' : (
+                              !fixVersionsFixed.length && !fixVersions.length ? '无' : (
                                 <div>
                                   <div style={{ color: '#000' }}>
-                                    {_.map(this.state.fixVersionsFixed, 'name').join(' , ')}
+                                    {_.map(fixVersionsFixed, 'name').join(' , ')}
                                   </div>
                                   <p style={{ wordBreak: 'break-word', marginBottom: 0 }}>
-                                    {_.map(this.state.fixVersions, 'name').join(' , ')}
+                                    {_.map(fixVersions, 'name').join(' , ')}
                                   </p>
                                 </div>
                               )
@@ -1439,75 +1340,7 @@ class EditIssueNarrow extends Component {
                                   </span>
                                 </div>
                                 <div className="c7ntest-value-wrapper">
-                                  <ReadAndEdit
-                                    callback={this.changeRae.bind(this)}
-                                    thisType="statusId"
-                                    current={this.state.currentRae}
-                                    origin={this.state.statusId}
-                                    onOk={this.updateIssue.bind(this, 'statusId')}
-                                    onCancel={this.resetStatusId.bind(this)}
-                                    onInit={() => {
-                                      this.setAnIssueToState();
-                                      loadStatus().then((res) => {
-                                        this.setState({
-                                          originStatus: res,
-                                        });
-                                      });
-                                    }}
-                                    readModeContent={(
-                                      <div>
-                                        {
-                                          this.state.statusId ? (
-                                            <div
-                                              style={{
-                                                background: this.state.origin.statusColor || STATUS[this.state.statusCode],
-                                                color: '#fff',
-                                                borderRadius: '2px',
-                                                padding: '0 8px',
-                                                display: 'inline-block',
-                                                margin: '2px auto 2px 0',
-                                              }}
-                                            >
-                                              {this.state.statusName}
-                                            </div>
-                                          ) : '无'
-                                        }
-                                      </div>
-                                    )}
-                                  >
-                                    <Select
-                                      value={this.state.originStatus.length
-                                        ? this.state.statusId : this.state.statusName}
-                                      style={{ width: 150 }}
-                                      loading={this.state.selectLoading}
-                                      autoFocus
-                                      getPopupContainer={triggerNode => triggerNode.parentNode}
-                                      onFocus={() => {
-                                        this.setState({
-                                          selectLoading: true,
-                                        });
-                                        loadStatus().then((res) => {
-                                          this.setState({
-                                            originStatus: res,
-                                            selectLoading: false,
-                                          });
-                                        });
-                                      }}
-                                      onChange={(value) => {
-                                        this.setState({
-                                          statusId: value,
-                                        });
-                                      }}
-                                    >
-                                      {
-                                        this.state.originStatus.map(status => (
-                                          <Option key={status.id} value={status.id}>
-                                            {status.name}
-                                          </Option>
-                                        ))
-                                      }
-                                    </Select>
-                                  </ReadAndEdit>
+                                  {this.renderSelectStatus()}
                                 </div>
                               </div>
                               {/* 优先级 */}
@@ -1516,91 +1349,7 @@ class EditIssueNarrow extends Component {
                                   <span className="c7ntest-property">优先级：</span>
                                 </div>
                                 <div className="c7ntest-value-wrapper">
-                                  <ReadAndEdit
-                                    callback={this.changeRae.bind(this)}
-                                    thisType="priorityCode"
-                                    current={this.state.currentRae}
-                                    origin={this.state.priorityCode}
-                                    onOk={this.updateIssue.bind(this, 'priorityCode')}
-                                    onCancel={this.resetPriorityCode.bind(this)}
-                                    onInit={() => {
-                                      this.setAnIssueToState();
-                                      loadPriorities().then((res) => {
-                                        this.setState({
-                                          originpriorities: res.lookupValues,
-                                        });
-                                      });
-                                    }}
-                                    readModeContent={(
-                                      <div>
-                                        {
-                                          this.state.priorityCode ? (
-                                            <div
-                                              className="c7ntest-level"
-                                              style={{
-                                                backgroundColor: COLOR[this.state.priorityCode].bgColor,
-                                                color: COLOR[this.state.priorityCode].color,
-                                                borderRadius: '2px',
-                                                padding: '0 8px',
-                                                display: 'inline-block',
-                                              }}
-                                            >
-                                              {this.state.priorityName}
-                                            </div>
-                                          ) : '无'
-                                        }
-                                      </div>
-                                    )}
-                                  >
-                                    <Select
-                                      value={this.state.originpriorities.length
-                                        ? this.state.priorityCode : this.state.priorityName}
-                                      style={{ width: '150px' }}
-                                      loading={this.state.selectLoading}
-                                      autoFocus
-                                      getPopupContainer={triggerNode => triggerNode.parentNode}
-                                      onFocus={() => {
-                                        this.setState({
-                                          selectLoading: true,
-                                        });
-                                        loadPriorities().then((res) => {
-                                          this.setState({
-                                            originpriorities: res.lookupValues,
-                                            selectLoading: false,
-                                          });
-                                        });
-                                      }}
-                                      onChange={(value) => {
-                                        const priority = _.find(this.state.originpriorities,
-                                          { valueCode: value });
-                                        this.setState({
-                                          priorityCode: value,
-                                          priorityName: priority.name,
-                                        });
-                                      }}
-                                    >
-                                      {
-                                        this.transformPriorityCode(this.state.originpriorities).map(priorityType => (
-                                          <Option key={priorityType.valueCode} value={priorityType.valueCode}>
-                                            <div style={{ display: 'inline-flex', alignItems: 'center', padding: '2px' }}>
-                                              <div
-                                                className="c7ntest-level"
-                                                style={{
-                                                  backgroundColor: COLOR[priorityType.valueCode].bgColor,
-                                                  color: COLOR[priorityType.valueCode].color,
-                                                  borderRadius: '2px',
-                                                  padding: '0 8px',
-                                                  display: 'inline-block',
-                                                }}
-                                              >
-                                                {priorityType.name}
-                                              </div>
-                                            </div>
-                                          </Option>
-                                        ))
-                                      }
-                                    </Select>
-                                  </ReadAndEdit>
+                                  {this.renderSelectPriority()}
                                 </div>
                               </div>
                             </div>
@@ -1608,7 +1357,7 @@ class EditIssueNarrow extends Component {
                         }
                         {/* 模块 */}
                         {
-                          this.state.typeCode !== 'sub_task' ? (
+                          typeCode !== 'sub_task' ? (
                             <div className="line-start mt-10 ht-20">
                               <div className="c7ntest-property-wrapper">
                                 <span className="c7ntest-property">
@@ -1617,55 +1366,7 @@ class EditIssueNarrow extends Component {
                                 </span>
                               </div>
                               <div className="c7ntest-value-wrapper">
-                                <ReadAndEdit
-                                  callback={this.changeRae.bind(this)}
-                                  thisType="componentIssueRelDTOList"
-                                  current={this.state.currentRae}
-                                  origin={this.state.componentIssueRelDTOList}
-                                  onInit={() => this.setAnIssueToState(this.state.origin)}
-                                  onOk={this.updateIssueSelect.bind(this, 'originComponents', 'componentIssueRelDTOList')}
-                                  onCancel={this.resetComponentIssueRelDTOList.bind(this)}
-                                  readModeContent={(
-                                    <div style={{ color: '#3f51b5' }}>
-                                      <p style={{ color: '#3f51b5', wordBreak: 'break-word', marginBottom: 0 }}>
-                                        {this.transToArr(this.state.componentIssueRelDTOList, 'name')}
-                                      </p>
-                                    </div>
-                                  )}
-                                >
-                                  <Select
-                                    value={this.transToArr(this.state.componentIssueRelDTOList, 'name', 'array')}
-                                    loading={this.state.selectLoading}
-                                    mode="tags"
-                                    autoFocus
-                                    getPopupContainer={triggerNode => triggerNode.parentNode}
-                                    tokenSeparators={[',']}
-                                    style={{ width: '200px', marginTop: 0, paddingTop: 0 }}
-                                    onFocus={() => {
-                                      this.setState({
-                                        selectLoading: true,
-                                      });
-                                      loadComponents().then((res) => {
-                                        this.setState({
-                                          originComponents: res,
-                                          selectLoading: false,
-                                        });
-                                      });
-                                    }}
-                                    onChange={value => this.setState({
-                                      componentIssueRelDTOList: value,
-                                    })}
-                                  >
-                                    {this.state.originComponents.map(component => (
-                                      <Option
-                                        key={component.name}
-                                        value={component.name}
-                                      >
-                                        {component.name}
-                                      </Option>
-                                    ))}
-                                  </Select>
-                                </ReadAndEdit>
+                                {this.renderSelectModule()}
                               </div>
                             </div>
                           ) : null
@@ -1679,76 +1380,7 @@ class EditIssueNarrow extends Component {
                             </span>
                           </div>
                           <div className="c7ntest-value-wrapper">
-
-                            <ReadAndEdit
-                              callback={this.changeRae.bind(this)}
-                              thisType="labelIssueRelDTOList"
-                              current={this.state.currentRae}
-                              origin={this.state.labelIssueRelDTOList}
-                              onInit={() => this.setAnIssueToState(this.state.origin)}
-                              onOk={this.updateIssueSelect.bind(this, 'originLabels', 'labelIssueRelDTOList')}
-                              onCancel={this.resetlabelIssueRelDTOList.bind(this)}
-                              readModeContent={(
-                                <div>
-                                  {
-                                    this.state.labelIssueRelDTOList.length > 0 ? (
-                                      <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-                                        {
-                                          this.transToArr(this.state.labelIssueRelDTOList, 'labelName', 'array').map(label => (
-                                            <div
-                                              key={label}
-                                              style={{
-                                                color: '#000',
-                                                borderRadius: '100px',
-                                                fontSize: '13px',
-                                                lineHeight: '24px',
-                                                padding: '2px 12px',
-                                                background: 'rgba(0, 0, 0, 0.08)',
-                                                marginRight: '8px',
-                                                marginBottom: 3,
-                                              }}
-                                            >
-                                              {label}
-                                            </div>
-                                          ))
-                                        }
-                                      </div>
-                                    ) : '无'
-                                  }
-                                </div>
-                              )}
-                            >
-                              <Select
-                                value={this.transToArr(this.state.labelIssueRelDTOList, 'labelName', 'array')}
-                                mode="tags"
-                                autoFocus
-                                loading={this.state.selectLoading}
-                                tokenSeparators={[',']}
-                                getPopupContainer={triggerNode => triggerNode.parentNode}
-                                style={{ width: '200px', marginTop: 0, paddingTop: 0 }}
-                                onFocus={() => {
-                                  this.setState({
-                                    selectLoading: true,
-                                  });
-                                  loadLabels().then((res) => {
-                                    this.setState({
-                                      originLabels: res,
-                                      selectLoading: false,
-                                    });
-                                  });
-                                }}
-                                onChange={value => this.setState({ labelIssueRelDTOList: value })}
-                              >
-                                {this.state.originLabels.map(label => (
-                                  <Option
-                                    key={label.labelName}
-                                    value={label.labelName}
-                                  >
-                                    {label.labelName}
-                                  </Option>
-                                ))}
-                              </Select>
-                            </ReadAndEdit>
+                            {this.renderSelectLabel()}
                           </div>
                         </div>
                         {/* 版本 */}
@@ -1763,13 +1395,13 @@ class EditIssueNarrow extends Component {
                             <div className="c7ntest-value-wrapper">
                               <div>
                                 {
-                                  !this.state.fixVersionsFixed.length && !this.state.fixVersions.length ? '无' : (
+                                  !fixVersionsFixed.length && !fixVersions.length ? '无' : (
                                     <div>
                                       <div style={{ color: '#000' }}>
-                                        {_.map(this.state.fixVersionsFixed, 'name').join(' , ')}
+                                        {_.map(fixVersionsFixed, 'name').join(' , ')}
                                       </div>
                                       <p style={{ wordBreak: 'break-word', marginBottom: 0 }}>
-                                        {_.map(this.state.fixVersions, 'name').join(' , ')}
+                                        {_.map(fixVersions, 'name').join(' , ')}
                                       </p>
                                     </div>
                                   )
@@ -1785,6 +1417,7 @@ class EditIssueNarrow extends Component {
                             </span>
                           </div>
                         </div>
+                        {/* 报告人 */}
                         <div className="line-start mt-10 assignee ht-20">
                           <div className="c7ntest-property-wrapper">
                             <span className="c7ntest-property">
@@ -1793,102 +1426,17 @@ class EditIssueNarrow extends Component {
                             </span>
                           </div>
                           <div className="c7ntest-value-wrapper" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
-                            <ReadAndEdit
-                              style={{ marginBottom: 5 }}
-                              callback={this.changeRae.bind(this)}
-                              thisType="reporterId"
-                              current={this.state.currentRae}
-                              origin={this.state.reporterId}
-                              onOk={this.updateIssue.bind(this, 'reporterId')}
-                              onCancel={this.resetReporterId.bind(this)}
-                              onInit={() => {
-                                this.setAnIssueToState(this.state.origin);
-                                if (this.state.reporterId) {
-                                  this.setState({
-                                    flag: 'loading',
-                                  });
-                                  getUser(this.state.reporterId).then((res) => {
-                                    this.setState({
-                                      reporterId: JSON.stringify(res.content[0]),
-                                      originUsers: res.content,
-                                      flag: 'finish',
-                                    });
-                                  });
-                                } else {
-                                  this.setState({
-                                    reporterId: undefined,
-                                    originUsers: [],
-                                  });
-                                }
-                              }}
-                              readModeContent={(
-                                <div>
-                                  {
-                                    this.state.reporterId && this.state.reporterName ? (
-                                      <UserHead
-                                        user={{
-                                          id: this.state.reporterId,
-                                          loginName: '',
-                                          realName: this.state.reporterName,
-                                          avatar: this.state.reporterImageUrl,
-                                        }}
-                                      />
-                                    ) : '无'
-                                  }
-                                </div>
-                              )}
-                            >
-                              <Select
-                                value={this.state.flag === 'loading' ? undefined : this.state.reporterId || undefined}
-                                style={{ width: 150 }}
-                                loading={this.state.selectLoading}
-                                allowClear
-                                autoFocus
-                                filter
-                                onFilterChange={this.onFilterChange.bind(this)}
-                                getPopupContainer={triggerNode => triggerNode.parentNode}
-                                onChange={(value) => {
-                                  this.setState({ reporterId: value });
-                                }}
-                              >
-                                {this.state.originUsers.map(user => (
-                                  <Option key={JSON.stringify(user)} value={JSON.stringify(user)}>
-                                    <div style={{ display: 'inline-flex', alignItems: 'center', padding: '2px' }}>
-                                      <UserHead
-                                        user={{
-                                          id: user.id,
-                                          loginName: user.loginName,
-                                          realName: user.realName,
-                                          avatar: user.imageUrl,
-                                        }}
-                                      />
-                                    </div>
-                                  </Option>
-                                ))}
-                              </Select>
-                            </ReadAndEdit>
+                            {this.renderSelectPerson()}
                             <span
                               role="none"
                               style={{
                                 color: '#3f51b5',
                                 cursor: 'pointer',
-                                marginTop: '-5px',
+                                marginTop: '-2px',
                                 display: 'inline-block',
-                                marginBottom: 5,
                               }}
                               onClick={() => {
-                                getSelf().then((res) => {
-                                  if (res.id !== this.state.reporterId) {
-                                    this.setState({
-                                      currentRae: undefined,
-                                      reporterId: JSON.stringify(res),
-                                      reporterName: `${res.loginName}${res.realName}`,
-                                      reporterImageUrl: res.imageUrl,
-                                    }, () => {
-                                      this.updateIssue('reporterId');
-                                    });
-                                  }
-                                });
+                                this.editIssue({ reporterId: AppState.userInfo.id });
                               }}
                             >
                               <FormattedMessage id="issue_edit_assignToMe" />
@@ -1903,102 +1451,17 @@ class EditIssueNarrow extends Component {
                             </span>
                           </div>
                           <div className="c7ntest-value-wrapper" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
-                            <ReadAndEdit
-                              style={{ marginBottom: 5 }}
-                              callback={this.changeRae.bind(this)}
-                              thisType="assigneeId"
-                              current={this.state.currentRae}
-                              origin={this.state.assigneeId}
-                              onOk={this.updateIssue.bind(this, 'assigneeId')}
-                              onCancel={this.resetAssigneeId.bind(this)}
-                              onInit={() => {
-                                this.setAnIssueToState(this.state.origin);
-                                if (this.state.assigneeId) {
-                                  this.setState({
-                                    flag: 'loading',
-                                  });
-                                  getUser(this.state.assigneeId).then((res) => {
-                                    this.setState({
-                                      assigneeId: JSON.stringify(res.content[0]),
-                                      originUsers: [res.content[0]],
-                                      flag: 'finish',
-                                    });
-                                  });
-                                } else {
-                                  this.setState({
-                                    assigneeId: undefined,
-                                    originUsers: [],
-                                  });
-                                }
-                              }}
-                              readModeContent={(
-                                <div>
-                                  {
-                                    this.state.assigneeId && this.state.assigneeName ? (
-                                      <UserHead
-                                        user={{
-                                          id: this.state.assigneeId,
-                                          loginName: '',
-                                          realName: this.state.assigneeName,
-                                          avatar: this.state.assigneeImageUrl,
-                                        }}
-                                      />
-                                    ) : '无'
-                                  }
-                                </div>
-                              )}
-                            >
-                              <Select
-                                value={this.state.flag === 'loading' ? undefined : this.state.assigneeId || undefined}
-                                style={{ width: 150 }}
-                                loading={this.state.selectLoading}
-                                allowClear
-                                autoFocus
-                                filter
-                                onFilterChange={this.onFilterChange.bind(this)}
-                                getPopupContainer={triggerNode => triggerNode.parentNode}
-                                onChange={(value) => {
-                                  this.setState({ assigneeId: value });
-                                }}
-                              >
-                                {this.state.originUsers.map(user => (
-                                  <Option key={JSON.stringify(user)} value={JSON.stringify(user)}>
-                                    <div style={{ display: 'inline-flex', alignItems: 'center', padding: '2px' }}>
-                                      <UserHead
-                                        user={{
-                                          id: user.id,
-                                          loginName: user.loginName,
-                                          realName: user.realName,
-                                          avatar: user.imageUrl,
-                                        }}
-                                      />
-                                    </div>
-                                  </Option>
-                                ))}
-                              </Select>
-                            </ReadAndEdit>
+                            {this.renderSelectAssign()}
                             <span
                               role="none"
                               style={{
                                 color: '#3f51b5',
                                 cursor: 'pointer',
-                                marginTop: '-5px',
+                                marginTop: '-2px',
                                 display: 'inline-block',
-                                marginBottom: 5,
                               }}
                               onClick={() => {
-                                getSelf().then((res) => {
-                                  if (res.id !== this.state.assigneeId) {
-                                    this.setState({
-                                      currentRae: undefined,
-                                      assigneeId: JSON.stringify(res),
-                                      assigneeName: `${res.loginName}${res.realName}`,
-                                      assigneeImageUrl: res.imageUrl,
-                                    }, () => {
-                                      this.updateIssue('assigneeId');
-                                    });
-                                  }
-                                });
+                                this.editIssue({ assigneeId: AppState.userInfo.id });
                               }}
                             >
                               <FormattedMessage id="issue_edit_assignToMe" />
@@ -2025,7 +1488,7 @@ class EditIssueNarrow extends Component {
                             </span>
                           </div>
                           <div className="c7ntest-value-wrapper">
-                            {formatDate(this.state.creationDate)}
+                            {formatDate(creationDate)}
                           </div>
                         </div>
                         <div className="line-start mt-10 ht-20">
@@ -2036,7 +1499,7 @@ class EditIssueNarrow extends Component {
                             </span>
                           </div>
                           <div className="c7ntest-value-wrapper">
-                            {formatDate(this.state.lastUpdateDate)}
+                            {formatDate(lastUpdateDate)}
                           </div>
                         </div>
                       </div>
@@ -2054,7 +1517,7 @@ class EditIssueNarrow extends Component {
                       }}
                       />
                       <div className="c7ntest-title-right" style={{ marginLeft: '14px', position: 'relative' }}>
-                        <Button className="leftBtn" funcType="flat" onClick={() => this.setState({ edit: true })}>
+                        <Button className="leftBtn" funcType="flat" onClick={() => this.setState({ FullEditorShow: true })}>
                           <Icon type="zoom_out_map icon" style={{ marginRight: 2 }} />
                           <span><FormattedMessage id="execute_edit_fullScreen" /></span>
                         </Button>
@@ -2065,18 +1528,17 @@ class EditIssueNarrow extends Component {
                           type="mode_edit mlr-3 pointer"
                           onClick={() => {
                             this.setState({
-                              editDesShow: true,
-                              editDes: this.state.description,
+                              editDescriptionShow: true,
                             });
                           }}
                         />
                       </div>
                     </div>
-                    {this.renderDes()}
+                    {this.renderDescription()}
                   </div>
 
                 </div>
-
+                {/* 测试步骤 */}
                 <div id="test1">
                   <div className="c7ntest-title-wrapper">
                     <div className="c7ntest-title-left">
@@ -2088,7 +1550,7 @@ class EditIssueNarrow extends Component {
                     }}
                     />
                     <div className="c7ntest-title-right" style={{ marginLeft: '14px', position: 'relative' }}>
-                      <Button className="leftBtn" funcTyp="flat" onClick={() => this.setState({ createTestStepShow: true })}>
+                      <Button className="leftBtn" funcTyp="flat" onClick={this.createIssueStep}>
                         <Icon type="playlist_add icon" style={{ marginRight: 2 }} />
                         <FormattedMessage id="issue_edit_addTestDetail" />
                       </Button>
@@ -2097,8 +1559,8 @@ class EditIssueNarrow extends Component {
                   <div className="c7ntest-content-wrapper" style={{ paddingLeft: 0 }}>
                     <TestStepTable
                       mode={mode}
-                      issueId={this.state.origin.issueId}
-                      data={this.state.testStepData}
+                      issueId={issueId}
+                      data={testStepData}
                       enterLoad={() => {
                         this.setState({
                           issueLoading: true,
@@ -2115,7 +1577,7 @@ class EditIssueNarrow extends Component {
                     />
                   </div>
                 </div>
-
+                {/* 测试执行 */}
                 <div id="test2">
                   <div className="c7ntest-title-wrapper">
                     <div className="c7ntest-title-left">
@@ -2130,8 +1592,8 @@ class EditIssueNarrow extends Component {
                   <div className="c7ntest-content-wrapper" style={{ paddingLeft: 0 }}>
                     <TestExecuteTable
                       mode={mode}
-                      issueId={this.state.origin.issueId}
-                      data={this.state.testExecuteData}
+                      issueId={issueId}
+                      data={testExecuteData}
                       enterLoad={() => {
                         this.setState({
                           issueLoading: true,
@@ -2149,7 +1611,7 @@ class EditIssueNarrow extends Component {
                   </div>
                 </div>
 
-
+                {/* 附件 */}
                 <div id="attachment">
                   <div className="c7ntest-title-wrapper">
                     <div className="c7ntest-title-left">
@@ -2166,11 +1628,11 @@ class EditIssueNarrow extends Component {
                       onRemove={this.setFileList}
                       onBeforeUpload={this.setFileList}
                       updateNow={this.onChangeFileList}
-                      fileList={this.state.fileList}
+                      fileList={fileList}
                     />
                   </div>
                 </div>
-
+                {/* 评论 */}
                 <div id="commit">
                   <div className="c7ntest-title-wrapper">
                     <div className="c7ntest-title-left">
@@ -2182,7 +1644,7 @@ class EditIssueNarrow extends Component {
                     }}
                     />
                     <div className="c7ntest-title-right" style={{ marginLeft: '14px' }}>
-                      <Button className="leftBtn" funcType="flat" onClick={() => this.setState({ addCommit: true })}>
+                      <Button className="leftBtn" funcType="flat" onClick={() => this.setState({ addingComment: true })}>
                         <Icon type="playlist_add icon" />
                         <FormattedMessage id="issue_edit_addComment" />
                       </Button>
@@ -2190,6 +1652,7 @@ class EditIssueNarrow extends Component {
                   </div>
                   {this.renderCommits()}
                 </div>
+                {/* 修改日志 */}
                 <div id="data_log">
                   <div className="c7ntest-title-wrapper">
                     <div className="c7ntest-title-left">
@@ -2204,80 +1667,65 @@ class EditIssueNarrow extends Component {
                   {this.renderDataLogs()}
                 </div>
 
-                {
-                  this.state.origin.typeCode !== 'sub_task' && (
-                    <div id="link_task">
-                      <div className="c7ntest-title-wrapper">
-                        <div className="c7ntest-title-left">
-                          <Icon type="link c7ntest-icon-title" />
-                          <FormattedMessage id="issue_edit_linkIssue" />
-                        </div>
-                        <div style={{
-                          flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px',
-                        }}
-                        />
-                        <div className="c7ntest-title-right" style={{ marginLeft: '14px' }}>
-                          <Button className="leftBtn" funcType="flat" onClick={() => this.setState({ createLinkTaskShow: true })}>
-                            <Icon type="playlist_add icon" />
-                            <FormattedMessage id="issue_edit_addLinkIssue" />
-                          </Button>
-                        </div>
-                      </div>
-                      {this.renderLinkIssues()}
+                {/* 关联用例 */}
+                <div id="link_task">
+                  <div className="c7ntest-title-wrapper">
+                    <div className="c7ntest-title-left">
+                      <Icon type="link c7ntest-icon-title" />
+                      <FormattedMessage id="issue_edit_linkIssue" />
                     </div>
-                  )
-                }
+                    <div style={{
+                      flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px',
+                    }}
+                    />
+                    <div className="c7ntest-title-right" style={{ marginLeft: '14px' }}>
+                      <Button className="leftBtn" funcType="flat" onClick={() => this.setState({ createLinkTaskShow: true })}>
+                        <Icon type="playlist_add icon" />
+                        <FormattedMessage id="issue_edit_addLinkIssue" />
+                      </Button>
+                    </div>
+                  </div>
+                  {this.renderLinkIssues()}
+                </div>
+
               </div>
             </section>
           </div>
         </div>
         {
-          this.state.edit ? (
-            <FullEditor
-              initValue={text2Delta(this.state.editDes)}
-              visible={this.state.edit}
-              onCancel={() => this.setState({ edit: false })}
-              onOk={callback}
-            />
-          ) : null
+          <FullEditor
+            initValue={description}
+            visible={FullEditorShow}
+            onCancel={() => this.setState({ FullEditorShow: false })}
+            onOk={(value) => {
+              this.setState({
+                FullEditorShow: false,
+              });
+              this.editIssue({ description: value });
+            }}
+          />
         }
         {
-          this.state.createLinkTaskShow ? (
+          createLinkTaskShow ? (
             <CreateLinkTask
-              issueId={this.state.origin.issueId}
-              visible={this.state.createLinkTaskShow}
+              issueId={issueId}
+              visible={createLinkTaskShow}
               onCancel={() => this.setState({ createLinkTaskShow: false })}
               onOk={this.handleCreateLinkIssue.bind(this)}
             />
           ) : null
         }
         {
-          this.state.copyIssueShow ? (
+          copyIssueShow ? (
             <CopyIssue
-              issueId={this.state.origin.issueId}
-              issueNum={this.state.origin.issueNum}
-              issue={this.state.origin}
-              issueLink={this.state.linkIssues}
-              issueSummary={this.state.origin.summary}
-              visible={this.state.copyIssueShow}
+              issueId={issueId}
+              issueNum={issueNum}
+              issue={issueInfo}
+              issueLink={linkIssues}
+              issueSummary={summary}
+              visible={copyIssueShow}
               onCancel={() => this.setState({ copyIssueShow: false })}
               onOk={this.handleCopyIssue.bind(this)}
-            />
-          ) : null
-        }
-        {
-          this.state.createTestStepShow ? (
-            <CreateTestStep
-              issueId={this.state.origin.issueId}
-              issueName={this.state.origin.issueNum}
-              visible={this.state.createTestStepShow}
-              lastRank={this.state.testStepData.length
-                ? this.state.testStepData[this.state.testStepData.length - 1].rank : null}
-              onCancel={() => this.setState({ createTestStepShow: false })}
-              onOk={() => {
-                this.setState({ createTestStepShow: false });
-                this.reloadIssue();
-              }}
             />
           ) : null
         }

@@ -8,6 +8,10 @@ import './WYSIWYGEditor.scss';
 Quill.register('modules/imageDrop', ImageDrop);
 
 class WYSIWYGEditor extends Component {
+  state = {
+    value: null,
+  }
+
   modules = {
     toolbar: [
       ['bold', 'italic', 'underline', 'strike', 'blockquote'],
@@ -50,6 +54,9 @@ class WYSIWYGEditor extends Component {
 
   handleChange = (content, delta, source, editor) => {
     const value = editor.getContents();
+    this.setState({
+      value: value.ops,
+    });
     if (this.props.onChange && value && value.ops) {
       this.props.onChange(value.ops);
     }
@@ -59,7 +66,7 @@ class WYSIWYGEditor extends Component {
     const { placeholder, value } = this.props;
     let defaultValue = value;
     try {
-      defaultValue = JSON.parse(value);     
+      defaultValue = JSON.parse(value);
     } catch (error) {
       defaultValue = value;
     }
@@ -81,20 +88,20 @@ class WYSIWYGEditor extends Component {
         {
           this.props.bottomBar && (
             <div style={{
-              padding: '0 8px', border: '1px solid #ccc', borderTop: 'none', display: 'flex', justifyContent: 'flex-end', 
+              padding: '0 8px', border: '1px solid #ccc', borderTop: 'none', display: 'flex', justifyContent: 'flex-end',
             }}
             >
-              <Button 
+              <Button
                 type="primary"
-                onClick={() => this.props.handleDelete()}
+                onClick={() => this.props.handleDelete && this.props.handleDelete()}
               >
                 {Choerodon.getMessage('取消', 'Cancle')}
               </Button>
               <Button
                 type="primary"
-                onClick={() => this.props.handleSave()}
+                onClick={() => this.props.handleSave(this.state.value)}
               >
-                {Choerodon.getMessage('保存', 'Save')}             
+                {Choerodon.getMessage('保存', 'Save')}
               </Button>
             </div>
           )

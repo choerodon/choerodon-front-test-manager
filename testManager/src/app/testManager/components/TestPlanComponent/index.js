@@ -5,7 +5,8 @@ import CreateCycle from './CreateCycle';
 import CreateStage from './CreateStage';
 import EditStage from './EditStage';
 import EditCycle from './EditCycle';
+import ExportSide from './ExportSide';
 
 export {
-  EventCalendar, PlanTree, CreateCycle, CreateStage, EditStage, EditCycle, CloneCycle,
+  EventCalendar, PlanTree, CreateCycle, CreateStage, EditStage, EditCycle, CloneCycle, ExportSide,
 };

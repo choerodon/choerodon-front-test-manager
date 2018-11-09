@@ -12,16 +12,16 @@ import {
 } from 'choerodon-ui';
 import { Link } from 'react-router-dom';
 import {
-  getCycleById, editExecuteDetail, deleteExecute,
+  getExecutesByCycleId, editExecuteDetail, deleteExecute,
 } from '../../../../api/cycleApi';
 import { getStatusList } from '../../../../api/TestStatusApi';
 import {
-  EventCalendar, PlanTree, CreateCycle, EditStage, EditCycle,
+  EventCalendar, PlanTree, CreateCycle, EditStage, EditCycle, ExportSide,
 } from '../../../../components/TestPlanComponent';
 import {
   RichTextShow, SelectFocusLoad, StatusTags, DragTable, 
 } from '../../../../components/CommonComponent';
-import { getUsers } from '../../../../api/CommonApi';
+import { getUsers } from '../../../../api/IamApi';
 import TestPlanStore from '../../../../store/project/TestPlan/TestPlanStore';
 import {
   delta2Html, delta2Text, issueLink, executeDetailShowLink,
@@ -47,6 +47,10 @@ class TestPlanHome extends Component {
     this.refresh();
   }
 
+  saveRef = name => (ref) => {
+    this[name] = ref;
+  }
+
   refresh = () => {
     getStatusList('CYCLE_CASE').then((statusList) => {
       this.setState({ statusList });
@@ -70,7 +74,7 @@ class TestPlanHome extends Component {
       TestPlanStore.rightEnterLoading();
       TestPlanStore.setExecutePagination(pagination);
       const currentCycle = TestPlanStore.getCurrentCycle;
-      getCycleById({
+      getExecutesByCycleId({
         size: pagination.pageSize,
         page: pagination.current - 1,
       }, currentCycle.cycleId,
@@ -119,7 +123,7 @@ class TestPlanHome extends Component {
     }).then((res) => {
       const { executePagination } = TestPlanStore;
       const currentCycle = TestPlanStore.getCurrentCycle;
-      getCycleById({
+      getExecutesByCycleId({
         page: executePagination.current - 1,
         size: executePagination.pageSize,
       }, currentCycle.cycleId).then((cycle) => {
@@ -153,7 +157,7 @@ class TestPlanHome extends Component {
           .then((res) => {
             const { executePagination } = TestPlanStore;
             const currentCycle = TestPlanStore.getCurrentCycle;
-            getCycleById({
+            getExecutesByCycleId({
               page: executePagination.current - 1,
               size: executePagination.pageSize,
             }, currentCycle.cycleId).then((cycle) => {
@@ -178,9 +182,8 @@ class TestPlanHome extends Component {
   }
 
   render() {
-    console.log('render');
     const {
-      treeShow, CreateCycleVisible, statusList,
+      treeShow, CreateCycleVisible, statusList, 
     } = this.state;
     const {
       testList, executePagination, loading, rightLoading, times, calendarShowMode,
@@ -234,11 +237,7 @@ class TestPlanHome extends Component {
       render(executionStatus) {
         const statusColor = _.find(statusList, { statusId: executionStatus })
           ? _.find(statusList, { statusId: executionStatus }).statusColor : '';
-        return (
-          // <div style={{ ...styles.statusOption, ...{ background: statusColor } }}>
-          //   {_.find(statusList, { statusId: executionStatus })
-          //     && _.find(statusList, { statusId: executionStatus }).statusName}
-          // </div>
+        return (   
           _.find(statusList, { statusId: executionStatus }) && (
             <StatusTags
               color={statusColor}
@@ -257,10 +256,7 @@ class TestPlanHome extends Component {
         return (
           <Tooltip title={<RichTextShow data={delta2Html(comment)} />}>
             <div
-              className="c7ntest-text-dot"
-            // style={{
-            //   width: 65,
-            // }}
+              className="c7ntest-text-dot"  
             >
               {delta2Text(comment)}
             </div>
@@ -324,8 +320,7 @@ class TestPlanHome extends Component {
         return (
           <div
             className="c7ntest-text-dot"
-          >
-            {/* {lastUpdateDate && moment(lastUpdateDate).format('D/MMMM/YY')} */}
+          >    
             {lastUpdateDate && moment(lastUpdateDate).format('YYYY-MM-DD')}
           </div>
         );
@@ -351,10 +346,7 @@ class TestPlanHome extends Component {
       render: (text, record) => (
         record.projectId !== 0
         && (
-          <div style={{ display: 'flex' }}>
-            {/* <Tooltip title={<FormattedMessage id="execute_quickPass" />}>
-              <Icon type="pass" onClick={this.quickPass.bind(this, record)} style={{ cursor: 'pointer' }} />
-            </Tooltip> */}
+          <div style={{ display: 'flex' }}>   
             <Icon
               type="explicit2"
               style={{ cursor: 'pointer', margin: '0 10px' }}
@@ -464,6 +456,10 @@ class TestPlanHome extends Component {
               <FormattedMessage id="cycle_create_title" />
             </span>
           </Button>
+          <Button className="leftBtn" onClick={() => this.ExportSide.open()}>
+            <Icon type="export icon" />
+            <FormattedMessage id="export" />
+          </Button>
           <Button onClick={this.refresh}>
             <Icon type="autorenew icon" />
             <span>
@@ -485,6 +481,7 @@ class TestPlanHome extends Component {
                 onCancel={() => { this.setState({ CreateCycleVisible: false }); }}
                 onOk={() => { this.setState({ CreateCycleVisible: false }); this.refresh(); }}
               />
+              <ExportSide ref={this.saveRef('ExportSide')} />
               {!treeShow && (
                 <div className="c7ntest-TestPlan-bar">
                   <div
@@ -579,7 +576,6 @@ class TestPlanHome extends Component {
             </div>
           </Spin>
         </Content>
-
       </Page>
     );
   }

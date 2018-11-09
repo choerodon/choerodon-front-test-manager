@@ -219,7 +219,7 @@ const zhCN = {
   cycle_createExecute_me: '我',
   cycle_createExecute_others: '其他人',
   cycle_createExecute_selectAssign: '选择指派人',
-  cycle_createExecute_folder: '测试步骤',
+  cycle_createExecute_folder: '测试阶段',
   cycle_createExecute_assigned: '被指定人',
   cycle_createExecute_filter: '筛选器',
   cycle_createExecute_priority: '优先级',
@@ -232,8 +232,8 @@ const zhCN = {
   cycle_createExecute_defectStatus: '缺陷状态',
 
 
-  // 测试用例管理
-  issue_name: '测试用例管理',
+  // 测试用例
+  issue_name: '测试用例',
   issue_noIssueTitle: '根据当前搜索条件没有查询到问题',
   issue_noIssueDescription: '尝试修改您的过滤选项或者在下面创建新的问题',
   issue_createTestIssue: '创建测试用例',
@@ -342,7 +342,7 @@ const zhCN = {
   export_side_content_title: `在项目“${projectName}”中导出用例`,
   export_side_content_description: '您可以在此将项目的用例信息导出到文件中去。',
   // dashboard
-  dashboard_issue: '测试用例管理',
+  dashboard_issue: '测试用例',
   dashboard_cycle: '测试循环',
   dashboard_execute: '执行测试',
   dashboard_report: '测试报告',

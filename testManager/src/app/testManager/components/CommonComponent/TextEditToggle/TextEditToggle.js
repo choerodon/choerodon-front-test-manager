@@ -5,8 +5,9 @@ import { findDOMNode } from 'react-dom';
 import PropTypes from 'prop-types';
 import { observer } from 'mobx-react';
 import './TextEditToggle.scss';
+// 防止提交前变回原值
+const Text = props => (typeof (props.children) === 'function' ? props.children(props.newData || props.originData) : props.children);
 
-const Text = props => props.children;
 const Edit = props => props.children;
 const FormItem = Form.Item;
 function contains(root, n) {
@@ -25,8 +26,18 @@ class TextEditToggle extends Component {
   state = {
     editing: false,
     originData: null,
+    newData: null,
   }
 
+  componentDidMount() {
+    console.log('mount');
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    console.log('update');
+  }
+
+  
   static defaultProps = {
     // hasFeedback: false,
     // prefixCls: 'ant-form',
@@ -47,6 +58,19 @@ class TextEditToggle extends Component {
     // colon: PropTypes.bool,
   };
 
+  static getDerivedStateFromProps(props, state) {
+    // if (props.formKey === 'statusId') {
+    //   console.log(props.originData, state.originData, state.editing, state.newData);
+    // }
+
+    if (props.originData !== state.originData) {
+      return {
+        originData: props.originData,
+        newData: null,
+      };      
+    }
+    return null;
+  }
 
   onDocumentClick = (event) => {
     const target = event.target;
@@ -58,6 +82,12 @@ class TextEditToggle extends Component {
     }
   }
 
+  handleDone=() => {
+    // this.setState({
+    //   newData: null,
+    // });
+  }
+
   // 提交编辑
   onSubmit = () => {
     document.removeEventListener('mousedown', this.onDocumentClick);
@@ -65,9 +95,14 @@ class TextEditToggle extends Component {
       this.props.form.validateFields((err, values) => {
         if (!err) {
           if (this.props.formKey) {
-            const newValue = values[this.props.formKey];
-            if (this.props.onSubmit && newValue !== this.props.originData) {
-              this.props.onSubmit(this.props.formKey ? newValue : null);
+            const newData = values[this.props.formKey];
+            if (this.props.onSubmit && newData !== this.props.originData) {
+              this.setState({
+                // originData: newData,
+                newData,
+              });
+              // 传入一个done方法，用于防止父组件数据更新后的newData错误问题
+              this.props.onSubmit(this.props.formKey ? newData : null, this.handleDone);
             }
           } else {
             this.props.onSubmit();
@@ -95,6 +130,7 @@ class TextEditToggle extends Component {
     this.setState({
       editing: true,
       originData: this.props.originData,
+      newData: null,
     });
   }
 
@@ -137,8 +173,17 @@ class TextEditToggle extends Component {
     }));
   }
 
+  renderTextChild=(children) => {
+    const childrenArray = React.Children.toArray(children);
+    // console.log(childrenArray);
+    return childrenArray.map(child => React.cloneElement(child, {
+      newData: this.state.newData,
+      originData: this.props.originData,
+    }));
+  }
+
   renderChild = () => {
-    const { editing } = this.state;
+    const { editing, newData } = this.state;
     const { disabled } = this.props;
     const { originData, formKey, rules } = this.props;
     const { getFieldDecorator } = this.props.form;
@@ -174,7 +219,7 @@ class TextEditToggle extends Component {
         onClick={this.enterEditing}
         role="none"
       >
-        {children}
+        {this.renderTextChild(children)}
         <Icon type="mode_edit" className="c7ntest-TextEditToggle-text-icon" />
       </div>
     );
@@ -182,7 +227,7 @@ class TextEditToggle extends Component {
 
   render() {
     return (
-      <div>
+      <div {...this.props}>
         {this.renderChild()}
       </div>
     );

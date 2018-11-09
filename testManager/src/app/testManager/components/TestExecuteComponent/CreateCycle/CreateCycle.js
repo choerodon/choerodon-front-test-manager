@@ -54,7 +54,7 @@ class CreateCycle extends Component {
     });
   }
 
-  loadVersions = () => {
+  getProjectVersion = () => {
     this.setState({
       selectLoading: true,
     });
@@ -106,7 +106,7 @@ class CreateCycle extends Component {
                   })(
                     <Select
                       loading={selectLoading}
-                      onFocus={this.loadVersions}
+                      onFocus={this.getProjectVersion}
                       style={{ width: 500, margin: '0 0 10px 0' }}
                       label={<FormattedMessage id="version" />}
                     >

@@ -223,7 +223,7 @@ const enUS = {
   cycle_createExecute_no: 'No',
   cycle_createExecute_defectStatus: 'Defect status',
 
-  // 测试用例管理
+  // 测试用例
   issue_name: 'Test issue management',
   issue_noIssueTitle: 'No issues were found based on current search criteria',
   issue_noIssueDescription: 'Try modifying your filtering options or creating a new issue below',
@@ -327,7 +327,7 @@ const enUS = {
   issue_tree_copy: 'copy',
   issue_tree_paste: 'paste',
   // dashboard
-  dashboard_issue: '测试用例管理',
+  dashboard_issue: '测试用例',
   dashboard_cycle: '测试循环',
   dashboard_execute: '执行测试',
   dashboard_report: '测试报告',

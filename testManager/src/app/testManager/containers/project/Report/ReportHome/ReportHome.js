@@ -45,15 +45,16 @@ const styles = {
 class ReportHome extends Component {
   render() {
     const urlParams = AppState.currentMenuType;
+    const { organizationId } = AppState.currentMenuType;
     const menu = (
       <Menu style={{ marginTop: 35 }}>
         <Menu.Item key="0">
-          <Link to={`/testManager/report/story?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}>
+          <Link to={`/testManager/report/story?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}&organizationId=${organizationId}`}>
             <FormattedMessage id="report_dropDown_demand" /> 
           </Link>
         </Menu.Item>
         <Menu.Item key="1">
-          <Link to={`/testManager/report/test?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}>
+          <Link to={`/testManager/report/test?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}&organizationId=${organizationId}`}>
             <FormattedMessage id="report_dropDown_defect" /> 
           </Link>
         </Menu.Item>      
@@ -83,7 +84,7 @@ class ReportHome extends Component {
           link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management/test-report/report/"
         >
           <div style={{ display: 'flex' }}>
-            <Link to={`/testManager/report/story?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}>
+            <Link to={`/testManager/report/story?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}&organizationId=${organizationId}`}>
               <div style={styles.itemContainer}>
                 <div style={styles.imgContainer}>
                   <img src={Pic} alt="" />
@@ -92,7 +93,7 @@ class ReportHome extends Component {
                 <div style={{ color: 'rgba(0,0,0,0.65)' }}><FormattedMessage id="report_demandToDefect_description" /></div>
               </div>
             </Link>
-            <Link to={`/testManager/report/test?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}>
+            <Link to={`/testManager/report/test?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}&organizationId=${organizationId}`}>
               <div style={styles.itemContainer}>
                 <div style={styles.imgContainer}>
                   <img src={Pic2} alt="" />

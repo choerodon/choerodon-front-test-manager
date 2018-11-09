@@ -1,41 +1,6 @@
 import React, { Component } from 'react';
-import {
-  Button, Table, Spin, Popover, Tooltip, Icon, 
-} from 'choerodon-ui';
-
-const COLOR = {
-  medium: {
-    color: '#3575df',
-    bgColor: 'rgba(77, 144, 254, 0.2)',
-  },
-  high: {
-    color: '#ffb100',
-    bgColor: 'rgba(255, 177, 0, 0.12)',
-  },
-  low: {
-    color: 'rgba(0, 0, 0, 0.36)',
-    bgColor: 'rgba(0, 0, 0, 0.08)',
-  },
-};
 
 class StatusTag extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-    };
-  }
-
-  componentDidMount() {
-  }
-
-  shouldComponentUpdate(nextProps, nextState) {
-    if (nextProps.status.statusName === this.props.status.statusName 
-      && nextProps.status.statusColor === this.props.status.statusColor) {
-      return false;
-    }
-    return true;
-  }
-
   render() {
     const { status } = this.props; 
     return (
@@ -43,7 +8,7 @@ class StatusTag extends Component {
         className=""
         style={{
           background: status.statusColor,
-          color: '#fff',
+          // color: '#fff',
           overflow: 'hidden',
           textOverflow: 'ellipsis',
           whiteSpace: 'nowrap',

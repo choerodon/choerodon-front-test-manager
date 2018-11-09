@@ -13,9 +13,9 @@ import { FormattedMessage } from 'react-intl';
 import FileSaver from 'file-saver';
 import moment from 'moment';
 import './TestExecuteHome.scss';
-import { getUsers } from '../../../../api/CommonApi';
+import { getUsers } from '../../../../api/IamApi';
 import {
-  getCycles, deleteExecute, getCycleById,
+  getCycleTree, deleteExecute, getExecutesByCycleId,
   clone, addFolder, exportCycle,
 } from '../../../../api/cycleApi';
 import { getStatusList } from '../../../../api/TestStatusApi';
@@ -37,7 +37,38 @@ const { confirm } = Modal;
 
 
 const dataList = [];
-
+/**
+ * 非递归遍历树 将测试阶段按照时间排序
+ *
+ * @param {*} node
+ * @returns
+ */
+function traverseTree(node) {
+  if (!node) {
+    return;
+  }
+  const stack = [];
+  stack.push(node);
+  let tmpNode;
+  while (stack.length > 0) {
+    tmpNode = stack.pop();
+    const { type, key } = tmpNode;
+    if (type === 'cycle') {
+      tmpNode.children = tmpNode.children.sort((a, b) => {
+        if (moment(a.fromDate).isAfter(moment(b.fromDate))) {
+          return 1;
+        } else {
+          return -1;
+        }
+      }).map((child, i) => ({ ...child, key: `${key}-${i}` }));
+    } else if (tmpNode.children && tmpNode.children.length > 0) {
+      let i = tmpNode.children.length - 1;
+      for (i = tmpNode.children.length - 1; i >= 0; i -= 1) {
+        stack.push(tmpNode.children[i]);
+      }
+    }
+  }
+}
 const { TreeNode } = Tree;
 @observer
 class TestExecuteHome extends Component {
@@ -100,7 +131,7 @@ class TestExecuteHome extends Component {
           });
         }
         // console.log(this.treeAssignedTo);
-        getCycleById({
+        getExecutesByCycleId({
           page: 0,
           size: executePagination.pageSize,
         }, data.cycleId,
@@ -185,7 +216,8 @@ class TestExecuteHome extends Component {
     getStatusList('CYCLE_CASE').then((statusList) => {
       this.setState({ statusList });
     });
-    getCycles(assignedTo).then((data) => {
+    getCycleTree(assignedTo).then((data) => {
+      traverseTree({ title: '所有版本', key: '0', children: data.versions });
       TestExecuteStore.setTreeData([{ title: '所有版本', key: '0', children: data.versions }]);
       this.setState({
         // treeData: [
@@ -236,7 +268,7 @@ class TestExecuteHome extends Component {
         rightLoading: true,
       });
       const { executePagination } = this.state;
-      getCycleById({
+      getExecutesByCycleId({
         page: executePagination.current - 1,
         size: executePagination.pageSize,
       }, defaultExpandKeyItem.cycleId,
@@ -375,7 +407,7 @@ class TestExecuteHome extends Component {
         filters,
       });
       const currentCycle = TestExecuteStore.getCurrentCycle;
-      getCycleById({
+      getExecutesByCycleId({
         size: pagination.pageSize,
         page: pagination.current - 1,
       }, currentCycle.cycleId,
@@ -838,7 +870,9 @@ class TestExecuteHome extends Component {
         <Content
           // title={<FormattedMessage id="cycle_title" />}
           // description={<FormattedMessage id="cycle_description" />}
-          style={{ paddingBottom: 0, paddingRight: 0, display: 'flex' }}
+          style={{ 
+            paddingLeft: 0, paddingBottom: 0, paddingRight: 0, display: 'flex', 
+          }}
         >
           <Spin spinning={loading}>
             <CreateCycle

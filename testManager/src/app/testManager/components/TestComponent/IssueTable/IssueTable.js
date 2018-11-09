@@ -23,8 +23,8 @@ class IssueTable extends Component {
   renderTestIssue(issue) {
     const {
       issueId,
-      typeCode, issueNum, summary, assigneeId, assigneeName, assigneeImageUrl, reporterId,
-      reporterName, reporterImageUrl, statusName, statusColor, priorityName, priorityCode,
+      issueTypeDTO, issueNum, summary, assigneeId, assigneeName, assigneeImageUrl, reporterId,
+      reporterName, reporterImageUrl, statusMapDTO, priorityDTO,
       folderName, epicColor, componentIssueRelDTOList, labelIssueRelDTOList,
       versionIssueRelDTOList, creationDate, lastUpdateDate,
     } = issue;
@@ -34,17 +34,17 @@ class IssueTable extends Component {
           display: 'flex', marginBottom: '5px', width: '100%', flex: 1,
         }}
         >
-          {/* {{renderType(typeCode)}} */}
+          {renderType(issueTypeDTO)}
           {renderIssueNum(issueNum)}
           {renderSummary(summary)}
         </div>
         <div style={{ display: 'flex' }}>
-          {renderPriority(priorityCode, priorityName)}
+          {renderPriority(priorityDTO)}
           {renderVersions(versionIssueRelDTOList)}
           {renderFolder(folderName)}
           <div className="c7ntest-flex-space" />
           {renderAssigned(assigneeId, assigneeName, assigneeImageUrl)}
-          {renderStatus(statusName, statusColor)}
+          {renderStatus(statusMapDTO)}
         </div>
       </div>
     );
@@ -52,9 +52,8 @@ class IssueTable extends Component {
 
   renderWideIssue(issue) {
     const {
-      issueId,
-      typeCode, issueNum, summary, assigneeId, assigneeName, assigneeImageUrl, reporterId,
-      reporterName, reporterImageUrl, statusName, statusColor, priorityName, priorityCode,
+      issueId,issueTypeDTO, issueNum, summary, assigneeId, assigneeName, assigneeImageUrl, reporterId,
+      reporterName, reporterImageUrl, priorityDTO, statusMapDTO,
       folderName, epicColor, componentIssueRelDTOList, labelIssueRelDTOList,
       versionIssueRelDTOList, creationDate, lastUpdateDate,
     } = issue;
@@ -63,18 +62,18 @@ class IssueTable extends Component {
         display: 'flex', flex: 1, marginTop: '3px', marginBottom: '3px', cursor: 'pointer',
       }}
       >
-        {/* {renderType(typeCode)} */}
+        {renderType(issueTypeDTO)}
         {renderIssueNum(issueNum)}
         {renderSummary(summary)}
         <div className="c7ntest-flex-space" />
-        {renderPriority(priorityCode, priorityName)}
+        {renderPriority(priorityDTO)}
         {renderVersions(versionIssueRelDTOList)}
         {renderFolder(folderName)}
         {/* {renderComponents(componentIssueRelDTOList)} */}
         {/* 标签 */}
         {/* {renderLabels(labelIssueRelDTOList)} */}
         {renderAssigned(assigneeId, assigneeName, assigneeImageUrl)}
-        {renderStatus(statusName, statusColor)}
+        {renderStatus(statusMapDTO)}
       </div>
     );
   }
@@ -82,8 +81,8 @@ class IssueTable extends Component {
   renderNarrowIssue(issue) {
     const {
       issueId,
-      typeCode, issueNum, summary, assigneeId, assigneeName, assigneeImageUrl, reporterId,
-      reporterName, reporterImageUrl, statusName, statusColor, priorityName, priorityCode,
+      issueTypeDTO, issueNum, summary, assigneeId, assigneeName, assigneeImageUrl, reporterId,
+      reporterName, reporterImageUrl, statusMapDTO, priorityDTO,
       folderName, epicColor, componentIssueRelDTOList, labelIssueRelDTOList,
       versionIssueRelDTOList, creationDate, lastUpdateDate,
     } = issue;
@@ -93,7 +92,7 @@ class IssueTable extends Component {
           display: 'flex', marginBottom: '5px', width: '100%', flex: 1,
         }}
         >
-          {/* {{renderType(typeCode)}} */}
+          {renderType(issueTypeDTO)}
           {renderIssueNum(issueNum)}
           {renderSummary(summary)}
         </div>
@@ -103,7 +102,7 @@ class IssueTable extends Component {
           {renderFolder(folderName)}
           <div className="c7ntest-flex-space" />
           {/* {renderAssigned(assigneeId, assigneeName, assigneeImageUrl)} */}
-          {renderStatus(statusName, statusColor)}
+          {renderStatus(statusMapDTO)}
         </div>
       </div>
     );

@@ -17,7 +17,7 @@ describe('Cycle Api-GET', () => {
     return cycleFunc.getCycleTree();
   });
   it('[GET] 根据循环查询执行', () => {
-    return cycleFunc.getCycleById(testCycleId);
+    return cycleFunc.getExecutesByCycleId(testCycleId);
   });
   it('[GET] 根据循环查询文件夹', () => {
     return cycleFunc.getFoldersByCycleId(testCycleId);

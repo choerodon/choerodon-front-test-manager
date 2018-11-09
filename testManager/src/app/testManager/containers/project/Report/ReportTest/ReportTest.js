@@ -197,21 +197,22 @@ class ReportTest extends Component {
       statusList, stepStatusList, openId,
     } = this.state;
     const urlParams = AppState.currentMenuType;
+    const { organizationId } = AppState.currentMenuType;
     const that = this;
     const menu = (
       <Menu style={{ marginTop: 35 }}>
         <Menu.Item key="0">
-          <Link to={`/testManager/report/story?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}>
+          <Link to={`/testManager/report/story?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}&organizationId=${organizationId}`}>
             <FormattedMessage id="report_dropDown_demand" />
           </Link>
         </Menu.Item>
         <Menu.Item key="1">
-          <Link to={`/testManager/report/test?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}>
+          <Link to={`/testManager/report/test?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}&organizationId=${organizationId}`}>
             <FormattedMessage id="report_dropDown_defect" />
           </Link>
         </Menu.Item>
         <Menu.Item key="2">
-          <Link to={`/testManager/report?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}>
+          <Link to={`/testManager/report?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}&organizationId=${organizationId}`}>
             <FormattedMessage id="report_dropDown_home" />
           </Link>
         </Menu.Item>
@@ -226,9 +227,10 @@ class ReportTest extends Component {
       render(test, record) {
         const { issueInfosDTO } = record;
         const {
-          issueId, issueColor, issueStatusName,
+          issueId, statusMapDTO,
           issueName, summary, typeCode,
         } = issueInfosDTO;
+        const { name: statusName, colour: statusColor } = statusMapDTO || {};
         return (
           <Collapse
             activeKey={openId}
@@ -247,8 +249,8 @@ class ReportTest extends Component {
                       </Link>
                     </Tooltip>
                     <div className="c7ntest-collapse-header-icon">
-                      <span style={{ color: issueColor, borderColor: issueColor }}>
-                        {issueStatusName}
+                      <span style={{ color: statusColor, borderColor: statusColor }}>
+                        {statusName}
                       </span>
                     </div>
                   </div>
@@ -382,8 +384,9 @@ class ReportTest extends Component {
         const caseShow = testCycleCaseES.concat(testCycleCaseStepES).map((execute) => {
           const { issueInfosDTO } = execute;
           const {
-            issueColor, issueName, issueStatusName, summary, typeCode,
+            issueName, summary, typeCode, statusMapDTO,
           } = issueInfosDTO || {};
+          const { name: statusName, colour: statusColor } = statusMapDTO || {};
           return (
             <div className="c7ntest-issue-show-container">
               <div className="c7ntest-collapse-show-item">
@@ -393,8 +396,8 @@ class ReportTest extends Component {
                   </Link>
                 </Tooltip>
                 <div className="c7ntest-collapse-header-icon">
-                  <span style={{ color: issueColor, borderColor: issueColor }}>
-                    {issueStatusName}
+                  <span style={{ color: statusColor, borderColor: statusColor }}>
+                    {statusName}
                   </span>
                 </div>
               </div>
@@ -432,9 +435,8 @@ class ReportTest extends Component {
           const { issueLinkDTOS } = execute;
           // window.console.log(issueLinkDTOS.length);
           const issueLinks = issueLinkDTOS && issueLinkDTOS.map((link) => {
-            const {
-              statusColor, statusName, issueNum, summary,
-            } = link;
+            const { issueNum, summary, statusMapDTO } = link;
+            const { name: statusName, colour: statusColor } = statusMapDTO || {};
             return (
               <div className="c7ntest-issue-show-container">
                 <div className="c7ntest-collapse-show-item">
@@ -584,7 +586,7 @@ class ReportTest extends Component {
       <Page className="c7ntest-report-test">
         <Header
           title={<FormattedMessage id="report_defectToDemand" />}
-          backPath={`/testManager/report?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}`}
+          backPath={`/testManager/report?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}&organizationId=${organizationId}`}
         >
           <Dropdown overlay={menu} trigger={['click']}>
             <a className="ant-dropdown-link" href="#">

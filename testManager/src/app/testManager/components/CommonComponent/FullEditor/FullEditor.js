@@ -1,25 +1,31 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { Form, Modal } from 'choerodon-ui';
-
 import WYSIWYGEditor from '../WYSIWYGEditor';
 
-class CreateSprint extends Component {
-  state = {
-    delta: '',
-  };
+class FullEditor extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      delta: this.formatValue(props.initValue),
+    };
+  }
 
-  componentWillReceiveProps(nextProps) {
+  formatValue = (value) => {
+    let delta = value;
     try {
-      JSON.parse(nextProps.initValue);
-      this.setState({
-        delta: JSON.parse(nextProps.initValue),
-      });
+      JSON.parse(value);
+      delta = JSON.parse(value);
     } catch (error) {
-      this.setState({
-        delta: nextProps.initValue,
-      });
+      delta = value;
     }
+    return delta;
+  }
+
+  componentWillReceiveProps(nextProps) {   
+    this.setState({
+      delta: this.formatValue(nextProps.initValue),
+    });  
   }
 
 
@@ -50,4 +56,4 @@ class CreateSprint extends Component {
     );
   }
 }
-export default Form.create({})(withRouter(CreateSprint));
+export default Form.create({})(withRouter(FullEditor));

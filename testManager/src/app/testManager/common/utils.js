@@ -1,4 +1,4 @@
-import { stores } from 'choerodon-front-boot';
+import { stores, axios } from 'choerodon-front-boot';
 import QuillDeltaToHtmlConverter from 'quill-delta-to-html';
 import { uploadImage, uploadFileAgile } from '../api/FileApi';
 import { SERVICES_URL } from './Constant';
@@ -31,7 +31,7 @@ export function delta2Html(description, config) {
     // console.log(description, error);
     temp = JSON.stringify([{ insert: description }]);
   }
-  
+
   const delta = text2Delta(temp);
   const converter = new QuillDeltaToHtmlConverter(delta, config);
   const text = converter.convert();
@@ -233,35 +233,53 @@ export function getParams(url) {
 }
 export function issueLink(issueId, typeCode) {
   const menu = AppState.currentMenuType;
-  const { type, id: projectId, name } = menu;
+  const {
+    type, id: projectId, name, organizationId,
+  } = menu;
   if (typeCode === 'issue_test') {
-    return encodeURI(`/testManager/IssueManage?type=${type}&id=${projectId}&name=${name}&paramIssueId=${issueId}`);
+    return encodeURI(`/testManager/IssueManage?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}&paramIssueId=${issueId}`);
   } else {
-    return encodeURI(`/agile/issue?type=${type}&id=${projectId}&name=${name}&paramIssueId=${issueId}`);
+    return encodeURI(`/agile/issue?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}&paramIssueId=${issueId}`);
   }
 }
 export function createIssueLink() {
   const menu = AppState.currentMenuType;
-  const { type, id: projectId, name } = menu;
-  return encodeURI(`/agile/issue?type=${type}&id=${projectId}&name=${name}`);
+  const {
+    type, id: projectId, name, organizationId,
+  } = menu;
+  return encodeURI(`/agile/issue?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}`);
 }
 export function cycleLink(cycleId) {
   const menu = AppState.currentMenuType;
-  const { type, id: projectId, name } = menu;
- 
-  return encodeURI(`/testManager/TestExecute?type=${type}&id=${projectId}&name=${name}&cycleId=${cycleId}`);
+  const {
+    type, id: projectId, name, organizationId,
+  } = menu;
+
+  return encodeURI(`/testManager/TestExecute?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}&cycleId=${cycleId}`);
 }
 export function executeDetailLink(executeId) {
   const menu = AppState.currentMenuType;
-  const { type, id: projectId, name } = menu;
- 
-  return encodeURI(`/testManager/TestExecute/execute/${executeId}?type=${type}&id=${projectId}&name=${name}`);
+  const {
+    type, id: projectId, name, organizationId,
+  } = menu;
+
+  return encodeURI(`/testManager/TestExecute/execute/${executeId}?type=${type}&id=${projectId}&organizationId=${organizationId}&name=${name}`);
 }
 export function executeDetailShowLink(executeId) {
   const menu = AppState.currentMenuType;
-  const { type, id: projectId, name } = menu;
- 
-  return encodeURI(`/testManager/TestPlan/executeShow/${executeId}?type=${type}&id=${projectId}&name=${name}`);
+  const {
+    type, id: projectId, name, organizationId,
+  } = menu;
+
+  return encodeURI(`/testManager/TestPlan/executeShow/${executeId}?type=${type}&id=${projectId}&organizationId=${organizationId}&name=${name}`);
+}
+export function commonLink(link) {
+  const menu = AppState.currentMenuType;
+  const {
+    type, id: projectId, name, organizationId,
+  } = menu;
+
+  return encodeURI(`/testManager${link}?type=${type}&id=${projectId}&organizationId=${organizationId}&name=${name}`);
 }
 /**
  * 处理数据请求错误
@@ -276,3 +294,64 @@ export function handleProptError(data) {
     return data;
   }
 }
+
+export function color2rgba(color, alpha = 1) {
+  if (typeof color !== 'string') {
+    return '';
+  }
+  const r = parseInt(color.slice(1, 3), 16);
+  const g = parseInt(color.slice(3, 5), 16);
+  const b = parseInt(color.slice(5, 7), 16);
+  return `rgba(${r},${g},${b},${alpha})`;
+}
+export function humanizeDuration(seconds) {
+  let result = '';
+  if (seconds) {
+    /** eslint-disable no-constant-condition */
+    if ((result = Math.round(seconds / (60 * 60 * 24 * 30 * 12))) > 0) { // year
+      result = `${result}年`;
+    } else if ((result = Math.round(seconds / (60 * 60 * 24 * 30))) > 0) { // months
+      result = `${result}月`;
+    } else if ((result = Math.round(seconds / (60 * 60 * 24))) > 0) { // days
+      result = `${result}天`;
+    } else if ((result = Math.round(seconds / (60 * 60))) > 0) { // Hours
+      result = `${result}小时`;
+    } else if ((result = Math.round(seconds / (60))) > 0) { // minute
+      result = `${result}分钟`;
+    } else if ((result = Math.round(seconds)) > 0) { // second
+      result = `${result}秒`;
+    } else {
+      result = `${seconds}毫秒`;
+    }
+  }
+  return result;
+}
+export const getProjectId = () => AppState.currentMenuType.id;
+export const getOrganizationId = () => AppState.currentMenuType.organizationId;
+
+export function request() { }
+['get', 'post', 'options', 'delete', 'put'].forEach((type) => {
+  request[type] = (...args) => new Promise((resolve, reject) => {
+    // const ARGS = [...args];
+    let url = args[0];
+
+    if (Object.keys(getParams(url)).length > 0) {
+      url += `&organizationId=${getOrganizationId()}`;
+    } else {
+      url += `?organizationId=${getOrganizationId()}`;
+    }
+    args[0] = url;
+
+    axios[type](...args).then((data) => {
+      if (data && data.failed) {
+        Choerodon.prompt(data.message);
+        reject(data.failed);
+      } else {
+        resolve(data);
+      }
+    }).catch((error) => {
+      Choerodon.prompt(error.message);
+      reject(error);
+    });
+  });
+});

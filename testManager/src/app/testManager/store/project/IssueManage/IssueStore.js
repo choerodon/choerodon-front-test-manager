@@ -2,10 +2,14 @@ import {
   observable, action, computed, toJS,
 } from 'mobx';
 import { stores, axios } from 'choerodon-front-boot';
+import _ from 'lodash';
 import {
-  loadVersions, getIssuesByFolder, getIssuesByIds, getSingleIssues,
+  getIssuesByFolder, getIssuesByIds, getSingleIssues,
   getIssuesByVersion, getAllIssues,
 } from '../../../api/IssueManageApi';
+import {
+  getProjectVersion, getPrioritys, getIssueTypes, getIssueStatus,
+} from '../../../api/agileApi';
 import IssueTreeStore from './IssueTreeStore';
 
 const { AppState } = stores;
@@ -17,6 +21,12 @@ class IssueStore {
   @observable issueIds = [];
 
   @observable versions = [];
+
+  @observable prioritys = [];
+
+  @observable issueTypes = [];
+
+  @observable issueStatusList = [];
 
   @observable selectedVersion = null;
 
@@ -67,7 +77,9 @@ class IssueStore {
       orderType: '',
     });
     this.setFilter({
-      advancedSearchArgs: { typeCode: ['issue_test'] },
+      advancedSearchArgs: {
+        // typeCode: ['issue_test'] 
+      },
       searchArgs: {},
     });
     this.setFilteredInfo({});
@@ -75,11 +87,14 @@ class IssueStore {
   }
 
   loadIssues = (page, size = 10) => {
-    page = isNaN(page) ? 0 : page;
+    page = isNaN(page) ? 0 : Math.max(page, 0);
     this.setLoading(true);
     const { orderField, orderType } = this.order;
     const funcArr = [];
-    funcArr.push(loadVersions());
+    funcArr.push(getProjectVersion());
+    funcArr.push(getPrioritys());
+    funcArr.push(getIssueTypes());
+    funcArr.push(getIssueStatus());
     const currentCycle = IssueTreeStore.currentCycle;
     const types = ['all', 'topversion', 'version', 'folder'];
     const type = currentCycle.key ? types[currentCycle.key.split('-').length - 1] : 'allissue';
@@ -140,8 +155,11 @@ class IssueStore {
     // } else {
     //   funcArr.push(getAllIssues(page, size, this.getFilter, orderField, orderType));
     // }
-    return Promise.all(funcArr).then(([versions, res]) => {
+    return Promise.all(funcArr).then(([versions, prioritys, issueTypes, issueStatusList, res]) => {
       this.setVersions(versions);
+      this.setPrioritys(prioritys);
+      this.setIssueTypes(issueTypes);
+      this.setIssueStatusList(issueStatusList);
       if (versions && versions.length > 0) {
         this.selectVersion(versions[0].versionId);
       }
@@ -200,6 +218,18 @@ class IssueStore {
 
   @action setVersions(versions) {
     this.versions = versions;
+  }
+
+  @action setPrioritys(prioritys) {
+    this.prioritys = prioritys;
+  }
+
+  @action setIssueTypes(issueTypes) {
+    this.issueTypes = issueTypes;
+  }
+
+  @action setIssueStatusList(issueStatusList) {
+    this.issueStatusList = issueStatusList;
   }
 
   @action selectVersion(selectedVersion) {
@@ -285,6 +315,34 @@ class IssueStore {
 
   @computed get getVersions() {
     return toJS(this.versions);
+  }
+
+  @computed get getPrioritys() {
+    return toJS(this.prioritys);
+  }
+
+  @computed get getMediumPriority() {
+    const priority = _.find(this.prioritys, { default: true });
+    if (priority) {
+      return priority.id;
+    }
+    return null;
+  }
+
+  @computed get getIssueTypes() {
+    return toJS(this.issueTypes);
+  }
+
+  @computed get getTestType() {
+    const type = _.find(this.issueTypes, { typeCode: 'issue_test' });
+    if (type) {
+      return type.id;
+    }
+    return null;
+  }
+
+  @computed get getIssueStatus() {
+    return toJS(this.issueStatusList);
   }
 
   @computed get getSeletedVersion() {

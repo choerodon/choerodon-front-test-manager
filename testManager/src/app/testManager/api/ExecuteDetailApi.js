@@ -1,14 +1,11 @@
-import { stores, axios } from 'choerodon-front-boot';
+import { getProjectId, request } from '../common/utils';
 
-const { AppState } = stores;
 export function getCycle(id) {
-  const projectId = AppState.currentMenuType.id;
-  return axios.get(`/test/v1/projects/${projectId}/cycle/case/query/one/${id}`);
+  return request.get(`/test/v1/projects/${getProjectId()}/cycle/case/query/one/${id}`);
 }
 
 export function editCycle(cycle) {
-  const projectId = AppState.currentMenuType.id;
-  return axios.post(`/test/v1/projects/${projectId}/cycle/case/update`, cycle);
+  return request.post(`/test/v1/projects/${getProjectId()}/cycle/case/update`, cycle);
 }
 /**
  *增加缺陷
@@ -18,8 +15,7 @@ export function editCycle(cycle) {
  * @returns
  */
 export function addDefects(defects) {
-  const projectId = AppState.currentMenuType.id;
-  return axios.post(`/test/v1/projects/${projectId}/defect`, defects);
+  return request.post(`/test/v1/projects/${getProjectId()}/defect`, defects);
 }
 /**
  *移除缺陷
@@ -29,27 +25,25 @@ export function addDefects(defects) {
  * @returns
  */
 export function removeDefect(defectId) {
-  const projectId = AppState.currentMenuType.id;
-  return axios.delete(`/test/v1/projects/${projectId}/defect/delete/${defectId}`);
+  return request.delete(`/test/v1/projects/${getProjectId()}/defect/delete/${defectId}`);
 }
 export function editCycleSide(data) {
   const axiosConfig = {
     headers: { 'content-type': 'multipart/form-datal' },
   };
-  const projectId = AppState.currentMenuType.id;
-  return axios.post(`/zuul/test/v1/projects/${projectId}/cycle/case/step/updateWithAttach`, data, axiosConfig);
+
+  return request.post(`/zuul/test/v1/projects/${getProjectId()}/cycle/case/step/updateWithAttach`, data, axiosConfig);
 }
 export function editCycleStep(data) {
-  const projectId = AppState.currentMenuType.id;
-  return axios.put(`/test/v1/projects/${projectId}/cycle/case/step`, data);
+  return request.put(`/test/v1/projects/${getProjectId()}/cycle/case/step`, data);
 }
 export function getCycleDetails(pagination, cycleCaseId) {
   const { size, page } = pagination;
-  const projectId = AppState.currentMenuType.id;
-  return axios.get(`test/v1/projects/${projectId}/cycle/case/step/query/${cycleCaseId}?size=${size}&page=${page}`);
+
+  return request.get(`test/v1/projects/${getProjectId()}/cycle/case/step/query/${cycleCaseId}?size=${size}&page=${page}`);
 }
 export function getCycleHistiorys(pagination, cycleCaseId) {
   const { size, page } = pagination;
-  const projectId = AppState.currentMenuType.id;
-  return axios.get(`test/v1/projects/${projectId}/cycle/case/history/${cycleCaseId}?size=${size}&page=${page}`);
+
+  return request.get(`test/v1/projects/${getProjectId()}/cycle/case/history/${cycleCaseId}?size=${size}&page=${page}`);
 }

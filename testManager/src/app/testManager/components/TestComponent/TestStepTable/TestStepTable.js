@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-  Input, Icon, Modal, Tooltip,
+  Input, Icon, Modal, Tooltip, Button,
 } from 'choerodon-ui';
 import { stores, axios } from 'choerodon-front-boot';
 import _ from 'lodash';
@@ -76,6 +76,7 @@ class TestStepTable extends Component {
   };
 
   cloneStep = (stepId) => {
+    this.props.enterLoad();
     axios.post(`/test/v1/projects/${AppState.currentMenuType.id}/case/step/clone`, {
       stepId,
       issueId: this.props.issueId,
@@ -84,6 +85,7 @@ class TestStepTable extends Component {
         this.props.onOk();
       })
       .catch((error) => {
+        this.props.leaveLoad();
       });
   }
 
@@ -139,11 +141,11 @@ class TestStepTable extends Component {
               }]}
             >
               <Text>
-                {/* <Tooltip title={testStep}> */}
-                <div className="c7ntest-text-wrap">
-                  {testStep}
-                </div>
-                {/* </Tooltip> */}
+                {data => (
+                  <div className="c7ntest-text-wrap">
+                    {data}
+                  </div>
+                )}
               </Text>
               <Edit>
                 <TextArea autoFocus autosize />
@@ -167,11 +169,11 @@ class TestStepTable extends Component {
               originData={testData}
             >
               <Text>
-                {/* <Tooltip title={testData}> */}
-                <div className="c7ntest-text-wrap">
-                  {testData}
-                </div>
-                {/* </Tooltip> */}
+                {data => (
+                  <div className="c7ntest-text-wrap">
+                    {data}
+                  </div>
+                )}       
               </Text>
               <Edit>
                 <TextArea autoFocus autosize />
@@ -198,12 +200,12 @@ class TestStepTable extends Component {
                   required: true, message: '请输入预期结果!',
                 }]}
               >
-                <Text>
-                  {/* <Tooltip title={expectedResult}> */}
-                  <div className="c7ntest-text-wrap">
-                    {expectedResult}
-                  </div>
-                  {/* </Tooltip> */}
+                <Text>  
+                  {data => (
+                    <div className="c7ntest-text-wrap">
+                      {data}
+                    </div>
+                  )}
                 </Text>
                 <Edit>
                   <TextArea autoFocus autosize />
@@ -262,9 +264,9 @@ class TestStepTable extends Component {
           return (
             <div>
               <Tooltip title={<FormattedMessage id="execute_copy" />}>
-                <Icon type="library_books" style={{ cursor: 'pointer', margin: '0 5px' }} onClick={() => that.cloneStep(record.stepId)} />
+                <Button shape="circle" funcType="flat" icon="library_books" style={{ cursor: 'pointer', margin: '0 5px', color: 'black' }} onClick={() => that.cloneStep(record.stepId)} />
               </Tooltip>
-              <Icon type="delete_forever" style={{ cursor: 'pointer', margin: '0 5px' }} onClick={() => that.handleDeleteTestStep(record.stepId)} />
+              <Button shape="circle" funcType="flat" icon="delete_forever" style={{ cursor: 'pointer', margin: '0 5px', color: 'black' }} onClick={() => that.handleDeleteTestStep(record.stepId)} />
             </div>
           );
         },
