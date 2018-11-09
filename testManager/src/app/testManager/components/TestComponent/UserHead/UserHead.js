@@ -1,19 +1,7 @@
 import React, { Component } from 'react';
-import {
-  Button, Table, Spin, Popover, Tooltip, Icon, Avatar, 
-} from 'choerodon-ui';
 import './UserHead.scss';
 
 class UserHead extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-    };
-  }
-
-  componentDidMount() {
-  }
-
   shouldComponentUpdate(nextProps, nextState) {
     if (nextProps.user.id === this.props.user.id) {
       return false;
@@ -41,7 +29,7 @@ class UserHead extends Component {
         className="c7ntest-userHead"
         style={{
           ...this.props.style,
-          display: user.id ? 'flex' : 'none',
+          display: user.id ? 'inline-flex' : 'none',
         }}
       >
         {
@@ -53,7 +41,7 @@ class UserHead extends Component {
                 background: '#b3bac5',
                 color: '#fff',
                 overflow: 'hidden',
-                display: 'flex',
+                display: 'inline-flex',
                 justifyContent: 'center',
                 alignItems: 'center',
                 textAlign: 'center',
@@ -81,7 +69,7 @@ class UserHead extends Component {
                 background: '#c5cbe8',
                 color: '#6473c3',
                 overflow: 'hidden',
-                display: 'flex',
+                display: 'inline-flex',
                 justifyContent: 'center',
                 alignItems: 'center',
                 marginRight: 5,

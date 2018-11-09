@@ -7,7 +7,7 @@ class User extends Component {
     return user ? (
       <div 
         style={{        
-          display: 'flex',
+          display: 'inline-flex',
           alignItems: 'center',
         }}
       >

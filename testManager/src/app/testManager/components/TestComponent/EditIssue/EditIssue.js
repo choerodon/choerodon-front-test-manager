@@ -931,7 +931,7 @@ class EditIssueNarrow extends Component {
       <TextEditToggle
         formKey="reporterId"
         onSubmit={(id, done) => { this.editIssue({ reporterId: id || 0 }, done); }}
-        originData={userList.length > 0 ? reporterId : (
+        originData={userList.length > 0 ? reporterId : reporterId ? (
           <UserHead
             user={{
               id: reporterId,
@@ -940,7 +940,7 @@ class EditIssueNarrow extends Component {
               avatar: reporterImageUrl,
             }}
           />
-        )}
+        ) : '无'}
       >
         <Text>
           {(data) => {
@@ -950,16 +950,7 @@ class EditIssueNarrow extends Component {
                 <User user={targetUser} />
               ) : '无';
             } else {
-              return (
-                <UserHead
-                  user={{
-                    id: reporterId,
-                    loginName: '',
-                    realName: reporterName,
-                    avatar: reporterImageUrl,
-                  }}
-                />
-              );
+              return data;
             }
           }}
         </Text>
@@ -1018,7 +1009,7 @@ class EditIssueNarrow extends Component {
       <TextEditToggle
         formKey="assigneeId"
         onSubmit={(id, done) => { this.editIssue({ assigneeId: id || 0 }, done); }}
-        originData={userList.length > 0 ? assigneeId : (
+        originData={userList.length > 0 ? assigneeId : assigneeId ? (
           <UserHead
             user={{
               id: assigneeId,
@@ -1027,7 +1018,7 @@ class EditIssueNarrow extends Component {
               avatar: assigneeImageUrl,
             }}
           />
-        )}
+        ) : '无'}
       >
         <Text>
           {(data) => {
@@ -1037,16 +1028,7 @@ class EditIssueNarrow extends Component {
                 <User user={targetUser} />
               ) : '无';
             } else {
-              return (
-                <UserHead
-                  user={{
-                    id: assigneeId,
-                    loginName: '',
-                    realName: assigneeName,
-                    avatar: assigneeImageUrl,
-                  }}
-                />
-              );
+              return data; 
             }
           }}
         </Text>
@@ -1333,7 +1315,7 @@ class EditIssueNarrow extends Component {
                         {mode === 'narrow'
                           && (
                             <div>
-                              <div className="line-start mt-10 ht-20">
+                              <div className="line-start mt-10">
                                 <div className="c7ntest-property-wrapper">
                                   <span className="c7ntest-property">
                                     {'状态：'}
@@ -1344,7 +1326,7 @@ class EditIssueNarrow extends Component {
                                 </div>
                               </div>
                               {/* 优先级 */}
-                              <div className="line-start mt-10 ht-20">
+                              <div className="line-start mt-10">
                                 <div className="c7ntest-property-wrapper">
                                   <span className="c7ntest-property">优先级：</span>
                                 </div>
@@ -1358,7 +1340,7 @@ class EditIssueNarrow extends Component {
                         {/* 模块 */}
                         {
                           typeCode !== 'sub_task' ? (
-                            <div className="line-start mt-10 ht-20">
+                            <div className="line-start mt-10">
                               <div className="c7ntest-property-wrapper">
                                 <span className="c7ntest-property">
                                   <FormattedMessage id="summary_component" />
@@ -1372,7 +1354,7 @@ class EditIssueNarrow extends Component {
                           ) : null
                         }
                         {/* 标签 */}
-                        <div className="line-start mt-10 ht-20">
+                        <div className="line-start mt-10">
                           <div className="c7ntest-property-wrapper">
                             <span className="c7ntest-property">
                               <FormattedMessage id="summary_label" />
@@ -1385,7 +1367,7 @@ class EditIssueNarrow extends Component {
                         </div>
                         {/* 版本 */}
                         {mode === 'narrow' && (
-                          <div className="line-start mt-10 ht-20">
+                          <div className="line-start mt-10">
                             <div className="c7ntest-property-wrapper">
                               <span className="c7ntest-property">
                                 <FormattedMessage id="issue_create_content_version" />
@@ -1418,7 +1400,7 @@ class EditIssueNarrow extends Component {
                           </div>
                         </div>
                         {/* 报告人 */}
-                        <div className="line-start mt-10 assignee ht-20">
+                        <div className="line-start mt-10 assignee">
                           <div className="c7ntest-property-wrapper">
                             <span className="c7ntest-property">
                               <FormattedMessage id="issue_edit_reporter" />
@@ -1443,7 +1425,7 @@ class EditIssueNarrow extends Component {
                             </span>
                           </div>
                         </div>
-                        <div className="line-start mt-10 assignee ht-20">
+                        <div className="line-start mt-10 assignee">
                           <div className="c7ntest-property-wrapper">
                             <span className="c7ntest-property">
                               <FormattedMessage id="issue_edit_manager" />
@@ -1480,7 +1462,7 @@ class EditIssueNarrow extends Component {
                           </div>
                         </div>
 
-                        <div className="line-start mt-10 ht-20">
+                        <div className="line-start mt-10">
                           <div className="c7ntest-property-wrapper">
                             <span className="c7ntest-property">
                               <FormattedMessage id="issue_edit_createDate" />
@@ -1491,7 +1473,7 @@ class EditIssueNarrow extends Component {
                             {formatDate(creationDate)}
                           </div>
                         </div>
-                        <div className="line-start mt-10 ht-20">
+                        <div className="line-start mt-10">
                           <div className="c7ntest-property-wrapper">
                             <span className="c7ntest-property">
                               <FormattedMessage id="issue_edit_updateDate" />
