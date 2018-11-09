@@ -143,7 +143,7 @@ class IssueTreeTitle extends Component {
     this.setState({
       enter: false,
     });
-    console.log(e.ctrlKey, cycleId, IssueStore.getDraggingTableItems);
+    // console.log(e.ctrlKey, cycleId, IssueStore.getDraggingTableItems);
     const isCopy = e.ctrlKey || e.metaKey;
     const issueLinks = IssueStore.getDraggingTableItems.map(issue => ({
       issueId: issue.issueId,

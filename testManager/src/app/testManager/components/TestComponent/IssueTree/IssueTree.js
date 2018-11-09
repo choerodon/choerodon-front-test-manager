@@ -266,7 +266,7 @@ class IssueTree extends Component {
       IssueTreeStore.setSelectedKeys(filteredKeys);
     }
     IssueTreeStore.setCurrentCycle(data);
-    IssueStore.loadIssues();
+    IssueStore.loadIssues(0);
     // }
   }
 

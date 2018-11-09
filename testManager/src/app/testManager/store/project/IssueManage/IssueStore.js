@@ -30,7 +30,11 @@ class IssueStore {
 
   @observable selectedVersion = null;
 
-  @observable pagination = {};
+  @observable pagination = {
+    current: 1,
+    pageSize: 10,
+    total: 0,
+  };
 
   @observable filter = {
     advancedSearchArgs: {},
@@ -86,8 +90,9 @@ class IssueStore {
     // this.loadIssues();
   }
 
-  loadIssues = (page, size = 10) => {
-    page = isNaN(page) ? 0 : Math.max(page, 0);
+  loadIssues = (page, size = this.pagination.pageSize) => {
+    // console.log(page);
+    page = isNaN(page) ? this.pagination.current - 1 : Math.max(page, 0);
     this.setLoading(true);
     const { orderField, orderType } = this.order;
     const funcArr = [];
