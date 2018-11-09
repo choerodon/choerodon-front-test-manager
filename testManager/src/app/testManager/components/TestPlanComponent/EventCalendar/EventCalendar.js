@@ -19,17 +19,18 @@ class EventCalendar extends Component {
     pos: 0,
   }
 
-  componentWillReceiveProps(nextProps) {
-    const { times } = nextProps;
-    const { mode } = this.state;
-    // console.log(times);
+  static getDerivedStateFromProps(props, state) {
+    const { times } = props;
+    const { mode } = state;
     // 使事件始终可以显示在当前范围
     if (times && times.length > 0) {
-      this.setState({
+      return {
         pos: 0,
         currentDate: null,
         baseDate: times[0].start ? moment(times[0].start).startOf(mode) : moment(),
-      });
+      };      
+    } else {
+      return null;
     }
   }
 
@@ -69,6 +70,7 @@ class EventCalendar extends Component {
   render() {
     const { mode, currentDate } = this.state;
     const { showMode, times } = this.props;
+    
     const { start, end } = this.calculateTime();
     const range = moment.range(start, end);
     const timeArray = Array.from(range.by('day'));

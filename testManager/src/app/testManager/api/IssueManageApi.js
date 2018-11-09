@@ -490,15 +490,6 @@ export function getExportList() {
   return request.get(`/test/v1/projects/${getProjectId()}/test/fileload/history`);
 }
 /**
- *获取导出历史
- *
- * @export
- * @returns
- */
-export function getImportHistory() {
-  return request.get(`/test/v1/projects/${getProjectId()}/test/fileload/history/latest`);
-}
-/**
  *导出失败重试
  *
  * @export
@@ -507,4 +498,23 @@ export function getImportHistory() {
  */
 export function exportRetry(historyId) {
   return request.get(`/test/v1/projects/${getProjectId()}/case/download/excel/fail?historyId=${historyId}`);
+}
+/**
+ *获取导入历史
+ *
+ * @export
+ * @returns
+ */
+export function getImportHistory() {
+  return request.get(`/test/v1/projects/${getProjectId()}/test/fileload/history/latest`);
+}
+/**
+ * 取消本次导入
+ *
+ * @export
+ * @param {*} historyId
+ * @returns
+ */
+export function cancelImport(historyId) {
+  return request.put(`/test/v1/projects/${getProjectId()}/test/fileload/history/cancel?historyId=${historyId}`);
 }

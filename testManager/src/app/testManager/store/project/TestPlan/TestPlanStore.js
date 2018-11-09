@@ -6,6 +6,39 @@ import { getCycleTree, getExecutesByCycleId } from '../../../api/cycleApi';
 import { getStatusList } from '../../../api/TestStatusApi';
 import { BaseTreeProto } from '../prototype';
 
+/**
+ * 非递归遍历树 将测试阶段按照时间排序
+ *
+ * @param {*} node
+ * @returns
+ */
+function traverseTree(node) {
+  if (!node) {
+    return;
+  }
+  const stack = [];
+  stack.push(node);
+  let tmpNode;
+  while (stack.length > 0) {
+    tmpNode = stack.pop();
+    const { type, key } = tmpNode;
+    if (type === 'cycle') {
+      tmpNode.children = tmpNode.children.sort((a, b) => {
+        if (moment(a.fromDate).isAfter(moment(b.fromDate))) {
+          return 1;
+        } else {
+          return -1;
+        }
+      }).map((child, i) => ({ ...child, key: `${key}-${i}` }));
+    } else if (tmpNode.children && tmpNode.children.length > 0) {
+      let i = tmpNode.children.length - 1;
+      for (i = tmpNode.children.length - 1; i >= 0; i -= 1) {
+        stack.push(tmpNode.children[i]);
+      }
+    }
+  }
+}
+
 class TestPlanStore extends BaseTreeProto {
   @observable statusList = [];
 
@@ -47,8 +80,8 @@ class TestPlanStore extends BaseTreeProto {
       this.setStatusList({ statusList });
     });
     getCycleTree().then((data) => {
-      this.setTreeData([{ title: '所有版本', key: '0', children: data.versions }]);
-
+      traverseTree({ title: '所有版本', key: '0', children: data.versions });
+      this.setTreeData([{ title: '所有版本', key: '0', children: data.versions }]);      
       this.generateList([
         { title: '所有版本', key: '0', children: data.versions },
       ]);

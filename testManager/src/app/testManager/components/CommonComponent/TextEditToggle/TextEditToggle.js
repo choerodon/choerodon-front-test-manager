@@ -28,6 +28,15 @@ class TextEditToggle extends Component {
     originData: null,
     newData: null,
   }
+
+  componentDidMount() {
+    console.log('mount');
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    console.log('update');
+  }
+
   
   static defaultProps = {
     // hasFeedback: false,
@@ -50,12 +59,10 @@ class TextEditToggle extends Component {
   };
 
   static getDerivedStateFromProps(props, state) {
-    console.log(props.originData, state.originData, state.editing);
-    // if (!state.editing) {
-    //   return {
-    //     newData:state.originData
-    //   };
-    // } else 
+    // if (props.formKey === 'statusId') {
+    //   console.log(props.originData, state.originData, state.editing, state.newData);
+    // }
+
     if (props.originData !== state.originData) {
       return {
         originData: props.originData,
@@ -75,6 +82,12 @@ class TextEditToggle extends Component {
     }
   }
 
+  handleDone=() => {
+    // this.setState({
+    //   newData: null,
+    // });
+  }
+
   // 提交编辑
   onSubmit = () => {
     document.removeEventListener('mousedown', this.onDocumentClick);
@@ -88,7 +101,8 @@ class TextEditToggle extends Component {
                 // originData: newData,
                 newData,
               });
-              this.props.onSubmit(this.props.formKey ? newData : null);
+              // 传入一个done方法，用于防止父组件数据更新后的newData错误问题
+              this.props.onSubmit(this.props.formKey ? newData : null, this.handleDone);
             }
           } else {
             this.props.onSubmit();
@@ -116,6 +130,7 @@ class TextEditToggle extends Component {
     this.setState({
       editing: true,
       originData: this.props.originData,
+      newData: null,
     });
   }
 

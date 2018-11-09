@@ -263,7 +263,7 @@ class EditIssueNarrow extends Component {
    * @param newValue 例 { statusId: 1 }
    * @memberof EditIssueNarrow
    */
-  editIssue = (newValue) => {
+  editIssue = (newValue, done) => {
     const key = Object.keys(newValue)[0];
     const value = newValue[key];
     const {
@@ -285,6 +285,8 @@ class EditIssueNarrow extends Component {
               if (this.props.onUpdate) {
                 this.props.onUpdate();
               }
+            }).finally(() => {
+              done();
             });
         }
         break;
@@ -297,6 +299,8 @@ class EditIssueNarrow extends Component {
             if (this.props.onUpdate) {
               this.props.onUpdate();
             }
+          }).finally(() => {
+            done();
           });
         break;
       }
@@ -308,6 +312,8 @@ class EditIssueNarrow extends Component {
             if (this.props.onUpdate) {
               this.props.onUpdate();
             }
+          }).finally(() => {
+            done();
           });
         break;
       }
@@ -316,6 +322,8 @@ class EditIssueNarrow extends Component {
           returnBeforeTextUpload(value, issue, updateIssue, 'description')
             .then((res) => {
               this.reloadIssue();
+            }).finally(() => {
+              done();
             });
         }
         break;
@@ -328,6 +336,8 @@ class EditIssueNarrow extends Component {
             if (this.props.onUpdate) {
               this.props.onUpdate();
             }
+          }).finally(() => {
+            done();
           });
         break;
       }
@@ -662,9 +672,8 @@ class EditIssueNarrow extends Component {
       <TextEditToggle
         style={{ width: '100%' }}
         formKey="statusId"
-        onSubmit={(value) => { this.editIssue({ statusId: value }); }}
-        originData={StatusList.length
-          ? statusId : statusName}
+        onSubmit={(value, done) => { this.editIssue({ statusId: value }, done); }}
+        originData={StatusList.length ? statusId : statusName}
       >
         <Text>
           {(data) => {
@@ -728,7 +737,7 @@ class EditIssueNarrow extends Component {
       <TextEditToggle
         style={{ width: '100%' }}
         formKey="priorityId"
-        onSubmit={(value) => { this.editIssue({ priorityId: value }); }}
+        onSubmit={(value, done) => { this.editIssue({ priorityId: value }, done); }}
         originData={priorityList.length
           ? priorityId : priorityName}
       >
@@ -782,7 +791,7 @@ class EditIssueNarrow extends Component {
       <TextEditToggle
         style={{ width: '100%' }}
         formKey="componentIssueRelDTOList"
-        onSubmit={(value) => { this.editIssue({ componentIssueRelDTOList: value }); }}
+        onSubmit={(value, done) => { this.editIssue({ componentIssueRelDTOList: value }, done); }}
         originData={this.transToArr(componentIssueRelDTOList, 'name', 'array')}
       >
         <Text>
@@ -840,7 +849,7 @@ class EditIssueNarrow extends Component {
       <TextEditToggle
         style={{ width: '100%' }}
         formKey="labelIssueRelDTOList"
-        onSubmit={(value) => { this.editIssue({ labelIssueRelDTOList: value }); }}
+        onSubmit={(value, done) => { this.editIssue({ labelIssueRelDTOList: value }, done); }}
         originData={this.transToArr(labelIssueRelDTOList, 'labelName', 'array')}
       >
         <Text>
@@ -921,7 +930,7 @@ class EditIssueNarrow extends Component {
     return (
       <TextEditToggle
         formKey="reporterId"
-        onSubmit={(id) => { this.editIssue({ reporterId: id || 0 }); }}
+        onSubmit={(id, done) => { this.editIssue({ reporterId: id || 0 }, done); }}
         originData={userList.length > 0 ? reporterId : (
           <UserHead
             user={{
@@ -1008,7 +1017,7 @@ class EditIssueNarrow extends Component {
     return (
       <TextEditToggle
         formKey="assigneeId"
-        onSubmit={(id) => { this.editIssue({ assigneeId: id || 0 }); }}
+        onSubmit={(id, done) => { this.editIssue({ assigneeId: id || 0 }, done); }}
         originData={userList.length > 0 ? assigneeId : (
           <UserHead
             user={{
@@ -1194,7 +1203,7 @@ class EditIssueNarrow extends Component {
                   <TextEditToggle
                     style={{ width: '100%' }}
                     formKey="summary"
-                    onSubmit={(value) => { this.editIssue({ summary: value }); }}
+                    onSubmit={(value, done) => { this.editIssue({ summary: value }, done); }}
                     originData={summary}
                   >
                     <Text>
@@ -1422,9 +1431,9 @@ class EditIssueNarrow extends Component {
                               role="none"
                               style={{
                                 color: '#3f51b5',
-                                cursor: 'pointer',  
+                                cursor: 'pointer',
                                 marginTop: '-2px',
-                                display: 'inline-block',           
+                                display: 'inline-block',
                               }}
                               onClick={() => {
                                 this.editIssue({ reporterId: AppState.userInfo.id });
@@ -1449,7 +1458,7 @@ class EditIssueNarrow extends Component {
                                 color: '#3f51b5',
                                 cursor: 'pointer',
                                 marginTop: '-2px',
-                                display: 'inline-block',                         
+                                display: 'inline-block',
                               }}
                               onClick={() => {
                                 this.editIssue({ assigneeId: AppState.userInfo.id });

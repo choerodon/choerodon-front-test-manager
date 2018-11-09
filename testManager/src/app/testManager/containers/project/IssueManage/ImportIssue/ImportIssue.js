@@ -90,9 +90,9 @@ class ImportIssue extends Component {
       lastUpdateDate, successfulCount, failedCount, fileUrl, status,
     } = importRecord;
     // 如果用户已取消
-    if (status === 3) {
-      return <div className="c7ntest-ImportIssue-record-normal-text">导入已取消</div>;
-    }
+    // if (status === 4) {
+    //   return <div className="c7ntest-ImportIssue-record-normal-text">导入已取消</div>;
+    // }
     return (
       <div className="c7ntest-ImportIssue-record-normal-text">
         上次导入完成时间
@@ -155,8 +155,11 @@ class ImportIssue extends Component {
 
   handleMessage = (data) => {
     console.log(data);
-    const { rate } = data;
-
+    const { importRecord } = this.state;
+    const { rate, id, status } = data;
+    if (importRecord.status === 4 && id === importRecord.id && status !== 4) {
+      return;
+    }
     this.setState({
       progress: rate.toFixed(1),
       importRecord: data,
@@ -164,14 +167,17 @@ class ImportIssue extends Component {
   }
 
   handleCancelImport=() => {
+    const { importRecord } = this.state;
     confirm({
       title: '取消导入',
       content: '取消导入不会删除已经导入的数据。',
       onOk: () => {
         // 取消之后重取一下数据
-        cancelImport().then((res) => {
-          this.getImportHistory();
-        });
+        if (importRecord.id) {
+          cancelImport(importRecord.id).then((res) => {
+            this.getImportHistory();
+          });
+        }        
       },
     });
   }
@@ -248,7 +254,7 @@ class ImportIssue extends Component {
           </Button>
           {/* 取消导入 */}
           {importing && (
-          <Button type="primary" funcType="raised" onClick={this.handleCancelImport}>
+          <Button type="primary" funcType="raised" style={{ marginLeft: 20 }} onClick={this.handleCancelImport}>
             <FormattedMessage id="cancel" />
           </Button>
           )}
