@@ -186,19 +186,6 @@ class IssueStore {
           total: res.totalElements,
         });
       }
-      // if ((!IssueTreeStore.currentCycle.versionId && this.issueIds.length === 0) || page === 0) {
-      //   this.setPagination({
-      //     current: res.number + 1,
-      //     pageSize: size,
-      //     total: res.totalElements,
-      //   });
-      // } else {
-      //   this.setPagination({
-      //     current: page + 1,
-      //     pageSize: size,
-      //     total: this.pagination.total,
-      //   });
-      // }
 
       this.setLoading(false);
       return Promise.resolve(res);
@@ -242,6 +229,7 @@ class IssueStore {
   }
 
   @action setPagination(data) {
+    console.log(data);
     this.pagination = data;
   }
 

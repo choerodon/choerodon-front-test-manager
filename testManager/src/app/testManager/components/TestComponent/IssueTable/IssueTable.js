@@ -52,7 +52,7 @@ class IssueTable extends Component {
 
   renderWideIssue(issue) {
     const {
-      issueId,issueTypeDTO, issueNum, summary, assigneeId, assigneeName, assigneeImageUrl, reporterId,
+      issueId, issueTypeDTO, issueNum, summary, assigneeId, assigneeName, assigneeImageUrl, reporterId,
       reporterName, reporterImageUrl, priorityDTO, statusMapDTO,
       folderName, epicColor, componentIssueRelDTOList, labelIssueRelDTOList,
       versionIssueRelDTOList, creationDate, lastUpdateDate,
@@ -181,7 +181,7 @@ class IssueTable extends Component {
           const end = Math.max(firstIndex, index);
           // debugger;
           const draggingTableItems = IssueStore.getIssues.slice(start, end + 1);
-          console.log(draggingTableItems);
+          // console.log(draggingTableItems);
           IssueStore.setDraggingTableItems(draggingTableItems);
         }
       } else {
@@ -195,7 +195,7 @@ class IssueTable extends Component {
         } else {
           old.push(issue);
         }
-        console.log(hasSelected, old);
+        // console.log(hasSelected, old);
         IssueStore.setDraggingTableItems(old);
       }
     } else {

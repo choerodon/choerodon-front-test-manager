@@ -208,10 +208,11 @@ class Test extends Component {
   }
 
   handleFilterChange = (pagination, filters, sorter, barFilters) => {
+    // 条件变化返回第一页
     IssueStore.setPagination({
-      current: 0,
+      current: 1,
       pageSize: IssueStore.pagination.pageSize,
-      total: 0,
+      total: IssueStore.pagination.total,
     });
     IssueStore.setFilteredInfo(filters);
     IssueStore.setBarFilters(barFilters);
