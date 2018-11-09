@@ -182,7 +182,6 @@ class TestPlanHome extends Component {
   }
 
   render() {
-    console.log('render');
     const {
       treeShow, CreateCycleVisible, statusList, 
     } = this.state;
@@ -238,11 +237,7 @@ class TestPlanHome extends Component {
       render(executionStatus) {
         const statusColor = _.find(statusList, { statusId: executionStatus })
           ? _.find(statusList, { statusId: executionStatus }).statusColor : '';
-        return (
-          // <div style={{ ...styles.statusOption, ...{ background: statusColor } }}>
-          //   {_.find(statusList, { statusId: executionStatus })
-          //     && _.find(statusList, { statusId: executionStatus }).statusName}
-          // </div>
+        return (   
           _.find(statusList, { statusId: executionStatus }) && (
             <StatusTags
               color={statusColor}
@@ -261,10 +256,7 @@ class TestPlanHome extends Component {
         return (
           <Tooltip title={<RichTextShow data={delta2Html(comment)} />}>
             <div
-              className="c7ntest-text-dot"
-            // style={{
-            //   width: 65,
-            // }}
+              className="c7ntest-text-dot"  
             >
               {delta2Text(comment)}
             </div>
@@ -328,8 +320,7 @@ class TestPlanHome extends Component {
         return (
           <div
             className="c7ntest-text-dot"
-          >
-            {/* {lastUpdateDate && moment(lastUpdateDate).format('D/MMMM/YY')} */}
+          >    
             {lastUpdateDate && moment(lastUpdateDate).format('YYYY-MM-DD')}
           </div>
         );
@@ -355,10 +346,7 @@ class TestPlanHome extends Component {
       render: (text, record) => (
         record.projectId !== 0
         && (
-          <div style={{ display: 'flex' }}>
-            {/* <Tooltip title={<FormattedMessage id="execute_quickPass" />}>
-              <Icon type="pass" onClick={this.quickPass.bind(this, record)} style={{ cursor: 'pointer' }} />
-            </Tooltip> */}
+          <div style={{ display: 'flex' }}>   
             <Icon
               type="explicit2"
               style={{ cursor: 'pointer', margin: '0 10px' }}
@@ -588,7 +576,6 @@ class TestPlanHome extends Component {
             </div>
           </Spin>
         </Content>
-
       </Page>
     );
   }
