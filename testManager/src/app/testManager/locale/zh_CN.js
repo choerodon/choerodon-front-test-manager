@@ -199,7 +199,7 @@ const zhCN = {
   cycle_cloneCycle: '克隆循环',
   cycle_editFolder: '编辑阶段',
   cycle_deleteFolder: '删除阶段',
-  cycle_cloneFolder: '克隆阶段',
+  cycle_cloneStage: '克隆阶段',
   cycle_exportCycle: '导出循环',
   cycle_exportFolder: '导出阶段',
   cycle_newFolder: '新测试阶段',

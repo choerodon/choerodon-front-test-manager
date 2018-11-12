@@ -117,7 +117,7 @@ class TreeTitle extends Component {
             {type === 'folder' ? <FormattedMessage id="cycle_deleteFolder" /> : <FormattedMessage id="cycle_deleteCycle" />}
           </Menu.Item>,
           <Menu.Item key="clone">
-            {type === 'folder' ? <FormattedMessage id="cycle_cloneFolder" /> : <FormattedMessage id="cycle_cloneCycle" />}
+            {type === 'folder' ? <FormattedMessage id="cycle_cloneStage" /> : <FormattedMessage id="cycle_cloneCycle" />}
           </Menu.Item>,
           <Menu.Item key="export">
             {type === 'folder' ? <FormattedMessage id="cycle_exportFolder" /> : <FormattedMessage id="cycle_exportCycle" />}

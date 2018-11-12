@@ -58,8 +58,8 @@ class PlanTreeTitle extends Component {
       }
       case 'delete': {
         confirm({
-          title: '确定要删除阶段?',
-          content: '阶段内所有执行将被删除',
+          title: `确定要删除${type === 'cycle' ? '循环' : '阶段'}?`,
+          content: `${type === 'cycle' ? '循环' : '阶段'}阶段内所有执行将被删除`,
           onOk() {
             deleteCycleOrFolder(cycleId).then((res) => {
               if (res.failed) {
@@ -138,7 +138,7 @@ class PlanTreeTitle extends Component {
             {type === 'folder' ? <FormattedMessage id="cycle_deleteFolder" /> : <FormattedMessage id="cycle_deleteCycle" />}
           </Menu.Item>,
           <Menu.Item key="clone">
-            {type === 'folder' ? <FormattedMessage id="cycle_cloneFolder" /> : <FormattedMessage id="cycle_cloneCycle" />}
+            {type === 'folder' ? <FormattedMessage id="cycle_cloneStage" /> : <FormattedMessage id="cycle_cloneCycle" />}
           </Menu.Item>,
           // <Menu.Item key="export">
           //   {type === 'folder' ? <FormattedMessage id="cycle_exportFolder" /> : <FormattedMessage id="cycle_exportCycle" />}

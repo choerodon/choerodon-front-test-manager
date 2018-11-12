@@ -1,16 +1,17 @@
 import React, { Component } from 'react';
 import {
-  Modal, Select, Form, Input, Spin, 
+  Modal, Select, Form, Input, Spin,
 } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 import { getProjectVersion } from '../../../api/agileApi';
-import { clone } from '../../../api/cycleApi';
+import { clone, getCyclesByVersionId } from '../../../api/cycleApi';
 
 const Option = Select.Option;
 const FormItem = Form.Item;
-class CloneCycle extends Component {
+class CloneStage extends Component {
   state = {
     versions: [],
+    cycleList: [],
     loading: false,
   }
 
@@ -18,7 +19,7 @@ class CloneCycle extends Component {
     const { resetFields, setFieldsValue } = this.props.form;
     if (this.props.visible === false && nextProps.visible === true) {
       resetFields();
-      setFieldsValue({ cycleName: nextProps.currentCloneCycle.title });
+      setFieldsValue({ cycleName: nextProps.currentCloneStage.title });
       this.setInitValues(nextProps);
     }
   }
@@ -27,15 +28,17 @@ class CloneCycle extends Component {
     this.setState({
       loading: true,
     });
-    const { versionId } = nextProps.currentCloneCycle;
+    const { versionId, parentCycleId } = nextProps.currentCloneStage;
     const { setFieldsValue } = this.props.form;
-    getProjectVersion().then((versions) => {
-      this.setState({
-        versions,        
-        loading: false,
+    Promise.all([getProjectVersion(), getCyclesByVersionId(versionId)])
+      .then(([versions, cycleList]) => {
+        this.setState({
+          versions,
+          cycleList,
+          loading: false,
+        });
+        setFieldsValue({ versionId, parentCycleId });
       });
-      setFieldsValue({ versionId });
-    });
   }
 
   // getProjectVersion = () => {
@@ -50,20 +53,34 @@ class CloneCycle extends Component {
   //   });
   // }
 
+  getCyclesByVersionId = () => {
+    this.setState({
+      selectLoading: true,
+    });
+    const { getFieldValue } = this.props.form;
+    const versionId = getFieldValue('versionId');
+    getCyclesByVersionId(versionId).then((cycleList) => {
+      this.setState({
+        cycleList,
+        selectLoading: false,
+      });
+    });
+  }
+
   handleOk = () => {
-    // console.log(this.props.currentCloneCycle);
+    // console.log(this.props.currentCloneStage);
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
-        const { versionId, cycleName } = values;
+        const { versionId, cycleName, parentCycleId } = values;
         this.setState({
           loading: true,
         });
-        clone(this.props.currentCloneCycle.cycleId, { cycleName, versionId }, 'CLONE_CYCLE').then((data) => {
+        clone(this.props.currentCloneStage.cycleId, { cycleName, parentCycleId, versionId }, 'CLONE_FOLDER').then((data) => {
           this.setState({
             loading: false,
           });
           if (data.failed) {
-            Choerodon.prompt('名字重复');           
+            Choerodon.prompt('名字重复');
           } else {
             this.props.onOk();
           }
@@ -71,23 +88,30 @@ class CloneCycle extends Component {
           Choerodon.prompt('网络出错');
           this.setState({
             loading: false,
-          });         
+          });
         });
       }
     });
   }
 
   render() {
-    const { loading, selectLoading, versions } = this.state;
-    const { getFieldDecorator } = this.props.form;
+    const {
+      loading, selectLoading, versions, cycleList,
+    } = this.state;
+    const { getFieldDecorator, getFieldValue, resetFields } = this.props.form;
     const versionOptions = versions.map(version => (
       <Option value={version.versionId} key={version.versionId}>
         {version.name}
       </Option>
     ));
+    const cycleOptions = cycleList.map(cycle => (
+      <Option value={cycle.cycleId} key={cycle.cycleId}>
+        {cycle.cycleName}
+      </Option>
+    ));
     return (
       <Modal
-        title={<FormattedMessage id="cycle_cloneCycle" />}
+        title={<FormattedMessage id="cycle_cloneStage" />}
         visible={this.props.visible}
         onOk={this.handleOk}
         onCancel={this.props.onCancel}
@@ -101,13 +125,31 @@ class CloneCycle extends Component {
                 }],
               })(
                 <Select
-                // style={{ width: 500, margin: '0 0 10px 0' }}
+                  // style={{ width: 500, margin: '0 0 10px 0' }}
                   label={<FormattedMessage id="version" />}
-
+                  onChange={() => { resetFields('parentCycleId'); }}
                   loading={selectLoading}
                   // onFocus={this.getProjectVersion}
                 >
                   {versionOptions}
+                </Select>,
+              )}
+            </FormItem>
+            <FormItem>
+              {getFieldDecorator('parentCycleId', {
+                rules: [{
+                  required: true, message: '请选择循环!',
+                }],
+              })(
+                <Select
+                  disabled={!getFieldValue('versionId')}
+                  // style={{ width: 500, margin: '0 0 10px 0' }}
+                  label={<FormattedMessage id="cycle" />}
+
+                  loading={selectLoading}
+                  onFocus={this.getCyclesByVersionId}
+                >
+                  {cycleOptions}
                 </Select>,
               )}
             </FormItem>
@@ -118,7 +160,7 @@ class CloneCycle extends Component {
                 }],
               })(
                 <Input
-                // style={{ width: 500, margin: '0 0 10px 0' }}
+                  // style={{ width: 500, margin: '0 0 10px 0' }}
                   label={<FormattedMessage id="cycle_cycleName" />}
                 />,
               )}
@@ -130,8 +172,8 @@ class CloneCycle extends Component {
   }
 }
 
-CloneCycle.propTypes = {
+CloneStage.propTypes = {
 
 };
 
-export default Form.create()(CloneCycle);
+export default Form.create()(CloneStage);
