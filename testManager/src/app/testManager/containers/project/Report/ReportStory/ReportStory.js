@@ -10,7 +10,7 @@ import {
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import { getReportsFromStory } from '../../../../api/reportApi';
-import { getIssueTypes } from '../../../../api/agileApi';
+import { getIssueTypes, getIssueStatus } from '../../../../api/agileApi';
 import { getStatusList } from '../../../../api/TestStatusApi';
 import { issueLink, cycleLink, executeDetailShowLink } from '../../../../common/utils';
 import './ReportStory.scss';
@@ -19,10 +19,12 @@ const { AppState } = stores;
 const Panel = Collapse.Panel;
 
 class ReportStory extends Component {
-  state = {   
+  state = {
     loading: false,
     reportList: [],
     statusList: [],
+    issueTypes: [],
+    issueStatusList: [],
     pagination: {
       current: 1,
       total: 0,
@@ -39,21 +41,10 @@ class ReportStory extends Component {
 
   componentDidMount() {
     this.getInfo();
-    getIssueTypes();
   }
 
   getInfo = () => {
-    this.setState({
-      loading: true,
-    });
     this.getReportsFromStory();
-    getStatusList('CYCLE_CASE').then((statusList) => {      
-      this.setState({       
-        statusList,
-        // loading: false,
-        openId: {},
-      });
-    });
   }
 
 
@@ -61,29 +52,39 @@ class ReportStory extends Component {
     const Pagination = pagination || this.state.pagination;
     const Search = search || this.state.search;
     this.setState({ loading: true });
-    getReportsFromStory({
+    Promise.all([getReportsFromStory({
       page: Pagination.current - 1,
       size: Pagination.pageSize,
-    }, Search).then((reportData) => {
-      if (reportData.totalElements !== undefined) {
+    }, Search),
+    getStatusList('CYCLE_CASE'),
+    getIssueTypes(),
+    getIssueTypes('agile'),
+    getIssueStatus(),
+    ])
+      .then(([reportData, statusList, issueTypes, agileTypeList, issueStatusList]) => {
+        if (reportData.totalElements !== undefined) {
+          this.setState({
+            loading: false,
+            // reportList: reportData.content,
+            statusList,
+            issueTypes: issueTypes.concat(agileTypeList),
+            issueStatusList,
+            openId: {},
+            reportList: reportData.content,
+            pagination: {
+              current: Pagination.current,
+              pageSize: Pagination.pageSize,
+              // total: reportData.totalElements,
+              total: reportData.totalElements,
+            },
+          });
+        }
+      }).catch((error) => {
+        window.console.log(error);
         this.setState({
           loading: false,
-          // reportList: reportData.content,
-          reportList: reportData.content,
-          pagination: {
-            current: Pagination.current,
-            pageSize: Pagination.pageSize,
-            // total: reportData.totalElements,
-            total: reportData.totalElements,
-          },
         });
-      } 
-    }).catch((error) => {
-      window.console.log(error);
-      this.setState({
-        loading: false,
       });
-    });
   }
 
   handleTableChange = (pagination, filters, sorter) => {
@@ -92,14 +93,14 @@ class ReportStory extends Component {
 
   handleOpen = (issueId, keys) => {
     const { openId } = this.state;
-    openId[issueId] = keys; 
+    openId[issueId] = keys;
     this.setState({
       openId: { ...openId },
     });
   }
 
   handleFilterChange = (pagination, filters, sorter, barFilters) => {
-    const { statusCode, priorityCode, typeCode } = filters;
+    const { statusId, priorityCode, typeId } = filters;
     const {
       issueNum, summary, assignee, sprint, version, component, epic, content,
     } = filters;
@@ -107,9 +108,9 @@ class ReportStory extends Component {
     const search = {
       content: barFilters[0] ? barFilters[0] : content ? content[0] : '',
       advancedSearchArgs: {
-        statusCode: statusCode || [],
+        statusId: statusId || [],
         // priorityCode: priorityCode || [],
-        typeCode: typeCode || [],
+        issueTypeId: typeId || [],
       },
       otherArgs: {
         issueNum: issueNum ? issueNum[0] : '',
@@ -132,7 +133,7 @@ class ReportStory extends Component {
   render() {
     const {
       reportList, loading, pagination,
-      statusList, openId,
+      statusList, openId, issueTypes, issueStatusList,
     } = this.state;
     const urlParams = AppState.currentMenuType;
     const { organizationId } = AppState.currentMenuType;
@@ -159,30 +160,9 @@ class ReportStory extends Component {
     const filterColumns = [
       {
         title: '类型',
-        dataIndex: 'typeCode',
-        key: 'typeCode',
-        filters: [
-          {
-            text: '故事',
-            value: 'story',
-          },
-          {
-            text: '测试',
-            value: 'issue_test',
-          },
-          {
-            text: '任务',
-            value: 'task',
-          },
-          {
-            text: '故障',
-            value: 'bug',
-          },
-          {
-            text: '史诗',
-            value: 'issue_epic',
-          },
-        ],
+        dataIndex: 'typeId',
+        key: 'typeId',
+        filters: issueTypes.map(type => ({ text: type.name, value: type.id })),
         filterMultiple: true,
       },
       // {
@@ -231,22 +211,9 @@ class ReportStory extends Component {
       // },
       {
         title: '状态',
-        dataIndex: 'statusCode',
-        key: 'statusCode',
-        filters: [
-          {
-            text: '待处理',
-            value: 'todo',
-          },
-          {
-            text: '进行中',
-            value: 'doing',
-          },
-          {
-            text: '已完成',
-            value: 'done',
-          },
-        ],
+        dataIndex: 'statusId',
+        key: 'statusId',
+        filters: issueStatusList.map(status => ({ text: status.name, value: status.id })),
         filterMultiple: true,
         // filteredValue: IssueStore.filteredInfo.statusCode || null,
       },

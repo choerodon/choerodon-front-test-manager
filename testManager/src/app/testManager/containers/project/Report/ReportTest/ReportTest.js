@@ -11,6 +11,7 @@ import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import { getReportsFromDefect, getReportsFromDefectByIssueIds } from '../../../../api/reportApi';
 import { getStatusList } from '../../../../api/TestStatusApi';
+import { getIssueTypes, getIssueStatus } from '../../../../api/agileApi';
 import { issueLink, cycleLink, executeDetailShowLink } from '../../../../common/utils';
 import './ReportTest.scss';
 
@@ -26,6 +27,8 @@ class ReportTest extends Component {
     // issueStatusList: [],
     statusList: [],
     stepStatusList: [],
+    issueTypes: [],
+    issueStatusList: [],
     pagination: {
       current: 1,
       total: 0,
@@ -54,15 +57,24 @@ class ReportTest extends Component {
       getStatusList('CYCLE_CASE'),
       getStatusList('CASE_STEP'),
       this.getReportsFromDefect(),
+      getIssueTypes(),
+      getIssueTypes('agile'),
+      getIssueStatus(),
     ]).then(([
       // issueStatusList, 
       statusList,
       stepStatusList,
+      any,
+      issueTypes, 
+      agileTypeList, 
+      issueStatusList,
     ]) => {
       this.setState({
         // issueStatusList,
         statusList,
         stepStatusList,
+        issueTypes: issueTypes.concat(agileTypeList),
+        issueStatusList,
         // loading: false,
         openId: [],
       });
@@ -163,15 +175,15 @@ class ReportTest extends Component {
   }
 
   handleFilterChange = (pagination, filters, sorter, barFilters) => {
-    const { statusCode, priorityCode, typeCode } = filters;
+    const { statusId, priorityCode, issueTypeId } = filters;
     const {
       issueNum, summary, assignee, sprint, version, component, epic,
     } = filters;
     const search = {
       advancedSearchArgs: {
-        statusCode: statusCode || [],
+        statusId: statusId || [],
         // priorityCode: priorityCode || [],
-        typeCode: typeCode || [],
+        issueTypeId: issueTypeId || [],
       },
       otherArgs: {
         issueNum: issueNum ? issueNum[0] : '',
@@ -194,7 +206,7 @@ class ReportTest extends Component {
   render() {
     const {
       selectVisible, reportList, loading, pagination,
-      statusList, stepStatusList, openId,
+      statusList, stepStatusList, issueTypes, issueStatusList, openId,
     } = this.state;
     const urlParams = AppState.currentMenuType;
     const { organizationId } = AppState.currentMenuType;
@@ -228,7 +240,7 @@ class ReportTest extends Component {
         const { issueInfosDTO } = record;
         const {
           issueId, statusMapDTO,
-          issueName, summary, typeCode,
+          issueName, summary, issueTypeId,
         } = issueInfosDTO;
         const { name: statusName, colour: statusColor } = statusMapDTO || {};
         return (
@@ -244,7 +256,7 @@ class ReportTest extends Component {
                   <div className="c7ntest-collapse-show-item">
                     <Icon type="navigate_next" className="c7ntest-collapse-icon" />
                     <Tooltip title={issueName}>
-                      <Link className="c7ntest-showId" to={issueLink(issueId, typeCode)} target="_blank">
+                      <Link className="c7ntest-showId" to={issueLink(issueId, issueTypeId)} target="_blank">
                         {issueName}
                       </Link>
                     </Tooltip>
@@ -384,14 +396,14 @@ class ReportTest extends Component {
         const caseShow = testCycleCaseES.concat(testCycleCaseStepES).map((execute) => {
           const { issueInfosDTO } = execute;
           const {
-            issueName, summary, typeCode, statusMapDTO,
+            issueName, summary, issueTypeId, statusMapDTO,
           } = issueInfosDTO || {};
           const { name: statusName, colour: statusColor } = statusMapDTO || {};
           return (
             <div className="c7ntest-issue-show-container">
               <div className="c7ntest-collapse-show-item">
                 <Tooltip title={issueName}>
-                  <Link className="c7ntest-showId" to={issueLink(issueInfosDTO && issueInfosDTO.issueId, typeCode)} target="_blank">
+                  <Link className="c7ntest-showId" to={issueLink(issueInfosDTO && issueInfosDTO.issueId, issueTypeId)} target="_blank">
                     {issueName}
                   </Link>
                 </Tooltip>
@@ -441,7 +453,7 @@ class ReportTest extends Component {
               <div className="c7ntest-issue-show-container">
                 <div className="c7ntest-collapse-show-item">
                   <Tooltip title={issueNum}>
-                    <Link className="c7ntest-showId" to={issueLink(link.linkedIssueId, link.typeCode)} target="_blank">
+                    <Link className="c7ntest-showId" to={issueLink(link.linkedIssueId, link.issueTypeId)} target="_blank">
                       {issueNum}
                     </Link>
                   </Tooltip>
@@ -472,30 +484,9 @@ class ReportTest extends Component {
     const filterColumns = [
       {
         title: '类型',
-        dataIndex: 'typeCode',
-        key: 'typeCode',
-        filters: [
-          {
-            text: '故事',
-            value: 'story',
-          },
-          {
-            text: '测试',
-            value: 'issue_test',
-          },
-          {
-            text: '任务',
-            value: 'task',
-          },
-          {
-            text: '故障',
-            value: 'bug',
-          },
-          {
-            text: '史诗',
-            value: 'issue_epic',
-          },
-        ],
+        dataIndex: 'issueTypeId',
+        key: 'issueTypeId',
+        filters: issueTypes.map(type => ({ text: type.name, value: type.id })),
         filterMultiple: true,
       },
       // {
@@ -538,24 +529,11 @@ class ReportTest extends Component {
       // },
       {
         title: '状态',
-        dataIndex: 'statusCode',
-        key: 'statusCode',
-        filters: [
-          {
-            text: '待处理',
-            value: 'todo',
-          },
-          {
-            text: '进行中',
-            value: 'doing',
-          },
-          {
-            text: '已完成',
-            value: 'done',
-          },
-        ],
+        dataIndex: 'statusId',
+        key: 'statusId',
+        filters: issueStatusList.map(status => ({ text: status.name, value: status.id })),
         filterMultiple: true,
-        // filteredValue: IssueStore.filteredInfo.statusCode || null,
+        // filteredValue: IssueStore.filteredInfo.statusId || null,
       },
       // {
       //   title: '冲刺',

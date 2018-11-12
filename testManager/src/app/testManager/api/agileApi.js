@@ -98,8 +98,8 @@ export function getPrioritys() {
  * @export
  * @returns
  */
-export function getIssueStatus() {
-  return request.get(`/issue/v1/projects/${getProjectId()}/schemes/query_status_by_project_id?apply_type=test`);
+export function getIssueStatus(applyType) {
+  return request.get(`/issue/v1/projects/${getProjectId()}/schemes/query_status_by_project_id?apply_type=${applyType || 'test'}`);
 }
 /**
  *获取当前项目的issue类型列表
@@ -107,6 +107,6 @@ export function getIssueStatus() {
  * @export
  * @returns
  */
-export function getIssueTypes() {
-  return request.get(`/issue/v1/projects/${getProjectId()}/schemes/query_issue_types_with_sm_id?apply_type=test`);
+export function getIssueTypes(applyType) {
+  return request.get(`/issue/v1/projects/${getProjectId()}/schemes/query_issue_types_with_sm_id?apply_type=${applyType || 'test'}`);
 }
