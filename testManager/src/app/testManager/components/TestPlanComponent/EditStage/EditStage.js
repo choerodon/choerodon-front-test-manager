@@ -7,11 +7,7 @@ import moment from 'moment';
 import { Content } from 'choerodon-front-boot';
 import { FormattedMessage } from 'react-intl';
 import { editFolder } from '../../../api/cycleApi';
-// import { getFoldersByVersion } from '../../../api/IssueManageApi';
 import TestPlanStore from '../../../store/project/TestPlan/TestPlanStore';
-
-// const { RangePicker } = DatePicker;
-const { Option } = Select;
 
 const FormItem = Form.Item;
 const { Sidebar } = Modal;
@@ -19,7 +15,6 @@ const { Sidebar } = Modal;
 @observer
 class EditStage extends Component {
   state = {
-    folders: [],
     selectLoading: false,
     loading: false,
   }
@@ -28,7 +23,6 @@ class EditStage extends Component {
     const { resetFields } = this.props.form;
     if (nextProps.visible && !this.props.visible) {
       resetFields();
-      // this.loadFolders();
     }
   }
 
@@ -68,19 +62,6 @@ class EditStage extends Component {
     TestPlanStore.ExitEditStage();
   }
 
-  // loadFolders = () => {
-  //   this.setState({
-  //     selectLoading: true,
-  //   });
-  //   const { versionId } = TestPlanStore.CurrentEditStage;
-  //   getFoldersByVersion().then((folders) => {
-  //     this.setState({
-  //       folders,
-  //       selectLoading: false,
-  //     });
-  //   });
-  // }
-
   disabledStartDate = (startValue) => {
     const { parentTime } = TestPlanStore.CurrentEditStage;
     const { start, end } = parentTime;    
@@ -112,18 +93,11 @@ class EditStage extends Component {
 
   render() {
     const { visible } = this.props;
-    const { 
-      parentTime,
-      title, description, versionId, fromDate, toDate, folderId, versionName, folderName,
+    const {       
+      title, description, fromDate, toDate, versionName, folderName,
     } = TestPlanStore.CurrentEditStage;
-    // console.log(parentTime);
     const { getFieldDecorator } = this.props.form;
-    const { folders, loading, selectLoading } = this.state;
-    // const options = folders.map(folder => (
-    //   <Option value={folder.folderId} key={folder.folderId}>
-    //     {folder.name}
-    //   </Option>
-    // ));
+    const { loading, selectLoading } = this.state;
     return (
       <div>
         <Sidebar
@@ -183,9 +157,7 @@ class EditStage extends Component {
                       onFocus={this.loadFolders}
                       style={{ width: 500, margin: '0 0 10px 0' }}
                       label={<FormattedMessage id="testPlan_linkFolder" />}
-                    >
-                      {/* {options} */}
-                    </Select>,
+                    />,
                   )}
                 </FormItem>
                 <FormItem>
@@ -218,11 +190,6 @@ class EditStage extends Component {
                     />,
                   )}
                 </FormItem>
-                {/* <RangePicker
-                  format="YYYY-MM-DD" 
-                  disabledDate={this.disabledDate}
-                  label={<FormattedMessage id="cycle_endTime" />}
-                /> */}
               </Form>
             </Spin>
           </Content>

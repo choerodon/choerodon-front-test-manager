@@ -102,12 +102,12 @@ class ExportSide extends Component {
       ele.target = '_blank';
       document.body.appendChild(ele);
       ele.click();
-      document.removeChild(ele);
+      document.body.removeChild(ele);
     }
   }
 
   handleMessage = (data) => {
-    console.log(data);
+    // console.log(data);
     const exportList = [...this.state.exportList];
     const { id, rate } = data;
     const index = _.findIndex(exportList, { id });

@@ -40,7 +40,6 @@ function traverseTree(node) {
 }
 
 class TestPlanStore extends BaseTreeProto {
-
   @observable treeShow = true;
 
   @observable statusList = [];
@@ -113,19 +112,19 @@ class TestPlanStore extends BaseTreeProto {
         page: executePagination.current - 1,
         size: executePagination.pageSize,
       }, data.cycleId,
-        {
-          ...filters,
-          lastUpdatedBy: [Number(this.lastUpdatedBy) || null],
-          assignedTo: [Number(this.assignedTo) || null],
-        }).then((cycle) => {
-          this.rightLeaveLoading();
-          this.setTestList(cycle.content);
-          this.setExecutePagination({
-            current: executePagination.current,
-            pageSize: executePagination.pageSize,
-            total: cycle.totalElements,
-          });
+      {
+        ...filters,
+        lastUpdatedBy: [Number(this.lastUpdatedBy) || null],
+        assignedTo: [Number(this.assignedTo) || null],
+      }).then((cycle) => {
+        this.rightLeaveLoading();
+        this.setTestList(cycle.content);
+        this.setExecutePagination({
+          current: executePagination.current,
+          pageSize: executePagination.pageSize,
+          total: cycle.totalElements,
         });
+      });
     }
   }
 
@@ -160,19 +159,19 @@ class TestPlanStore extends BaseTreeProto {
         page: 0,
         size: executePagination.pageSize,
       }, data.cycleId,
-        {
-          ...filters,
-          lastUpdatedBy: [Number(this.lastUpdatedBy) || null],
-          assignedTo: [Number(this.assignedTo) || null],
-        }).then((cycle) => {
-          this.rightLeaveLoading();
-          this.setTestList(cycle.content);
-          this.setExecutePagination({
-            current: 1,
-            pageSize: executePagination.pageSize,
-            total: cycle.totalElements,
-          });
+      {
+        ...filters,
+        lastUpdatedBy: [Number(this.lastUpdatedBy) || null],
+        assignedTo: [Number(this.assignedTo) || null],
+      }).then((cycle) => {
+        this.rightLeaveLoading();
+        this.setTestList(cycle.content);
+        this.setExecutePagination({
+          current: 1,
+          pageSize: executePagination.pageSize,
+          total: cycle.totalElements,
         });
+      });
     }
     // }
   }
@@ -195,11 +194,6 @@ class TestPlanStore extends BaseTreeProto {
   }
 
   generateList = (data) => {
-    // const temp = data;
-    // while (temp) {
-    //   dataList = dataList.concat(temp.children);
-    //   if()
-    // }
     for (let i = 0; i < data.length; i += 1) {
       const node = data[i];
       const { key, title } = node;
