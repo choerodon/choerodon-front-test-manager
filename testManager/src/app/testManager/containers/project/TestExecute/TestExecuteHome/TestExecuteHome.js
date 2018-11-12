@@ -78,8 +78,7 @@ class TestExecuteHome extends Component {
     EditCycleVisible: false,
     CloneCycleVisible: false,
     currentCloneCycle: null,
-    rightLoading: false,
-    sideVisible: false,
+    rightLoading: false, 
     testList: [],
     // currentCycle: {},
     currentEditValue: {},
@@ -895,17 +894,14 @@ class TestExecuteHome extends Component {
             /> */}
             <div className="c7ntest-TestExecuteHome">
 
-              <div className={this.state.sideVisible ? 'c7ntest-ch-side' : 'c7ntest-ch-hidden'} style={{ minHeight: window.innerHeight - 128 }}>
+              <div className={!leftVisible ? 'c7ntest-ch-side' : 'c7ntest-ch-hidden'} style={{ minHeight: window.innerHeight - 128 }}>
 
                 <div className="c7ntest-chs-button">
                   <div
                     role="none"
                     className="c7ntest-TestExecuteHome-button"
                     onClick={() => {
-                      TestExecuteStore.setLeftVisible(true);
-                      this.setState({
-                        sideVisible: false,
-                      });
+                      TestExecuteStore.setLeftVisible(true);                 
                     }}
                   >
                     <Icon type="navigate_next" />
@@ -916,10 +912,7 @@ class TestExecuteHome extends Component {
                     <p
                       role="none"
                       onClick={() => {
-                        TestExecuteStore.setLeftVisible(true);
-                        this.setState({
-                          sideVisible: false,
-                        });
+                        TestExecuteStore.setLeftVisible(true);                 
                       }}
                     >
                       <FormattedMessage id="cycle_name" />
@@ -949,10 +942,7 @@ class TestExecuteHome extends Component {
                       role="none"
                       className="c7ntest-TestExecuteHome-button"
                       onClick={() => {
-                        TestExecuteStore.setLeftVisible(false);
-                        this.setState({
-                          sideVisible: true,
-                        });
+                        TestExecuteStore.setLeftVisible(false);                    
                       }}
                     >
                       <Icon type="navigate_before" />

@@ -133,33 +133,7 @@ class IssueStore {
         funcArr.push(getSingleIssues(page, size, this.getFilter, orderField, orderType));
       }
     }
-    // console.log(type);
-    // 三种加载issue情况
-    // 1.选择文件夹
-    // if (IssueTreeStore.currentCycle.versionId) {
-    //   // 2.选择文件夹并不在第一页
-    //   const { versionId, cycleId } = IssueTreeStore.currentCycle;
-    //   if (page > 0) {
-    //     funcArr.push(getIssuesByIds(versionId, cycleId,
-    //       this.issueIds.slice(size * page, size * (page + 1))));
-    //   } else if (cycleId) {
-    //     funcArr.push(getIssuesByFolder(cycleId,
-    //       page, size, this.getFilter, orderField, orderType));
-    //   } else {
-    //     funcArr.push(getIssuesByVersion(versionId,
-    //       page, size, this.getFilter, orderField, orderType));
-    //   }
-    // } else if (this.issueIds.length > 0 && page > 0) {
-    //   // 3.直接调用敏捷接口
-    //   // funcArr.push(loadIssues(page, size, this.getFilter, orderField, orderType));
-    //   funcArr.push(getIssuesByIds(null, null,
-    //     this.issueIds.slice(size * page, size * (page + 1))));
-    // } else if (this.paramIssueId) {
-    //   // 地址栏有id的情况
-    //   funcArr.push(loadIssues(page, size, this.getFilter, orderField, orderType));
-    // } else {
-    //   funcArr.push(getAllIssues(page, size, this.getFilter, orderField, orderType));
-    // }
+
     return Promise.all(funcArr).then(([versions, prioritys, issueTypes, issueStatusList, res]) => {
       this.setVersions(versions);
       this.setPrioritys(prioritys);

@@ -38,10 +38,8 @@ class Test extends Component {
       create: false,
       selectedIssue: {},
       createIssue: false,
-      // selectIssueType: 'issue_test',
       createIssueValue: '',
       createLoading: false,
-      // keyCode: 0,
     };
   }
 
