@@ -9,34 +9,14 @@ import FileSaver from 'file-saver';
 import moment from 'moment';
 import { SelectVersion, SelectFolder, SimpleSelect } from '../../CommonComponent';
 import {
-  getCyclesByVersionId, getExportList, getFoldersByCycleId,
+  getCyclesByVersionId, getExportList, getFoldersByCycleId, exportCycle,
 } from '../../../api/cycleApi';
+import { humanizeDuration } from '../../../common/utils';
 import './ExportSide.scss';
 
 const { Sidebar } = Modal;
 const { AppState } = stores;
-function humanizeDuration(seconds) {
-  let result = '';
-  if (seconds) {
-    /** eslint-disable no-constant-condition */
-    if ((result = Math.round(seconds / (60 * 60 * 24 * 30 * 12))) > 0) { // year
-      result = `${result} 年`;
-    } else if ((result = Math.round(seconds / (60 * 60 * 24 * 30))) > 0) { // months
-      result = `${result} 月`;
-    } else if ((result = Math.round(seconds / (60 * 60 * 24))) > 0) { // days
-      result = `${result} 天`;
-    } else if ((result = Math.round(seconds / (60 * 60))) > 0) { // Hours
-      result = `${result} 小时`;
-    } else if ((result = Math.round(seconds / (60))) > 0) { // minute
-      result = `${result} 分钟`;
-    } else if ((result = Math.round(seconds)) > 0) { // second
-      result = `${result} 秒`;
-    } else {
-      result = `${seconds} 毫秒`;
-    }
-  }
-  return result;
-}
+
 class ExportSide extends Component {
   state = {
     loading: true,
@@ -56,6 +36,9 @@ class ExportSide extends Component {
 
   open = () => {
     this.setState({
+      versionId: null,
+      cycleId: null,
+      stageId: null,
       visible: true,
       loading: true,
     });
@@ -64,14 +47,6 @@ class ExportSide extends Component {
         exportList,
         loading: false,
       });
-    });
-  }
-
-  exportExcel() {
-    exportIssues(null, null).then((excel) => {
-      const blob = new Blob([excel], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-      const fileName = `${AppState.currentMenuType.name}.xlsx`;
-      FileSaver.saveAs(blob, fileName);
     });
   }
 
@@ -84,32 +59,30 @@ class ExportSide extends Component {
   handleVersionChange = (versionId) => {
     this.setState({
       versionId,
-      folderId: null,
+      stageId: null,
     });
   }
 
-  handleFolderChange = (folderId) => {
+  handleCycleChange = (cycleId) => {
     this.setState({
-      folderId,
+      cycleId,
     });
   }
 
-  // createExport = () => {
-  //   const { versionId, folderId } = this.state;
-  //   if (folderId) {
-  //     exportIssuesFromFolder(folderId).then((data) => {
+  handleStageChange = (stageId) => {
+    this.setState({
+      stageId,
+    });
+  }
 
-  //     });
-  //   } else if (versionId) {
-  //     exportIssuesFromVersion(versionId).then((data) => {
-
-  //     });
-  //   } else {
-  //     exportIssues().then((data) => {
-
-  //     });
-  //   }
-  // }
+  createExport = () => {
+    const { versionId, cycleId, stageId } = this.state;
+    if (!cycleId) {
+      Choerodon.prompt('测试循环为必选项');
+      return;
+    }
+    exportCycle(stageId || cycleId);
+  }
 
   handleDownload = (fileUrl) => {
     if (fileUrl) {
@@ -118,7 +91,7 @@ class ExportSide extends Component {
       ele.target = '_blank';
       document.body.appendChild(ele);
       ele.click();
-      document.removeChild(ele);
+      document.body.removeChild(ele);
     }
   }
 
@@ -142,7 +115,6 @@ class ExportSide extends Component {
     const { creationDate, lastUpdateDate } = record;
     const startTime = moment(creationDate);
     const lastTime = moment(lastUpdateDate);
-
     const diff = lastTime.diff(startTime);
     return creationDate && lastUpdateDate
       ? humanizeDuration(diff / 1000)
@@ -172,12 +144,12 @@ class ExportSide extends Component {
         );
       },
     },
-    // {
-    //   title: '用例个数',
-    //   dataIndex: 'num',
-    //   key: 'num',
-    //   // width: 100,
-    // }, 
+    {
+      title: '执行个数',
+      dataIndex: 'successfulCount',
+      key: 'successfulCount',
+      // width: 100,
+    },
     {
       title: '导出时间',
       dataIndex: 'creationDate',
@@ -230,8 +202,9 @@ class ExportSide extends Component {
         >
           <div className="c7ntest-ExportSide">
             <div style={{ marginBottom: 24 }}>
-              <SelectVersion allowClear style={{ width: 100 }} value={versionId || '所有版本'} onChange={this.handleVersionChange} />
-              <SimpleSelect         
+              <SelectVersion style={{ width: 100 }} value={versionId} onChange={this.handleVersionChange} />
+              <SimpleSelect
+                style={{ width: 200, margin: '0 20px' }}
                 disabled={!versionId}
                 label="测试循环"
                 value={cycleId}
@@ -240,7 +213,7 @@ class ExportSide extends Component {
                 onChange={this.handleCycleChange}
                 option={{ value: 'cycleId', text: 'cycleName' }}
               />
-              <SimpleSelect  
+              <SimpleSelect
                 disabled={!cycleId}
                 label="测试阶段"
                 value={stageId}
@@ -252,7 +225,7 @@ class ExportSide extends Component {
               <Button type="primary" icon="playlist_add" onClick={this.createExport}>新建导出</Button>
             </div>
             <WSHandler
-              messageKey={`choerodon:msg:test-issue-export:${AppState.userInfo.id}`}
+              messageKey={`choerodon:msg:test-cycle-export:${AppState.userInfo.id}`}
               onMessage={this.handleMessage}
             >
               <Table columns={columns} dataSource={exportList} loading={loading} />

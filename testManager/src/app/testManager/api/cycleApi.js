@@ -42,13 +42,13 @@ export function editFolder(data) {
   return request.put(`/test/v1/projects/${getProjectId()}/cycle`, data);
 }
 export function exportCycle(cycleId) {
-  return request.get(`/test/v1/projects/${getProjectId()}/cycle/case/download/excel/${cycleId}`, { responseType: 'arraybuffer' });
+  return request.get(`/test/v1/projects/${getProjectId()}/cycle/case/download/excel/${cycleId}`);
 }
 export function getCyclesByVersionId(versionId) {
-  return request.get(`/v1/projects/${getProjectId()}/cycle/get/cycles/all/in/version/${versionId}`);
+  return request.get(`/test/v1/projects/${getProjectId()}/cycle/get/cycles/all/in/version/${versionId}`);
 }
 export function getFoldersByCycleId(cycleId) {
-  return request.put(`/v1/projects/${getProjectId()}/cycle/query/folder/cycleId/${cycleId}`);
+  return request.get(`/test/v1/projects/${getProjectId()}/cycle/query/folder/cycleId/${cycleId}`);
 }
 /**
  *获取导出历史
@@ -57,5 +57,5 @@ export function getFoldersByCycleId(cycleId) {
  * @returns
  */
 export function getExportList() {
-  return request.get(`/test/v1/projects/${getProjectId()}/test/fileload/history`);
+  return request.get(`/test/v1/projects/${getProjectId()}/test/fileload/history/cycle`);
 }

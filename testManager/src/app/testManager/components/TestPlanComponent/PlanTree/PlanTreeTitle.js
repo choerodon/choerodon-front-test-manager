@@ -140,9 +140,9 @@ class PlanTreeTitle extends Component {
           <Menu.Item key="clone">
             {type === 'folder' ? <FormattedMessage id="cycle_cloneFolder" /> : <FormattedMessage id="cycle_cloneCycle" />}
           </Menu.Item>,
-          <Menu.Item key="export">
-            {type === 'folder' ? <FormattedMessage id="cycle_exportFolder" /> : <FormattedMessage id="cycle_exportCycle" />}
-          </Menu.Item>,
+          // <Menu.Item key="export">
+          //   {type === 'folder' ? <FormattedMessage id="cycle_exportFolder" /> : <FormattedMessage id="cycle_exportCycle" />}
+          // </Menu.Item>,
           <Menu.Item key="sync">
             <FormattedMessage id="cycle_sync" /> 
           </Menu.Item>,

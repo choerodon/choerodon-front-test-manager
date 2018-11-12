@@ -5,7 +5,6 @@ import {
   Modal, Progress, Table, Button, Icon, Tooltip,
 } from 'choerodon-ui';
 import _ from 'lodash';
-import FileSaver from 'file-saver';
 import moment from 'moment';
 import { SelectVersion, SelectFolder } from '../../CommonComponent';
 import {
@@ -43,14 +42,6 @@ class ExportSide extends Component {
         exportList,
         loading: false,
       });
-    });
-  }
-
-  exportExcel() {
-    exportIssues(null, null).then((excel) => {
-      const blob = new Blob([excel], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-      const fileName = `${AppState.currentMenuType.name}.xlsx`;
-      FileSaver.saveAs(blob, fileName);
     });
   }
 

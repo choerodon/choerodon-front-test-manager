@@ -487,7 +487,7 @@ export function downloadTemplate() {
  * @returns
  */
 export function getExportList() {
-  return request.get(`/test/v1/projects/${getProjectId()}/test/fileload/history`);
+  return request.get(`/test/v1/projects/${getProjectId()}/test/fileload/history/issue`);
 }
 /**
  *导出失败重试

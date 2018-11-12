@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Moment from 'moment';
 import { observer } from 'mobx-react';
 import { extendMoment } from 'moment-range';
-import { Page, Header, Content, } from 'choerodon-front-boot';
+import { Page, Header, Content } from 'choerodon-front-boot';
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import {
@@ -74,19 +74,19 @@ class TestPlanHome extends Component {
         size: pagination.pageSize,
         page: pagination.current - 1,
       }, currentCycle.cycleId,
-        {
-          ...filters,
-          lastUpdatedBy: [Number(this.lastUpdatedBy)],
-          assignedTo: [Number(this.assignedTo)],
-        }).then((cycle) => {
-          TestPlanStore.rightLeaveLoading();
-          TestPlanStore.setTestList(cycle.content);
-          TestPlanStore.setExecutePagination({
-            current: pagination.current,
-            pageSize: pagination.pageSize,
-            total: cycle.totalElements,
-          });
+      {
+        ...filters,
+        lastUpdatedBy: [Number(this.lastUpdatedBy)],
+        assignedTo: [Number(this.assignedTo)],
+      }).then((cycle) => {
+        TestPlanStore.rightLeaveLoading();
+        TestPlanStore.setTestList(cycle.content);
+        TestPlanStore.setExecutePagination({
+          current: pagination.current,
+          pageSize: pagination.pageSize,
+          total: cycle.totalElements,
         });
+      });
     }
   }
 
@@ -175,7 +175,7 @@ class TestPlanHome extends Component {
   }
 
   render() {
-    const { CreateCycleVisible, statusList, } = this.state;
+    const { CreateCycleVisible, statusList } = this.state;
     const treeShow = TestPlanStore.treeShow;
     const {
       testList, executePagination, loading, rightLoading, times, calendarShowMode,
@@ -502,7 +502,7 @@ class TestPlanHome extends Component {
               {/* <Spin spinning={loading}> */}
               {key ? (
                 <div className="c7ntest-TestPlan-content-right">
-                  <EventCalendar showMode={calendarShowMode} times={times} onItemClick={this.onItemClick} />
+                  <EventCalendar key={currentCycle.cycleId} showMode={calendarShowMode} times={times} onItemClick={this.onItemClick} />
                   {calendarShowMode === 'single' && (
                     <div className="c7ntest-TestPlan-content-right-bottom">
                       <div style={{ display: 'flex', marginBottom: 20 }}>
@@ -539,18 +539,17 @@ class TestPlanHome extends Component {
                   )}
                 </div>
               ) : (
-                  <div style={{
-                    display: 'flex', alignItems: 'center', height: 250, margin: '88px auto', padding: '50px 75px', border: '1px dashed rgba(0,0,0,0.54)',
-                  }}
-                  >
-                    <img src={noRight} alt="" />
-                    <div style={{ marginLeft: 40 }}>
-                      <div style={{ fontSize: '14px', color: 'rgba(0,0,0,0.65)' }}>根据当前选定的测试循环没有查询到循环信息</div>
-                      <div style={{ fontSize: '20px', marginTop: 10 }}>尝试在您的树状图中选择测试循环</div>
-                    </div>
+                <div style={{
+                  display: 'flex', alignItems: 'center', height: 250, margin: '88px auto', padding: '50px 75px', border: '1px dashed rgba(0,0,0,0.54)',
+                }}
+                >
+                  <img src={noRight} alt="" />
+                  <div style={{ marginLeft: 40 }}>
+                    <div style={{ fontSize: '14px', color: 'rgba(0,0,0,0.65)' }}>根据当前选定的测试循环没有查询到循环信息</div>
+                    <div style={{ fontSize: '20px', marginTop: 10 }}>尝试在您的树状图中选择测试循环</div>
                   </div>
-                )}
-
+                </div>
+              )}
             </div>
           </Spin>
         </Content>
