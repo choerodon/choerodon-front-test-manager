@@ -40,6 +40,9 @@ function traverseTree(node) {
 }
 
 class TestPlanStore extends BaseTreeProto {
+
+  @observable treeShow = true;
+
   @observable statusList = [];
 
   @observable times = [];
@@ -81,7 +84,7 @@ class TestPlanStore extends BaseTreeProto {
     });
     getCycleTree().then((data) => {
       traverseTree({ title: '所有版本', key: '0', children: data.versions });
-      this.setTreeData([{ title: '所有版本', key: '0', children: data.versions }]);      
+      this.setTreeData([{ title: '所有版本', key: '0', children: data.versions }]);
       this.generateList([
         { title: '所有版本', key: '0', children: data.versions },
       ]);
@@ -110,19 +113,19 @@ class TestPlanStore extends BaseTreeProto {
         page: executePagination.current - 1,
         size: executePagination.pageSize,
       }, data.cycleId,
-      {
-        ...filters,
-        lastUpdatedBy: [Number(this.lastUpdatedBy) || null],
-        assignedTo: [Number(this.assignedTo) || null],
-      }).then((cycle) => {
-        this.rightLeaveLoading();
-        this.setTestList(cycle.content);
-        this.setExecutePagination({
-          current: executePagination.current,
-          pageSize: executePagination.pageSize,
-          total: cycle.totalElements,
+        {
+          ...filters,
+          lastUpdatedBy: [Number(this.lastUpdatedBy) || null],
+          assignedTo: [Number(this.assignedTo) || null],
+        }).then((cycle) => {
+          this.rightLeaveLoading();
+          this.setTestList(cycle.content);
+          this.setExecutePagination({
+            current: executePagination.current,
+            pageSize: executePagination.pageSize,
+            total: cycle.totalElements,
+          });
         });
-      });
     }
   }
 
@@ -157,19 +160,19 @@ class TestPlanStore extends BaseTreeProto {
         page: 0,
         size: executePagination.pageSize,
       }, data.cycleId,
-      {
-        ...filters,
-        lastUpdatedBy: [Number(this.lastUpdatedBy) || null],
-        assignedTo: [Number(this.assignedTo) || null],
-      }).then((cycle) => {
-        this.rightLeaveLoading();
-        this.setTestList(cycle.content);
-        this.setExecutePagination({
-          current: 1,
-          pageSize: executePagination.pageSize,
-          total: cycle.totalElements,
+        {
+          ...filters,
+          lastUpdatedBy: [Number(this.lastUpdatedBy) || null],
+          assignedTo: [Number(this.assignedTo) || null],
+        }).then((cycle) => {
+          this.rightLeaveLoading();
+          this.setTestList(cycle.content);
+          this.setExecutePagination({
+            current: 1,
+            pageSize: executePagination.pageSize,
+            total: cycle.totalElements,
+          });
         });
-      });
     }
     // }
   }
@@ -218,6 +221,10 @@ class TestPlanStore extends BaseTreeProto {
         this.generateList(node.children, node.key);
       }
     }
+  }
+
+  @action setTreeShow(treeShow) {
+    this.treeShow = treeShow;
   }
 
   @action setAssignedTo(assignedTo) {

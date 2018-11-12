@@ -305,6 +305,9 @@ export function color2rgba(color, alpha = 1) {
   return `rgba(${r},${g},${b},${alpha})`;
 }
 export function humanizeDuration(seconds) {
+  if(seconds<0){
+    return ''
+  }
   let result = '';
   if (seconds) {
     /** eslint-disable no-constant-condition */

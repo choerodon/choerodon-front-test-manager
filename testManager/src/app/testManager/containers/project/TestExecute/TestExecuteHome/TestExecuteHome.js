@@ -78,8 +78,6 @@ class TestExecuteHome extends Component {
     EditCycleVisible: false,
     CloneCycleVisible: false,
     currentCloneCycle: null,
-    loading: true,
-    leftVisible: true,
     rightLoading: false,
     sideVisible: false,
     testList: [],
@@ -95,8 +93,6 @@ class TestExecuteHome extends Component {
     statusList: [],
     filters: {},
   };
-
-  treeAssignedTo = AppState.userInfo.id;
 
   componentDidMount() {
     this.refresh();
@@ -115,6 +111,7 @@ class TestExecuteHome extends Component {
     selected, selectedNodes, node, event,
   } = {}, flag) => {
     // window.console.log(selectedNodes, node, event);
+    const treeAssignedTo = TestExecuteStore.treeAssignedTo;
     if (selectedKeys) {
       TestExecuteStore.setSelectedKeys(selectedKeys);
     }
@@ -130,7 +127,6 @@ class TestExecuteHome extends Component {
             // currentCycle: data,
           });
         }
-        // console.log(this.treeAssignedTo);
         getExecutesByCycleId({
           page: 0,
           size: executePagination.pageSize,
@@ -138,7 +134,7 @@ class TestExecuteHome extends Component {
         {
           ...filters,
           lastUpdatedBy: [Number(this.lastUpdatedBy)],
-          assignedTo: [this.treeAssignedTo || Number(this.assignedTo)],
+          assignedTo: [treeAssignedTo || Number(this.assignedTo)],
         }, data.type).then((cycle) => {
           this.setState({
             rightLoading: false,
@@ -209,7 +205,7 @@ class TestExecuteHome extends Component {
     });
   }
 
-  refresh = (assignedTo = this.treeAssignedTo) => {
+  refresh = (assignedTo = TestExecuteStore.treeAssignedTo) => {
     this.setState({
       loading: true,
     });
@@ -434,7 +430,7 @@ class TestExecuteHome extends Component {
     const {
       children, key, cycleCaseList, type,
     } = item;
-    if (this.treeAssignedTo !== 0 && cycleCaseList && Object.keys(cycleCaseList).length === 0) {
+    if (TestExecuteStore.treeAssignedTo !== 0 && cycleCaseList && Object.keys(cycleCaseList).length === 0) {
       return null;
     }
     // debugger;
@@ -553,10 +549,10 @@ class TestExecuteHome extends Component {
     let assignedTo = 0;
     if (e.target.value === 'my') {
       assignedTo = AppState.userInfo.id;
-      this.treeAssignedTo = assignedTo;
+      TestExecuteStore.setTreeAssignedTo(assignedTo);
       this.refresh(assignedTo);
     } else {
-      this.treeAssignedTo = 0;
+      TestExecuteStore.setTreeAssignedTo(0);
       this.refresh(0);
     }
   }
@@ -565,7 +561,7 @@ class TestExecuteHome extends Component {
     // window.console.log('render');
     const {
       CreateExecuteDetailVisible, CreateCycleVisible, EditCycleVisible, CloneCycleVisible,
-      currentCloneCycle, loading, currentEditValue, testList, rightLoading, leftVisible,
+      currentCloneCycle, loading, currentEditValue, testList, rightLoading,
       searchValue, autoExpandParent,
       executePagination,
       statusList,
@@ -574,6 +570,8 @@ class TestExecuteHome extends Component {
     const expandedKeys = TestExecuteStore.getExpandedKeys;
     const selectedKeys = TestExecuteStore.getSelectedKeys;
     const currentCycle = TestExecuteStore.getCurrentCycle;
+    const leftVisible = TestExecuteStore.leftVisible;
+    const treeAssignedTo = TestExecuteStore.treeAssignedTo;
     const { cycleId, title, type } = currentCycle;
     const prefix = <Icon type="filter_list" />;
     const columns = [{
@@ -741,12 +739,12 @@ class TestExecuteHome extends Component {
             <Tooltip title={<FormattedMessage id="execute_quickPass" />}>
               <Icon type="pass" onClick={this.quickPass.bind(this, record)} style={{ cursor: 'pointer' }} />
             </Tooltip>
-            
+
             <Icon
               type="explicit-outline"
               style={{ cursor: 'pointer', margin: '0 10px' }}
               onClick={() => {
-                const { history } = this.props;             
+                const { history } = this.props;
                 history.push(executeDetailLink(record.executeId));
               }}
             />
@@ -873,12 +871,12 @@ class TestExecuteHome extends Component {
         <Content
           // title={<FormattedMessage id="cycle_title" />}
           // description={<FormattedMessage id="cycle_description" />}
-          style={{ 
-            paddingLeft: 0, paddingBottom: 0, paddingRight: 0, display: 'flex', 
+          style={{
+            paddingLeft: 0, paddingBottom: 0, paddingRight: 0, display: 'flex',
           }}
         >
           <Spin spinning={loading}>
-            <CreateCycle
+            {/* <CreateCycle
               visible={CreateCycleVisible}
               onCancel={() => { this.setState({ CreateCycleVisible: false }); }}
               onOk={() => { this.setState({ CreateCycleVisible: false }); this.refresh(); }}
@@ -894,7 +892,7 @@ class TestExecuteHome extends Component {
               currentCloneCycle={currentCloneCycle}
               onCancel={() => { this.setState({ CloneCycleVisible: false }); }}
               onOk={() => { this.setState({ CloneCycleVisible: false }); this.refresh(); }}
-            />
+            /> */}
             <div className="c7ntest-TestExecuteHome">
 
               <div className={this.state.sideVisible ? 'c7ntest-ch-side' : 'c7ntest-ch-hidden'} style={{ minHeight: window.innerHeight - 128 }}>
@@ -904,8 +902,8 @@ class TestExecuteHome extends Component {
                     role="none"
                     className="c7ntest-TestExecuteHome-button"
                     onClick={() => {
+                      TestExecuteStore.setLeftVisible(true);
                       this.setState({
-                        leftVisible: true,
                         sideVisible: false,
                       });
                     }}
@@ -918,8 +916,8 @@ class TestExecuteHome extends Component {
                     <p
                       role="none"
                       onClick={() => {
+                        TestExecuteStore.setLeftVisible(true);
                         this.setState({
-                          leftVisible: true,
                           sideVisible: false,
                         });
                       }}
@@ -933,7 +931,7 @@ class TestExecuteHome extends Component {
                 <RadioButton
                   style={{ marginBottom: 20 }}
                   onChange={this.handleTreeAssignedToChange}
-                  defaultValue="my"
+                  value={treeAssignedTo === 0 ? 'all' : 'my'}             
                   data={[{
                     value: 'my',
                     text: 'cycle_my',
@@ -951,8 +949,8 @@ class TestExecuteHome extends Component {
                       role="none"
                       className="c7ntest-TestExecuteHome-button"
                       onClick={() => {
+                        TestExecuteStore.setLeftVisible(false);
                         this.setState({
-                          leftVisible: false,
                           sideVisible: true,
                         });
                       }}
@@ -996,7 +994,7 @@ class TestExecuteHome extends Component {
                           this.loadCycle();
                         }}
                       />
-                      {this.treeAssignedTo === 0 && (
+                      {treeAssignedTo === 0 && (
                         <div style={{ marginLeft: 20 }}>
                           <SelectFocusLoad
                             label={<FormattedMessage id="cycle_assignedTo" />}
