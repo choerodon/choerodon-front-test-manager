@@ -20,16 +20,7 @@ export default class TestSurvey extends Component {
   }
 
   getInfo = () => {   
-    Promise.all([getIssueCount({
-      advancedSearchArgs: {
-        typeCode: [
-          'issue_test',
-        ],
-      },
-      otherArgs: {
-        // version: [version.versionId],
-      },
-    }), getCaseNotPlain(), getCaseNotRun(), getCaseNum()])
+    Promise.all([getIssueCount(), getCaseNotPlain(), getCaseNotRun(), getCaseNum()])
       .then(([totalData, notPlan, notRun, caseNum]) => {
         this.setState({
           totalTest: totalData.totalElements,
