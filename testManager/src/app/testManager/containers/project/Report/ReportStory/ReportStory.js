@@ -15,6 +15,11 @@ import { getStatusList } from '../../../../api/TestStatusApi';
 import { issueLink, cycleLink, executeDetailShowLink } from '../../../../common/utils';
 import './ReportStory.scss';
 
+export const STATUS = {
+  todo: '#ffb100',
+  doing: '#4d90fe',
+  done: '#00bfa5',
+};
 const { AppState } = stores;
 const Panel = Collapse.Panel;
 
@@ -252,7 +257,7 @@ class ReportStory extends Component {
         const {
           statusMapDTO, issueStatusName, issueName, issueId, typeCode, summary,
         } = defectInfo;
-        const { name: statusName, colour: statusColor } = statusMapDTO || {};
+        const { name: statusName, colour: statusColor, type: statusCode } = statusMapDTO || {};
         return (
           <div>
             <div className="c7ntest-collapse-header-container">
@@ -268,7 +273,7 @@ class ReportStory extends Component {
                 </Link>
               </Tooltip>
               <div className="c7ntest-issue-status-icon">
-                <span style={{ color: statusColor, borderColor: statusColor }}>
+                <span style={{ color: STATUS[statusCode], borderColor: STATUS[statusCode] }}>
                   {statusName}
                 </span>
               </div>

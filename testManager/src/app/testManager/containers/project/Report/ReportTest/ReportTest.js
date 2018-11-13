@@ -18,7 +18,11 @@ import './ReportTest.scss';
 const { AppState } = stores;
 const { Panel } = Collapse;
 
-
+export const STATUS = {
+  todo: '#ffb100',
+  doing: '#4d90fe',
+  done: '#00bfa5',
+};
 class ReportTest extends Component {
   state = {
     selectVisible: false,
@@ -65,8 +69,8 @@ class ReportTest extends Component {
       statusList,
       stepStatusList,
       any,
-      issueTypes, 
-      agileTypeList, 
+      issueTypes,
+      agileTypeList,
       issueStatusList,
     ]) => {
       this.setState({
@@ -92,7 +96,7 @@ class ReportTest extends Component {
    * @memberof ReportTest
    */
   getReportsFromDefect = (pagination, search) => {
-    const Pagination = pagination || this.state.pagination;   
+    const Pagination = pagination || this.state.pagination;
     const Search = search || this.state.search;
     getReportsFromDefect({
       page: Pagination.current - 1,
@@ -134,11 +138,11 @@ class ReportTest extends Component {
     getReportsFromDefectByIssueIds(this.sliceIssueIds(issueIds, Pagination)).then((reportData) => {
       if (!reportData.failed) {
         this.setState({
-          loading: false,       
+          loading: false,
           reportList: reportData,
           pagination: {
             current: Pagination.current,
-            pageSize: Pagination.pageSize,          
+            pageSize: Pagination.pageSize,
             total: issueIds.length,
           },
         });
@@ -198,7 +202,7 @@ class ReportTest extends Component {
     const Pagination = this.state.pagination;
     Pagination.current = 1;
     this.setState({
-      search,      
+      search,
     });
     this.getReportsFromDefect(Pagination, search);
   }
@@ -242,7 +246,7 @@ class ReportTest extends Component {
           issueId, statusMapDTO,
           issueName, summary, issueTypeId,
         } = issueInfosDTO;
-        const { name: statusName, colour: statusColor } = statusMapDTO || {};
+        const { name: statusName, colour: statusColor, type: statusCode } = statusMapDTO || {};
         return (
           <Collapse
             activeKey={openId}
@@ -261,7 +265,7 @@ class ReportTest extends Component {
                       </Link>
                     </Tooltip>
                     <div className="c7ntest-collapse-header-icon">
-                      <span style={{ color: statusColor, borderColor: statusColor }}>
+                      <span style={{ color: STATUS[statusCode], borderColor: STATUS[statusCode] }}>
                         {statusName}
                       </span>
                     </div>
@@ -398,7 +402,7 @@ class ReportTest extends Component {
           const {
             issueName, summary, issueTypeId, statusMapDTO,
           } = issueInfosDTO || {};
-          const { name: statusName, colour: statusColor } = statusMapDTO || {};
+          const { name: statusName, colour: statusColor, type: statusCode } = statusMapDTO || {};
           return (
             <div className="c7ntest-issue-show-container">
               <div className="c7ntest-collapse-show-item">
@@ -408,7 +412,7 @@ class ReportTest extends Component {
                   </Link>
                 </Tooltip>
                 <div className="c7ntest-collapse-header-icon">
-                  <span style={{ color: statusColor, borderColor: statusColor }}>
+                  <span style={{ color: STATUS[statusCode], borderColor: STATUS[statusCode] }}>
                     {statusName}
                   </span>
                 </div>
@@ -448,7 +452,7 @@ class ReportTest extends Component {
           // window.console.log(issueLinkDTOS.length);
           const issueLinks = issueLinkDTOS && issueLinkDTOS.map((link) => {
             const { issueNum, summary, statusMapDTO } = link;
-            const { name: statusName, colour: statusColor } = statusMapDTO || {};
+            const { name: statusName, colour: statusColor, type: statusCode } = statusMapDTO || {};
             return (
               <div className="c7ntest-issue-show-container">
                 <div className="c7ntest-collapse-show-item">
@@ -458,7 +462,7 @@ class ReportTest extends Component {
                     </Link>
                   </Tooltip>
                   <div className="c7ntest-collapse-header-icon">
-                    <span style={{ color: statusColor, borderColor: statusColor }}>
+                    <span style={{ color: STATUS[statusCode], borderColor: STATUS[statusCode] }}>
                       {statusName}
                     </span>
                   </div>

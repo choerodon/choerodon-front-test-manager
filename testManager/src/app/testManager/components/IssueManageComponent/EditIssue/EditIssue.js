@@ -707,10 +707,7 @@ class EditIssueNarrow extends Component {
         onSubmit={(value, done) => { this.editIssue({ statusId: value }, done); }}
         originData={StatusList.length ? statusId : (
           <Tag
-            status={{
-              statusCode,
-              statusName,
-            }}
+            status={statusMapDTO}
           />
         )}
       >
@@ -722,17 +719,11 @@ class EditIssueNarrow extends Component {
                 {
                   targetStatus ? (
                     <Tag
-                      status={{
-                        statusCode: targetStatus.statusDTO.type,
-                        statusName: targetStatus.statusDTO.name,
-                      }}
+                      status={targetStatus.statusDTO}
                     />
                   ) : (
                     <Tag
-                      status={{
-                        statusCode,
-                        statusName,
-                      }}
+                      status={statusMapDTO}
                     />                    
                   )
                 }
@@ -751,10 +742,7 @@ class EditIssueNarrow extends Component {
               StatusList.map(transform => (
                 <Option key={transform.id} value={transform.endStatusId}>
                   <Tag
-                    status={{
-                      statusCode: transform.statusDTO.type,
-                      statusName: transform.statusDTO.name,
-                    }}
+                    status={transform.statusDTO}
                   />                  
                 </Option>
               ))

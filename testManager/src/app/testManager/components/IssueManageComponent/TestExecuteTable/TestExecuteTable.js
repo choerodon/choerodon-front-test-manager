@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  Table, Icon, Tooltip, Menu, 
+  Table, Icon, Tooltip, Menu,
 } from 'choerodon-ui';
 import { stores, axios } from 'choerodon-front-boot';
 import _ from 'lodash';
@@ -163,11 +163,11 @@ class TestExecuteTable extends Component {
       render: (statusName, item) => {
         const urlParams = AppState.currentMenuType;
         const status = _.find(this.state.status, { statusId: item.executionStatus }) || {};
-        return (   
+        return (
           <StatusTags
             color={status.statusColor}
             name={status.statusName}
-          />      
+          />
           // <div style={{
           //   width: 60, height: 20, borderRadius: '2px', background: status.statusColor, display: 'inline-block', lineHeight: '20px', textAlign: 'center', color: '#fff',
           // }}
@@ -182,38 +182,42 @@ class TestExecuteTable extends Component {
       dataIndex: 'defects',
       key: 'defects',
       render: (defects, item) => (
-        <div>        
+        <div>
           {
-            item.defects.length ? (              
+            item.defects.length ? (
               <Tooltip
                 placement="topLeft"
                 title={(
                   <div>
-                    {item.defects.map((defect, i) => (
-                      <div>
-                        <Link
-                          style={{
-                            color: 'white',
-                          }}
-                          to={issueLink(defect.issueInfosDTO.issueId,
-                            defect.issueInfosDTO.typeCode)}
-                          target="_blank"
-                        >
-                          {defect.issueInfosDTO.issueNum}
-                        </Link>
-                        <div>{defect.issueInfosDTO.summary}</div>
-                      </div>
-                    ))}
+                    {item.defects.map((defect, i) => {
+                      const { 
+                        issueId, typeCode, issueName, summary, 
+                      } = defect.issueInfosDTO || {};
+                      return (
+                        <div>
+                          <Link
+                            style={{
+                              color: 'white',
+                            }}
+                            to={issueLink(issueId, typeCode)}
+                            target="_blank"
+                          >
+                            {issueName}
+                          </Link>
+                          <div>{summary}</div>
+                        </div>
+                      );
+                    })}
                   </div>
-                  )}
+                )}
               >
                 <div className="c7ntest-text-dot">
-                  {item.defects.map((defect, i) => defect.issueInfosDTO.issueNum).join(',')}
+                  {item.defects.map((defect, i) => defect.issueInfosDTO && defect.issueInfosDTO.issueName).join(',')}
                 </div>
               </Tooltip>
-             
+
             ) : '-'
-          }        
+          }
         </div>
       ),
     }, {

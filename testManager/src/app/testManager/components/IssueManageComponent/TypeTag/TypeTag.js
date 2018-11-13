@@ -7,12 +7,12 @@ class TypeTag extends Component {
     const {
       colour: typeColor, name: typeName, typeCode, icon,
     } = type || {}; 
+    const backgroundColor = typeColor && typeColor.includes('#') ? typeColor : `#${typeColor}`;
     return (
       <div style={{ display: 'flex' }}>
-        <div
-          className=""
+        <div      
           style={{
-            backgroundColor: `#${typeColor}`,
+            backgroundColor,
             display: 'flex',
             width: 20,
             height: 20,

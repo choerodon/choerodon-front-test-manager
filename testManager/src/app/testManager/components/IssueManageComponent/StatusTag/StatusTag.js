@@ -7,7 +7,7 @@ export const STATUS = {
 };
 const StatusTagSimple = (props) => {
   const { status } = props; 
-  const { statusCode, statusName } = status;
+  const { colour: statusColor, name: statusName, type: statusCode } = status || {};
   return (
     <div
       style={{
@@ -25,12 +25,13 @@ const StatusTagSimple = (props) => {
 class StatusTag extends Component {
   render() {
     const { status } = this.props; 
+    const { colour: statusColor, name: statusName, type: statusCode } = status || {};
     return (
       <div
         className=""
         style={{
           display: 'inline-block',
-          background: STATUS[status.statusCode],
+          background: STATUS[statusCode],
           color: '#fff',
           overflow: 'hidden',
           textOverflow: 'ellipsis',
@@ -44,7 +45,7 @@ class StatusTag extends Component {
           ...this.props.style,
         }}
       >
-        { status.statusName }
+        { statusName }
       </div>
     );
   }

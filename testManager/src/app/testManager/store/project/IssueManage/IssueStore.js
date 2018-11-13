@@ -82,6 +82,7 @@ class IssueStore {
     });
     this.setFilter({
       advancedSearchArgs: {
+        
         // typeCode: ['issue_test'] 
       },
       searchArgs: {},

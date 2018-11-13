@@ -200,7 +200,7 @@ class TestPlanHome extends Component {
             <Tooltip
               title={(
                 <div>
-                  <div>{issueInfosDTO.issueNum}</div>
+                  <div>{issueInfosDTO.issueName}</div>
                   <div>{issueInfosDTO.summary}</div>
                 </div>
               )}
@@ -213,7 +213,7 @@ class TestPlanHome extends Component {
                 to={issueLink(issueInfosDTO.issueId, issueInfosDTO.typeCode)}
                 target="_blank"
               >
-                {issueInfosDTO.issueNum}
+                {issueInfosDTO.issueName}
               </Link>
             </Tooltip>
           )

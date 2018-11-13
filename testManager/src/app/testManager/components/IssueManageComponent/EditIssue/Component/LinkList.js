@@ -77,10 +77,7 @@ class LinkList extends Component {
           <Tooltip mouseEnterDelay={0.5} title={`任务状态： ${statusName}`}>
             <div>
               <StatusTag
-                status={{
-                  statusColor,
-                  statusName,
-                }}
+                status={statusMapDTO}
               />
             </div>
           </Tooltip>
