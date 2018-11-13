@@ -1,3 +1,4 @@
+/* eslint-disable no-lonely-if */
 import {
   observable, action, computed, toJS,
 } from 'mobx';
