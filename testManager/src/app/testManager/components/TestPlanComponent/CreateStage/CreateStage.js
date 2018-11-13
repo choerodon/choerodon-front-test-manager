@@ -127,7 +127,7 @@ class CreateStage extends Component {
       <div>
         <Spin spinning={loading}>
           <Sidebar
-            title={<FormattedMessage id="cycle_create_title" />}
+            title={<FormattedMessage id="testPlan_createStage" />}
             visible={visible}
             onOk={this.onOk}
             onCancel={onCancel}
@@ -179,6 +179,9 @@ class CreateStage extends Component {
                       onFocus={this.loadFolders}
                       style={{ width: 500, margin: '0 0 10px 0' }}
                       label={<FormattedMessage id="testPlan_linkFolder" />}
+                      optionFilterProp="children"
+                      filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                      filter
                     >
                       {options}
                     </Select>,                    
