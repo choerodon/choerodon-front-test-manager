@@ -28,15 +28,6 @@ class TextEditToggle extends Component {
     originData: null,
     newData: null,
   }
-
-  componentDidMount() {
-    console.log('mount');
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    console.log('update');
-  }
-
   
   static defaultProps = {
     // hasFeedback: false,

@@ -3,25 +3,18 @@ import {
   Form, Input, Select, Modal, Spin, DatePicker,
 } from 'choerodon-ui';
 import { observer } from 'mobx-react';
-import { toJS } from 'mobx';
 import moment from 'moment';
-import { Content, stores } from 'choerodon-front-boot';
+import { Content } from 'choerodon-front-boot';
 import { FormattedMessage } from 'react-intl';
 import { editFolder } from '../../../api/cycleApi';
-import { getFoldersByVersion } from '../../../api/IssueManageApi';
 import TestPlanStore from '../../../store/project/TestPlan/TestPlanStore';
 
-// const { RangePicker } = DatePicker;
-const { Option } = Select;
-const { AppState } = stores;
 const FormItem = Form.Item;
 const { Sidebar } = Modal;
-const { TextArea } = Input;
 
 @observer
 class EditStage extends Component {
   state = {
-    folders: [],
     selectLoading: false,
     loading: false,
   }
@@ -30,7 +23,6 @@ class EditStage extends Component {
     const { resetFields } = this.props.form;
     if (nextProps.visible && !this.props.visible) {
       resetFields();
-      this.loadFolders();
     }
   }
 
@@ -38,13 +30,12 @@ class EditStage extends Component {
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
         this.setState({ loading: true });
-        // window.console.log('Received values of form: ', values);
         const { fromDate, toDate } = values;       
         const initialValue = TestPlanStore.CurrentEditStage;
-        // console.log(toJS(initialValue));
         editFolder({
           ...values,
           ...{
+            folderId: initialValue.folderId,
             cycleId: initialValue.cycleId,
             objectVersionNumber: initialValue.objectVersionNumber,
             type: 'folder',
@@ -69,19 +60,6 @@ class EditStage extends Component {
 
   onCancel = () => {
     TestPlanStore.ExitEditStage();
-  }
-
-  loadFolders = () => {
-    this.setState({
-      selectLoading: true,
-    });
-    const { versionId } = TestPlanStore.CurrentEditStage;
-    getFoldersByVersion().then((folders) => {
-      this.setState({
-        folders,
-        selectLoading: false,
-      });
-    });
   }
 
   disabledStartDate = (startValue) => {
@@ -115,18 +93,11 @@ class EditStage extends Component {
 
   render() {
     const { visible } = this.props;
-    const { 
-      parentTime,
-      title, description, versionId, fromDate, toDate, folderId,
+    const {       
+      title, description, fromDate, toDate, versionName, folderName,
     } = TestPlanStore.CurrentEditStage;
-    // console.log(parentTime);
     const { getFieldDecorator } = this.props.form;
-    const { folders, loading, selectLoading } = this.state;
-    const options = folders.map(folder => (
-      <Option value={folder.folderId} key={folder.folderId}>
-        {folder.name}
-      </Option>
-    ));
+    const { loading, selectLoading } = this.state;
     return (
       <div>
         <Sidebar
@@ -175,7 +146,7 @@ class EditStage extends Component {
                   label={null}
                 >
                   {getFieldDecorator('folderId', {
-                    initialValue: folderId,
+                    initialValue: `${versionName}-${folderName}`,
                     rules: [{
                       required: true, message: '请选择文件夹!',
                     }],
@@ -186,9 +157,7 @@ class EditStage extends Component {
                       onFocus={this.loadFolders}
                       style={{ width: 500, margin: '0 0 10px 0' }}
                       label={<FormattedMessage id="testPlan_linkFolder" />}
-                    >
-                      {options}
-                    </Select>,
+                    />,
                   )}
                 </FormItem>
                 <FormItem>
@@ -221,11 +190,6 @@ class EditStage extends Component {
                     />,
                   )}
                 </FormItem>
-                {/* <RangePicker
-                  format="YYYY-MM-DD" 
-                  disabledDate={this.disabledDate}
-                  label={<FormattedMessage id="cycle_endTime" />}
-                /> */}
               </Form>
             </Spin>
           </Content>

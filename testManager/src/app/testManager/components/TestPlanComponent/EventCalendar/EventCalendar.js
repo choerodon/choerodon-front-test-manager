@@ -12,27 +12,49 @@ import EventItem from './EventItem';
 
 const moment = extendMoment(Moment);
 class EventCalendar extends Component {
-  state = {
-    currentDate: null,
-    baseDate: moment(),
-    mode: 'month',
-    pos: 0,
-  }
-
-  static getDerivedStateFromProps(props, state) {
+  constructor(props) {
+    super(props);
     const { times } = props;
-    const { mode } = state;
-    // 使事件始终可以显示在当前范围
+    let baseDate = moment();
     if (times && times.length > 0) {
-      return {
-        pos: 0,
-        currentDate: null,
-        baseDate: times[0].start ? moment(times[0].start).startOf(mode) : moment(),
-      };      
-    } else {
-      return null;
+      baseDate = times[0].start ? moment(times[0].start).startOf('month') : moment();
     }
+    this.state = {
+      currentDate: null,
+      baseDate,
+      mode: 'month',
+      pos: 0,
+    };
   }
+  
+
+  // componentWillReceiveProps(nextProps) {
+  //   const { times } = nextProps;
+  //   const { mode } = this.state;
+  //   // console.log(times);
+  //   // 使事件始终可以显示在当前范围
+  //   if (times && times.length > 0) {
+  //     this.setState({
+  //       pos: 0,
+  //       currentDate: null,
+  //       baseDate: times[0].start ? moment(times[0].start).startOf(mode) : moment(),
+  //     });
+  //   }
+  // }
+  // static getDerivedStateFromProps(props, state) {
+  //   const { times } = props;
+  //   const { mode, baseDate } = state;
+  //   // 使事件始终可以显示在当前范围
+  //   if (times && times.length > 0) {
+  //     return {
+  //       pos: 0,
+  //       currentDate: null,  
+  //       baseDate: times[0].start ? moment(times[0].start).startOf(mode) : moment(),
+  //     };      
+  //   } else {
+  //     return null;
+  //   }
+  // }
 
   calculateTime = () => {
     const { mode, pos, baseDate } = this.state;
@@ -74,27 +96,7 @@ class EventCalendar extends Component {
     const { start, end } = this.calculateTime();
     const range = moment.range(start, end);
     const timeArray = Array.from(range.by('day'));
-    const fake = [{
-      start: moment().startOf('month'),
-      end: moment().endOf('month').add(-5, 'day'),
-    },
-      // {
-      //   start: moment().startOf('month'),
-      //   end: moment().endOf('month').add(-6, 'day'),
-      // }, {
-      //   start: moment().startOf('month').add(-5, 'day'),
-      //   end: moment().endOf('month').add(-5, 'day'),
-      // }, {
-      //   start: moment().startOf('month').add(15, 'day'),
-      //   end: moment().endOf('month').add(5, 'day'),
-      // }, {
-      //   start: moment().startOf('month').add(0, 'day'),
-      //   end: moment().endOf('month').add(-30, 'day'),
-      // }, {
-      //   start: moment().startOf('month').add(-10, 'day'),
-      //   end: moment().endOf('month').add(-33, 'day'),
-      // }
-    ];
+
     return (
       <div className="c7ntest-EventCalendar" style={{ height: showMode === 'multi' ? '100%' : '162px' }}>
         <div className="c7ntest-EventCalendar-header">

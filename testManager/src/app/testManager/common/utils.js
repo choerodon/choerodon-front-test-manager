@@ -305,6 +305,9 @@ export function color2rgba(color, alpha = 1) {
   return `rgba(${r},${g},${b},${alpha})`;
 }
 export function humanizeDuration(seconds) {
+  if (seconds < 0) {
+    return '';
+  }
   let result = '';
   if (seconds) {
     /** eslint-disable no-constant-condition */
@@ -343,14 +346,14 @@ export function request() { }
     args[0] = url;
 
     axios[type](...args).then((data) => {
-      if (data && data.failed) {
-        Choerodon.prompt(data.message);
-        reject(data.failed);
-      } else {
-        resolve(data);
-      }
+      // if (data && data.failed) {
+      //   // Choerodon.prompt(data.message);
+      //   resolve(data);
+      // } else {
+      resolve(data);
+      // }
     }).catch((error) => {
-      Choerodon.prompt(error.message);
+      // Choerodon.prompt(error.message);
       reject(error);
     });
   });

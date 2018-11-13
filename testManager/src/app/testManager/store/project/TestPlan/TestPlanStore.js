@@ -40,6 +40,8 @@ function traverseTree(node) {
 }
 
 class TestPlanStore extends BaseTreeProto {
+  @observable treeShow = true;
+
   @observable statusList = [];
 
   @observable times = [];
@@ -81,7 +83,7 @@ class TestPlanStore extends BaseTreeProto {
     });
     getCycleTree().then((data) => {
       traverseTree({ title: '所有版本', key: '0', children: data.versions });
-      this.setTreeData([{ title: '所有版本', key: '0', children: data.versions }]);      
+      this.setTreeData([{ title: '所有版本', key: '0', children: data.versions }]);
       this.generateList([
         { title: '所有版本', key: '0', children: data.versions },
       ]);
@@ -192,11 +194,6 @@ class TestPlanStore extends BaseTreeProto {
   }
 
   generateList = (data) => {
-    // const temp = data;
-    // while (temp) {
-    //   dataList = dataList.concat(temp.children);
-    //   if()
-    // }
     for (let i = 0; i < data.length; i += 1) {
       const node = data[i];
       const { key, title } = node;
@@ -218,6 +215,10 @@ class TestPlanStore extends BaseTreeProto {
         this.generateList(node.children, node.key);
       }
     }
+  }
+
+  @action setTreeShow(treeShow) {
+    this.treeShow = treeShow;
   }
 
   @action setAssignedTo(assignedTo) {

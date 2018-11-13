@@ -18,23 +18,20 @@ import {
 import './SummaryHome.scss';
 
 class SummaryHome extends Component {
-  constructor() {
-    super();
-    this.state = {
-      loading: false,
-      range: '7',
-      excuteList: [],
-      createList: [],
-      totalTest: 0,
-      notPlan: 0,
-      notRun: 0,
-      caseNum: 0,
-      totalExcute: 0,
-      totalCreate: 0,
-      versionTable: [],
-      componentTable: [],
-      labelTable: [],
-    };
+  state = {
+    loading: false,
+    range: '7',
+    excuteList: [],
+    createList: [],
+    totalTest: 0,
+    notPlan: 0,
+    notRun: 0,
+    caseNum: 0,
+    totalExcute: 0,
+    totalCreate: 0,
+    versionTable: [],
+    componentTable: [],
+    labelTable: [],
   }
 
   componentDidMount() {
@@ -44,24 +41,13 @@ class SummaryHome extends Component {
   getInfo = () => {
     this.setState({ loading: true });
     const { date, range } = this.state;
-    Promise.all([getIssueCount({
-      advancedSearchArgs: {
-        // typeCode: [
-        //   'issue_test',
-        // ],
-        issueTypeId: [18],
-      },
-      otherArgs: {
-        // issueIds: ['13378'],
-        // version: [version.versionId],
-      },
-    }), getCaseNotPlain(), getCaseNotRun(), getCaseNum(),
-    getCycleRange(moment().format('YYYY-MM-DD'), range),
-    getCreateRange(range), getProjectVersion(), getModules(), getLabels()])
+    Promise.all([getIssueCount(), getCaseNotPlain(), getCaseNotRun(), getCaseNum(),
+      getCycleRange(moment().format('YYYY-MM-DD'), range),
+      getCreateRange(range), getProjectVersion(), getModules(), getLabels()])
       .then(([totalData, notPlan, notRun, caseNum, excuteList,
         createList, versionList, componentList, labelList]) => {
         this.setState({
-          loading: false,
+          
           // totalIssue: totalIssueData.totalElements,
           totalTest: totalData.totalElements,
           notPlan,
@@ -78,6 +64,7 @@ class SummaryHome extends Component {
           this.getComponentTable(componentList),
         ]).then(([versionTable, labelTable, componentTable]) => {
           this.setState({
+            loading: false,
             versionTable,
             labelTable,
             componentTable,
@@ -91,7 +78,7 @@ class SummaryHome extends Component {
 
   getVersionTable = versionList => new Promise((resolve) => {
     getIssueStatistic('version').then((data) => {
-      const versionTable = versionList.map((version) => {
+      const versionTable = versionList.reverse().map((version) => {
         let num = 0;
         if (_.find(data, { typeName: version.versionId.toString() })) {
           num = _.find(data, { typeName: version.versionId.toString() }).value;
@@ -213,7 +200,7 @@ class SummaryHome extends Component {
         lineStyle: {
           color: '#EEEEEE',
           // width: 8, // 这里是为了突出显示加上的
-        }, 
+        },
       },
       axisLabel: {
         show: true,
@@ -222,19 +209,19 @@ class SummaryHome extends Component {
         },
       },
       splitLine: {
-        show: true, 
+        show: true,
         //  改变轴线颜色
         lineStyle: {
           // 使用深浅的间隔色
           color: ['#EEEEEE'],
-        },                            
+        },
       },
       // data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
       data: this.state.createList.map(execute => execute.time),
     },
     yAxis: {
       type: 'value',
-      name: '数值',      
+      name: '数值',
       nameTextStyle: {
         color: 'black',
       },
@@ -242,7 +229,7 @@ class SummaryHome extends Component {
         lineStyle: {
           color: '#EEEEEE',
           // width: 8, // 这里是为了突出显示加上的
-        }, 
+        },
       },
       axisLabel: {
         show: true,
@@ -251,12 +238,12 @@ class SummaryHome extends Component {
         },
       },
       splitLine: {
-        show: true, 
+        show: true,
         //  改变轴线颜色
         lineStyle: {
           // 使用深浅的间隔色
           color: ['#EEEEEE'],
-        },                            
+        },
       },
       minInterval: 1,
     },
@@ -286,7 +273,7 @@ class SummaryHome extends Component {
       // containLabel: true,
     },
     xAxis: {
-      type: 'category',      
+      type: 'category',
       name: '日期',
       // nameGap: 28,
       nameTextStyle: {
@@ -298,7 +285,7 @@ class SummaryHome extends Component {
         lineStyle: {
           color: '#EEEEEE',
           // width: 8, // 这里是为了突出显示加上的
-        }, 
+        },
       },
       axisLabel: {
         show: true,
@@ -307,19 +294,19 @@ class SummaryHome extends Component {
         },
       },
       splitLine: {
-        show: true, 
+        show: true,
         //  改变轴线颜色
         lineStyle: {
           // 使用深浅的间隔色
           color: ['#EEEEEE'],
-        },                            
+        },
       },
       // data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
       data: this.state.excuteList.map(execute => execute.time),
     },
     yAxis: {
       type: 'value',
-      name: '数值',      
+      name: '数值',
       nameTextStyle: {
         color: 'black',
       },
@@ -327,7 +314,7 @@ class SummaryHome extends Component {
         lineStyle: {
           color: '#EEEEEE',
           // width: 8, // 这里是为了突出显示加上的
-        }, 
+        },
       },
       axisLabel: {
         show: true,
@@ -336,12 +323,12 @@ class SummaryHome extends Component {
         },
       },
       splitLine: {
-        show: true, 
+        show: true,
         //  改变轴线颜色
         lineStyle: {
           // 使用深浅的间隔色
           color: ['#EEEEEE'],
-        },                            
+        },
       },
       minInterval: 1,
     },
@@ -400,7 +387,7 @@ class SummaryHome extends Component {
         </Header>
         <Spin spinning={loading}>
           <div className="c7ntest-content-container">
-            <div className="c7ntest-statistic-container">              
+            <div className="c7ntest-statistic-container">
               <Popover
                 placement="topLeft"
                 content={<div><FormattedMessage id="summary_totalTest_tip" /></div>}
@@ -475,7 +462,7 @@ class SummaryHome extends Component {
                   </div>
                 </div>
               </Popover>
-            </div>         
+            </div>
             <div className="c7ntest-tableArea-container">
               <div className="c7ntest-table-container">
                 <div className="c7ntest-table-title">
@@ -531,8 +518,8 @@ class SummaryHome extends Component {
                 <FormattedMessage id="summary_summaryTimeLeap" />
                 {'：'}
               </div>
-              <RadioButton       
-                defaultValue={range} 
+              <RadioButton
+                defaultValue={range}
                 onChange={this.handleRangeChange}
                 data={[{
                   value: '7',

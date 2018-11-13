@@ -192,7 +192,7 @@ const enUS = {
   cycle_cloneCycle: 'Clone cycle',
   cycle_editFolder: 'Edit stage',
   cycle_deleteFolder: 'Delete stage',
-  cycle_cloneFolder: 'Clone stage',
+  cycle_cloneStage: 'Clone stage',
   cycle_exportCycle: 'Export cycle',
   cycle_exportFolder: 'Export stage',
   cycle_newFolder: 'New stage',

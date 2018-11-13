@@ -11,13 +11,18 @@ import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import { getReportsFromDefect, getReportsFromDefectByIssueIds } from '../../../../api/reportApi';
 import { getStatusList } from '../../../../api/TestStatusApi';
+import { getIssueTypes, getIssueStatus } from '../../../../api/agileApi';
 import { issueLink, cycleLink, executeDetailShowLink } from '../../../../common/utils';
 import './ReportTest.scss';
 
 const { AppState } = stores;
 const { Panel } = Collapse;
 
-
+export const STATUS = {
+  todo: '#ffb100',
+  doing: '#4d90fe',
+  done: '#00bfa5',
+};
 class ReportTest extends Component {
   state = {
     selectVisible: false,
@@ -26,6 +31,8 @@ class ReportTest extends Component {
     // issueStatusList: [],
     statusList: [],
     stepStatusList: [],
+    issueTypes: [],
+    issueStatusList: [],
     pagination: {
       current: 1,
       total: 0,
@@ -54,15 +61,24 @@ class ReportTest extends Component {
       getStatusList('CYCLE_CASE'),
       getStatusList('CASE_STEP'),
       this.getReportsFromDefect(),
+      getIssueTypes(),
+      getIssueTypes('agile'),
+      getIssueStatus(),
     ]).then(([
       // issueStatusList, 
       statusList,
       stepStatusList,
+      any,
+      issueTypes,
+      agileTypeList,
+      issueStatusList,
     ]) => {
       this.setState({
         // issueStatusList,
         statusList,
         stepStatusList,
+        issueTypes: issueTypes.concat(agileTypeList),
+        issueStatusList,
         // loading: false,
         openId: [],
       });
@@ -80,7 +96,7 @@ class ReportTest extends Component {
    * @memberof ReportTest
    */
   getReportsFromDefect = (pagination, search) => {
-    const Pagination = pagination || this.state.pagination;   
+    const Pagination = pagination || this.state.pagination;
     const Search = search || this.state.search;
     getReportsFromDefect({
       page: Pagination.current - 1,
@@ -122,11 +138,11 @@ class ReportTest extends Component {
     getReportsFromDefectByIssueIds(this.sliceIssueIds(issueIds, Pagination)).then((reportData) => {
       if (!reportData.failed) {
         this.setState({
-          loading: false,       
+          loading: false,
           reportList: reportData,
           pagination: {
             current: Pagination.current,
-            pageSize: Pagination.pageSize,          
+            pageSize: Pagination.pageSize,
             total: issueIds.length,
           },
         });
@@ -163,15 +179,15 @@ class ReportTest extends Component {
   }
 
   handleFilterChange = (pagination, filters, sorter, barFilters) => {
-    const { statusCode, priorityCode, typeCode } = filters;
+    const { statusId, priorityCode, issueTypeId } = filters;
     const {
       issueNum, summary, assignee, sprint, version, component, epic,
     } = filters;
     const search = {
       advancedSearchArgs: {
-        statusCode: statusCode || [],
+        statusId: statusId || [],
         // priorityCode: priorityCode || [],
-        typeCode: typeCode || [],
+        issueTypeId: issueTypeId || [],
       },
       otherArgs: {
         issueNum: issueNum ? issueNum[0] : '',
@@ -186,7 +202,7 @@ class ReportTest extends Component {
     const Pagination = this.state.pagination;
     Pagination.current = 1;
     this.setState({
-      search,      
+      search,
     });
     this.getReportsFromDefect(Pagination, search);
   }
@@ -194,7 +210,7 @@ class ReportTest extends Component {
   render() {
     const {
       selectVisible, reportList, loading, pagination,
-      statusList, stepStatusList, openId,
+      statusList, stepStatusList, issueTypes, issueStatusList, openId,
     } = this.state;
     const urlParams = AppState.currentMenuType;
     const { organizationId } = AppState.currentMenuType;
@@ -230,7 +246,7 @@ class ReportTest extends Component {
           issueId, statusMapDTO,
           issueName, summary, typeCode,
         } = issueInfosDTO;
-        const { name: statusName, colour: statusColor } = statusMapDTO || {};
+        const { name: statusName, colour: statusColor, type: statusCode } = statusMapDTO || {};
         return (
           <Collapse
             activeKey={openId}
@@ -249,7 +265,7 @@ class ReportTest extends Component {
                       </Link>
                     </Tooltip>
                     <div className="c7ntest-collapse-header-icon">
-                      <span style={{ color: statusColor, borderColor: statusColor }}>
+                      <span style={{ color: STATUS[statusCode], borderColor: STATUS[statusCode] }}>
                         {statusName}
                       </span>
                     </div>
@@ -386,7 +402,7 @@ class ReportTest extends Component {
           const {
             issueName, summary, typeCode, statusMapDTO,
           } = issueInfosDTO || {};
-          const { name: statusName, colour: statusColor } = statusMapDTO || {};
+          const { name: statusName, colour: statusColor, type: statusCode } = statusMapDTO || {};
           return (
             <div className="c7ntest-issue-show-container">
               <div className="c7ntest-collapse-show-item">
@@ -396,7 +412,7 @@ class ReportTest extends Component {
                   </Link>
                 </Tooltip>
                 <div className="c7ntest-collapse-header-icon">
-                  <span style={{ color: statusColor, borderColor: statusColor }}>
+                  <span style={{ color: STATUS[statusCode], borderColor: STATUS[statusCode] }}>
                     {statusName}
                   </span>
                 </div>
@@ -436,7 +452,7 @@ class ReportTest extends Component {
           // window.console.log(issueLinkDTOS.length);
           const issueLinks = issueLinkDTOS && issueLinkDTOS.map((link) => {
             const { issueNum, summary, statusMapDTO } = link;
-            const { name: statusName, colour: statusColor } = statusMapDTO || {};
+            const { name: statusName, colour: statusColor, type: statusCode } = statusMapDTO || {};
             return (
               <div className="c7ntest-issue-show-container">
                 <div className="c7ntest-collapse-show-item">
@@ -446,7 +462,7 @@ class ReportTest extends Component {
                     </Link>
                   </Tooltip>
                   <div className="c7ntest-collapse-header-icon">
-                    <span style={{ color: statusColor, borderColor: statusColor }}>
+                    <span style={{ color: STATUS[statusCode], borderColor: STATUS[statusCode] }}>
                       {statusName}
                     </span>
                   </div>
@@ -472,30 +488,9 @@ class ReportTest extends Component {
     const filterColumns = [
       {
         title: '类型',
-        dataIndex: 'typeCode',
-        key: 'typeCode',
-        filters: [
-          {
-            text: '故事',
-            value: 'story',
-          },
-          {
-            text: '测试',
-            value: 'issue_test',
-          },
-          {
-            text: '任务',
-            value: 'task',
-          },
-          {
-            text: '故障',
-            value: 'bug',
-          },
-          {
-            text: '史诗',
-            value: 'issue_epic',
-          },
-        ],
+        dataIndex: 'issueTypeId',
+        key: 'issueTypeId',
+        filters: issueTypes.map(type => ({ text: type.name, value: type.id })),
         filterMultiple: true,
       },
       // {
@@ -538,24 +533,11 @@ class ReportTest extends Component {
       // },
       {
         title: '状态',
-        dataIndex: 'statusCode',
-        key: 'statusCode',
-        filters: [
-          {
-            text: '待处理',
-            value: 'todo',
-          },
-          {
-            text: '进行中',
-            value: 'doing',
-          },
-          {
-            text: '已完成',
-            value: 'done',
-          },
-        ],
+        dataIndex: 'statusId',
+        key: 'statusId',
+        filters: issueStatusList.map(status => ({ text: status.name, value: status.id })),
         filterMultiple: true,
-        // filteredValue: IssueStore.filteredInfo.statusCode || null,
+        // filteredValue: IssueStore.filteredInfo.statusId || null,
       },
       // {
       //   title: '冲刺',

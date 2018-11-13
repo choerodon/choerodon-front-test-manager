@@ -20,6 +20,15 @@ export function getIssues(search) {
   return request.post(`agile/v1/projects/${getProjectId()}/issues/test_component/no_sub`, search);
 }
 /**
+ *获取当前项目的issue类型列表
+ *
+ * @export
+ * @returns
+ */
+export function getIssueTypes(applyType) {
+  return request.get(`/issue/v1/projects/${getProjectId()}/schemes/query_issue_types_with_sm_id?apply_type=${applyType || 'test'}`);
+}
+/**
  *获取缺陷列表（排除test类型）
  *
  * @export
@@ -27,14 +36,18 @@ export function getIssues(search) {
  * @returns
  */
 export function getIssuesForDefects(summary) {
-  const advancedSearchArgs = {
-    typeCode: ['sub_task', 'story', 'task', 'issue_epic', 'bug'],
-  };
-  const searchArgs = {};
-  if (summary) {
-    searchArgs.summary = summary;
-  }
-  return getIssues({ advancedSearchArgs, searchArgs });
+  return new Promise(((resolve) => {
+    getIssueTypes('agile').then((types) => {
+      const advancedSearchArgs = {
+        issueTypeId: types.map(type => type.id),
+      };
+      const searchArgs = {};
+      if (summary) {
+        searchArgs.summary = summary;
+      }
+      resolve(getIssues({ advancedSearchArgs, searchArgs }));
+    });
+  }));
 }
 /**
  *获取根据筛选条件获取issues
@@ -63,7 +76,15 @@ export function getIssueList(summary, type) {
  * @returns
  */
 export function getIssueCount(search) {
-  return getIssues(search);
+  return new Promise(((resolve) => {
+    getIssueTypes('test').then((types) => {
+      const advancedSearchArgs = {
+        issueTypeId: types.map(type => type.id),
+      };
+      const searchArgs = {};
+      resolve(getIssues({ advancedSearchArgs, searchArgs }));
+    });
+  }));
 }
 /**
  *获取当前项目的模块
@@ -98,15 +119,6 @@ export function getPrioritys() {
  * @export
  * @returns
  */
-export function getIssueStatus() {
-  return request.get(`/issue/v1/projects/${getProjectId()}/schemes/query_status_by_project_id?apply_type=test`);
-}
-/**
- *获取当前项目的issue类型列表
- *
- * @export
- * @returns
- */
-export function getIssueTypes() {
-  return request.get(`/issue/v1/projects/${getProjectId()}/schemes/query_issue_types_with_sm_id?apply_type=test`);
+export function getIssueStatus(applyType) {
+  return request.get(`/issue/v1/projects/${getProjectId()}/schemes/query_status_by_project_id?apply_type=${applyType || 'test'}`);
 }

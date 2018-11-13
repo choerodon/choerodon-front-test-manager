@@ -19,13 +19,13 @@ import {
   loadIssue, createIssue, exportIssues, downloadTemplate,
 } from '../../../../api/IssueManageApi';
 import { commonLink } from '../../../../common/utils';
-import EmptyBlock from '../../../../components/TestComponent/EmptyBlock';
-import CreateIssue from '../../../../components/TestComponent/CreateIssue';
-import EditIssue from '../../../../components/TestComponent/EditIssue';
-import IssueTree from '../../../../components/TestComponent/IssueTree';
-import IssueTable from '../../../../components/TestComponent/IssueTable';
-// import UploadSide from '../../../../components/TestComponent/UploadSide';
-import ExportSide from '../../../../components/TestComponent/ExportSide';
+import EmptyBlock from '../../../../components/IssueManageComponent/EmptyBlock';
+import CreateIssue from '../../../../components/IssueManageComponent/CreateIssue';
+import EditIssue from '../../../../components/IssueManageComponent/EditIssue';
+import IssueTree from '../../../../components/IssueManageComponent/IssueTree';
+import IssueTable from '../../../../components/IssueManageComponent/IssueTable';
+// import UploadSide from '../../../../components/IssueManageComponent/UploadSide';
+import ExportSide from '../../../../components/IssueManageComponent/ExportSide';
 
 const { AppState } = stores;
 const { Option } = Select;
@@ -38,10 +38,8 @@ class Test extends Component {
       create: false,
       selectedIssue: {},
       createIssue: false,
-      // selectIssueType: 'issue_test',
       createIssueValue: '',
       createLoading: false,
-      // keyCode: 0,
     };
   }
 
@@ -208,10 +206,11 @@ class Test extends Component {
   }
 
   handleFilterChange = (pagination, filters, sorter, barFilters) => {
+    // 条件变化返回第一页
     IssueStore.setPagination({
-      current: 0,
+      current: 1,
       pageSize: IssueStore.pagination.pageSize,
-      total: 0,
+      total: IssueStore.pagination.total,
     });
     IssueStore.setFilteredInfo(filters);
     IssueStore.setBarFilters(barFilters);

@@ -19,20 +19,36 @@ class CloneCycle extends Component {
     if (this.props.visible === false && nextProps.visible === true) {
       resetFields();
       setFieldsValue({ cycleName: nextProps.currentCloneCycle.title });
+      this.setInitValues(nextProps);
     }
   }
-  
-  getProjectVersion = () => {
+
+  setInitValues = (nextProps) => {
     this.setState({
-      selectLoading: true,
+      loading: true,
     });
+    const { versionId } = nextProps.currentCloneCycle;
+    const { setFieldsValue } = this.props.form;
     getProjectVersion().then((versions) => {
       this.setState({
-        versions,
-        selectLoading: false,
+        versions,        
+        loading: false,
       });
+      setFieldsValue({ versionId });
     });
   }
+
+  // getProjectVersion = () => {
+  //   this.setState({
+  //     selectLoading: true,
+  //   });
+  //   getProjectVersion().then((versions) => {
+  //     this.setState({
+  //       versions,
+  //       selectLoading: false,
+  //     });
+  //   });
+  // }
 
   handleOk = () => {
     // console.log(this.props.currentCloneCycle);
@@ -89,7 +105,7 @@ class CloneCycle extends Component {
                   label={<FormattedMessage id="version" />}
 
                   loading={selectLoading}
-                  onFocus={this.getProjectVersion}
+                  // onFocus={this.getProjectVersion}
                 >
                   {versionOptions}
                 </Select>,

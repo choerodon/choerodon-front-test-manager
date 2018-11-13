@@ -143,9 +143,9 @@ export function loadDatalogs(issueId) {
  */
 export function loadIssuesInLink(page = 0, size = 10, issueId, content) {
   if (content) {
-    return request.get(`/agile/v1/projects/${getProjectId()}/issues/summary?issueId=${issueId}&self=false&content=${content}&page=${page}&size=${size}&onlyActiveSprint=false`);
+    return request.get(`/agile/v1/projects/${getProjectId()}/issues/agile/summary?issueId=${issueId}&self=false&content=${content}&page=${page}&size=${size}&onlyActiveSprint=false`);
   } else {
-    return request.get(`/agile/v1/projects/${getProjectId()}/issues/summary?issueId=${issueId}&self=false&page=${page}&size=${size}&onlyActiveSprint=false`);
+    return request.get(`/agile/v1/projects/${getProjectId()}/issues/agile/summary?issueId=${issueId}&self=false&page=${page}&size=${size}&onlyActiveSprint=false`);
   }
 }
 /**
@@ -168,7 +168,7 @@ export function createLink(issueId, issueLinkCreateDTOList) {
  * @returns
  */
 export function loadLinkIssues(issueId) {
-  return request.get(`/agile/v1/projects/${getProjectId()}/issue_links/${issueId}`);
+  return request.get(`/agile/v1/projects/${getProjectId()}/issue_links/${issueId}?no_issue_test=false`);
 }
 /**
  *获取用例树
@@ -487,7 +487,7 @@ export function downloadTemplate() {
  * @returns
  */
 export function getExportList() {
-  return request.get(`/test/v1/projects/${getProjectId()}/test/fileload/history`);
+  return request.get(`/test/v1/projects/${getProjectId()}/test/fileload/history/issue`);
 }
 /**
  *导出失败重试

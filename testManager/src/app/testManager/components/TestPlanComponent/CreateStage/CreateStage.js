@@ -32,7 +32,7 @@ class CreateStage extends Component {
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
         // this.setState({ loading: true });
-        window.console.log('Received values of form: ', values);
+        // window.console.log('Received values of form: ', values);
         const { fromDate, toDate } = values;
         const {
           visible, onOk, onCancel, CreateStageIn, 
@@ -113,7 +113,9 @@ class CreateStage extends Component {
     const {
       visible, onOk, onCancel, CreateStageIn, 
     } = this.props;
-    const { title, versionId } = CreateStageIn;
+    const {
+      title, versionId, fromDate, toDate, 
+    } = CreateStageIn;
     const { getFieldDecorator } = this.props.form;
     const { folders, loading, selectLoading } = this.state;
     const options = folders.map(folder => (
@@ -184,11 +186,12 @@ class CreateStage extends Component {
                 </FormItem>
                 <FormItem>
                   {getFieldDecorator('fromDate', {
+                    initialValue: fromDate && moment(fromDate),
                     rules: [{
                       required: true, message: '请选择日期!',
                     }],
                   })(
-                    <DatePicker
+                    <DatePicker                   
                       format="YYYY-MM-DD"
                       disabledDate={this.disabledStartDate}
                       style={{ width: 500 }}
@@ -198,11 +201,12 @@ class CreateStage extends Component {
                 </FormItem>
                 <FormItem>
                   {getFieldDecorator('toDate', {
+                    initialValue: toDate && moment(toDate),
                     rules: [{
                       required: true, message: '请选择日期!',
                     }],
                   })(
-                    <DatePicker
+                    <DatePicker                     
                       disabledDate={this.disabledEndDate}
                       label={<FormattedMessage id="cycle_endTime" />}
                       format="YYYY-MM-DD"

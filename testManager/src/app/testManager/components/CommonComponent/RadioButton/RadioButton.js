@@ -5,12 +5,10 @@ import './RadioButton.scss';
 
 class RadioButton extends Component {
   render() {
-    const { 
-      style, defaultValue, onChange, data, 
-    } = this.props;
+    const { style, data } = this.props;
     return (
       <div className="c7ntest-radio-button" style={style}>
-        <Radio.Group defaultValue={defaultValue} onChange={onChange}>
+        <Radio.Group {...this.props} style={null}>
           {
             data.map(button => (
               <Radio.Button value={button.value}>

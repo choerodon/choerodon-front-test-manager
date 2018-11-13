@@ -2,9 +2,7 @@ import React, { Component } from 'react';
 import Moment from 'moment';
 import { observer } from 'mobx-react';
 import { extendMoment } from 'moment-range';
-import {
-  Page, Header, Content, stores,
-} from 'choerodon-front-boot';
+import { Page, Header, Content } from 'choerodon-front-boot';
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import {
@@ -19,7 +17,7 @@ import {
   EventCalendar, PlanTree, CreateCycle, EditStage, EditCycle, ExportSide,
 } from '../../../../components/TestPlanComponent';
 import {
-  RichTextShow, SelectFocusLoad, StatusTags, DragTable, 
+  RichTextShow, SelectFocusLoad, StatusTags, DragTable,
 } from '../../../../components/CommonComponent';
 import { getUsers } from '../../../../api/IamApi';
 import TestPlanStore from '../../../../store/project/TestPlan/TestPlanStore';
@@ -30,13 +28,11 @@ import './TestPlanHome.scss';
 import noRight from '../../../../assets/noright.svg';
 
 const { confirm } = Modal;
-const { AppState } = stores;
 const moment = extendMoment(Moment);
 @observer
 class TestPlanHome extends Component {
   state = {
     CreateCycleVisible: false,
-    treeShow: true,
     statusList: [],
   }
 
@@ -147,10 +143,7 @@ class TestPlanHome extends Component {
     confirm({
       width: 560,
       title: Choerodon.getMessage('确认删除吗?', 'Confirm delete'),
-      content:
-  <div style={{ marginBottom: 32 }}>
-    {Choerodon.getMessage('当你点击删除后，该条数据将被永久删除，不可恢复!', 'When you click delete, after which the data will be permanently deleted and irreversible!')}
-  </div>,
+      content: Choerodon.getMessage('当你点击删除后，该条数据将被永久删除，不可恢复!', 'When you click delete, after which the data will be permanently deleted and irreversible!'),
       onOk: () => {
         TestPlanStore.rightEnterLoading();
         deleteExecute(executeId)
@@ -182,9 +175,8 @@ class TestPlanHome extends Component {
   }
 
   render() {
-    const {
-      treeShow, CreateCycleVisible, statusList, 
-    } = this.state;
+    const { CreateCycleVisible, statusList } = this.state;
+    const treeShow = TestPlanStore.treeShow;
     const {
       testList, executePagination, loading, rightLoading, times, calendarShowMode,
     } = TestPlanStore;
@@ -208,7 +200,7 @@ class TestPlanHome extends Component {
             <Tooltip
               title={(
                 <div>
-                  <div>{issueInfosDTO.issueNum}</div>
+                  <div>{issueInfosDTO.issueName}</div>
                   <div>{issueInfosDTO.summary}</div>
                 </div>
               )}
@@ -221,7 +213,7 @@ class TestPlanHome extends Component {
                 to={issueLink(issueInfosDTO.issueId, issueInfosDTO.typeCode)}
                 target="_blank"
               >
-                {issueInfosDTO.issueNum}
+                {issueInfosDTO.issueName}
               </Link>
             </Tooltip>
           )
@@ -237,7 +229,7 @@ class TestPlanHome extends Component {
       render(executionStatus) {
         const statusColor = _.find(statusList, { statusId: executionStatus })
           ? _.find(statusList, { statusId: executionStatus }).statusColor : '';
-        return (   
+        return (
           _.find(statusList, { statusId: executionStatus }) && (
             <StatusTags
               color={statusColor}
@@ -256,7 +248,7 @@ class TestPlanHome extends Component {
         return (
           <Tooltip title={<RichTextShow data={delta2Html(comment)} />}>
             <div
-              className="c7ntest-text-dot"  
+              className="c7ntest-text-dot"
             >
               {delta2Text(comment)}
             </div>
@@ -320,7 +312,7 @@ class TestPlanHome extends Component {
         return (
           <div
             className="c7ntest-text-dot"
-          >    
+          >
             {lastUpdateDate && moment(lastUpdateDate).format('YYYY-MM-DD')}
           </div>
         );
@@ -346,12 +338,12 @@ class TestPlanHome extends Component {
       render: (text, record) => (
         record.projectId !== 0
         && (
-          <div style={{ display: 'flex' }}>   
+          <div style={{ display: 'flex' }}>
             <Icon
               type="explicit2"
               style={{ cursor: 'pointer', margin: '0 10px' }}
               onClick={() => {
-                const { history } = this.props;         
+                const { history } = this.props;
                 history.push(executeDetailShowLink(record.executeId));
               }}
             />
@@ -487,21 +479,13 @@ class TestPlanHome extends Component {
                   <div
                     role="none"
                     className="c7ntest-TestPlan-bar-button"
-                    onClick={() => {
-                      this.setState({
-                        treeShow: true,
-                      });
-                    }}
+                    onClick={() => { TestPlanStore.setTreeShow(true); }}
                   >
                     <Icon type="navigate_next" />
                   </div>
                   <p
                     role="none"
-                    onClick={() => {
-                      this.setState({
-                        treeShow: true,
-                      });
-                    }}
+                    onClick={() => { TestPlanStore.setTreeShow(true); }}
                   >
                     <FormattedMessage id="testPlan_name" />
                   </p>
@@ -511,18 +495,14 @@ class TestPlanHome extends Component {
                 {treeShow && (
                   <PlanTree
                     ref={(tree) => { this.PlanTree = tree; }}
-                    onClose={() => {
-                      this.setState({
-                        treeShow: false,
-                      });
-                    }}
+                    onClose={() => { TestPlanStore.setTreeShow(false); }}
                   />
                 )}
               </div>
               {/* <Spin spinning={loading}> */}
               {key ? (
                 <div className="c7ntest-TestPlan-content-right">
-                  <EventCalendar showMode={calendarShowMode} times={times} onItemClick={this.onItemClick} />
+                  <EventCalendar key={currentCycle.cycleId} showMode={calendarShowMode} times={times} onItemClick={this.onItemClick} />
                   {calendarShowMode === 'single' && (
                     <div className="c7ntest-TestPlan-content-right-bottom">
                       <div style={{ display: 'flex', marginBottom: 20 }}>
@@ -531,7 +511,6 @@ class TestPlanHome extends Component {
                           request={getUsers}
                           onChange={(value) => {
                             TestPlanStore.setLastUpdatedBy(value);
-                            // this.lastUpdatedBy = value;
                             TestPlanStore.loadCycle();
                           }}
                         />
@@ -541,7 +520,6 @@ class TestPlanHome extends Component {
                             request={getUsers}
                             onChange={(value) => {
                               TestPlanStore.setAssignedTo(value);
-                              // this.assignedTo = value;
                               TestPlanStore.loadCycle();
                             }}
                           />
@@ -572,7 +550,6 @@ class TestPlanHome extends Component {
                   </div>
                 </div>
               )}
-
             </div>
           </Spin>
         </Content>

@@ -8,6 +8,7 @@ import './PlanTree.scss';
 import FileSaver from 'file-saver';
 import TestPlanStore from '../../../store/project/TestPlan/TestPlanStore';
 import CloneCycle from '../CloneCycle';
+import CloneStage from '../CloneStage';
 import {  
   clone, addFolder, exportCycle,
 } from '../../../api/cycleApi';
@@ -24,8 +25,10 @@ class PlanTree extends Component {
     searchValue: '',
     CreateStageIn: {},
     CreateStageVisible: false,
-    currentCloneCycle: null,
+    currentCloneCycle: null, 
     CloneCycleVisible: false,
+    currentCloneStage: null,
+    CloneStageVisible: false,
     EditCycleVisible: false,
     currentEditValue: {},
   }
@@ -67,8 +70,12 @@ class PlanTree extends Component {
   callback = (item, code) => {
     switch (code) {
       case 'CLONE_FOLDER': {
-        const parentKey = this.getParentKey(item.key, TestPlanStore.getTreeData);
-        TestPlanStore.addItemByParentKey(parentKey, { ...item, ...{ key: `${parentKey}-CLONE_FOLDER`, type: 'CLONE_FOLDER' } });
+        this.setState({
+          currentCloneStage: item,
+          CloneStageVisible: true,
+        });
+        // const parentKey = this.getParentKey(item.key, TestPlanStore.getTreeData);
+        // TestPlanStore.addItemByParentKey(parentKey, { ...item, ...{ key: `${parentKey}-CLONE_FOLDER`, type: 'CLONE_FOLDER' } });
         break;
       }
       case 'CLONE_CYCLE': {
@@ -127,24 +134,25 @@ class PlanTree extends Component {
         type={expandedKeys.includes(item.key) ? 'folder_open2' : 'folder_open'}
       />
     );
-    if (type === 'CLONE_FOLDER' || type === 'CLONE_CYCLE') {
-      return (
-        <TreeNode
-          title={(
-            <div onClick={e => e.stopPropagation()} role="none">
-              <Input
-                defaultValue={item.title}
-                autoFocus
-                onBlur={(e) => {
-                  this.Clone(item, e, type);
-                }}
-              />
-            </div>
-          )}
-          icon={icon}
-          data={item}
-        />);
-    } else if (type === 'ADD_FOLDER') {
+    // if (type === 'CLONE_FOLDER' || type === 'CLONE_CYCLE') {
+    //   return (
+    //     <TreeNode
+    //       title={(
+    //         <div onClick={e => e.stopPropagation()} role="none">
+    //           <Input
+    //             defaultValue={item.title}
+    //             autoFocus
+    //             onBlur={(e) => {
+    //               this.Clone(item, e, type);
+    //             }}
+    //           />
+    //         </div>
+    //       )}
+    //       icon={icon}
+    //       data={item}
+    //     />);
+    // } else 
+    if (type === 'ADD_FOLDER') {
       return (
         <TreeNode
           title={(
@@ -226,36 +234,37 @@ class PlanTree extends Component {
   }
 
 
-  Clone = (item, e, type) => {
-    const { value } = e.target;
-    // window.console.log(item, value);
-    // e.target.focus();
-    if (value === item.title) {
-      Choerodon.prompt('请更改名字');
-      TestPlanStore.removeAdding();
-    } else {
-      TestPlanStore.enterLoading();
-      clone(item.cycleId, { cycleName: value }, type).then((data) => {
-        TestPlanStore.leaveLoading();
-        if (data.failed) {
-          Choerodon.prompt('名字重复');
-          TestPlanStore.removeAdding();
-        } else {
-          this.refresh();
-        }
-      }).catch(() => {
-        Choerodon.prompt('网络出错');
-        TestPlanStore.leaveLoading();
-        TestPlanStore.removeAdding();
-      });
-    }
-  }
+  // Clone = (item, e, type) => {
+  //   const { value } = e.target;
+  //   // window.console.log(item, value);
+  //   // e.target.focus();
+  //   if (value === item.title) {
+  //     Choerodon.prompt('请更改名字');
+  //     TestPlanStore.removeAdding();
+  //   } else {
+  //     TestPlanStore.enterLoading();
+  //     clone(item.cycleId, { cycleName: value }, type).then((data) => {
+  //       TestPlanStore.leaveLoading();
+  //       if (data.failed) {
+  //         Choerodon.prompt('名字重复');
+  //         TestPlanStore.removeAdding();
+  //       } else {
+  //         this.refresh();
+  //       }
+  //     }).catch(() => {
+  //       Choerodon.prompt('网络出错');
+  //       TestPlanStore.leaveLoading();
+  //       TestPlanStore.removeAdding();
+  //     });
+  //   }
+  // }
 
   render() {
     const { onClose } = this.props;
     const {
       autoExpandParent, CreateStageVisible, CreateStageIn,
-      CloneCycleVisible, currentCloneCycle, EditCycleVisible, currentEditValue,
+      CloneCycleVisible, currentCloneCycle, CloneStageVisible, currentCloneStage, 
+      EditCycleVisible, currentEditValue,
     } = this.state;
     const treeData = TestPlanStore.getTreeData;
     const expandedKeys = TestPlanStore.getExpandedKeys;
@@ -269,7 +278,12 @@ class PlanTree extends Component {
           onCancel={() => { this.setState({ CloneCycleVisible: false }); }}
           onOk={() => { this.setState({ CloneCycleVisible: false }); this.refresh(); }}
         />
-
+        <CloneStage
+          visible={CloneStageVisible}
+          currentCloneStage={currentCloneStage}
+          onCancel={() => { this.setState({ CloneStageVisible: false }); }}
+          onOk={() => { this.setState({ CloneStageVisible: false }); this.refresh(); }}
+        />
         <CreateStage
           visible={CreateStageVisible}
           CreateStageIn={CreateStageIn}

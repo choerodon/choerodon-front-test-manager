@@ -30,7 +30,11 @@ class IssueStore {
 
   @observable selectedVersion = null;
 
-  @observable pagination = {};
+  @observable pagination = {
+    current: 1,
+    pageSize: 10,
+    total: 0,
+  };
 
   @observable filter = {
     advancedSearchArgs: {},
@@ -78,6 +82,7 @@ class IssueStore {
     });
     this.setFilter({
       advancedSearchArgs: {
+        
         // typeCode: ['issue_test'] 
       },
       searchArgs: {},
@@ -86,8 +91,9 @@ class IssueStore {
     // this.loadIssues();
   }
 
-  loadIssues = (page, size = 10) => {
-    page = isNaN(page) ? 0 : Math.max(page, 0);
+  loadIssues = (page, size = this.pagination.pageSize) => {
+    // console.log(page);
+    page = isNaN(page) ? this.pagination.current - 1 : Math.max(page, 0);
     this.setLoading(true);
     const { orderField, orderType } = this.order;
     const funcArr = [];
@@ -128,33 +134,7 @@ class IssueStore {
         funcArr.push(getSingleIssues(page, size, this.getFilter, orderField, orderType));
       }
     }
-    // console.log(type);
-    // 三种加载issue情况
-    // 1.选择文件夹
-    // if (IssueTreeStore.currentCycle.versionId) {
-    //   // 2.选择文件夹并不在第一页
-    //   const { versionId, cycleId } = IssueTreeStore.currentCycle;
-    //   if (page > 0) {
-    //     funcArr.push(getIssuesByIds(versionId, cycleId,
-    //       this.issueIds.slice(size * page, size * (page + 1))));
-    //   } else if (cycleId) {
-    //     funcArr.push(getIssuesByFolder(cycleId,
-    //       page, size, this.getFilter, orderField, orderType));
-    //   } else {
-    //     funcArr.push(getIssuesByVersion(versionId,
-    //       page, size, this.getFilter, orderField, orderType));
-    //   }
-    // } else if (this.issueIds.length > 0 && page > 0) {
-    //   // 3.直接调用敏捷接口
-    //   // funcArr.push(loadIssues(page, size, this.getFilter, orderField, orderType));
-    //   funcArr.push(getIssuesByIds(null, null,
-    //     this.issueIds.slice(size * page, size * (page + 1))));
-    // } else if (this.paramIssueId) {
-    //   // 地址栏有id的情况
-    //   funcArr.push(loadIssues(page, size, this.getFilter, orderField, orderType));
-    // } else {
-    //   funcArr.push(getAllIssues(page, size, this.getFilter, orderField, orderType));
-    // }
+
     return Promise.all(funcArr).then(([versions, prioritys, issueTypes, issueStatusList, res]) => {
       this.setVersions(versions);
       this.setPrioritys(prioritys);
@@ -181,19 +161,6 @@ class IssueStore {
           total: res.totalElements,
         });
       }
-      // if ((!IssueTreeStore.currentCycle.versionId && this.issueIds.length === 0) || page === 0) {
-      //   this.setPagination({
-      //     current: res.number + 1,
-      //     pageSize: size,
-      //     total: res.totalElements,
-      //   });
-      // } else {
-      //   this.setPagination({
-      //     current: page + 1,
-      //     pageSize: size,
-      //     total: this.pagination.total,
-      //   });
-      // }
 
       this.setLoading(false);
       return Promise.resolve(res);
@@ -236,7 +203,7 @@ class IssueStore {
     this.selectedVersion = selectedVersion;
   }
 
-  @action setPagination(data) {
+  @action setPagination(data) {  
     this.pagination = data;
   }
 
