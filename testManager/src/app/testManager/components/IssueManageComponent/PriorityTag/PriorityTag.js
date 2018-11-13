@@ -20,7 +20,7 @@ class PriorityTag extends Component {
           textAlign: 'center',
         }}
       >
-        { `${name}` }
+        { `${name || ''}` }
       </div>
     );
   }

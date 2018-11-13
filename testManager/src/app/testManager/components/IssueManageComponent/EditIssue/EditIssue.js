@@ -25,6 +25,7 @@ import Comment from './Component/Comment';
 import DataLogs from './Component/DataLogs';
 import LinkList from './Component/LinkList';
 import PriorityTag from '../PriorityTag';
+import StatusTag from '../StatusTag';
 import CopyIssue from '../CopyIssue';
 import TestStepTable from '../TestStepTable';
 import TestExecuteTable from '../TestExecuteTable';
@@ -37,6 +38,7 @@ const { confirm } = Modal;
 let sign = true;
 let filterSign = false;
 const { Text, Edit } = TextEditToggle;
+const StatusTagSimple = StatusTag.Simple;
 const navs = [
   { code: 'detail', tooltip: '详情', icon: 'error_outline' },
   { code: 'des', tooltip: '描述', icon: 'subject' },
@@ -47,6 +49,33 @@ const navs = [
   { code: 'data_log', tooltip: '活动日志', icon: 'insert_invitation' },
   { code: 'link_task', tooltip: '相关任务', icon: 'link' },
 ];
+const STATUS_ICON = {
+  done: {
+    icon: 'check_circle',
+    color: '#1bb06e',
+    bgColor: '',
+  },
+  todo: {
+    icon: 'watch_later',
+    color: '#4a93fc',
+    bgColor: '',
+  },
+  doing: {
+    icon: 'timelapse',
+    color: '#ffae02',
+    bgColor: '',
+  },
+};
+const ICON_COLOR = {
+  todo: 'rgba(255, 177, 0, 0.2)',
+  doing: 'rgba(77,144,254,0.2)',
+  done: 'rgba(0,191,165,0.2)',
+};
+const STATUS = {
+  todo: '#ffb100',
+  doing: '#4d90fe',
+  done: '#00bfa5',
+};
 class EditIssueNarrow extends Component {
   state = {
     // 子组件显示控制
@@ -662,18 +691,28 @@ class EditIssueNarrow extends Component {
    * @memberof EditIssueNarrow
    */
   renderSelectStatus = () => {
-    const { issueInfo, StatusList, selectLoading } = this.state;
+    const {
+      issueInfo, StatusList, selectLoading,  
+    } = this.state;
+    const { mode } = this.props;
     const { statusMapDTO } = issueInfo;
     const {
-      name: statusName, id: statusId, colour: statusColor, icon: statusIcon,
+      name: statusName, id: statusId, colour: statusColor, icon: statusIcon, type: statusCode,
     } = statusMapDTO || {};
-
+    const Tag = mode === 'narrow' ? StatusTag : StatusTagSimple;
     return (
       <TextEditToggle
         style={{ width: '100%' }}
         formKey="statusId"
         onSubmit={(value, done) => { this.editIssue({ statusId: value }, done); }}
-        originData={StatusList.length ? statusId : statusName}
+        originData={StatusList.length ? statusId : (
+          <Tag
+            status={{
+              statusCode,
+              statusName,
+            }}
+          />
+        )}
       >
         <Text>
           {(data) => {
@@ -682,16 +721,20 @@ class EditIssueNarrow extends Component {
               <div>
                 {
                   targetStatus ? (
-                    <div
-                      style={{
-                        color: targetStatus.statusDTO.colour || 'black',
-                        fontSize: '16px',
-                        lineHeight: '18px',
+                    <Tag
+                      status={{
+                        statusCode: targetStatus.statusDTO.type,
+                        statusName: targetStatus.statusDTO.name,
                       }}
-                    >
-                      {targetStatus.statusDTO.name}
-                    </div>
-                  ) : statusName
+                    />
+                  ) : (
+                    <Tag
+                      status={{
+                        statusCode,
+                        statusName,
+                      }}
+                    />                    
+                  )
                 }
               </div>
             );
@@ -707,7 +750,12 @@ class EditIssueNarrow extends Component {
             {
               StatusList.map(transform => (
                 <Option key={transform.id} value={transform.endStatusId}>
-                  {transform.statusDTO.name}
+                  <Tag
+                    status={{
+                      statusCode: transform.statusDTO.type,
+                      statusName: transform.statusDTO.name,
+                    }}
+                  />                  
                 </Option>
               ))
             }
@@ -739,7 +787,7 @@ class EditIssueNarrow extends Component {
         formKey="priorityId"
         onSubmit={(value, done) => { this.editIssue({ priorityId: value }, done); }}
         originData={priorityList.length
-          ? priorityId : priorityName}
+          ? priorityId : <PriorityTag priority={priorityDTO || {}} />}
       >
         <Text>
           {(data) => {
@@ -1028,7 +1076,7 @@ class EditIssueNarrow extends Component {
                 <User user={targetUser} />
               ) : '无';
             } else {
-              return data; 
+              return data;
             }
           }}
         </Text>
@@ -1083,6 +1131,7 @@ class EditIssueNarrow extends Component {
     } = issueInfo;
     const {
       name: statusName, id: statusId, colour: statusColor, icon: statusIcon,
+      type: statusCode,
     } = statusMapDTO || {};
     const { colour: priorityColor } = priorityDTO || {};
     const typeCode = issueTypeDTO ? issueTypeDTO.typeCode : '';
@@ -1214,7 +1263,7 @@ class EditIssueNarrow extends Component {
                           width: 30,
                           height: 30,
                           borderRadius: '50%',
-                          background: statusColor,
+                          background: STATUS[statusCode] ? `${STATUS[statusCode]}33` : '#ffae0233',
                           marginRight: 12,
                           flexShrink: 0,
                           display: 'flex',
@@ -1223,10 +1272,14 @@ class EditIssueNarrow extends Component {
                         }}
                       >
                         <Icon
-                          type={statusIcon}
+                          type={
+                            STATUS_ICON[statusCode]
+                              ? STATUS_ICON[statusCode].icon
+                              : 'timelapse'
+                          }
                           style={{
                             fontSize: '24px',
-                            color: statusColor || '#ffae02',
+                            color: STATUS[statusCode] || '#ffae02',
                           }}
                         />
                       </span>

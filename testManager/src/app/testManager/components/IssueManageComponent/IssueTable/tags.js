@@ -181,13 +181,14 @@ export function renderAssigned(assigneeId, assigneeName, imageUrl) {
   );
 }
 export function renderStatus(statusMapDTO) {
-  const { name: statusName, colour: statusColor } = statusMapDTO;
+  const { name: statusName, colour: statusColor, type: statusCode } = statusMapDTO;
   return (
     <div style={{ margin: '0 5px' }}>
       <Tooltip mouseEnterDelay={0.5} title={`任务状态： ${statusName}`}>
         <div>
           <StatusTag
             status={{
+              statusCode,
               statusColor,
               statusName,
             }}

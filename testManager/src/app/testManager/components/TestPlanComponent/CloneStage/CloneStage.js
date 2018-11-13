@@ -161,7 +161,7 @@ class CloneStage extends Component {
               })(
                 <Input
                   // style={{ width: 500, margin: '0 0 10px 0' }}
-                  label={<FormattedMessage id="cycle_cycleName" />}
+                  label={<FormattedMessage id="cycle_stageName" />}
                 />,
               )}
             </FormItem>
