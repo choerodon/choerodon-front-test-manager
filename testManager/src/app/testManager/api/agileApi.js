@@ -76,7 +76,15 @@ export function getIssueList(summary, type) {
  * @returns
  */
 export function getIssueCount(search) {
-  return getIssues(search);
+  return new Promise(((resolve) => {
+    getIssueTypes('test').then((types) => {
+      const advancedSearchArgs = {
+        issueTypeId: types.map(type => type.id),
+      };
+      const searchArgs = {};
+      resolve(getIssues({ advancedSearchArgs, searchArgs }));
+    });
+  }));
 }
 /**
  *获取当前项目的模块

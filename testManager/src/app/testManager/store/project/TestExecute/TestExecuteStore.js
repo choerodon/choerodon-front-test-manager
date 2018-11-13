@@ -9,7 +9,7 @@ const { AppState } = stores;
 class TestExecuteStore extends BaseTreeProto {
   @observable leftVisible = true;
 
-  @observable treeAssignedTo = AppState.userInfo.id;
+  @observable treeAssignedTo = 0;
 
   @action setLeftVisible(leftVisible) {
     this.leftVisible = leftVisible;

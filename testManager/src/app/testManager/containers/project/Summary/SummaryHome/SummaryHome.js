@@ -41,20 +41,9 @@ class SummaryHome extends Component {
   getInfo = () => {
     this.setState({ loading: true });
     const { date, range } = this.state;
-    Promise.all([getIssueCount({
-      advancedSearchArgs: {
-        // typeCode: [
-        //   'issue_test',
-        // ],
-        issueTypeId: [18],
-      },
-      otherArgs: {
-        // issueIds: ['13378'],
-        // version: [version.versionId],
-      },
-    }), getCaseNotPlain(), getCaseNotRun(), getCaseNum(),
-    getCycleRange(moment().format('YYYY-MM-DD'), range),
-    getCreateRange(range), getProjectVersion(), getModules(), getLabels()])
+    Promise.all([getIssueCount(), getCaseNotPlain(), getCaseNotRun(), getCaseNum(),
+      getCycleRange(moment().format('YYYY-MM-DD'), range),
+      getCreateRange(range), getProjectVersion(), getModules(), getLabels()])
       .then(([totalData, notPlan, notRun, caseNum, excuteList,
         createList, versionList, componentList, labelList]) => {
         this.setState({

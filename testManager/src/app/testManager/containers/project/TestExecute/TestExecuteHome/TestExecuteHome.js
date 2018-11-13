@@ -588,7 +588,7 @@ class TestExecuteHome extends Component {
             <Tooltip
               title={(
                 <div>
-                  <div>{issueInfosDTO.issueNum}</div>
+                  <div>{issueInfosDTO.issueName}</div>
                   <div>{issueInfosDTO.summary}</div>
                 </div>
               )}
@@ -601,7 +601,7 @@ class TestExecuteHome extends Component {
                 to={issueLink(issueInfosDTO.issueId, issueInfosDTO.typeCode)}
                 target="_blank"
               >
-                {issueInfosDTO.issueNum}
+                {issueInfosDTO.issueName}
               </Link>
             </Tooltip>
           )
@@ -671,7 +671,7 @@ class TestExecuteHome extends Component {
                       to={issueLink(defect.issueInfosDTO.issueId, defect.issueInfosDTO.typeCode)}
                       target="_blank"
                     >
-                      {defect.issueInfosDTO.issueNum}
+                      {defect.issueInfosDTO.issueName}
                     </Link>
                     <div>{defect.issueInfosDTO.summary}</div>
                   </div>
@@ -680,7 +680,7 @@ class TestExecuteHome extends Component {
             </div>
           )}
         >
-          {defects.map((defect, i) => defect.issueInfosDTO && defect.issueInfosDTO.issueNum).join(',')}
+          {defects.map((defect, i) => defect.issueInfosDTO && defect.issueInfosDTO.issueName).join(',')}
         </Tooltip>
       ),
     },

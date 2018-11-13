@@ -158,7 +158,11 @@ class CreateLinkTask extends Component {
         >
           <Form layout="vertical">
             <FormItem style={{ width: 520 }}>
-              {getFieldDecorator('linkTypeId', {})(
+              {getFieldDecorator('linkTypeId', {
+                rules: [{
+                  required: true, message: '请选择类型!',
+                }],
+              })(
                 <Select
                   label={<FormattedMessage id="issue_create_link_content_create_relation" />}
                   // labelInValue
@@ -174,7 +178,11 @@ class CreateLinkTask extends Component {
             </FormItem>
 
             <FormItem style={{ width: 520 }}>
-              {getFieldDecorator('issues', {})(
+              {getFieldDecorator('issues', {
+                rules: [{
+                  required: true, message: '请选择用例!',
+                }],  
+              })(
                 <Select
                   label={<FormattedMessage id="issue_create_link_content_create_question" />}
                   mode="multiple"
