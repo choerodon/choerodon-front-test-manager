@@ -31,6 +31,7 @@
         icon: baseline-list_alt
         Routes: /testManager/report
         sort: 5
+        delete: true
         permission:
           - 'test-manager-service.test-cycle.getTestCycle'
     - "status":
@@ -46,6 +47,18 @@
         delete: true
         permission:
           - 'test-manager-service.test-cycle.getTestCycle'
+
+"platform-reports":
+  icon: bar_chart
+  sort: 99
+  project:
+    - "testreport":
+        icon: baseline-list_alt
+        Routes: /testManager/report
+        sort: 5
+        permission:
+          - 'test-manager-service.test-cycle.getTestCycle'
+
     # - "createautotest":
     #     icon: note_add
     #     Routes: /testManager/AutoTest/create
