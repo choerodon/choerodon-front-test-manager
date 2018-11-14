@@ -80,15 +80,9 @@ class TestExecuteHome extends Component {
     currentCloneCycle: null,
     rightLoading: false, 
     testList: [],
-    // currentCycle: {},
     currentEditValue: {},
     autoExpandParent: true,
     searchValue: '',
-    executePagination: {
-      current: 1,
-      total: 0,
-      pageSize: 5,
-    },
     statusList: [],
     filters: {},
   };
@@ -114,7 +108,8 @@ class TestExecuteHome extends Component {
     if (selectedKeys) {
       TestExecuteStore.setSelectedKeys(selectedKeys);
     }
-    const { executePagination, filters } = this.state;
+    const { filters } = this.state;
+    const executePagination = TestExecuteStore.getExecutePagination;
     const data = node ? node.props.data : TestExecuteStore.getCurrentCycle;
     if (data.cycleId) {
       TestExecuteStore.setCurrentCycle(data);
@@ -135,19 +130,55 @@ class TestExecuteHome extends Component {
           lastUpdatedBy: [Number(this.lastUpdatedBy)],
           assignedTo: [treeAssignedTo || Number(this.assignedTo)],
         }, data.type).then((cycle) => {
+          TestExecuteStore.setExecutePagination({
+            current: 1,
+            pageSize: executePagination.pageSize,
+            total: cycle.totalElements,
+          });
           this.setState({
             rightLoading: false,
-            testList: cycle.content,
-            executePagination: {
-              current: 1,
-              pageSize: executePagination.pageSize,
-              total: cycle.totalElements,
-            },
+            testList: cycle.content,       
           });
           // window.console.log(cycle);
         });
       }
     }
+  }
+
+  /**
+   *右侧reload
+   *
+   * @memberof TestExecuteHome
+   */
+  reloadExecutes=() => {
+    const data = TestExecuteStore.getCurrentCycle;
+    const treeAssignedTo = TestExecuteStore.treeAssignedTo;
+    const executePagination = TestExecuteStore.getExecutePagination;
+    const { filters } = this.state;
+    this.setState({
+      rightLoading: true,
+    });
+  
+    getExecutesByCycleId({
+      page: executePagination.current - 1,
+      size: executePagination.pageSize,
+    }, data.cycleId,
+    {
+      ...filters,
+      lastUpdatedBy: [Number(this.lastUpdatedBy)],
+      assignedTo: [treeAssignedTo || Number(this.assignedTo)],
+    }, data.type).then((res) => {
+      TestExecuteStore.setExecutePagination({
+        current: res.number + 1,
+        pageSize: res.size,
+        total: res.totalElements,
+      });
+      this.setState({
+        rightLoading: false,
+        testList: res.content,    
+      });
+    // window.console.log(cycle);
+    });
   }
 
   generateList = (data) => {
@@ -176,7 +207,7 @@ class TestExecuteHome extends Component {
 
   deleteExecute = (record) => {
     const { executeId, cycleId } = record;
-    const { executePagination } = this.state;
+    const executePagination = TestExecuteStore.getExecutePagination;
     confirm({
       width: 560,
       title: Choerodon.getMessage('确认删除吗?', 'Confirm delete'),
@@ -262,20 +293,21 @@ class TestExecuteHome extends Component {
         autoExpandParent: true,
         rightLoading: true,
       });
-      const { executePagination } = this.state;
+      const executePagination = TestExecuteStore.getExecutePagination;
       getExecutesByCycleId({
         page: executePagination.current - 1,
         size: executePagination.pageSize,
       }, defaultExpandKeyItem.cycleId,
       {}, defaultExpandKeyItem.type).then((cycle) => {
+        TestExecuteStore.setExecutePagination({
+          current: executePagination.current,
+          pageSize: executePagination.pageSize,
+          total: cycle.totalElements,
+        });
         this.setState({
           rightLoading: false,
           testList: cycle.content,
-          executePagination: {
-            current: executePagination.current,
-            pageSize: executePagination.pageSize,
-            total: cycle.totalElements,
-          },
+   
         });
         // window.console.log(cycle);
       });
@@ -396,9 +428,9 @@ class TestExecuteHome extends Component {
   handleExecuteTableChange = (pagination, filters, sorter) => {
     // window.console.log(pagination, filters, sorter);
     if (pagination.current) {
+      TestExecuteStore.setExecutePagination(pagination);
       this.setState({
-        rightLoading: true,
-        executePagination: pagination,
+        rightLoading: true,       
         filters,
       });
       const currentCycle = TestExecuteStore.getCurrentCycle;
@@ -411,14 +443,14 @@ class TestExecuteHome extends Component {
         lastUpdatedBy: [Number(this.lastUpdatedBy)],
         assignedTo: [Number(this.assignedTo)],
       }, currentCycle.type).then((cycle) => {
+        TestExecuteStore.setExecutePagination({
+          current: pagination.current,
+          pageSize: pagination.pageSize,
+          total: cycle.totalElements,
+        });
         this.setState({
           rightLoading: false,
-          testList: cycle.content,
-          executePagination: {
-            current: pagination.current,
-            pageSize: pagination.pageSize,
-            total: cycle.totalElements,
-          },
+          testList: cycle.content,       
         });
         // window.console.log(cycle);
       });
@@ -529,13 +561,13 @@ class TestExecuteHome extends Component {
       delete cycleData.nextRank;
       cycleData.assignedTo = cycleData.assignedTo || 0;
       this.setState({
-        loading: true,
+        rightLoading: true,
       });
       editCycle(cycleData).then((Data) => {
-        this.refresh();
+        this.reloadExecutes();
       }).catch((error) => {
         this.setState({
-          loading: false,
+          rightLoading: false,
         });
         Choerodon.prompt('网络错误');
       });
@@ -561,9 +593,7 @@ class TestExecuteHome extends Component {
     const {
       CreateExecuteDetailVisible, CreateCycleVisible, EditCycleVisible, CloneCycleVisible,
       currentCloneCycle, loading, currentEditValue, testList, rightLoading,
-      searchValue, autoExpandParent,
-      executePagination,
-      statusList,
+      searchValue, autoExpandParent, statusList,
     } = this.state;
     const treeData = TestExecuteStore.getTreeData;
     const expandedKeys = TestExecuteStore.getExpandedKeys;
@@ -571,6 +601,7 @@ class TestExecuteHome extends Component {
     const currentCycle = TestExecuteStore.getCurrentCycle;
     const leftVisible = TestExecuteStore.leftVisible;
     const treeAssignedTo = TestExecuteStore.treeAssignedTo;
+    const executePagination = TestExecuteStore.getExecutePagination;
     const { cycleId, title, type } = currentCycle;
     const prefix = <Icon type="filter_list" />;
     const columns = [{

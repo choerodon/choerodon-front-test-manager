@@ -5,7 +5,6 @@ import {
   Modal, Progress, Table, Button, Icon, Tooltip,
 } from 'choerodon-ui';
 import _ from 'lodash';
-import FileSaver from 'file-saver';
 import moment from 'moment';
 import { SelectVersion, SelectFolder, SimpleSelect } from '../../CommonComponent';
 import {
@@ -96,7 +95,7 @@ class ExportSide extends Component {
   }
 
   handleMessage = (data) => {
-    console.log(data);
+    // console.log(data);
     const exportList = [...this.state.exportList];
     const { id, rate } = data;
     const index = _.findIndex(exportList, { id });
