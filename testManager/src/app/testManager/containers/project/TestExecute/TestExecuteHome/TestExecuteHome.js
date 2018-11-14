@@ -639,6 +639,35 @@ class TestExecuteHome extends Component {
         );
       },
     }, {
+      title: '用例描述',
+      dataIndex: 'summary',
+      key: 'summary',
+      flex: 1,
+      // filters: [],
+      // onFilter: (value, record) => 
+      //   record.issueInfosDTO && record.issueInfosDTO.issueName.indexOf(value) === 0,  
+      render(issueId, record) {
+        const { issueInfosDTO } = record;
+        return (
+          issueInfosDTO && (
+            <Tooltip
+              title={(              
+                <div>{issueInfosDTO.summary}</div>          
+              )}
+            >
+              <span
+                className="c7ntest-text-dot"
+                style={{
+                  width: 100,
+                }}
+              >
+                {issueInfosDTO.summary}
+              </span>
+            </Tooltip>
+          )
+        );
+      },
+    }, {
       title: <FormattedMessage id="status" />,
       dataIndex: 'executionStatus',
       key: 'executionStatus',
@@ -662,7 +691,7 @@ class TestExecuteHome extends Component {
         );
       },
     }, {
-      title: <FormattedMessage id="cycle_comment" />,
+      title: '执行描述',
       dataIndex: 'comment',
       key: 'comment',
       filters: [],
