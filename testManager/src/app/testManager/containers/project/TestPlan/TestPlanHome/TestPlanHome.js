@@ -201,7 +201,7 @@ class TestPlanHome extends Component {
               title={(
                 <div>
                   <div>{issueInfosDTO.issueName}</div>
-                  <div>{issueInfosDTO.summary}</div>
+                  {/* <div>{issueInfosDTO.summary}</div> */}
                 </div>
               )}
             >
@@ -220,7 +220,7 @@ class TestPlanHome extends Component {
         );
       },
     }, {
-      title: '用例描述',
+      title: '用例名',
       dataIndex: 'summary',
       key: 'summary',
       flex: 2,

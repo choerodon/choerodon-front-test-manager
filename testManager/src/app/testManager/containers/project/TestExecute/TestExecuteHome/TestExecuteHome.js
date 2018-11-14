@@ -78,7 +78,7 @@ class TestExecuteHome extends Component {
     EditCycleVisible: false,
     CloneCycleVisible: false,
     currentCloneCycle: null,
-    rightLoading: false, 
+    rightLoading: false,
     testList: [],
     currentEditValue: {},
     autoExpandParent: true,
@@ -112,6 +112,10 @@ class TestExecuteHome extends Component {
     const executePagination = TestExecuteStore.getExecutePagination;
     const data = node ? node.props.data : TestExecuteStore.getCurrentCycle;
     if (data.cycleId) {
+      // 切换时，将分页回到第一页
+      if (data.cycleId !== TestExecuteStore.getCurrentCycle.cycleId) {
+        TestExecuteStore.setExecutePagination({ current: 1 });
+      }
       TestExecuteStore.setCurrentCycle(data);
       // window.console.log(data);
       if (data.type === 'folder' || data.type === 'cycle') {
@@ -121,28 +125,16 @@ class TestExecuteHome extends Component {
             // currentCycle: data,
           });
         }
-        getExecutesByCycleId({
-          page: 0,
-          size: executePagination.pageSize,
-        }, data.cycleId,
-        {
-          ...filters,
-          lastUpdatedBy: [Number(this.lastUpdatedBy)],
-          assignedTo: [treeAssignedTo || Number(this.assignedTo)],
-        }, data.type).then((cycle) => {
-          TestExecuteStore.setExecutePagination({
-            current: cycle.number + 1,
-            pageSize: executePagination.pageSize,
-            total: cycle.totalElements,
-          });
-          this.setState({
-            rightLoading: false,
-            testList: cycle.content,       
-          });
-          // window.console.log(cycle);
-        });
+        this.loadExecutes(data);
       }
     }
+  }
+
+  reloadExecutes = () => {
+    this.setState({
+      rightLoading: true,
+    });
+    this.loadExecutes();
   }
 
   /**
@@ -150,24 +142,27 @@ class TestExecuteHome extends Component {
    *
    * @memberof TestExecuteHome
    */
-  reloadExecutes=() => {
-    const data = TestExecuteStore.getCurrentCycle;
+  loadExecutes = () => {
+    const currentCycle = TestExecuteStore.getCurrentCycle;
+    const { cycleId, type } = currentCycle;
     const treeAssignedTo = TestExecuteStore.treeAssignedTo;
     const executePagination = TestExecuteStore.getExecutePagination;
     const { filters } = this.state;
-    this.setState({
-      rightLoading: true,
-    });
-  
+    const targetPage = executePagination.current - 1;
+
+    // this.setState({
+    //   rightLoading: true,
+    // });
+
     getExecutesByCycleId({
-      page: executePagination.current - 1,
+      page: targetPage,
       size: executePagination.pageSize,
-    }, data.cycleId,
+    }, cycleId,
     {
       ...filters,
       lastUpdatedBy: [Number(this.lastUpdatedBy)],
       assignedTo: [treeAssignedTo || Number(this.assignedTo)],
-    }, data.type).then((res) => {
+    }, type).then((res) => {
       TestExecuteStore.setExecutePagination({
         current: res.number + 1,
         pageSize: res.size,
@@ -175,9 +170,9 @@ class TestExecuteHome extends Component {
       });
       this.setState({
         rightLoading: false,
-        testList: res.content,    
+        testList: res.content,
       });
-    // window.console.log(cycle);
+      // window.console.log(cycle);
     });
   }
 
@@ -293,24 +288,24 @@ class TestExecuteHome extends Component {
         autoExpandParent: true,
         rightLoading: true,
       });
-      const executePagination = TestExecuteStore.getExecutePagination;
-      getExecutesByCycleId({
-        page: executePagination.current - 1,
-        size: executePagination.pageSize,
-      }, defaultExpandKeyItem.cycleId,
-      {}, defaultExpandKeyItem.type).then((cycle) => {
-        TestExecuteStore.setExecutePagination({
-          current: cycle.number + 1,
-          pageSize: executePagination.pageSize,
-          total: cycle.totalElements,
-        });
-        this.setState({
-          rightLoading: false,
-          testList: cycle.content,
-   
-        });
-        // window.console.log(cycle);
-      });
+      this.loadExecutes();
+      // const executePagination = TestExecuteStore.getExecutePagination;
+      // getExecutesByCycleId({
+      //   page: executePagination.current - 1,
+      //   size: executePagination.pageSize,
+      // }, defaultExpandKeyItem.cycleId,
+      // {}, defaultExpandKeyItem.type).then((cycle) => {
+      //   TestExecuteStore.setExecutePagination({
+      //     current: cycle.number + 1,
+      //     pageSize: executePagination.pageSize,
+      //     total: cycle.totalElements,
+      //   });
+      //   this.setState({
+      //     rightLoading: false,
+      //     testList: cycle.content,
+      //   });
+      //   // window.console.log(cycle);
+      // });
     }
   }
 
@@ -426,35 +421,13 @@ class TestExecuteHome extends Component {
   }
 
   handleExecuteTableChange = (pagination, filters, sorter) => {
-    // window.console.log(pagination, filters, sorter);
-    if (pagination.current) {
-      TestExecuteStore.setExecutePagination(pagination);
-      this.setState({
-        rightLoading: true,       
-        filters,
-      });
-      const currentCycle = TestExecuteStore.getCurrentCycle;
-      getExecutesByCycleId({
-        size: pagination.pageSize,
-        page: pagination.current - 1,
-      }, currentCycle.cycleId,
-      {
-        ...filters,
-        lastUpdatedBy: [Number(this.lastUpdatedBy)],
-        assignedTo: [Number(this.assignedTo)],
-      }, currentCycle.type).then((cycle) => {
-        TestExecuteStore.setExecutePagination({
-          current: cycle.number + 1,
-          pageSize: pagination.pageSize,
-          total: cycle.totalElements,
-        });
-        this.setState({
-          rightLoading: false,
-          testList: cycle.content,       
-        });
-        // window.console.log(cycle);
-      });
-    }
+    TestExecuteStore.setExecutePagination(pagination);
+    this.setState({
+      rightLoading: true,
+      filters,
+    }, () => {
+      this.loadExecutes();
+    });
   }
 
   renderTreeNodes = data => data.map((item) => {
@@ -620,7 +593,7 @@ class TestExecuteHome extends Component {
               title={(
                 <div>
                   <div>{issueInfosDTO.issueName}</div>
-                  <div>{issueInfosDTO.summary}</div>
+                  {/* <div>{issueInfosDTO.summary}</div> */}
                 </div>
               )}
             >
@@ -639,7 +612,7 @@ class TestExecuteHome extends Component {
         );
       },
     }, {
-      title: '用例描述',
+      title: '用例名',
       dataIndex: 'summary',
       key: 'summary',
       width: '20%',
@@ -652,8 +625,8 @@ class TestExecuteHome extends Component {
           issueInfosDTO && (
             <Tooltip
               placement="topLeft"
-              title={(              
-                <div>{issueInfosDTO.summary}</div>          
+              title={(
+                <div>{issueInfosDTO.summary}</div>
               )}
             >
               <span
@@ -797,7 +770,7 @@ class TestExecuteHome extends Component {
         && (
           <div style={{ display: 'flex' }}>
             <Tooltip title={<FormattedMessage id="execute_quickPass" />}>
-              <Button shape="circle" funcType="flat" icon="pass" onClick={this.quickPass.bind(this, record)} />              
+              <Button shape="circle" funcType="flat" icon="pass" onClick={this.quickPass.bind(this, record)} />
             </Tooltip>
             <Tooltip title="跳转至执行详情">
               <Button
@@ -809,7 +782,7 @@ class TestExecuteHome extends Component {
                   const { history } = this.props;
                   history.push(executeDetailLink(record.executeId));
                 }}
-              />   
+              />
             </Tooltip>
             {/* <Icon
               type="delete_forever"
@@ -965,7 +938,7 @@ class TestExecuteHome extends Component {
                     role="none"
                     className="c7ntest-TestExecuteHome-button"
                     onClick={() => {
-                      TestExecuteStore.setLeftVisible(true);                 
+                      TestExecuteStore.setLeftVisible(true);
                     }}
                   >
                     <Icon type="navigate_next" />
@@ -976,7 +949,7 @@ class TestExecuteHome extends Component {
                     <p
                       role="none"
                       onClick={() => {
-                        TestExecuteStore.setLeftVisible(true);                 
+                        TestExecuteStore.setLeftVisible(true);
                       }}
                     >
                       <FormattedMessage id="cycle_name" />
@@ -988,7 +961,7 @@ class TestExecuteHome extends Component {
                 <RadioButton
                   style={{ marginBottom: 20 }}
                   onChange={this.handleTreeAssignedToChange}
-                  value={treeAssignedTo === 0 ? 'all' : 'my'}             
+                  value={treeAssignedTo === 0 ? 'all' : 'my'}
                   data={[{
                     value: 'my',
                     text: 'cycle_my',
@@ -1006,7 +979,7 @@ class TestExecuteHome extends Component {
                       role="none"
                       className="c7ntest-TestExecuteHome-button"
                       onClick={() => {
-                        TestExecuteStore.setLeftVisible(false);                    
+                        TestExecuteStore.setLeftVisible(false);
                       }}
                     >
                       <Icon type="navigate_before" />
@@ -1078,9 +1051,9 @@ class TestExecuteHome extends Component {
                 >
                   <img src={noRight} alt="" />
                   <div style={{ marginLeft: 40 }}>
-                    <div style={{ fontSize: '14px', color: 'rgba(0,0,0,0.65)' }}>根据当前选定的测试循环没有查询到循环信息</div>
-                    <div style={{ fontSize: '20px', marginTop: 10 }}>尝试在您的树状图中选择测试循环</div>
-                  </div>
+                      <div style={{ fontSize: '14px', color: 'rgba(0,0,0,0.65)' }}>根据当前选定的测试循环没有查询到循环信息</div>
+                      <div style={{ fontSize: '20px', marginTop: 10 }}>尝试在您的树状图中选择测试循环</div>
+                    </div>
                 </div>
               )}
             </div>

@@ -22,7 +22,7 @@ class TestExecuteStore extends BaseTreeProto {
   }
 
   @action setExecutePagination(executePagination) {
-    this.executePagination = executePagination;
+    this.executePagination = { ...this.executePagination, ...executePagination };
   }
 
   @action setTreeAssignedTo(treeAssignedTo) {

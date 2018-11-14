@@ -19,6 +19,8 @@ class BaseTreeProto {
 
   @observable currentCycle = {};
 
+  @observable preCycle = {};
+
 
   @computed get getTreeData() {
     return toJS(this.treeData);
@@ -34,6 +36,10 @@ class BaseTreeProto {
 
   @computed get getCurrentCycle() {
     return toJS(this.currentCycle);
+  }
+
+  @computed get getPreCycle() {
+    return toJS(this.preCycle);
   }
 
   getItemByKey(key) {
@@ -64,7 +70,12 @@ class BaseTreeProto {
   }
 
   @action setCurrentCycle(currentCycle) {
+    this.setPreCycle({ ...this.currentCycle });
     this.currentCycle = currentCycle;
+  }
+  
+  @action setPreCycle(preCycle) {
+    this.preCycle = preCycle;
   }
 
   @action removeAdding = () => {
