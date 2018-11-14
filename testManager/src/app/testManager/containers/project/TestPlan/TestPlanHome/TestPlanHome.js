@@ -82,7 +82,7 @@ class TestPlanHome extends Component {
         TestPlanStore.rightLeaveLoading();
         TestPlanStore.setTestList(cycle.content);
         TestPlanStore.setExecutePagination({
-          current: pagination.current,
+          current: cycle.number + 1,
           pageSize: pagination.pageSize,
           total: cycle.totalElements,
         });
@@ -126,7 +126,7 @@ class TestPlanHome extends Component {
         TestPlanStore.rightLeaveLoading();
         TestPlanStore.setTestList(cycle.content);
         TestPlanStore.setExecutePagination({
-          current: executePagination.current,
+          current: cycle.number + 1,
           pageSize: executePagination.pageSize,
           total: cycle.totalElements,
         });
@@ -157,7 +157,7 @@ class TestPlanHome extends Component {
               TestPlanStore.rightLeaveLoading();
               TestPlanStore.setTestList(cycle.content);
               TestPlanStore.setExecutePagination({
-                current: executePagination.current,
+                current: cycle.number + 1,
                 pageSize: executePagination.pageSize,
                 total: cycle.totalElements,
               });

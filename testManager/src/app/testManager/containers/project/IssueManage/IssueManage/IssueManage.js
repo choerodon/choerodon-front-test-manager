@@ -76,14 +76,13 @@ class Test extends Component {
     } else if (paramIssueId) {
       IssueStore.setBarFilters(arr);
       IssueStore.init();
-      IssueStore.loadIssues()
-        .then((res) => {
-          window.console.log(res);
-          this.setState({
-            selectedIssue: res.content.length ? res.content[0] : {},
-            expand: true,
-          });
+      IssueStore.loadIssues().then((res) => {
+        window.console.log(res);
+        this.setState({
+          selectedIssue: res.content.length ? res.content[0] : {},
+          expand: true,
         });
+      });
     } else {
       IssueStore.setBarFilters(arr);
       IssueStore.init();

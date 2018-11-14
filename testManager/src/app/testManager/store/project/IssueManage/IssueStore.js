@@ -97,79 +97,81 @@ class IssueStore {
     page = isNaN(page) ? this.pagination.current - 1 : Math.max(page, 0);
     this.setLoading(true);
     const { orderField, orderType } = this.order;
-    getIssueTypes().then((issueTypes) => {
-      this.setIssueTypes(issueTypes);
-      this.setFilter({
-        advancedSearchArgs: {
-          issueTypeId: issueTypes.map(type => type.id),   
-        },
-        searchArgs: {},
-      });
-      const funcArr = [];
-      funcArr.push(getProjectVersion());
-      funcArr.push(getPrioritys());
-      funcArr.push(getIssueStatus());
-      const currentCycle = IssueTreeStore.currentCycle;
-      const types = ['all', 'topversion', 'version', 'folder'];
-      const type = currentCycle.key ? types[currentCycle.key.split('-').length - 1] : 'allissue';
-      const { versionId, cycleId, children } = currentCycle;
-      // 不是第一页情况
-      if (page > 0) {
-      // 调用
-        funcArr.push(getIssuesByIds(versionId, cycleId,
-          this.issueIds.slice(size * page, size * (page + 1))));
-      } else {
-      // 第一页 五种情况
-      // 1.加载全部数据
-        if (type === 'all' || type === 'allissue' && !this.paramIssueId) {
-          funcArr.push(getAllIssues(page, size, this.getFilter, orderField, orderType));
-        } else if (type === 'topversion') {
-        // 2.加载某一类versions
-          const versions = children.map(child => child.versionId);
-          // console.log(versions);
-          funcArr.push(getIssuesByVersion(versions,
-            page, size, this.getFilter, orderField, orderType));
-        } else if (type === 'version') {
-        // 3.加载单个version
-          funcArr.push(getIssuesByVersion([versionId],
-            page, size, this.getFilter, orderField, orderType));
-        } else if (type === 'folder') {
-        // 4.加载单个folder
-          funcArr.push(getIssuesByFolder(cycleId,
-            page, size, this.getFilter, orderField, orderType));
-        } else if (this.paramIssueId) {
-        // 5.地址栏有url 调用只取这一个issue的方法 这个要放最后
-          funcArr.push(getSingleIssues(page, size, this.getFilter, orderField, orderType));
-        }
-      }
-
-      Promise.all(funcArr).then(([versions, prioritys, issueStatusList, res]) => {
-        this.setVersions(versions);
-        this.setPrioritys(prioritys);      
-        this.setIssueStatusList(issueStatusList);
-        if (versions && versions.length > 0) {
-          this.selectVersion(versions[0].versionId);
-        }
-        this.setIssues(res.content);
-        if (page === 0) {
-          this.setIssueIds(res.allIdValues || []);
-        }
-        // 调用ids接口不返回总数
+    return new Promise((resolve) => {
+      getIssueTypes().then((issueTypes) => {
+        this.setIssueTypes(issueTypes);
+        this.setFilter({
+          advancedSearchArgs: {
+            issueTypeId: issueTypes.map(type => type.id),   
+          },
+          searchArgs: {},
+        });
+        const funcArr = [];
+        funcArr.push(getProjectVersion());
+        funcArr.push(getPrioritys());
+        funcArr.push(getIssueStatus());
+        const currentCycle = IssueTreeStore.currentCycle;
+        const types = ['all', 'topversion', 'version', 'folder'];
+        const type = currentCycle.key ? types[currentCycle.key.split('-').length - 1] : 'allissue';
+        const { versionId, cycleId, children } = currentCycle;
+        // 不是第一页情况
         if (page > 0) {
-          this.setPagination({
-            current: page + 1,
-            pageSize: size,
-            total: this.pagination.total,
-          });
+        // 调用
+          funcArr.push(getIssuesByIds(versionId, cycleId,
+            this.issueIds.slice(size * page, size * (page + 1))));
         } else {
-          this.setPagination({
-            current: res.number + 1,
-            pageSize: size,
-            total: res.totalElements,
-          });
+        // 第一页 五种情况
+        // 1.加载全部数据
+          if (type === 'all' || type === 'allissue' && !this.paramIssueId) {
+            funcArr.push(getAllIssues(page, size, this.getFilter, orderField, orderType));
+          } else if (type === 'topversion') {
+          // 2.加载某一类versions
+            const versions = children.map(child => child.versionId);
+            // console.log(versions);
+            funcArr.push(getIssuesByVersion(versions,
+              page, size, this.getFilter, orderField, orderType));
+          } else if (type === 'version') {
+          // 3.加载单个version
+            funcArr.push(getIssuesByVersion([versionId],
+              page, size, this.getFilter, orderField, orderType));
+          } else if (type === 'folder') {
+          // 4.加载单个folder
+            funcArr.push(getIssuesByFolder(cycleId,
+              page, size, this.getFilter, orderField, orderType));
+          } else if (this.paramIssueId) {
+          // 5.地址栏有url 调用只取这一个issue的方法 这个要放最后
+            funcArr.push(getSingleIssues(page, size, this.getFilter, orderField, orderType));
+          }
         }
-
-        this.setLoading(false);      
+  
+        Promise.all(funcArr).then(([versions, prioritys, issueStatusList, res]) => {
+          this.setVersions(versions);
+          this.setPrioritys(prioritys);      
+          this.setIssueStatusList(issueStatusList);
+          if (versions && versions.length > 0) {
+            this.selectVersion(versions[0].versionId);
+          }
+          this.setIssues(res.content);
+          if (page === 0) {
+            this.setIssueIds(res.allIdValues || []);
+          }
+          // 调用ids接口不返回总数
+          if (page > 0) {
+            this.setPagination({
+              current: page + 1,
+              pageSize: size,
+              total: this.pagination.total,
+            });
+          } else {
+            this.setPagination({
+              current: res.number + 1,
+              pageSize: size,
+              total: res.totalElements,
+            });
+          }
+          resolve(res);
+          this.setLoading(false);      
+        });
       });
     });
   }

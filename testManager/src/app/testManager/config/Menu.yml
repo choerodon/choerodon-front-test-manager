@@ -21,7 +21,7 @@
         permission:
           - 'test-manager-service.test-cycle.getTestCycle'
     - "TestExecute":
-        icon: test_execution
+        icon: test_execute
         Routes: /testManager/TestExecute
         sort: 4
         permission:

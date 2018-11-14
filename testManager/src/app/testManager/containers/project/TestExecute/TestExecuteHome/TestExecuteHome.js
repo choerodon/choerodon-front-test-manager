@@ -131,7 +131,7 @@ class TestExecuteHome extends Component {
           assignedTo: [treeAssignedTo || Number(this.assignedTo)],
         }, data.type).then((cycle) => {
           TestExecuteStore.setExecutePagination({
-            current: 1,
+            current: cycle.number + 1,
             pageSize: executePagination.pageSize,
             total: cycle.totalElements,
           });
@@ -300,7 +300,7 @@ class TestExecuteHome extends Component {
       }, defaultExpandKeyItem.cycleId,
       {}, defaultExpandKeyItem.type).then((cycle) => {
         TestExecuteStore.setExecutePagination({
-          current: executePagination.current,
+          current: cycle.number + 1,
           pageSize: executePagination.pageSize,
           total: cycle.totalElements,
         });
@@ -444,7 +444,7 @@ class TestExecuteHome extends Component {
         assignedTo: [Number(this.assignedTo)],
       }, currentCycle.type).then((cycle) => {
         TestExecuteStore.setExecutePagination({
-          current: pagination.current,
+          current: cycle.number + 1,
           pageSize: pagination.pageSize,
           total: cycle.totalElements,
         });
