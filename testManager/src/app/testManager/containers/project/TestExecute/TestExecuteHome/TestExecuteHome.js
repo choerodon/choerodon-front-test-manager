@@ -642,7 +642,7 @@ class TestExecuteHome extends Component {
       title: '用例描述',
       dataIndex: 'summary',
       key: 'summary',
-      flex: 1,
+      width: '20%',
       // filters: [],
       // onFilter: (value, record) => 
       //   record.issueInfosDTO && record.issueInfosDTO.issueName.indexOf(value) === 0,  
@@ -651,6 +651,7 @@ class TestExecuteHome extends Component {
         return (
           issueInfosDTO && (
             <Tooltip
+              placement="topLeft"
               title={(              
                 <div>{issueInfosDTO.summary}</div>          
               )}
@@ -822,85 +823,85 @@ class TestExecuteHome extends Component {
       ),
     }];
     const otherColumns = [
-      {
-        title: <FormattedMessage id="cycle_createExecute_component" />,
-        dataIndex: 'issueInfosDTO',
-        key: 'component',
-        render(issueInfosDTO) {
-          if (!issueInfosDTO) {
-            return null;
-          }
-          const { componentIssueRelDTOList } = issueInfosDTO;
-          return (
-            <Tooltip
-              placement="topLeft"
-              title={(
-                <div>
-                  {componentIssueRelDTOList && componentIssueRelDTOList.map((component, i) => (
-                    <div>
-                      {component.name}
-                    </div>
-                  ))}
-                </div>
-              )}
-            >
-              {componentIssueRelDTOList && componentIssueRelDTOList.map((component, i) => component.name).join(',')}
-            </Tooltip>
-          );
-        },
-      },
-      {
-        title: <FormattedMessage id="cycle_createExecute_label" />,
-        dataIndex: 'issueInfosDTO',
-        key: 'statusName',
-        render(issueInfosDTO) {
-          if (!issueInfosDTO) {
-            return null;
-          }
-          const { labelIssueRelDTOList } = issueInfosDTO;
-          return (
-            <Tooltip
-              placement="topLeft"
-              title={(
-                <div>
-                  {labelIssueRelDTOList && labelIssueRelDTOList.map((label, i) => (
-                    <div>
-                      {label.labelName}
-                    </div>
-                  ))}
-                </div>
-              )}
-            >
-              <div style={{
-                display: 'flex', flexFlow: 'row wrap', width: '100%', justifyContent: 'space-between', alignItems: 'center', maxHeight: 24, overflow: 'hidden',
-              }}
-              >
-                {labelIssueRelDTOList && labelIssueRelDTOList.map((label, i) => (
-                  <div
-                    style={{
-                      flexShrink: 0,
-                      width: '48%',
-                      color: '#000',
-                      borderRadius: '100px',
-                      fontSize: '13px',
-                      lineHeight: '20px',
-                      padding: '2px 5px',
-                      textAlign: 'center',
-                      background: 'rgba(0, 0, 0, 0.08)',
-                      // margin: '0 5px',
-                      // marginBottom: 3,
-                    }}
-                    className="c7ntest-text-dot"
-                  >
-                    {label.labelName}
-                  </div>
-                ))}
-              </div>
+      // {
+      //   title: <FormattedMessage id="cycle_createExecute_component" />,
+      //   dataIndex: 'issueInfosDTO',
+      //   key: 'component',
+      //   render(issueInfosDTO) {
+      //     if (!issueInfosDTO) {
+      //       return null;
+      //     }
+      //     const { componentIssueRelDTOList } = issueInfosDTO;
+      //     return (
+      //       <Tooltip
+      //         placement="topLeft"
+      //         title={(
+      //           <div>
+      //             {componentIssueRelDTOList && componentIssueRelDTOList.map((component, i) => (
+      //               <div>
+      //                 {component.name}
+      //               </div>
+      //             ))}
+      //           </div>
+      //         )}
+      //       >
+      //         {componentIssueRelDTOList && componentIssueRelDTOList.map((component, i) => component.name).join(',')}
+      //       </Tooltip>
+      //     );
+      //   },
+      // },
+      // {
+      //   title: <FormattedMessage id="cycle_createExecute_label" />,
+      //   dataIndex: 'issueInfosDTO',
+      //   key: 'statusName',
+      //   render(issueInfosDTO) {
+      //     if (!issueInfosDTO) {
+      //       return null;
+      //     }
+      //     const { labelIssueRelDTOList } = issueInfosDTO;
+      //     return (
+      //       <Tooltip
+      //         placement="topLeft"
+      //         title={(
+      //           <div>
+      //             {labelIssueRelDTOList && labelIssueRelDTOList.map((label, i) => (
+      //               <div>
+      //                 {label.labelName}
+      //               </div>
+      //             ))}
+      //           </div>
+      //         )}
+      //       >
+      //         <div style={{
+      //           display: 'flex', flexFlow: 'row wrap', width: '100%', justifyContent: 'space-between', alignItems: 'center', maxHeight: 24, overflow: 'hidden',
+      //         }}
+      //         >
+      //           {labelIssueRelDTOList && labelIssueRelDTOList.map((label, i) => (
+      //             <div
+      //               style={{
+      //                 flexShrink: 0,
+      //                 width: '48%',
+      //                 color: '#000',
+      //                 borderRadius: '100px',
+      //                 fontSize: '13px',
+      //                 lineHeight: '20px',
+      //                 padding: '2px 5px',
+      //                 textAlign: 'center',
+      //                 background: 'rgba(0, 0, 0, 0.08)',
+      //                 // margin: '0 5px',
+      //                 // marginBottom: 3,
+      //               }}
+      //               className="c7ntest-text-dot"
+      //             >
+      //               {label.labelName}
+      //             </div>
+      //           ))}
+      //         </div>
 
-            </Tooltip>
-          );
-        },
-      },
+      //       </Tooltip>
+      //     );
+      //   },
+      // },
     ];
     const nameColumn = {
       title: <FormattedMessage id="cycle_stageName" />,
