@@ -44,6 +44,8 @@ class IssueTreeTitle extends Component {
           content: '删除文件夹后将删除文件夹内所有测试用例，以及相关的测试阶段和执行',
           onOk() {
             deleteFolder(cycleId).then((res) => {
+              IssueTreeStore.setLoading(true);
+              IssueStore.setLoading(true);
               if (res.failed) {
                 Choerodon.prompt('删除失败');
               } else {
@@ -53,6 +55,7 @@ class IssueTreeTitle extends Component {
                 refresh();
               }
             }).catch((err) => {
+              IssueTreeStore.setLoading(false);
               Choerodon.prompt('网络异常');
             });
           },
