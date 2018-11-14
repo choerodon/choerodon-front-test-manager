@@ -100,12 +100,10 @@ class IssueStore {
     return new Promise((resolve) => {
       getIssueTypes().then((issueTypes) => {
         this.setIssueTypes(issueTypes);
-        this.setFilter({
-          advancedSearchArgs: {
-            issueTypeId: issueTypes.map(type => type.id),   
-          },
-          searchArgs: {},
-        });
+        // 设置测试类型
+        const filter = this.getFilter;
+        filter.advancedSearchArgs.issueTypeId = issueTypes.map(type => type.id);
+        this.setFilter(filter);
         const funcArr = [];
         funcArr.push(getProjectVersion());
         funcArr.push(getPrioritys());

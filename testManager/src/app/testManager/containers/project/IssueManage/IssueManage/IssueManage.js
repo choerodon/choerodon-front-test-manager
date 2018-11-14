@@ -204,7 +204,7 @@ class Test extends Component {
     IssueStore.loadIssues(current - 1, size);
   }
 
-  handleFilterChange = (pagination, filters, sorter, barFilters) => {
+  handleFilterChange = (pagination, filters, sorter, barFilters) => {    
     // 条件变化返回第一页
     IssueStore.setPagination({
       current: 1,
