@@ -55,6 +55,7 @@ class IssueTreeTitle extends Component {
                 refresh();
               }
             }).catch((err) => {
+              IssueStore.setLoading(false);
               IssueTreeStore.setLoading(false);
               Choerodon.prompt('网络异常');
             });
