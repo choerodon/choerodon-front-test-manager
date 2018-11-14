@@ -767,17 +767,20 @@ class TestExecuteHome extends Component {
         && (
           <div style={{ display: 'flex' }}>
             <Tooltip title={<FormattedMessage id="execute_quickPass" />}>
-              <Icon type="pass" onClick={this.quickPass.bind(this, record)} style={{ cursor: 'pointer' }} />
+              <Button shape="circle" funcType="flat" icon="pass" onClick={this.quickPass.bind(this, record)} />              
             </Tooltip>
-
-            <Icon
-              type="explicit-outline"
-              style={{ cursor: 'pointer', margin: '0 10px' }}
-              onClick={() => {
-                const { history } = this.props;
-                history.push(executeDetailLink(record.executeId));
-              }}
-            />
+            <Tooltip title="跳转至执行详情">
+              <Button
+                shape="circle"
+                funcType="flat"
+                icon="explicit-outline"
+                // style={{ margin: '0 10px' }}
+                onClick={() => {
+                  const { history } = this.props;
+                  history.push(executeDetailLink(record.executeId));
+                }}
+              />   
+            </Tooltip>
             {/* <Icon
               type="delete_forever"
               style={{ cursor: 'pointer' }}
@@ -804,7 +807,7 @@ class TestExecuteHome extends Component {
               placement="topLeft"
               title={(
                 <div>
-                  {componentIssueRelDTOList.map((component, i) => (
+                  {componentIssueRelDTOList && componentIssueRelDTOList.map((component, i) => (
                     <div>
                       {component.name}
                     </div>
@@ -812,7 +815,7 @@ class TestExecuteHome extends Component {
                 </div>
               )}
             >
-              {componentIssueRelDTOList.map((component, i) => component.name).join(',')}
+              {componentIssueRelDTOList && componentIssueRelDTOList.map((component, i) => component.name).join(',')}
             </Tooltip>
           );
         },
@@ -831,7 +834,7 @@ class TestExecuteHome extends Component {
               placement="topLeft"
               title={(
                 <div>
-                  {labelIssueRelDTOList.map((label, i) => (
+                  {labelIssueRelDTOList && labelIssueRelDTOList.map((label, i) => (
                     <div>
                       {label.labelName}
                     </div>
@@ -843,7 +846,7 @@ class TestExecuteHome extends Component {
                 display: 'flex', flexFlow: 'row wrap', width: '100%', justifyContent: 'space-between', alignItems: 'center', maxHeight: 24, overflow: 'hidden',
               }}
               >
-                {labelIssueRelDTOList.map((label, i) => (
+                {labelIssueRelDTOList && labelIssueRelDTOList.map((label, i) => (
                   <div
                     style={{
                       flexShrink: 0,

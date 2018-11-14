@@ -339,21 +339,25 @@ class TestPlanHome extends Component {
         record.projectId !== 0
         && (
           <div style={{ display: 'flex' }}>
-            <Icon
-              type="explicit2"
-              style={{ cursor: 'pointer', margin: '0 10px' }}
-              onClick={() => {
-                const { history } = this.props;
-                history.push(executeDetailShowLink(record.executeId));
-              }}
-            />
-            <Icon
-              type="delete_forever"
-              style={{ cursor: 'pointer' }}
+            <Tooltip title="跳转至执行详情">
+              <Button
+                shape="circle"
+                funcType="flat"
+                icon="explicit2"              
+                onClick={() => {
+                  const { history } = this.props;
+                  history.push(executeDetailShowLink(record.executeId));
+                }}
+              /> 
+            </Tooltip>
+            <Button
+              shape="circle"
+              funcType="flat"
+              icon="delete_forever"            
               onClick={() => {
                 this.deleteExecute(record);
               }}
-            />
+            />            
           </div>
         )
       ),
