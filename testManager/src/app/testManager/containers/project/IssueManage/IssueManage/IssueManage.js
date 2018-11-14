@@ -148,7 +148,7 @@ class Test extends Component {
       const testType = IssueStore.getTestType;
       const mediumPriority = IssueStore.getMediumPriority;
       const data = {
-        priorityCode: 'medium',
+        priorityCode: `priority-${mediumPriority}`,
         priorityId: mediumPriority,
         typeCode: 'issue_test',
         issueTypeId: testType,
