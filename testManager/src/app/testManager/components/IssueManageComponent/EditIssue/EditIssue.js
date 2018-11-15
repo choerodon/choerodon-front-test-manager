@@ -134,8 +134,8 @@ class EditIssueNarrow extends Component {
   onChangeFileList = (arr) => {
     if (arr.length > 0 && arr.some(one => !one.url)) {
       const config = {
-        issueType: this.state.typeCode,
-        issueId: this.state.issueId,
+        // issueType: this.state.typeCode,
+        issueId: this.state.issueInfo.issueId,
         fileName: arr[0].name || 'AG_ATTACHMENT',
         projectId: AppState.currentMenuType.id,
       };
