@@ -12,7 +12,7 @@ const ReporterSwitcher = (props) => {
   const urlParams = AppState.currentMenuType;
   const { organizationId } = AppState.currentMenuType;
   const menu = (
-    <Menu style={{ marginTop: 35 }}>
+    <Menu>
       <Menu.Item key="0">
         <Link to={`/testManager/report/story?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}&organizationId=${organizationId}`}>
           <FormattedMessage id="report_dropDown_demand" />
