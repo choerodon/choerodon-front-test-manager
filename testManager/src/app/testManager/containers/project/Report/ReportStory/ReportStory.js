@@ -9,6 +9,7 @@ import {
 } from 'choerodon-ui';
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
+import { ReporterSwitcher } from '../../../../components/ReportComponent';
 import { getReportsFromStory } from '../../../../api/reportApi';
 import { getIssueTypes, getIssueStatus } from '../../../../api/agileApi';
 import { getStatusList } from '../../../../api/TestStatusApi';
@@ -143,25 +144,6 @@ class ReportStory extends Component {
     const urlParams = AppState.currentMenuType;
     const { organizationId } = AppState.currentMenuType;
     const that = this;
-    const menu = (
-      <Menu style={{ marginTop: 35 }}>
-        <Menu.Item key="0">
-          <Link to={`/testManager/report/story?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}&organizationId=${organizationId}`}>
-            <FormattedMessage id="report_dropDown_demand" />
-          </Link>
-        </Menu.Item>
-        <Menu.Item key="1">
-          <Link to={`/testManager/report/test?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}&organizationId=${organizationId}`}>
-            <FormattedMessage id="report_dropDown_defect" />
-          </Link>
-        </Menu.Item>
-        <Menu.Item key="2">
-          <Link to={`/testManager/report?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}&organizationId=${organizationId}`}>
-            <FormattedMessage id="report_dropDown_home" />
-          </Link>
-        </Menu.Item>
-      </Menu>
-    );
     const filterColumns = [
       {
         title: '类型',
@@ -542,12 +524,7 @@ class ReportStory extends Component {
           title={<FormattedMessage id="report_demandToDefect" />}
           backPath={`/testManager/report?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}&organizationId=${organizationId}`}
         >
-          <Dropdown overlay={menu} trigger={['click']}>
-            <a className="ant-dropdown-link" href="#">
-              <FormattedMessage id="report_switch" />
-              <Icon type="arrow_drop_down" />
-            </a>
-          </Dropdown>
+          <ReporterSwitcher />
           {/* <Button
             style={{ marginLeft: 30 }}
             onClick={() => {
