@@ -6,7 +6,7 @@
  * @Feature:  
  */
 import { stores } from 'choerodon-front-boot';
-import { getProjectId, getOrganizationId, request } from '../common/utils';
+import { getProjectId, request } from '../common/utils';
 
 const { AppState } = stores;
 

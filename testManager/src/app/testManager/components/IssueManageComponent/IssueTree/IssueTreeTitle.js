@@ -322,7 +322,7 @@ class IssueTreeTitle extends Component {
                   IssueStore.tableDraging ? this.moveIssues.bind(this, data.cycleId, data.versionId) : null,
               }}
             >
-              <Draggable key={data.key} draggableId={JSON.stringify({ folderId: data.cycleId, versionId: data.versionId, objectVersionNumber: data.objectVersionNumber })}>
+              <Draggable key={data.key} draggableId={JSON.stringify({ cycleId: data.cycleId, versionId: data.versionId, objectVersionNumber: data.objectVersionNumber })}>
                 {(providedinner, snapshotinner) => {
                   if (snapshotinner.isDragging) {
                     document.addEventListener('keydown', this.enterCopy);

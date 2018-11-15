@@ -259,7 +259,7 @@ class IssueTree extends Component {
     const draggingItems = selectedKeys.map(key => IssueTreeStore.getItemByKey(key));
     const { draggableId } = source;
     const item = JSON.parse(draggableId);
-    if (!_.find(draggingItems, { cycleId: item.folderId })) {
+    if (!_.find(draggingItems, { cycleId: item.cycleId })) {
       draggingItems.push(item);
     }
     IssueTreeStore.setDraggingFolders(draggingItems);
@@ -273,35 +273,43 @@ class IssueTree extends Component {
       return;
     }
     const draggingItems = IssueTreeStore.getDraggingFolders;
-    const filteredItems = draggingItems.filter(item => destination.droppableId !== item.versionId);
+    
+    // 过滤，这里只要文件夹
+    const filteredItems = draggingItems.filter(item => destination.droppableId !== item.versionId && item.cycleId);
+    console.log(draggingItems, filteredItems);
+    IssueTreeStore.setSelectedKeys([]);
     if (filteredItems.length > 0) {
       const data = filteredItems.map(item => ({ versionId: destination.droppableId, folderId: item.cycleId, objectVersionNumber: item.objectVersionNumber }));
       // console.log(data);
       IssueTreeStore.setLoading(true);
-
+      // 清掉之前的拖动数据
+      IssueTreeStore.setDraggingFolders([]);
       if (IssueTreeStore.isCopy) {
         copyFolders(data, destination.droppableId).then((res) => {
           if (res.failed) {
             IssueTreeStore.setLoading(false);
             Choerodon.prompt('存在同名文件夹');
-            return;
           }
-          this.getTree();
+          // this.getTree();
         }).catch((err) => {
           IssueTreeStore.setLoading(false);
           Choerodon.prompt('网络错误');
+        }).finally(() => {
+          this.getTree();
         });
       } else {
-        moveFolders(data).then((res) => {
+        moveFolders(data).then((res) => {          
           if (res.failed) {
             IssueTreeStore.setLoading(false);
             Choerodon.prompt('存在同名文件夹');
-            return;
+            
           }
-          this.getTree();
-        }).catch((err) => {
+          // this.getTree();
+        }).catch((err) => {        
           IssueTreeStore.setLoading(false);
           Choerodon.prompt('网络错误');
+        }).finally(() => {
+          this.getTree();
         });
       }
     }
