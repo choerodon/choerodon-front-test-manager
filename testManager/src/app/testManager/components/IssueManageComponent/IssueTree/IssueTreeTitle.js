@@ -43,9 +43,9 @@ class IssueTreeTitle extends Component {
           title: '确定删除文件夹?',
           content: '删除文件夹后将删除文件夹内所有测试用例，以及相关的测试阶段和执行',
           onOk() {
+            IssueTreeStore.setLoading(true);
+            IssueStore.setLoading(true);
             deleteFolder(cycleId).then((res) => {
-              IssueTreeStore.setLoading(true);
-              IssueStore.setLoading(true);
               if (res.failed) {
                 Choerodon.prompt('删除失败');
               } else {
