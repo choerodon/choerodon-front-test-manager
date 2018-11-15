@@ -1,4 +1,4 @@
-import { getProjectId, getOrganizationId, request } from '../common/utils';
+import { getProjectId, request } from '../common/utils';
 
 /**
  *获取当前项目的所有版本
@@ -111,7 +111,7 @@ export function getLabels() {
  * @returns
  */
 export function getPrioritys() {
-  return request.get(`/issue/v1/projects/${getOrganizationId()}/priority/list_by_org`);
+  return request.get(`/issue/v1/projects/${getProjectId()}/priority/list_by_org`);
 }
 /**
  *获取当前项目的issue状态列表
