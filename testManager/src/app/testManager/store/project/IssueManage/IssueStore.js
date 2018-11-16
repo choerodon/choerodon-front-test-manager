@@ -108,6 +108,7 @@ class IssueStore {
         funcArr.push(getPrioritys());
         funcArr.push(getIssueStatus());
         const currentCycle = IssueTreeStore.currentCycle;
+        // 树的每一层的类型
         const types = ['all', 'topversion', 'version', 'folder'];
         const type = currentCycle.key ? types[currentCycle.key.split('-').length - 1] : 'allissue';
         const { versionId, cycleId, children } = currentCycle;
@@ -117,14 +118,21 @@ class IssueStore {
           funcArr.push(getIssuesByIds(versionId, cycleId,
             this.issueIds.slice(size * Page, size * (Page + 1))));
         } else {
-          // 第一页 五种情况
+          // 第一页 五种情况 地址栏有参数时的优先级为最低
+          /**
+           * 1.加载所有issue
+           * 2.记载某一类型的版本下的issue,例如规划中的版本
+           * 3.加载某个版本的issue
+           * 4.加载某个文件夹下的issue
+           * 5.地址栏有paramIssueId时只取单个issue并打开侧边
+           * 
+           */
           // 1.加载全部数据
-          if (type === 'all' || type === 'allissue' && !this.paramIssueId) {
+          if ((type === 'all' || type === 'allissue') && !this.paramIssueId) {
             funcArr.push(getAllIssues(Page, size, this.getFilter, orderField, orderType));
           } else if (type === 'topversion') {
             // 2.加载某一类versions
-            const versions = children.map(child => child.versionId);
-            // console.log(versions);
+            const versions = children.map(child => child.versionId);      
             funcArr.push(getIssuesByVersion(versions,
               Page, size, this.getFilter, orderField, orderType));
           } else if (type === 'version') {

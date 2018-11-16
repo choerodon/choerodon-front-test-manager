@@ -192,6 +192,10 @@ class IssueTreeTitle extends Component {
     const {
       type: Menutype, id: projectId, organizationId: orgId, name,
     } = menu;   
+    const draggingItems = IssueTreeStore.getDraggingFolders;
+    
+    // 过滤，这里只要文件夹,显示时可以显示和当前版本一样的，但最终处理时过滤掉
+    const filteredItems = draggingItems.filter(item => item.cycleId);
     const getMenu = () => {
       let items = [];
       // if (type === 'temp') {
@@ -343,6 +347,26 @@ class IssueTreeTitle extends Component {
                           // background: snapshotinner.isDragging && 'white',
                         }}
                       >
+                        {snapshotinner.isDragging
+                                && (
+                                  <div style={{
+                                    position: 'absolute',
+                                    width: 15,
+                                    height: 15,
+                                    fontSize: '12px',
+                                    lineHeight: '15px',
+                                    background: 'red',
+                                    textAlign: 'center',
+                                    color: 'white',
+                                    borderRadius: '50%',
+                                    top: 0,
+                                    left: -20,
+                                  }}
+                                  >
+                                    {filteredItems.length}
+                                  </div>
+                                )
+                              }
                         {treeTitle}
                         {snapshotinner.isDragging
                         && (

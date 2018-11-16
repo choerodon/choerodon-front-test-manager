@@ -18,7 +18,6 @@ const dataList = [];
 @observer
 class IssueTree extends Component {
   state = {
-    // loading: false,
     autoExpandParent: false,
     searchValue: '',
   }
@@ -276,7 +275,7 @@ class IssueTree extends Component {
     
     // 过滤，这里只要文件夹
     const filteredItems = draggingItems.filter(item => destination.droppableId !== item.versionId && item.cycleId);
-    console.log(draggingItems, filteredItems);
+    // console.log(draggingItems, filteredItems);
     IssueTreeStore.setSelectedKeys([]);
     if (filteredItems.length > 0) {
       const data = filteredItems.map(item => ({ versionId: destination.droppableId, folderId: item.cycleId, objectVersionNumber: item.objectVersionNumber }));
@@ -302,7 +301,6 @@ class IssueTree extends Component {
           if (res.failed) {
             IssueTreeStore.setLoading(false);
             Choerodon.prompt('存在同名文件夹');
-            
           }
           // this.getTree();
         }).catch((err) => {        

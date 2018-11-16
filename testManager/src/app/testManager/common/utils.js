@@ -310,7 +310,6 @@ export function humanizeDuration(seconds) {
   }
   let result = '';
   if (seconds) {
-    /** eslint-disable no-constant-condition */
     if ((result = Math.round(seconds / (60 * 60 * 24 * 30 * 12))) > 0) { // year
       result = `${result}年`;
     } else if ((result = Math.round(seconds / (60 * 60 * 24 * 30))) > 0) { // months
