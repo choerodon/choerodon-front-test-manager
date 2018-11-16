@@ -388,7 +388,7 @@ class TestExecuteInfo extends Component {
               width: '100%', height: '60%', display: 'flex', flexDirection: 'column',
             }}
           >
-            <div style={styles.cardTitle}>
+            <div role="none" style={styles.cardTitle} onClick={(e) => { e.stopPropagation(); }}>
               {/* <Icon type="expand_more" /> */}
               <span style={styles.cardTitleText}><FormattedMessage id="execute_description" /></span>
               <div style={{ flex: 1, visibility: 'hidden' }} />

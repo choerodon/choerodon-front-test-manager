@@ -82,7 +82,7 @@ class TestPlanHome extends Component {
         TestPlanStore.rightLeaveLoading();
         TestPlanStore.setTestList(cycle.content);
         TestPlanStore.setExecutePagination({
-          current: pagination.current,
+          current: cycle.number + 1,
           pageSize: pagination.pageSize,
           total: cycle.totalElements,
         });
@@ -126,7 +126,7 @@ class TestPlanHome extends Component {
         TestPlanStore.rightLeaveLoading();
         TestPlanStore.setTestList(cycle.content);
         TestPlanStore.setExecutePagination({
-          current: executePagination.current,
+          current: cycle.number + 1,
           pageSize: executePagination.pageSize,
           total: cycle.totalElements,
         });
@@ -157,7 +157,7 @@ class TestPlanHome extends Component {
               TestPlanStore.rightLeaveLoading();
               TestPlanStore.setTestList(cycle.content);
               TestPlanStore.setExecutePagination({
-                current: executePagination.current,
+                current: cycle.number + 1,
                 pageSize: executePagination.pageSize,
                 total: cycle.totalElements,
               });
@@ -201,7 +201,7 @@ class TestPlanHome extends Component {
               title={(
                 <div>
                   <div>{issueInfosDTO.issueName}</div>
-                  <div>{issueInfosDTO.summary}</div>
+                  {/* <div>{issueInfosDTO.summary}</div> */}
                 </div>
               )}
             >
@@ -215,6 +215,33 @@ class TestPlanHome extends Component {
               >
                 {issueInfosDTO.issueName}
               </Link>
+            </Tooltip>
+          )
+        );
+      },
+    }, {
+      title: '用例名',
+      dataIndex: 'summary',
+      key: 'summary',
+      flex: 2,
+      render(issueId, record) {
+        const { issueInfosDTO } = record;
+        return (
+          issueInfosDTO && (
+            <Tooltip
+              placement="topLeft"
+              title={(              
+                <div>{issueInfosDTO.summary}</div>          
+              )}
+            >
+              <span
+                className="c7ntest-text-dot"
+                style={{
+                  width: 100,
+                }}
+              >
+                {issueInfosDTO.summary}
+              </span>
             </Tooltip>
           )
         );
@@ -239,7 +266,7 @@ class TestPlanHome extends Component {
         );
       },
     }, {
-      title: <FormattedMessage id="cycle_comment" />,
+      title: '执行描述',
       dataIndex: 'comment',
       key: 'comment',
       filters: [],
@@ -339,105 +366,109 @@ class TestPlanHome extends Component {
         record.projectId !== 0
         && (
           <div style={{ display: 'flex' }}>
-            <Icon
-              type="explicit2"
-              style={{ cursor: 'pointer', margin: '0 10px' }}
-              onClick={() => {
-                const { history } = this.props;
-                history.push(executeDetailShowLink(record.executeId));
-              }}
-            />
-            <Icon
-              type="delete_forever"
-              style={{ cursor: 'pointer' }}
+            <Tooltip title="跳转至执行详情">
+              <Button
+                shape="circle"
+                funcType="flat"
+                icon="explicit2"              
+                onClick={() => {
+                  const { history } = this.props;
+                  history.push(executeDetailShowLink(record.executeId));
+                }}
+              /> 
+            </Tooltip>
+            <Button
+              shape="circle"
+              funcType="flat"
+              icon="delete_forever"            
               onClick={() => {
                 this.deleteExecute(record);
               }}
-            />
+            />            
           </div>
         )
       ),
     }];
     const otherColumns = [
-      {
-        title: <FormattedMessage id="cycle_createExecute_component" />,
-        dataIndex: 'issueInfosDTO',
-        key: 'component',
-        render(issueInfosDTO) {
-          if (!issueInfosDTO) {
-            return null;
-          }
-          const { componentIssueRelDTOList } = issueInfosDTO;
-          return (
-            <Tooltip
-              placement="topLeft"
-              title={(
-                <div>
-                  {componentIssueRelDTOList.map((component, i) => (
-                    <div>
-                      {component.name}
-                    </div>
-                  ))}
-                </div>
-              )}
-            >
-              {componentIssueRelDTOList.map((component, i) => component.name).join(',')}
-            </Tooltip>
-          );
-        },
-      },
-      {
-        title: <FormattedMessage id="cycle_createExecute_label" />,
-        dataIndex: 'issueInfosDTO',
-        key: 'statusName',
-        render(issueInfosDTO) {
-          if (!issueInfosDTO) {
-            return null;
-          }
-          const { labelIssueRelDTOList } = issueInfosDTO;
-          return (
-            <Tooltip
-              placement="topLeft"
-              title={(
-                <div>
-                  {labelIssueRelDTOList.map((label, i) => (
-                    <div>
-                      {label.labelName}
-                    </div>
-                  ))}
-                </div>
-              )}
-            >
-              <div style={{
-                display: 'flex', flexFlow: 'row wrap', width: '100%', justifyContent: 'space-between', alignItems: 'center', maxHeight: 24, overflow: 'hidden',
-              }}
-              >
-                {labelIssueRelDTOList.map((label, i) => (
-                  <div
-                    style={{
-                      flexShrink: 0,
-                      width: '48%',
-                      color: '#000',
-                      borderRadius: '100px',
-                      fontSize: '13px',
-                      lineHeight: '20px',
-                      padding: '2px 5px',
-                      textAlign: 'center',
-                      background: 'rgba(0, 0, 0, 0.08)',
-                      // margin: '0 5px',
-                      // marginBottom: 3,
-                    }}
-                    className="c7ntest-text-dot"
-                  >
-                    {label.labelName}
-                  </div>
-                ))}
-              </div>
+      // {
+      //   title: <FormattedMessage id="cycle_createExecute_component" />,
+      //   dataIndex: 'issueInfosDTO',
+      //   key: 'component',
+      //   render(issueInfosDTO) {
+      //     if (!issueInfosDTO) {
+      //       return null;
+      //     }
+      //     const { componentIssueRelDTOList } = issueInfosDTO;
+      //     return (
+      //       <Tooltip
+      //         placement="topLeft"
+      //         title={(
+      //           <div>
+      //             {componentIssueRelDTOList && componentIssueRelDTOList.map((component, i) => (
+      //               <div>
+      //                 {component.name}
+      //               </div>
+      //             ))}
+      //           </div>
+      //         )}
+      //       >
+      //         {componentIssueRelDTOList && componentIssueRelDTOList.map((component, i) => component.name).join(',')}
+      //       </Tooltip>
+      //     );
+      //   },
+      // },
+      // {
+      //   title: <FormattedMessage id="cycle_createExecute_label" />,
+      //   dataIndex: 'issueInfosDTO',
+      //   key: 'statusName',
+      //   render(issueInfosDTO) {
+      //     if (!issueInfosDTO) {
+      //       return null;
+      //     }
+      //     const { labelIssueRelDTOList } = issueInfosDTO;
+      //     return (
+      //       <Tooltip
+      //         placement="topLeft"
+      //         title={(
+      //           <div>
+      //             {labelIssueRelDTOList && labelIssueRelDTOList.map((label, i) => (
+      //               <div>
+      //                 {label.labelName}
+      //               </div>
+      //             ))}
+      //           </div>
+      //         )}
+      //       >
+      //         <div style={{
+      //           display: 'flex', flexFlow: 'row wrap', width: '100%', justifyContent: 'space-between', alignItems: 'center', maxHeight: 24, overflow: 'hidden',
+      //         }}
+      //         >
+      //           {labelIssueRelDTOList && labelIssueRelDTOList.map((label, i) => (
+      //             <div
+      //               style={{
+      //                 flexShrink: 0,
+      //                 width: '48%',
+      //                 color: '#000',
+      //                 borderRadius: '100px',
+      //                 fontSize: '13px',
+      //                 lineHeight: '20px',
+      //                 padding: '2px 5px',
+      //                 textAlign: 'center',
+      //                 background: 'rgba(0, 0, 0, 0.08)',
+      //                 // margin: '0 5px',
+      //                 // marginBottom: 3,
+      //               }}
+      //               className="c7ntest-text-dot"
+      //             >
+      //               {label.labelName}
+      //             </div>
+      //           ))}
+      //         </div>
 
-            </Tooltip>
-          );
-        },
-      },
+      //       </Tooltip>
+      //     );
+      //   },
+      // },
     ];
     return (
       <Page className="c7ntest-TestPlan">

@@ -78,17 +78,11 @@ class TestExecuteHome extends Component {
     EditCycleVisible: false,
     CloneCycleVisible: false,
     currentCloneCycle: null,
-    rightLoading: false, 
+    rightLoading: false,
     testList: [],
-    // currentCycle: {},
     currentEditValue: {},
     autoExpandParent: true,
     searchValue: '',
-    executePagination: {
-      current: 1,
-      total: 0,
-      pageSize: 5,
-    },
     statusList: [],
     filters: {},
   };
@@ -114,9 +108,14 @@ class TestExecuteHome extends Component {
     if (selectedKeys) {
       TestExecuteStore.setSelectedKeys(selectedKeys);
     }
-    const { executePagination, filters } = this.state;
+    const { filters } = this.state;
+    const executePagination = TestExecuteStore.getExecutePagination;
     const data = node ? node.props.data : TestExecuteStore.getCurrentCycle;
     if (data.cycleId) {
+      // 切换时，将分页回到第一页
+      if (data.cycleId !== TestExecuteStore.getCurrentCycle.cycleId) {
+        TestExecuteStore.setExecutePagination({ current: 1 });
+      }
       TestExecuteStore.setCurrentCycle(data);
       // window.console.log(data);
       if (data.type === 'folder' || data.type === 'cycle') {
@@ -126,28 +125,55 @@ class TestExecuteHome extends Component {
             // currentCycle: data,
           });
         }
-        getExecutesByCycleId({
-          page: 0,
-          size: executePagination.pageSize,
-        }, data.cycleId,
-        {
-          ...filters,
-          lastUpdatedBy: [Number(this.lastUpdatedBy)],
-          assignedTo: [treeAssignedTo || Number(this.assignedTo)],
-        }, data.type).then((cycle) => {
-          this.setState({
-            rightLoading: false,
-            testList: cycle.content,
-            executePagination: {
-              current: 1,
-              pageSize: executePagination.pageSize,
-              total: cycle.totalElements,
-            },
-          });
-          // window.console.log(cycle);
-        });
+        this.loadExecutes(data);
       }
     }
+  }
+
+  reloadExecutes = () => {
+    this.setState({
+      rightLoading: true,
+    });
+    this.loadExecutes();
+  }
+
+  /**
+   *右侧reload
+   *
+   * @memberof TestExecuteHome
+   */
+  loadExecutes = () => {
+    const currentCycle = TestExecuteStore.getCurrentCycle;
+    const { cycleId, type } = currentCycle;
+    const treeAssignedTo = TestExecuteStore.treeAssignedTo;
+    const executePagination = TestExecuteStore.getExecutePagination;
+    const { filters } = this.state;
+    const targetPage = executePagination.current - 1;
+
+    // this.setState({
+    //   rightLoading: true,
+    // });
+
+    getExecutesByCycleId({
+      page: targetPage,
+      size: executePagination.pageSize,
+    }, cycleId,
+    {
+      ...filters,
+      lastUpdatedBy: [Number(this.lastUpdatedBy)],
+      assignedTo: [treeAssignedTo || Number(this.assignedTo)],
+    }, type).then((res) => {
+      TestExecuteStore.setExecutePagination({
+        current: res.number + 1,
+        pageSize: res.size,
+        total: res.totalElements,
+      });
+      this.setState({
+        rightLoading: false,
+        testList: res.content,
+      });
+      // window.console.log(cycle);
+    });
   }
 
   generateList = (data) => {
@@ -176,7 +202,7 @@ class TestExecuteHome extends Component {
 
   deleteExecute = (record) => {
     const { executeId, cycleId } = record;
-    const { executePagination } = this.state;
+    const executePagination = TestExecuteStore.getExecutePagination;
     confirm({
       width: 560,
       title: Choerodon.getMessage('确认删除吗?', 'Confirm delete'),
@@ -262,23 +288,24 @@ class TestExecuteHome extends Component {
         autoExpandParent: true,
         rightLoading: true,
       });
-      const { executePagination } = this.state;
-      getExecutesByCycleId({
-        page: executePagination.current - 1,
-        size: executePagination.pageSize,
-      }, defaultExpandKeyItem.cycleId,
-      {}, defaultExpandKeyItem.type).then((cycle) => {
-        this.setState({
-          rightLoading: false,
-          testList: cycle.content,
-          executePagination: {
-            current: executePagination.current,
-            pageSize: executePagination.pageSize,
-            total: cycle.totalElements,
-          },
-        });
-        // window.console.log(cycle);
-      });
+      this.loadExecutes();
+      // const executePagination = TestExecuteStore.getExecutePagination;
+      // getExecutesByCycleId({
+      //   page: executePagination.current - 1,
+      //   size: executePagination.pageSize,
+      // }, defaultExpandKeyItem.cycleId,
+      // {}, defaultExpandKeyItem.type).then((cycle) => {
+      //   TestExecuteStore.setExecutePagination({
+      //     current: cycle.number + 1,
+      //     pageSize: executePagination.pageSize,
+      //     total: cycle.totalElements,
+      //   });
+      //   this.setState({
+      //     rightLoading: false,
+      //     testList: cycle.content,
+      //   });
+      //   // window.console.log(cycle);
+      // });
     }
   }
 
@@ -394,35 +421,13 @@ class TestExecuteHome extends Component {
   }
 
   handleExecuteTableChange = (pagination, filters, sorter) => {
-    // window.console.log(pagination, filters, sorter);
-    if (pagination.current) {
-      this.setState({
-        rightLoading: true,
-        executePagination: pagination,
-        filters,
-      });
-      const currentCycle = TestExecuteStore.getCurrentCycle;
-      getExecutesByCycleId({
-        size: pagination.pageSize,
-        page: pagination.current - 1,
-      }, currentCycle.cycleId,
-      {
-        ...filters,
-        lastUpdatedBy: [Number(this.lastUpdatedBy)],
-        assignedTo: [Number(this.assignedTo)],
-      }, currentCycle.type).then((cycle) => {
-        this.setState({
-          rightLoading: false,
-          testList: cycle.content,
-          executePagination: {
-            current: pagination.current,
-            pageSize: pagination.pageSize,
-            total: cycle.totalElements,
-          },
-        });
-        // window.console.log(cycle);
-      });
-    }
+    TestExecuteStore.setExecutePagination(pagination);
+    this.setState({
+      rightLoading: true,
+      filters,
+    }, () => {
+      this.loadExecutes();
+    });
   }
 
   renderTreeNodes = data => data.map((item) => {
@@ -529,13 +534,13 @@ class TestExecuteHome extends Component {
       delete cycleData.nextRank;
       cycleData.assignedTo = cycleData.assignedTo || 0;
       this.setState({
-        loading: true,
+        rightLoading: true,
       });
       editCycle(cycleData).then((Data) => {
-        this.refresh();
+        this.reloadExecutes();
       }).catch((error) => {
         this.setState({
-          loading: false,
+          rightLoading: false,
         });
         Choerodon.prompt('网络错误');
       });
@@ -561,9 +566,7 @@ class TestExecuteHome extends Component {
     const {
       CreateExecuteDetailVisible, CreateCycleVisible, EditCycleVisible, CloneCycleVisible,
       currentCloneCycle, loading, currentEditValue, testList, rightLoading,
-      searchValue, autoExpandParent,
-      executePagination,
-      statusList,
+      searchValue, autoExpandParent, statusList,
     } = this.state;
     const treeData = TestExecuteStore.getTreeData;
     const expandedKeys = TestExecuteStore.getExpandedKeys;
@@ -571,6 +574,7 @@ class TestExecuteHome extends Component {
     const currentCycle = TestExecuteStore.getCurrentCycle;
     const leftVisible = TestExecuteStore.leftVisible;
     const treeAssignedTo = TestExecuteStore.treeAssignedTo;
+    const executePagination = TestExecuteStore.getExecutePagination;
     const { cycleId, title, type } = currentCycle;
     const prefix = <Icon type="filter_list" />;
     const columns = [{
@@ -589,7 +593,7 @@ class TestExecuteHome extends Component {
               title={(
                 <div>
                   <div>{issueInfosDTO.issueName}</div>
-                  <div>{issueInfosDTO.summary}</div>
+                  {/* <div>{issueInfosDTO.summary}</div> */}
                 </div>
               )}
             >
@@ -603,6 +607,36 @@ class TestExecuteHome extends Component {
               >
                 {issueInfosDTO.issueName}
               </Link>
+            </Tooltip>
+          )
+        );
+      },
+    }, {
+      title: '用例名',
+      dataIndex: 'summary',
+      key: 'summary',
+      width: '20%',
+      // filters: [],
+      // onFilter: (value, record) => 
+      //   record.issueInfosDTO && record.issueInfosDTO.issueName.indexOf(value) === 0,  
+      render(issueId, record) {
+        const { issueInfosDTO } = record;
+        return (
+          issueInfosDTO && (
+            <Tooltip
+              placement="topLeft"
+              title={(
+                <div>{issueInfosDTO.summary}</div>
+              )}
+            >
+              <span
+                className="c7ntest-text-dot"
+                style={{
+                  width: 100,
+                }}
+              >
+                {issueInfosDTO.summary}
+              </span>
             </Tooltip>
           )
         );
@@ -631,7 +665,7 @@ class TestExecuteHome extends Component {
         );
       },
     }, {
-      title: <FormattedMessage id="cycle_comment" />,
+      title: '执行描述',
       dataIndex: 'comment',
       key: 'comment',
       filters: [],
@@ -736,17 +770,20 @@ class TestExecuteHome extends Component {
         && (
           <div style={{ display: 'flex' }}>
             <Tooltip title={<FormattedMessage id="execute_quickPass" />}>
-              <Icon type="pass" onClick={this.quickPass.bind(this, record)} style={{ cursor: 'pointer' }} />
+              <Button shape="circle" funcType="flat" icon="pass" onClick={this.quickPass.bind(this, record)} />
             </Tooltip>
-
-            <Icon
-              type="explicit-outline"
-              style={{ cursor: 'pointer', margin: '0 10px' }}
-              onClick={() => {
-                const { history } = this.props;
-                history.push(executeDetailLink(record.executeId));
-              }}
-            />
+            <Tooltip title="跳转至执行详情">
+              <Button
+                shape="circle"
+                funcType="flat"
+                icon="explicit-outline"
+                // style={{ margin: '0 10px' }}
+                onClick={() => {
+                  const { history } = this.props;
+                  history.push(executeDetailLink(record.executeId));
+                }}
+              />
+            </Tooltip>
             {/* <Icon
               type="delete_forever"
               style={{ cursor: 'pointer' }}
@@ -759,85 +796,85 @@ class TestExecuteHome extends Component {
       ),
     }];
     const otherColumns = [
-      {
-        title: <FormattedMessage id="cycle_createExecute_component" />,
-        dataIndex: 'issueInfosDTO',
-        key: 'component',
-        render(issueInfosDTO) {
-          if (!issueInfosDTO) {
-            return null;
-          }
-          const { componentIssueRelDTOList } = issueInfosDTO;
-          return (
-            <Tooltip
-              placement="topLeft"
-              title={(
-                <div>
-                  {componentIssueRelDTOList.map((component, i) => (
-                    <div>
-                      {component.name}
-                    </div>
-                  ))}
-                </div>
-              )}
-            >
-              {componentIssueRelDTOList.map((component, i) => component.name).join(',')}
-            </Tooltip>
-          );
-        },
-      },
-      {
-        title: <FormattedMessage id="cycle_createExecute_label" />,
-        dataIndex: 'issueInfosDTO',
-        key: 'statusName',
-        render(issueInfosDTO) {
-          if (!issueInfosDTO) {
-            return null;
-          }
-          const { labelIssueRelDTOList } = issueInfosDTO;
-          return (
-            <Tooltip
-              placement="topLeft"
-              title={(
-                <div>
-                  {labelIssueRelDTOList.map((label, i) => (
-                    <div>
-                      {label.labelName}
-                    </div>
-                  ))}
-                </div>
-              )}
-            >
-              <div style={{
-                display: 'flex', flexFlow: 'row wrap', width: '100%', justifyContent: 'space-between', alignItems: 'center', maxHeight: 24, overflow: 'hidden',
-              }}
-              >
-                {labelIssueRelDTOList.map((label, i) => (
-                  <div
-                    style={{
-                      flexShrink: 0,
-                      width: '48%',
-                      color: '#000',
-                      borderRadius: '100px',
-                      fontSize: '13px',
-                      lineHeight: '20px',
-                      padding: '2px 5px',
-                      textAlign: 'center',
-                      background: 'rgba(0, 0, 0, 0.08)',
-                      // margin: '0 5px',
-                      // marginBottom: 3,
-                    }}
-                    className="c7ntest-text-dot"
-                  >
-                    {label.labelName}
-                  </div>
-                ))}
-              </div>
+      // {
+      //   title: <FormattedMessage id="cycle_createExecute_component" />,
+      //   dataIndex: 'issueInfosDTO',
+      //   key: 'component',
+      //   render(issueInfosDTO) {
+      //     if (!issueInfosDTO) {
+      //       return null;
+      //     }
+      //     const { componentIssueRelDTOList } = issueInfosDTO;
+      //     return (
+      //       <Tooltip
+      //         placement="topLeft"
+      //         title={(
+      //           <div>
+      //             {componentIssueRelDTOList && componentIssueRelDTOList.map((component, i) => (
+      //               <div>
+      //                 {component.name}
+      //               </div>
+      //             ))}
+      //           </div>
+      //         )}
+      //       >
+      //         {componentIssueRelDTOList && componentIssueRelDTOList.map((component, i) => component.name).join(',')}
+      //       </Tooltip>
+      //     );
+      //   },
+      // },
+      // {
+      //   title: <FormattedMessage id="cycle_createExecute_label" />,
+      //   dataIndex: 'issueInfosDTO',
+      //   key: 'statusName',
+      //   render(issueInfosDTO) {
+      //     if (!issueInfosDTO) {
+      //       return null;
+      //     }
+      //     const { labelIssueRelDTOList } = issueInfosDTO;
+      //     return (
+      //       <Tooltip
+      //         placement="topLeft"
+      //         title={(
+      //           <div>
+      //             {labelIssueRelDTOList && labelIssueRelDTOList.map((label, i) => (
+      //               <div>
+      //                 {label.labelName}
+      //               </div>
+      //             ))}
+      //           </div>
+      //         )}
+      //       >
+      //         <div style={{
+      //           display: 'flex', flexFlow: 'row wrap', width: '100%', justifyContent: 'space-between', alignItems: 'center', maxHeight: 24, overflow: 'hidden',
+      //         }}
+      //         >
+      //           {labelIssueRelDTOList && labelIssueRelDTOList.map((label, i) => (
+      //             <div
+      //               style={{
+      //                 flexShrink: 0,
+      //                 width: '48%',
+      //                 color: '#000',
+      //                 borderRadius: '100px',
+      //                 fontSize: '13px',
+      //                 lineHeight: '20px',
+      //                 padding: '2px 5px',
+      //                 textAlign: 'center',
+      //                 background: 'rgba(0, 0, 0, 0.08)',
+      //                 // margin: '0 5px',
+      //                 // marginBottom: 3,
+      //               }}
+      //               className="c7ntest-text-dot"
+      //             >
+      //               {label.labelName}
+      //             </div>
+      //           ))}
+      //         </div>
 
-            </Tooltip>
-          );
-        },
-      },
+      //       </Tooltip>
+      //     );
+      //   },
+      // },
     ];
     const nameColumn = {
       title: <FormattedMessage id="cycle_stageName" />,
@@ -901,7 +938,7 @@ class TestExecuteHome extends Component {
                     role="none"
                     className="c7ntest-TestExecuteHome-button"
                     onClick={() => {
-                      TestExecuteStore.setLeftVisible(true);                 
+                      TestExecuteStore.setLeftVisible(true);
                     }}
                   >
                     <Icon type="navigate_next" />
@@ -912,7 +949,7 @@ class TestExecuteHome extends Component {
                     <p
                       role="none"
                       onClick={() => {
-                        TestExecuteStore.setLeftVisible(true);                 
+                        TestExecuteStore.setLeftVisible(true);
                       }}
                     >
                       <FormattedMessage id="cycle_name" />
@@ -924,7 +961,7 @@ class TestExecuteHome extends Component {
                 <RadioButton
                   style={{ marginBottom: 20 }}
                   onChange={this.handleTreeAssignedToChange}
-                  value={treeAssignedTo === 0 ? 'all' : 'my'}             
+                  value={treeAssignedTo === 0 ? 'all' : 'my'}
                   data={[{
                     value: 'my',
                     text: 'cycle_my',
@@ -942,7 +979,7 @@ class TestExecuteHome extends Component {
                       role="none"
                       className="c7ntest-TestExecuteHome-button"
                       onClick={() => {
-                        TestExecuteStore.setLeftVisible(false);                    
+                        TestExecuteStore.setLeftVisible(false);
                       }}
                     >
                       <Icon type="navigate_before" />

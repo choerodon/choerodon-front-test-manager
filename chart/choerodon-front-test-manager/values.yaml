@@ -41,6 +41,8 @@ env:
       PRO_TITLE_NAME: Choerodon
       PRO_API_HOST: api.staging.example.com
       PRO_HEADER_TITLE_NAME: Choerodon
+      PRO_WEBSOCKET_SERVER: ws://ws.example.com
+      
 resources:
   # We usually recommend not to specify default resources and to leave this as a conscious
   # choice for the user. This also increases chances chart run on environments with little

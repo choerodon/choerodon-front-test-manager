@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  Menu, Dropdown, Icon,  
+  Menu, Dropdown, Icon, Button,
 } from 'choerodon-ui';
 import {
   Page, Header, Content, stores, 
 } from 'choerodon-front-boot';
 import { FormattedMessage } from 'react-intl';
-import './ReportHome.less';
+import { ReporterSwitcher } from '../../../../components/ReportComponent';
 import Pic from './pic.svg';
 import Pic2 from './pic2.svg';
 
@@ -45,35 +45,11 @@ const styles = {
 class ReportHome extends Component {
   render() {
     const urlParams = AppState.currentMenuType;
-    const { organizationId } = AppState.currentMenuType;
-    const menu = (
-      <Menu style={{ marginTop: 35 }}>
-        <Menu.Item key="0">
-          <Link to={`/testManager/report/story?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}&organizationId=${organizationId}`}>
-            <FormattedMessage id="report_dropDown_demand" /> 
-          </Link>
-        </Menu.Item>
-        <Menu.Item key="1">
-          <Link to={`/testManager/report/test?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}&organizationId=${organizationId}`}>
-            <FormattedMessage id="report_dropDown_defect" /> 
-          </Link>
-        </Menu.Item>      
-      </Menu>
-    );
-    
+    const { organizationId } = AppState.currentMenuType;    
     return (
       <Page className="c7ntest-report-home">
         <Header title={<FormattedMessage id="report_title" />}>
-          <Dropdown overlay={menu} trigger={['click']}>
-            <a className="ant-dropdown-link" href="#">
-              <FormattedMessage id="report_switch" /> 
-              <Icon type="arrow_drop_down" />
-            </a>
-          </Dropdown>          
-          {/* <Button onClick={this.getInfo}>
-            <Icon type="autorenew icon" />
-            <span><FormattedMessage id="refresh" /></span>
-          </Button> */}
+          <ReporterSwitcher isHome />
         </Header>
         <Content
           // style={{

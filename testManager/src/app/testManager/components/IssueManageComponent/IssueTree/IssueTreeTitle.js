@@ -43,6 +43,8 @@ class IssueTreeTitle extends Component {
           title: '确定删除文件夹?',
           content: '删除文件夹后将删除文件夹内所有测试用例，以及相关的测试阶段和执行',
           onOk() {
+            IssueTreeStore.setLoading(true);
+            IssueStore.setLoading(true);
             deleteFolder(cycleId).then((res) => {
               if (res.failed) {
                 Choerodon.prompt('删除失败');
@@ -53,6 +55,8 @@ class IssueTreeTitle extends Component {
                 refresh();
               }
             }).catch((err) => {
+              IssueStore.setLoading(false);
+              IssueTreeStore.setLoading(false);
               Choerodon.prompt('网络异常');
             });
           },
@@ -188,6 +192,10 @@ class IssueTreeTitle extends Component {
     const {
       type: Menutype, id: projectId, organizationId: orgId, name,
     } = menu;   
+    const draggingItems = IssueTreeStore.getDraggingFolders;
+    
+    // 过滤，这里只要文件夹,显示时可以显示和当前版本一样的，但最终处理时过滤掉
+    const filteredItems = draggingItems.filter(item => item && item.cycleId);
     const getMenu = () => {
       let items = [];
       // if (type === 'temp') {
@@ -318,7 +326,7 @@ class IssueTreeTitle extends Component {
                   IssueStore.tableDraging ? this.moveIssues.bind(this, data.cycleId, data.versionId) : null,
               }}
             >
-              <Draggable key={data.key} draggableId={JSON.stringify({ folderId: data.cycleId, versionId: data.versionId, objectVersionNumber: data.objectVersionNumber })}>
+              <Draggable key={data.key} draggableId={JSON.stringify({ cycleId: data.cycleId, versionId: data.versionId, objectVersionNumber: data.objectVersionNumber })}>
                 {(providedinner, snapshotinner) => {
                   if (snapshotinner.isDragging) {
                     document.addEventListener('keydown', this.enterCopy);
@@ -339,6 +347,26 @@ class IssueTreeTitle extends Component {
                           // background: snapshotinner.isDragging && 'white',
                         }}
                       >
+                        {snapshotinner.isDragging
+                                && (
+                                  <div style={{
+                                    position: 'absolute',
+                                    width: 15,
+                                    height: 15,
+                                    fontSize: '12px',
+                                    lineHeight: '15px',
+                                    background: 'red',
+                                    textAlign: 'center',
+                                    color: 'white',
+                                    borderRadius: '50%',
+                                    top: 0,
+                                    left: -20,
+                                  }}
+                                  >
+                                    {filteredItems.length}
+                                  </div>
+                                )
+                              }
                         {treeTitle}
                         {snapshotinner.isDragging
                         && (

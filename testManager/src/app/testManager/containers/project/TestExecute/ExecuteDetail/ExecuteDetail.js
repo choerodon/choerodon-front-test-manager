@@ -57,7 +57,7 @@ class ExecuteDetail extends Component {
     const historyList = ExecuteDetailStore.getHistoryList;
     const historyPagination = ExecuteDetailStore.getHistoryPagination;
     const cycleData = ExecuteDetailStore.getCycleData;
-    const { nextExecuteId, lastExecuteId } = cycleData;
+    const { nextExecuteId, lastExecuteId, issueInfosDTO } = cycleData;
     const columnsHistory = [{
       title: <FormattedMessage id="execute_executive" />,
       dataIndex: 'user',
@@ -145,7 +145,7 @@ class ExecuteDetail extends Component {
     return (
       <Page className="c7ntest-ExecuteDetail">
         <Header title={(
-          <div>
+          <div className="c7ntest-center">
             <Tooltip
               title={Choerodon.getMessage('返回', 'return')}
               placement="bottom"
@@ -160,11 +160,16 @@ class ExecuteDetail extends Component {
               />
             </Tooltip>
             <span><FormattedMessage id="execute_detail" /></span>
+            <span 
+              title={issueInfosDTO && issueInfosDTO.summary}
+              style={{ display: 'inline-block', marginLeft: 15, width: 100 }}
+              className="c7ntest-text-dot"
+            >
+              {issueInfosDTO && issueInfosDTO.summary}
+            </span>
           </div>
         )}
         >
-
-
           <Button
             disabled={lastExecuteId === null}
             onClick={() => {

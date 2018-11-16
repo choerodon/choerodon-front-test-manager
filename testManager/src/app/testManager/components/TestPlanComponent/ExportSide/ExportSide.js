@@ -5,7 +5,6 @@ import {
   Modal, Progress, Table, Button, Icon, Tooltip,
 } from 'choerodon-ui';
 import _ from 'lodash';
-import FileSaver from 'file-saver';
 import moment from 'moment';
 import { SelectVersion, SelectFolder, SimpleSelect } from '../../CommonComponent';
 import {
@@ -36,9 +35,9 @@ class ExportSide extends Component {
 
   open = () => {
     this.setState({
-      versionId: null,
-      cycleId: null,
-      stageId: null,
+      // versionId: null,
+      // cycleId: null,
+      // stageId: null,
       visible: true,
       loading: true,
     });
@@ -96,7 +95,7 @@ class ExportSide extends Component {
   }
 
   handleMessage = (data) => {
-    console.log(data);
+    // console.log(data);
     const exportList = [...this.state.exportList];
     const { id, rate } = data;
     const index = _.findIndex(exportList, { id });
@@ -117,7 +116,7 @@ class ExportSide extends Component {
     const lastTime = moment(lastUpdateDate);
     const diff = lastTime.diff(startTime);
     return creationDate && lastUpdateDate
-      ? humanizeDuration(diff / 1000)
+      ? humanizeDuration(diff)
       : null;
   }
 
@@ -189,7 +188,6 @@ class ExportSide extends Component {
       <Sidebar
         title="导出测试执行"
         visible={visible}
-        destroyOnClose
         footer={<Button onClick={this.handleClose} type="primary" funcType="raised"><FormattedMessage id="close" /></Button>}
       >
         <Content

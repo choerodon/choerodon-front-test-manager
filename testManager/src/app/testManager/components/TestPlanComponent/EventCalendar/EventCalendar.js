@@ -55,6 +55,29 @@ class EventCalendar extends Component {
   //     return null;
   //   }
   // }
+  componentDidMount() {   
+    this.setRightWidth();
+    window.addEventListener('resize', this.setRightWidth);
+  }
+  
+  componentDidUpdate() {
+    this.setRightWidth();
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.setRightWidth);
+  }
+
+  /**
+   *由于滚动条会占用位置，所以动态设置宽度
+   *
+   * @memberof EventCalendar
+   */
+  setRightWidth=() => {
+    if (this.scroll && this.wrapper) {
+      this.scroll.style.width = `${this.wrapper.offsetWidth}px`;
+    }
+  }
 
   calculateTime = () => {
     const { mode, pos, baseDate } = this.state;
@@ -87,6 +110,10 @@ class EventCalendar extends Component {
       pos: 0,
       baseDate: date,
     });
+  }
+
+  saveRef = name => (ref) => {
+    this[name] = ref;
   }
 
   render() {
@@ -157,17 +184,19 @@ class EventCalendar extends Component {
             {
               timeArray.map(m => <CalendarBackItem date={m} />)
             }
-          </div>
-          <div className="c7ntest-EventCalendar-eventContainer">
-            {times.map(event => (
-              <EventItem
-                onClick={this.props.onItemClick}
-                itemRange={moment.range(event.start, event.end)}
+          </div>          
+          <div className="c7ntest-EventCalendar-eventContainer" ref={this.saveRef('wrapper')}>   
+            <div className="c7ntest-EventCalendar-scroll-wrapper" ref={this.saveRef('scroll')}>         
+              {times.map(event => (
+                <EventItem
+                  onClick={this.props.onItemClick}
+                  itemRange={moment.range(event.start, event.end)}
                 // totalRange={timeArray.length}
-                data={event}
-                range={range}
-              />
-            ))}
+                  data={event}
+                  range={range}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </div>

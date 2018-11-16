@@ -18,7 +18,6 @@ const dataList = [];
 @observer
 class IssueTree extends Component {
   state = {
-    loading: false,
     autoExpandParent: false,
     searchValue: '',
   }
@@ -45,10 +44,7 @@ class IssueTree extends Component {
   }
 
   addFolder = (item, e, type) => {
-    // console.log(item, e.target.value, type);
-    this.setState({
-      loading: true,
-    });
+    IssueTreeStore.setLoading(true);
     addFolder({
       name: e.target.value,
       type: 'cycle',
@@ -60,9 +56,7 @@ class IssueTree extends Component {
       } else {
         this.getTree();
       }
-      this.setState({
-        loading: false,
-      });
+      IssueTreeStore.setLoading(false);
     });
   }
 
@@ -91,28 +85,17 @@ class IssueTree extends Component {
   getParentKey = (key, tree) => key.split('-').slice(0, -1).join('-')
 
   getTree = () => {
-    // console.log(IssueTreeStore.treeData);
-    this.setState({
-      loading: true,
-    });
-
+    IssueTreeStore.setLoading(true);
     getIssueTree().then((data) => {
       IssueTreeStore.setTreeData([{ title: '所有版本', key: '0', children: data.versions }]);
-      this.setState({
-        // treeData: [
-        //   { title: '所有版本', key: '0', children: data.versions },
-        // ],
-        loading: false,
-      });
+      IssueTreeStore.setLoading(false);
       this.generateList([
         { title: '所有版本', key: '0', children: data.versions },
       ]);
 
       // window.console.log(dataList);
     }).catch(() => {
-      this.setState({
-        loading: false,
-      });
+      IssueTreeStore.setLoading(false);
       Choerodon.prompt('网络错误');
     });
   }
@@ -275,7 +258,7 @@ class IssueTree extends Component {
     const draggingItems = selectedKeys.map(key => IssueTreeStore.getItemByKey(key));
     const { draggableId } = source;
     const item = JSON.parse(draggableId);
-    if (!_.find(draggingItems, { cycleId: item.folderId })) {
+    if (!_.find(draggingItems, { cycleId: item.cycleId })) {
       draggingItems.push(item);
     }
     IssueTreeStore.setDraggingFolders(draggingItems);
@@ -289,44 +272,42 @@ class IssueTree extends Component {
       return;
     }
     const draggingItems = IssueTreeStore.getDraggingFolders;
-    const filteredItems = draggingItems.filter(item => destination.droppableId !== item.versionId);
+    
+    // 过滤，这里只要文件夹
+    const filteredItems = draggingItems.filter(item => item && destination.droppableId !== item.versionId && item.cycleId);
+    // console.log(draggingItems, filteredItems);
+    IssueTreeStore.setSelectedKeys([]);
     if (filteredItems.length > 0) {
       const data = filteredItems.map(item => ({ versionId: destination.droppableId, folderId: item.cycleId, objectVersionNumber: item.objectVersionNumber }));
-      console.log(data);
-      this.setState({
-        loading: true,
-      });
+      // console.log(data);
+      IssueTreeStore.setLoading(true);
+      // 清掉之前的拖动数据
+      IssueTreeStore.setDraggingFolders([]);
       if (IssueTreeStore.isCopy) {
         copyFolders(data, destination.droppableId).then((res) => {
           if (res.failed) {
-            this.setState({
-              loading: false,
-            });
+            IssueTreeStore.setLoading(false);
             Choerodon.prompt('存在同名文件夹');
-            return;
           }
-          this.getTree();
+          // this.getTree();
         }).catch((err) => {
-          this.setState({
-            loading: false,
-          });
+          IssueTreeStore.setLoading(false);
           Choerodon.prompt('网络错误');
+        }).finally(() => {
+          this.getTree();
         });
       } else {
-        moveFolders(data).then((res) => {
+        moveFolders(data).then((res) => {          
           if (res.failed) {
-            this.setState({
-              loading: false,
-            });
+            IssueTreeStore.setLoading(false);
             Choerodon.prompt('存在同名文件夹');
-            return;
           }
-          this.getTree();
-        }).catch((err) => {
-          this.setState({
-            loading: false,
-          });
+          // this.getTree();
+        }).catch((err) => {        
+          IssueTreeStore.setLoading(false);
           Choerodon.prompt('网络错误');
+        }).finally(() => {
+          this.getTree();
         });
       }
     }
@@ -337,9 +318,8 @@ class IssueTree extends Component {
 
   render() {
     const { onClose } = this.props;
-    const {
-      autoExpandParent, loading,
-    } = this.state;
+    const { autoExpandParent } = this.state;
+    const loading = IssueTreeStore.loading;
     const treeData = IssueTreeStore.getTreeData;
     const expandedKeys = IssueTreeStore.getExpandedKeys;
     const selectedKeys = IssueTreeStore.getSelectedKeys;

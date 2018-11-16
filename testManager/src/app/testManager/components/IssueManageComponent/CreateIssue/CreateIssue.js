@@ -180,11 +180,12 @@ class CreateIssue extends Component {
         //     });
         //   }
         // });
-        const testType = IssueStore.getTestType;
+        const testType = IssueStore.getTestType;     
         const extra = {
           typeCode: 'issue_test',
           issueTypeId: testType,
           summary: values.summary,
+          priorityCode: `priority-${values.priorityId}`,
           priorityId: values.priorityId,
           sprintId: values.sprintId || 0,
           epicId: values.epicId || 0,

@@ -8,3 +8,6 @@
 'test-manager.cycle':  测试循环
 'test-manager.createautotest':  新建测试
 'test-manager.autotestlist':  测试记录
+
+"platform-reports": "报表"
+"platform-reports.testreport": "测试管理报表"

@@ -76,14 +76,13 @@ class Test extends Component {
     } else if (paramIssueId) {
       IssueStore.setBarFilters(arr);
       IssueStore.init();
-      IssueStore.loadIssues()
-        .then((res) => {
-          window.console.log(res);
-          this.setState({
-            selectedIssue: res.content.length ? res.content[0] : {},
-            expand: true,
-          });
+      IssueStore.loadIssues().then((res) => {
+        window.console.log(res);
+        this.setState({
+          selectedIssue: res.content.length ? res.content[0] : {},
+          expand: true,
         });
+      });
     } else {
       IssueStore.setBarFilters(arr);
       IssueStore.init();
@@ -149,7 +148,7 @@ class Test extends Component {
       const testType = IssueStore.getTestType;
       const mediumPriority = IssueStore.getMediumPriority;
       const data = {
-        priorityCode: 'medium',
+        priorityCode: `priority-${mediumPriority}`,
         priorityId: mediumPriority,
         typeCode: 'issue_test',
         issueTypeId: testType,
@@ -205,7 +204,7 @@ class Test extends Component {
     IssueStore.loadIssues(current - 1, size);
   }
 
-  handleFilterChange = (pagination, filters, sorter, barFilters) => {
+  handleFilterChange = (pagination, filters, sorter, barFilters) => {    
     // 条件变化返回第一页
     IssueStore.setPagination({
       current: 1,

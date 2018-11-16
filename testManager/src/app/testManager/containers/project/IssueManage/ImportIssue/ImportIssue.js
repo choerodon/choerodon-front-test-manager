@@ -154,7 +154,7 @@ class ImportIssue extends Component {
   }
 
   handleMessage = (data) => {
-    console.log(data);
+    // console.log(data);
     const { importRecord } = this.state;
     const { rate, id, status } = data;
     if (importRecord.status === 4 && id === importRecord.id && status !== 4) {

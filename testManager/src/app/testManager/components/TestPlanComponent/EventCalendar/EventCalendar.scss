@@ -53,8 +53,13 @@
   &-eventContainer {
     height:calc(100% - 65px);
     overflow: auto;
+    overflow-x: hidden;
     width: 100%;
     position: absolute;
     top: 60px;
+
   }
+  // &-scroll-wrapper{
+  //   width: calc(100% + 8px);
+  // }
 }

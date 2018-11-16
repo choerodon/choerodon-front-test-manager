@@ -4,6 +4,8 @@ import {
 import { BaseTreeProto } from '../prototype';
 
 class IssueTreeStore extends BaseTreeProto {
+  @observable loading=false;
+
   @observable draggingFolders = [];
 
   @observable isCopy = false;
@@ -14,6 +16,10 @@ class IssueTreeStore extends BaseTreeProto {
 
   @action setCopy = (isCopy) => {
     this.isCopy = isCopy;
+  }
+
+  @action setLoading = (loading) => {
+    this.loading = loading;
   }
 
   @action setDraggingFolders(draggingFolders) {

@@ -13,6 +13,7 @@ import {
 import { humanizeDuration } from '../../../common/utils';
 import './ExportSide.scss';
 
+
 const { Sidebar } = Modal;
 const { AppState } = stores;
 
@@ -36,6 +37,7 @@ class ExportSide extends Component {
     this.setState({
       visible: true,
       loading: true,
+      // folderId: null,
     });
     getExportList().then((exportList) => {
       this.setState({
@@ -124,7 +126,7 @@ class ExportSide extends Component {
       diff = moment().diff(startTime);
     }
     return creationDate && lastUpdateDate
-      ? humanizeDuration(diff / 1000)
+      ? humanizeDuration(diff)
       : null;
   }
 
@@ -195,8 +197,7 @@ class ExportSide extends Component {
     return (
       <Sidebar
         title="导出用例"
-        visible={visible}
-        destroyOnClose
+        visible={visible}   
         footer={<Button onClick={this.handleClose} type="primary" funcType="raised"><FormattedMessage id="close" /></Button>}
       >
         <Content
