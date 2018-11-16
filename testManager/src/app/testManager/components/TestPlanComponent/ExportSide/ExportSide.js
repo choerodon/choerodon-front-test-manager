@@ -35,9 +35,9 @@ class ExportSide extends Component {
 
   open = () => {
     this.setState({
-      versionId: null,
-      cycleId: null,
-      stageId: null,
+      // versionId: null,
+      // cycleId: null,
+      // stageId: null,
       visible: true,
       loading: true,
     });
@@ -188,7 +188,6 @@ class ExportSide extends Component {
       <Sidebar
         title="导出测试执行"
         visible={visible}
-        destroyOnClose
         footer={<Button onClick={this.handleClose} type="primary" funcType="raised"><FormattedMessage id="close" /></Button>}
       >
         <Content
