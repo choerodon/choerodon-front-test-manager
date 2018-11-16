@@ -274,7 +274,7 @@ class IssueTree extends Component {
     const draggingItems = IssueTreeStore.getDraggingFolders;
     
     // 过滤，这里只要文件夹
-    const filteredItems = draggingItems.filter(item => destination.droppableId !== item.versionId && item.cycleId);
+    const filteredItems = draggingItems.filter(item => item && destination.droppableId !== item.versionId && item.cycleId);
     // console.log(draggingItems, filteredItems);
     IssueTreeStore.setSelectedKeys([]);
     if (filteredItems.length > 0) {
