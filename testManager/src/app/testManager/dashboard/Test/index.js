@@ -20,7 +20,7 @@ export default class Announcement extends Component {
           </li>
           <li>           
             <a target="choerodon" href="http://choerodon.io/zh/docs/user-guide/test-management/test-execute/">
-              {Choerodon.getMessage('测试计划', 'test execute')}
+              {Choerodon.getMessage('测试执行', 'test execute')}
             </a>
           </li>
           <li>           
