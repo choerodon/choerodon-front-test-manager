@@ -87,3 +87,39 @@ All notable changes to choerodon-front-agile will be documented in this file.
 - Fix the save operation of the edit in the table
 - Fix some style issues
 - Fix the style problem of dragging the table without searching for data
+
+## [0.11.0] - 2018-09-30
+
+### Add
+
+#### 0.11.0 Significantly added features
+
+- Test case can import through template excel file
+- Test case export function
+- Test execution details page add before/next button
+
+### Modify
+
+#### 0.11.0 Significantly modify the feature
+
+- Test plan export changed to asynchronous modification, adding progress bar
+- Test case folder copying and moving support batch mode
+- Test phase folder added version display
+- Test phase has a default time
+- Test step added drag scroll
+- Test execution page hides empty cycle
+- The version of the test summary page is sorted by creation time
+- Test case sorted by creation time desc
+- Save the status of sidebar in test execution and test plan page
+- Create a test step doesn't show up a new page, insert a new row in the table for editing
+- Test step copy icon changed to button
+
+### Fix
+
+#### 0.11.0 Significant repair features
+
+- Test case folder page don't scrolling when copy or drag folder
+- Test plan page scroll problem
+- Old values appear when table edits are saved
+- Test plan, test execution table style adjustment
+- Don't return to the first page after modifying the test case
