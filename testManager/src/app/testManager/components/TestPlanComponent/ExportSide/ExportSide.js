@@ -116,7 +116,7 @@ class ExportSide extends Component {
     const lastTime = moment(lastUpdateDate);
     const diff = lastTime.diff(startTime);
     return creationDate && lastUpdateDate
-      ? humanizeDuration(diff / 1000)
+      ? humanizeDuration(diff)
       : null;
   }
 

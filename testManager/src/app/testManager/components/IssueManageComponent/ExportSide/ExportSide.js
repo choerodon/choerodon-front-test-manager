@@ -13,6 +13,7 @@ import {
 import { humanizeDuration } from '../../../common/utils';
 import './ExportSide.scss';
 
+
 const { Sidebar } = Modal;
 const { AppState } = stores;
 
@@ -124,7 +125,7 @@ class ExportSide extends Component {
       diff = moment().diff(startTime);
     }
     return creationDate && lastUpdateDate
-      ? humanizeDuration(diff / 1000)
+      ? humanizeDuration(diff)
       : null;
   }
 
