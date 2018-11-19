@@ -21,3 +21,11 @@ export function getYaml() {
 export function loadPodParam(projectId, id, type) {
   return axios.get(`devops/v1/projects/${getProjectId()}/app_pod/${5}/containers/logs`);
 }
+export function getApps({
+  page, size, sort, postData, 
+}) {
+  return request.post(`/devops/v1/projects/${getProjectId()}/apps/list_by_options?active=true&page=${page}&size=${size}&sort=${sort.field},${sort.order}`, JSON.stringify(postData));
+}
+export function getAppVersions(appId, flag = '') {
+  return request.get(`/devops/v1/projects/${getProjectId()}/apps/${appId}/version/list?is_publish=${flag}`);
+}

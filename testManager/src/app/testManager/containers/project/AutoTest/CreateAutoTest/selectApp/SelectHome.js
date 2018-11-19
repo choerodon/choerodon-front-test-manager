@@ -2,34 +2,72 @@ import React, { Component } from 'react';
 import { observer } from 'mobx-react';
 import { withRouter } from 'react-router-dom';
 import { injectIntl, FormattedMessage } from 'react-intl';
-import {
-  Button, Tabs, Icon, Modal, Input, Table, Pagination,
-} from 'choerodon-ui';
+import { Modal, Table, Select } from 'choerodon-ui';
 import { stores, Content } from 'choerodon-front-boot';
-import { LoadingBar } from '../../../../../components/CommonComponent';
 import './SelectApp.scss';
+import { getApps, getAppVersions } from '../../../../../api/AutoTestApi';
 import SelectAppStore from '../../../../../store/project/AutoTest/SelectAppStore';
 
-const { TabPane } = Tabs;
-const ButtonGroup = Button.Group;
 const SideBar = Modal.Sidebar;
 const { AppState } = stores;
-
+const { Option } = Select;
 @observer
 class DeployAppHome extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      activeTab: '1',
-      projectId: AppState.currentMenuType.id,
-      view: 'card',
-    };
+  state = {
+    projectId: AppState.currentMenuType.id,
+    appList: [],
+    selectedApp: null,
+    appVersions: [],
+    selectedAppVersion: null,
+    loading: false,
+    pagination: {
+      current: 1,
+      total: 0,
+      pageSize: 10,
+    },
+
   }
 
   componentDidMount() {
-    const { projectId } = this.state;
-    SelectAppStore.loadData({ projectId });
-    this.handleSelectData();
+    this.loadApps();
+  }
+
+  loadApps = (value = '') => {
+    const { pagination, selectedApp } = this.state;
+    const { current, pageSize: size } = pagination;
+    let searchParam = {};
+    if (value !== '') {
+      searchParam = { name: [value] };
+    }
+    getApps({
+      page: current - 1,
+      size,
+      sort: { field: 'id', order: 'desc' },
+      postData: { searchParam, param: '' },
+    }).then((data) => {
+      // 默认取第一个
+      if (data.failed) {
+        Choerodon.prompt(data.failed);
+        return; 
+      }
+      if (data.content.length > 0 && data.content[0].id != selectedApp) {
+        this.loadAppVersions(data.content[0].id);
+        this.setState({
+          selectedApp: data.content[0].id,
+        });
+      }
+      this.setState({
+        appList: data.content,
+      });
+    });
+  }
+
+  loadAppVersions = (appId) => {
+    getAppVersions(appId).then((data) => {      
+      this.setState({
+        appVersions: data,
+      });
+    });
   }
 
   /**
@@ -37,23 +75,14 @@ class DeployAppHome extends Component {
    * @param page
    * @param size
    */
-  onPageChange =(page, size) => {
-    const { activeTab, projectId } = this.state;
-    const key = activeTab;
-    if (key === '1') {
-      SelectAppStore.loadData({
-        projectId,
-        page: page - 1,
-        size,
-      });
-    } else {
-      SelectAppStore.loadApps({
-        projectId,
-        page: page - 1,
-        size,
-      });
-    }
-  };
+  // onPageChange = (page, size) => {
+  //   const { projectId } = this.state;
+  //   this.loadData({
+  //     projectId,
+  //     page: page - 1,
+  //     size,
+  //   });
+  // };
 
   /**
    * 获取本项目的app
@@ -61,21 +90,26 @@ class DeployAppHome extends Component {
    */
   getProjectTable = () => {
     const { intl } = this.props;
-    const { app, isMarket } = this.state;
-    const dataSource = SelectAppStore.getAllData;
+    const {
+      app, isMarket, appVersions, selectedAppVersion, pagination,
+    } = this.state;
     const column = [{
       key: 'check',
       width: '50px',
       render: record => (
-        app && record.id === app.id && !isMarket && <i className="icon icon-check icon-select" />
+        record.id === selectedAppVersion.id && <i className="icon icon-check icon-select" />
       ),
-
     }, {
       title: <FormattedMessage id="app_name" />,
       dataIndex: 'name',
       key: 'name',
       sorter: true,
       filters: [],
+    }, {
+      title: <FormattedMessage id="autoteststep_one_version" />,
+      dataIndex: 'version',
+      key: 'version',
+      sorter: true,
     }, {
       title: <FormattedMessage id="app_code" />,
       dataIndex: 'code',
@@ -90,65 +124,14 @@ class DeployAppHome extends Component {
         onRow={(record) => {
           const a = record;
           return {
-            onClick: this.handleSelectApp.bind(this, record),
+            onClick: this.handleSelectAppVersion.bind(this, record),
           };
         }}
         onChange={this.tableChange}
         columns={column}
         rowKey={record => record.id}
-        dataSource={dataSource}
-        pagination={SelectAppStore.getLocalPageInfo}
-      />
-    );
-  };
-
-  /**
-   * 获取应用市场的数据
-   * @returns {*}
-   */
-  getMarketTable = () => {
-    const { intl } = this.props;
-    const { app, isMarket } = this.state;
-    const dataSource = SelectAppStore.getStoreData;
-    const column = [{
-      key: 'check',
-      width: '50px',
-      render: record => (
-        app && isMarket && record.appId === app.appId && <i className="icon icon-check icon-select" />
-      ),
-
-    }, {
-      title: <FormattedMessage id="appstore.name" />,
-      dataIndex: 'name',
-      key: 'name',
-    }, {
-      title: <FormattedMessage id="appstore.contributor" />,
-      dataIndex: 'contributor',
-      key: 'contributor',
-    }, {
-      title: <FormattedMessage id="appstore.category" />,
-      dataIndex: 'category',
-      key: 'category',
-    }, {
-      title: <FormattedMessage id="appstore.description" />,
-      dataIndex: 'description',
-      key: 'description',
-    }];
-    return (
-      <Table
-        onRow={(record) => {
-          const a = record;
-          return {
-            onClick: this.handleSelectApp.bind(this, record),
-          };
-        }}
-        filterBarPlaceholder={intl.formatMessage({ id: 'filter' })}
-        rowClassName="col-check"
-        onChange={this.tableChange}
-        columns={column}
-        rowKey={record => record.id}
-        dataSource={dataSource}
-        pagination={SelectAppStore.getStorePageInfo}
+        dataSource={appVersions}
+        pagination={pagination}
       />
     );
   };
@@ -156,77 +139,51 @@ class DeployAppHome extends Component {
   /**
    * 初始化选择数据
    */
-  handleSelectData =() => {
-    if (this.props.app) {
-      if (this.props.isMarket) {
-        const app = this.props.app;
-        app.appId = app.id;
-      }
-      this.setState({ app: this.props.app, isMarket: this.props.isMarket });
-    }
-  };
+  // handleSelectData = () => {
+  //   if (this.props.app) {
+  //     if (this.props.isMarket) {
+  //       const app = this.props.app;
+  //       app.appId = app.id;
+  //     }
+  //     this.setState({ app: this.props.app, isMarket: this.props.isMarket });
+  //   }
+  // };
 
-  /**
-   * 切换视图
-   * @param view
-   */
-  changeView =(view) => {
-    this.setState({ view });
-  };
-
-  /**
-   * 搜索
-   * @param e
-   */
-  handleSearch =(e) => {
-    const { activeTab, projectId } = this.state;
-    this.setState({ val: e.target.value });
-    SelectAppStore.setSearchValue(e.target.value);
-    if (activeTab === '1') {
-      SelectAppStore.loadData({
-        projectId,
-        postData: { param: e.target.value, searchParam: {} },
-        page: 0,
-      });
-    } else {
-      SelectAppStore.loadApps({
-        projectId,
-        postData: { param: e.target.value, searchParam: {}, page: 0 },
-      });
-    }
-  };
 
   /**
    * 清空搜索框数据
    */
-  clearInputValue = (key) => {
-    const { projectId, activeKey } = this.state;
-    const keys = key || activeKey;
-    SelectAppStore.setSearchValue('');
-    this.setState({ val: '' });
-    if (keys === '1') {
-      SelectAppStore.loadData({
-        projectId,
-        page: 0,
-        size: SelectAppStore.localPageInfo.pageSize,
-      });
-    } else {
-      SelectAppStore.loadApps({
-        projectId,
-        page: 0,
-        size: SelectAppStore.storePageInfo.pageSize,
-      });
-    }
-  };
+  // clearInputValue = (key) => {
+  //   const { projectId, activeKey } = this.state;
+  //   const keys = key || activeKey;
+  //   SelectAppStore.setSearchValue('');
+  //   if (keys === '1') {
+  //     SelectAppStore.loadData({
+  //       projectId,
+  //       page: 0,
+  //       size: SelectAppStore.localPageInfo.pageSize,
+  //     });
+  //   } else {
+  //     SelectAppStore.loadApps({
+  //       projectId,
+  //       page: 0,
+  //       size: SelectAppStore.storePageInfo.pageSize,
+  //     });
+  //   }
+  // };
 
   /**
    * 点击选择数据
    * @param record
    */
   handleSelectApp = (record) => {
-    const { activeTab } = this.state;
-    this.setState({ app: record, isMarket: activeTab === '2' });
+    this.loadAppVersions(record.id);
+    this.setState({ app: record, selectedApp: record.id });
   };
+
+  handleSelectAppVersion=(record) => {
+    this.setState({ selectedAppVersion: record.id });
+  }
 
   /**
    * table 改变的函数
@@ -234,8 +191,7 @@ class DeployAppHome extends Component {
    * @param filters 过滤
    * @param sorter 排序
    */
-  tableChange =(pagination, filters, sorter, paras) => {
-    const { activeTab } = this.state;
+  tableChange = (pagination, filters, sorter, paras) => {
     const menu = AppState.currentMenuType;
     const organizationId = menu.id;
     const sort = { field: 'id', order: 'desc' };
@@ -257,62 +213,35 @@ class DeployAppHome extends Component {
       searchParam,
       param: paras.toString(),
     };
-    if (activeTab === '1') {
-      SelectAppStore.loadData({
-        projectId: organizationId,
-        sort,
-        postData,
-        page,
-        size: pagination.pageSize,
-      });
-    } else {
-      SelectAppStore.loadApps({
-        projectId: organizationId,
-        sort,
-        postData,
-        page,
-        size: pagination.pageSize,
-      });
-    }
+
+    // SelectAppStore.loadData({
+    //   projectId: organizationId,
+    //   sort,
+    //   postData,
+    //   page,
+    //   size: pagination.pageSize,
+    // });
   };
 
-  /**
-   * 切换tabs
-   * @param key
-   */
-  changeTab =(key) => {
-    this.clearInputValue(key);
-    this.setState({
-      activeTab: key,
-    });
-  };
 
   /**
    * 确定选择数据
    */
-  handleOk =() => {
-    const { app, activeTab } = this.state;
+  handleOk = () => {
+    const { selectedAppVersion } = this.state;
     const { handleOk, intl } = this.props;
-    if (app) {
-      handleOk(app, activeTab);
+    if (selectedAppVersion) {
+      handleOk(selectedAppVersion);
     } else {
-      Choerodon.prompt(intl.formatMessage({ id: 'network.form.version.disable' }));
+      Choerodon.prompt('未选择应用版本');
     }
   };
 
   render() {
     const { intl: { formatMessage }, show, handleCancel } = this.props;
-    const {
-      val, view, isMarket, app, activeTab,
-    } = this.state;
-    const localDataSource = SelectAppStore.getAllData;
-    const storeDataSource = SelectAppStore.getStoreData;
-    const { total: lt, current: lc, pageSize: lp } = SelectAppStore.getLocalPageInfo;
-    const { total: st, current: sc, pageSize: sp } = SelectAppStore.getStorePageInfo;
+    const { appList, selectedApp } = this.state;
     const projectName = AppState.currentMenuType.name;
-    const prefix = <Icon type="search" onClick={this.handleSearch} />;
-    const suffix = val ? <Icon type="close" onClick={() => this.clearInputValue(activeTab)} /> : null;
-    const loading = SelectAppStore.getLoading;
+    const appOptions = appList.map(app => <Option value={app.id} key={app.id}>{app.name}</Option>);
     return (
       <SideBar
         title={<FormattedMessage id="autoteststep_one_app" />}
@@ -323,129 +252,19 @@ class DeployAppHome extends Component {
         onCancel={handleCancel}
       >
         <Content className="c7ntest-deployApp-sidebar sidebar-content" code="autotest.sidebar" value={projectName}>
+          <Select
+            style={{ width: 200, marginBottom: 30 }}
+            label="应用名称"
+            onChange={this.handleSelectApp}
+            value={selectedApp}
+            filter
+            filterOption={false}
+            onFilterChange={(value) => { this.loadApps(value); }}
+          >
+            {appOptions}
+          </Select>
           <div>
-            <Tabs
-              animated={false}
-              tabBarExtraContent={(
-                <ButtonGroup>
-                  <Button onClick={this.changeView.bind(this, 'list')} className={view === 'list' ? 'c7ntest-tab-active' : ''}><Icon type="format_list_bulleted" /></Button>
-                  <Button onClick={this.changeView.bind(this, 'card')} className={view === 'card' ? 'c7ntest-tab-active' : ''}><Icon type="dashboard" /></Button>
-                </ButtonGroup>
-              )}
-              onChange={this.changeTab}
-
-            >
-              <TabPane className="c7ntest-autotest-tabpane" tab={formatMessage({ id: 'autotest_sidebar_project' })} key="1">
-                {view === 'list' && this.getProjectTable()}
-                {view === 'card' && (
-                  <React.Fragment>
-                    <div className="c7ntest-store-search">
-                      <Input
-                        value={val}
-                        prefix={prefix}
-                        suffix={suffix}
-                        onChange={this.handleSearch}
-                        onPressEnter={this.handleSearch}
-                        placeholder={formatMessage({ id: 'autotest_sidebar_search' })}
-                        // eslint-disable-next-line no-return-assign
-                        ref={node => this.searchInput = node}
-                      />
-                    </div>
-                    {loading ? <LoadingBar display /> : (
-                      <React.Fragment>
-                        <div>
-                          {localDataSource.length >= 1 && localDataSource.map(card => (
-                            <div
-                              key={card.id}
-                              role="none"
-                              className={`c7ntest-store-card ${app && app.id === card.id && !isMarket && 'c7ntest-card-active'}`}
-                              onClick={this.handleSelectApp.bind(this, card)}
-                            >
-                              {app && !isMarket && app.id === card.id && <span className="span-icon-check"><i className="icon icon-check" /></span> }
-                              <div className="c7ntest-store-card-icon" />
-                              <div className="c7ntest-store-card-name">                               
-                                {card.name}                                
-                              </div>
-                              <div title={card.code} className="c7ntest-store-card-des-60">
-                                {card.code}
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                        <div className="c7ntest-store-pagination">
-                          <Pagination
-                            total={lt}
-                            current={lc}
-                            pageSize={lp}
-                            showSizeChanger
-                            onChange={this.onPageChange}
-                            onShowSizeChange={this.onPageChange}
-                          />
-                        </div>
-                      </React.Fragment>
-                    )}
-                  </React.Fragment>
-                )}
-
-              </TabPane>
-              {/* <TabPane className="c7ntest-autotest-tabpane" tab={formatMessage({ id: 'autotest_sidebar_market' })} key="2">
-                {view === 'list' && this.getMarketTable()}
-                {view === 'card' && (
-                  <React.Fragment>
-                    <div className="c7ntest-store-search">
-                      <Input
-                        placeholder={formatMessage({ id: 'autotest_sidebar_search' })}
-                        value={val}
-                        prefix={prefix}
-                        suffix={suffix}
-                        // onChange={e => _.debounce(() => this.handleSearch(e), 1000)}
-                        onChange={this.handleSearch}
-                        onPressEnter={this.handleSearch}
-                        // eslint-disable-next-line no-return-assign
-                        ref={node => this.searchInput = node}
-                      />
-                    </div>
-                    {loading ? <Loadingbar display /> : (
-                      <React.Fragment>
-                        <div>
-                          {storeDataSource.length >= 1 && storeDataSource.map(card => (
-                            <div
-                              key={card.id}
-                              role="none"
-                              className={`c7ntest-store-card ${app && isMarket && app.appId === card.appId && 'c7ntest-card-active'}`}
-                              onClick={this.handleSelectApp.bind(this, card)}
-                            >
-                              {app && app.appId === card.appId && isMarket && <span className="span-icon-check"><i className="icon icon-check " /></span> }
-                              {card.imgUrl ? <div className="c7ntest-store-card-icon" style={{ backgroundImage: `url(${Choerodon.fileServer(card.imgUrl)})` }} />
-                                : <div className="c7ntest-store-card-icon" />}
-                              <div title={card.name} className="c7ntest-store-card-name">
-                                {card.name}
-                              </div>
-                              <div className="c7ntest-store-card-source">
-                                {card.category}
-                              </div>
-                              <div title={card.description} className="c7ntest-store-card-des-60">
-                                {card.description}
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                        <div className="c7ntest-store-pagination">
-                          <Pagination
-                            total={st}
-                            current={sc}
-                            pageSize={sp}
-                            showSizeChanger
-                            onChange={this.onPageChange}
-                            onShowSizeChange={this.onPageChange}
-                          />
-                        </div>
-                      </React.Fragment>
-                    )}
-                  </React.Fragment>
-                )}
-              </TabPane> */}
-            </Tabs>
+            {this.getProjectTable()}
           </div>
         </Content>
       </SideBar>);

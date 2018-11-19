@@ -14,11 +14,10 @@ import YamlEditor from './YamlEditor';
 import SelectVersion from './SelectVersion';
 import SelectFolder from './SelectFolder';
 import Upload from './Upload';
-import LoadingBar from './LoadingBar';
 import SimpleSelect from './SimpleSelect';
 
 export {
   TextEditToggle, RichTextShow, SelectFocusLoad, User, UploadInTable, DefectSelect, 
   SelectCreateIssueFooter, RadioButton, StatusTags, FullEditor, WYSIWYGEditor, DragTable, YamlEditor,
-  SelectVersion, Upload, LoadingBar, SelectFolder, SimpleSelect,
+  SelectVersion, Upload, SelectFolder, SimpleSelect,
 };

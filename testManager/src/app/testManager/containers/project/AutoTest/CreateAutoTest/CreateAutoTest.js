@@ -129,40 +129,45 @@ class CreateAutoTest extends Component {
     this.setState({ show: false });
   };
 
+  // /**
+  //  * 弹框确定
+  //  * @param app 选择的数据
+  //  * @param key 标明是项目应用还是应用市场应用
+  //  */
+  // handleOk = (app) => {
+  //   const { CreateAutoTestStore } = this.props;
+  //   if (app) {
+  //     CreateAutoTestStore.loadVersion(app.id, this.state.projectId, '');
+  //     this.setState({
+  //       app,
+  //       appId: app.id,
+  //       show: false,
+  //       is_project: true,
+  //       appVersionId: undefined,
+  //       versionDto: null,
+  //     });
+  //   } else {
+  //     this.setState({ show: false });
+  //   }
+  // };
   /**
-   * 弹框确定
-   * @param app 选择的数据
-   * @param key 标明是项目应用还是应用市场应用
+   * 选择应用以及应用版本之后
+   *
+   * @memberof CreateAutoTest
    */
-  handleOk = (app, key) => {
+  handleOk = (value) => {
     const { CreateAutoTestStore } = this.props;
-    if (app) {
-      if (key === '1') {
-        CreateAutoTestStore.loadVersion(app.id, this.state.projectId, '');
-        this.setState({
-          app,
-          appId: app.id,
-          show: false,
-          is_project: true,
-          appVersionId: undefined,
-          versionDto: null,
-        });
-      } else {
-        CreateAutoTestStore.loadVersion(app.appId, this.state.projectId, true);
-        this.setState({
-          app,
-          appId: app.appId,
-          show: false,
-          is_project: false,
-          appVersionId: undefined,
-          versionDto: null,
-        });
-      }
-    } else {
-      this.setState({ show: false });
+    const versions = CreateAutoTestStore.versions;
+    const versionDto = _.filter(versions, v => v.id === value)[0];
+    CreateAutoTestStore.setValue(null);
+    this.setState({
+      appVersionId: value, versionDto, value: null, markers: [], 
+    });
+    if (this.state.envId) {
+      this.handleSelectEnv(this.state.envId);
     }
   };
-
+  
   /**
    * 选择环境
    * @param value
@@ -184,22 +189,22 @@ class CreateAutoTest extends Component {
     CreateAutoTestStore.loadInstances(this.state.appId, value);
   };
 
-  /**
-   * 选择版本
-   * @param value
-   */
-  handleSelectVersion = (value) => {
-    const { CreateAutoTestStore } = this.props;
-    const versions = CreateAutoTestStore.versions;
-    const versionDto = _.filter(versions, v => v.id === value)[0];
-    CreateAutoTestStore.setValue(null);
-    this.setState({
-      appVersionId: value, versionDto, value: null, markers: [], 
-    });
-    if (this.state.envId) {
-      this.handleSelectEnv(this.state.envId);
-    }
-  };
+  // /**
+  //  * 选择版本
+  //  * @param value
+  //  */
+  // handleSelectVersion = (value) => {
+  //   const { CreateAutoTestStore } = this.props;
+  //   const versions = CreateAutoTestStore.versions;
+  //   const versionDto = _.filter(versions, v => v.id === value)[0];
+  //   CreateAutoTestStore.setValue(null);
+  //   this.setState({
+  //     appVersionId: value, versionDto, value: null, markers: [], 
+  //   });
+  //   if (this.state.envId) {
+  //     this.handleSelectEnv(this.state.envId);
+  //   }
+  // };
 
   /**
    * 选择实例
@@ -399,7 +404,7 @@ class CreateAutoTest extends Component {
           </div>
         </section>
         {/* 选择应用版本 */}
-        <section className="deployApp-section">
+        {/* <section className="deployApp-section">
           <div className="autotest-title">
             <i className="icon icon-version section-title-icon " />
             <span className="section-title">{formatMessage({ id: 'autoteststep_one_version_title' })}</span>
@@ -418,7 +423,7 @@ class CreateAutoTest extends Component {
           >
             {versions.map(v => <Option key={v.id} value={v.id}>{v.version}</Option>)}
           </Select>
-        </section>
+        </section> */}
         {/* 选择目标版本 */}
         <section className="deployApp-section">
           <div className="autotest-title">
