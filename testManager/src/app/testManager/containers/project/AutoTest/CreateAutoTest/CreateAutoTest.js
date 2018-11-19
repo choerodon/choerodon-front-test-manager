@@ -14,6 +14,7 @@ import './CreateAutoTest.scss';
 import { commonLink } from '../../../../common/utils';
 import { YamlEditor, SelectVersion } from '../../../../components/CommonComponent';
 import SelectApp from './selectApp';
+import { ConfirmInfo } from './components';
 
 const RadioGroup = Radio.Group;
 const Step = Steps.Step;
@@ -466,7 +467,7 @@ class CreateAutoTest extends Component {
           <Button
             type="primary"
             funcType="raised"
-            disabled={!(this.state.appId)}
+            // disabled={!(this.state.appId)}
             onClick={this.changeStep.bind(this, 2)}
           >
             {formatMessage({ id: 'next' })}
@@ -533,70 +534,70 @@ class CreateAutoTest extends Component {
    * 渲染第三步
    * @returns {*}
    */
-  handleRenderMode = () => {
-    const { CreateAutoTestStore, intl } = this.props;
-    const { formatMessage } = intl;
-    const instances = CreateAutoTestStore.currentInstance;
-    return (
-      <div className="deployApp-autotest">
-        <p>
-          {formatMessage({ id: 'autoteststep.three.description' })}
-        </p>
-        <section className="deployApp-section">
-          <div className="autotest-title">
-            <i className="icon icon-jsfiddle section-title-icon " />
-            <span className="section-title">{formatMessage({ id: 'autoteststep.three.mode.title' })}</span>
-          </div>
-          <div className="section-text-margin">
-            <RadioGroup
-              onChange={this.handleChangeMode}
-              value={this.state.mode}
-              label={<span className="autotest-text">{formatMessage({ id: 'autoteststep.three.mode' })}</span>}
-            >
-              <Radio className="autotest-radio" value="new">{formatMessage({ id: 'autoteststep.three.mode.new' })}</Radio>
-              <Radio className="autotest-radio" value="replace" disabled={instances.length === 0 || (instances.length === 1 && (instances[0].appVersion === this.state.versionDto.version) && !this.state.changeYaml)}>
-                {formatMessage({ id: 'autoteststep.three.mode.replace' })}
-                <i className="icon icon-error section-instance-icon" />
-                <span className="autotest-tip-text">{formatMessage({ id: 'autoteststep.three.mode.help' })}</span>
-              </Radio>
-            </RadioGroup>
-            {this.state.mode === 'replace' && (
-            <Select
-              onSelect={this.handleSelectInstance}
-              value={this.state.instanceId 
-                || (instances && instances.length === 1 && instances[0].id)}
-              label={<FormattedMessage id="autoteststep.three.mode.replace.label" />}
-              className="autotest-select"
-              placeholder="Select a person"
-              optionFilterProp="children"
-              filterOption={(input, option) => option.props.children
-                .toLowerCase().indexOf(input.toLowerCase()) >= 0}
-              filter
-            >
-              {instances.map(v => (
-                <Option value={v.id} key={v.id} disabled={this.state.changeYaml ? false : v.appVersion === this.state.versionDto.version}>
-                  {v.code}
-                </Option>
-              ))}
-            </Select>
-            )}
-          </div>
-        </section>
-        <section className="deployApp-section">
-          <Button
-            type="primary"
-            funcType="raised"
-            onClick={this.changeStep.bind(this, 3)}
-            // disabled={!(this.state.mode === 'new' || (this.state.mode === 'replace' && (this.state.instanceId || (instances && instances.length === 1))))}
-          >
-            {formatMessage({ id: 'next' })}
-          </Button>
-          <Button funcType="raised" onClick={this.changeStep.bind(this, 2)}>{formatMessage({ id: 'previous' })}</Button>
-          <Button funcType="raised" className="c7ntest-autotest-clear" onClick={this.clearStepOne}>{formatMessage({ id: 'cancel' })}</Button>
-        </section>
-      </div>
-    );
-  };
+  // handleRenderMode = () => {
+  //   const { CreateAutoTestStore, intl } = this.props;
+  //   const { formatMessage } = intl;
+  //   const instances = CreateAutoTestStore.currentInstance;
+  //   return (
+  //     <div className="deployApp-autotest">
+  //       <p>
+  //         {formatMessage({ id: 'autoteststep.three.description' })}
+  //       </p>
+  //       <section className="deployApp-section">
+  //         <div className="autotest-title">
+  //           <i className="icon icon-jsfiddle section-title-icon " />
+  //           <span className="section-title">{formatMessage({ id: 'autoteststep.three.mode.title' })}</span>
+  //         </div>
+  //         <div className="section-text-margin">
+  //           <RadioGroup
+  //             onChange={this.handleChangeMode}
+  //             value={this.state.mode}
+  //             label={<span className="autotest-text">{formatMessage({ id: 'autoteststep.three.mode' })}</span>}
+  //           >
+  //             <Radio className="autotest-radio" value="new">{formatMessage({ id: 'autoteststep.three.mode.new' })}</Radio>
+  //             <Radio className="autotest-radio" value="replace" disabled={instances.length === 0 || (instances.length === 1 && (instances[0].appVersion === this.state.versionDto.version) && !this.state.changeYaml)}>
+  //               {formatMessage({ id: 'autoteststep.three.mode.replace' })}
+  //               <i className="icon icon-error section-instance-icon" />
+  //               <span className="autotest-tip-text">{formatMessage({ id: 'autoteststep.three.mode.help' })}</span>
+  //             </Radio>
+  //           </RadioGroup>
+  //           {this.state.mode === 'replace' && (
+  //           <Select
+  //             onSelect={this.handleSelectInstance}
+  //             value={this.state.instanceId 
+  //               || (instances && instances.length === 1 && instances[0].id)}
+  //             label={<FormattedMessage id="autoteststep.three.mode.replace.label" />}
+  //             className="autotest-select"
+  //             placeholder="Select a person"
+  //             optionFilterProp="children"
+  //             filterOption={(input, option) => option.props.children
+  //               .toLowerCase().indexOf(input.toLowerCase()) >= 0}
+  //             filter
+  //           >
+  //             {instances.map(v => (
+  //               <Option value={v.id} key={v.id} disabled={this.state.changeYaml ? false : v.appVersion === this.state.versionDto.version}>
+  //                 {v.code}
+  //               </Option>
+  //             ))}
+  //           </Select>
+  //           )}
+  //         </div>
+  //       </section>
+  //       <section className="deployApp-section">
+  //         <Button
+  //           type="primary"
+  //           funcType="raised"
+  //           onClick={this.changeStep.bind(this, 3)}
+  //           // disabled={!(this.state.mode === 'new' || (this.state.mode === 'replace' && (this.state.instanceId || (instances && instances.length === 1))))}
+  //         >
+  //           {formatMessage({ id: 'next' })}
+  //         </Button>
+  //         <Button funcType="raised" onClick={this.changeStep.bind(this, 2)}>{formatMessage({ id: 'previous' })}</Button>
+  //         <Button funcType="raised" className="c7ntest-autotest-clear" onClick={this.clearStepOne}>{formatMessage({ id: 'cancel' })}</Button>
+  //       </section>
+  //     </div>
+  //   );
+  // };
 
   /**
    * 渲染第四步预览
@@ -624,11 +625,9 @@ class CreateAutoTest extends Component {
         </p>
         <section className="deployApp-section">
           <div>
-            <div className="deployApp-title">
-              <Icon type="widgets" />
+            <div className="deployApp-title">        
               <span className="deployApp-title-text">
-                {formatMessage({ id: 'autoteststep_three_app' })}
-                {'：'}
+                {'测试类型：'}        
               </span>
             </div>
             <div className="deployApp-text">
@@ -641,6 +640,51 @@ class CreateAutoTest extends Component {
             </div>
           </div>
           <div>
+            <div className="deployApp-title">    
+              <span className="deployApp-title-text">
+                {'测试框架：'}        
+              </span>
+            </div>
+            <div className="deployApp-text">
+              {this.state.app && this.state.app.name}
+              <span className="deployApp-value">
+                {'('}
+                {this.state.app && this.state.app.code}
+                {')'}
+              </span>
+            </div>
+          </div>
+          <div>
+            <div className="deployApp-title">    
+              <span className="deployApp-title-text">
+                {'应用：'}        
+              </span>
+            </div>
+            <div className="deployApp-text">
+              {this.state.app && this.state.app.name}
+              <span className="deployApp-value">
+                {'('}
+                {this.state.app && this.state.app.code}
+                {')'}
+              </span>
+            </div>
+          </div>
+          <div>
+            <div className="deployApp-title">    
+              <span className="deployApp-title-text">
+                {'版本：'}        
+              </span>
+            </div>
+            <div className="deployApp-text">
+              {this.state.app && this.state.app.name}
+              <span className="deployApp-value">
+                {'('}
+                {this.state.app && this.state.app.code}
+                {')'}
+              </span>
+            </div>
+          </div>
+          {/* <div>
             <div className="deployApp-title">
               <Icon type="version" />
               <span className="deployApp-title-text">
@@ -667,15 +711,16 @@ class CreateAutoTest extends Component {
               </span>
             </div>
           </div>
+          */}
           <div>
             <div className="deployApp-title">
-              <Icon type="description" />
+              {/* <Icon type="description" /> */}
               <span className="deployApp-title-text">
                 {formatMessage({ id: 'autoteststep_two_config' })}
                 {'：'}
               </span>
             </div>
-          </div>
+          </div> 
           {data && (
           <div>
             {<YamlEditor
@@ -761,7 +806,9 @@ class CreateAutoTest extends Component {
 
               {/* {this.state.current === 3 && this.handleRenderMode()} */}
 
-              {this.state.current === 3 && this.handleRenderReview()}
+              {/* {this.state.current === 3 && this.handleRenderReview()} */}
+              {this.state.current === 3 && <ConfirmInfo />}
+              
             </div>
           </div>
           {this.state.show && (

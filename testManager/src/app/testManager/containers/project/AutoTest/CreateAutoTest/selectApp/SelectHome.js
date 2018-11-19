@@ -17,7 +17,7 @@ class DeployAppHome extends Component {
     selectedApp: null,
     appVersions: [],
     selectedAppVersion: null,
-    loading: false,
+    // loading: false,
     pagination: {
       current: 1,
       total: 0,
