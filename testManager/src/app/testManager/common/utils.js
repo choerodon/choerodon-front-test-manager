@@ -237,7 +237,7 @@ export function attachParams() {
   const {
     type, id: projectId, name, organizationId,
   } = menu;
-  return `type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}`;
+  return encodeURI(`type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}`);
 }
 export function issueLink(issueId, typeCode) {
   const menu = AppState.currentMenuType;

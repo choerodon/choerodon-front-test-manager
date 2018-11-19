@@ -11,6 +11,7 @@ import {
 import _ from 'lodash';
 import YAML from 'yamljs';
 import './CreateAutoTest.scss';
+import { attachParams } from '../../../../common/utils';
 import { YamlEditor, SelectVersion } from '../../../../components/CommonComponent';
 import SelectApp from './selectApp';
 
@@ -717,7 +718,10 @@ class CreateAutoTest extends Component {
       <Page
         className="c7ntest-region c7ntest-deployApp"
       >
-        <Header title={<FormattedMessage id="autotest_header_title" />} />
+        <Header
+          title={<FormattedMessage id="autotest_create_header_title" />}
+          backPath={`/testManager/AutoTest/list?${attachParams()}`} 
+        />
         <Content className="c7ntest-deployApp-wrapper" code="autotest" values={{ name: projectName }}>
           <div className="deployApp-card">
             <Steps current={this.state.current}>

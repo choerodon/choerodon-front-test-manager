@@ -279,7 +279,7 @@ class AutoTestList extends Component {
   };
 
   toCreateAutoTest=() => {
-    this.props.history.push(`/testManager/AutoTest/create/?${attachParams}`);
+    this.props.history.push(`/testManager/AutoTest/create/?${attachParams()}`);
   }
 
   render() {
@@ -356,11 +356,11 @@ class AutoTestList extends Component {
     return (
       <Page className="c7ntest-AutoTestList">
         <Header title={<FormattedMessage id="autotestlist_title" />}>
-          <Button onClick={this.getTestHistoryByApp}>
+          <Button onClick={this.toCreateAutoTest}>
             <Icon type="playlist_add icon" />
             <span>添加测试</span>
           </Button>
-          <Button onClick={this.toCreateAutoTest}>
+          <Button onClick={this.getTestHistoryByApp}>
             <Icon type="autorenew icon" />
             <span><FormattedMessage id="refresh" /></span>
           </Button>

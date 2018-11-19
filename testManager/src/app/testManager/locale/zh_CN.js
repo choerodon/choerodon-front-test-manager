@@ -347,7 +347,7 @@ const zhCN = {
   dashboard_execute: '执行测试',
   dashboard_report: '测试报告',
   // 自动化测试
-  autotest_header_title: '自动化测试',
+  autotest_create_header_title: '新建测试',
   'autotest.title': '在项目“{name}”中创建自动化测试',
   'autotest.description': '您可以在此页面选择测试框架，测试应用以及测试应用的版本，修改配置以创建自动化测试。',
   autoteststep_one_title: '选择测试实例',
