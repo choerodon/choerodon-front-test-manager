@@ -33,10 +33,10 @@ class CreateIssueTiny extends Component {
         relationType: 'fix',
       });
       const testType = IssueStore.getTestType;
-      const mediumPriority = IssueStore.getMediumPriority;
+      const defaultPriority = IssueStore.getDefaultPriority;
       const data = {
-        priorityCode: `priority-${mediumPriority}`,
-        priorityId: mediumPriority,
+        priorityCode: `priority-${defaultPriority}`,
+        priorityId: defaultPriority,
         typeCode: 'issue_test',
         issueTypeId: testType,
         projectId: getProjectId(),

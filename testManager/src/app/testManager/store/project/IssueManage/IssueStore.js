@@ -2,7 +2,6 @@
 import {
   observable, action, computed, toJS,
 } from 'mobx';
-import { stores, axios } from 'choerodon-front-boot';
 import _ from 'lodash';
 import {
   getIssuesByFolder, getIssuesByIds, getSingleIssues,
@@ -12,9 +11,6 @@ import {
   getProjectVersion, getPrioritys, getIssueTypes, getIssueStatus,
 } from '../../../api/agileApi';
 import IssueTreeStore from './IssueTreeStore';
-
-const { AppState } = stores;
-
 
 class IssueStore {
   @observable issues = [];
@@ -173,13 +169,6 @@ class IssueStore {
     });
   }
 
-  createIssue(issueObj, projectId = AppState.currentMenuType.id) {
-    const issue = {
-      projectId: AppState.currentMenuType.id,
-      ...issueObj,
-    };
-    return axios.post(`/agile/v1/projects/${projectId}/issue`, issue);
-  }
 
   @action setIssues(data) {
     this.issues = data;
@@ -282,7 +271,7 @@ class IssueStore {
     return toJS(this.prioritys);
   }
 
-  @computed get getMediumPriority() {
+  @computed get getDefaultPriority() {
     const priority = _.find(this.prioritys, { default: true });
     if (priority) {
       return priority.id;

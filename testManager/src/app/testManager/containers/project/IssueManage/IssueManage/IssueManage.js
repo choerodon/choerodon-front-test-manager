@@ -3,14 +3,14 @@ import { observer } from 'mobx-react';
 import _ from 'lodash';
 import { Page, Header, Content } from 'choerodon-front-boot';
 import {
-  Table, Button, Pagination, Icon,   
+  Table, Button, Pagination, Icon,
 } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 import FileSaver from 'file-saver';
 import IssueStore from '../../../../store/project/IssueManage/IssueStore';
 import pic from '../../../../assets/问题管理－空.png';
 import { loadIssue, downloadTemplate } from '../../../../api/IssueManageApi';
-import { commonLink } from '../../../../common/utils';
+import { commonLink, getParams } from '../../../../common/utils';
 import EmptyBlock from '../../../../components/IssueManageComponent/EmptyBlock';
 import CreateIssue from '../../../../components/IssueManageComponent/CreateIssue';
 import EditIssue from '../../../../components/IssueManageComponent/EditIssue';
@@ -21,14 +21,11 @@ import { CreateIssueTiny } from './components';
 import './IssueManage.scss';
 
 @observer
-class Test extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      expand: false,
-      create: false,
-      selectedIssue: {},
-    };
+export default class IssueManage extends Component {
+  state = {
+    expand: false,
+    create: false,
+    selectedIssue: {},
   }
 
   componentDidMount() {
@@ -36,59 +33,27 @@ class Test extends Component {
   }
 
   getInit() {
-    const Request = this.GetRequest(this.props.location.search);
+    const Request = getParams(this.props.location.search);
     const { paramName, paramIssueId } = Request;
-    IssueStore.setParamName(paramName);    
+    IssueStore.setParamName(paramName);
     IssueStore.setParamIssueId(paramIssueId);
-    const arr = [];
-    if (paramName) {
-      arr.push(paramName);
-    }
-    if (paramIssueId) {
-      IssueStore.setBarFilters(arr);
-      IssueStore.init();
-      IssueStore.loadIssues().then((res) => {
-        window.console.log(res);
+    const arr = paramName ? [paramName] : [];
+    IssueStore.setBarFilters(arr);
+    IssueStore.init();
+    IssueStore.loadIssues().then((res) => {
+      window.console.log(res);
+      if (paramIssueId) {
         this.setState({
           selectedIssue: res.content.length ? res.content[0] : {},
           expand: true,
         });
-      });
-    } else {
-      IssueStore.setBarFilters(arr);
-      IssueStore.init();
-      IssueStore.loadIssues();
-    }
-  }
-
-  GetRequest(url) {
-    const theRequest = {};
-    if (url.indexOf('?') !== -1) {
-      const str = url.split('?')[1];
-      const strs = str.split('&');
-      for (let i = 0; i < strs.length; i += 1) {
-        theRequest[strs[i].split('=')[0]] = decodeURI(strs[i].split('=')[1]);
       }
-    }
-    return theRequest;
+    });
   }
 
   handleCreateIssue() {
     this.setState({ create: false });
     IssueStore.loadIssues();
-  }
-
-  handleChangeIssueId(issueId) {
-    this.setState({
-      expand: false,
-    }, () => {
-      this.setState({
-        selectedIssue: {
-          issueId,
-        },
-        expand: true,
-      });
-    });
   }
 
   handleIssueUpdate(issueId = this.state.selectedIssue.issueId) {
@@ -127,7 +92,7 @@ class Test extends Component {
     IssueStore.loadIssues(current - 1, size);
   }
 
-  handleFilterChange = (pagination, filters, sorter, barFilters) => {    
+  handleFilterChange = (pagination, filters, sorter, barFilters) => {
     // 条件变化返回第一页
     IssueStore.setPagination({
       current: 1,
@@ -140,18 +105,20 @@ class Test extends Component {
     if (barFilters === undefined || barFilters.length === 0) {
       IssueStore.setBarFilters(undefined);
     }
-    const obj = {
-      advancedSearchArgs: {},
-      searchArgs: {},
-    };
-    const { statusId, priorityId, typeId } = filters;
+    
+    const { statusId, priorityId } = filters;
     const { issueNum, summary } = filters;
-    obj.advancedSearchArgs.statusId = statusId || [];
-    obj.advancedSearchArgs.priorityId = priorityId || [];
-    // obj.advancedSearchArgs.typeId = ['issue_test'];
-    obj.searchArgs.issueNum = issueNum && issueNum.length ? issueNum[0] : barFilters[0];
-    obj.searchArgs.summary = summary && summary.length ? summary[0] : '';
-    IssueStore.setFilter(obj);
+    const search = {
+      advancedSearchArgs: {
+        statusId: statusId || [],
+        priorityId: priorityId || [],
+      },
+      searchArgs: {
+        issueNum: issueNum && issueNum.length ? issueNum[0] : barFilters[0],
+        summary: summary && summary.length ? summary[0] : '',
+      },
+    };
+    IssueStore.setFilter(search);
     const { current, pageSize } = IssueStore.pagination;
     IssueStore.loadIssues(current - 1, pageSize);
   }
@@ -160,7 +127,7 @@ class Test extends Component {
   downloadTemplate() {
     downloadTemplate().then((excel) => {
       const blob = new Blob([excel], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-      const fileName = `${'模板'}.xlsx`;
+      const fileName = '导入模板.xlsx';
       FileSaver.saveAs(blob, fileName);
     });
   }
@@ -175,28 +142,6 @@ class Test extends Component {
     const treeShow = IssueStore.treeShow;
     const prioritys = IssueStore.getPrioritys;
     const issueStatusList = IssueStore.getIssueStatus;
-    // const ORDER = [
-    //   {
-    //     code: 'summary',
-    //     showName: <FormattedMessage id="issue_issueSortByName" />,
-    //   },
-    //   // {
-    //   //   code: 'typeCode',
-    //   //   showName: <FormattedMessage id="issue_issueSortByType" />,
-    //   // },
-    //   {
-    //     code: 'priorityCode',
-    //     showName: <FormattedMessage id="issue_issueSortByPriority" />,
-    //   },
-    //   {
-    //     code: 'statusId',
-    //     showName: <FormattedMessage id="issue_issueSortByStatus" />,
-    //   },
-    //   {
-    //     code: 'assigneeId',
-    //     showName: <FormattedMessage id="issue_issueSortByPerson" />,
-    //   },
-    // ];
     const filterColumns = [
       {
         title: <FormattedMessage id="issue_issueFilterByNum" />,
@@ -226,59 +171,10 @@ class Test extends Component {
         filteredValue: IssueStore.filteredInfo.statusId || null,
       },
     ];
-    // const columns = [
-    //   {
-    //     title: 'summary',
-    //     dataIndex: 'summary',
-    //     render: (summary, record) => (
-    //       expand ? this.renderNarrowIssue(record) : this.renderTestIssue(record)
-    //     ),
-    //   },
-    // ];
-    // const sort = (
-    //   <Menu onClick={this.handleSort.bind(this)}>
-    //     {
-    //       ORDER.map(v => (
-    //         <Menu.Item key={v.code}>
-    //           <div
-    //             style={{
-    //               display: 'flex',
-    //               justifyContent: 'space-between',
-    //               alignItems: 'center',
-    //               color: IssueStore.order.orderField === v.code ? 'blue' : '#000',
-    //             }}
-    //           >
-    //             <span style={{ width: 100 }}>
-    //               {v.showName}
-    //             </span>
-    //             <div style={{ display: 'flex', flexDirection: 'column' }}>
-    //               {
-    //                 IssueStore.order.orderField === v.code && IssueStore.order.orderType === 'asc' && (
-    //                   <Icon
-    //                     type="arrow_upward"
-    //                   />
-    //                 )
-    //               }
-    //               {
-    //                 IssueStore.order.orderField === v.code && IssueStore.order.orderType === 'desc' && (
-    //                   <Icon
-    //                     type="arrow_downward"
-    //                   />
-    //                 )
-    //               }
-    //             </div>
-    //           </div>
-    //         </Menu.Item>
-    //       ))
-    //     }
-
-    //   </Menu>
-    // );
-
     return (
       <Page className="c7ntest-Issue c7ntest-region">
         <Header
-          title={<FormattedMessage id="issue_name" />}       
+          title={<FormattedMessage id="issue_name" />}
         >
           <Button className="leftBtn" onClick={() => this.setState({ create: true })}>
             <Icon type="playlist_add icon" />
@@ -338,7 +234,6 @@ class Test extends Component {
           <div
             className="c7ntest-content-issue"
             style={{
-              // width: this.state.expand ? '28%' : '100%',
               flex: 1,
               display: 'block',
               overflowY: 'auto',
@@ -358,19 +253,6 @@ class Test extends Component {
                 filterBarPlaceholder={<FormattedMessage id="issue_filterTestIssue" />}
               />
             </section>
-            {/* <section className="c7ntest-count">
-              <span className="c7ntest-span-count"><FormattedMessage id="issue_issueTotal" values={{ total: IssueStore.pagination.total }} /></span>
-              <Dropdown overlay={sort} trigger={['click']}>
-                <div style={{
-                  display: 'flex', alignItems: 'center', fontSize: '13px', lineHeight: '20px', cursor: 'pointer', position: 'absolute', right: 25, bottom: 28,
-                }}
-                >
-                  <Icon type="swap_vert" style={{ fontSize: '16px', marginRight: '5px' }} />
-                  <FormattedMessage id="issue_issueSort" />
-                </div>
-              </Dropdown>
-            </section> */}
-
             <section
               className={`c7ntest-table ${this.state.expand ? 'expand-sign' : ''}`}
               style={{
@@ -420,7 +302,7 @@ class Test extends Component {
                   }}
                 >
                   {/* table底部创建用例 */}
-                  <CreateIssueTiny />                  
+                  <CreateIssueTiny />
                 </div>
               </div>
               {
@@ -445,11 +327,11 @@ class Test extends Component {
 
             </section>
 
-          </div>  
+          </div>
           <ExportSide ref={this.saveRef('ExportSide')} />
           <div
             className="c7ntest-sidebar"
-            style={{    
+            style={{
               display: this.state.expand ? '' : 'none',
               width: treeShow ? 440 : '72%',
             }}
@@ -500,4 +382,3 @@ class Test extends Component {
     );
   }
 }
-export default Test;
