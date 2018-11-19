@@ -8,10 +8,9 @@ import {
 import { FormattedMessage } from 'react-intl';
 import FileSaver from 'file-saver';
 import IssueStore from '../../../../store/project/IssueManage/IssueStore';
-import IssueTreeStore from '../../../../store/project/IssueManage/IssueTreeStore';
 import pic from '../../../../assets/问题管理－空.png';
-import { loadIssue, createIssue, downloadTemplate } from '../../../../api/IssueManageApi';
-import { commonLink, getProjectId } from '../../../../common/utils';
+import { loadIssue, downloadTemplate } from '../../../../api/IssueManageApi';
+import { commonLink } from '../../../../common/utils';
 import EmptyBlock from '../../../../components/IssueManageComponent/EmptyBlock';
 import CreateIssue from '../../../../components/IssueManageComponent/CreateIssue';
 import EditIssue from '../../../../components/IssueManageComponent/EditIssue';
@@ -29,9 +28,6 @@ class Test extends Component {
       expand: false,
       create: false,
       selectedIssue: {},
-      createIssue: false,
-      createIssueValue: '',
-      createLoading: false,
     };
   }
 
@@ -41,31 +37,14 @@ class Test extends Component {
 
   getInit() {
     const Request = this.GetRequest(this.props.location.search);
-    const {
-      paramType, paramId, paramName, paramStatus, paramIssueId, paramUrl,
-    } = Request;
-    IssueStore.setParamId(paramId);
-    IssueStore.setParamType(paramType);
-    IssueStore.setParamName(paramName);
-    IssueStore.setParamStatus(paramStatus);
+    const { paramName, paramIssueId } = Request;
+    IssueStore.setParamName(paramName);    
     IssueStore.setParamIssueId(paramIssueId);
-    IssueStore.setParamUrl(paramUrl);
     const arr = [];
     if (paramName) {
       arr.push(paramName);
     }
-    if (paramStatus) {
-      const obj = {
-        advancedSearchArgs: {},
-        searchArgs: {},
-      };
-      const a = [paramStatus];
-      obj.advancedSearchArgs.statusId = a || [];
-      IssueStore.setBarFilters(arr);
-      IssueStore.setFilter(obj);
-      IssueStore.setFilteredInfo({ statusId: [paramStatus] });
-      IssueStore.loadIssues();
-    } else if (paramIssueId) {
+    if (paramIssueId) {
       IssueStore.setBarFilters(arr);
       IssueStore.init();
       IssueStore.loadIssues().then((res) => {
@@ -94,9 +73,8 @@ class Test extends Component {
     return theRequest;
   }
 
-  handleCreateIssue(issueObj) {
+  handleCreateIssue() {
     this.setState({ create: false });
-    // IssueStore.init();
     IssueStore.loadIssues();
   }
 
@@ -121,53 +99,6 @@ class Test extends Component {
       IssueStore.setIssues(originIssues);
     });
   }
-
-  // handleBlurCreateIssue() {
-  //   if (this.state.createIssueValue !== '') {
-  //     const versionIssueRelDTOList = [];
-  //     const selectedVersion = IssueTreeStore.currentCycle.versionId || IssueStore.getSeletedVersion;
-  //     const folderId = IssueTreeStore.currentCycle.cycleId;
-  //     // 判断是否选择版本
-  //     const versions = IssueStore.getVersions;
-  //     if (!selectedVersion || !_.find(versions, { versionId: selectedVersion })) {
-  //       Choerodon.prompt('请选择版本');
-  //       return;
-  //     }
-  //     versionIssueRelDTOList.push({
-  //       versionId: selectedVersion,
-  //       relationType: 'fix',
-  //     });
-  //     const testType = IssueStore.getTestType;
-  //     const mediumPriority = IssueStore.getMediumPriority;
-  //     const data = {
-  //       priorityCode: `priority-${mediumPriority}`,
-  //       priorityId: mediumPriority,
-  //       typeCode: 'issue_test',
-  //       issueTypeId: testType,
-  //       projectId: getProjectId(),
-  //       sprintId: 0,
-  //       summary: this.state.createIssueValue,
-  //       epicId: 0,
-  //       parentIssueId: 0,
-  //       versionIssueRelDTOList,
-  //     };
-  //     this.setState({
-  //       createLoading: true,
-  //     });
-  //     createIssue(data, folderId)
-  //       .then((res) => {
-  //         // IssueStore.init();
-  //         IssueStore.loadIssues();
-  //         this.setState({
-  //           createIssueValue: '',
-  //           createLoading: false,
-  //         });
-  //       })
-  //       .catch((error) => {
-  //       });
-  //   }
-  // }
-
 
   handleSort({ key }) {
     const currentSort = IssueStore.order;
@@ -242,11 +173,8 @@ class Test extends Component {
   render() {
     const { expand } = this.state;
     const treeShow = IssueStore.treeShow;
-    const versions = IssueStore.getVersions;
     const prioritys = IssueStore.getPrioritys;
     const issueStatusList = IssueStore.getIssueStatus;
-    const selectedVersion = IssueTreeStore.currentCycle.versionId || IssueStore.getSeletedVersion;
-
     // const ORDER = [
     //   {
     //     code: 'summary',
@@ -350,8 +278,7 @@ class Test extends Component {
     return (
       <Page className="c7ntest-Issue c7ntest-region">
         <Header
-          title={<FormattedMessage id="issue_name" />}
-          backPath={IssueStore.getBackUrl}
+          title={<FormattedMessage id="issue_name" />}       
         >
           <Button className="leftBtn" onClick={() => this.setState({ create: true })}>
             <Icon type="playlist_add icon" />
@@ -492,91 +419,8 @@ class Test extends Component {
                     borderBottom: '1px solid #e8e8e8',
                   }}
                 >
-                  <CreateIssueTiny />
-                  {/* {this.state.createIssue ? (
-                    <div className="c7ntest-add" style={{ display: 'block', width: '100%' }}>
-                      <div className="c7ntest-add-select-version">                     
-                        {
-                          _.find(versions, { versionId: selectedVersion })
-                            ? (
-                              <div style={{ display: 'flex', alignItems: 'center', marginTop: -8 }}>
-                                <span className="c7ntest-add-select-version-prefix">V</span>
-                                <Select
-                                  disabled={IssueTreeStore.currentCycle.versionId}
-                                  onChange={(value) => {
-                                    IssueStore.selectVersion(value);
-                                  }}
-                                  value={selectedVersion}
-                                  style={{ width: 50 }}
-                                  dropdownMatchSelectWidth={false}
-                                >
-                                  {
-                                    versions.map(version => <Option value={version.versionId}>{version.name}</Option>)
-                                  }
-                                </Select>
-                              </div>
-                            )
-                            : (
-                              <div style={{ color: 'gray', marginTop: -3 }}>
-                                {'暂无版本'}
-                              </div>
-                            )
-                        }
-
-                        <div style={{ marginLeft: 8, flexGrow: 1 }}>
-                          <Input
-                            autoFocus
-                            value={this.state.createIssueValue}
-                            placeholder={<FormattedMessage id="issue_whatToDo" />}
-                            onChange={(e) => {
-                              this.setState({
-                                createIssueValue: e.target.value,
-                              });
-                            }}
-                            maxLength={44}
-                            onPressEnter={this.handleBlurCreateIssue.bind(this)}
-                          />
-                        </div>
-                      </div>
-                      <div style={{
-                        marginTop: 10, display: 'flex', marginLeft: 50, paddingRight: 70,
-                      }}
-                      >
-                        <Button
-                          type="primary"
-                          onClick={() => {
-                            this.setState({
-                              createIssue: false,
-                            });
-                          }}
-                        >
-                          <FormattedMessage id="cancel" />
-                        </Button>
-                        <Button
-                          type="primary"
-                          loading={this.state.createLoading}
-                          onClick={this.handleBlurCreateIssue.bind(this)}
-                        >
-                          <FormattedMessage id="ok" />
-                        </Button>
-                      </div>
-                    </div>
-                  ) : (
-                    <Button
-                      className="leftBtn"
-                      style={{ color: '#3f51b5' }}
-                      funcType="flat"
-                      onClick={() => {
-                        this.setState({
-                          createIssue: true,
-                          createIssueValue: '',
-                        });
-                      }}
-                    >
-                      <Icon type="playlist_add icon" style={{ marginRight: -2 }} />
-                      <span><FormattedMessage id="issue_issueCreate" /></span>
-                    </Button>
-                  )} */}
+                  {/* table底部创建用例 */}
+                  <CreateIssueTiny />                  
                 </div>
               </div>
               {
@@ -601,14 +445,11 @@ class Test extends Component {
 
             </section>
 
-          </div>
-          {/* <UploadSide ref={this.saveRef('UploadSide')} /> */}
+          </div>  
           <ExportSide ref={this.saveRef('ExportSide')} />
           <div
             className="c7ntest-sidebar"
-            style={{
-              // width: this.state.expand ? '72%' : 0,
-              // width: this.state.expand ? 440 : 0,              
+            style={{    
               display: this.state.expand ? '' : 'none',
               width: treeShow ? 440 : '72%',
             }}

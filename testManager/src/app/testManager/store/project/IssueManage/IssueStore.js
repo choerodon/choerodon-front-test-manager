@@ -51,17 +51,9 @@ class IssueStore {
 
   @observable loading = true;
 
-  @observable paramType = undefined;
-
-  @observable paramId = undefined;
-
   @observable paramName = undefined;
 
-  @observable paramStatus = undefined;
-
   @observable paramIssueId = undefined;
-
-  @observable paramUrl = undefined;
 
   @observable barFilters = undefined;
 
@@ -241,24 +233,12 @@ class IssueStore {
     this.paramType = data;
   }
 
-  @action setParamId(data) {
-    this.paramId = data;
-  }
-
   @action setParamName(data) {
     this.paramName = data;
   }
 
-  @action setParamStatus(data) {
-    this.paramStatus = data;
-  }
-
   @action setParamIssueId(data) {
     this.paramIssueId = data;
-  }
-
-  @action setParamUrl(data) {
-    this.paramUrl = data;
   }
 
   @action setBarFilters(data) {
@@ -330,20 +310,9 @@ class IssueStore {
     return toJS(this.selectedVersion);
   }
 
-  @computed get getBackUrl() {
-    const urlParams = AppState.currentMenuType;
-    if (!this.paramUrl) {
-      return undefined;
-    } else {
-      return `/agile/${this.paramUrl}?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}&organizationId=${urlParams.organizationId}`;
-    }
-  }
-
   @computed get getFilter() {
     const filter = this.filter;
     const otherArgs = {
-      type: this.paramType,
-      id: this.paramId ? [this.paramId] : undefined,
       issueIds: this.paramIssueId ? [Number(this.paramIssueId)] : undefined,
     };
     return {

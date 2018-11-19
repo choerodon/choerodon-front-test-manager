@@ -6,7 +6,6 @@ import { Modal, Table, Select } from 'choerodon-ui';
 import { stores, Content } from 'choerodon-front-boot';
 import './SelectApp.scss';
 import { getApps, getAppVersions } from '../../../../../api/AutoTestApi';
-import SelectAppStore from '../../../../../store/project/AutoTest/SelectAppStore';
 
 const SideBar = Modal.Sidebar;
 const { AppState } = stores;
@@ -14,7 +13,6 @@ const { Option } = Select;
 @observer
 class DeployAppHome extends Component {
   state = {
-    projectId: AppState.currentMenuType.id,
     appList: [],
     selectedApp: null,
     appVersions: [],
@@ -50,7 +48,7 @@ class DeployAppHome extends Component {
         Choerodon.prompt(data.failed);
         return; 
       }
-      if (data.content.length > 0 && data.content[0].id != selectedApp) {
+      if (data.content.length > 0 && data.content[0].id !== selectedApp) {
         this.loadAppVersions(data.content[0].id);
         this.setState({
           selectedApp: data.content[0].id,
