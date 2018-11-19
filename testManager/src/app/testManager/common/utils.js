@@ -141,16 +141,10 @@ export function returnBeforeTextUpload(text, data, func, pro = 'description') {
   if (imgBase.length) {
     return uploadImage(formData).then((imgUrlList) => {
       replaceBase64ToUrl(imgUrlList, imgBase, deltaOps);
-      const converter = new QuillDeltaToHtmlConverter(deltaOps, {});
-      const html = converter.convert();
-      // send.gitlabDescription = html;
       send[pro] = JSON.stringify(deltaOps);
       return func(send);
     });
   } else {
-    const converter = new QuillDeltaToHtmlConverter(deltaOps, {});
-    const html = converter.convert();
-    // send.gitlabDescription = html;
     send[pro] = JSON.stringify(deltaOps);
     return func(send);
   }
@@ -232,12 +226,13 @@ export function getParams(url) {
   }
   return theRequest;
 }
-export function attachParams() {
+export function commonLink(link) {
   const menu = AppState.currentMenuType;
   const {
     type, id: projectId, name, organizationId,
   } = menu;
-  return encodeURI(`type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}`);
+
+  return encodeURI(`/testManager${link}?type=${type}&id=${projectId}&organizationId=${organizationId}&name=${name}`);
 }
 export function issueLink(issueId, typeCode) {
   const menu = AppState.currentMenuType;
@@ -266,43 +261,17 @@ export function cycleLink(cycleId) {
   return encodeURI(`/testManager/TestExecute?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}&cycleId=${cycleId}`);
 }
 export function executeDetailLink(executeId) {
-  const menu = AppState.currentMenuType;
-  const {
-    type, id: projectId, name, organizationId,
-  } = menu;
-
-  return encodeURI(`/testManager/TestExecute/execute/${executeId}?type=${type}&id=${projectId}&organizationId=${organizationId}&name=${name}`);
+  return commonLink(`/TestExecute/execute/${executeId}`);
 }
 export function executeDetailShowLink(executeId) {
-  const menu = AppState.currentMenuType;
-  const {
-    type, id: projectId, name, organizationId,
-  } = menu;
-
-  return encodeURI(`/testManager/TestPlan/executeShow/${executeId}?type=${type}&id=${projectId}&organizationId=${organizationId}&name=${name}`);
+  return commonLink(`/TestPlan/executeShow/${executeId}`);
 }
-export function commonLink(link) {
-  const menu = AppState.currentMenuType;
-  const {
-    type, id: projectId, name, organizationId,
-  } = menu;
 
-  return encodeURI(`/testManager${link}?type=${type}&id=${projectId}&organizationId=${organizationId}&name=${name}`);
-}
 /**
- * 处理数据请求错误
- * @param data
- * @returns {*}
+ * 颜色转rgba
+ * @param {*} color 
+ * @param {*} alpha 
  */
-export function handleProptError(data) {
-  if (data && data.failed) {
-    Choerodon.prompt(data.message);
-    return false;
-  } else {
-    return data;
-  }
-}
-
 export function color2rgba(color, alpha = 1) {
   if (typeof color !== 'string') {
     return '';
@@ -312,42 +281,21 @@ export function color2rgba(color, alpha = 1) {
   const b = parseInt(color.slice(5, 7), 16);
   return `rgba(${r},${g},${b},${alpha})`;
 }
+/**
+ * 时间（毫秒）转文字显示 
+ * @param {*} ms 
+ */
 export function humanizeDuration(ms) {
   return humanize(ms, {
     language: 'zh_CN', delimiter: '', spacer: '', largest: 2, round: true,
   });
 }
-// export function humanizeDuration(seconds) {
-//   if (seconds < 0) {
-//     return '';
-//   }
-//   let result = '';
-//   if (seconds) {
-//     if ((result = Math.round(seconds / (60 * 60 * 24 * 30 * 12))) > 0) { // year
-//       result = `${result}年`;
-//     } else if ((result = Math.round(seconds / (60 * 60 * 24 * 30))) > 0) { // months
-//       result = `${result}月`;
-//     } else if ((result = Math.round(seconds / (60 * 60 * 24))) > 0) { // days
-//       result = `${result}天`;
-//     } else if ((result = Math.round(seconds / (60 * 60))) > 0) { // Hours
-//       result = `${result}小时`;
-//     } else if ((result = Math.round(seconds / (60))) > 0) { // minute
-//       result = `${result}分钟`;
-//     } else if ((result = Math.round(seconds)) > 0) { // second
-//       result = `${result}秒`;
-//     } else {
-//       result = `${seconds}毫秒`;
-//     }
-//   }
-//   return result;
-// }
 export const getProjectId = () => AppState.currentMenuType.id;
 export const getOrganizationId = () => AppState.currentMenuType.organizationId;
 
 export function request() { }
 ['get', 'post', 'options', 'delete', 'put'].forEach((type) => {
   request[type] = (...args) => new Promise((resolve, reject) => {
-    // const ARGS = [...args];
     let url = args[0];
 
     if (Object.keys(getParams(url)).length > 0) {
@@ -355,8 +303,8 @@ export function request() { }
     } else {
       url += `?organizationId=${getOrganizationId()}`;
     }
+    // eslint-disable-next-line no-param-reassign 
     args[0] = url;
-
     axios[type](...args).then((data) => {
       // if (data && data.failed) {
       //   // Choerodon.prompt(data.message);

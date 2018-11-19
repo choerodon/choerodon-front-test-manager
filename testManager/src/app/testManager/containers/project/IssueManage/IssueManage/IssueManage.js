@@ -37,11 +37,11 @@ export default class IssueManage extends Component {
     const { paramName, paramIssueId } = Request;
     IssueStore.setParamName(paramName);
     IssueStore.setParamIssueId(paramIssueId);
-    const arr = paramName ? [paramName] : [];
-    IssueStore.setBarFilters(arr);
+    // 当参数中有用例名时，在table的筛选框中加入
+    const barFilters = paramName ? [paramName] : [];
+    IssueStore.setBarFilters(barFilters);
     IssueStore.init();
-    IssueStore.loadIssues().then((res) => {
-      window.console.log(res);
+    IssueStore.loadIssues().then((res) => {     
       if (paramIssueId) {
         this.setState({
           selectedIssue: res.content.length ? res.content[0] : {},

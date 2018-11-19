@@ -14,7 +14,7 @@ import 'codemirror/theme/base16-dark.css';
 import { User } from '../../../../components/CommonComponent';
 import { getAppList, getTestHistoryByApp, loadPodParam } from '../../../../api/AutoTestApi';
 import { CiStatus, TestResult } from './AutoTestTags';
-import { attachParams } from '../../../../common/utils';
+import { commonLink } from '../../../../common/utils';
 import './AutoTestList.scss';
 
 const Sidebar = Modal.Sidebar;
@@ -279,7 +279,7 @@ class AutoTestList extends Component {
   };
 
   toCreateAutoTest=() => {
-    this.props.history.push(`/testManager/AutoTest/create/?${attachParams()}`);
+    this.props.history.push(commonLink('/AutoTest/create'));
   }
 
   render() {
