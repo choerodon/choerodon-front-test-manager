@@ -170,26 +170,30 @@ class IssueTree extends Component {
       />);
   });
 
+  /**
+   * 树的遍历，将树打为数组，方便搜索
+   *
+   * @memberof IssueTree
+   */
   generateList = (data) => {
-    // const temp = data;
-    // while (temp) {
-    //   dataList = dataList.concat(temp.children);
-    //   if()
-    // }
-    for (let i = 0; i < data.length; i += 1) {
-      const node = data[i];
-      const { key, title } = node;
-      // 找出url上的cycleId
-      // const { cycleId } = getParams(window.location.href);
-      // const currentCycle = IssueTreeStore.getCurrentCycle;
-      // if (!currentCycle.cycleId && Number(cycleId) === node.cycleId) {
-      //   this.setExpandDefault(node);
-      // } else if (currentCycle.cycleId === node.cycleId) {
-      //   IssueTreeStore.setCurrentCycle(node);
-      // }
-      dataList.push({ key, title });
-      if (node.children) {
-        this.generateList(node.children, node.key);
+    if (!data) {
+      return;
+    }
+    const stack = [];
+    stack.push(data);
+    const currentCycle = IssueTreeStore.getCurrentCycle;
+    while (stack && stack.length > 0) {
+      const tempNode = stack.pop();
+      if (tempNode.children && tempNode.children) {
+        tempNode.children.forEach((node, i) => {
+          const { key, title } = node;
+          // 树拖动之后versionId会更新，在这里更新右侧创建用例处的版本
+          if (currentCycle.cycleId === node.cycleId) {
+            IssueTreeStore.setCurrentCycle(node);
+          }
+          dataList.push({ key, title });
+          stack.push(tempNode.children[i]);
+        });
       }
     }
   }
