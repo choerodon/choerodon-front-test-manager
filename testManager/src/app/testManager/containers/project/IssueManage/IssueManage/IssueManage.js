@@ -1,33 +1,25 @@
 import React, { Component } from 'react';
 import { observer } from 'mobx-react';
 import _ from 'lodash';
+import { Page, Header, Content } from 'choerodon-front-boot';
 import {
-  Page, Header, Content, stores,
-} from 'choerodon-front-boot';
-import {
-  Table, Button, Input, Dropdown, Menu, Pagination,
-  Spin, Icon, Select,
+  Table, Button, Input, Pagination, Icon, Select,  
 } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 import FileSaver from 'file-saver';
-import '../../../../assets/main.scss';
-import './IssueManage.scss';
 import IssueStore from '../../../../store/project/IssueManage/IssueStore';
 import IssueTreeStore from '../../../../store/project/IssueManage/IssueTreeStore';
 import pic from '../../../../assets/问题管理－空.png';
-import {
-  loadIssue, createIssue, exportIssues, downloadTemplate,
-} from '../../../../api/IssueManageApi';
-import { commonLink } from '../../../../common/utils';
+import { loadIssue, createIssue, downloadTemplate } from '../../../../api/IssueManageApi';
+import { commonLink, getProjectId } from '../../../../common/utils';
 import EmptyBlock from '../../../../components/IssueManageComponent/EmptyBlock';
 import CreateIssue from '../../../../components/IssueManageComponent/CreateIssue';
 import EditIssue from '../../../../components/IssueManageComponent/EditIssue';
 import IssueTree from '../../../../components/IssueManageComponent/IssueTree';
 import IssueTable from '../../../../components/IssueManageComponent/IssueTable';
-// import UploadSide from '../../../../components/IssueManageComponent/UploadSide';
 import ExportSide from '../../../../components/IssueManageComponent/ExportSide';
+import './IssueManage.scss';
 
-const { AppState } = stores;
 const { Option } = Select;
 @observer
 class Test extends Component {
@@ -152,7 +144,7 @@ class Test extends Component {
         priorityId: mediumPriority,
         typeCode: 'issue_test',
         issueTypeId: testType,
-        projectId: AppState.currentMenuType.id,
+        projectId: getProjectId(),
         sprintId: 0,
         summary: this.state.createIssueValue,
         epicId: 0,

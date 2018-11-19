@@ -101,9 +101,7 @@ class IssueTree extends Component {
   }
 
   renderTreeNodes = data => data.map((item) => {
-    const {
-      children, cycleCaseList, type,
-    } = item;
+    const { children, type } = item;
     const key = type === 'temp' ? `${item.key}temp` : item.key;
     const { searchValue } = this.state;
     const expandedKeys = IssueTreeStore.getExpandedKeys;
@@ -188,6 +186,11 @@ class IssueTree extends Component {
       //   IssueTreeStore.setCurrentCycle(node);
       // }
       dataList.push({ key, title });
+      // 拖动后versionId会变，这里取数据之后将右侧版本更新
+      const currentCycle = IssueTreeStore.getCurrentCycle;
+      if (currentCycle.cycleId === node.cycleId) {
+        IssueTreeStore.setCurrentCycle(node);
+      }      
       if (node.children) {
         this.generateList(node.children, node.key);
       }
