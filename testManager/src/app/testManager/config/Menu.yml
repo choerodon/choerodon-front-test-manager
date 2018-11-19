@@ -58,8 +58,8 @@
         icon: record_test
         Routes: /testManager/AutoTest/list
         sort: 8
-        permission:
         delete: true
+        permission:        
           - 'test-manager-service.test-cycle.getTestCycle'
     - "autotest":
         icon: auto_test
