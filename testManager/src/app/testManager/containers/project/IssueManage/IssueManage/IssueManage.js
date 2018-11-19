@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import _ from 'lodash';
 import { Page, Header, Content } from 'choerodon-front-boot';
 import {
-  Table, Button, Input, Pagination, Icon, Select,  
+  Table, Button, Pagination, Icon,   
 } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 import FileSaver from 'file-saver';
@@ -18,9 +18,9 @@ import EditIssue from '../../../../components/IssueManageComponent/EditIssue';
 import IssueTree from '../../../../components/IssueManageComponent/IssueTree';
 import IssueTable from '../../../../components/IssueManageComponent/IssueTable';
 import ExportSide from '../../../../components/IssueManageComponent/ExportSide';
+import { CreateIssueTiny } from './components';
 import './IssueManage.scss';
 
-const { Option } = Select;
 @observer
 class Test extends Component {
   constructor(props) {
@@ -122,51 +122,51 @@ class Test extends Component {
     });
   }
 
-  handleBlurCreateIssue() {
-    if (this.state.createIssueValue !== '') {
-      const versionIssueRelDTOList = [];
-      const selectedVersion = IssueTreeStore.currentCycle.versionId || IssueStore.getSeletedVersion;
-      const folderId = IssueTreeStore.currentCycle.cycleId;
-      // 判断是否选择版本
-      const versions = IssueStore.getVersions;
-      if (!selectedVersion || !_.find(versions, { versionId: selectedVersion })) {
-        Choerodon.prompt('请选择版本');
-        return;
-      }
-      versionIssueRelDTOList.push({
-        versionId: selectedVersion,
-        relationType: 'fix',
-      });
-      const testType = IssueStore.getTestType;
-      const mediumPriority = IssueStore.getMediumPriority;
-      const data = {
-        priorityCode: `priority-${mediumPriority}`,
-        priorityId: mediumPriority,
-        typeCode: 'issue_test',
-        issueTypeId: testType,
-        projectId: getProjectId(),
-        sprintId: 0,
-        summary: this.state.createIssueValue,
-        epicId: 0,
-        parentIssueId: 0,
-        versionIssueRelDTOList,
-      };
-      this.setState({
-        createLoading: true,
-      });
-      createIssue(data, folderId)
-        .then((res) => {
-          // IssueStore.init();
-          IssueStore.loadIssues();
-          this.setState({
-            createIssueValue: '',
-            createLoading: false,
-          });
-        })
-        .catch((error) => {
-        });
-    }
-  }
+  // handleBlurCreateIssue() {
+  //   if (this.state.createIssueValue !== '') {
+  //     const versionIssueRelDTOList = [];
+  //     const selectedVersion = IssueTreeStore.currentCycle.versionId || IssueStore.getSeletedVersion;
+  //     const folderId = IssueTreeStore.currentCycle.cycleId;
+  //     // 判断是否选择版本
+  //     const versions = IssueStore.getVersions;
+  //     if (!selectedVersion || !_.find(versions, { versionId: selectedVersion })) {
+  //       Choerodon.prompt('请选择版本');
+  //       return;
+  //     }
+  //     versionIssueRelDTOList.push({
+  //       versionId: selectedVersion,
+  //       relationType: 'fix',
+  //     });
+  //     const testType = IssueStore.getTestType;
+  //     const mediumPriority = IssueStore.getMediumPriority;
+  //     const data = {
+  //       priorityCode: `priority-${mediumPriority}`,
+  //       priorityId: mediumPriority,
+  //       typeCode: 'issue_test',
+  //       issueTypeId: testType,
+  //       projectId: getProjectId(),
+  //       sprintId: 0,
+  //       summary: this.state.createIssueValue,
+  //       epicId: 0,
+  //       parentIssueId: 0,
+  //       versionIssueRelDTOList,
+  //     };
+  //     this.setState({
+  //       createLoading: true,
+  //     });
+  //     createIssue(data, folderId)
+  //       .then((res) => {
+  //         // IssueStore.init();
+  //         IssueStore.loadIssues();
+  //         this.setState({
+  //           createIssueValue: '',
+  //           createLoading: false,
+  //         });
+  //       })
+  //       .catch((error) => {
+  //       });
+  //   }
+  // }
 
 
   handleSort({ key }) {
@@ -244,7 +244,6 @@ class Test extends Component {
     const treeShow = IssueStore.treeShow;
     const versions = IssueStore.getVersions;
     const prioritys = IssueStore.getPrioritys;
-    const issueTypes = IssueStore.getIssueTypes;
     const issueStatusList = IssueStore.getIssueStatus;
     const selectedVersion = IssueTreeStore.currentCycle.versionId || IssueStore.getSeletedVersion;
 
@@ -493,10 +492,10 @@ class Test extends Component {
                     borderBottom: '1px solid #e8e8e8',
                   }}
                 >
-                  {this.state.createIssue ? (
+                  <CreateIssueTiny />
+                  {/* {this.state.createIssue ? (
                     <div className="c7ntest-add" style={{ display: 'block', width: '100%' }}>
-                      <div className="c7ntest-add-select-version">
-                        {/* 创建issue选择版本 */}
+                      <div className="c7ntest-add-select-version">                     
                         {
                           _.find(versions, { versionId: selectedVersion })
                             ? (
@@ -577,7 +576,7 @@ class Test extends Component {
                       <Icon type="playlist_add icon" style={{ marginRight: -2 }} />
                       <span><FormattedMessage id="issue_issueCreate" /></span>
                     </Button>
-                  )}
+                  )} */}
                 </div>
               </div>
               {

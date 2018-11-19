@@ -8,6 +8,7 @@
 'test-manager.cycle':  cycle
 'test-manager.createautotest':  add test
 'test-manager.autotestlist':  test record
+'test-manager.autotest':  auto test
 
 "platform-reports": "Reports"
 "platform-reports.testreport": "test report"
