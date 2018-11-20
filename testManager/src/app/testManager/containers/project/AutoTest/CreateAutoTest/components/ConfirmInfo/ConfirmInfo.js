@@ -338,12 +338,14 @@ class ConfirmInfo extends Component {
   }
 
   render() {
-    const instances = CreateAutoTestStore.currentInstance;
+    const {
+      app, appVersion, versionId, env, 
+    } = CreateAutoTestStore;
     const { intl } = this.props;
     const { formatMessage } = intl;
     // const data = this.state.yaml || CreateAutoTestStore.value;
     const {
-      data, app, appVersionId, envId, instanceId, mode, testType,
+      data, appVersionId, envId, instanceId, mode, testType,
     } = this.state;
     const options = {
       theme: 'neat',
@@ -386,10 +388,10 @@ class ConfirmInfo extends Component {
               </span>
             </div>
             <div className="deployApp-text">
-              {this.state.app && this.state.app.name}
+              {app && app.name}
               <span className="deployApp-value">
                 {'('}
-                {this.state.app && this.state.app.code}
+                {app && app.code}
                 {')'}
               </span>
             </div>
@@ -401,10 +403,10 @@ class ConfirmInfo extends Component {
               </span>
             </div>
             <div className="deployApp-text">
-              {this.state.app && this.state.app.name}
+              {app && app.name}
               <span className="deployApp-value">
                 {'('}
-                {this.state.app && this.state.app.code}
+                {app && app.code}
                 {')'}
               </span>
             </div>
@@ -416,12 +418,7 @@ class ConfirmInfo extends Component {
               </span>
             </div>
             <div className="deployApp-text">
-              {this.state.app && this.state.app.name}
-              <span className="deployApp-value">
-                {'('}
-                {this.state.app && this.state.app.code}
-                {')'}
-              </span>
+              {appVersion && appVersion.version}              
             </div>
           </div>
           {/* <div>

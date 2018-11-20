@@ -8,11 +8,13 @@ const { AppState } = stores;
 class CreateAutoTestStore {
   @observable currentStep = 1;
 
-  @observable appVersion = null;
+  @observable app = {};
 
-  @observable versionId = null;
+  @observable appVersion = {};
 
-  @observable env = null;
+  @observable version = {};
+
+  @observable env = {};
 
   // @observable envs = [];
 
@@ -26,73 +28,37 @@ class CreateAutoTestStore {
 
   @observable currentInstance = {};
 
-  // loadApps(id, projectId = AppState.currentMenuType.id) {
-  //   return axios.get(`/devops/v1/projects/${projectId}/apps/${id}/detail`).then((data) => {
-  //     const res = this.handleProptError(data);
-  //     return res;
-  //   });
-  // }
-
-  // loadVersion(appId, projectId, flag = '') {
-  //   return axios.get(`/devops/v1/projects/${projectId}/apps/${appId}/version/list?is_publish=${flag}`)
-  //     .then((data) => {
-  //       const res = this.handleProptError(data);
-  //       if (res) {
-  //         this.setVersions(res);
-  //       }
-  //       return res;
-  //     });
-  // }
-
-  // loadEnv(projectId = AppState.currentMenuType.id) {
-  //   return axios.get(`/devops/v1/projects/${projectId}/envs?active=true`)
-  //     .then((data) => {
-  //       const res = this.handleProptError(data);
-  //       if (res) {
-  //         this.setEnvs(res);
-  //       }
-  //       return res;
-  //     });
-  // }
-
-  // loadValue(appId, verId, envId, projectId = AppState.currentMenuType.id) {
-  //   return getYaml().then((data) => {
-  //     const res = this.handleProptError(data);
-  //     if (res) {
-  //       this.setValue(res);
-  //     }
-  //     return res;
-  //   });
-  // }
 
   checkYaml = (value, projectId = AppState.currentMenuType.id) => axios.post(`/devops/v1/projects/${projectId}/app_instances/value_format`, { yaml: value });
 
-  loadInstances(appId, envId, projectId = AppState.currentMenuType.id) {
-    return axios.get(`/devops/v1/projects/${projectId}/app_instances/listByAppIdAndEnvId?envId=${envId}&appId=${appId}`)
-      .then((data) => {
-        const res = this.handleProptError(data);
-        if (res) {
-          this.setCurrentInstance(res);
-        }
-        return res;
-      });
-  }
+  // loadInstances(appId, envId, projectId = AppState.currentMenuType.id) {
+  //   return axios.get(`/devops/v1/projects/${projectId}/app_instances/listByAppIdAndEnvId?envId=${envId}&appId=${appId}`)
+  //     .then((data) => {
+  //       const res = this.handleProptError(data);
+  //       if (res) {
+  //         this.setCurrentInstance(res);
+  //       }
+  //       return res;
+  //     });
+  // }
 
-  deploymentApp(applicationDeployDTO, projectId = AppState.currentMenuType.id) {
-    return axios.post(`/devops/v1/projects/${projectId}/app_instances`, applicationDeployDTO)
-      .then((data) => {
-        const res = this.handleProptError(data);
-        return res;
-      });
+  // deploymentApp(applicationDeployDTO, projectId = AppState.currentMenuType.id) {
+  //   return axios.post(`/devops/v1/projects/${projectId}/app_instances`, applicationDeployDTO)
+  //     .then((data) => {
+  //       const res = this.handleProptError(data);
+  //       return res;
+  //     });
+  // }
+  @action setApp = (app) => {
+    this.app = app;
   }
-
 
   @action setAppVersion = (appVersion) => {
     this.appVersion = appVersion;
   }
 
-  @action setVersionId = (versionId) => {
-    this.versionId = versionId;
+  @action setVersion = (version) => {
+    this.version = version;
   }
 
   @action setEnv = (env) => {

@@ -7,7 +7,7 @@ import { injectIntl, FormattedMessage } from 'react-intl';
 import YAML from 'yamljs';
 import { YamlEditor } from '../../../../../../components/CommonComponent';
 import CreateAutoTestStore from '../../../../../../store/project/AutoTest/CreateAutoTestStore';
-import { getYaml } from '../../../../../../api/AutoTestApi';
+import { getYaml, checkYaml } from '../../../../../../api/AutoTestApi';
 
 @injectIntl
 class ModifyConfig extends Component {
@@ -38,7 +38,7 @@ class ModifyConfig extends Component {
    */
   handleChangeValue = (value) => {
     this.setState({ value });
-    CreateAutoTestStore.checkYaml(value)
+    checkYaml(value)
       .then((data) => {
         this.setState({ errorLine: data });
         const oldYaml = CreateAutoTestStore.getValue ? CreateAutoTestStore.getValue.yaml : '';

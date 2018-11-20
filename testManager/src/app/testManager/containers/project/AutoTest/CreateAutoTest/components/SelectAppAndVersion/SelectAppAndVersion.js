@@ -4,19 +4,20 @@ import { withRouter } from 'react-router-dom';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { Modal, Table, Select } from 'choerodon-ui';
 import { stores, Content } from 'choerodon-front-boot';
-import './SelectApp.scss';
+import './SelectAppAndVersion.scss';
 import { getApps, getAppVersions } from '../../../../../../api/AutoTestApi';
+import CreateAutoTestStore from '../../../../../../store/project/AutoTest/CreateAutoTestStore';
 
 const SideBar = Modal.Sidebar;
 const { AppState } = stores;
 const { Option } = Select;
 @observer
-class selectApp extends Component {
+class SelectAppAndVersion extends Component {
   state = {
     appList: [],
-    selectedApp: null,
+    // selectedApp: null,
     appVersions: [],
-    selectedAppVersion: null,
+    // selectedAppVersion: null,
     // loading: false,
     pagination: {
       current: 1,
@@ -33,6 +34,7 @@ class selectApp extends Component {
   loadApps = (value = '') => {
     const { pagination, selectedApp } = this.state;
     const { current, pageSize: size } = pagination;
+    const { app, version } = CreateAutoTestStore;
     let searchParam = {};
     if (value !== '') {
       searchParam = { name: [value] };
@@ -48,11 +50,10 @@ class selectApp extends Component {
         Choerodon.prompt(data.failed);
         return; 
       }
-      if (data.content.length > 0 && data.content[0].id !== selectedApp) {
+      if (data.content.length > 0 && data.content[0].id && !app.id) {
         this.loadAppVersions(data.content[0].id);
-        this.setState({
-          selectedApp: data.content[0].id,
-        });
+        console.log(`选择应用:${data.content[0]}`);
+        CreateAutoTestStore.setApp(data.content[0]);        
       }
       this.setState({
         appList: data.content,
@@ -88,14 +89,13 @@ class selectApp extends Component {
    */
   getProjectTable = () => {
     const { intl } = this.props;
-    const {
-      app, isMarket, appVersions, selectedAppVersion, pagination,
-    } = this.state;
+    const { appVersions, pagination } = this.state;
+    const { version } = CreateAutoTestStore;
     const column = [{
       key: 'check',
       width: '50px',
       render: record => (
-        record.id === selectedAppVersion.id && <i className="icon icon-check icon-select" />
+        record.id === version.id && <i className="icon icon-check icon-select" />
       ),
     }, {
       title: <FormattedMessage id="app_name" />,
@@ -176,11 +176,13 @@ class selectApp extends Component {
    */
   handleSelectApp = (record) => {
     this.loadAppVersions(record.id);
-    this.setState({ app: record, selectedApp: record.id });
+    console.log(`选择应用:${record}`);
+    CreateAutoTestStore.setApp(record);    
   };
 
-  handleSelectAppVersion=(record) => {
-    this.setState({ selectedAppVersion: record.id });
+  handleSelectAppVersion=(record) => {  
+    CreateAutoTestStore.setAppVersion(record);
+    console.log(`选择应用版本:${record}`);
   }
 
   /**
@@ -226,10 +228,10 @@ class selectApp extends Component {
    * 确定选择数据
    */
   handleOk = () => {
-    const { selectedAppVersion } = this.state;
     const { handleOk, intl } = this.props;
-    if (selectedAppVersion) {
-      handleOk(selectedAppVersion);
+    const { app, version } = CreateAutoTestStore;
+    if (app.id || version.id) {
+      handleOk();
     } else {
       Choerodon.prompt('未选择应用版本');
     }
@@ -237,7 +239,8 @@ class selectApp extends Component {
 
   render() {
     const { intl: { formatMessage }, show, handleCancel } = this.props;
-    const { appList, selectedApp } = this.state;
+    const { appList } = this.state;
+    const { app, version } = CreateAutoTestStore;
     const projectName = AppState.currentMenuType.name;
     const appOptions = appList.map(app => <Option value={app.id} key={app.id}>{app.name}</Option>);
     return (
@@ -254,7 +257,7 @@ class selectApp extends Component {
             style={{ width: 200, marginBottom: 30 }}
             label="应用名称"
             onChange={this.handleSelectApp}
-            value={selectedApp}
+            value={app.id}
             filter
             filterOption={false}
             onFilterChange={(value) => { this.loadApps(value); }}
@@ -269,4 +272,4 @@ class selectApp extends Component {
   }
 }
 
-export default withRouter(injectIntl(selectApp));
+export default withRouter(injectIntl(SelectAppAndVersion));

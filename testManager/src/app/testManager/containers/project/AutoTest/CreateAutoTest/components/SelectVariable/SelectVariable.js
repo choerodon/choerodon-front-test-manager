@@ -3,13 +3,15 @@ import {
   Select, Button, Radio, Steps, Icon, Tooltip, Form,
 } from 'choerodon-ui';
 import { injectIntl, FormattedMessage } from 'react-intl';
+import { observer } from 'mobx-react';
 import { YamlEditor, SelectVersion } from '../../../../../../components/CommonComponent';
 import CreateAutoTestStore from '../../../../../../store/project/AutoTest/CreateAutoTestStore';
 import { getEnvs } from '../../../../../../api/AutoTestApi';
-import SelectApp from '../selectApp';
+import SelectAppAndVersion from '../SelectAppAndVersion';
 
 const Option = Select.Option;
 @injectIntl
+@observer
 class SelectVariable extends Component {
   state = {
     selectApp: false,
@@ -33,9 +35,11 @@ class SelectVariable extends Component {
   /**
    * 选择应用版本
    */
-  handleOk = (selectedAppVersion) => {
-    console.log(`选择应用版本:${selectedAppVersion}`);
-    CreateAutoTestStore.setAppVersion(selectedAppVersion);
+  handleOk = (selectdApp, selectedAppVersion) => {
+    // console.log(`选择应用:${selectdApp}`, `选择应用版本:${selectedAppVersion}`);
+    // CreateAutoTestStore.setApp(selectdApp);
+    // CreateAutoTestStore.setAppVersion(selectedAppVersion);
+    this.setState({ selectApp: false });
   }
 
   /**
@@ -44,7 +48,8 @@ class SelectVariable extends Component {
    * @param {*} versionId
    * @memberof CreateAutoTest
    */
-  handleVersionSelect=(versionId) => {
+  handleVersionSelect=(versionId, other) => {
+    console.log(versionId, other);
     CreateAutoTestStore.setVersionId(versionId);    
   }
 
@@ -62,9 +67,9 @@ class SelectVariable extends Component {
 
   render() {
     const { intl } = this.props;
-    const { versionId, selectApp, envs } = this.state;
+    const { selectApp, envs } = this.state;
     const { formatMessage } = intl;
-    const env = CreateAutoTestStore.env;
+    const { app, env, version } = CreateAutoTestStore;
     return (
       <div className="deployApp-app">
         <p>
@@ -77,20 +82,20 @@ class SelectVariable extends Component {
             <span className="section-title">{formatMessage({ id: 'autoteststep_one_app' })}</span>
           </div>
           <div className="autotest-text">
-            {this.state.app && (
+            {app && (
               <div className="section-text-margin">
                 <Tooltip title={<FormattedMessage id={this.state.is_project ? 'project' : 'market'} />}><span className={`icon ${this.state.is_project ? 'icon-project' : 'icon-apps'} section-text-icon`} /></Tooltip>
                 <span className="section-text">
-                  {this.state.app.name}
+                  {app.name}
                   {'('}
-                  {this.state.app.code}
+                  {app.code}
                   {')'}
                 </span>
               </div>
             )}
             <a
               role="none"
-              className={`${this.state.app ? '' : 'section-text-margin'}`}
+              className={`${app ? '' : 'section-text-margin'}`}
               onClick={this.showSideBar}
             >
               {formatMessage({ id: 'autotestapp_add' })}
@@ -105,7 +110,7 @@ class SelectVariable extends Component {
             <span className="section-title">{formatMessage({ id: 'autoteststep_one_targetversion' })}</span>
           </div>
           <SelectVersion
-            value={versionId}
+            value={version.id}
             className="section-text-margin"
             style={{ width: 482 }}
             onChange={this.handleVersionSelect}
@@ -118,7 +123,7 @@ class SelectVariable extends Component {
             <span className="section-title">{formatMessage({ id: 'autoteststep_one_environment' })}</span>
           </div>
           <Select
-            value={env}
+            value={env.id}
             label={<span className="autotest-text">{formatMessage({ id: 'autoteststep_one_environment' })}</span>}
             className="section-text-margin"
             onSelect={this.handleSelectEnv}
@@ -148,7 +153,7 @@ class SelectVariable extends Component {
           </Button>
           <Button funcType="raised" className="c7ntest-autotest-clear">{formatMessage({ id: 'cancel' })}</Button>
         </section>
-        <SelectApp
+        <SelectAppAndVersion
           show={selectApp}
           handleCancel={this.handleCancel}
           handleOk={this.handleOk}

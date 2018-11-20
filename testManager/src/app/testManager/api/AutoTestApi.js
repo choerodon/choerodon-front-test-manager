@@ -18,6 +18,10 @@ export function getTestHistoryByApp() {
 export function getYaml() {
   return axios.get('/getYaml');
 }
+export function checkYaml(value) {
+  return axios.post(`/devops/v1/projects/${getProjectId()}/app_instances/value_format`, { yaml: value });
+}
+
 export function loadPodParam(projectId, id, type) {
   return axios.get(`devops/v1/projects/${getProjectId()}/app_pod/${5}/containers/logs`);
 }
