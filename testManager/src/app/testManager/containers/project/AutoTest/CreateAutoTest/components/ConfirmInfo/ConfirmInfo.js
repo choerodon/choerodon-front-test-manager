@@ -6,6 +6,7 @@ import moment from 'moment';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import CreateAutoTestStore from '../../../../../../store/project/AutoTest/CreateAutoTestStore';
 import { YamlEditor } from '../../../../../../components/CommonComponent';
+import './ConfirmInfo.scss';
 
 const intlPrefix = 'taskdetail';
 const FormItem = Form.Item;
@@ -52,7 +53,7 @@ class ConfirmInfo extends Component {
     let content;
     if (cronLoading === 'empty') {
       content = (
-        <div className="c7n-task-deatil-cron-container-empty">
+        <div className="c7ntest-task-deatil-cron-container-empty">
           <FormattedMessage id={`${intlPrefix}.cron.tip`} />
           <a href={intl.formatMessage({ id: `${intlPrefix}.cron.tip.link` })} target="_blank">
             <span>{intl.formatMessage({ id: 'learnmore' })}</span>
@@ -67,7 +68,7 @@ class ConfirmInfo extends Component {
         </div>);
     } else if (cronLoading === 'right') {
       content = (
-        <div className="c7n-task-deatil-cron-container">
+        <div className="c7ntest-task-deatil-cron-container">
           <FormattedMessage id={`${intlPrefix}.cron.example`} />
           {
             cronTime.map((value, key) => (
@@ -94,10 +95,10 @@ class ConfirmInfo extends Component {
     const { intl, AppState } = this.props;
     const { getFieldDecorator } = this.props.form;
     return (
-      <React.Fragment>
+      <div className="c7ntest-create-task">
         <FormItem
           {...formItemLayout}
-          className="c7n-create-task-inline-formitem"
+          className="c7ntest-create-task-inline-formitem"
         >
           {getFieldDecorator('startTime', {
             rules: [{
@@ -120,7 +121,7 @@ class ConfirmInfo extends Component {
         </FormItem>
         <FormItem
           {...formItemLayout}
-          className="c7n-create-task-inline-formitem"
+          className="c7ntest-create-task-inline-formitem"
         >
           {getFieldDecorator('endTime', {
             rules: [],
@@ -145,7 +146,7 @@ class ConfirmInfo extends Component {
             initialValue: 'simple-trigger',
           })(
             <RadioGroup
-              className="c7n-create-task-radio-container"
+              className="c7ntest-create-task-radio-container"
               label="触发类型"
               onChange={this.changeValue.bind(this)}
             >
@@ -154,47 +155,45 @@ class ConfirmInfo extends Component {
             </RadioGroup>,
           )}
         </FormItem>
-        <div style={{ display: triggerType === 'easy' ? 'flex' : 'none' }}>
-          <div className="c7n-create-task-set-task">
-            <FormItem
-              {...formItemLayout}
-              className="c7n-create-task-inline-formitem"
-            >
-              {getFieldDecorator('simpleRepeatInterval', {
-                rules: [{
-                  required: triggerType === 'easy',
-                  // message: intl.formatMessage({ id: `${intlPrefix}.repeat.required` }),
-                }, {
-                  pattern: /^[1-9]\d*$/,
-                  // message: intl.formatMessage({ id: `${intlPrefix}.repeat.pattern` }),
-                }],
-                validateFirst: true,
-              })(
-                <Input style={{ width: '100px' }} autoComplete="off" label="重复间隔" />,
-              )}
-            </FormItem>
-            <FormItem
-              {...formItemLayout}
-              className="c7n-create-task-inline-formitem c7n-create-task-inline-formitem-select"
-            >
-              {getFieldDecorator('simpleRepeatIntervalUnit', {
-                rules: [],
-                initialValue: 'SECONDS',
-              })(
-                <Select
-                  style={{ width: '124px' }}
-                // getPopupContainer={() => document.getElementsByClassName('sidebar-content')[0].parentNode}
-                >
-                  <Option value="SECONDS">秒</Option>
-                  <Option value="MINUTES">分</Option>
-                  <Option value="HOURS">时</Option>
-                  <Option value="DAYS">天</Option>
-                </Select>,
-              )}
-            </FormItem>
-          </div>
+        <div style={{ display: triggerType === 'easy' ? 'block' : 'none' }}>       
           <FormItem
-            className="c7n-create-task-inline-formitem"
+            {...formItemLayout}
+            className="c7ntest-create-task-inline-formitem"
+          >
+            {getFieldDecorator('simpleRepeatInterval', {
+              rules: [{
+                required: triggerType === 'easy',
+                // message: intl.formatMessage({ id: `${intlPrefix}.repeat.required` }),
+              }, {
+                pattern: /^[1-9]\d*$/,
+                // message: intl.formatMessage({ id: `${intlPrefix}.repeat.pattern` }),
+              }],
+              validateFirst: true,
+            })(
+              <Input style={{ width: '100px' }} autoComplete="off" label="重复间隔" />,
+            )}
+          </FormItem>
+          <FormItem
+            {...formItemLayout}
+            className="c7ntest-create-task-inline-formitem c7ntest-create-task-inline-formitem-select"
+          >
+            {getFieldDecorator('simpleRepeatIntervalUnit', {
+              rules: [],
+              initialValue: 'SECONDS',
+            })(
+              <Select
+                style={{ width: '124px' }}
+              >
+                <Option value="SECONDS">秒</Option>
+                <Option value="MINUTES">分</Option>
+                <Option value="HOURS">时</Option>
+                <Option value="DAYS">天</Option>
+              </Select>,
+            )}
+          </FormItem>
+   
+          <FormItem
+            className="c7ntest-create-task-inline-formitem"
             {...formItemLayout}
           >
             {getFieldDecorator('simpleRepeatCount', {
@@ -213,7 +212,7 @@ class ConfirmInfo extends Component {
         <div>
           <FormItem
             {...formItemLayout}
-            style={{ position: 'relative', display: triggerType === 'cron' ? 'inline-block' : 'none' }}
+            style={{ display: triggerType === 'cron' ? 'inline-block' : 'none' }}
           >
             {getFieldDecorator('cronExpression', {
               rules: [{
@@ -228,18 +227,18 @@ class ConfirmInfo extends Component {
             content={this.getCronContent()}
             trigger="click"
             placement="bottom"
-            overlayClassName="c7n-task-detail-popover"
-            getPopupContainer={() => document.getElementsByClassName('sidebar-content')[0].parentNode}
+            overlayClassName="c7ntest-task-detail-popover"
+            // getPopupContainer={() => document.getElementsByClassName('sidebar-content')[0].parentNode}
           >
             <Icon
               onClick={this.checkCron}
               style={{ display: triggerType === 'cron' ? 'inline-block' : 'none' }}
-              className="c7n-task-detail-popover-icon"
+              className="c7ntest-task-detail-popover-icon"
               type="find_in_page"
             />
           </Popover>
         </div>
-      </React.Fragment>
+      </div>
     );
   }
 
