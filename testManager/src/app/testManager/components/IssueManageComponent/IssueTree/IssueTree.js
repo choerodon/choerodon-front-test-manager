@@ -89,11 +89,7 @@ class IssueTree extends Component {
     getIssueTree().then((data) => {
       IssueTreeStore.setTreeData([{ title: '所有版本', key: '0', children: data.versions }]);
       IssueTreeStore.setLoading(false);
-      this.generateList([
-        { title: '所有版本', key: '0', children: data.versions },
-      ]);
-
-      // window.console.log(dataList);
+      this.generateList({ title: '所有版本', key: '0', children: data.versions });
     }).catch(() => {
       IssueTreeStore.setLoading(false);
       Choerodon.prompt('网络错误');
