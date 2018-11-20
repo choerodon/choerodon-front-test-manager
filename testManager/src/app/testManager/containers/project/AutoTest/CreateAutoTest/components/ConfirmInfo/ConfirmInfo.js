@@ -6,6 +6,7 @@ import moment from 'moment';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import CreateAutoTestStore from '../../../../../../store/project/AutoTest/CreateAutoTestStore';
 import { YamlEditor } from '../../../../../../components/CommonComponent';
+import { getYaml } from '../../../../../../api/AutoTestApi';
 import './ConfirmInfo.scss';
 
 const intlPrefix = 'taskdetail';
@@ -28,8 +29,23 @@ class ConfirmInfo extends Component {
   state = {
     triggerType: 'easy',
     testType: 'instant',
+    data: null,
   }
 
+  componentDidMount() {
+    this.loadYaml();
+  }
+
+  loadYaml=() => {
+    getYaml().then((data) => {
+      if (data) {
+        this.setState({
+          data,
+        });
+      }
+    });
+  }
+  
   // 创建任务切换触发类型
   changeValue(e) {
     const { resetFields } = this.props.form;
@@ -46,6 +62,85 @@ class ConfirmInfo extends Component {
     }
     return endTime.valueOf() <= startTime.valueOf();
   }
+
+  /**
+   * 部署应用
+   */
+  handleDeploy = () => {
+    this.setState({
+      loading: true,
+    });
+    const instances = CreateAutoTestStore.currentInstance;
+    const value = this.state.value || CreateAutoTestStore.value.yaml;
+    const applicationDeployDTO = {
+      appId: this.state.appId,
+      appVerisonId: this.state.appVersionId,
+      environmentId: this.state.envId,
+      values: value,
+      type: this.state.mode === 'new' ? 'create' : 'update',
+      appInstanceId: this.state.mode === 'new'
+        ? null : this.state.instanceId || (instances && instances.length === 1 && instances[0].id),
+    };
+    if (this.state.selectType === 'create') {
+      const { type, id } = this.taskdetail;
+      this.props.form.validateFieldsAndScroll((err, values) => {
+        if (!err) {
+          this.setState({
+            // isSubmitting: true,
+          });
+          const flag = values.triggerType === 'simple-trigger';
+          const {
+            startTime, endTime, cronExpression, simpleRepeatInterval,
+            simpleRepeatIntervalUnit, simpleRepeatCount, 
+          } = values;
+          const body = {
+            ...values,
+            startTime: startTime.format('YYYY-MM-DD HH:mm:ss'),
+            endTime: endTime ? endTime.format('YYYY-MM-DD HH:mm:ss') : null,
+            cronExpression: flag ? null : cronExpression,
+            simpleRepeatInterval: flag ? Number(simpleRepeatInterval) : null,
+            simpleRepeatIntervalUnit: flag ? simpleRepeatIntervalUnit : null,
+            simpleRepeatCount: flag ? Number(simpleRepeatCount) : null,
+          };
+          createTask(body, type, id).then(({ failed, message }) => {
+            if (failed) {
+              Choerodon.prompt(message);
+              this.setState({
+                // isSubmitting: false,
+              });
+            } else {
+              // Choerodon.prompt(intl.formatMessage({ id: 'create.success' }));
+              this.setState({
+                // isSubmitting: false,
+              }, () => {
+                // this.handleRefresh();
+              });
+            }
+          }).catch(() => {
+            // Choerodon.prompt(intl.formatMessage({ id: 'create.error' }));
+            // this.setState({
+            //   isSubmitting: false,
+            // });
+          });
+        }
+      });
+    }
+    // CreateAutoTestStore.deploymentApp(applicationDeployDTO)
+    //   .then((datas) => {
+    //     if (datas) {
+    //       this.openAppDeployment();
+    //     }
+    //     this.setState({
+    //       loading: false,
+    //     });
+    //   })
+    //   .catch((error) => {
+    //     Choerodon.prompt(error.response.data.message);
+    //     this.setState({
+    //       loading: false,
+    //     });
+    //   });
+  };
 
   getCronContent = () => {
     const { cronLoading, cronTime } = this.state;
@@ -246,9 +341,9 @@ class ConfirmInfo extends Component {
     const instances = CreateAutoTestStore.currentInstance;
     const { intl } = this.props;
     const { formatMessage } = intl;
-    const data = this.state.yaml || CreateAutoTestStore.value;
+    // const data = this.state.yaml || CreateAutoTestStore.value;
     const {
-      app, appVersionId, envId, instanceId, mode, testType,
+      data, app, appVersionId, envId, instanceId, mode, testType,
     } = this.state;
     const options = {
       theme: 'neat',
@@ -379,10 +474,10 @@ class ConfirmInfo extends Component {
           )}
         </section>
         <section className="deployApp-section">
-          {/* <Button type="primary" funcType="raised" disabled={!(app && appVersionId && envId && mode)} onClick={this.handleDeploy} loading={this.state.loading}>{formatMessage({ id: 'autotestbtn_autotest' })}</Button>
+          <Button type="primary" funcType="raised" disabled={!(app && appVersionId && envId && mode)} onClick={this.handleDeploy} loading={this.state.loading}>{formatMessage({ id: 'autotestbtn_autotest' })}</Button>
        
-          <Button funcType="raised" onClick={this.changeStep.bind(this, 2)}>{formatMessage({ id: 'previous' })}</Button>
-          <Button funcType="raised" className="c7ntest-autotest-clear" onClick={this.clearStepOne}>{formatMessage({ id: 'cancel' })}</Button> */}
+          <Button funcType="raised" onClick={CreateAutoTestStore.preStep}>{formatMessage({ id: 'previous' })}</Button>
+          <Button funcType="raised" className="c7ntest-autotest-clear" onClick={() => { CreateAutoTestStore.toStep(1); }}>{formatMessage({ id: 'cancel' })}</Button>
         </section>
       </section>
     );

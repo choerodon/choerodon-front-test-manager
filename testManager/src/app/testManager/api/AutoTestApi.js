@@ -29,3 +29,6 @@ export function getApps({
 export function getAppVersions(appId, flag = '') {
   return request.get(`/devops/v1/projects/${getProjectId()}/apps/${appId}/version/list?is_publish=${flag}`);
 }
+export function getEnvs() {
+  return axios.get(`/devops/v1/projects/${getProjectId()}/envs?active=true`);   
+}

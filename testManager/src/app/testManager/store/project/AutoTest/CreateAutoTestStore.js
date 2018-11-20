@@ -6,17 +6,17 @@ const { AppState } = stores;
 
 @store('CreateAutoTestStore')
 class CreateAutoTestStore {
-  @observable apps = [];
+  @observable currentStep = 1;
 
-  @observable currentApp = {};
+  @observable appVersion = null;
 
-  @observable versions = [];
+  @observable versionId = null;
 
-  @observable currentVersion = {};
+  @observable env = null;
 
-  @observable envs = [];
+  // @observable envs = [];
 
-  @observable currentEnv = {};
+  // @observable currentEnv = {};
 
   @observable value = null;
 
@@ -26,44 +26,44 @@ class CreateAutoTestStore {
 
   @observable currentInstance = {};
 
-  loadApps(id, projectId = AppState.currentMenuType.id) {
-    return axios.get(`/devops/v1/projects/${projectId}/apps/${id}/detail`).then((data) => {
-      const res = this.handleProptError(data);
-      return res;
-    });
-  }
+  // loadApps(id, projectId = AppState.currentMenuType.id) {
+  //   return axios.get(`/devops/v1/projects/${projectId}/apps/${id}/detail`).then((data) => {
+  //     const res = this.handleProptError(data);
+  //     return res;
+  //   });
+  // }
 
-  loadVersion(appId, projectId, flag = '') {
-    return axios.get(`/devops/v1/projects/${projectId}/apps/${appId}/version/list?is_publish=${flag}`)
-      .then((data) => {
-        const res = this.handleProptError(data);
-        if (res) {
-          this.setVersions(res);
-        }
-        return res;
-      });
-  }
+  // loadVersion(appId, projectId, flag = '') {
+  //   return axios.get(`/devops/v1/projects/${projectId}/apps/${appId}/version/list?is_publish=${flag}`)
+  //     .then((data) => {
+  //       const res = this.handleProptError(data);
+  //       if (res) {
+  //         this.setVersions(res);
+  //       }
+  //       return res;
+  //     });
+  // }
 
-  loadEnv(projectId = AppState.currentMenuType.id) {
-    return axios.get(`/devops/v1/projects/${projectId}/envs?active=true`)
-      .then((data) => {
-        const res = this.handleProptError(data);
-        if (res) {
-          this.setEnvs(res);
-        }
-        return res;
-      });
-  }
+  // loadEnv(projectId = AppState.currentMenuType.id) {
+  //   return axios.get(`/devops/v1/projects/${projectId}/envs?active=true`)
+  //     .then((data) => {
+  //       const res = this.handleProptError(data);
+  //       if (res) {
+  //         this.setEnvs(res);
+  //       }
+  //       return res;
+  //     });
+  // }
 
-  loadValue(appId, verId, envId, projectId = AppState.currentMenuType.id) {
-    return getYaml().then((data) => {
-      const res = this.handleProptError(data);
-      if (res) {
-        this.setValue(res);
-      }
-      return res;
-    });
-  }
+  // loadValue(appId, verId, envId, projectId = AppState.currentMenuType.id) {
+  //   return getYaml().then((data) => {
+  //     const res = this.handleProptError(data);
+  //     if (res) {
+  //       this.setValue(res);
+  //     }
+  //     return res;
+  //   });
+  // }
 
   checkYaml = (value, projectId = AppState.currentMenuType.id) => axios.post(`/devops/v1/projects/${projectId}/app_instances/value_format`, { yaml: value });
 
@@ -86,29 +86,38 @@ class CreateAutoTestStore {
       });
   }
 
-  @action setApps(data) {
-    this.apps = data;
+
+  @action setAppVersion = (appVersion) => {
+    this.appVersion = appVersion;
   }
 
-  @action setCurrentApp(data) {
-    this.currentApp = data;
+  @action setVersionId = (versionId) => {
+    this.versionId = versionId;
   }
 
-  @action setVersions(data) {
-    this.versions = data;
+  @action setEnv = (env) => {
+    this.env = env;
   }
 
-  @action setCurrentVersion(data) {
-    this.currentVersion = data;
+  @action toStep = (step) => {
+    this.currentStep = step;
   }
 
-  @action setEnvs(data) {
-    this.envs = data;
+  @action nextStep = () => {
+    this.currentStep += 1;
   }
 
-  @action setCurrentEnv(data) {
-    this.currentEnv = data;
+  @action preStep = () => {
+    this.currentStep -= 1;
   }
+
+  // @action setEnvs(data) {
+  //   this.envs = data;
+  // }
+
+  // @action setCurrentEnv(data) {
+  //   this.currentEnv = data;
+  // }
 
   @action setValue(data) {
     this.value = data;
@@ -142,7 +151,7 @@ class CreateAutoTestStore {
     return this.value;
   }
 
-  handleProptError =(error) => {
+  handleProptError = (error) => {
     if (error && error.failed) {
       Choerodon.prompt(error.message);
       return false;

@@ -5,13 +5,13 @@ import { injectIntl, FormattedMessage } from 'react-intl';
 import { Modal, Table, Select } from 'choerodon-ui';
 import { stores, Content } from 'choerodon-front-boot';
 import './SelectApp.scss';
-import { getApps, getAppVersions } from '../../../../../api/AutoTestApi';
+import { getApps, getAppVersions } from '../../../../../../api/AutoTestApi';
 
 const SideBar = Modal.Sidebar;
 const { AppState } = stores;
 const { Option } = Select;
 @observer
-class DeployAppHome extends Component {
+class selectApp extends Component {
   state = {
     appList: [],
     selectedApp: null,
@@ -269,4 +269,4 @@ class DeployAppHome extends Component {
   }
 }
 
-export default withRouter(injectIntl(DeployAppHome));
+export default withRouter(injectIntl(selectApp));

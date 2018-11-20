@@ -5,7 +5,7 @@ import {
 } from 'react-router-dom';
 import { asyncRouter, nomatch } from 'choerodon-front-boot';
 
-const CreateAutoTest = asyncRouter(() => (import('./CreateAutoTest')), () => import('../../../store/project/AutoTest/CreateAutoTestStore'));
+const CreateAutoTest = asyncRouter(() => (import('./CreateAutoTest')));
 const AutoTestList = asyncRouter(() => import('./AutoTestList'));
 const TestIndex = ({ match }) => (
   <Switch>
