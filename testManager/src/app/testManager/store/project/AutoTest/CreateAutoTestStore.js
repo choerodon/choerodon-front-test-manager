@@ -1,10 +1,7 @@
-import { observable, action, computed } from 'mobx';
-import { axios, store, stores } from 'choerodon-front-boot';
-import { getYaml } from '../../../api/AutoTestApi';
+import {
+  observable, action, computed, toJS, 
+} from 'mobx';
 
-const { AppState } = stores;
-
-@store('CreateAutoTestStore')
 class CreateAutoTestStore {
   @observable currentStep = 1;
 
@@ -16,39 +13,10 @@ class CreateAutoTestStore {
 
   @observable env = {};
 
-  // @observable envs = [];
+  @observable configValue = null;
 
-  // @observable currentEnv = {};
+  @observable newConfigValue = null;
 
-  @observable value = null;
-
-  @observable currentMode = 'new';
-
-  @observable instances = [];
-
-  @observable currentInstance = {};
-
-
-  checkYaml = (value, projectId = AppState.currentMenuType.id) => axios.post(`/devops/v1/projects/${projectId}/app_instances/value_format`, { yaml: value });
-
-  // loadInstances(appId, envId, projectId = AppState.currentMenuType.id) {
-  //   return axios.get(`/devops/v1/projects/${projectId}/app_instances/listByAppIdAndEnvId?envId=${envId}&appId=${appId}`)
-  //     .then((data) => {
-  //       const res = this.handleProptError(data);
-  //       if (res) {
-  //         this.setCurrentInstance(res);
-  //       }
-  //       return res;
-  //     });
-  // }
-
-  // deploymentApp(applicationDeployDTO, projectId = AppState.currentMenuType.id) {
-  //   return axios.post(`/devops/v1/projects/${projectId}/app_instances`, applicationDeployDTO)
-  //     .then((data) => {
-  //       const res = this.handleProptError(data);
-  //       return res;
-  //     });
-  // }
   @action setApp = (app) => {
     this.app = app;
   }
@@ -77,54 +45,22 @@ class CreateAutoTestStore {
     this.currentStep -= 1;
   }
 
-  // @action setEnvs(data) {
-  //   this.envs = data;
-  // }
-
-  // @action setCurrentEnv(data) {
-  //   this.currentEnv = data;
-  // }
-
-  @action setValue(data) {
-    this.value = data;
+  @action setConfigValue(configValue) {
+    this.configValue = configValue;
+    this.newConfigValue = configValue;
   }
 
-  @action setShowArr(data) {
-    this.showArr = data;
+  @action setNewConfigValue(newConfigValue) {
+    this.newConfigValue = { ...this.newConfigValue, yaml: newConfigValue };
   }
 
-  @action setLoadingArr(data) {
-    this.loadingArr = data;
+  @computed get getConfigValue() {
+    return toJS(this.configValue);
   }
 
-  @action setCurrentMode(data) {
-    this.currentMode = data;
-  }
-
-  @action setInstances(data) {
-    this.instances = data;
-  }
-
-  @action setCurrentInstance(data) {
-    this.currentInstance = data;
-  }
-
-  @computed get getCurrentStage() {
-    return this.showArr.lastIndexOf(true) + 1;
-  }
-
-  @computed get getValue() {
-    return this.value;
-  }
-
-  handleProptError = (error) => {
-    if (error && error.failed) {
-      Choerodon.prompt(error.message);
-      return false;
-    } else {
-      return error;
-    }
+  @computed get getNewConfigValue() {
+    return toJS(this.newConfigValue);
   }
 }
-const createAutoTestStore = new CreateAutoTestStore();
-export default createAutoTestStore;
+
+export default new CreateAutoTestStore();

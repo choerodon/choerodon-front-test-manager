@@ -3,6 +3,8 @@ import {
   Button, Select, Radio, Form, Input, Popover, Icon, Spin, DatePicker,
 } from 'choerodon-ui';
 import moment from 'moment';
+import YAML from 'yamljs';
+import { observer } from 'mobx-react';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import CreateAutoTestStore from '../../../../../../store/project/AutoTest/CreateAutoTestStore';
 import { YamlEditor } from '../../../../../../components/CommonComponent';
@@ -25,6 +27,7 @@ const formItemLayout = {
 };
 @injectIntl
 @Form.create()
+@observer
 class ConfirmInfo extends Component {
   state = {
     triggerType: 'easy',
@@ -70,16 +73,29 @@ class ConfirmInfo extends Component {
     this.setState({
       loading: true,
     });
-    const instances = CreateAutoTestStore.currentInstance;
+    // const instances = CreateAutoTestStore.currentInstance;
     const value = this.state.value || CreateAutoTestStore.value.yaml;
+    let isNotChange = true;
+    const oldYaml = CreateAutoTestStore.getConfigValue.yaml;
+    const newYaml = CreateAutoTestStore.getNewConfigValue.yaml;
+    const oldvalue = YAML.parse(oldYaml);
+    const newvalue = YAML.parse(newYaml);
+        
+    if (JSON.stringify(oldvalue) !== JSON.stringify(newvalue)) {
+      isNotChange = false;
+    }
+    const { 
+      app, appVersion, env, version, 
+    } = CreateAutoTestStore;
     const applicationDeployDTO = {
-      appId: this.state.appId,
-      appVerisonId: this.state.appVersionId,
-      environmentId: this.state.envId,
+      isNotChange,
+      appId: app.id,
+      appVerisonId: appVersion.id,
+      environmentId: env.id,
       values: value,
       type: this.state.mode === 'new' ? 'create' : 'update',
-      appInstanceId: this.state.mode === 'new'
-        ? null : this.state.instanceId || (instances && instances.length === 1 && instances[0].id),
+      // appInstanceId: this.state.mode === 'new'
+      //   ? null : this.state.instanceId || (instances && instances.length === 1 && instances[0].id),
     };
     if (this.state.selectType === 'create') {
       const { type, id } = this.taskdetail;
@@ -339,13 +355,13 @@ class ConfirmInfo extends Component {
 
   render() {
     const {
-      app, appVersion, versionId, env, 
+      app, appVersion, version, env, 
     } = CreateAutoTestStore;
     const { intl } = this.props;
     const { formatMessage } = intl;
     // const data = this.state.yaml || CreateAutoTestStore.value;
     const {
-      data, appVersionId, envId, instanceId, mode, testType,
+      data, testType,
     } = this.state;
     const options = {
       theme: 'neat',
@@ -399,26 +415,34 @@ class ConfirmInfo extends Component {
           <div>
             <div className="deployApp-title">
               <span className="deployApp-title-text">
-                {'应用：'}
+                {'应用名称：'}
               </span>
             </div>
             <div className="deployApp-text">
               {app && app.name}
               <span className="deployApp-value">
-                {'('}
-                {app && app.code}
-                {')'}
+                {app && `(${app.code})`}                
               </span>
+            </div>
+          </div>          
+          <div>
+            <div className="deployApp-title">
+              <span className="deployApp-title-text">
+                {'应用版本：'}
+              </span>
+            </div>
+            <div className="deployApp-text">
+              {appVersion && appVersion.version}              
             </div>
           </div>
           <div>
             <div className="deployApp-title">
               <span className="deployApp-title-text">
-                {'版本：'}
+                {'目标版本：'}
               </span>
             </div>
             <div className="deployApp-text">
-              {appVersion && appVersion.version}              
+              {version && version.versionName}              
             </div>
           </div>
           {/* <div>
@@ -471,7 +495,7 @@ class ConfirmInfo extends Component {
           )}
         </section>
         <section className="deployApp-section">
-          <Button type="primary" funcType="raised" disabled={!(app && appVersionId && envId && mode)} onClick={this.handleDeploy} loading={this.state.loading}>{formatMessage({ id: 'autotestbtn_autotest' })}</Button>
+          <Button type="primary" funcType="raised" disabled={!(app.id && appVersion.id && env.id)} onClick={this.handleDeploy} loading={this.state.loading}>{formatMessage({ id: 'autotestbtn_autotest' })}</Button>
        
           <Button funcType="raised" onClick={CreateAutoTestStore.preStep}>{formatMessage({ id: 'previous' })}</Button>
           <Button funcType="raised" className="c7ntest-autotest-clear" onClick={() => { CreateAutoTestStore.toStep(1); }}>{formatMessage({ id: 'cancel' })}</Button>

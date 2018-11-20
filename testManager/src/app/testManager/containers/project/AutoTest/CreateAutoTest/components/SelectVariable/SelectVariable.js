@@ -4,6 +4,7 @@ import {
 } from 'choerodon-ui';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { observer } from 'mobx-react';
+import _ from 'lodash';
 import { YamlEditor, SelectVersion } from '../../../../../../components/CommonComponent';
 import CreateAutoTestStore from '../../../../../../store/project/AutoTest/CreateAutoTestStore';
 import { getEnvs } from '../../../../../../api/AutoTestApi';
@@ -49,12 +50,13 @@ class SelectVariable extends Component {
    * @memberof CreateAutoTest
    */
   handleVersionSelect=(versionId, other) => {
-    console.log(versionId, other);
-    CreateAutoTestStore.setVersionId(versionId);    
+    const { children: versionName } = other.props;
+    CreateAutoTestStore.setVersion({ versionId, versionName });    
   }
 
-  handleSelectEnv=(env) => {
-    CreateAutoTestStore.setEnv(env);
+  handleSelectEnv=(envId, other) => {
+    const { envs } = this.state;
+    CreateAutoTestStore.setEnv(_.find(envs, { id: envId }));
   }
 
   loadEnvs=() => {
@@ -110,7 +112,7 @@ class SelectVariable extends Component {
             <span className="section-title">{formatMessage({ id: 'autoteststep_one_targetversion' })}</span>
           </div>
           <SelectVersion
-            value={version.id}
+            value={version.versionId}
             className="section-text-margin"
             style={{ width: 482 }}
             onChange={this.handleVersionSelect}

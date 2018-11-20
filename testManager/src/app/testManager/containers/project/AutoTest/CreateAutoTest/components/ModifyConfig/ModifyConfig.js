@@ -3,18 +3,18 @@ import React, { Component } from 'react';
 import {
   Select, Button, Radio, Steps, Icon, Tooltip, Form,
 } from 'choerodon-ui';
+import { observer } from 'mobx-react';
 import { injectIntl, FormattedMessage } from 'react-intl';
-import YAML from 'yamljs';
+
 import { YamlEditor } from '../../../../../../components/CommonComponent';
 import CreateAutoTestStore from '../../../../../../store/project/AutoTest/CreateAutoTestStore';
 import { getYaml, checkYaml } from '../../../../../../api/AutoTestApi';
 
 @injectIntl
+@observer
 class ModifyConfig extends Component {
   state = {
     markers: null,
-    changeYaml: false,
-    data: null,
     errorLine: [],
   };
 
@@ -25,9 +25,7 @@ class ModifyConfig extends Component {
   loadYaml=() => {
     getYaml().then((data) => {
       if (data) {
-        this.setState({
-          data,
-        });
+        CreateAutoTestStore.setConfigValue(data);
       }
     });
   }
@@ -37,30 +35,18 @@ class ModifyConfig extends Component {
    * @param value
    */
   handleChangeValue = (value) => {
-    this.setState({ value });
+    CreateAutoTestStore.setNewConfigValue(value);
     checkYaml(value)
       .then((data) => {
         this.setState({ errorLine: data });
-        const oldYaml = CreateAutoTestStore.getValue ? CreateAutoTestStore.getValue.yaml : '';
-        const oldvalue = YAML.parse(oldYaml);
-        const newvalue = YAML.parse(value);
-        if (JSON.stringify(oldvalue) === JSON.stringify(newvalue)) {
-          this.setState({
-            changeYaml: false,
-          });
-        } else {
-          this.setState({
-            changeYaml: true,
-          });
-        }
       });
   };
 
   render() {
     const { intl } = this.props;
     const { formatMessage } = intl;
-    const { data } = this.state;
-    // const data = data || CreateAutoTestStore.value;
+    const { errorLine, markers } = this.state;
+    const data = CreateAutoTestStore.getNewConfigValue;
     return (
       <div className="deployApp-env">
         <p>
@@ -77,9 +63,9 @@ class ModifyConfig extends Component {
               newLines={data.newLines}
               isFileError={!!data.errorLines}
               totalLine={data.totalLine}
-              errorLines={this.state.errorLine}
+              errorLines={errorLine}
               errMessage={data.errorMsg}
-              modifyMarkers={this.state.markers}
+              modifyMarkers={markers}
               value={data.yaml}
               highlightMarkers={data.highlightMarkers}
               onChange={this.handleChangeValue}
