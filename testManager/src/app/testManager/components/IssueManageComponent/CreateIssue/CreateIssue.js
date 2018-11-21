@@ -18,6 +18,7 @@ import {
 import { getUsers } from '../../../api/IamApi';
 import { FullEditor, WYSIWYGEditor } from '../../CommonComponent';
 import UserHead from '../UserHead';
+import { getProjectName } from '../../../common/utils';
 
 const { AppState } = stores;
 const { Sidebar } = Modal;
@@ -285,7 +286,7 @@ class CreateIssue extends Component {
           style={{
             padding: '0 0 10px 0',
           }}
-          title={<FormattedMessage id="issue_create_title" />}
+          title={<FormattedMessage id="issue_create_title" values={{ name: getProjectName() }} />}
           description={<FormattedMessage id="issue_create_content_description" />}
           link="http://v0-8.choerodon.io/zh/docs/user-guide/agile/issue/create-issue/"
         >

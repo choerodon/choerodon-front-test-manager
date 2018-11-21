@@ -14,6 +14,7 @@ import 'codemirror/theme/base16-dark.css';
 import { User } from '../../../../components/CommonComponent';
 import { getAppList, getTestHistoryByApp, loadPodParam } from '../../../../api/AutoTestApi';
 import { CiStatus, TestResult } from './AutoTestTags';
+import { getProjectName } from '../../../../common/utils';
 import './AutoTestList.scss';
 
 const Sidebar = Modal.Sidebar;
@@ -360,7 +361,7 @@ class AutoTestList extends Component {
           // style={{
           //   padding: '0 0 10px 0',
           // }}
-          title={<FormattedMessage id="autotestlist_content_title" />}
+          title={<FormattedMessage id="autotestlist_content_title" values={{ name: getProjectName() }} />}
           description={<FormattedMessage id="autotestlist_content_description" />}
         // link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management/test-report/report/"
         >

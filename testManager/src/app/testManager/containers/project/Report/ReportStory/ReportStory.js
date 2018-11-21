@@ -13,7 +13,9 @@ import { ReporterSwitcher } from '../../../../components/ReportComponent';
 import { getReportsFromStory } from '../../../../api/reportApi';
 import { getIssueTypes, getIssueStatus } from '../../../../api/agileApi';
 import { getStatusList } from '../../../../api/TestStatusApi';
-import { issueLink, cycleLink, executeDetailShowLink } from '../../../../common/utils';
+import {
+  issueLink, cycleLink, executeDetailShowLink, getProjectName, 
+} from '../../../../common/utils';
 import './ReportStory.scss';
 
 export const STATUS = {
@@ -554,7 +556,7 @@ class ReportStory extends Component {
           // style={{
           //   padding: '0 0 10px 0',
           // }}
-          title={<FormattedMessage id="report_content_title" />}
+          title={<FormattedMessage id="report_content_title" values={{ name: getProjectName() }} />}
           description={<FormattedMessage id="report_content_description" />}
           link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management/test-report/report/"
         >
