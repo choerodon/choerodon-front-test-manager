@@ -17,7 +17,7 @@ import {
   EventCalendar, PlanTree, CreateCycle, EditStage, EditCycle, ExportSide,
 } from '../../../../components/TestPlanComponent';
 import {
-  RichTextShow, SelectFocusLoad, StatusTags, DragTable, ResizeAble,
+  RichTextShow, SelectFocusLoad, StatusTags, DragTable, 
 } from '../../../../components/CommonComponent';
 import { getUsers } from '../../../../api/IamApi';
 import TestPlanStore from '../../../../store/project/TestPlan/TestPlanStore';

@@ -15,4 +15,3 @@ export { default as SelectVersion } from './SelectVersion';
 export { default as SelectFolder } from './SelectFolder';
 export { default as Upload } from './Upload';
 export { default as SimpleSelect } from './SimpleSelect';
-export { default as ResizeAble } from './ResizeAble';
