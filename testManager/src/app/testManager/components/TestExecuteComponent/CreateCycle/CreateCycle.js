@@ -6,6 +6,7 @@ import { Content } from 'choerodon-front-boot';
 import { FormattedMessage } from 'react-intl';
 import { getProjectVersion } from '../../../api/agileApi';
 import { addCycle } from '../../../api/cycleApi';
+import { getProjectName } from '../../../common/utils';
 
 const { Option } = Select;
 const FormItem = Form.Item;
@@ -90,7 +91,7 @@ class CreateCycle extends Component {
               style={{
                 padding: '0 0 10px 0',
               }}
-              title={<FormattedMessage id="cycle_create_content_title" />}
+              title={<FormattedMessage id="cycle_create_content_title" values={{ name: getProjectName() }} />}
               description={<FormattedMessage id="cycle_create_content_description" />}
               link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management/test-cycle/create-cycle/"
             >

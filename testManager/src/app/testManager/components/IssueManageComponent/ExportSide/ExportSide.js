@@ -10,7 +10,7 @@ import { SelectVersion, SelectFolder } from '../../CommonComponent';
 import {
   exportIssues, exportIssuesFromVersion, exportIssuesFromFolder, getExportList, exportRetry,
 } from '../../../api/IssueManageApi';
-import { humanizeDuration } from '../../../common/utils';
+import { humanizeDuration, getProjectName } from '../../../common/utils';
 import './ExportSide.scss';
 
 
@@ -204,7 +204,7 @@ class ExportSide extends Component {
           style={{
             padding: '0 0 10px 0',
           }}
-          title={<FormattedMessage id="export_side_content_title" />}
+          title={<FormattedMessage id="export_side_content_title" values={{ name: getProjectName() }} />}
           description={<FormattedMessage id="export_side_content_description" />}
           link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management"
         >

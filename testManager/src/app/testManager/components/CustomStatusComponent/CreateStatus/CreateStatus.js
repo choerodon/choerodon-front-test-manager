@@ -7,6 +7,7 @@ import { FormattedMessage } from 'react-intl';
 import { SketchPicker } from 'react-color';
 import './CreateStatus.scss';
 import { createStatus } from '../../../api/TestStatusApi';
+import { getProjectName } from '../../../common/utils';
 
 const FormItem = Form.Item;
 const { Sidebar } = Modal;
@@ -72,7 +73,7 @@ class CreateStatus extends Component {
               style={{
                 padding: '0 0 10px 0',
               }}
-              title={<FormattedMessage id="status_side_content_title" />}
+              title={<FormattedMessage id="status_side_content_title" values={{ name: getProjectName() }} />}
               description={<FormattedMessage id="status_side_content_description" />}
               link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management/setting/status/"
             >

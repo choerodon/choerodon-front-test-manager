@@ -1,19 +1,14 @@
 // 文档地址前缀
-import { stores } from 'choerodon-front-boot';
 
-const { AppState } = stores;
-const projectName = AppState.currentMenuType.name;
-const docServer = 'http://v0-7.choerodon.io/zh/docs';
 // 界面标题描述统一管理
 const pageDetail = {
-  status_custom_home_title: `Custom status of project "${projectName}"`,
+  status_custom_home_title: 'Custom status of project "{name}"',
   status_custom_home_description: 'The table below shows the available test execution status, test step status.',
   // 报表
-  report_content_title: `Reports of project "${projectName}"`,
+  report_content_title: 'Reports of project "{name}"',
   report_content_description: 'There are two kinks of report：demand -> test -> execute -> defect，defect -> execute -> test -> demand 。  Click to choose whick kind of report you want to see。',
 
   // 测试循环
-  cycle_title: `Cycle of project "${projectName}"`,
   cycle_description: 'The cycle summary uses the tree view to view the test cases corresponding to different version in this project.',
 };
 const enUS = {
@@ -134,8 +129,8 @@ const enUS = {
   status_comment: 'Comment',
   status_color: 'Color',
   // 自定义状态侧边栏 
-  status_side_content_title: `Create status in project “${projectName}”`,
-  status_side_edit_content_title: `Edit status in project “${projectName}”`,
+  status_side_content_title: 'Create status in project “{name}”',
+  status_side_edit_content_title: 'Edit status in project “{name}”',
   status_side_content_description: 'You can create status which includes execute status and step status.',
   status_side_edit_content_description: 'You can edit the status in project.',
   // 报表
@@ -153,7 +148,7 @@ const enUS = {
   report_total: 'Total',
   // 选择问题侧边栏
   report_select_title: 'Choose questions',
-  report_select_content_title: `Choose questions from project “${projectName}”`,
+
   report_select_content_description: 'You can choose any questions to generate report',
   report_select_allVersion: 'All versions',
   report_select_questionId: 'test question ID',
@@ -199,7 +194,7 @@ const enUS = {
   cycle_sync: 'sync',
   // 创建测试循环侧边
   cycle_create_title: 'Create cycle',
-  cycle_create_content_title: `Create cycle in project “${projectName}”`,
+  cycle_create_content_title: 'Create cycle in project “{name}”',
   cycle_create_content_description: 'You can create cycles in a version.',
   // 创建执行侧边
   cycle_createExecute_title: 'Create cycle execute',
@@ -257,7 +252,7 @@ const enUS = {
   issue_folder: 'folder',
   // 创建测试用例侧边栏
   issue_create_name: 'Create test issue',
-  issue_create_title: `Create test issue in project “${projectName}”`,
+  issue_create_title: 'Create test issue in project “{name}”',
   issue_create_content_description: 'Please enter the details of the test case below, including detailed descriptions, personnel information, version information, progress estimates, priorities, and more. You can help people understand tasks faster and more comprehensively through rich task descriptions, and better control the progress of problems.',
   issue_create_content_epic: 'Epic',
   issue_create_content_sprint: 'Sprint',

@@ -7,6 +7,7 @@ import { FormattedMessage } from 'react-intl';
 import { SketchPicker } from 'react-color';
 import './EditStatusSide.scss';
 import { editStatus } from '../../../api/TestStatusApi';
+import { getProjectName } from '../../../common/utils';
 
 const FormItem = Form.Item;
 const { Sidebar } = Modal;
@@ -70,7 +71,7 @@ class EditStatusSide extends Component {
               style={{
                 padding: '0 0 10px 0',
               }}
-              title={<FormattedMessage id="status_side_edit_content_title" />}
+              title={<FormattedMessage id="status_side_edit_content_title" values={{ name: getProjectName() }} />}
               description={<FormattedMessage id="status_side_edit_content_description" />}
               link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management/setting/status/"
             >
