@@ -5,7 +5,7 @@ import {
 import { FormattedMessage } from 'react-intl';
 import { Page, Header, Content } from 'choerodon-front-boot';
 import { CreateStatus, EditStatusSide } from '../../../../components/CustomStatusComponent';
-
+import { getProjectName } from '../../../../common/utils';
 import { getStatusList, deleteStatus } from '../../../../api/TestStatusApi';
 
 const TabPane = Tabs.TabPane;
@@ -182,7 +182,7 @@ class CustomStatusHome extends Component {
             // style={{
             //   padding: '0 0 10px 0',
             // }}
-            title={<FormattedMessage id="status_custom_home_title" />}
+            title={<FormattedMessage id="status_custom_home_title" values={{ name: getProjectName() }} />}
             description={<FormattedMessage id="status_custom_home_description" />}
             link="http://choerodon.io/zh/docs/user-guide/test-management/setting/status/"
           >

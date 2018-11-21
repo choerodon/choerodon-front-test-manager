@@ -1,4 +1,5 @@
 
+import axios from 'axios';
 import { getProjectId, request } from '../common/utils';
 import './AutoTestApiMock';
 
@@ -9,14 +10,29 @@ import './AutoTestApiMock';
  * @returns
  */
 export function getAppList() {
-  return request.get('/getAppList');
+  return axios.get('/getAppList');
 }
 export function getTestHistoryByApp() {
-  return request.get('/getTestHistoryByApp');
+  return axios.get('/getTestHistoryByApp');
 }
 export function getYaml() {
-  return request.get('/getYaml');
+  return axios.get('/getYaml');
 }
+export function checkYaml(value) {
+  return axios.post(`/devops/v1/projects/${getProjectId()}/app_instances/value_format`, { yaml: value });
+}
+
 export function loadPodParam(projectId, id, type) {
-  return request.get(`devops/v1/projects/${getProjectId()}/app_pod/${5}/containers/logs`);
+  return axios.get(`devops/v1/projects/${getProjectId()}/app_pod/${5}/containers/logs`);
+}
+export function getApps({
+  page, size, sort, postData, 
+}) {
+  return request.post(`/devops/v1/projects/${getProjectId()}/apps/list_by_options?active=true&page=${page}&size=${size}&sort=${sort.field},${sort.order}`, JSON.stringify(postData));
+}
+export function getAppVersions(appId, flag = '') {
+  return request.get(`/devops/v1/projects/${getProjectId()}/apps/${appId}/version/list?is_publish=${flag}`);
+}
+export function getEnvs() {
+  return axios.get(`/devops/v1/projects/${getProjectId()}/envs?active=true`);   
 }

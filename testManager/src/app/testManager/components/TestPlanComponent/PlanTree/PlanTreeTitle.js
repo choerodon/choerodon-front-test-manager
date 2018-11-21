@@ -176,14 +176,14 @@ class PlanTreeTitle extends Component {
           )
           : (
             <div className="c7ntest-plan-tree-title-text" style={{ width: !data.type && '120px' }}>
-              <Tooltip title={title}>
+              <Tooltip title={title} placement="topLeft">
                 {title}
               </Tooltip>
             </div>
           )}   
         {
     
-          <div role="none" className="c7ntest-plan-tree-title-actionButton" style={{ marginLeft: data.type === 'cycle' || data.type === 'temp' ? '18px' : 0 }} onClick={e => e.stopPropagation()}>
+          <div role="none" className="c7ntest-plan-tree-title-actionButton" onClick={e => e.stopPropagation()}>
             {/* {data.type === 'temp'
               ? null : */}
             {data.type

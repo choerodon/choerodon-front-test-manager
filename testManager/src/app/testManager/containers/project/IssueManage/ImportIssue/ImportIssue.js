@@ -9,7 +9,7 @@ import {
 import moment from 'moment';
 import { FormattedMessage } from 'react-intl';
 import { importIssue } from '../../../../api/FileApi';
-import { commonLink, humanizeDuration } from '../../../../common/utils';
+import { commonLink, humanizeDuration, getProjectName } from '../../../../common/utils';
 import { SelectVersion } from '../../../../components/CommonComponent';
 import { getImportHistory, cancelImport } from '../../../../api/IssueManageApi';
 import './ImportIssue.scss';
@@ -205,7 +205,7 @@ class ImportIssue extends Component {
           // style={{
           //   padding: '0 0 10px 0',
           // }}
-          title={<FormattedMessage id="upload_side_content_title" />}
+          title={<FormattedMessage id="upload_side_content_title" values={{ name: getProjectName() }} />}
           description={<FormattedMessage id="upload_side_content_description" />}
           link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management"
         >

@@ -115,7 +115,7 @@ class IssueTreeTitle extends Component {
   enterCopy = (e) => {
     e.preventDefault();
     e.stopImmediatePropagation();
-    console.log(e.keyCode);
+    // console.log(e.keyCode);
     // 17 ctrl 91 左command 93 右command 224 其他浏览器（firefox）command
     if (e.keyCode === 17 || e.keyCode === 93 || e.keyCode === 91 || e.keyCode === 224) {
       const templateCopy = document.getElementById('template_folder_copy').cloneNode(true);

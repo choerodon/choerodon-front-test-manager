@@ -1,24 +1,18 @@
-import TextEditToggle from './TextEditToggle';
-import RichTextShow from './RichTextShow';
-import SelectFocusLoad from './SelectFocusLoad';
-import User from './User/User';
-import UploadInTable from './UploadInTable';
-import DefectSelect from './DefectSelect';
-import SelectCreateIssueFooter from './SelectCreateIssueFooter';
-import RadioButton from './RadioButton';
-import StatusTags from './StatusTags';
-import FullEditor from './FullEditor';
-import WYSIWYGEditor from './WYSIWYGEditor';
-import DragTable from './DragTable';
-import YamlEditor from './YamlEditor';
-import SelectVersion from './SelectVersion';
-import SelectFolder from './SelectFolder';
-import Upload from './Upload';
-import LoadingBar from './LoadingBar';
-import SimpleSelect from './SimpleSelect';
-
-export {
-  TextEditToggle, RichTextShow, SelectFocusLoad, User, UploadInTable, DefectSelect, 
-  SelectCreateIssueFooter, RadioButton, StatusTags, FullEditor, WYSIWYGEditor, DragTable, YamlEditor,
-  SelectVersion, Upload, LoadingBar, SelectFolder, SimpleSelect,
-};
+export { default as TextEditToggle } from './TextEditToggle';
+export { default as RichTextShow } from './RichTextShow';
+export { default as SelectFocusLoad } from './SelectFocusLoad';
+export { default as User } from './User/User';
+export { default as UploadInTable } from './UploadInTable';
+export { default as DefectSelect } from './DefectSelect';
+export { default as SelectCreateIssueFooter } from './SelectCreateIssueFooter';
+export { default as RadioButton } from './RadioButton';
+export { default as StatusTags } from './StatusTags';
+export { default as FullEditor } from './FullEditor';
+export { default as WYSIWYGEditor } from './WYSIWYGEditor';
+export { default as DragTable } from './DragTable';
+export { default as YamlEditor } from './YamlEditor';
+export { default as SelectVersion } from './SelectVersion';
+export { default as SelectFolder } from './SelectFolder';
+export { default as Upload } from './Upload';
+export { default as SimpleSelect } from './SimpleSelect';
+export { default as ResizeAble } from './ResizeAble';

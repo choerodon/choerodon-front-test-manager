@@ -2,7 +2,6 @@
 import {
   observable, action, computed, toJS,
 } from 'mobx';
-import { stores, axios } from 'choerodon-front-boot';
 import _ from 'lodash';
 import {
   getIssuesByFolder, getIssuesByIds, getSingleIssues,
@@ -12,9 +11,6 @@ import {
   getProjectVersion, getPrioritys, getIssueTypes, getIssueStatus,
 } from '../../../api/agileApi';
 import IssueTreeStore from './IssueTreeStore';
-
-const { AppState } = stores;
-
 
 class IssueStore {
   @observable issues = [];
@@ -51,17 +47,9 @@ class IssueStore {
 
   @observable loading = true;
 
-  @observable paramType = undefined;
-
-  @observable paramId = undefined;
-
   @observable paramName = undefined;
 
-  @observable paramStatus = undefined;
-
   @observable paramIssueId = undefined;
-
-  @observable paramUrl = undefined;
 
   @observable barFilters = undefined;
 
@@ -181,13 +169,6 @@ class IssueStore {
     });
   }
 
-  createIssue(issueObj, projectId = AppState.currentMenuType.id) {
-    const issue = {
-      projectId: AppState.currentMenuType.id,
-      ...issueObj,
-    };
-    return axios.post(`/agile/v1/projects/${projectId}/issue`, issue);
-  }
 
   @action setIssues(data) {
     this.issues = data;
@@ -241,24 +222,12 @@ class IssueStore {
     this.paramType = data;
   }
 
-  @action setParamId(data) {
-    this.paramId = data;
-  }
-
   @action setParamName(data) {
     this.paramName = data;
   }
 
-  @action setParamStatus(data) {
-    this.paramStatus = data;
-  }
-
   @action setParamIssueId(data) {
     this.paramIssueId = data;
-  }
-
-  @action setParamUrl(data) {
-    this.paramUrl = data;
   }
 
   @action setBarFilters(data) {
@@ -302,7 +271,7 @@ class IssueStore {
     return toJS(this.prioritys);
   }
 
-  @computed get getMediumPriority() {
+  @computed get getDefaultPriority() {
     const priority = _.find(this.prioritys, { default: true });
     if (priority) {
       return priority.id;
@@ -330,20 +299,9 @@ class IssueStore {
     return toJS(this.selectedVersion);
   }
 
-  @computed get getBackUrl() {
-    const urlParams = AppState.currentMenuType;
-    if (!this.paramUrl) {
-      return undefined;
-    } else {
-      return `/agile/${this.paramUrl}?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}&organizationId=${urlParams.organizationId}`;
-    }
-  }
-
   @computed get getFilter() {
     const filter = this.filter;
     const otherArgs = {
-      type: this.paramType,
-      id: this.paramId ? [this.paramId] : undefined,
       issueIds: this.paramIssueId ? [Number(this.paramIssueId)] : undefined,
     };
     return {

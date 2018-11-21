@@ -89,9 +89,7 @@ class IssueTree extends Component {
     getIssueTree().then((data) => {
       IssueTreeStore.setTreeData([{ title: '所有版本', key: '0', children: data.versions }]);
       IssueTreeStore.setLoading(false);
-      this.generateList([
-        { title: '所有版本', key: '0', children: data.versions },
-      ]);
+      this.generateList({ title: '所有版本', key: '0', children: data.versions });
 
       // window.console.log(dataList);
     }).catch(() => {
@@ -101,9 +99,7 @@ class IssueTree extends Component {
   }
 
   renderTreeNodes = data => data.map((item) => {
-    const {
-      children, cycleCaseList, type,
-    } = item;
+    const { children, type } = item;
     const key = type === 'temp' ? `${item.key}temp` : item.key;
     const { searchValue } = this.state;
     const expandedKeys = IssueTreeStore.getExpandedKeys;
@@ -170,26 +166,30 @@ class IssueTree extends Component {
       />);
   });
 
+  /**
+   * 树的遍历，将树打为数组，方便搜索
+   *
+   * @memberof IssueTree
+   */
   generateList = (data) => {
-    // const temp = data;
-    // while (temp) {
-    //   dataList = dataList.concat(temp.children);
-    //   if()
-    // }
-    for (let i = 0; i < data.length; i += 1) {
-      const node = data[i];
-      const { key, title } = node;
-      // 找出url上的cycleId
-      // const { cycleId } = getParams(window.location.href);
-      // const currentCycle = IssueTreeStore.getCurrentCycle;
-      // if (!currentCycle.cycleId && Number(cycleId) === node.cycleId) {
-      //   this.setExpandDefault(node);
-      // } else if (currentCycle.cycleId === node.cycleId) {
-      //   IssueTreeStore.setCurrentCycle(node);
-      // }
-      dataList.push({ key, title });
-      if (node.children) {
-        this.generateList(node.children, node.key);
+    if (!data) {
+      return;
+    }
+    const stack = [];
+    stack.push(data);
+    const currentCycle = IssueTreeStore.getCurrentCycle;
+    while (stack && stack.length > 0) {
+      const tempNode = stack.pop();
+      if (tempNode.children && tempNode.children) {
+        tempNode.children.forEach((node, i) => {
+          const { key, title } = node;
+          // 树拖动之后versionId会更新，在这里更新右侧创建用例处的版本
+          if (currentCycle.cycleId === node.cycleId) {
+            IssueTreeStore.setCurrentCycle(node);
+          }
+          dataList.push({ key, title });
+          stack.push(tempNode.children[i]);
+        });
       }
     }
   }
@@ -272,7 +272,7 @@ class IssueTree extends Component {
       return;
     }
     const draggingItems = IssueTreeStore.getDraggingFolders;
-    
+
     // 过滤，这里只要文件夹
     const filteredItems = draggingItems.filter(item => item && destination.droppableId !== item.versionId && item.cycleId);
     // console.log(draggingItems, filteredItems);
@@ -297,13 +297,13 @@ class IssueTree extends Component {
           this.getTree();
         });
       } else {
-        moveFolders(data).then((res) => {          
+        moveFolders(data).then((res) => {
           if (res.failed) {
             IssueTreeStore.setLoading(false);
             Choerodon.prompt('存在同名文件夹');
           }
           // this.getTree();
-        }).catch((err) => {        
+        }).catch((err) => {
           IssueTreeStore.setLoading(false);
           Choerodon.prompt('网络错误');
         }).finally(() => {

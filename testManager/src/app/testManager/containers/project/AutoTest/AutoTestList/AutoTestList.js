@@ -14,6 +14,7 @@ import 'codemirror/theme/base16-dark.css';
 import { User } from '../../../../components/CommonComponent';
 import { getAppList, getTestHistoryByApp, loadPodParam } from '../../../../api/AutoTestApi';
 import { CiStatus, TestResult } from './AutoTestTags';
+import { commonLink, getProjectName } from '../../../../common/utils';
 import './AutoTestList.scss';
 
 const Sidebar = Modal.Sidebar;
@@ -277,6 +278,10 @@ class AutoTestList extends Component {
     });
   };
 
+  toCreateAutoTest=() => {
+    this.props.history.push(commonLink('/AutoTest/create'));
+  }
+
   render() {
     const {
       appList, selectLoading, currentApp, historyList, loading, showSide, following,
@@ -351,6 +356,10 @@ class AutoTestList extends Component {
     return (
       <Page className="c7ntest-AutoTestList">
         <Header title={<FormattedMessage id="autotestlist_title" />}>
+          <Button onClick={this.toCreateAutoTest}>
+            <Icon type="playlist_add icon" />
+            <span>添加测试</span>
+          </Button>
           <Button onClick={this.getTestHistoryByApp}>
             <Icon type="autorenew icon" />
             <span><FormattedMessage id="refresh" /></span>
@@ -360,7 +369,7 @@ class AutoTestList extends Component {
           // style={{
           //   padding: '0 0 10px 0',
           // }}
-          title={<FormattedMessage id="autotestlist_content_title" />}
+          title={<FormattedMessage id="autotestlist_content_title" values={{ name: getProjectName() }} />}
           description={<FormattedMessage id="autotestlist_content_description" />}
         // link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management/test-report/report/"
         >

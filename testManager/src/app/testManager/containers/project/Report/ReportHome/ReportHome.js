@@ -7,6 +7,7 @@ import {
   Page, Header, Content, stores, 
 } from 'choerodon-front-boot';
 import { FormattedMessage } from 'react-intl';
+import { getProjectName } from '../../../../common/utils';
 import { ReporterSwitcher } from '../../../../components/ReportComponent';
 import Pic from './pic.svg';
 import Pic2 from './pic2.svg';
@@ -55,7 +56,7 @@ class ReportHome extends Component {
           // style={{
           //   padding: '0 0 10px 0',
           // }}
-          title={<FormattedMessage id="report_content_title" />}
+          title={<FormattedMessage id="report_content_title" values={{ name: getProjectName() }} />}
           description={<FormattedMessage id="report_content_description" />}
           link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management/test-report/report/"
         >

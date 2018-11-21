@@ -2,6 +2,7 @@ import Mock from 'mockjs';
 
 
 const server = process.env.API_HOST;
+
 Mock.setup({
   timeout: '200 - 400',
 });

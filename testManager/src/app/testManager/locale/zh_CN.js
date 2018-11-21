@@ -1,22 +1,17 @@
 // zh_CN.js
-import { stores } from 'choerodon-front-boot';
 
-const { AppState } = stores;
-const projectName = AppState.currentMenuType.name;
 // 文档地址前缀
 const docServer = 'http://v0-7.choerodon.io/zh/docs';
 // 界面标题描述统一管理
 const pageDetail = {
 
-  status_custom_home_title: `项目"${projectName}"的自定义状态`,
+  status_custom_home_title: '项目"{name}"的自定义状态',
   status_custom_home_description: '下表显示可用测试执行状态，测试步骤状态。',
 
   // 报表
-  report_content_title: `项目"${projectName}"的报表`,
+  report_content_title: '项目"{name}"的报表',
   report_content_description: '两种可跟踪性报告可用：要求 -> 测试 -> 执行 -> 缺陷，缺陷 -> 执行 -> 测试 -> 。  点击您需要查看的报告类型可以查看具体的详细内容。',
 
-  // 测试循环
-  cycle_title: `项目"${projectName}"的循环摘要`,
   cycle_description: '循环摘要使用树状图查看本项目中不同版本所对应的测试情况。',
 };
 
@@ -141,8 +136,8 @@ const zhCN = {
   status_comment: '说明',
   status_color: '颜色',
   // 自定义状态侧边栏 
-  status_side_content_title: `在项目“${projectName}”中创建状态`,
-  status_side_edit_content_title: `编辑项目“${projectName}”中的状态`,
+  status_side_content_title: '在项目“{name}”中创建状态',
+  status_side_edit_content_title: '编辑项目“{name}”中的状态',
   status_side_content_description: '您可以创建自定义状态，包括执行状态和步骤状态。',
   status_side_edit_content_description: '您可以自定义状态，包括执行状态和步骤状态。',
   // 报表
@@ -160,7 +155,7 @@ const zhCN = {
   report_total: '总共',
   // 选择问题侧边栏
   report_select_title: '选择问题',
-  report_select_content_title: `项目“${projectName}”的报表选择问题`,
+
   report_select_content_description: '您可以选择任意问题生成报表',
   report_select_allVersion: '所有版本',
   report_select_questionId: '测试问题ID',
@@ -207,7 +202,7 @@ const zhCN = {
 
   // 创建测试循环侧边
   cycle_create_title: '创建测试循环',
-  cycle_create_content_title: `在项目“${projectName}”中创建测试循环`,
+  cycle_create_content_title: '在项目“{name}”中创建测试循环',
   cycle_create_content_description: '您可以在一个版本中创建一个测试循环。',
   // 创建执行侧边
   cycle_createExecute_title: '添加测试执行',
@@ -266,7 +261,7 @@ const zhCN = {
   issue_folder: '文件夹',
   // 创建测试用例侧边栏
   issue_create_name: '创建测试用例',
-  issue_create_title: `在项目“${projectName}”中创建测试用例`,
+  issue_create_title: '在项目“{name}”中创建测试用例',
   issue_create_content_description: '请在下面输入测试用例的详细信息，包含详细描述、人员信息、版本信息、进度预估、优先级等等。您可以通过丰富的任务描述帮助相关人员更快更全面的理解任务，同时更好的把控问题进度。',
   issue_create_content_epic: '史诗',
   issue_create_content_sprint: '冲刺',
@@ -336,10 +331,10 @@ const zhCN = {
   issue_tree_copy: '复制',
   issue_tree_paste: '粘贴',
   // 侧边上传导入
-  upload_side_content_title: `在项目“${projectName}”中导入用例`,
+  upload_side_content_title: '在项目“{name}”中导入用例',
   upload_side_content_description: '您可以在此将文件中的用例信息导入到平台中去。注：您必须使用上传模板，点击“下载”下载模板。',
   // 侧边导出
-  export_side_content_title: `在项目“${projectName}”中导出用例`,
+  export_side_content_title: '在项目“{name}”中导出用例',
   export_side_content_description: '您可以在此将项目的用例信息导出到文件中去。',
   // dashboard
   dashboard_issue: '测试用例',
@@ -347,7 +342,7 @@ const zhCN = {
   dashboard_execute: '执行测试',
   dashboard_report: '测试报告',
   // 自动化测试
-  autotest_header_title: '自动化测试',
+  autotest_create_header_title: '新建测试',
   'autotest.title': '在项目“{name}”中创建自动化测试',
   'autotest.description': '您可以在此页面选择测试框架，测试应用以及测试应用的版本，修改配置以创建自动化测试。',
   autoteststep_one_title: '选择测试实例',
@@ -385,7 +380,7 @@ const zhCN = {
   autotest_sidebar_search: '搜索应用',
   // 测试列表页面
   autotestlist_title: '测试记录',
-  autotestlist_content_title: `项目“${projectName}”的测试记录`,
+  autotestlist_content_title: '项目“{name}”的测试记录',
   autotestlist_content_description: '测试记录保存了自动化测试的所有记录',
   // container
   'container.title': '项目"{name}"的容器',

@@ -17,7 +17,7 @@ import {
   EventCalendar, PlanTree, CreateCycle, EditStage, EditCycle, ExportSide,
 } from '../../../../components/TestPlanComponent';
 import {
-  RichTextShow, SelectFocusLoad, StatusTags, DragTable,
+  RichTextShow, SelectFocusLoad, StatusTags, DragTable, ResizeAble,
 } from '../../../../components/CommonComponent';
 import { getUsers } from '../../../../api/IamApi';
 import TestPlanStore from '../../../../store/project/TestPlan/TestPlanStore';
@@ -524,10 +524,12 @@ class TestPlanHome extends Component {
               )}
               <div className="c7ntest-TestPlan-tree">
                 {treeShow && (
-                  <PlanTree
-                    ref={(tree) => { this.PlanTree = tree; }}
-                    onClose={() => { TestPlanStore.setTreeShow(false); }}
-                  />
+                // <ResizeAble>
+                <PlanTree
+                  ref={(tree) => { this.PlanTree = tree; }}
+                  onClose={() => { TestPlanStore.setTreeShow(false); }}
+                />
+                // </ResizeAble>
                 )}
               </div>
               {/* <Spin spinning={loading}> */}

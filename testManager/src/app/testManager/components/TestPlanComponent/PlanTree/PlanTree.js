@@ -9,6 +9,7 @@ import FileSaver from 'file-saver';
 import TestPlanStore from '../../../store/project/TestPlan/TestPlanStore';
 import CloneCycle from '../CloneCycle';
 import CloneStage from '../CloneStage';
+import { ResizeAble } from '../../CommonComponent';
 import {  
   clone, addFolder, exportCycle,
 } from '../../../api/cycleApi';
@@ -305,7 +306,9 @@ class PlanTree extends Component {
             <Icon type="navigate_before" />
           </div>
         </div>
+        
         <div className="c7ntest-PlanTree-tree">
+          
           <Tree
             selectedKeys={selectedKeys}
             expandedKeys={expandedKeys}
@@ -316,7 +319,9 @@ class PlanTree extends Component {
           >
             {this.renderTreeNodes(treeData)}
           </Tree>
+          
         </div>
+      
       </div>
     );
   }
