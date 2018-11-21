@@ -1,6 +1,6 @@
 .c7ntest-PlanTree {
   height: 100%;
-  width: 260px;
+  min-width: 260px;
   padding-left: 16px;
   display: flex;
   flex-direction: column;
@@ -18,7 +18,8 @@
   }
   .ant-tree-title {
     display: inline-block;
-    float: right;
+    // float: right;
+    flex: 1
   }
   .ant-tree li .ant-tree-node-content-wrapper.ant-tree-node-selected {
     background: rgba(0, 0, 0, 0.04);
