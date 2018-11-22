@@ -1,8 +1,6 @@
 
 import React, { Component } from 'react';
-import {
-  Select, Button, Radio, Steps, Icon, Tooltip, Form,
-} from 'choerodon-ui';
+import { Button } from 'choerodon-ui';
 import { observer } from 'mobx-react';
 import { injectIntl, FormattedMessage } from 'react-intl';
 

@@ -67,10 +67,6 @@ class EventCalendar extends Component {
     addResizeListener(this.wrapper, this.setRightWidth);
   }
 
-  remove() {
-    removeResizeListener(this.wrapper, this.other);
-  }
-
   componentWillUnmount() {
     removeResizeListener(this.wrapper, this.setRightWidth);
   }
@@ -145,13 +141,7 @@ class EventCalendar extends Component {
 今天
 
             </Button> */}
-            <Button
-              onClick={() => { this.remove(); }}
-              style={{ fontWeight: 500 }}
-            >
-今天
 
-            </Button>
             {
               currentDate && currentDate.format('LL')
             }

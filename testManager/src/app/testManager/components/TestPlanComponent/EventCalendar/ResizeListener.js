@@ -21,8 +21,10 @@ export function addResizeListener(ele, handler) {
     _addHandler(object, handler);
   } else {
     // 不存在时，创建object元素，并添加监听
-    const objectElement = _createObjectElement(ele);
-    _addHandler(objectElement, handler);
+    const objectElement = _createObjectElement(ele);    
+    // 必须先定义onload事件，再append,来兼容浏览器
+    objectElement.onload = () => _addHandler(objectElement, handler);
+    ele.appendChild(objectElement);    
     // 将object元素保存在目标元素上
     ele._ResizeObject_ = objectElement;
   }
@@ -44,7 +46,7 @@ function _createObjectElement(ele) {
   objectElement.setAttribute('style', 'display: block; position: absolute; top: 0; left: 0; height: 100%; width: 100%; overflow: hidden;opacity: 0; pointer-events: none; z-index: -1;');
   objectElement.type = 'text/html';
   objectElement.data = 'about:blank';
-  ele.appendChild(objectElement);
+  // ele.appendChild(objectElement);
   return objectElement;
 }
 

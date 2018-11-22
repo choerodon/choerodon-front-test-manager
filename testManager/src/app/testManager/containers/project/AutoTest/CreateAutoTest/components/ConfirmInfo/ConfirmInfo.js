@@ -8,7 +8,7 @@ import { observer } from 'mobx-react';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import CreateAutoTestStore from '../../../../../../store/project/AutoTest/CreateAutoTestStore';
 import { YamlEditor } from '../../../../../../components/CommonComponent';
-import { getYaml } from '../../../../../../api/AutoTestApi';
+import { getYaml, createTask } from '../../../../../../api/AutoTestApi';
 import './ConfirmInfo.scss';
 
 const intlPrefix = 'taskdetail';
@@ -97,6 +97,7 @@ class ConfirmInfo extends Component {
       // appInstanceId: this.state.mode === 'new'
       //   ? null : this.state.instanceId || (instances && instances.length === 1 && instances[0].id),
     };
+    console.log(app, appVersion, env, version);
     if (this.state.selectType === 'create') {
       const { type, id } = this.taskdetail;
       this.props.form.validateFieldsAndScroll((err, values) => {
@@ -118,26 +119,27 @@ class ConfirmInfo extends Component {
             simpleRepeatIntervalUnit: flag ? simpleRepeatIntervalUnit : null,
             simpleRepeatCount: flag ? Number(simpleRepeatCount) : null,
           };
-          createTask(body, type, id).then(({ failed, message }) => {
-            if (failed) {
-              Choerodon.prompt(message);
-              this.setState({
-                // isSubmitting: false,
-              });
-            } else {
-              // Choerodon.prompt(intl.formatMessage({ id: 'create.success' }));
-              this.setState({
-                // isSubmitting: false,
-              }, () => {
-                // this.handleRefresh();
-              });
-            }
-          }).catch(() => {
-            // Choerodon.prompt(intl.formatMessage({ id: 'create.error' }));
-            // this.setState({
-            //   isSubmitting: false,
-            // });
-          });
+          
+          // createTask(body, type, id).then(({ failed, message }) => {
+          //   if (failed) {
+          //     Choerodon.prompt(message);
+          //     this.setState({
+          //       // isSubmitting: false,
+          //     });
+          //   } else {
+          //     // Choerodon.prompt(intl.formatMessage({ id: 'create.success' }));
+          //     this.setState({
+          //       // isSubmitting: false,
+          //     }, () => {
+          //       // this.handleRefresh();
+          //     });
+          //   }
+          // }).catch(() => {
+          //   // Choerodon.prompt(intl.formatMessage({ id: 'create.error' }));
+          //   // this.setState({
+          //   //   isSubmitting: false,
+          //   // });
+          // });
         }
       });
     }

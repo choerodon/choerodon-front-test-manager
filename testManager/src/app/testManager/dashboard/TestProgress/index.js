@@ -12,8 +12,7 @@ import './index.scss';
 
 const { AppState } = stores;
 export default class TestProgress extends Component {
-  state = {
-    noVersion: false,
+  state = { 
     currentVersion: null,
     versionList: [],
     VersionProgress: [],
@@ -33,11 +32,7 @@ export default class TestProgress extends Component {
         }
         this.setState({
           versionList: res,
-          noVersion: false,
-        });
-      } else {
-        this.setState({
-          noVersion: true,
+         
         });
       }
     });
