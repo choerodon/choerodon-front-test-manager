@@ -8,7 +8,7 @@ import { RadioButton } from '../../CommonComponent';
 import './EventCalendar.scss';
 import CalendarBackItem from './CalendarBackItem';
 import EventItem from './EventItem';
-
+import { addResizeListener, removeResizeListener } from './ResizeListener';
 
 const moment = extendMoment(Moment);
 class EventCalendar extends Component {
@@ -23,6 +23,7 @@ class EventCalendar extends Component {
       currentDate: null,
       baseDate,
       mode: 'month',
+      width: 'auto',
       pos: 0,
     };
   }
@@ -55,17 +56,23 @@ class EventCalendar extends Component {
   //     return null;
   //   }
   // }
-  componentDidMount() {   
+  // static getDerivedStateFromProps(props, state) {
+  //   return {
+  //     width: this.wrapper ? this.wrapper.offsetWidth : 'auto',
+  //   };
+  // }
+
+  componentDidMount() {
     this.setRightWidth();
-    window.addEventListener('resize', this.setRightWidth);
+    addResizeListener(this.wrapper, this.setRightWidth);
   }
-  
-  componentDidUpdate() {
-    this.setRightWidth();
+
+  remove() {
+    removeResizeListener(this.wrapper, this.other);
   }
 
   componentWillUnmount() {
-    window.removeEventListener('resize', this.setRightWidth);
+    removeResizeListener(this.wrapper, this.setRightWidth);
   }
 
   /**
@@ -73,7 +80,7 @@ class EventCalendar extends Component {
    *
    * @memberof EventCalendar
    */
-  setRightWidth=() => {
+  setRightWidth=() => {   
     if (this.scroll && this.wrapper) {
       this.scroll.style.width = `${this.wrapper.offsetWidth}px`;
     }
@@ -117,7 +124,7 @@ class EventCalendar extends Component {
   }
 
   render() {
-    const { mode, currentDate } = this.state;
+    const { mode, currentDate, width } = this.state;
     const { showMode, times } = this.props;
     
     const { start, end } = this.calculateTime();
@@ -138,6 +145,13 @@ class EventCalendar extends Component {
 今天
 
             </Button> */}
+            <Button
+              onClick={() => { this.remove(); }}
+              style={{ fontWeight: 500 }}
+            >
+今天
+
+            </Button>
             {
               currentDate && currentDate.format('LL')
             }

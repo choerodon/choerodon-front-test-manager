@@ -74,13 +74,13 @@ class ConfirmInfo extends Component {
       loading: true,
     });
     // const instances = CreateAutoTestStore.currentInstance;
-    const value = this.state.value || CreateAutoTestStore.value.yaml;
+    // const value = this.state.value || CreateAutoTestStore.value.yaml;
     let isNotChange = true;
     const oldYaml = CreateAutoTestStore.getConfigValue.yaml;
     const newYaml = CreateAutoTestStore.getNewConfigValue.yaml;
     const oldvalue = YAML.parse(oldYaml);
     const newvalue = YAML.parse(newYaml);
-        
+    console.log(oldvalue);    
     if (JSON.stringify(oldvalue) !== JSON.stringify(newvalue)) {
       isNotChange = false;
     }
@@ -92,7 +92,7 @@ class ConfirmInfo extends Component {
       appId: app.id,
       appVerisonId: appVersion.id,
       environmentId: env.id,
-      values: value,
+      values: newYaml,
       type: this.state.mode === 'new' ? 'create' : 'update',
       // appInstanceId: this.state.mode === 'new'
       //   ? null : this.state.instanceId || (instances && instances.length === 1 && instances[0].id),
@@ -495,7 +495,7 @@ class ConfirmInfo extends Component {
           )}
         </section>
         <section className="deployApp-section">
-          <Button type="primary" funcType="raised" disabled={!(app.id && appVersion.id && env.id)} onClick={this.handleDeploy} loading={this.state.loading}>{formatMessage({ id: 'autotestbtn_autotest' })}</Button>
+          <Button type="primary" funcType="raised" onClick={this.handleDeploy} loading={this.state.loading}>{formatMessage({ id: 'autotestbtn_autotest' })}</Button>
        
           <Button funcType="raised" onClick={CreateAutoTestStore.preStep}>{formatMessage({ id: 'previous' })}</Button>
           <Button funcType="raised" className="c7ntest-autotest-clear" onClick={() => { CreateAutoTestStore.toStep(1); }}>{formatMessage({ id: 'cancel' })}</Button>
