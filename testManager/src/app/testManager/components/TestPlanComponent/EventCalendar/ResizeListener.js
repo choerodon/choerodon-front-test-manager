@@ -21,12 +21,7 @@ export function addResizeListener(ele, handler) {
     _addHandler(object, handler);
   } else {
     // 不存在时，创建object元素，并添加监听
-    const objectElement = _createObjectElement(ele);    
-    // 必须先定义onload事件，再append,来兼容浏览器
-    objectElement.onload = () => _addHandler(objectElement, handler);
-    ele.appendChild(objectElement);    
-    // 将object元素保存在目标元素上
-    ele._ResizeObject_ = objectElement;
+    _createObjectElement(ele, handler);
   }
 }
 /**
@@ -37,17 +32,25 @@ export function addResizeListener(ele, handler) {
 export function removeResizeListener(ele, handler) {
   // 存在object元素，说明加过监听
   const object = ele._ResizeObject_;
-  if (ele._ResizeObject_) {
+  if (object) {
     _removeHandler(object, handler);
   }
 }
-function _createObjectElement(ele) {
+/**
+ * 创建object并添加监听，！！！objectElement的属性设置和ele的append顺序很重要，否则会不兼容ie
+ * @param {*} ele 
+ * @param {*} handler 
+ */
+function _createObjectElement(ele, handler) {
   const objectElement = document.createElement('object');
   objectElement.setAttribute('style', 'display: block; position: absolute; top: 0; left: 0; height: 100%; width: 100%; overflow: hidden;opacity: 0; pointer-events: none; z-index: -1;');
+  // 必须先定义onload事件，再append,来兼容浏览器
+  objectElement.onload = () => _addHandler(objectElement, handler);
   objectElement.type = 'text/html';
+  ele.appendChild(objectElement);
   objectElement.data = 'about:blank';
-  // ele.appendChild(objectElement);
-  return objectElement;
+  // 将object元素保存在目标元素上
+  ele._ResizeObject_ = objectElement;
 }
 
 function _addHandler(objectElement, handler) {
