@@ -8,7 +8,6 @@ import { RadioButton } from '../../CommonComponent';
 import './EventCalendar.scss';
 import CalendarBackItem from './CalendarBackItem';
 import EventItem from './EventItem';
-import { addResizeListener, removeResizeListener } from './ResizeListener';
 
 const moment = extendMoment(Moment);
 class EventCalendar extends Component {
@@ -63,25 +62,10 @@ class EventCalendar extends Component {
   // }
 
   componentDidMount() {
-    this.setRightWidth();
-    addResizeListener(this.wrapper, this.setRightWidth);
+    const scrollBarWidth = this.wrapper.offsetWidth - this.wrapper.clientWidth;
+    this.scroll.style.width = `calc(100% + ${scrollBarWidth}px)`;
   }
-
-  componentWillUnmount() {
-    removeResizeListener(this.wrapper, this.setRightWidth);
-  }
-
-  /**
-   *由于滚动条会占用位置，所以动态设置宽度
-   *
-   * @memberof EventCalendar
-   */
-  setRightWidth=() => {   
-    if (this.scroll && this.wrapper) {
-      this.scroll.style.width = `${this.wrapper.offsetWidth}px`;
-    }
-  }
-
+ 
   calculateTime = () => {
     const { mode, pos, baseDate } = this.state;
     const start = moment(baseDate).startOf(mode).add(pos, mode);
