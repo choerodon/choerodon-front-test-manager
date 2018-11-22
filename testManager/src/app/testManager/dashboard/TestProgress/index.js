@@ -110,9 +110,17 @@ export default class TestProgress extends Component {
   renderContent = () => {
     const { versionList, currentVersion } = this.state;
     const menu = (
-      <Menu onClick={this.handleMenuClick} className="menu">
+      <Menu onClick={this.handleMenuClick} style={{ height: 200, overflow: 'hidden auto' }}>
         {
-          versionList.map(item => <Menu.Item key={item.versionId}><Tooltip title={item.name} placement="topRight"><span className="c7n-menuItem">{item.name}</span></Tooltip></Menu.Item>)
+          versionList.map(item => (
+            <Menu.Item key={item.versionId}>
+              <Tooltip title={item.name} placement="topRight">
+                <span className="c7ntest-text-dot">
+                  {item.name}
+                </span>
+              </Tooltip>
+            </Menu.Item>
+          ))
         }
       </Menu>
     );
