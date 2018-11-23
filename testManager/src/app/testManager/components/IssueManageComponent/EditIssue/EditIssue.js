@@ -1350,7 +1350,7 @@ class EditIssueNarrow extends Component {
                       }}
                       />
                     </div>
-                    <div className="c7ntest-content-wrapper" style={{ display: 'flex', flexWrap: 'wrap', flexDirection: mode === 'narrow' ? 'column' : 'row' }}>
+                    <div className="c7ntest-content-wrapper" style={{ display: mode === 'narrow' ? 'block' : 'flex' }}>
                       {/* 状态 */}
                       <div style={{ flex: 1 }}>
                         {mode === 'narrow'
