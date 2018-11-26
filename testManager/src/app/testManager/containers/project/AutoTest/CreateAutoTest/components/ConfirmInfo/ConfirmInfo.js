@@ -8,7 +8,9 @@ import { observer } from 'mobx-react';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import CreateAutoTestStore from '../../../../../../store/project/AutoTest/CreateAutoTestStore';
 import { YamlEditor } from '../../../../../../components/CommonComponent';
-import { getYaml, createTask, runTestTiming } from '../../../../../../api/AutoTestApi';
+import {
+  getYaml, runTestTiming, runTestInstant, 
+} from '../../../../../../api/AutoTestApi';
 import './ConfirmInfo.scss';
 
 const intlPrefix = 'taskdetail';
@@ -37,18 +39,18 @@ class ConfirmInfo extends Component {
   }
 
   componentDidMount() {
-    this.loadYaml();
+    // this.loadYaml();
   }
 
-  loadYaml=() => {
-    getYaml().then((data) => {
-      if (data) {
-        this.setState({
-          data,
-        });
-      }
-    });
-  }
+  // loadYaml=() => {
+  //   getYaml().then((data) => {
+  //     if (data) {
+  //       this.setState({
+  //         data,
+  //       });
+  //     }
+  //   });
+  // }
   
   // 创建任务切换触发类型
   changeValue(e) {
@@ -186,6 +188,7 @@ class ConfirmInfo extends Component {
     const { testType } = this.state;
     if (testType === 'instant') {
       // 立即执行
+      runTestInstant(applicationDeployDTO);
       console.log('instant');
     } else {
       // 定时执行
@@ -440,9 +443,9 @@ class ConfirmInfo extends Component {
     } = CreateAutoTestStore;
     const { intl } = this.props;
     const { formatMessage } = intl;
-    // const data = this.state.yaml || CreateAutoTestStore.value;
+    const data = this.state.data || CreateAutoTestStore.getNewConfigValue;
     const {
-      data, testType,
+      testType,
     } = this.state;
     const options = {
       theme: 'neat',

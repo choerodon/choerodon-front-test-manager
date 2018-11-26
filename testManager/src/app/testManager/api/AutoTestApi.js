@@ -37,6 +37,10 @@ export function getAppVersions(appId, flag = '') {
 export function getEnvs() {
   return axios.get(`/devops/v1/projects/${getProjectId()}/envs?active=true`);   
 }
+export function runTestInstant(scheduleTaskDTO) {
+  return request.post(`/test/v1/projects/${getProjectId()}/app_instances`, scheduleTaskDTO);   
+}
+
 export function runTestTiming(scheduleTaskDTO) {
   return request.post(`/test/v1/projects/${getProjectId()}/app_instances/schedule`, scheduleTaskDTO);   
 }
