@@ -17,6 +17,7 @@ export function getTestHistoryByApp() {
 }
 export function getYaml() {
   return axios.get('/getYaml');
+  return request.get(`/test/v1/projects/${getProjectId()}/app_instances/value?appId=1&envId=1&appVersionId=1`);
 }
 export function checkYaml(value) {
   return axios.post(`/devops/v1/projects/${getProjectId()}/app_instances/value_format`, { yaml: value });
@@ -35,4 +36,7 @@ export function getAppVersions(appId, flag = '') {
 }
 export function getEnvs() {
   return axios.get(`/devops/v1/projects/${getProjectId()}/envs?active=true`);   
+}
+export function runTestTiming(scheduleTaskDTO) {
+  return request.post(`/test/v1/projects/${getProjectId()}/app_instances/schedule`, scheduleTaskDTO);   
 }

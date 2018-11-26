@@ -84,9 +84,9 @@ class SelectVariable extends Component {
             <span className="section-title">{formatMessage({ id: 'autoteststep_one_app' })}</span>
           </div>
           <div className="autotest-text">
-            {app && (
+            {app.id && (
               <div className="section-text-margin">
-                <Tooltip title={<FormattedMessage id={this.state.is_project ? 'project' : 'market'} />}><span className={`icon ${this.state.is_project ? 'icon-project' : 'icon-apps'} section-text-icon`} /></Tooltip>
+                <Tooltip title={<FormattedMessage id="project" />}><span className="icon icon-project section-text-icon" /></Tooltip>
                 <span className="section-text">
                   {app.name}
                   {'('}
@@ -97,7 +97,7 @@ class SelectVariable extends Component {
             )}
             <a
               role="none"
-              className={`${app ? '' : 'section-text-margin'}`}
+              className={`${app.id ? '' : 'section-text-margin'}`}
               onClick={this.showSideBar}
             >
               {formatMessage({ id: 'autotestapp_add' })}

@@ -282,6 +282,10 @@ class AutoTestList extends Component {
     this.props.history.push(commonLink('/AutoTest/create'));
   }
 
+  toReport=() => {
+    this.props.history.push(commonLink('/AutoTest/report')); 
+  }
+
   render() {
     const {
       appList, selectLoading, currentApp, historyList, loading, showSide, following,
@@ -341,7 +345,9 @@ class AutoTestList extends Component {
             <Tooltip title={status === 'failed' ? '重试' : '重新执行'}>
               <Icon type="replay" className="c7ntest-icon-in-table" style={{ marginLeft: 8 }} />
             </Tooltip>
-            <Icon type="exit_to_app" className="c7ntest-icon-in-table" style={{ marginLeft: 8 }} />
+            <Tooltip title="测试报告">
+              <Icon type="exit_to_app" className="c7ntest-icon-in-table" style={{ marginLeft: 8 }} onClick={this.toReport} />
+            </Tooltip>
           </div>
         );
       },
