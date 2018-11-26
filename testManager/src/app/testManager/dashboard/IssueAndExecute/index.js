@@ -7,6 +7,7 @@ import 'moment/locale/zh-cn';
 import 'moment/locale/en-nz';
 import _ from 'lodash';
 import { getCycleRange, getCreateRange } from '../../api/summaryApi';
+import { commonLink } from '../../common/utils';
 
 const { AppState } = stores;
 const langauge = AppState.currentLanguage;
@@ -191,7 +192,7 @@ export default class IssueAndExecute extends Component {
           />
         </div>
         <DashBoardNavBar>
-          <Link to={encodeURI(`/testManager/summary?type=${type}&id=${projectId}&name=${name}`)}>{Choerodon.getMessage('转至测试摘要', 'review test summary')}</Link>
+          <Link to={commonLink('/summary')}>{Choerodon.getMessage('转至测试摘要', 'review test summary')}</Link>
         </DashBoardNavBar>
       </div>
     );
