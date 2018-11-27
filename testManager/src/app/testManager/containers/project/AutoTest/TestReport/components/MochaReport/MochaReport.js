@@ -22,13 +22,9 @@ const STATUS = {
     name: '失败',
     code: 'error',
   },
-  slow: {
-
-  },
-  medium: {
-
-  },
-
+  slow: 'red',
+  medium: '#fbc02d',
+  fast: 'rgba(0,0,0,.38)',
 };
 const columns = [{
   title: '名称',
@@ -90,13 +86,14 @@ const columns = [{
   width: '30%',
   key: 'duration',
   render: (duration, record) => {
-    const { durationdOut, timedOut } = record;
+    const { durationdOut, timedOut, speed } = record;
+    // slow medium fast
     return (
       <div>
         <span style={{ display: 'inline-block', width: 60 }}>
           {duration > 1000 ? `${duration / 1000}s` : `${duration}ms`}
-        </span>
-        <Icon type="durationr" style={{ color: timedOut ? 'red' : 'rgba(0,0,0,.38)' }} />
+        </span>     
+        <Icon type="APItest" style={{ color: timedOut ? 'red' : STATUS[speed] || 'rgba(0,0,0,.38)' }} />
       </div>
     );
   },
