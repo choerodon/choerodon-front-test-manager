@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Table, Icon } from 'choerodon-ui';
 import ReactEcharts from 'echarts-for-react';
 import { observer } from 'mobx-react';
+import moment from 'moment';
 import hljs from 'highlight.js/lib/highlight';
 import CodeSnippet from './CodeSnippet';
 import 'highlight.js/styles/solarized-light.css';
@@ -81,7 +82,7 @@ const columns = [{
           <StatusTags name={STATUS[state].name} colorCode={STATUS[state].code} />
         </span>
       );
-    } 
+    }
   },
 }, {
   title: '用时',
@@ -91,8 +92,8 @@ const columns = [{
   render: (duration, record) => {
     const { durationdOut, timedOut } = record;
     return (
-      <div>        
-        <span style={{ display: 'inline-block', width: 60 }}>        
+      <div>
+        <span style={{ display: 'inline-block', width: 60 }}>
           {duration > 1000 ? `${duration / 1000}s` : `${duration}ms`}
         </span>
         <Icon type="durationr" style={{ color: timedOut ? 'red' : 'rgba(0,0,0,.38)' }} />
@@ -160,18 +161,54 @@ class MochaReport extends Component {
 
   render() {
     const tests = ReportStore.getFilteredTests;
+    const { stats } = ReportStore;
+    const {
+      passPercent, skipped, duration, failures, start, end, testsRegistered,
+    } = stats;
     const { suites } = tests[0] || { suites: [] };
     console.log(ReportStore.getFilteredTests);
     const code = 'var cycleId = cloneCycle.cycleId;\nreturn cycleFunc.deleteCycle(cycleId);';
     return (
       <div>
-        {/* <div style={{ display: 'flex' }}> */}
-        <ReactEcharts
-          style={{ height: 200, flex: 1 }}
-          option={this.getOption()}
-        />
+        <div style={{ display: 'flex' }}>
+        测试统计
+          <ReactEcharts
+            style={{ width: 500, height: 200, flex: 1 }}
+            option={this.getOption()}
+          />
+          <div style={{ width: 500, marginLeft: 50 }}>
+            <div>
+              通过率:
+              {passPercent}
+              {' '}
+
+            </div>
+            <div>
+            测试单元：
+              {stats.suites}
+            </div>
+            <div>
+            总测试数量:
+              {
+              testsRegistered
+            }
+            </div>
+            <div>
+            总耗时：
+              {duration}
+            </div>
+            <div>
+            开始时间:
+              {moment(start).format('YYYY-MM-DD hh:mm:ss')}
+            </div>
+            <div>
+            结束时间:
+              {moment(end).format('YYYY-MM-DD hh:mm:ss')}
+            </div>
+          </div>
+        </div>
+        测试时长表
         <DuringChart />
-        {/* </div> */}
         <Table
           columns={columns}
           dataSource={suites.map(suite => ({ ...suite, children: suite.tests }))}
