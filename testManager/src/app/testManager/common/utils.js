@@ -285,9 +285,14 @@ export function color2rgba(color, alpha = 1) {
  * 时间（毫秒）转文字显示 
  * @param {*} ms 
  */
-export function humanizeDuration(ms) {
-  return humanize(ms, {
-    language: 'zh_CN', delimiter: '', spacer: '', largest: 2, round: true,
+export function humanizeDuration(ms, config = {}) {
+  return humanize(ms, {     
+    language: 'zh_CN',
+    delimiter: '',
+    spacer: '',
+    largest: 2,
+    round: true,
+    ...config,
   });
 }
 export const getProjectId = () => AppState.currentMenuType.id;
