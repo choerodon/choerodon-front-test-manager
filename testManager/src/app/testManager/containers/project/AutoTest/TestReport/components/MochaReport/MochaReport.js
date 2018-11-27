@@ -115,14 +115,6 @@ class MochaReport extends Component {
         trigger: 'item',
         formatter: '{b} : {c} ({d}%)',
       },
-      legend: {
-        type: 'scroll',
-        orient: 'vertical',
-        right: 10,
-        top: 20,
-        bottom: 20,
-        // data: data.legendData,
-      },
       series: [
         {
           color: ['#00BFA5', 'red'],
@@ -134,7 +126,7 @@ class MochaReport extends Component {
           center: ['35%', '42%'],
           label: {
             normal: {
-              show: false,
+              // show: false,
               // position: 'center',
               textStyle: {
                 fontSize: '13',
@@ -163,7 +155,7 @@ class MochaReport extends Component {
     const tests = ReportStore.getFilteredTests;
     const { stats } = ReportStore;
     const {
-      passPercent, skipped, duration, failures, start, end, testsRegistered,
+      passPercent, skipped, duration, passes, failures, start, end, testsRegistered,
     } = stats;
     const { suites } = tests[0] || { suites: [] };
     console.log(ReportStore.getFilteredTests);
@@ -173,7 +165,7 @@ class MochaReport extends Component {
         <div style={{ display: 'flex' }}>
         测试统计
           <ReactEcharts
-            style={{ width: 500, height: 200, flex: 1 }}
+            style={{ width: 500, flex: 1 }}
             option={this.getOption()}
           />
           <div style={{ width: 500, marginLeft: 50 }}>
@@ -191,6 +183,18 @@ class MochaReport extends Component {
             总测试数量:
               {
               testsRegistered
+            }
+            </div>
+            <div>
+            通过数量:
+              {
+              passes
+            }
+            </div>
+            <div>
+            失败数量:
+              {
+              failures
             }
             </div>
             <div>
