@@ -692,7 +692,7 @@ class EditIssueNarrow extends Component {
    */
   renderSelectStatus = () => {
     const {
-      issueInfo, StatusList, selectLoading,  
+      issueInfo, StatusList, selectLoading,
     } = this.state;
     const { mode } = this.props;
     const { statusMapDTO } = issueInfo;
@@ -722,10 +722,10 @@ class EditIssueNarrow extends Component {
                       status={targetStatus.statusDTO}
                     />
                   ) : (
-                    <Tag
-                      status={statusMapDTO}
-                    />                    
-                  )
+                      <Tag
+                        status={statusMapDTO}
+                      />
+                    )
                 }
               </div>
             );
@@ -743,7 +743,7 @@ class EditIssueNarrow extends Component {
                 <Option key={transform.id} value={transform.endStatusId}>
                   <Tag
                     status={transform.statusDTO}
-                  />                  
+                  />
                 </Option>
               ))
             }
@@ -963,30 +963,36 @@ class EditIssueNarrow extends Component {
         <User user={user} />
       </Option>
     ));
+    const targetUser = _.find(userList, { id: reporterId });
+    let showUser = reporterId || '无';
+    // 当存在用户且列表没找到
+    if (reporterId && !targetUser) {
+      showUser = (
+        <UserHead
+          user={{
+            id: reporterId,
+            loginName: '',
+            realName: reporterName,
+            avatar: reporterImageUrl,
+          }}
+        />
+      );
+    }
     return (
       <TextEditToggle
         formKey="reporterId"
         onSubmit={(id, done) => { this.editIssue({ reporterId: id || 0 }, done); }}
-        originData={userList.length > 0 ? reporterId : reporterId ? (
-          <UserHead
-            user={{
-              id: reporterId,
-              loginName: '',
-              realName: reporterName,
-              avatar: reporterImageUrl,
-            }}
-          />
-        ) : '无'}
+        originData={showUser}
       >
         <Text>
           {(data) => {
-            if (userList.length > 0) {
-              const targetUser = _.find(userList, { id: data });
-              return targetUser ? (
-                <User user={targetUser} />
-              ) : '无';
+            if (data) {
+              const tempShowUser = _.find(userList, { id: data });
+              return tempShowUser ? (
+                <User user={tempShowUser} />
+              ) : data;
             } else {
-              return data;
+              return '无';
             }
           }}
         </Text>
@@ -1041,30 +1047,36 @@ class EditIssueNarrow extends Component {
         <User user={user} />
       </Option>
     ));
+    const targetUser = _.find(userList, { id: assigneeId });
+    let showUser = assigneeId || '无';
+    // 当存在用户且列表没找到
+    if (assigneeId && !targetUser) {
+      showUser = (
+        <UserHead
+          user={{
+            id: assigneeId,
+            loginName: '',
+            realName: assigneeName,
+            avatar: assigneeImageUrl,
+          }}
+        />
+      );
+    }
     return (
       <TextEditToggle
         formKey="assigneeId"
         onSubmit={(id, done) => { this.editIssue({ assigneeId: id || 0 }, done); }}
-        originData={userList.length > 0 ? assigneeId : assigneeId ? (
-          <UserHead
-            user={{
-              id: assigneeId,
-              loginName: '',
-              realName: assigneeName,
-              avatar: assigneeImageUrl,
-            }}
-          />
-        ) : '无'}
+        originData={showUser}
       >
         <Text>
           {(data) => {
-            if (userList.length > 0) {
-              const targetUser = _.find(userList, { id: data });
-              return targetUser ? (
-                <User user={targetUser} />
-              ) : '无';
+            if (data) {
+              const tempShowUser = _.find(userList, { id: data });
+              return tempShowUser ? (
+                <User user={tempShowUser} />
+              ) : data;
             } else {
-              return data;
+              return '无';
             }
           }}
         </Text>

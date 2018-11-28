@@ -74,9 +74,9 @@ class TextEditToggle extends Component {
   }
 
   handleDone=() => {
-    // this.setState({
-    //   newData: null,
-    // });
+    this.setState({
+      newData: null,
+    });
   }
 
   // 提交编辑

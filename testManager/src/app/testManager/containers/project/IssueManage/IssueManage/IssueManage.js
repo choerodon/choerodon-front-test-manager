@@ -24,7 +24,7 @@ import './IssueManage.scss';
 export default class IssueManage extends Component {
   state = {
     expand: false,
-    create: false,
+    createIssueShow: false,
     selectedIssue: {},
   }
 
@@ -52,37 +52,38 @@ export default class IssueManage extends Component {
   }
 
   handleCreateIssue() {
-    this.setState({ create: false });
+    this.setState({ createIssueShow: false });
     IssueStore.loadIssues();
   }
 
+  /**
+   * 当issue更新时,本地更新单个issue
+   * @param {*} issueId 
+   */
   handleIssueUpdate(issueId = this.state.selectedIssue.issueId) {
     loadIssue(issueId).then((res) => {
-      const originIssues = _.slice(IssueStore.issues);
-      const index = _.findIndex(originIssues, { issueId: res.issueId });
-      originIssues[index] = { ...originIssues[index], ...res };
-      IssueStore.setIssues(originIssues);
+      IssueStore.updateSingleIssue(res);
     });
   }
 
-  handleSort({ key }) {
-    const currentSort = IssueStore.order;
-    const targetSort = {};
-    if (currentSort.orderField === key) {
-      targetSort.orderField = key;
-      if (currentSort.orderType !== 'desc') {
-        targetSort.orderType = 'desc';
-      } else {
-        targetSort.orderType = 'asc';
-      }
-    } else {
-      targetSort.orderField = key;
-      targetSort.orderType = 'desc';
-    }
-    IssueStore.setOrder(targetSort);
-    const { current, pageSize } = IssueStore.pagination;
-    IssueStore.loadIssues(current - 1, pageSize);
-  }
+  // handleSort({ key }) {
+  //   const currentSort = IssueStore.order;
+  //   const targetSort = {};
+  //   if (currentSort.orderField === key) {
+  //     targetSort.orderField = key;
+  //     if (currentSort.orderType !== 'desc') {
+  //       targetSort.orderType = 'desc';
+  //     } else {
+  //       targetSort.orderType = 'asc';
+  //     }
+  //   } else {
+  //     targetSort.orderField = key;
+  //     targetSort.orderType = 'desc';
+  //   }
+  //   IssueStore.setOrder(targetSort);
+  //   const { current, pageSize } = IssueStore.pagination;
+  //   IssueStore.loadIssues(current - 1, pageSize);
+  // }
 
   handlePaginationChange(page, pageSize) {
     IssueStore.loadIssues(page - 1, pageSize);
@@ -138,7 +139,7 @@ export default class IssueManage extends Component {
   }
 
   render() {
-    const { expand } = this.state;
+    const { expand, createIssueShow, selectedIssue } = this.state;
     const treeShow = IssueStore.treeShow;
     const prioritys = IssueStore.getPrioritys;
     const issueStatusList = IssueStore.getIssueStatus;
@@ -176,7 +177,7 @@ export default class IssueManage extends Component {
         <Header
           title={<FormattedMessage id="issue_name" />}
         >
-          <Button className="leftBtn" onClick={() => this.setState({ create: true })}>
+          <Button className="leftBtn" onClick={() => this.setState({ createIssueShow: true })}>
             <Icon type="playlist_add icon" />
             <FormattedMessage id="issue_createTestIssue" />
           </Button>
@@ -195,7 +196,7 @@ export default class IssueManage extends Component {
           <Button
             onClick={() => {
               if (this.EditIssue) {
-                this.EditIssue.reloadIssue(this.state.selectedIssue.issueId);
+                this.EditIssue.reloadIssue(selectedIssue.issueId);
               }
               const { current, pageSize } = IssueStore.pagination;
               if (this.tree) {
@@ -282,7 +283,7 @@ export default class IssueManage extends Component {
                         selectedIssue: value,
                       });
                     }}
-                    selectedIssue={this.state.selectedIssue}
+                    selectedIssue={selectedIssue}
                     expand={expand}
                     treeShow={treeShow}
                   />
@@ -332,18 +333,18 @@ export default class IssueManage extends Component {
           <div
             className="c7ntest-sidebar"
             style={{
-              display: this.state.expand ? '' : 'none',
+              display: expand ? '' : 'none',
               width: treeShow ? 440 : '72%',
             }}
           >
             {
-              this.state.expand ? (
+              expand ? (
                 <EditIssue
                   mode={treeShow ? 'narrow' : 'wide'}
                   ref={(instance) => {
                     if (instance) { this.EditIssue = instance; }
                   }}
-                  issueId={this.state.selectedIssue.issueId}
+                  issueId={selectedIssue.issueId}
                   onCancel={() => {
                     this.setState({
                       expand: false,
@@ -354,8 +355,7 @@ export default class IssueManage extends Component {
                     this.setState({
                       expand: false,
                       selectedIssue: {},
-                    });
-                    // IssueStore.init();
+                    });                
                     IssueStore.loadIssues();
                   }}
                   onUpdate={this.handleIssueUpdate.bind(this)}
@@ -368,14 +368,13 @@ export default class IssueManage extends Component {
             }
           </div>
           {
-            this.state.create ? (
+            createIssueShow && (
               <CreateIssue
-                visible={this.state.create}
-                onCancel={() => this.setState({ create: false })}
+                visible={createIssueShow}
+                onCancel={() => this.setState({ createIssueShow: false })}
                 onOk={this.handleCreateIssue.bind(this)}
-
               />
-            ) : null
+            )
           }
         </Content>
       </Page>
