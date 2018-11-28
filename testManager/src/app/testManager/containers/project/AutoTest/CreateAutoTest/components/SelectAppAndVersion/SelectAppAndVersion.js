@@ -50,8 +50,8 @@ class SelectAppAndVersion extends Component {
         Choerodon.prompt(data.failed);
         return; 
       }
-      if (data.content.length > 0 && data.content[0].id && !app.id) {
-        this.loadAppVersions(data.content[0].id);
+      if (data.content.length > 0 && data.content[0].id) {
+        this.loadAppVersions(app.id || data.content[0].id);
         console.log(`选择应用:${data.content[0]}`);
         CreateAutoTestStore.setApp(data.content[0]);        
       }
@@ -64,7 +64,7 @@ class SelectAppAndVersion extends Component {
   loadAppVersions = (appId) => {
     getAppVersions(appId).then((data) => {      
       this.setState({
-        appVersions: data,
+        appVersions: data.content,
       });
     });
   }
@@ -90,17 +90,17 @@ class SelectAppAndVersion extends Component {
   getProjectTable = () => {
     const { intl } = this.props;
     const { appVersions, pagination } = this.state;
-    const { version } = CreateAutoTestStore;
+    const { appVersion } = CreateAutoTestStore;
     const column = [{
       key: 'check',
       width: '50px',
       render: record => (
-        record.id === version.id && <i className="icon icon-check icon-select" />
+        record.id === appVersion.id && <i className="icon icon-check icon-select" />
       ),
     }, {
       title: <FormattedMessage id="app_name" />,
-      dataIndex: 'name',
-      key: 'name',
+      dataIndex: 'appName',
+      key: 'appName',
       sorter: true,
       filters: [],
     }, {
@@ -110,8 +110,8 @@ class SelectAppAndVersion extends Component {
       sorter: true,
     }, {
       title: <FormattedMessage id="app_code" />,
-      dataIndex: 'code',
-      key: 'code',
+      dataIndex: 'appCode',
+      key: 'appCode',
       sorter: true,
       filters: [],
     }];
@@ -119,12 +119,9 @@ class SelectAppAndVersion extends Component {
       <Table
         filterBarPlaceholder={intl.formatMessage({ id: 'filter' })}
         rowClassName="col-check"
-        onRow={(record) => {
-          const a = record;
-          return {
-            onClick: this.handleSelectAppVersion.bind(this, record),
-          };
-        }}
+        onRow={record => ({
+          onClick: this.handleSelectAppVersion.bind(this, record),
+        })}
         onChange={this.tableChange}
         columns={column}
         rowKey={record => record.id}
@@ -229,8 +226,8 @@ class SelectAppAndVersion extends Component {
    */
   handleOk = () => {
     const { handleOk, intl } = this.props;
-    const { app, version } = CreateAutoTestStore;
-    if (app.id || version.id) {
+    const { app, appVersion } = CreateAutoTestStore;
+    if (app.id || appVersion.id) {
       handleOk();
     } else {
       Choerodon.prompt('未选择应用版本');
@@ -240,7 +237,7 @@ class SelectAppAndVersion extends Component {
   render() {
     const { intl: { formatMessage }, show, handleCancel } = this.props;
     const { appList } = this.state;
-    const { app, version } = CreateAutoTestStore;
+    const { app } = CreateAutoTestStore;
     const projectName = AppState.currentMenuType.name;
     const appOptions = appList.map(app => <Option value={app.id} key={app.id}>{app.name}</Option>);
     return (

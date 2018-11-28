@@ -21,7 +21,8 @@ class ModifyConfig extends Component {
   }
 
   loadYaml=() => {
-    getYaml().then((data) => {
+    const { app, appVersion, env } = CreateAutoTestStore;
+    getYaml(app.id, appVersion.id, env.id).then((data) => {
       if (data) {
         CreateAutoTestStore.setConfigValue(data);
       }

@@ -178,7 +178,7 @@ class ConfirmInfo extends Component {
       isNotChange,
       appId: app.id,
       appVerisonId: appVersion.id || 5,
-      environmentId: env.id,
+      environmentId: env.id || 144,
       projectVersionId: version.versionId,
       values: newYaml,
       type: this.state.mode === 'new' ? 'create' : 'update',

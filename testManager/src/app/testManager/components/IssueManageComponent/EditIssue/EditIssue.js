@@ -314,7 +314,7 @@ class EditIssueNarrow extends Component {
               if (this.props.onUpdate) {
                 this.props.onUpdate();
               }
-            }).finally(() => {
+            }).catch(() => {
               done();
             });
         }
@@ -328,7 +328,7 @@ class EditIssueNarrow extends Component {
             if (this.props.onUpdate) {
               this.props.onUpdate();
             }
-          }).finally(() => {
+          }).catch(() => {
             done();
           });
         break;
@@ -341,7 +341,7 @@ class EditIssueNarrow extends Component {
             if (this.props.onUpdate) {
               this.props.onUpdate();
             }
-          }).finally(() => {
+          }).catch(() => {
             done();
           });
         break;
@@ -351,7 +351,7 @@ class EditIssueNarrow extends Component {
           returnBeforeTextUpload(value, issue, updateIssue, 'description')
             .then((res) => {
               this.reloadIssue();
-            }).finally(() => {
+            }).catch(() => {
               done();
             });
         }
@@ -365,7 +365,7 @@ class EditIssueNarrow extends Component {
             if (this.props.onUpdate) {
               this.props.onUpdate();
             }
-          }).finally(() => {
+          }).catch(() => {
             done();
           });
         break;
@@ -716,16 +716,7 @@ class EditIssueNarrow extends Component {
             const targetStatus = _.find(StatusList, { endStatusId: data });
             return (
               <div>
-                {
-                  targetStatus ? (
-                    <Tag
-                      status={targetStatus.statusDTO}
-                    />
-                  ) : (
-                      <Tag
-                        status={statusMapDTO}
-                      />
-                    )
+                {<Tag status={targetStatus ? targetStatus.statusDTO : statusMapDTO} />                 
                 }
               </div>
             );
@@ -1163,7 +1154,7 @@ class EditIssueNarrow extends Component {
       </Menu>
     );
     return (
-      <div className="choerodon-modal-editIssue">
+      <div className="c7ntest-editIssue">
         {
           issueLoading ? (
             <div

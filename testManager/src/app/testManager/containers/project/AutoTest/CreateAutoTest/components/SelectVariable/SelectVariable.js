@@ -60,9 +60,9 @@ class SelectVariable extends Component {
   }
 
   loadEnvs=() => {
-    getEnvs().then((envs) => {
+    getEnvs().then((res) => {
       this.setState({
-        envs,
+        envs: res.content,
       });
     });
   }
@@ -71,7 +71,9 @@ class SelectVariable extends Component {
     const { intl } = this.props;
     const { selectApp, envs } = this.state;
     const { formatMessage } = intl;
-    const { app, env, version } = CreateAutoTestStore;
+    const {
+      app, env, version, appVersion, 
+    } = CreateAutoTestStore;
     return (
       <div className="deployApp-app">
         <p>
@@ -137,7 +139,8 @@ class SelectVariable extends Component {
             onFocus={this.loadEnvs}
           >
             {envs.map(v => (
-              <Option value={v.id} key={v.id} disabled={!v.connect}>
+              // <Option value={v.id} key={v.id} disabled={!v.connect}>
+              <Option value={v.id} key={v.id}>
                 {v.connect ? <span className="c7ntest-ist-status_on" /> : <span className="c7ntest-ist-status_off" />}
                 {v.name}
               </Option>
@@ -148,7 +151,7 @@ class SelectVariable extends Component {
           <Button
             type="primary"
             funcType="raised"
-          // disabled={!(this.state.appId)}
+            disabled={!app.id || !appVersion.id || !version.versionId || !env.id}
             onClick={CreateAutoTestStore.nextStep}
           >
             {formatMessage({ id: 'next' })}

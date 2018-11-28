@@ -1,6 +1,6 @@
 
 import axios from 'axios';
-import { getProjectId, request } from '../common/utils';
+import { getProjectId, getOrganizationId, request } from '../common/utils';
 import './AutoTestApiMock';
 
 /**
@@ -15,9 +15,9 @@ export function getAppList() {
 export function getTestHistoryByApp() {
   return axios.get('/getTestHistoryByApp');
 }
-export function getYaml() {
-  return axios.get('/getYaml');
-  return request.get(`/test/v1/projects/${getProjectId()}/app_instances/value?appId=1&envId=1&appVersionId=1`);
+export function getYaml(appId, appVersionId, envId) {
+  // return axios.get('/getYaml');
+  return request.get(`/test/v1/projects/${getProjectId()}/app_instances/value?appId=${appId}&envId=${envId}&appVersionId=${appVersionId}`);
 }
 export function checkYaml(value) {
   return axios.post(`/devops/v1/projects/${getProjectId()}/app_instances/value_format`, { yaml: value });
@@ -32,10 +32,13 @@ export function getApps({
   return request.post(`/devops/v1/projects/${getProjectId()}/apps/list_by_options?active=true&page=${page}&size=${size}&sort=${sort.field},${sort.order}`, JSON.stringify(postData));
 }
 export function getAppVersions(appId, flag = '') {
-  return request.get(`/devops/v1/projects/${getProjectId()}/apps/${appId}/version/list?is_publish=${flag}`);
+  return request.post(`/devops/v1/projects/${getProjectId()}/app_versions/list_by_options?appId=${appId}&page=0&size=10&sort=id,desc`);
 }
 export function getEnvs() {
-  return axios.get(`/devops/v1/projects/${getProjectId()}/envs?active=true`);   
+  return axios.post(`/devops/v1/organizations/${getOrganizationId()}/clusters/page_cluster?page=0&size=12&sort=id,desc`, { 
+    param: '',
+    searchParam: {}, 
+  });   
 }
 export function runTestInstant(scheduleTaskDTO) {
   return request.post(`/test/v1/projects/${getProjectId()}/app_instances`, scheduleTaskDTO);   
