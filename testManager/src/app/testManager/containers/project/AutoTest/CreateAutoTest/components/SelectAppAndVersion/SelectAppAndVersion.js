@@ -85,8 +85,8 @@ class SelectAppAndVersion extends Component {
       title: <FormattedMessage id="app_name" />,
       dataIndex: 'appName',
       key: 'appName',
-      sorter: true,
-      filters: [],
+      // sorter: true,
+      // filters: [],
     }, {
       title: <FormattedMessage id="autoteststep_one_version" />,
       dataIndex: 'version',
@@ -96,8 +96,8 @@ class SelectAppAndVersion extends Component {
       title: <FormattedMessage id="app_code" />,
       dataIndex: 'appCode',
       key: 'appCode',
-      sorter: true,
-      filters: [],
+      // sorter: true,
+      // filters: [],
     }];
     return (
       <Table

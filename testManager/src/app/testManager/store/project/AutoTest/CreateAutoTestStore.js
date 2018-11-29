@@ -23,6 +23,8 @@ class CreateAutoTestStore {
 
   @observable env = {};
 
+  @observable envList = [];
+
   @observable configValue = null;
 
   @observable newConfigValue = null;
@@ -37,6 +39,10 @@ class CreateAutoTestStore {
 
   @action setAppVersionList = (appVersionList) => {
     this.appVersionList = appVersionList;
+  }
+
+  @action setEnvList = (envList) => {
+    this.envList = envList;
   }
 
   @action setAppVersion = (appVersion) => {

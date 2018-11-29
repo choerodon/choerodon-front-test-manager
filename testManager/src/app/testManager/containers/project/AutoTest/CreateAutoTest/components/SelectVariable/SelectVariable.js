@@ -16,7 +16,7 @@ const Option = Select.Option;
 class SelectVariable extends Component {
   state = {
     selectApp: false,
-    envs: [],
+    // envs: [],
   }
 
   /**
@@ -55,24 +55,22 @@ class SelectVariable extends Component {
   }
 
   handleSelectEnv=(envId, other) => {
-    const { envs } = this.state;
-    CreateAutoTestStore.setEnv(_.find(envs, { id: envId }));
+    const { envList } = CreateAutoTestStore;
+    CreateAutoTestStore.setEnv(_.find(envList, { id: envId }));
   }
 
   loadEnvs=() => {
     getEnvs().then((res) => {
-      this.setState({
-        envs: res.content,
-      });
+      CreateAutoTestStore.setEnvList(res.content);      
     });
   }
 
   render() {
     const { intl } = this.props;
-    const { selectApp, envs } = this.state;
+    const { selectApp } = this.state;
     const { formatMessage } = intl;
     const {
-      app, env, version, appVersion, 
+      app, env, version, appVersion, envList,
     } = CreateAutoTestStore;
     return (
       <div className="deployApp-app">
@@ -138,7 +136,7 @@ class SelectVariable extends Component {
             filter
             onFocus={this.loadEnvs}
           >
-            {envs.map(v => (
+            {envList.map(v => (
               // <Option value={v.id} key={v.id} disabled={!v.connect}>
               <Option value={v.id} key={v.id}>
                 {v.connect ? <span className="c7ntest-ist-status_on" /> : <span className="c7ntest-ist-status_off" />}
