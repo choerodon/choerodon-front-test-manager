@@ -3,15 +3,10 @@ import { Table, Icon } from 'choerodon-ui';
 import ReactEcharts from 'echarts-for-react';
 import { observer } from 'mobx-react';
 import moment from 'moment';
-// import hljs from 'highlight.js/lib/highlight';
-// import CodeSnippet from './CodeSnippet';
-// import 'highlight.js/styles/solarized-light.css';
 import { StatusTags } from '../../../../../../components/CommonComponent';
 import ReportStore from './reportStore';
 import DuringChart from './DuringChart';
-// Register hljs languages
-// hljs.registerLanguage('javascript', require('highlight.js/lib/languages/javascript'));
-// hljs.registerLanguage('diff', require('highlight.js/lib/languages/diff'));
+import './MochaReport.scss';
 
 const STATUS = {
   passed: {
@@ -158,78 +153,52 @@ class MochaReport extends Component {
       passPercent, skipped, duration, passes, failures, start, end, testsRegistered,
     } = stats;
     const { suites } = tests[0] || { suites: [] };
-    console.log(ReportStore.getFilteredTests);
-    const code = 'var cycleId = cloneCycle.cycleId;\nreturn cycleFunc.deleteCycle(cycleId);';
     return (
-      <div>
+      <div className="c7ntest-mochaReport">
         <div style={{ display: 'flex' }}>
-        测试统计
+          <span style={{ fontSize: '14px', fontWeight: 500 }}>测试统计</span>        
           <ReactEcharts
-            style={{ width: 500, flex: 1 }}
+            style={{ width: '40%' }}
             option={this.getOption()}
           />
-          <div style={{ width: 500, marginLeft: 50, boxShadow: '0 3px 1px -2px rgba(0,0,0,0.20), 0 2px 2px 0 rgba(0,0,0,0.14), 0 1px 5px 0 rgba(0,0,0,0.12)' }}>
-            <div>
-              通过率:
-              {passPercent}
-              {' '}
-
+          <div className="c7ntest-mochaReport-statistics">
+            <div className="c7ntest-mochaReport-statistics-title">数据统计</div>
+            <div className="c7ntest-mochaReport-statistics-item">
+              {`通过率：${passPercent}%`}
             </div>
-            <div>
-            测试单元：
-              {stats.suites}
-            </div>
-            <div>
-            总测试数量:
-              {
-              testsRegistered
-            }
-            </div>
-            <div>
-            通过数量:
-              {
-              passes
-            }
-            </div>
-            <div>
-            失败数量:
-              {
-              failures
-            }
-            </div>
-            <div>
-            总耗时：
-              {duration}
-            </div>
-            <div>
-            开始时间:
-              {moment(start).format('YYYY-MM-DD hh:mm:ss')}
-            </div>
-            <div>
-            结束时间:
-              {moment(end).format('YYYY-MM-DD hh:mm:ss')}
+            <div className="c7ntest-mochaReport-statistics-item">
+              {`测试单元：${stats.suites}`}           
+              <div className="c7ntest-mochaReport-statistics-item">
+                {`总测试数量：${testsRegistered}`}           
+              </div>
+              <div className="c7ntest-mochaReport-statistics-item">
+                {`通过数量：${passes}`}            
+              </div>
+              <div className="c7ntest-mochaReport-statistics-item">
+                {`失败数量：${failures}`}            
+              </div>
+              <div className="c7ntest-mochaReport-statistics-item">
+                {`总耗时：${duration > 1000 ? `${duration / 1000} 秒` : `${duration} 毫秒}`}`}
+              </div>
+              <div className="c7ntest-mochaReport-statistics-item">
+                {`开始时间：${moment(start).format('YYYY-MM-DD hh:mm:ss')}`}             
+              </div>
+              <div className="c7ntest-mochaReport-statistics-item">
+                {`结束时间：${moment(end).format('YYYY-MM-DD hh:mm:ss')}`}             
+              </div>
             </div>
           </div>
         </div>
-        测试时长表
+        <span style={{ fontSize: '14px', fontWeight: 500 }}>测试时长表</span>        
         <DuringChart />
         <Table
           columns={columns}
           dataSource={suites.map(suite => ({ ...suite, children: suite.tests }))}
-        // expandedRowRender={record => <CodeSnippet className="code-snippet" code={record.code} />}
-        />
-        {/* <CodeSnippet className="code-snippet" code={code} label="Stack Trace" />
-        <CodeSnippet className="code-snippet" code={'- 400\n+ 200\n'} lang="diff" label="Diff" /> */}
-      </div>
+        />          
+      </div>      
     );
   }
 }
 
 
 export default MochaReport;
-// atelier-estuary-light
-// atom-one-light
-// foundation
-// magula
-// mono-blue
-// expandedRowRender={record => <p style={{ margin: 0 }}>{record.description}</p>
