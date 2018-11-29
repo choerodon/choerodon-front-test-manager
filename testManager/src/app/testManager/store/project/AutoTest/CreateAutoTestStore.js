@@ -1,15 +1,25 @@
 import {
-  observable, action, computed, toJS, 
+  observable, action, computed, toJS,
 } from 'mobx';
 
 class CreateAutoTestStore {
   @observable currentStep = 1;
 
+  @observable appList = [];
+
   @observable app = {};
 
   @observable appVersion = {};
 
+  @observable appVersionList = [];
+
   @observable version = {};
+
+  @observable appVersionPagination = {
+    current: 1,
+    total: 0,
+    pageSize: 10,
+  }
 
   @observable env = {};
 
@@ -21,12 +31,24 @@ class CreateAutoTestStore {
     this.app = app;
   }
 
+  @action setAppList = (appList) => {
+    this.appList = appList;
+  }
+
+  @action setAppVersionList = (appVersionList) => {
+    this.appVersionList = appVersionList;
+  }
+
   @action setAppVersion = (appVersion) => {
     this.appVersion = appVersion;
   }
 
   @action setVersion = (version) => {
     this.version = version;
+  }
+
+  @action setAppVersionPagination = (appVersionPagination) => {
+    this.appVersionPagination = { ...this.appVersionPagination, ...appVersionPagination };
   }
 
   @action setEnv = (env) => {

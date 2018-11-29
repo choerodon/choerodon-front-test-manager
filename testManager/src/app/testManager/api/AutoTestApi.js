@@ -31,8 +31,9 @@ export function getApps({
 }) {
   return request.post(`/devops/v1/projects/${getProjectId()}/apps/list_by_options?active=true&page=${page}&size=${size}&sort=${sort.field},${sort.order}`, JSON.stringify(postData));
 }
-export function getAppVersions(appId, flag = '') {
-  return request.post(`/devops/v1/projects/${getProjectId()}/app_versions/list_by_options?appId=${appId}&page=0&size=10&sort=id,desc`);
+export function getAppVersions(appId, pagination, flag = '') {
+  const { current, pageSize } = pagination;
+  return request.post(`/devops/v1/projects/${getProjectId()}/app_versions/list_by_options?appId=${appId}&page=${current - 1}&size=${pageSize}&sort=id,desc`);
 }
 export function getEnvs() {
   return axios.post(`/devops/v1/organizations/${getOrganizationId()}/clusters/page_cluster?page=0&size=12&sort=id,desc`, { 

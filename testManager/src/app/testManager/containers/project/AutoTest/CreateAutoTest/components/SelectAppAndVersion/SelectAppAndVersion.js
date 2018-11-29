@@ -13,28 +13,13 @@ const { AppState } = stores;
 const { Option } = Select;
 @observer
 class SelectAppAndVersion extends Component {
-  state = {
-    appList: [],
-    // selectedApp: null,
-    appVersions: [],
-    // selectedAppVersion: null,
-    // loading: false,
-    pagination: {
-      current: 1,
-      total: 0,
-      pageSize: 10,
-    },
-
-  }
-
   componentDidMount() {
     this.loadApps();
   }
 
-  loadApps = (value = '') => {
-    const { pagination, selectedApp } = this.state;
-    const { current, pageSize: size } = pagination;
-    const { app, version } = CreateAutoTestStore;
+  loadApps = (value = '') => {    
+    const { app, appVersionPagination } = CreateAutoTestStore;
+    const { current, pageSize: size } = appVersionPagination;
     let searchParam = {};
     if (value !== '') {
       searchParam = { name: [value] };
@@ -50,21 +35,21 @@ class SelectAppAndVersion extends Component {
         Choerodon.prompt(data.failed);
         return; 
       }
+      CreateAutoTestStore.setAppList(data.content);
       if (data.content.length > 0 && data.content[0].id) {
-        this.loadAppVersions(app.id || data.content[0].id);
-        console.log(`选择应用:${data.content[0]}`);
+        this.loadAppVersions(app.id || data.content[0].id);       
         CreateAutoTestStore.setApp(data.content[0]);        
       }
-      this.setState({
-        appList: data.content,
-      });
     });
   }
 
-  loadAppVersions = (appId) => {
-    getAppVersions(appId).then((data) => {      
-      this.setState({
-        appVersions: data.content,
+  loadAppVersions = (appId, pagination = CreateAutoTestStore.appVersionPagination) => {
+    getAppVersions(appId, pagination).then((data) => {      
+      CreateAutoTestStore.setAppVersionList(data.content);
+      CreateAutoTestStore.setAppVersionPagination({
+        current: data.number + 1,
+        pageSize: data.size,
+        total: data.totalElements,
       });
     });
   }
@@ -89,8 +74,7 @@ class SelectAppAndVersion extends Component {
    */
   getProjectTable = () => {
     const { intl } = this.props;
-    const { appVersions, pagination } = this.state;
-    const { appVersion } = CreateAutoTestStore;
+    const { appVersion, appVersionList, appVersionPagination } = CreateAutoTestStore;
     const column = [{
       key: 'check',
       width: '50px',
@@ -125,8 +109,8 @@ class SelectAppAndVersion extends Component {
         onChange={this.tableChange}
         columns={column}
         rowKey={record => record.id}
-        dataSource={appVersions}
-        pagination={pagination}
+        dataSource={appVersionList}
+        pagination={appVersionPagination}
       />
     );
   };
@@ -189,27 +173,29 @@ class SelectAppAndVersion extends Component {
    * @param sorter 排序
    */
   tableChange = (pagination, filters, sorter, paras) => {
-    const menu = AppState.currentMenuType;
-    const organizationId = menu.id;
-    const sort = { field: 'id', order: 'desc' };
-    if (sorter.column) {
-      sort.field = sorter.field || sorter.columnKey;
-      // sort = sorter;
-      if (sorter.order === 'ascend') {
-        sort.order = 'asc';
-      } else if (sorter.order === 'descend') {
-        sort.order = 'desc';
-      }
-    }
-    let searchParam = {};
-    const page = pagination.current - 1;
-    if (Object.keys(filters).length) {
-      searchParam = filters;
-    }
-    const postData = {
-      searchParam,
-      param: paras.toString(),
-    };
+    const { app } = CreateAutoTestStore;
+    this.loadAppVersions(app.id, pagination);
+    // const menu = AppState.currentMenuType;
+    // const organizationId = menu.id;
+    // const sort = { field: 'id', order: 'desc' };
+    // if (sorter.column) {
+    //   sort.field = sorter.field || sorter.columnKey;
+    //   // sort = sorter;
+    //   if (sorter.order === 'ascend') {
+    //     sort.order = 'asc';
+    //   } else if (sorter.order === 'descend') {
+    //     sort.order = 'desc';
+    //   }
+    // }
+    // let searchParam = {};
+    // const page = pagination.current - 1;
+    // if (Object.keys(filters).length) {
+    //   searchParam = filters;
+    // }
+    // const postData = {
+    //   searchParam,
+    //   param: paras.toString(),
+    // };
 
     // SelectAppStore.loadData({
     //   projectId: organizationId,
@@ -236,8 +222,7 @@ class SelectAppAndVersion extends Component {
 
   render() {
     const { intl: { formatMessage }, show, handleCancel } = this.props;
-    const { appList } = this.state;
-    const { app } = CreateAutoTestStore;
+    const { app, appList } = CreateAutoTestStore;
     const projectName = AppState.currentMenuType.name;
     const appOptions = appList.map(app => <Option value={app.id} key={app.id}>{app.name}</Option>);
     return (

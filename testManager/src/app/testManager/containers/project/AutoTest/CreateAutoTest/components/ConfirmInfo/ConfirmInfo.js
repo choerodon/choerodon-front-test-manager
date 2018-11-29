@@ -177,6 +177,7 @@ class ConfirmInfo extends Component {
     const applicationDeployDTO = {
       isNotChange,
       appId: app.id,
+      code: app.code,
       appVerisonId: appVersion.id || 5,
       environmentId: env.id || 144,
       projectVersionId: version.versionId,
