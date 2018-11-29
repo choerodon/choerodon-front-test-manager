@@ -38,6 +38,10 @@ export default class TestSurvey extends Component {
       notRun, notPlan, caseNum, totalTest,
     } = this.state;
     const option = {
+      tooltip: {
+        trigger: 'item',
+        formatter: '{b} : {c} ({d}%)',
+      },
       series: [
         {
           color: ['#FFB100', '#00BFA5', '#FF7043'],
