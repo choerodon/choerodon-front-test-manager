@@ -346,7 +346,7 @@ class AutoTestList extends Component {
               <Icon type="replay" className="c7ntest-icon-in-table" style={{ marginLeft: 8 }} />
             </Tooltip>
             <Tooltip title="测试报告">
-              <Icon type="exit_to_app" className="c7ntest-icon-in-table" style={{ marginLeft: 8 }} onClick={this.toReport} />
+              <Icon type="poll" className="c7ntest-icon-in-table" style={{ marginLeft: 8 }} onClick={this.toReport} />
             </Tooltip>
           </div>
         );

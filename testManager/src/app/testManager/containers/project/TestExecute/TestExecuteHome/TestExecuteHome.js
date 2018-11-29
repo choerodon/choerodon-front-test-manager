@@ -729,7 +729,7 @@ class TestExecuteHome extends Component {
           <div
             className="c7ntest-text-dot"
           >
-            {lastUpdateUser.realName}
+            {lastUpdateUser && lastUpdateUser.realName}
           </div>
         );
       },

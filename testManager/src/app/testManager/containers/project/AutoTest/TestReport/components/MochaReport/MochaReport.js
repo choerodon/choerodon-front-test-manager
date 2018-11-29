@@ -3,15 +3,15 @@ import { Table, Icon } from 'choerodon-ui';
 import ReactEcharts from 'echarts-for-react';
 import { observer } from 'mobx-react';
 import moment from 'moment';
-import hljs from 'highlight.js/lib/highlight';
-import CodeSnippet from './CodeSnippet';
-import 'highlight.js/styles/solarized-light.css';
+// import hljs from 'highlight.js/lib/highlight';
+// import CodeSnippet from './CodeSnippet';
+// import 'highlight.js/styles/solarized-light.css';
 import { StatusTags } from '../../../../../../components/CommonComponent';
 import ReportStore from './reportStore';
 import DuringChart from './DuringChart';
 // Register hljs languages
-hljs.registerLanguage('javascript', require('highlight.js/lib/languages/javascript'));
-hljs.registerLanguage('diff', require('highlight.js/lib/languages/diff'));
+// hljs.registerLanguage('javascript', require('highlight.js/lib/languages/javascript'));
+// hljs.registerLanguage('diff', require('highlight.js/lib/languages/diff'));
 
 const STATUS = {
   passed: {
@@ -112,30 +112,33 @@ class MochaReport extends Component {
         trigger: 'item',
         formatter: '{b} : {c} ({d}%)',
       },
+      
       series: [
         {
-          color: ['#00BFA5', 'red'],
+          color: ['red', '#00BFA5'],
           type: 'pie',
+          radius: '80%',
           // radius: ['38px', '68px'],
           // avoidLabelOverlap: false,
           hoverAnimation: false,
           // legendHoverLink: false,
-          center: ['35%', '42%'],
-          label: {
-            normal: {
-              // show: false,
-              // position: 'center',
-              textStyle: {
-                fontSize: '13',
-              },
-            },
-            emphasis: {
-              show: false,
-            },
-          },
-          data: [
-            { value: stats.passes, name: '成功数量' },
+          // center: ['40%', '42%'],
+          // label: {
+          //   normal: {
+          //     // show: false,
+          //     // position: 'center',
+          //     textStyle: {
+          //       fontSize: '13',
+          //     },
+          //   },
+          //   align: 'right',
+          //   // emphasis: {
+          //   //   show: false,
+          //   // },
+          // },
+          data: [            
             { value: stats.failures, name: '失败数量' },
+            { value: stats.passes, name: '成功数量' },
           ],
           itemStyle: {
             normal: {
@@ -165,7 +168,7 @@ class MochaReport extends Component {
             style={{ width: 500, flex: 1 }}
             option={this.getOption()}
           />
-          <div style={{ width: 500, marginLeft: 50 }}>
+          <div style={{ width: 500, marginLeft: 50, boxShadow: '0 3px 1px -2px rgba(0,0,0,0.20), 0 2px 2px 0 rgba(0,0,0,0.14), 0 1px 5px 0 rgba(0,0,0,0.12)' }}>
             <div>
               通过率:
               {passPercent}
@@ -215,8 +218,8 @@ class MochaReport extends Component {
           dataSource={suites.map(suite => ({ ...suite, children: suite.tests }))}
         // expandedRowRender={record => <CodeSnippet className="code-snippet" code={record.code} />}
         />
-        <CodeSnippet className="code-snippet" code={code} label="Stack Trace" />
-        <CodeSnippet className="code-snippet" code={'- 400\n+ 200\n'} lang="diff" label="Diff" />
+        {/* <CodeSnippet className="code-snippet" code={code} label="Stack Trace" />
+        <CodeSnippet className="code-snippet" code={'- 400\n+ 200\n'} lang="diff" label="Diff" /> */}
       </div>
     );
   }

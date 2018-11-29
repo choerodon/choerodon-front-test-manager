@@ -156,14 +156,12 @@ class SelectAppAndVersion extends Component {
    * @param record
    */
   handleSelectApp = (record) => {
-    this.loadAppVersions(record.id);
-    console.log(`选择应用:${record}`);
+    this.loadAppVersions(record.id);    
     CreateAutoTestStore.setApp(record);    
   };
 
   handleSelectAppVersion=(record) => {  
-    CreateAutoTestStore.setAppVersion(record);
-    console.log(`选择应用版本:${record}`);
+    CreateAutoTestStore.setAppVersion(record);    
   }
 
   /**

@@ -151,6 +151,7 @@ class ReportStore {
         durings = durings.concat(su.tests);
       });
     });
+    durings.sort((a, b) => a.duration - b.duration);
     return durings;
   }
 }
