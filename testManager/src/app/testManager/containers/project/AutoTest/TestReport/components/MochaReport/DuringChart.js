@@ -9,6 +9,7 @@ class DuringChart extends Component {
   getOption() {
     // const { intl: { formatMessage } } = this.props;
     const tests = ReportStore.getTests;
+    console.log(tests);
     const { stats } = ReportStore;
     // console.log(tests);
     const averageDuration = [];

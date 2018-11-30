@@ -9,6 +9,10 @@ const transduce = (items, mapper, reducer, initial) => items.reduce(
 );
 
 class ReportStore {
+  @observable allSuites = [];
+
+  @observable stats = {};
+
   @observable filteredSuites = [];
 
   @observable isLoading = true;
@@ -26,18 +30,25 @@ class ReportStore {
   @observable sideNavOpen = false;
 
   constructor(data = {}, config = {}) {
-    Object.assign(this, config, {
-      allSuites: data.suites ? [data.suites] : [],     
-      enableChart: !!config.enableCharts,
-      initialLoadTimeout: 300,
-      reportTitle: config.reportTitle || data.reportTitle,
-      showHooksOptions: ['failed', 'always', 'never', 'context'],
-      stats: data.stats || {},
-    });
+    // Object.assign(this, config, {
+    //   allSuites: data.suites ? [data.suites] : [],
+    //   enableChart: !!config.enableCharts,
+    //   initialLoadTimeout: 300,
+    //   reportTitle: config.reportTitle || data.reportTitle,
+    //   showHooksOptions: ['failed', 'always', 'never', 'context'],
+    //   stats: data.stats || {},
+    // });
 
     // extendObservable(this, {
 
     // });
+  }
+
+  @action
+  setReport(report) {
+    this.allSuites = report.suites ? [report.suites] : [];
+    this.stats = report.stats || {};
+    this.updateFilteredSuites();
   }
 
   @action.bound openSideNav() {
@@ -130,9 +141,9 @@ class ReportStore {
   }
 
   @action
-  updateFilteredSuites() { 
+  updateFilteredSuites() {
     this.toggleIsLoading(false);
-    this.filteredSuites = this._getFilteredTests(this.allSuites);  
+    this.filteredSuites = this._getFilteredTests(this.allSuites);
   }
 
   @computed get getFilteredTests() {
@@ -145,14 +156,15 @@ class ReportStore {
 
   @computed get getTests() {
     let durings = [];
+
     this.allSuites.forEach((suite) => {
       const { suites } = suite;
       suites.forEach((su) => {
-        durings = durings.concat(su.tests);
+        durings = [...durings, ...su.tests];        
       });
     });
     durings.sort((a, b) => a.duration - b.duration);
-    return durings;
+    return toJS(durings);
   }
 }
 

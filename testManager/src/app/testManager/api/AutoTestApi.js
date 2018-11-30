@@ -16,7 +16,7 @@ export function getTestHistoryByApp() {
   return axios.get('/getTestHistoryByApp');
 }
 export function getYaml(appId, appVersionId, envId) {
-  // return axios.get('/getYaml');
+  return axios.get('/getYaml');
   return request.get(`/test/v1/projects/${getProjectId()}/app_instances/value?appId=${appId}&envId=${envId}&appVersionId=${appVersionId}`);
 }
 export function checkYaml(value) {
@@ -47,4 +47,7 @@ export function runTestInstant(scheduleTaskDTO) {
 
 export function runTestTiming(scheduleTaskDTO) {
   return request.post(`/test/v1/projects/${getProjectId()}/app_instances/schedule`, scheduleTaskDTO);   
+}
+export function getTestReport(id) {
+  return request.get(`/test/v1/projects/${getProjectId()}/automation/result/query/${id}`);   
 }

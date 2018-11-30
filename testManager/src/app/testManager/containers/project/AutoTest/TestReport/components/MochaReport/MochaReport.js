@@ -4,6 +4,7 @@ import ReactEcharts from 'echarts-for-react';
 import { observer } from 'mobx-react';
 import moment from 'moment';
 import { StatusTags } from '../../../../../../components/CommonComponent';
+import { getTestReport } from '../../../../../../api/AutoTestApi';
 import ReportStore from './reportStore';
 import DuringChart from './DuringChart';
 import './MochaReport.scss';
@@ -98,6 +99,9 @@ const columns = [{
 class MochaReport extends Component {
   componentDidMount() {
     ReportStore.updateFilteredSuites();
+    getTestReport(1).then((report) => {
+      ReportStore.setReport(report);
+    });
   }
 
   getOption() {
