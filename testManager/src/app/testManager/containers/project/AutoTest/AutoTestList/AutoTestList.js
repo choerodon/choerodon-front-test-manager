@@ -12,7 +12,7 @@ import CodeMirror from 'react-codemirror';
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/base16-dark.css';
 import { User } from '../../../../components/CommonComponent';
-import { getAppList, getTestHistoryByApp, loadPodParam } from '../../../../api/AutoTestApi';
+import { getApps, getTestHistoryByApp, loadPodParam } from '../../../../api/AutoTestApi';
 import { CiStatus, TestResult } from './AutoTestTags';
 import { commonLink, getProjectName } from '../../../../common/utils';
 import './AutoTestList.scss';
@@ -34,31 +34,45 @@ class AutoTestList extends Component {
   }
 
   componentDidMount() {
-    this.getAppList();
+    this.loadApps();
   }
 
-  getAppList = (value) => {
+  loadApps = (value = '') => {    
     const { currentApp } = this.state;
+    let searchParam = {};
+    if (value !== '') {
+      searchParam = { name: [value] };
+    }
+    
     this.setState({
       selectLoading: true,
     });
-    getAppList(value).then((List) => {
-      console.log(currentApp);
-      if (!currentApp && !value && List.length > 0) {
+    getApps({
+      page: 0,
+      size: 10,
+      sort: { field: 'id', order: 'desc' },
+      postData: { searchParam, param: '' },
+    }).then((data) => {
+      // 默认取第一个
+      if (data.failed) {
+        Choerodon.prompt(data.failed);
+        return; 
+      }      
+      if (!currentApp && !value && data.content.length > 0) {
         this.setState({
-          currentApp: List[0].id,
-          appList: List,
+          currentApp: data.content[0].id,
+          appList: data.content,
           selectLoading: false,
-        });
-        this.getTestHistoryByApp(List[0].id);
+        });        
       } else {
         this.setState({
-          appList: List,
+          appList: data.content,
           selectLoading: false,
         });
       }
     });
   }
+
 
   getTestHistoryByApp = (appId = this.state.currentApp) => {
     this.setState({
@@ -387,7 +401,7 @@ class AutoTestList extends Component {
               value={currentApp}
               loading={selectLoading}
               onChange={this.handleDefectsChange}
-              onFilterChange={this.getAppList}
+              onFilterChange={this.loadApps}
             >
               {appOptions}
             </Select>

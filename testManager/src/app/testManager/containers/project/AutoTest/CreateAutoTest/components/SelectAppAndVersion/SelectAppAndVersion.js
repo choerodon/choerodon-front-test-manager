@@ -43,8 +43,8 @@ class SelectAppAndVersion extends Component {
     });
   }
 
-  loadAppVersions = (appId, pagination = CreateAutoTestStore.appVersionPagination) => {
-    getAppVersions(appId, pagination).then((data) => {      
+  loadAppVersions = (appId, pagination = CreateAutoTestStore.appVersionPagination, filters = {}) => {
+    getAppVersions(appId, pagination, filters).then((data) => {      
       CreateAutoTestStore.setAppVersionList(data.content);
       CreateAutoTestStore.setAppVersionPagination({
         current: data.number + 1,
@@ -91,6 +91,7 @@ class SelectAppAndVersion extends Component {
       title: <FormattedMessage id="autoteststep_one_version" />,
       dataIndex: 'version',
       key: 'version',
+      filters: [],
       sorter: true,
     }, {
       title: <FormattedMessage id="app_code" />,
@@ -171,8 +172,9 @@ class SelectAppAndVersion extends Component {
    * @param sorter 排序
    */
   tableChange = (pagination, filters, sorter, paras) => {
+    console.log(filters, sorter, paras);
     const { app } = CreateAutoTestStore;
-    this.loadAppVersions(app.id, pagination);
+    this.loadAppVersions(app.id, pagination, filters);
     // const menu = AppState.currentMenuType;
     // const organizationId = menu.id;
     // const sort = { field: 'id', order: 'desc' };

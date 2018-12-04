@@ -16,7 +16,7 @@ export function getTestHistoryByApp() {
   return axios.get('/getTestHistoryByApp');
 }
 export function getYaml(appId, appVersionId, envId) {
-  return axios.get('/getYaml');
+  // return axios.get('/getYaml');
   return request.get(`/test/v1/projects/${getProjectId()}/app_instances/value?appId=${appId}&envId=${envId}&appVersionId=${appVersionId}`);
 }
 export function checkYaml(value) {
@@ -31,9 +31,9 @@ export function getApps({
 }) {
   return request.post(`/devops/v1/projects/${getProjectId()}/apps/list_by_options?active=true&page=${page}&size=${size}&sort=${sort.field},${sort.order}`, JSON.stringify(postData));
 }
-export function getAppVersions(appId, pagination, flag = '') {
+export function getAppVersions(appId, pagination, filter) {
   const { current, pageSize } = pagination;
-  return request.post(`/devops/v1/projects/${getProjectId()}/app_versions/list_by_options?appId=${appId}&page=${current - 1}&size=${pageSize}&sort=id,desc`);
+  return request.post(`/devops/v1/projects/${getProjectId()}/app_versions/list_by_options?appId=${appId}&page=${current - 1}&size=${pageSize}&sort=id,desc`, { searchParam: filter });
 }
 export function getEnvs() {
   return axios.post(`/devops/v1/organizations/${getOrganizationId()}/clusters/page_cluster?page=0&size=12&sort=id,desc`, { 
