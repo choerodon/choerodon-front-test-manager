@@ -187,10 +187,16 @@ class ConfirmInfo extends Component {
       //   ? null : this.state.instanceId || (instances && instances.length === 1 && instances[0].id),
     };
     const { testType } = this.state;
+    this.setState({
+      loading: true,
+    });
     if (testType === 'instant') {
       // 立即执行
-      runTestInstant(applicationDeployDTO);
-      console.log('instant');
+      runTestInstant(applicationDeployDTO).then((res) => {
+        this.setState({
+          loading: false,
+        });
+      });
     } else {
       // 定时执行
       this.props.form.validateFieldsAndScroll((err, values) => {
@@ -215,27 +221,11 @@ class ConfirmInfo extends Component {
               deploy: applicationDeployDTO,
             },
           };        
-          runTestTiming(scheduleTaskDTO);
-          // createTask(body, type, id).then(({ failed, message }) => {
-          //   if (failed) {
-          //     Choerodon.prompt(message);
-          //     this.setState({
-          //       // isSubmitting: false,
-          //     });
-          //   } else {
-          //     // Choerodon.prompt(intl.formatMessage({ id: 'create.success' }));
-          //     this.setState({
-          //       // isSubmitting: false,
-          //     }, () => {
-          //       // this.handleRefresh();
-          //     });
-          //   }
-          // }).catch(() => {
-          //   // Choerodon.prompt(intl.formatMessage({ id: 'create.error' }));
-          //   // this.setState({
-          //   //   isSubmitting: false,
-          //   // });
-          // });
+          runTestTiming(scheduleTaskDTO).then((res) => {
+            this.setState({
+              loading: false,
+            });
+          });
         } else {
           console.log(err);
         }
@@ -446,7 +436,7 @@ class ConfirmInfo extends Component {
     const { formatMessage } = intl;
     const data = this.state.data || CreateAutoTestStore.getNewConfigValue;
     const {
-      testType,
+      testType, loading,
     } = this.state;
     const options = {
       theme: 'neat',
@@ -580,8 +570,7 @@ class ConfirmInfo extends Component {
           )}
         </section>
         <section className="deployApp-section">
-          <Button type="primary" funcType="raised" onClick={this.handleDeploy} loading={this.state.loading}>{formatMessage({ id: 'autotestbtn_autotest' })}</Button>
-       
+          <Button type="primary" funcType="raised" onClick={this.handleDeploy} loading={loading}>{formatMessage({ id: 'autotestbtn_autotest' })}</Button>
           <Button funcType="raised" onClick={CreateAutoTestStore.preStep}>{formatMessage({ id: 'previous' })}</Button>
           <Button funcType="raised" className="c7ntest-autotest-clear" onClick={() => { CreateAutoTestStore.toStep(1); }}>{formatMessage({ id: 'cancel' })}</Button>
         </section>

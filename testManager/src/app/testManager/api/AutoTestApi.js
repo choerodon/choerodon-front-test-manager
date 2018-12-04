@@ -12,19 +12,24 @@ import './AutoTestApiMock';
 export function getAppList() {
   return axios.get('/getAppList');
 }
-export function getTestHistoryByApp() {
-  return axios.get('/getTestHistoryByApp');
+export function getTestHistoryByApp(appId, pagination, filters) {
+  const { current, pageSize } = pagination;
+  // return axios.get('/getTestHistoryByApp');
+  return request.post(`/test/v1/projects/${getProjectId()}/test/automation/queryWithHistroy?page=${current - 1}&size=${pageSize}`, 
+    {
+      appId,
+    });
 }
 export function getYaml(appId, appVersionId, envId) {
   // return axios.get('/getYaml');
   return request.get(`/test/v1/projects/${getProjectId()}/app_instances/value?appId=${appId}&envId=${envId}&appVersionId=${appVersionId}`);
 }
 export function checkYaml(value) {
-  return axios.post(`/devops/v1/projects/${getProjectId()}/app_instances/value_format`, { yaml: value });
+  return request.post(`/devops/v1/projects/${getProjectId()}/app_instances/value_format`, { yaml: value });
 }
 
 export function loadPodParam(projectId, id, type) {
-  return axios.get(`devops/v1/projects/${getProjectId()}/app_pod/${5}/containers/logs`);
+  return request.get(`devops/v1/projects/${getProjectId()}/app_pod/${5}/containers/logs`);
 }
 export function getApps({
   page, size, sort, postData, 
@@ -36,7 +41,7 @@ export function getAppVersions(appId, pagination, filter) {
   return request.post(`/devops/v1/projects/${getProjectId()}/app_versions/list_by_options?appId=${appId}&page=${current - 1}&size=${pageSize}&sort=id,desc`, { searchParam: filter });
 }
 export function getEnvs() {
-  return axios.post(`/devops/v1/organizations/${getOrganizationId()}/clusters/page_cluster?page=0&size=12&sort=id,desc`, { 
+  return request.post(`/devops/v1/organizations/${getOrganizationId()}/clusters/page_cluster?page=0&size=12&sort=id,desc`, { 
     param: '',
     searchParam: {}, 
   });   

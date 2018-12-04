@@ -36,7 +36,7 @@ const TESTRESULT = {
   },
 };
 export function CiStatus(status) {
-  const tag = STATUS[status];
+  const tag = STATUS[status] || {};
   return (
     <div className="c7ntest-center">
       <Icon type={tag.icon} style={{ color: tag.color, marginRight: 5 }} />
@@ -46,7 +46,7 @@ export function CiStatus(status) {
 }
 
 export function TestResult(result) {
-  const tag = TESTRESULT[result];
+  const tag = TESTRESULT[result] || {};
   return (
     <div style={{
       width: 50,

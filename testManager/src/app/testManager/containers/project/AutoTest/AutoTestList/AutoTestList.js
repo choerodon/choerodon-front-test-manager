@@ -31,6 +31,11 @@ class AutoTestList extends Component {
     currentApp: null,
     loading: false,
     selectLoading: false,
+    pagination: {
+      current: 1,
+      total: 0,
+      pageSize: 10,
+    },
   }
 
   componentDidMount() {
@@ -59,6 +64,7 @@ class AutoTestList extends Component {
         return; 
       }      
       if (!currentApp && !value && data.content.length > 0) {
+        this.loadTestHistoryByApp({ appId: data.content[0].id });
         this.setState({
           currentApp: data.content[0].id,
           appList: data.content,
@@ -74,16 +80,25 @@ class AutoTestList extends Component {
   }
 
 
-  getTestHistoryByApp = (appId = this.state.currentApp) => {
+  loadTestHistoryByApp = ({ appId = this.state.currentApp, pagination = this.state.pagination, filter = {} } = {}) => {
     this.setState({
       loading: true,
     });
-    getTestHistoryByApp(appId).then((history) => {
+    getTestHistoryByApp(appId, pagination, filter).then((history) => {
       this.setState({
         loading: false,
         historyList: history.content,
+        pagination: {
+          current: history.number + 1,
+          total: history.totalElements,
+          pageSize: history.size,
+        },
       });
     });
+  }
+
+  handleTableChange=(pagination, filter) => {
+    this.loadTestHistoryByApp({ pagination, filter });
   }
 
   /**
@@ -303,7 +318,7 @@ class AutoTestList extends Component {
   render() {
     const {
       appList, selectLoading, currentApp, historyList, loading, showSide, following,
-      containerArr, containerName, fullscreen, podName,
+      containerArr, containerName, fullscreen, podName, pagination,
     } = this.state;
     const appOptions = appList.map(app => <Option value={app.id}>{app.name}</Option>);
     const containerDom = containerArr.length && (_.map(containerArr, c => <Option key={c.logId} value={`${c.logId}+${c.containerName}`}>{c.containerName}</Option>));
@@ -325,6 +340,7 @@ class AutoTestList extends Component {
       title: '应用版本',
       dataIndex: 'appVersion',
       key: 'appVersion',
+      filters: [],
     }, {
       title: '时长',
       dataIndex: 'during',
@@ -380,7 +396,7 @@ class AutoTestList extends Component {
             <Icon type="playlist_add icon" />
             <span>添加测试</span>
           </Button>
-          <Button onClick={this.getTestHistoryByApp}>
+          <Button onClick={this.loadTestHistoryByApp}>
             <Icon type="autorenew icon" />
             <span><FormattedMessage id="refresh" /></span>
           </Button>
@@ -405,7 +421,7 @@ class AutoTestList extends Component {
             >
               {appOptions}
             </Select>
-            <Table columns={columns} dataSource={historyList} />
+            <Table columns={columns} dataSource={historyList} pagination={pagination} onChange={this.handleTableChange} />
             <Sidebar
               visible={showSide}
               title={<FormattedMessage id="container.log.header.title" />}
