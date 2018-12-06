@@ -12,7 +12,7 @@ const TestIndex = ({ match }) => (
   <Switch>
     <Route exact path={`${match.url}/create`} component={CreateAutoTest} />
     <Route exact path={`${match.url}/list`} component={AutoTestList} />
-    <Route exact path={`${match.url}/report`} component={TestReport} />
+    <Route exact path={`${match.url}/report/:id?`} component={TestReport} />
     <Route path="*" component={nomatch} />
   </Switch>
 );

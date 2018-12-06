@@ -174,7 +174,8 @@ class SelectAppAndVersion extends Component {
   tableChange = (pagination, filters, sorter, paras) => {
     console.log(filters, sorter, paras);
     const { app } = CreateAutoTestStore;
-    this.loadAppVersions(app.id, pagination, filters);
+
+    this.loadAppVersions(app.id, pagination, paras.length > 0 ? { version: paras } : filters);
     // const menu = AppState.currentMenuType;
     // const organizationId = menu.id;
     // const sort = { field: 'id', order: 'desc' };

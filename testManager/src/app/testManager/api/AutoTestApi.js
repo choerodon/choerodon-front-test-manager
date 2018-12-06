@@ -28,8 +28,8 @@ export function checkYaml(value) {
   return request.post(`/devops/v1/projects/${getProjectId()}/app_instances/value_format`, { yaml: value });
 }
 
-export function loadPodParam(projectId, id, type) {
-  return request.get(`devops/v1/projects/${getProjectId()}/app_pod/${5}/containers/logs`);
+export function loadPodParam(id, type) {
+  return request.get(`devops/v1/projects/${getProjectId()}/app_pod/${id}/containers/logs`);
 }
 export function getApps({
   page, size, sort, postData, 

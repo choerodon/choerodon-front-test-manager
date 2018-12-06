@@ -8,12 +8,17 @@ import { MochaReport } from './components';
 import { commonLink, getProjectName } from '../../../../common/utils';
 
 class TestReport extends Component {
+  componentDidMount() {
+    this.handleRefresh();
+  }
+  
   saveRef = name => (ref) => {
     this[name] = ref;
   }
 
   handleRefresh=() => {
-    this.MochaReport.loadTestReport();
+    const { id } = this.props.match.params;
+    this.MochaReport.loadTestReport(id);
   }
 
   render() {
@@ -42,8 +47,5 @@ class TestReport extends Component {
   }
 }
 
-TestReport.propTypes = {
-
-};
 
 export default TestReport;

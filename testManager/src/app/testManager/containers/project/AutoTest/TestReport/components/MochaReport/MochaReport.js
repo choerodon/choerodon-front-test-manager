@@ -101,16 +101,12 @@ class MochaReport extends Component {
     loading: false,
   }
 
-  componentDidMount() {
-    // ReportStore.updateFilteredSuites();
-    this.loadTestReport();
-  }
-
-  loadTestReport = () => {
+  loadTestReport = (id) => {
+    console.log(id);
     this.setState({
       loading: true,
     });
-    getTestReport(1).then((report) => {
+    getTestReport(id).then((report) => {
       this.setState({
         loading: false,
       });

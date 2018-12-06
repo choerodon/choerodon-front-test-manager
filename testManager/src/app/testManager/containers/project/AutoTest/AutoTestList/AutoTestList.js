@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-  Page, Header, Content, stores,
+  Page, Header, Content,
 } from 'choerodon-front-boot';
 import {
   Icon, Button, Table, Select, Spin, Tooltip, Modal,
@@ -13,13 +13,13 @@ import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/base16-dark.css';
 import { User } from '../../../../components/CommonComponent';
 import { getApps, getTestHistoryByApp, loadPodParam } from '../../../../api/AutoTestApi';
-import { CiStatus, TestResult } from './AutoTestTags';
+import { PodStatus, TestResult } from './AutoTestTags';
 import { commonLink, getProjectName } from '../../../../common/utils';
 import './AutoTestList.scss';
 
 const Sidebar = Modal.Sidebar;
 const { Option } = Select;
-const { AppState } = stores;
+
 class AutoTestList extends Component {
   state = {
     showSide: false,
@@ -42,13 +42,13 @@ class AutoTestList extends Component {
     this.loadApps();
   }
 
-  loadApps = (value = '') => {    
+  loadApps = (value = '') => {
     const { currentApp } = this.state;
     let searchParam = {};
     if (value !== '') {
       searchParam = { name: [value] };
     }
-    
+
     this.setState({
       selectLoading: true,
     });
@@ -61,15 +61,15 @@ class AutoTestList extends Component {
       // 默认取第一个
       if (data.failed) {
         Choerodon.prompt(data.failed);
-        return; 
-      }      
+        return;
+      }
       if (!currentApp && !value && data.content.length > 0) {
         this.loadTestHistoryByApp({ appId: data.content[0].id });
         this.setState({
           currentApp: data.content[0].id,
           appList: data.content,
           selectLoading: false,
-        });        
+        });
       } else {
         this.setState({
           appList: data.content,
@@ -97,7 +97,7 @@ class AutoTestList extends Component {
     });
   }
 
-  handleTableChange=(pagination, filter) => {
+  handleTableChange = (pagination, filter) => {
     this.loadTestHistoryByApp({ pagination, filter });
   }
 
@@ -155,8 +155,7 @@ class AutoTestList extends Component {
    * @param record 容器record
    */
   showLog = (record) => {
-    const projectId = AppState.currentMenuType.id;
-    loadPodParam(projectId, record.id)
+    loadPodParam(record.id)
       .then((data) => {
         if (data && data.length) {
           this.setState({
@@ -307,12 +306,12 @@ class AutoTestList extends Component {
     });
   };
 
-  toCreateAutoTest=() => {
+  toCreateAutoTest = () => {
     this.props.history.push(commonLink('/AutoTest/create'));
   }
 
-  toReport=() => {
-    this.props.history.push(commonLink('/AutoTest/report')); 
+  toReport = (resultId) => {
+    this.props.history.push(commonLink(`/AutoTest/report/${resultId}`));
   }
 
   render() {
@@ -326,21 +325,30 @@ class AutoTestList extends Component {
       title: '容器状态',
       dataIndex: 'status',
       key: 'status',
-      render: status => CiStatus(status),
+      render: (status, record) => {
+        const { testAppInstanceDTO } = record;
+        const { podStatus } = testAppInstanceDTO || {};
+        return PodStatus(podStatus);
+      },
     }, {
       title: '执行方',
-      dataIndex: 'lastUpdateUser',
-      key: 'lastUpdateUser',
-      render: lastUpdateUser => <User user={lastUpdateUser} />,
+      dataIndex: 'createUser',
+      key: 'createUser',
+      render: createUser => <User user={createUser} />,
     }, {
       title: '测试框架',
-      dataIndex: 'testType',
-      key: 'testType',
+      dataIndex: 'framework',
+      key: 'framework',
     }, {
       title: '应用版本',
       dataIndex: 'appVersion',
       key: 'appVersion',
       filters: [],
+      render: (appVersion, record) => {
+        const { testAppInstanceDTO } = record;
+        const { appVersionName } = testAppInstanceDTO || {};
+        return <span>{appVersionName}</span>;
+      },
     }, {
       title: '时长',
       dataIndex: 'during',
@@ -357,26 +365,34 @@ class AutoTestList extends Component {
       ),
     }, {
       title: '测试结果',
-      dataIndex: 'result',
-      key: 'result',
-      render: result => TestResult(result),
+      dataIndex: 'testStatus',
+      key: 'testStatus',
+      render: testStatus => TestResult(testStatus),
     }, {
       title: '',
       dataIndex: 'action',
       key: 'action',
       render: (action, record) => {
-        const { id, status } = record;
+        const {
+          id, instanceId, status, resultId,
+        } = record;
         return (
           <div style={{ display: 'flex' }}>
             <div className="c7ntest-flex-space" />
             <Tooltip title={<FormattedMessage id="container.log" />}>
-              <Icon type="insert_drive_file" className="c7ntest-icon-in-table" onClick={this.showLog.bind(this, record)} />
+              <Button type="circle" onClick={this.showLog.bind(this, record)}>
+                <Icon type="insert_drive_file" />
+              </Button>
             </Tooltip>
             <Tooltip title={status === 'failed' ? '重试' : '重新执行'}>
-              <Icon type="replay" className="c7ntest-icon-in-table" style={{ marginLeft: 8 }} />
+              <Button type="circle">
+                <Icon type="replay" />
+              </Button>
             </Tooltip>
             <Tooltip title="测试报告">
-              <Icon type="poll" className="c7ntest-icon-in-table" style={{ marginLeft: 8 }} onClick={this.toReport} />
+              <Button disabled={!resultId} type="circle" onClick={this.toReport.bind(this, resultId)}>
+                <Icon type="poll" />
+              </Button>
             </Tooltip>
           </div>
         );
@@ -409,54 +425,52 @@ class AutoTestList extends Component {
           description={<FormattedMessage id="autotestlist_content_description" />}
         // link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management/test-report/report/"
         >
-          <Spin spinning={loading}>
-            <Select
-              label="选择应用"
-              style={{ width: 512, marginBottom: 20 }}
-              filter
-              value={currentApp}
-              loading={selectLoading}
-              onChange={this.handleDefectsChange}
-              onFilterChange={this.loadApps}
-            >
-              {appOptions}
-            </Select>
-            <Table columns={columns} dataSource={historyList} pagination={pagination} onChange={this.handleTableChange} />
-            <Sidebar
-              visible={showSide}
-              title={<FormattedMessage id="container.log.header.title" />}
-              onOk={this.closeSidebar}
-              className="c7ntest-podLog-content c7ntest-region"
-              okText={<FormattedMessage id="close" />}
-              okCancel={false}
-            >
-              <Content className="sidebar-content" code="container.log" values={{ name: podName }}>
-                <section className="c7ntest-podLog-section">
-                  <div className="c7ntest-podLog-hei-wrap">
-                    <div className="c7ntest-podShell-title">
-                      <FormattedMessage id="container.term.log" />
-                      {}
-                      <Select value={containerName} onChange={this.containerChange}>
-                        {containerDom}
-                      </Select>
-                      <Button type="primary" funcType="flat" shape="circle" icon="fullscreen" onClick={this.setFullscreen} />
-                    </div>
-                    {' '}
-                    {following ? <div className={`c7ntest-podLog-action log-following ${fullscreen ? 'f-top' : ''}`} onClick={this.stopFollowing} role="none">Stop Following</div>
-                      : <div className={`c7ntest-podLog-action log-following ${fullscreen ? 'f-top' : ''}`} onClick={this.loadLog.bind(this, true)} role="none">Start Following</div>}
-                    <CodeMirror
-                      ref={(editor) => { this.editorLog = editor; }}
-                      value="Loading..."
-                      className="c7ntest-podLog-editor"
-                      onChange={code => this.props.ChangeCode(code)}
-                      options={options}
-                    />
-                    <div className={`c7ntest-podLog-action log-goTop ${fullscreen ? 'g-top' : ''}`} onClick={this.goTop} role="none">Go Top</div>
+          <Select
+            label="选择应用"
+            style={{ width: 512, marginBottom: 20 }}
+            filter
+            value={currentApp}
+            loading={selectLoading}
+            onChange={this.handleDefectsChange}
+            onFilterChange={this.loadApps}
+          >
+            {appOptions}
+          </Select>
+          <Table loading={loading} columns={columns} dataSource={historyList} pagination={pagination} onChange={this.handleTableChange} />
+          <Sidebar
+            visible={showSide}
+            title={<FormattedMessage id="container.log.header.title" />}
+            onOk={this.closeSidebar}
+            className="c7ntest-podLog-content c7ntest-region"
+            okText={<FormattedMessage id="close" />}
+            okCancel={false}
+          >
+            <Content className="sidebar-content" code="container.log" values={{ name: podName }}>
+              <section className="c7ntest-podLog-section">
+                <div className="c7ntest-podLog-hei-wrap">
+                  <div className="c7ntest-podShell-title">
+                    <FormattedMessage id="container.term.log" />
+                    {}
+                    <Select value={containerName} onChange={this.containerChange}>
+                      {containerDom}
+                    </Select>
+                    <Button type="primary" funcType="flat" shape="circle" icon="fullscreen" onClick={this.setFullscreen} />
                   </div>
-                </section>
-              </Content>
-            </Sidebar>
-          </Spin>
+                  {' '}
+                  {following ? <div className={`c7ntest-podLog-action log-following ${fullscreen ? 'f-top' : ''}`} onClick={this.stopFollowing} role="none">Stop Following</div>
+                    : <div className={`c7ntest-podLog-action log-following ${fullscreen ? 'f-top' : ''}`} onClick={this.loadLog.bind(this, true)} role="none">Start Following</div>}
+                  <CodeMirror
+                    ref={(editor) => { this.editorLog = editor; }}
+                    value="Loading..."
+                    className="c7ntest-podLog-editor"
+                    onChange={code => this.props.ChangeCode(code)}
+                    options={options}
+                  />
+                  <div className={`c7ntest-podLog-action log-goTop ${fullscreen ? 'g-top' : ''}`} onClick={this.goTop} role="none">Go Top</div>
+                </div>
+              </section>
+            </Content>
+          </Sidebar>
         </Content>
       </Page>
     );
