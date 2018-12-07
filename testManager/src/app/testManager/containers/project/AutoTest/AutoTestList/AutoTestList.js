@@ -5,6 +5,8 @@ import {
 import {
   Icon, Button, Table, Select, Spin, Tooltip, Modal,
 } from 'choerodon-ui';
+import { observable, action } from 'mobx';
+import { observer } from 'mobx-react';
 import TimeAgo from 'timeago-react';
 import { FormattedMessage } from 'react-intl';
 import _ from 'lodash';
@@ -19,7 +21,7 @@ import './AutoTestList.scss';
 
 const Sidebar = Modal.Sidebar;
 const { Option } = Select;
-
+// @observer
 class AutoTestList extends Component {
   state = {
     showSide: false,
@@ -40,6 +42,13 @@ class AutoTestList extends Component {
 
   componentDidMount() {
     this.loadApps();
+    console.log(this.editorLog);
+  }
+
+  componentWillUnmount() {
+    if (this.state.ws) {
+      this.closeSidebar();
+    } 
   }
 
   loadApps = (value = '') => {
@@ -155,21 +164,30 @@ class AutoTestList extends Component {
    * @param record 容器record
    */
   showLog = (record) => {
-    loadPodParam(record.id)
-      .then((data) => {
-        if (data && data.length) {
-          this.setState({
-            envId: record.envId,
-            namespace: record.namespace,
-            containerArr: data,
-            podName: data[0].podName,
-            containerName: data[0].containerName,
-            logId: data[0].logId,
-            showSide: true,
-          });
-        }
-        this.loadLog();
+    // loadPodParam(record.id)
+    //   .then((data) => {
+    const { testAppInstanceDTO } = record;
+    if (testAppInstanceDTO) {
+      const {
+        envId, podName, containerName, logId, 
+      } = testAppInstanceDTO;
+      // if (data && data.length) {
+      this.setState({
+        envId, 
+        // containerArr: data,
+        podName,
+        containerName,
+        logId,
+        showSide: true,
+      }, () => {
+        setTimeout(() => {
+          this.loadLog();
+        }, 1000); 
       });
+      
+      
+      // }
+    }
   };
 
   /**
@@ -197,16 +215,18 @@ class AutoTestList extends Component {
   // @action
   loadLog = (followingOK) => {
     const {
-      namespace, envId, logId, podName, containerName, following,
+      envId, logId, podName, containerName, following,
     } = this.state;
     const authToken = document.cookie.split('=')[1];
     const logs = [];
     let oldLogs = [];
     let editor = null;
+    console.log('load', this, this.editorLog);
     if (this.editorLog) {
       editor = this.editorLog.getCodeMirror();
-      try {
-        const ws = new WebSocket(`POD_WEBSOCKET_URL/ws/log?key=env:${namespace}.envId:${envId}.log:${logId}&podName=${podName}&containerName=${containerName}&logId=${logId}&token=${authToken}`);
+      try { // PRO_DEVOPS_HOST
+        const ws = new WebSocket(`${'ws://devops-service-front.staging.saas.hand-china.com'}/ws/log?key=env:${'choerodon-test'}.envId:${envId}.log:${logId}&podName=${podName}&containerName=${containerName}&logId=${logId}&token=${authToken}`);
+        console.log(ws);
         this.setState({ ws, following: true });
         if (!followingOK) {
           editor.setValue('Loading...');
@@ -264,6 +284,7 @@ class AutoTestList extends Component {
           }
         });
       } catch (e) {
+        console.log(e);
         editor.setValue('连接失败');
       }
     }

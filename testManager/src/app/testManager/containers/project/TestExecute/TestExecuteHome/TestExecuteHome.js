@@ -18,8 +18,10 @@ import {
   getCycleTree, deleteExecute, getExecutesByCycleId,
   clone, addFolder, exportCycle,
 } from '../../../../api/cycleApi';
+import { getPrioritys } from '../../../../api/agileApi';
 import { getStatusList } from '../../../../api/TestStatusApi';
 import { editCycle } from '../../../../api/ExecuteDetailApi';
+import { renderPriority } from '../../../../components/IssueManageComponent/IssueTable/tags';
 import {
   TreeTitle, CreateCycle, EditCycle, ShowCycleData, CloneCycle,
 } from '../../../../components/TestExecuteComponent';
@@ -86,6 +88,7 @@ class TestExecuteHome extends Component {
     searchValue: '',
     statusList: [],
     filters: {},
+    prioritys: [],
   };
 
   componentDidMount() {
@@ -235,8 +238,8 @@ class TestExecuteHome extends Component {
     this.setState({
       loading: true,
     });
-    getStatusList('CYCLE_CASE').then((statusList) => {
-      this.setState({ statusList });
+    Promise.all([getStatusList('CYCLE_CASE'), getPrioritys()]).then(([statusList, prioritys]) => {
+      this.setState({ statusList, prioritys });
     });
     getCycleTree(assignedTo).then((data) => {
       traverseTree({ title: '所有版本', key: '0', children: data.versions });
@@ -566,7 +569,7 @@ class TestExecuteHome extends Component {
     // window.console.log('render');
     const {
       CreateExecuteDetailVisible, CreateCycleVisible, EditCycleVisible, CloneCycleVisible,
-      currentCloneCycle, loading, currentEditValue, testList, rightLoading,
+      currentCloneCycle, loading, currentEditValue, testList, rightLoading, prioritys,
       searchValue, autoExpandParent, statusList,
     } = this.state;
     const treeData = TestExecuteStore.getTreeData;
@@ -580,12 +583,12 @@ class TestExecuteHome extends Component {
     const prefix = <Icon type="filter_list" />;
     const columns = [{
       title: <span>ID</span>,
-      dataIndex: 'issueName',
-      key: 'issueName',
+      dataIndex: 'issueNum',
+      key: 'issueNum',
       flex: 1,
       // filters: [],
       // onFilter: (value, record) => 
-      //   record.issueInfosDTO && record.issueInfosDTO.issueName.indexOf(value) === 0,  
+      //   record.issueInfosDTO && record.issueInfosDTO.issueNum.indexOf(value) === 0,  
       render(issueId, record) {
         const { issueInfosDTO } = record;
         return (
@@ -593,7 +596,7 @@ class TestExecuteHome extends Component {
             <Tooltip
               title={(
                 <div>
-                  <div>{issueInfosDTO.issueName}</div>
+                  <div>{issueInfosDTO.issueNum}</div>
                   {/* <div>{issueInfosDTO.summary}</div> */}
                 </div>
               )}
@@ -606,7 +609,7 @@ class TestExecuteHome extends Component {
                 to={issueLink(issueInfosDTO.issueId, issueInfosDTO.typeCode)}
                 target="_blank"
               >
-                {issueInfosDTO.issueName}
+                {issueInfosDTO.issueNum}
               </Link>
             </Tooltip>
           )
@@ -617,9 +620,9 @@ class TestExecuteHome extends Component {
       dataIndex: 'summary',
       key: 'summary',
       width: '20%',
-      // filters: [],
+      filters: [],
       // onFilter: (value, record) => 
-      //   record.issueInfosDTO && record.issueInfosDTO.issueName.indexOf(value) === 0,  
+      //   record.issueInfosDTO && record.issueInfosDTO.issueNum.indexOf(value) === 0,  
       render(issueId, record) {
         const { issueInfosDTO } = record;
         return (
@@ -640,6 +643,18 @@ class TestExecuteHome extends Component {
               </span>
             </Tooltip>
           )
+        );
+      },
+    }, {
+      title: '用例优先级',
+      dataIndex: 'priorityId',
+      key: 'priorityId',
+      filters: prioritys.map(priority => ({ text: priority.name, value: priority.id })),
+      flex: 1,
+      render(issueId, record) {
+        const { issueInfosDTO } = record;
+        return (
+          issueInfosDTO && renderPriority(issueInfosDTO.priorityDTO)
         );
       },
     }, {
@@ -706,7 +721,7 @@ class TestExecuteHome extends Component {
                       to={issueLink(defect.issueInfosDTO.issueId, defect.issueInfosDTO.typeCode)}
                       target="_blank"
                     >
-                      {defect.issueInfosDTO.issueName}
+                      {defect.issueInfosDTO.issueNum}
                     </Link>
                     <div>{defect.issueInfosDTO.summary}</div>
                   </div>
@@ -715,7 +730,7 @@ class TestExecuteHome extends Component {
             </div>
           )}
         >
-          {defects.map((defect, i) => defect.issueInfosDTO && defect.issueInfosDTO.issueName).join(',')}
+          {defects.map((defect, i) => defect.issueInfosDTO && defect.issueInfosDTO.issueNum).join(',')}
         </Tooltip>
       ),
     },
