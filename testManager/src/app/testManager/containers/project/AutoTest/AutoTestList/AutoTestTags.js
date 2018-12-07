@@ -1,60 +1,71 @@
 import React from 'react';
 import { Icon } from 'choerodon-ui';
 
-const PODSTATUS = [{
-  icon: 'pending',
+export const PODSTATUS = [{
+  icon: 'pause_circle_outline',
   text: '等待中',
-  color: '#00BF96',
+  color: '#ffb100',
+  value: 0,
 }, {
   icon: 'timelapse',
   text: '进行中',
   color: '#4D90FE',
+  value: 1,
 }, {
   icon: 'check_circle',
   text: '通过',
   color: '#00BF96',
+  value: 2,
 }, {
   icon: 'cancel',
   text: '失败',
   color: '#F44336',
+  value: 3,
 }];
 const STATUS = {
   passed: {
     icon: 'check_circle',
     text: '通过',
     color: '#00BF96',
+    value: 3,
   },
   pending: {
     icon: 'timelapse',
     text: '进行中',
     color: '#4D90FE',
+    value: 3,
   },
   failed: {
     icon: 'cancel',
     text: '失败',
     color: '#F44336',
+    value: 3,
   },
 };
-const TESTRESULT = [
+export const TESTRESULT = [
   {
     icon: 'check_circle',
     text: '未执行',
     color: 'rgba(0, 0, 0, 0.18)',
+    value: 0,
   },
   {
     icon: 'check_circle',
     text: '全部通过',
     color: '#00BF96',
+    value: 1,
   },
   {
     icon: 'timelapse',
     text: '部分通过',
     color: '#4D90FE',
+    value: 2,
   },
   {
     icon: 'cancel',
     text: '全未通过',
     color: '#F44336',
+    value: 3,
   },
 ];
 // const TESTRESULT = {

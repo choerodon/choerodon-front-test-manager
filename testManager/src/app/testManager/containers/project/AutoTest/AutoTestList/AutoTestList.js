@@ -15,7 +15,9 @@ import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/base16-dark.css';
 import { User } from '../../../../components/CommonComponent';
 import { getApps, getTestHistoryByApp, loadPodParam } from '../../../../api/AutoTestApi';
-import { PodStatus, TestResult } from './AutoTestTags';
+import {
+  PODSTATUS, TESTRESULT, PodStatus, TestResult, 
+} from './AutoTestTags';
 import { commonLink, getProjectName } from '../../../../common/utils';
 import './AutoTestList.scss';
 
@@ -38,6 +40,7 @@ class AutoTestList extends Component {
       total: 0,
       pageSize: 10,
     },
+    filter: {},
   }
 
   componentDidMount() {
@@ -96,14 +99,15 @@ class AutoTestList extends Component {
     });
   }
 
-  loadTestHistoryByApp = ({ appId = this.state.currentApp, pagination = this.state.pagination, filter = {} } = {}) => {
+  loadTestHistoryByApp = ({ appId = this.state.currentApp, pagination = this.state.pagination, filter = this.state.filter } = {}) => {
     this.setState({
       loading: true,
+      filter,
     });
     getTestHistoryByApp(appId, pagination, filter).then((history) => {
       this.setState({
         loading: false,
-        historyList: history.content,
+        historyList: history.content,        
         pagination: {
           current: history.number + 1,
           total: history.totalElements,
@@ -353,7 +357,7 @@ class AutoTestList extends Component {
       title: '测试状态',
       dataIndex: 'podStatus',
       key: 'podStatus',
-      filters: [{ text: '等待中', value: 0 }, { text: '进行中', value: 1 }, { text: '已完成', value: 2 }],
+      filters: PODSTATUS,
       render: (status, record) => {
         const { testAppInstanceDTO } = record;
         const { podStatus } = testAppInstanceDTO || {};
@@ -384,11 +388,11 @@ class AutoTestList extends Component {
       key: 'during',
     }, {
       title: '执行时间',
-      dataIndex: 'time',
-      key: 'time',
-      render: time => (
+      dataIndex: 'creationDate',
+      key: 'creationDate',
+      render: creationDate => (
         <TimeAgo
-          datetime={time}
+          datetime={creationDate}
           locale={Choerodon.getMessage('zh_CN', 'en')}
         />
       ),
@@ -396,6 +400,7 @@ class AutoTestList extends Component {
       title: '测试结果',
       dataIndex: 'testStatus',
       key: 'testStatus',
+      filters: TESTRESULT,
       render: testStatus => TestResult(testStatus),
     }, {
       title: '',

@@ -4,14 +4,17 @@ import { getProjectId, getOrganizationId, request } from '../common/utils';
 import './AutoTestApiMock';
 
 
-export function getTestHistoryByApp(appId, pagination, filters) {
+export function getTestHistoryByApp(appId, pagination, filter) {
   const { current, pageSize } = pagination;
-  // return axios.get('/getTestHistoryByApp');
-  return request.post(`/test/v1/projects/${getProjectId()}/test/automation/queryWithHistroy?page=${current - 1}&size=${pageSize}`, 
-    {
-      appId,
-      ...filters,
-    });
+  const search = { appId, ...filter };
+  if (filter.version) {
+    search.filter = {
+      searchParam: {
+        version: filter.version,
+      },
+    };
+  }
+  return request.post(`/test/v1/projects/${getProjectId()}/test/automation/queryWithHistroy?page=${current - 1}&size=${pageSize}`, search);
 }
 export function getYaml(appId, appVersionId, envId) {
   // return axios.get('/getYaml');
