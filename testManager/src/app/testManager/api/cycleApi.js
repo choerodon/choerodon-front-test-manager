@@ -81,3 +81,6 @@ export function getFoldersByCycleId(cycleId) {
 export function getExportList() {
   return request.get(`/test/v1/projects/${getProjectId()}/test/fileload/history/cycle`);
 }
+export function assignBatch(userId, cycleId) {
+  return request.put(`test/v1/projects/${getProjectId()}/cycle/batch/change/cycleCase/assignedTo/${userId}/in/cycle/${cycleId}`);
+}

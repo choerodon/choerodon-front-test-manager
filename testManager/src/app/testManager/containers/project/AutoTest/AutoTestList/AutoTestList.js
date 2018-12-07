@@ -88,6 +88,13 @@ class AutoTestList extends Component {
     });
   }
 
+  handleAppChange=(appId) => {
+    this.loadTestHistoryByApp({ appId });
+    this.setState({
+      currentApp: appId,     
+  
+    });
+  }
 
   loadTestHistoryByApp = ({ appId = this.state.currentApp, pagination = this.state.pagination, filter = {} } = {}) => {
     this.setState({
@@ -452,7 +459,7 @@ class AutoTestList extends Component {
             filter
             value={currentApp}
             loading={selectLoading}
-            onChange={this.handleDefectsChange}
+            onChange={this.handleAppChange}
             onFilterChange={this.loadApps}
           >
             {appOptions}

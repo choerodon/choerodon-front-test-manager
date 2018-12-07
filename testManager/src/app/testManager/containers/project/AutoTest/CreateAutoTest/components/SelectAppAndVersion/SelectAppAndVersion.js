@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { observer } from 'mobx-react';
 import { withRouter } from 'react-router-dom';
+import _ from 'lodash';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { Modal, Table, Select } from 'choerodon-ui';
 import { stores, Content } from 'choerodon-front-boot';
@@ -36,7 +37,7 @@ class SelectAppAndVersion extends Component {
         return; 
       }
       CreateAutoTestStore.setAppList(data.content);
-      if (data.content.length > 0 && data.content[0].id) {
+      if (data.content.length > 0 && data.content[0].id && !app.id) {
         this.loadAppVersions(app.id || data.content[0].id);       
         CreateAutoTestStore.setApp(data.content[0]);        
       }
@@ -156,9 +157,10 @@ class SelectAppAndVersion extends Component {
    * 点击选择数据
    * @param record
    */
-  handleSelectApp = (record) => {
-    this.loadAppVersions(record.id);    
-    CreateAutoTestStore.setApp(record);    
+  handleSelectApp = (id) => {
+    this.loadAppVersions(id);    
+    const { app, appList } = CreateAutoTestStore;
+    CreateAutoTestStore.setApp(_.find(appList, { id }));    
   };
 
   handleSelectAppVersion=(record) => {  

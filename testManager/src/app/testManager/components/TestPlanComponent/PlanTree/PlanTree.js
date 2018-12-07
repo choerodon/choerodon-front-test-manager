@@ -9,9 +9,9 @@ import FileSaver from 'file-saver';
 import TestPlanStore from '../../../store/project/TestPlan/TestPlanStore';
 import CloneCycle from '../CloneCycle';
 import CloneStage from '../CloneStage';
-import { ResizeAble } from '../../CommonComponent';
+import AssignBatch from '../AssignBatch';
 import {  
-  clone, addFolder, exportCycle,
+  clone, addFolder, exportCycle, 
 } from '../../../api/cycleApi';
 import PlanTreeTitle from './PlanTreeTitle';
 import CreateStage from '../CreateStage';
@@ -31,7 +31,8 @@ class PlanTree extends Component {
     currentCloneStage: null,
     CloneStageVisible: false,
     EditCycleVisible: false,
-    currentEditValue: {},
+    AssignBatchShow: false,
+    currentEditValue: {},    
   }
 
   componentDidMount() {
@@ -77,6 +78,13 @@ class PlanTree extends Component {
         });
         // const parentKey = this.getParentKey(item.key, TestPlanStore.getTreeData);
         // TestPlanStore.addItemByParentKey(parentKey, { ...item, ...{ key: `${parentKey}-CLONE_FOLDER`, type: 'CLONE_FOLDER' } });
+        break;
+      }
+      case 'ASSIGN_BATCH': {
+        this.setState({
+          AssignBatchShow: true,
+          currentEditValue: item,
+        });
         break;
       }
       case 'CLONE_CYCLE': {
@@ -263,7 +271,7 @@ class PlanTree extends Component {
   render() {
     const { onClose } = this.props;
     const {
-      autoExpandParent, CreateStageVisible, CreateStageIn,
+      autoExpandParent, CreateStageVisible, CreateStageIn, AssignBatchShow,
       CloneCycleVisible, currentCloneCycle, CloneStageVisible, currentCloneStage, 
       EditCycleVisible, currentEditValue,
     } = this.state;
@@ -290,6 +298,12 @@ class PlanTree extends Component {
           CreateStageIn={CreateStageIn}
           onCancel={() => { this.setState({ CreateStageVisible: false }); }}
           onOk={() => { this.setState({ CreateStageVisible: false }); this.refresh(); }}
+        />
+        <AssignBatch 
+          visible={AssignBatchShow}
+          currentEditValue={currentEditValue}
+          onCancel={() => { this.setState({ AssignBatchShow: false }); }}
+          onOk={() => { this.setState({ AssignBatchShow: false }); this.refresh(); }}
         />
         <div className="c7ntest-PlanTree-treeTop">
           <Input

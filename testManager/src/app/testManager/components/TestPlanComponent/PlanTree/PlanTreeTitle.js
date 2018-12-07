@@ -45,6 +45,10 @@ class PlanTreeTitle extends Component {
         this.props.callback(data, 'ADD_FOLDER');
         break;
       }
+      case 'assign': {
+        this.props.callback(data, 'ASSIGN_BATCH');
+        break;
+      }
       case 'edit': {
         if (type === 'folder') {
           TestPlanStore.EditStage(data);
@@ -128,6 +132,13 @@ class PlanTreeTitle extends Component {
             <Menu.Item key="add">
               <FormattedMessage id="cycle_addFolder" />
             </Menu.Item>,
+          );
+        }
+        if (type === 'folder') {
+          items.push(
+            <Menu.Item key="assign">
+              批量指派
+            </Menu.Item>, 
           );
         }
         items = items.concat([
