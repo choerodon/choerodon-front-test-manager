@@ -8,7 +8,8 @@ export function getTestHistoryByApp(appId, pagination, filters) {
   const { current, pageSize } = pagination;
   // return axios.get('/getTestHistoryByApp');
   return request.post(`/test/v1/projects/${getProjectId()}/test/automation/queryWithHistroy?page=${current - 1}&size=${pageSize}`, 
-    {  
+    {
+      appId,
       ...filters,
     });
 }

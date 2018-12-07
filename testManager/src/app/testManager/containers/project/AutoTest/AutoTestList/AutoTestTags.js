@@ -2,7 +2,7 @@ import React from 'react';
 import { Icon } from 'choerodon-ui';
 
 const PODSTATUS = [{
-  icon: 'check_circle',
+  icon: 'pending',
   text: '等待中',
   color: '#00BF96',
 }, {
