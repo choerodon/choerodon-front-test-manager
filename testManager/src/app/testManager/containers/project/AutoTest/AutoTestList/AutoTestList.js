@@ -2,11 +2,10 @@ import React, { Component } from 'react';
 import {
   Page, Header, Content,
 } from 'choerodon-front-boot';
+import moment from 'moment';
 import {
   Icon, Button, Table, Select, Spin, Tooltip, Modal,
 } from 'choerodon-ui';
-import { observable, action } from 'mobx';
-import { observer } from 'mobx-react';
 import TimeAgo from 'timeago-react';
 import { FormattedMessage } from 'react-intl';
 import _ from 'lodash';
@@ -14,11 +13,13 @@ import CodeMirror from 'react-codemirror';
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/base16-dark.css';
 import { User } from '../../../../components/CommonComponent';
-import { getApps, getTestHistoryByApp, loadPodParam } from '../../../../api/AutoTestApi';
+import { getApps, getTestHistoryByApp, reRunTest } from '../../../../api/AutoTestApi';
 import {
   PODSTATUS, TESTRESULT, PodStatus, TestResult, 
 } from './AutoTestTags';
-import { commonLink, getProjectName } from '../../../../common/utils';
+import {
+  commonLink, getProjectName, humanizeDuration, cycleLink, 
+} from '../../../../common/utils';
 import './AutoTestList.scss';
 
 const Sidebar = Modal.Sidebar;
@@ -226,8 +227,9 @@ class AutoTestList extends Component {
   // @action
   loadLog = (followingOK) => {
     const {
-      envId, logId, podName, containerName, following,
+      envId, podName, containerName, following,
     } = this.state;
+    const logId = Math.random();
     const authToken = document.cookie.split('=')[1];
     const logs = [];
     let oldLogs = [];
@@ -338,12 +340,31 @@ class AutoTestList extends Component {
     });
   };
 
+  handleRerunTest=(record) => {
+    const { id } = record;
+    reRunTest({ historyId: id }).then((res) => {
+      this.setState({
+        loading: true,
+      });
+      this.loadTestHistoryByApp();
+    }).catch((err) => {
+      this.setState({
+        loading: false,
+      });
+      Choerodon.prompt('网络出错');
+    });
+  }
+
   toCreateAutoTest = () => {
     this.props.history.push(commonLink('/AutoTest/create'));
   }
 
   toReport = (resultId) => {
     this.props.history.push(commonLink(`/AutoTest/report/${resultId}`));
+  }
+
+  toTestExecute=(cycleId) => {
+    this.props.history.push(cycleLink(cycleId));
   }
 
   render() {
@@ -387,6 +408,13 @@ class AutoTestList extends Component {
       title: '时长',
       dataIndex: 'during',
       key: 'during',
+      render: (during, record) => {
+        const { creationDate, lastUpdateDate } = record;
+        const diff = moment(lastUpdateDate).diff(moment(creationDate));  
+        return creationDate && lastUpdateDate
+          ? humanizeDuration(diff)
+          : null;        
+      },
     }, {
       title: '执行时间',
       dataIndex: 'creationDate',
@@ -409,7 +437,7 @@ class AutoTestList extends Component {
       key: 'action',
       render: (action, record) => {
         const {
-          id, instanceId, status, resultId,
+          id, instanceId, status, resultId, cycleId,
         } = record;
         return (
           <div style={{ display: 'flex' }}>
@@ -420,8 +448,13 @@ class AutoTestList extends Component {
               </Button>
             </Tooltip>
             <Tooltip title={status === 'failed' ? '重试' : '重新执行'}>
-              <Button type="circle">
+              <Button type="circle" onClick={this.handleRerunTest.bind(this, record)}>
                 <Icon type="replay" />
+              </Button>
+            </Tooltip>
+            <Tooltip title="测试执行">
+              <Button disabled={!cycleId} type="circle" onClick={this.toTestExecute.bind(this, cycleId)}>
+                <Icon type="poll" />
               </Button>
             </Tooltip>
             <Tooltip title="测试报告">

@@ -199,6 +199,10 @@ class ConfirmInfo extends Component {
           loading: false,
         });
         this.toTestHistory();
+      }).catch((err) => {
+        this.setState({
+          loading: false,
+        });
       });
     } else {
       // 定时执行
