@@ -372,6 +372,7 @@ class AutoTestList extends Component {
       title: '测试框架',
       dataIndex: 'framework',
       key: 'framework',
+      filters: [],
     }, {
       title: '应用版本',
       dataIndex: 'version',

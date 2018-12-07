@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { withRouter } from 'react-router-dom';
 import {
   Button, Select, Radio, Form, Input, Popover, Icon, Spin, DatePicker,
 } from 'choerodon-ui';
@@ -8,6 +9,7 @@ import { observer } from 'mobx-react';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import CreateAutoTestStore from '../../../../../../store/project/AutoTest/CreateAutoTestStore';
 import { YamlEditor } from '../../../../../../components/CommonComponent';
+import { commonLink } from '../../../../../../common/utils';
 import {
   getYaml, runTestTiming, runTestInstant, 
 } from '../../../../../../api/AutoTestApi';
@@ -196,6 +198,7 @@ class ConfirmInfo extends Component {
         this.setState({
           loading: false,
         });
+        this.toTestHistory();
       });
     } else {
       // 定时执行
@@ -225,6 +228,7 @@ class ConfirmInfo extends Component {
             this.setState({
               loading: false,
             });
+            this.toTestHistory();
           });
         } else {
           console.log(err);
@@ -428,6 +432,10 @@ class ConfirmInfo extends Component {
     );
   }
 
+  toTestHistory = () => {
+    this.props.history.push(commonLink('/AutoTest/list'));
+  }
+
   render() {
     const {
       app, appVersion, version, env, 
@@ -579,4 +587,4 @@ class ConfirmInfo extends Component {
   }
 }
 
-export default ConfirmInfo;
+export default withRouter(ConfirmInfo);
