@@ -350,9 +350,10 @@ class AutoTestList extends Component {
     const appOptions = appList.map(app => <Option value={app.id}>{app.name}</Option>);
     const containerDom = containerArr.length && (_.map(containerArr, c => <Option key={c.logId} value={`${c.logId}+${c.containerName}`}>{c.containerName}</Option>));
     const columns = [{
-      title: '容器状态',
-      dataIndex: 'status',
-      key: 'status',
+      title: '测试状态',
+      dataIndex: 'podStatus',
+      key: 'podStatus',
+      filters: [{ text: '等待中', value: 0 }, { text: '进行中', value: 1 }, { text: '已完成', value: 2 }],
       render: (status, record) => {
         const { testAppInstanceDTO } = record;
         const { podStatus } = testAppInstanceDTO || {};
@@ -369,10 +370,10 @@ class AutoTestList extends Component {
       key: 'framework',
     }, {
       title: '应用版本',
-      dataIndex: 'appVersion',
-      key: 'appVersion',
+      dataIndex: 'version',
+      key: 'version',
       filters: [],
-      render: (appVersion, record) => {
+      render: (version, record) => {
         const { testAppInstanceDTO } = record;
         const { appVersionName } = testAppInstanceDTO || {};
         return <span>{appVersionName}</span>;

@@ -3,21 +3,13 @@ import axios from 'axios';
 import { getProjectId, getOrganizationId, request } from '../common/utils';
 import './AutoTestApiMock';
 
-/**
- *获取当前用户
- *
- * @export
- * @returns
- */
-export function getAppList() {
-  return axios.get('/getAppList');
-}
+
 export function getTestHistoryByApp(appId, pagination, filters) {
   const { current, pageSize } = pagination;
   // return axios.get('/getTestHistoryByApp');
   return request.post(`/test/v1/projects/${getProjectId()}/test/automation/queryWithHistroy?page=${current - 1}&size=${pageSize}`, 
-    {
-      appId,
+    {  
+      ...filters,
     });
 }
 export function getYaml(appId, appVersionId, envId) {
@@ -34,7 +26,7 @@ export function loadPodParam(id, type) {
 export function getApps({
   page, size, sort, postData, 
 }) {
-  return request.post(`/devops/v1/projects/${getProjectId()}/apps/list_by_options?active=true&page=${page}&size=${size}&sort=${sort.field},${sort.order}`, JSON.stringify(postData));
+  return request.post(`/devops/v1/projects/${getProjectId()}/apps/list_by_options?type=test&active=true&page=${page}&size=${size}&sort=${sort.field},${sort.order}`, JSON.stringify(postData));
 }
 export function getAppVersions(appId, pagination, filter) {
   const { current, pageSize } = pagination;
