@@ -138,7 +138,7 @@ class SelectVariable extends Component {
           >
             {envList.map(v => (
               // <Option value={v.id} key={v.id} disabled={!v.connect}>
-              <Option value={v.id} key={v.id}>
+              <Option value={v.id} key={v.id} disabled={!v.connect}>
                 {v.connect ? <span className="c7ntest-ist-status_on" /> : <span className="c7ntest-ist-status_off" />}
                 {v.name}
               </Option>

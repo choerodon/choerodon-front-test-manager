@@ -233,7 +233,7 @@ class TestPlanHome extends Component {
         const { issueInfosDTO } = record;
         return (
           issueInfosDTO && (
-            <SmartTooltip width={100}>
+            <SmartTooltip>
               {issueInfosDTO.summary}
             </SmartTooltip>            
           )

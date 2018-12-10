@@ -17,27 +17,27 @@ class SmartTooltip extends Component {
     placement: 'topLeft',
   };
 
-  getSnapshotBeforeUpdate(prevProps, prevState) {
-    // if (this.state.overflow !== prevState.overflow) {
+  componentDidMount() {
+    this.checkOverflow();
+  }
+  
+  componentDidUpdate(prevProps, prevState) {
+    this.checkOverflow();
+  }
+
+  checkOverflow=() => {
     if (this.container) {
       const { scrollWidth, clientWidth } = this.container;
       const isOverflow = scrollWidth > clientWidth;
-      return isOverflow;
-    }
-    return false;
-      
-   
-    // }
+      // console.log(scrollWidth, clientWidth);     
+      if (this.state.overflow !== isOverflow) {
+        this.setState({
+          overflow: isOverflow,
+        });
+      }
+    }    
   }
 
-  componentDidUpdate(prevProps, prevState, isOverflow) {
-    if (this.state.overflow !== isOverflow) {
-      this.setState({
-        overflow: isOverflow,
-      });
-    }
-  }
-  
   saveRef = name => (ref) => {
     this[name] = ref;
   }
