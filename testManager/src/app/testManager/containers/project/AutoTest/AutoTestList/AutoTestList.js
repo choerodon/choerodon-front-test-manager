@@ -4,7 +4,7 @@ import {
 } from 'choerodon-front-boot';
 import moment from 'moment';
 import {
-  Icon, Button, Table, Select, Spin, Tooltip, Modal,
+  Icon, Button, Table, Select, Spin, Tooltip, Modal, Menu, Dropdown,
 } from 'choerodon-ui';
 import TimeAgo from 'timeago-react';
 import { FormattedMessage } from 'react-intl';
@@ -15,10 +15,10 @@ import 'codemirror/theme/base16-dark.css';
 import { User } from '../../../../components/CommonComponent';
 import { getApps, getTestHistoryByApp, reRunTest } from '../../../../api/AutoTestApi';
 import {
-  PODSTATUS, TESTRESULT, PodStatus, TestResult, 
+  PODSTATUS, TESTRESULT, PodStatus, TestResult,
 } from './AutoTestTags';
 import {
-  commonLink, getProjectName, humanizeDuration, cycleLink, 
+  commonLink, getProjectName, humanizeDuration, cycleLink,
 } from '../../../../common/utils';
 import './AutoTestList.scss';
 
@@ -52,7 +52,7 @@ class AutoTestList extends Component {
   componentWillUnmount() {
     if (this.state.ws) {
       this.closeSidebar();
-    } 
+    }
   }
 
   loadApps = (value = '') => {
@@ -92,11 +92,11 @@ class AutoTestList extends Component {
     });
   }
 
-  handleAppChange=(appId) => {
+  handleAppChange = (appId) => {
     this.loadTestHistoryByApp({ appId });
     this.setState({
-      currentApp: appId,     
-  
+      currentApp: appId,
+
     });
   }
 
@@ -108,7 +108,7 @@ class AutoTestList extends Component {
     getTestHistoryByApp(appId, pagination, filter).then((history) => {
       this.setState({
         loading: false,
-        historyList: history.content,        
+        historyList: history.content,
         pagination: {
           current: history.number + 1,
           total: history.totalElements,
@@ -181,11 +181,11 @@ class AutoTestList extends Component {
     const { testAppInstanceDTO } = record;
     if (testAppInstanceDTO) {
       const {
-        envId, podName, containerName, logId, 
+        envId, podName, containerName, logId,
       } = testAppInstanceDTO;
       // if (data && data.length) {
       this.setState({
-        envId, 
+        envId,
         // containerArr: data,
         podName,
         containerName,
@@ -194,10 +194,10 @@ class AutoTestList extends Component {
       }, () => {
         setTimeout(() => {
           this.loadLog();
-        }, 1000); 
+        }, 1000);
       });
-      
-      
+
+
       // }
     }
   };
@@ -340,7 +340,7 @@ class AutoTestList extends Component {
     });
   };
 
-  handleRerunTest=(record) => {
+  handleRerunTest = (record) => {
     const { id } = record;
     reRunTest({ historyId: id }).then((res) => {
       this.setState({
@@ -363,9 +363,53 @@ class AutoTestList extends Component {
     this.props.history.push(commonLink(`/AutoTest/report/${resultId}`));
   }
 
-  toTestExecute=(cycleId) => {
+  toTestExecute = (cycleId) => {
     this.props.history.push(cycleLink(cycleId));
   }
+
+  handleItemClick=(record, { item, key, keyPath }) => {
+    const {
+      id, instanceId, status, resultId, cycleId,
+    } = record;
+    // console.log(key, record);
+    switch (key) {
+      case 'log': {
+        this.showLog(record);
+        break;
+      }
+      
+      case 'retry': {
+        this.handleRerunTest(record);
+        break;
+      }
+      case 'cycle': {
+        this.toTestExecute(cycleId);
+        break;
+      }
+      case 'report': {
+        this.toReport(resultId);
+        break;
+      }
+      default: break;
+    }
+  }
+
+  getMenu = record => (
+    <Menu onClick={this.handleItemClick.bind(this, record)} style={{ margin: '10px 0 0 28px' }}>
+      <Menu.Item key="log">
+        查看日志
+      </Menu.Item>
+      <Menu.Item key="retry">
+        重新执行
+      </Menu.Item>
+      <Menu.Item key="cycle">
+        测试循环
+      </Menu.Item>
+      <Menu.Item key="report">
+        测试报告
+      </Menu.Item>
+    </Menu>
+  );
 
   render() {
     const {
@@ -374,6 +418,7 @@ class AutoTestList extends Component {
     } = this.state;
     const appOptions = appList.map(app => <Option value={app.id}>{app.name}</Option>);
     const containerDom = containerArr.length && (_.map(containerArr, c => <Option key={c.logId} value={`${c.logId}+${c.containerName}`}>{c.containerName}</Option>));
+    
     const columns = [{
       title: '测试状态',
       dataIndex: 'podStatus',
@@ -410,10 +455,10 @@ class AutoTestList extends Component {
       key: 'during',
       render: (during, record) => {
         const { creationDate, lastUpdateDate } = record;
-        const diff = moment(lastUpdateDate).diff(moment(creationDate));  
+        const diff = moment(lastUpdateDate).diff(moment(creationDate));
         return creationDate && lastUpdateDate
           ? humanizeDuration(diff)
-          : null;        
+          : null;
       },
     }, {
       title: '执行时间',
@@ -441,7 +486,10 @@ class AutoTestList extends Component {
         } = record;
         return (
           <div style={{ display: 'flex' }}>
-            <div className="c7ntest-flex-space" />
+            <Dropdown overlay={this.getMenu(record)} trigger={['click']}>
+              <Button shape="circle" icon="more_vert" />
+            </Dropdown>
+            {/* <div className="c7ntest-flex-space" />
             <Tooltip title={<FormattedMessage id="container.log" />}>
               <Button type="circle" onClick={this.showLog.bind(this, record)}>
                 <Icon type="insert_drive_file" />
@@ -461,7 +509,7 @@ class AutoTestList extends Component {
               <Button disabled={!resultId} type="circle" onClick={this.toReport.bind(this, resultId)}>
                 <Icon type="poll" />
               </Button>
-            </Tooltip>
+            </Tooltip> */}
           </div>
         );
       },
