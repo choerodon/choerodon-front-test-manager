@@ -4,6 +4,7 @@ import {
   Menu, Input, Dropdown, Button, Popover, Tooltip, Icon, Modal,
 } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
+import { SmartTooltip } from '../../CommonComponent';
 import './PlanTreeTitle.scss';
 import { editFolder, deleteCycleOrFolder } from '../../../api/cycleApi';
 import { syncFolder, syncFoldersInCycle, syncFoldersInVersion } from '../../../api/IssueManageApi';
@@ -186,11 +187,9 @@ class PlanTreeTitle extends Component {
             />
           )
           : (
-            <div className="c7ntest-plan-tree-title-text" style={{ width: !data.type && '120px' }}>
-              <Tooltip title={title} placement="topLeft">
-                {title}
-              </Tooltip>
-            </div>
+            <SmartTooltip width={!data.type && '120px'} className="c7ntest-plan-tree-title-text">
+              {title}
+            </SmartTooltip>  
           )}   
         {
     

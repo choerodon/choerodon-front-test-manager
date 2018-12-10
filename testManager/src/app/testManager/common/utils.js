@@ -239,7 +239,7 @@ export function issueLink(issueId, typeCode) {
   const {
     type, id: projectId, name, organizationId,
   } = menu;
-  if (typeCode === 'issue_test') {
+  if (typeCode === 'issue_test' || typeCode === 'issue_auto_test') {
     return encodeURI(`/testManager/IssueManage?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}&paramIssueId=${issueId}`);
   } else {
     return encodeURI(`/agile/issue?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}&paramIssueId=${issueId}`);

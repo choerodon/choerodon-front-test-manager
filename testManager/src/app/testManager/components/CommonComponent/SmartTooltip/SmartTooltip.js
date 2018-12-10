@@ -47,7 +47,7 @@ class SmartTooltip extends Component {
       title, children, style, width, placement,
     } = this.props;
     const { overflow } = this.state;
-    const dom = <div style={{ ...defaultStyle, ...style, width }} ref={this.saveRef('container')}>{children}</div>;
+    const dom = <div style={{ ...defaultStyle, ...style, width }} {...this.props} ref={this.saveRef('container')} />;
     return overflow
       ? (
         <Tooltip placement={placement} title={title || children}>
