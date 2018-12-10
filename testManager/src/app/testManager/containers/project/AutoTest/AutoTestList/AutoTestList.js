@@ -189,7 +189,7 @@ class AutoTestList extends Component {
       // if (data && data.length) {
       this.setState({
         envId,
-        logType: podStatus === 0 ? 'socket' : 'local',
+        logType: podStatus === 1 ? 'socket' : 'local',
         // containerArr: data,
         podName,
         containerName,
