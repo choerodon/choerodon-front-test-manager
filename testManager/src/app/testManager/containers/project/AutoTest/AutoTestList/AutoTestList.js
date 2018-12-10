@@ -231,9 +231,9 @@ class AutoTestList extends Component {
   // @action
   loadLog = (followingOK) => {
     const {
-      envId, podName, containerName, following, logType,
+      envId, podName, containerName, following, logType, logId,
     } = this.state;
-    const logId = Math.random();
+    // const logId = Math.random();
     const authToken = document.cookie.split('=')[1];
     const logs = [];
     let oldLogs = [];
@@ -243,13 +243,13 @@ class AutoTestList extends Component {
       editor = this.editorLog.getCodeMirror();
       console.log(logType);
       if (logType === 'local') {
-        getLog(1).then((res) => {
+        getLog(logId).then((res) => {
           console.log(res);
           editor.setValue(res);
         });
       } else {
         try { // PRO_DEVOPS_HOST
-          const ws = new WebSocket(`${'ws://devops-service-front.staging.saas.hand-china.com'}/ws/log?key=env:${'choerodon-test'}.envId:${envId}.log:${logId}&podName=${podName}&containerName=${containerName}&logId=${logId}&token=${authToken}`);
+          const ws = new WebSocket(`${'ws://devops-service-front.staging.saas.hand-china.com'}/ws/log?key=env:${'choerodon-test'}.envId:${envId}.log:${logId || Math.random()}&podName=${podName}&containerName=${containerName}&logId=${logId}&token=${authToken}`);
           console.log(ws);
           this.setState({ ws, following: true });
           if (!followingOK) {
