@@ -48,6 +48,9 @@ export function runTestInstant(scheduleTaskDTO) {
 export function reRunTest(scheduleTaskDTO) {
   return request.post(`/test/v1/projects/${getProjectId()}/app_instances`, scheduleTaskDTO);   
 }
+export function getLog(logId) {
+  return request.get(`/test/v1/projects/${getProjectId()}/test/automation/queryLog/${logId}`);
+}
 export function runTestTiming(scheduleTaskDTO) {
   return request.post(`/test/v1/projects/${getProjectId()}/app_instances/schedule`, scheduleTaskDTO);   
 }

@@ -12,8 +12,10 @@ import _ from 'lodash';
 import CodeMirror from 'react-codemirror';
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/base16-dark.css';
-import { User } from '../../../../components/CommonComponent';
-import { getApps, getTestHistoryByApp, reRunTest } from '../../../../api/AutoTestApi';
+import { User, SmartTooltip } from '../../../../components/CommonComponent';
+import {
+  getApps, getTestHistoryByApp, reRunTest, getLog,
+} from '../../../../api/AutoTestApi';
 import {
   PODSTATUS, TESTRESULT, PodStatus, TestResult,
 } from './AutoTestTags';
@@ -28,6 +30,7 @@ const { Option } = Select;
 class AutoTestList extends Component {
   state = {
     showSide: false,
+    logType: 'local',
     following: true,
     fullscreen: false,
     containerArr: [],
@@ -181,11 +184,12 @@ class AutoTestList extends Component {
     const { testAppInstanceDTO } = record;
     if (testAppInstanceDTO) {
       const {
-        envId, podName, containerName, logId,
+        envId, podName, podStatus, containerName, logId,
       } = testAppInstanceDTO;
       // if (data && data.length) {
       this.setState({
         envId,
+        logType: podStatus === 0 ? 'socket' : 'local',
         // containerArr: data,
         podName,
         containerName,
@@ -227,7 +231,7 @@ class AutoTestList extends Component {
   // @action
   loadLog = (followingOK) => {
     const {
-      envId, podName, containerName, following,
+      envId, podName, containerName, following, logType,
     } = this.state;
     const logId = Math.random();
     const authToken = document.cookie.split('=')[1];
@@ -237,68 +241,76 @@ class AutoTestList extends Component {
     console.log('load', this, this.editorLog);
     if (this.editorLog) {
       editor = this.editorLog.getCodeMirror();
-      try { // PRO_DEVOPS_HOST
-        const ws = new WebSocket(`${'ws://devops-service-front.staging.saas.hand-china.com'}/ws/log?key=env:${'choerodon-test'}.envId:${envId}.log:${logId}&podName=${podName}&containerName=${containerName}&logId=${logId}&token=${authToken}`);
-        console.log(ws);
-        this.setState({ ws, following: true });
-        if (!followingOK) {
-          editor.setValue('Loading...');
-        }
-        ws.onopen = () => {
-          editor.setValue('Loading...');
-        };
-        ws.onerror = (e) => {
-          if (this.timer) {
-            clearInterval(this.timer);
-            this.timer = null;
-          }
-          logs.push('连接出错，请重新打开');
-          editor.setValue(_.join(logs, ''));
-          editor.execCommand('goDocEnd');
-        };
-        ws.onclose = (e) => {
-          if (this.timer) {
-            clearInterval(this.timer);
-            this.timer = null;
-          }
-          if (following) {
-            logs.push('连接已断开');
-            editor.setValue(_.join(logs, ''));
-          }
-          editor.execCommand('goDocEnd');
-        };
-        ws.onmessage = (e) => {
-          if (e.data.size) {
-            const reader = new FileReader();
-            reader.readAsText(e.data, 'utf-8');
-            reader.onload = () => {
-              if (reader.result !== '') {
-                logs.push(reader.result);
-              }
-            };
-          }
-          if (!logs.length) {
-            const logString = _.join(logs, '');
-            editor.setValue(logString);
-          }
-        };
-
-        this.timer = setInterval(() => {
-          if (logs.length > 0) {
-            if (!_.isEqual(logs, oldLogs)) {
-              const logString = _.join(logs, '');
-              editor.setValue(logString);
-              editor.execCommand('goDocEnd');
-              // 如果没有返回数据，则不进行重新赋值给编辑器
-              oldLogs = _.cloneDeep(logs);
-            }
-          } else if (!followingOK) {
+      console.log(logType);
+      if (logType === 'local') {
+        getLog(1).then((res) => {
+          console.log(res);
+          editor.setValue(res);
+        });
+      } else {
+        try { // PRO_DEVOPS_HOST
+          const ws = new WebSocket(`${'ws://devops-service-front.staging.saas.hand-china.com'}/ws/log?key=env:${'choerodon-test'}.envId:${envId}.log:${logId}&podName=${podName}&containerName=${containerName}&logId=${logId}&token=${authToken}`);
+          console.log(ws);
+          this.setState({ ws, following: true });
+          if (!followingOK) {
             editor.setValue('Loading...');
           }
-        });
-      } catch (e) {
-        console.log(e);
-        editor.setValue('连接失败');
+          ws.onopen = () => {
+            editor.setValue('Loading...');
+          };
+          ws.onerror = (e) => {
+            if (this.timer) {
+              clearInterval(this.timer);
+              this.timer = null;
+            }
+            logs.push('连接出错，请重新打开');
+            editor.setValue(_.join(logs, ''));
+            editor.execCommand('goDocEnd');
+          };
+          ws.onclose = (e) => {
+            if (this.timer) {
+              clearInterval(this.timer);
+              this.timer = null;
+            }
+            if (following) {
+              logs.push('连接已断开');
+              editor.setValue(_.join(logs, ''));
+            }
+            editor.execCommand('goDocEnd');
+          };
+          ws.onmessage = (e) => {
+            if (e.data.size) {
+              const reader = new FileReader();
+              reader.readAsText(e.data, 'utf-8');
+              reader.onload = () => {
+                if (reader.result !== '') {
+                  logs.push(reader.result);
+                }
+              };
+            }
+            if (!logs.length) {
+              const logString = _.join(logs, '');
+              editor.setValue(logString);
+            }
+          };
+
+          this.timer = setInterval(() => {
+            if (logs.length > 0) {
+              if (!_.isEqual(logs, oldLogs)) {
+                const logString = _.join(logs, '');
+                editor.setValue(logString);
+                editor.execCommand('goDocEnd');
+                // 如果没有返回数据，则不进行重新赋值给编辑器
+                oldLogs = _.cloneDeep(logs);
+              }
+            } else if (!followingOK) {
+              editor.setValue('Loading...');
+            }
+          });
+        } catch (e) {
+          console.log(e);
+          editor.setValue('连接失败');
+        }
       }
     }
   };
@@ -367,7 +379,7 @@ class AutoTestList extends Component {
     this.props.history.push(cycleLink(cycleId));
   }
 
-  handleItemClick=(record, { item, key, keyPath }) => {
+  handleItemClick = (record, { item, key, keyPath }) => {
     const {
       id, instanceId, status, resultId, cycleId,
     } = record;
@@ -377,7 +389,7 @@ class AutoTestList extends Component {
         this.showLog(record);
         break;
       }
-      
+
       case 'retry': {
         this.handleRerunTest(record);
         break;
@@ -418,7 +430,7 @@ class AutoTestList extends Component {
     } = this.state;
     const appOptions = appList.map(app => <Option value={app.id}>{app.name}</Option>);
     const containerDom = containerArr.length && (_.map(containerArr, c => <Option key={c.logId} value={`${c.logId}+${c.containerName}`}>{c.containerName}</Option>));
-    
+
     const columns = [{
       title: '测试状态',
       dataIndex: 'podStatus',

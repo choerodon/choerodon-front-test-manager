@@ -18,7 +18,7 @@ import {
   EventCalendar, PlanTree, CreateCycle, EditStage, EditCycle, ExportSide,
 } from '../../../../components/TestPlanComponent';
 import {
-  RichTextShow, SelectFocusLoad, StatusTags, DragTable, 
+  RichTextShow, SelectFocusLoad, StatusTags, DragTable, SmartTooltip,
 } from '../../../../components/CommonComponent';
 import { renderPriority } from '../../../../components/IssueManageComponent/IssueTable/tags';
 import { getUsers } from '../../../../api/IamApi';
@@ -233,21 +233,9 @@ class TestPlanHome extends Component {
         const { issueInfosDTO } = record;
         return (
           issueInfosDTO && (
-            <Tooltip
-              placement="topLeft"
-              title={(              
-                <div>{issueInfosDTO.summary}</div>          
-              )}
-            >
-              <span
-                className="c7ntest-text-dot"
-                style={{
-                  width: 100,
-                }}
-              >
-                {issueInfosDTO.summary}
-              </span>
-            </Tooltip>
+            <SmartTooltip width={100}>
+              {issueInfosDTO.summary}
+            </SmartTooltip>            
           )
         );
       },
