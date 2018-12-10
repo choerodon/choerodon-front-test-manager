@@ -5,7 +5,7 @@ import moment from 'moment';
 import { getCycleTree, getExecutesByCycleId } from '../../../api/cycleApi';
 import { getStatusList } from '../../../api/TestStatusApi';
 import { BaseTreeProto } from '../prototype';
-
+import { getProjectId } from '../../../common/utils';
 /**
  * 非递归遍历树 将测试阶段按照时间排序
  *
@@ -41,6 +41,8 @@ function traverseTree(node) {
 }
 
 class TestPlanStore extends BaseTreeProto {
+  @observable preProjectId = getProjectId();
+
   @observable treeShow = true;
 
   @observable statusList = [];
@@ -95,7 +97,12 @@ class TestPlanStore extends BaseTreeProto {
     }).finally(() => {
       this.leaveLoading();
     });
-
+    const preProjectId = this.preProjectId;
+    this.setPreProjectId(getProjectId());
+    // 切换项目不取数据，因为数据库中没存projectId
+    if (getProjectId() !== preProjectId) {
+      this.setCurrentCycle({});
+    }
     // 如果选中了项，就刷新table数据
     const currentCycle = this.getCurrentCycle;
     const selectedKeys = this.getSelectedKeys;
@@ -216,6 +223,10 @@ class TestPlanStore extends BaseTreeProto {
         this.generateList(node.children, node.key);
       }
     }
+  }
+
+  @action setPreProjectId(projectId) {
+    this.preProjectId = projectId;
   }
 
   @action setTreeShow(treeShow) {

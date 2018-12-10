@@ -29,7 +29,7 @@ import {
   RichTextShow, SelectFocusLoad, RadioButton, StatusTags,
 } from '../../../../components/CommonComponent';
 import {
-  delta2Html, delta2Text, issueLink, getParams, executeDetailLink,
+  delta2Html, delta2Text, issueLink, getParams, executeDetailLink, getProjectId,
 } from '../../../../common/utils';
 import TestExecuteStore from '../../../../store/project/TestExecute/TestExecuteStore';
 import noRight from '../../../../assets/noright.svg';
@@ -134,7 +134,7 @@ class TestExecuteHome extends Component {
     }
   }
 
-  reloadExecutes = () => {
+  reloadExecutes = () => {    
     this.setState({
       rightLoading: true,
     });
@@ -256,7 +256,12 @@ class TestExecuteHome extends Component {
 
       // window.console.log(dataList);
     });
-
+    const preProjectId = TestExecuteStore.preProjectId;
+    TestExecuteStore.setPreProjectId(getProjectId());
+    // 切换项目不取数据，因为数据库中没存projectId
+    if (getProjectId() !== preProjectId) {
+      TestExecuteStore.setCurrentCycle({});
+    }
     // 如果选中了项，就刷新table数据
     const currentCycle = TestExecuteStore.getCurrentCycle;
     const selectedKeys = TestExecuteStore.getSelectedKeys;

@@ -17,7 +17,7 @@ export function getTestHistoryByApp(appId, pagination, filter) {
   return request.post(`/test/v1/projects/${getProjectId()}/test/automation/queryWithHistroy?page=${current - 1}&size=${pageSize}`, search);
 }
 export function getYaml(appId, appVersionId, envId) {
-  return axios.get('/getYaml');
+  // return axios.get('/getYaml');
   return request.get(`/test/v1/projects/${getProjectId()}/app_instances/value?appId=${appId}&envId=${envId}&appVersionId=${appVersionId}`);
 }
 export function checkYaml(value) {
