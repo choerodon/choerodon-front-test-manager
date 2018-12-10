@@ -250,7 +250,7 @@ class IssueStore {
 
   @action setDraggingTableItems(draggingTableItems) {
     // console.log('set', draggingTableItems);
-    this.draggingTableItems = draggingTableItems;
+    this.draggingTableItems = draggingTableItems.filter(issue => issue.typeCode !== 'issue_auto_test');
   }
 
   @action setTableDraging(flag) {

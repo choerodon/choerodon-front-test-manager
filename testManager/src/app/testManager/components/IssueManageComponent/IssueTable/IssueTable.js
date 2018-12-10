@@ -239,7 +239,7 @@ class IssueTable extends Component {
               <div ref={provided.innerRef}>
                 {
                   _.slice(IssueStore.getIssues).map((issue, i) => (
-                    <Draggable key={issue.issueId} draggableId={issue.issueId} index={i}>
+                    <Draggable key={issue.issueId} draggableId={issue.issueId} index={i} isDragDisabled={issue.typeCode === 'issue_auto_test'}>
                       {
                         (providedinner, snapshotinner) => (
                           <div
@@ -252,7 +252,7 @@ class IssueTable extends Component {
                               onClick={this.handleClickIssue.bind(this, issue, i)}
                               className={issue.issueId === selectedIssue.issueId ? 'c7ntest-border-visible c7ntest-table-item' : 'c7ntest-border c7ntest-table-item'}
                               style={{
-                                background: !snapshotinner.isDragging && _.find(draggingTableItems, { issueId: issue.issueId }) && 'rgb(235, 242, 249)',
+                                background: !snapshotinner.isDragging && issue.typeCode !== 'issue_auto_test' && _.find(draggingTableItems, { issueId: issue.issueId }) && 'rgb(235, 242, 249)',
                                 position: 'relative',
                               }}
                             >
