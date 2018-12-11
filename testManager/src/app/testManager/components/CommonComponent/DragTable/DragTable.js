@@ -56,25 +56,31 @@ class DragTable extends Component {
 
   components = {
     table: () => {
-      const { disableContext } = this.props;
+      const { disableContext, disabled } = this.props;
       const table = (
         <table>
           <thead>
             {this.renderThead()}
           </thead>
-          <Droppable droppableId="dropTable">
-            {(provided, snapshot) => (
-              <tbody
-                ref={provided.innerRef}
-              >
-                {this.renderTbody(this.state.data)}
-                {provided.placeholder}
-              </tbody>
-            )}
-          </Droppable>
+          {disabled ? (
+            <tbody>
+              {this.renderTbody(this.state.data)}               
+            </tbody>
+          ) : (
+            <Droppable droppableId="dropTable">
+              {(provided, snapshot) => (
+                <tbody
+                  ref={provided.innerRef}
+                >
+                  {this.renderTbody(this.state.data)}
+                  {provided.placeholder}
+                </tbody>
+              )}
+            </Droppable>
+          )}
         </table>
       );
-      return disableContext ? table : (
+      return disabled || disableContext ? table : (
         <DragDropContext onDragEnd={this.onDragEnd.bind(this)} onDragStart={this.onDragStart}>
           {table}
         </DragDropContext>
@@ -95,22 +101,18 @@ class DragTable extends Component {
   }
 
   renderTbody(data) {   
-    const { columns, dragKey } = this.props;
+    const { columns, dragKey, disabled } = this.props;
     const rows = data.map((item, index) => (
-      <Draggable key={item[dragKey]} draggableId={item[dragKey]} index={index}>
-        {(provided, snapshot) => (
-          <tr
-            ref={provided.innerRef}
-            {...provided.draggableProps}
-            {...provided.dragHandleProps}
-          >
+      disabled
+        ? (
+          <tr>
             {columns.map((column) => {
               let renderedItem = null;
               const {
                 dataIndex, key, flex, render, 
               } = column;
               if (render) {
-                renderedItem = render(data[index][dataIndex], data[index], index, snapshot);
+                renderedItem = render(data[index][dataIndex], data[index], index);
               } else {
                 renderedItem = data[index][dataIndex];
               }
@@ -122,8 +124,35 @@ class DragTable extends Component {
             })}
           </tr>
         )
+        : (
+          <Draggable key={item[dragKey]} draggableId={item[dragKey]} index={index}>
+            {(provided, snapshot) => (
+              <tr
+                ref={provided.innerRef}
+                {...provided.draggableProps}
+                {...provided.dragHandleProps}
+              >
+                {columns.map((column) => {
+                  let renderedItem = null;
+                  const {
+                    dataIndex, key, flex, render, 
+                  } = column;
+                  if (render) {
+                    renderedItem = render(data[index][dataIndex], data[index], index, snapshot);
+                  } else {
+                    renderedItem = data[index][dataIndex];
+                  }
+                  return (
+                    <td style={{ flex: flex || 1 }}>
+                      {renderedItem}
+                    </td>
+                  );
+                })}
+              </tr>
+            )
         }
-      </Draggable>
+          </Draggable>
+        )
     ));
     return rows;
   }

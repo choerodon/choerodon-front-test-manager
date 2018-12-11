@@ -4,6 +4,7 @@ import {
   Menu, Input, Dropdown, Button, Popover, Tooltip, Icon, Modal,
 } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
+import { SmartTooltip } from '../../CommonComponent';
 import './PlanTreeTitle.scss';
 import { editFolder, deleteCycleOrFolder } from '../../../api/cycleApi';
 import { syncFolder, syncFoldersInCycle, syncFoldersInVersion } from '../../../api/IssueManageApi';
@@ -43,6 +44,10 @@ class PlanTreeTitle extends Component {
     switch (key) {
       case 'add': {
         this.props.callback(data, 'ADD_FOLDER');
+        break;
+      }
+      case 'assign': {
+        this.props.callback(data, 'ASSIGN_BATCH');
         break;
       }
       case 'edit': {
@@ -130,6 +135,13 @@ class PlanTreeTitle extends Component {
             </Menu.Item>,
           );
         }
+        if (type === 'folder') {
+          items.push(
+            <Menu.Item key="assign">
+              批量指派
+            </Menu.Item>, 
+          );
+        }
         items = items.concat([
           <Menu.Item key="edit">
             {type === 'folder' ? <FormattedMessage id="cycle_editFolder" /> : <FormattedMessage id="cycle_editCycle" />}
@@ -175,11 +187,9 @@ class PlanTreeTitle extends Component {
             />
           )
           : (
-            <div className="c7ntest-plan-tree-title-text" style={{ width: !data.type && '120px' }}>
-              <Tooltip title={title} placement="topLeft">
-                {title}
-              </Tooltip>
-            </div>
+            <SmartTooltip width={!data.type && '120px'} className="c7ntest-plan-tree-title-text">
+              {title}
+            </SmartTooltip>  
           )}   
         {
     

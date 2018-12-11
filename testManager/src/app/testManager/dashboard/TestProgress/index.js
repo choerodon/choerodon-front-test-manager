@@ -3,17 +3,16 @@ import { Link } from 'react-router-dom';
 import {
   Menu, Dropdown, Icon, Spin, Tooltip,
 } from 'choerodon-ui';
-import { DashBoardNavBar, stores } from 'choerodon-front-boot';
+import { DashBoardNavBar } from 'choerodon-front-boot';
 import ReactEcharts from 'echarts-for-react';
 import _ from 'lodash';
 import { getProjectVersion } from '../../api/agileApi';
 import { loadProgressByVersion } from '../../api/DashBoardApi';
+import { commonLink } from '../../common/utils';
 import './index.scss';
 
-const { AppState } = stores;
 export default class TestProgress extends Component {
-  state = {
-    noVersion: false,
+  state = { 
     currentVersion: null,
     versionList: [],
     VersionProgress: [],
@@ -33,11 +32,7 @@ export default class TestProgress extends Component {
         }
         this.setState({
           versionList: res,
-          noVersion: false,
-        });
-      } else {
-        this.setState({
-          noVersion: true,
+         
         });
       }
     });
@@ -110,9 +105,17 @@ export default class TestProgress extends Component {
   renderContent = () => {
     const { versionList, currentVersion } = this.state;
     const menu = (
-      <Menu onClick={this.handleMenuClick} className="menu">
+      <Menu onClick={this.handleMenuClick} style={{ height: 200, overflow: 'hidden auto' }}>
         {
-          versionList.map(item => <Menu.Item key={item.versionId}><Tooltip title={item.name} placement="topRight"><span className="c7n-menuItem">{item.name}</span></Tooltip></Menu.Item>)
+          versionList.map(item => (
+            <Menu.Item key={item.versionId}>
+              <Tooltip title={item.name} placement="topRight">
+                <span className="c7ntest-text-dot">
+                  {item.name}
+                </span>
+              </Tooltip>
+            </Menu.Item>
+          ))
         }
       </Menu>
     );
@@ -136,14 +139,11 @@ export default class TestProgress extends Component {
   }
 
   render() {
-    const menu = AppState.currentMenuType;
-    const { type, id: projectId, name } = menu;
-
     return (
       <div className="c7ntest-dashboard-TestProgress">
         {this.renderContent()}
         <DashBoardNavBar>
-          <Link to={encodeURI(`/testManager/TestExecute?type=${type}&id=${projectId}&name=${name}`)}>{Choerodon.getMessage('转至测试执行', 'review test execute')}</Link>
+          <Link to={commonLink('/TestExecute')}>{Choerodon.getMessage('转至测试执行', 'review test execute')}</Link>
         </DashBoardNavBar>
       </div>
     );

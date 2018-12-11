@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { withRouter } from 'react-router-dom';
 import {
   Button, Select, Radio, Form, Input, Popover, Icon, Spin, DatePicker,
 } from 'choerodon-ui';
@@ -8,7 +9,10 @@ import { observer } from 'mobx-react';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import CreateAutoTestStore from '../../../../../../store/project/AutoTest/CreateAutoTestStore';
 import { YamlEditor } from '../../../../../../components/CommonComponent';
-import { getYaml } from '../../../../../../api/AutoTestApi';
+import { commonLink } from '../../../../../../common/utils';
+import {
+  getYaml, runTestTiming, runTestInstant, 
+} from '../../../../../../api/AutoTestApi';
 import './ConfirmInfo.scss';
 
 const intlPrefix = 'taskdetail';
@@ -30,24 +34,25 @@ const formItemLayout = {
 @observer
 class ConfirmInfo extends Component {
   state = {
+    // selectType:''
     triggerType: 'easy',
     testType: 'instant',
     data: null,
   }
 
   componentDidMount() {
-    this.loadYaml();
+    // this.loadYaml();
   }
 
-  loadYaml=() => {
-    getYaml().then((data) => {
-      if (data) {
-        this.setState({
-          data,
-        });
-      }
-    });
-  }
+  // loadYaml=() => {
+  //   getYaml().then((data) => {
+  //     if (data) {
+  //       this.setState({
+  //         data,
+  //       });
+  //     }
+  //   });
+  // }
   
   // 创建任务切换触发类型
   changeValue(e) {
@@ -66,21 +71,105 @@ class ConfirmInfo extends Component {
     return endTime.valueOf() <= startTime.valueOf();
   }
 
+  range = (start, end) => {
+    const result = [];
+    for (let i = start; i < end; i += 1) {
+      result.push(i);
+    }
+    return result;
+  }
+
+
+  disabledDateStartTime = (date) => {
+    this.startTimes = date;
+    if (date && this.endTimes && this.endTimes.day() === date.day()) {
+      if (this.endTimes.hour() === date.hour() && this.endTimes.minute() === date.minute()) {
+        return {
+          disabledHours: () => this.range(this.endTimes.hour() + 1, 24),
+          disabledMinutes: () => this.range(this.endTimes.minute() + 1, 60),
+          disabledSeconds: () => this.range(this.endTimes.second(), 60),
+        };
+      } else if (this.endTimes.hour() === date.hour()) {
+        return {
+          disabledHours: () => this.range(this.endTimes.hour() + 1, 24),
+          disabledMinutes: () => this.range(this.endTimes.minute() + 1, 60),
+        };
+      } else {
+        return {
+          disabledHours: () => this.range(this.endTimes.hour() + 1, 24),
+        };
+      }
+    }
+  }
+
+
+  clearStartTimes = (status) => {
+    if (!status) {
+      this.endTimes = null;
+    }
+  }
+
+  clearEndTimes = (status) => {
+    if (!status) {
+      this.startTimes = null;
+    }
+  }
+
+
+  disabledDateEndTime = (date) => {
+    this.endTimes = date;
+    if (date && this.startTimes && this.startTimes.day() === date.day()) {
+      if (this.startTimes.hour() === date.hour() && this.startTimes.minute() === date.minute()) {
+        return {
+          disabledHours: () => this.range(0, this.startTimes.hour()),
+          disabledMinutes: () => this.range(0, this.startTimes.minute()),
+          disabledSeconds: () => this.range(0, this.startTimes.second() + 1),
+        };
+      } else if (this.startTimes.hour() === date.hour()) {
+        return {
+          disabledHours: () => this.range(0, this.startTimes.hour()),
+          disabledMinutes: () => this.range(0, this.startTimes.minute()),
+        };
+      } else {
+        return {
+          disabledHours: () => this.range(0, this.startTimes.hour()),
+        };
+      }
+    }
+  }
+
+  onStartChange = (value) => {
+    this.onChange('startTime', value);
+  }
+
+  onEndChange = (value) => {
+    this.onChange('endTime', value);
+  }
+
+  onChange = (field, value) => {
+    const { setFieldsValue } = this.props.form;
+    this.setState({
+      [field]: value,
+    }, () => {
+      setFieldsValue({ [field]: this.state[field] });
+    });
+  }
+
   /**
    * 部署应用
    */
   handleDeploy = () => {
-    this.setState({
-      loading: true,
-    });
+    // this.setState({
+    //   loading: true,
+    // });
     // const instances = CreateAutoTestStore.currentInstance;
-    const value = this.state.value || CreateAutoTestStore.value.yaml;
+    // const value = this.state.value || CreateAutoTestStore.value.yaml;
     let isNotChange = true;
     const oldYaml = CreateAutoTestStore.getConfigValue.yaml;
     const newYaml = CreateAutoTestStore.getNewConfigValue.yaml;
     const oldvalue = YAML.parse(oldYaml);
     const newvalue = YAML.parse(newYaml);
-        
+    console.log(oldvalue);    
     if (JSON.stringify(oldvalue) !== JSON.stringify(newvalue)) {
       isNotChange = false;
     }
@@ -90,15 +179,33 @@ class ConfirmInfo extends Component {
     const applicationDeployDTO = {
       isNotChange,
       appId: app.id,
-      appVerisonId: appVersion.id,
-      environmentId: env.id,
-      values: value,
+      code: app.code,
+      appVerisonId: appVersion.id || 5,
+      environmentId: env.id || 144,
+      projectVersionId: version.versionId,
+      values: newYaml,
       type: this.state.mode === 'new' ? 'create' : 'update',
       // appInstanceId: this.state.mode === 'new'
       //   ? null : this.state.instanceId || (instances && instances.length === 1 && instances[0].id),
     };
-    if (this.state.selectType === 'create') {
-      const { type, id } = this.taskdetail;
+    const { testType } = this.state;
+    this.setState({
+      loading: true,
+    });
+    if (testType === 'instant') {
+      // 立即执行
+      runTestInstant(applicationDeployDTO).then((res) => {
+        this.setState({
+          loading: false,
+        });
+        this.toTestHistory();
+      }).catch((err) => {
+        this.setState({
+          loading: false,
+        });
+      });
+    } else {
+      // 定时执行
       this.props.form.validateFieldsAndScroll((err, values) => {
         if (!err) {
           this.setState({
@@ -109,7 +216,7 @@ class ConfirmInfo extends Component {
             startTime, endTime, cronExpression, simpleRepeatInterval,
             simpleRepeatIntervalUnit, simpleRepeatCount, 
           } = values;
-          const body = {
+          const scheduleTaskDTO = {
             ...values,
             startTime: startTime.format('YYYY-MM-DD HH:mm:ss'),
             endTime: endTime ? endTime.format('YYYY-MM-DD HH:mm:ss') : null,
@@ -117,45 +224,21 @@ class ConfirmInfo extends Component {
             simpleRepeatInterval: flag ? Number(simpleRepeatInterval) : null,
             simpleRepeatIntervalUnit: flag ? simpleRepeatIntervalUnit : null,
             simpleRepeatCount: flag ? Number(simpleRepeatCount) : null,
-          };
-          createTask(body, type, id).then(({ failed, message }) => {
-            if (failed) {
-              Choerodon.prompt(message);
-              this.setState({
-                // isSubmitting: false,
-              });
-            } else {
-              // Choerodon.prompt(intl.formatMessage({ id: 'create.success' }));
-              this.setState({
-                // isSubmitting: false,
-              }, () => {
-                // this.handleRefresh();
-              });
-            }
-          }).catch(() => {
-            // Choerodon.prompt(intl.formatMessage({ id: 'create.error' }));
-            // this.setState({
-            //   isSubmitting: false,
-            // });
+            params: {
+              deploy: applicationDeployDTO,
+            },
+          };        
+          runTestTiming(scheduleTaskDTO).then((res) => {
+            this.setState({
+              loading: false,
+            });
+            this.toTestHistory();
           });
+        } else {
+          console.log(err);
         }
       });
     }
-    // CreateAutoTestStore.deploymentApp(applicationDeployDTO)
-    //   .then((datas) => {
-    //     if (datas) {
-    //       this.openAppDeployment();
-    //     }
-    //     this.setState({
-    //       loading: false,
-    //     });
-    //   })
-    //   .catch((error) => {
-    //     Choerodon.prompt(error.response.data.message);
-    //     this.setState({
-    //       loading: false,
-    //     });
-    //   });
   };
 
   getCronContent = () => {
@@ -353,15 +436,19 @@ class ConfirmInfo extends Component {
     );
   }
 
+  toTestHistory = () => {
+    this.props.history.push(commonLink('/AutoTest/list'));
+  }
+
   render() {
     const {
       app, appVersion, version, env, 
     } = CreateAutoTestStore;
     const { intl } = this.props;
     const { formatMessage } = intl;
-    // const data = this.state.yaml || CreateAutoTestStore.value;
+    const data = this.state.data || CreateAutoTestStore.getNewConfigValue;
     const {
-      data, testType,
+      testType, loading,
     } = this.state;
     const options = {
       theme: 'neat',
@@ -495,8 +582,7 @@ class ConfirmInfo extends Component {
           )}
         </section>
         <section className="deployApp-section">
-          <Button type="primary" funcType="raised" disabled={!(app.id && appVersion.id && env.id)} onClick={this.handleDeploy} loading={this.state.loading}>{formatMessage({ id: 'autotestbtn_autotest' })}</Button>
-       
+          <Button type="primary" funcType="raised" onClick={this.handleDeploy} loading={loading}>{formatMessage({ id: 'autotestbtn_autotest' })}</Button>
           <Button funcType="raised" onClick={CreateAutoTestStore.preStep}>{formatMessage({ id: 'previous' })}</Button>
           <Button funcType="raised" className="c7ntest-autotest-clear" onClick={() => { CreateAutoTestStore.toStep(1); }}>{formatMessage({ id: 'cancel' })}</Button>
         </section>
@@ -505,4 +591,4 @@ class ConfirmInfo extends Component {
   }
 }
 
-export default ConfirmInfo;
+export default withRouter(ConfirmInfo);

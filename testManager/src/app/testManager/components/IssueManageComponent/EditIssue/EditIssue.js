@@ -42,8 +42,8 @@ const StatusTagSimple = StatusTag.Simple;
 const navs = [
   { code: 'detail', tooltip: '详情', icon: 'error_outline' },
   { code: 'des', tooltip: '描述', icon: 'subject' },
-  { code: 'test1', tooltip: '测试详细信息', icon: 'compass' },
-  { code: 'test2', tooltip: '测试执行', icon: 'explicit2' },
+  { code: 'test_step', tooltip: '测试详细信息', icon: 'compass' },
+  { code: 'test_execute', tooltip: '测试执行', icon: 'explicit2' },
   { code: 'attachment', tooltip: '附件', icon: 'attach_file' },
   { code: 'commit', tooltip: '评论', icon: 'sms_outline' },
   { code: 'data_log', tooltip: '活动日志', icon: 'insert_invitation' },
@@ -90,7 +90,7 @@ class EditIssueNarrow extends Component {
 
     // issue信息
     issueInfo: {},
-
+    disabled: false, // 自动化类型不可编辑
     datalogs: [],
     fileList: [],
     testStepData: [],
@@ -127,6 +127,7 @@ class EditIssueNarrow extends Component {
       this.reloadIssue(nextProps.issueId);
     }
   }
+
 
   /**
    * Attachment
@@ -260,6 +261,7 @@ class EditIssueNarrow extends Component {
       }));
       this.setState({
         issueInfo: issue,
+        disabled: issue.typeCode === 'issue_auto_test',
         fileList,
         linkIssues,
         datalogs,
@@ -314,7 +316,7 @@ class EditIssueNarrow extends Component {
               if (this.props.onUpdate) {
                 this.props.onUpdate();
               }
-            }).finally(() => {
+            }).catch(() => {
               done();
             });
         }
@@ -328,7 +330,7 @@ class EditIssueNarrow extends Component {
             if (this.props.onUpdate) {
               this.props.onUpdate();
             }
-          }).finally(() => {
+          }).catch(() => {
             done();
           });
         break;
@@ -341,7 +343,7 @@ class EditIssueNarrow extends Component {
             if (this.props.onUpdate) {
               this.props.onUpdate();
             }
-          }).finally(() => {
+          }).catch(() => {
             done();
           });
         break;
@@ -351,7 +353,7 @@ class EditIssueNarrow extends Component {
           returnBeforeTextUpload(value, issue, updateIssue, 'description')
             .then((res) => {
               this.reloadIssue();
-            }).finally(() => {
+            }).catch(() => {
               done();
             });
         }
@@ -365,7 +367,7 @@ class EditIssueNarrow extends Component {
             if (this.props.onUpdate) {
               this.props.onUpdate();
             }
-          }).finally(() => {
+          }).catch(() => {
             done();
           });
         break;
@@ -692,7 +694,7 @@ class EditIssueNarrow extends Component {
    */
   renderSelectStatus = () => {
     const {
-      issueInfo, StatusList, selectLoading,  
+      issueInfo, StatusList, selectLoading, disabled,
     } = this.state;
     const { mode } = this.props;
     const { statusMapDTO } = issueInfo;
@@ -703,6 +705,7 @@ class EditIssueNarrow extends Component {
     return (
       <TextEditToggle
         style={{ width: '100%' }}
+        // disabled={disabled}
         formKey="statusId"
         onSubmit={(value, done) => { this.editIssue({ statusId: value }, done); }}
         originData={StatusList.length ? statusId : (
@@ -716,16 +719,7 @@ class EditIssueNarrow extends Component {
             const targetStatus = _.find(StatusList, { endStatusId: data });
             return (
               <div>
-                {
-                  targetStatus ? (
-                    <Tag
-                      status={targetStatus.statusDTO}
-                    />
-                  ) : (
-                    <Tag
-                      status={statusMapDTO}
-                    />                    
-                  )
+                {<Tag status={targetStatus ? targetStatus.statusDTO : statusMapDTO} />
                 }
               </div>
             );
@@ -743,7 +737,7 @@ class EditIssueNarrow extends Component {
                 <Option key={transform.id} value={transform.endStatusId}>
                   <Tag
                     status={transform.statusDTO}
-                  />                  
+                  />
                 </Option>
               ))
             }
@@ -759,7 +753,9 @@ class EditIssueNarrow extends Component {
    * @memberof EditIssueNarrow
    */
   renderSelectPriority = () => {
-    const { issueInfo, priorityList, selectLoading } = this.state;
+    const {
+      issueInfo, priorityList, selectLoading, disabled,
+    } = this.state;
     const { priorityDTO } = issueInfo;
     const { name: priorityName, id: priorityId, colour: priorityColor } = priorityDTO || {};
     const priorityOptions = priorityList.map(priority => (
@@ -771,6 +767,7 @@ class EditIssueNarrow extends Component {
     ));
     return (
       <TextEditToggle
+        // disabled={disabled}
         style={{ width: '100%' }}
         formKey="priorityId"
         onSubmit={(value, done) => { this.editIssue({ priorityId: value }, done); }}
@@ -821,10 +818,13 @@ class EditIssueNarrow extends Component {
    * @memberof EditIssueNarrow
    */
   renderSelectModule = () => {
-    const { issueInfo, componentList, selectLoading } = this.state;
+    const {
+      issueInfo, componentList, selectLoading, disabled,
+    } = this.state;
     const { componentIssueRelDTOList } = issueInfo;
     return (
       <TextEditToggle
+        // disabled={disabled}
         style={{ width: '100%' }}
         formKey="componentIssueRelDTOList"
         onSubmit={(value, done) => { this.editIssue({ componentIssueRelDTOList: value }, done); }}
@@ -879,10 +879,13 @@ class EditIssueNarrow extends Component {
    * @memberof EditIssueNarrow
    */
   renderSelectLabel = () => {
-    const { issueInfo, labelList, selectLoading } = this.state;
+    const {
+      issueInfo, labelList, selectLoading, disabled,
+    } = this.state;
     const { labelIssueRelDTOList } = issueInfo;
     return (
       <TextEditToggle
+        // disabled={disabled}
         style={{ width: '100%' }}
         formKey="labelIssueRelDTOList"
         onSubmit={(value, done) => { this.editIssue({ labelIssueRelDTOList: value }, done); }}
@@ -955,7 +958,9 @@ class EditIssueNarrow extends Component {
    * @memberof EditIssueNarrow
    */
   renderSelectPerson = (type) => {
-    const { issueInfo, userList, selectLoading } = this.state;
+    const {
+      issueInfo, userList, selectLoading, disabled,
+    } = this.state;
     const { reporterId, reporterName, reporterImageUrl } = issueInfo;
 
     const userOptions = userList.map(user => (
@@ -963,30 +968,37 @@ class EditIssueNarrow extends Component {
         <User user={user} />
       </Option>
     ));
+    const targetUser = _.find(userList, { id: reporterId });
+    let showUser = reporterId || '无';
+    // 当存在用户且列表没找到
+    if (reporterId && !targetUser) {
+      showUser = (
+        <UserHead
+          user={{
+            id: reporterId,
+            loginName: '',
+            realName: reporterName,
+            avatar: reporterImageUrl,
+          }}
+        />
+      );
+    }
     return (
       <TextEditToggle
+        // disabled={disabled}
         formKey="reporterId"
         onSubmit={(id, done) => { this.editIssue({ reporterId: id || 0 }, done); }}
-        originData={userList.length > 0 ? reporterId : reporterId ? (
-          <UserHead
-            user={{
-              id: reporterId,
-              loginName: '',
-              realName: reporterName,
-              avatar: reporterImageUrl,
-            }}
-          />
-        ) : '无'}
+        originData={showUser}
       >
         <Text>
           {(data) => {
-            if (userList.length > 0) {
-              const targetUser = _.find(userList, { id: data });
-              return targetUser ? (
-                <User user={targetUser} />
-              ) : '无';
+            if (data) {
+              const tempShowUser = _.find(userList, { id: data });
+              return tempShowUser ? (
+                <User user={tempShowUser} />
+              ) : data;
             } else {
-              return data;
+              return '无';
             }
           }}
         </Text>
@@ -1034,37 +1046,46 @@ class EditIssueNarrow extends Component {
    * @memberof EditIssueNarrow
    */
   renderSelectAssign = () => {
-    const { issueInfo, userList, selectLoading } = this.state;
+    const {
+      issueInfo, userList, selectLoading, disabled,
+    } = this.state;
     const { assigneeId, assigneeName, assigneeImageUrl } = issueInfo;
     const userOptions = userList.map(user => (
       <Option key={user.id} value={user.id}>
         <User user={user} />
       </Option>
     ));
+    const targetUser = _.find(userList, { id: assigneeId });
+    let showUser = assigneeId || '无';
+    // 当存在用户且列表没找到
+    if (assigneeId && !targetUser) {
+      showUser = (
+        <UserHead
+          user={{
+            id: assigneeId,
+            loginName: '',
+            realName: assigneeName,
+            avatar: assigneeImageUrl,
+          }}
+        />
+      );
+    }
     return (
       <TextEditToggle
+        // disabled={disabled}
         formKey="assigneeId"
         onSubmit={(id, done) => { this.editIssue({ assigneeId: id || 0 }, done); }}
-        originData={userList.length > 0 ? assigneeId : assigneeId ? (
-          <UserHead
-            user={{
-              id: assigneeId,
-              loginName: '',
-              realName: assigneeName,
-              avatar: assigneeImageUrl,
-            }}
-          />
-        ) : '无'}
+        originData={showUser}
       >
         <Text>
           {(data) => {
-            if (userList.length > 0) {
-              const targetUser = _.find(userList, { id: data });
-              return targetUser ? (
-                <User user={targetUser} />
-              ) : '无';
+            if (data) {
+              const tempShowUser = _.find(userList, { id: data });
+              return tempShowUser ? (
+                <User user={tempShowUser} />
+              ) : data;
             } else {
-              return data;
+              return '无';
             }
           }}
         </Text>
@@ -1110,7 +1131,7 @@ class EditIssueNarrow extends Component {
     const {
       issueInfo, issueLoading, FullEditorShow, createLinkTaskShow,
       copyIssueShow, currentNav, testStepData, testExecuteData,
-      linkIssues, fileList,
+      linkIssues, fileList, disabled,
     } = this.state;
     const {
       issueId, issueNum, summary, creationDate, lastUpdateDate, description,
@@ -1151,7 +1172,7 @@ class EditIssueNarrow extends Component {
       </Menu>
     );
     return (
-      <div className="choerodon-modal-editIssue">
+      <div className="c7ntest-editIssue">
         {
           issueLoading ? (
             <div
@@ -1220,6 +1241,7 @@ class EditIssueNarrow extends Component {
                 <div className="line-justify" style={{ marginBottom: 5, alignItems: 'center', marginTop: 10 }}>
 
                   <TextEditToggle
+                    disabled={disabled}
                     style={{ width: '100%' }}
                     formKey="summary"
                     onSubmit={(value, done) => { this.editIssue({ summary: value }, done); }}
@@ -1237,9 +1259,11 @@ class EditIssueNarrow extends Component {
                     </Edit>
                   </TextEditToggle>
                   <div style={{ flexShrink: 0, color: 'rgba(0, 0, 0, 0.65)' }}>
+                    {!disabled && (
                     <Dropdown overlay={getMenu()} trigger={['click']}>
                       <Button icon="more_vert" />
                     </Dropdown>
+                    )}
                   </div>
                 </div>
                 {/* 状态 */}
@@ -1350,7 +1374,7 @@ class EditIssueNarrow extends Component {
                       }}
                       />
                     </div>
-                    <div className="c7ntest-content-wrapper" style={{ display: 'flex', flexWrap: 'wrap', flexDirection: mode === 'narrow' ? 'column' : 'row' }}>
+                    <div className="c7ntest-content-wrapper" style={{ display: mode === 'narrow' ? 'block' : 'flex' }}>
                       {/* 状态 */}
                       <div style={{ flex: 1 }}>
                         {mode === 'narrow'
@@ -1562,7 +1586,7 @@ class EditIssueNarrow extends Component {
 
                 </div>
                 {/* 测试步骤 */}
-                <div id="test1">
+                <div id="test_step">
                   <div className="c7ntest-title-wrapper">
                     <div className="c7ntest-title-left">
                       <Icon type="compass c7ntest-icon-title" />
@@ -1573,7 +1597,7 @@ class EditIssueNarrow extends Component {
                     }}
                     />
                     <div className="c7ntest-title-right" style={{ marginLeft: '14px', position: 'relative' }}>
-                      <Button className="leftBtn" funcTyp="flat" onClick={this.createIssueStep}>
+                      <Button disabled={disabled} className="leftBtn" funcTyp="flat" onClick={this.createIssueStep}>
                         <Icon type="playlist_add icon" style={{ marginRight: 2 }} />
                         <FormattedMessage id="issue_edit_addTestDetail" />
                       </Button>
@@ -1581,6 +1605,7 @@ class EditIssueNarrow extends Component {
                   </div>
                   <div className="c7ntest-content-wrapper" style={{ paddingLeft: 0 }}>
                     <TestStepTable
+                      disabled={disabled}
                       mode={mode}
                       issueId={issueId}
                       data={testStepData}
@@ -1601,7 +1626,7 @@ class EditIssueNarrow extends Component {
                   </div>
                 </div>
                 {/* 测试执行 */}
-                <div id="test2">
+                <div id="test_execute">
                   <div className="c7ntest-title-wrapper">
                     <div className="c7ntest-title-left">
                       <Icon type="explicit2 c7ntest-icon-title" />

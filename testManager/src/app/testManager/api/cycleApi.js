@@ -6,13 +6,35 @@ export function getCycleTree(assignedTo) {
 }
 export function getExecutesByCycleId(pagination, cycleId, filters, type) {
   const { size, page } = pagination;
-  const Filters = { ...filters };
+  const Filters = {
+    ...filters,
+    searchDTO: {
+      advancedSearchArgs: {
+        statusId: [],
+        priorityId: [],
+      },
+      searchArgs: {
+        issueNum: '',
+        summary: '',
+      },
+    },
+  };
   if (Filters) {
-    Object.keys(Filters).forEach((filter) => {
-      Filters[filter] = Filters[filter][0];
+    Object.keys(filters).forEach((filter) => {
+      console.log(filter, Filters);
+      if (['priorityId'].includes(filter)) {
+        Filters.searchDTO.advancedSearchArgs[filter] = Filters[filter];
+      } else if (['summary'].includes(filter)) {
+        Filters.searchDTO.searchArgs[filter] = Filters[filter][0];
+      } else {
+        Filters[filter] = Filters[filter][0];
+      }
     });
   }
-  return request.post(`/test/v1/projects/${getProjectId()}/cycle/case/query/cycleId?size=${size}&page=${page}`, { cycleId, ...Filters });
+  return request.post(`/test/v1/projects/${getProjectId()}/cycle/case/query/cycleId?size=${size}&page=${page}`, {
+    cycleId,
+    ...Filters,
+  });
 }
 export function addCycle(data) {
   return request.post(`/test/v1/projects/${getProjectId()}/cycle`, data);
@@ -58,4 +80,7 @@ export function getFoldersByCycleId(cycleId) {
  */
 export function getExportList() {
   return request.get(`/test/v1/projects/${getProjectId()}/test/fileload/history/cycle`);
+}
+export function assignBatch(userId, cycleId) {
+  return request.put(`test/v1/projects/${getProjectId()}/cycle/batch/change/cycleCase/assignedTo/${userId}/in/cycle/${cycleId}`);
 }

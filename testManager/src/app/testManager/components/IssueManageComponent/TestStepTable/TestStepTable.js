@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-  Input, Icon, Modal, Tooltip, Button,
+  Input, Icon, Modal, Tooltip, Button, Table,
 } from 'choerodon-ui';
 import { stores, axios } from 'choerodon-front-boot';
 import _ from 'lodash';
@@ -17,7 +17,7 @@ class TestStepTable extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: [],    
+      data: [],
     };
   }
 
@@ -114,7 +114,7 @@ class TestStepTable extends Component {
   render() {
     const that = this;
     const {
-      onOk, enterLoad, leaveLoad, mode,
+      onOk, enterLoad, leaveLoad, mode, disabled,
     } = this.props;
 
     const columns = [{
@@ -133,6 +133,7 @@ class TestStepTable extends Component {
         return (
           <div className="item-container">
             <TextEditToggle
+              disabled={disabled}
               formKey="testStep"
               onSubmit={value => that.editStep({ ...record, testStep: value })}
               originData={testStep}
@@ -163,6 +164,7 @@ class TestStepTable extends Component {
         return (
           <div className="item-container">
             <TextEditToggle
+              disabled={disabled}
               // rules={[{ max: 30, message: '测试数据最长为30' }]}
               formKey="testData"
               onSubmit={value => that.editStep({ ...record, testData: value })}
@@ -173,7 +175,7 @@ class TestStepTable extends Component {
                   <div className="c7ntest-text-wrap">
                     {data}
                   </div>
-                )}       
+                )}
               </Text>
               <Edit>
                 <TextArea autoFocus autosize />
@@ -193,6 +195,7 @@ class TestStepTable extends Component {
           return (
             <div className="item-container">
               <TextEditToggle
+                disabled={disabled}
                 formKey="expectedResult"
                 onSubmit={value => that.editStep({ ...record, expectedResult: value })}
                 originData={expectedResult}
@@ -200,7 +203,7 @@ class TestStepTable extends Component {
                   required: true, message: '请输入预期结果!',
                 }]}
               >
-                <Text>  
+                <Text>
                   {data => (
                     <div className="c7ntest-text-wrap">
                       {data}
@@ -223,6 +226,7 @@ class TestStepTable extends Component {
           return (
             <div className="item-container">
               <TextEditToggle
+                disabled={disabled}
                 originData={attachments}
               >
                 <Text>
@@ -264,24 +268,25 @@ class TestStepTable extends Component {
           return (
             <div>
               <Tooltip title={<FormattedMessage id="execute_copy" />}>
-                <Button shape="circle" funcType="flat" icon="library_books" style={{ cursor: 'pointer', margin: '0 5px', color: 'black' }} onClick={() => that.cloneStep(record.stepId)} />
+                <Button disabled={disabled} shape="circle" funcType="flat" icon="library_books" style={{ margin: '0 5px', color: 'black' }} onClick={() => that.cloneStep(record.stepId)} />
               </Tooltip>
-              <Button shape="circle" funcType="flat" icon="delete_forever" style={{ cursor: 'pointer', margin: '0 5px', color: 'black' }} onClick={() => that.handleDeleteTestStep(record.stepId)} />
+              <Button disabled={disabled} shape="circle" funcType="flat" icon="delete_forever" style={{ margin: '0 5px', color: 'black' }} onClick={() => that.handleDeleteTestStep(record.stepId)} />
             </div>
           );
         },
       },
     ];
     return (
-      <div className="c7ntest-TestStepTable">
+      <div className="c7ntest-TestStepTable">        
         <DragTable
+          disabled={disabled}
           pagination={false}
           filterBar={false}
           dataSource={this.state.data}
           columns={mode === 'narrow' ? columns : columns.concat(wideColumns)}
           onDragEnd={this.onDragEnd}
           dragKey="stepId"
-        />    
+        />     
       </div>
     );
   }

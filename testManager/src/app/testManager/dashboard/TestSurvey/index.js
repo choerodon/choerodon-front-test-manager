@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { DashBoardNavBar, stores } from 'choerodon-front-boot';
+import { DashBoardNavBar } from 'choerodon-front-boot';
 import ReactEcharts from 'echarts-for-react';
 import { getCaseNotPlain, getCaseNotRun, getCaseNum } from '../../api/summaryApi';
 import { getIssueCount } from '../../api/agileApi';
+import { commonLink } from '../../common/utils';
 import './index.scss';
 
-const { AppState } = stores;
 export default class TestSurvey extends Component {
   state = {
     totalTest: 0,
@@ -38,6 +38,10 @@ export default class TestSurvey extends Component {
       notRun, notPlan, caseNum, totalTest,
     } = this.state;
     const option = {
+      tooltip: {
+        trigger: 'item',
+        formatter: '{b} : {c} ({d}%)',
+      },
       series: [
         {
           color: ['#FFB100', '#00BFA5', '#FF7043'],
@@ -77,9 +81,6 @@ export default class TestSurvey extends Component {
   }
 
   render() {
-    const menu = AppState.currentMenuType;
-    const { type, id: projectId, name } = menu;
-   
     return (
       <div className="c7ntest-dashboard-TestSurvey">
         <div className="c7ntest-charts">
@@ -105,7 +106,7 @@ export default class TestSurvey extends Component {
         {' '}
 
         <DashBoardNavBar>
-          <Link to={encodeURI(`/testManager/summary?type=${type}&id=${projectId}&name=${name}`)}>{Choerodon.getMessage('转至测试摘要', 'review test summary')}</Link>
+          <Link to={commonLink('/summary')}>{Choerodon.getMessage('转至测试摘要', 'review test summary')}</Link>
         </DashBoardNavBar>
       </div>
     );

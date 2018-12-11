@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
+import { withRouter } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import {
-  Table, Icon, Tooltip, Menu,
+  Table, Icon, Tooltip, Menu, Button,
 } from 'choerodon-ui';
 import { stores, axios } from 'choerodon-front-boot';
 import _ from 'lodash';
@@ -245,13 +246,17 @@ class TestExecuteTable extends Component {
           {/* <Tooltip title={<FormattedMessage id="execute_quickPass" />}>
               <Icon type="pass mlr-3 pointer" onClick={this.quickPass.bind(this, item)} />
             </Tooltip> */}
-
-          <Link to={executeDetailShowLink(item.executeId)}>
-            <Icon
-              type="explicit2 pointer"
+          <Tooltip title={<FormattedMessage id="execute_detail" />}>
+            <Button
+              shape="circle"
+              funcType="flat"
+              icon="explicit2"
               style={{ color: 'black' }}
+              onClick={() => {
+                this.props.history.push(executeDetailShowLink(item.executeId));
+              }}
             />
-          </Link>
+          </Tooltip>
           {/* <Popconfirm
               title={Choerodon.getMessage('确认删除吗?', 'Confirm delete')}
               placement="left"
@@ -279,4 +284,4 @@ class TestExecuteTable extends Component {
   }
 }
 
-export default TestExecuteTable;
+export default withRouter(TestExecuteTable);

@@ -1,12 +1,9 @@
-import EventCalendar from './EventCalendar';
-import PlanTree from './PlanTree';
-import CloneCycle from './CloneCycle';
-import CreateCycle from './CreateCycle';
-import CreateStage from './CreateStage';
-import EditStage from './EditStage';
-import EditCycle from './EditCycle';
-import ExportSide from './ExportSide';
-
-export {
-  EventCalendar, PlanTree, CreateCycle, CreateStage, EditStage, EditCycle, CloneCycle, ExportSide,
-};
+export { default as EventCalendar } from './EventCalendar';
+export { default as PlanTree } from './PlanTree';
+export { default as CloneCycle } from './CloneCycle';
+export { default as CreateCycle } from './CreateCycle';
+export { default as CreateStage } from './CreateStage';
+export { default as EditStage } from './EditStage';
+export { default as EditCycle } from './EditCycle';
+export { default as ExportSide } from './ExportSide';
+export { default as AssignBatch } from './AssignBatch';

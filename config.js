@@ -14,7 +14,7 @@ const config = {
     // server:'http://10.211.101.46:8080',//丁煌
     webSocketServer: 'ws://10.211.108.232:18085',
     // server:'http://172.20.1.50:8080',
-    port: 9090,// 端口
+    port: 5000,// 端口
     dashboard: {
         'testManager': 'src/app/testManager/dashboard/*',
     },

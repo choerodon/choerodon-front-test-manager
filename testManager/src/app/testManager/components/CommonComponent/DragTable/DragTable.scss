@@ -42,6 +42,7 @@
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
+          display: inline-block; //fix ie11
         }
       }
     }
@@ -60,6 +61,7 @@
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
+          display: inline-block; //fix ie11
         }
       }
     }

@@ -9,7 +9,6 @@ import './EventCalendar.scss';
 import CalendarBackItem from './CalendarBackItem';
 import EventItem from './EventItem';
 
-
 const moment = extendMoment(Moment);
 class EventCalendar extends Component {
   constructor(props) {
@@ -23,6 +22,7 @@ class EventCalendar extends Component {
       currentDate: null,
       baseDate,
       mode: 'month',
+      width: 'auto',
       pos: 0,
     };
   }
@@ -55,30 +55,17 @@ class EventCalendar extends Component {
   //     return null;
   //   }
   // }
-  componentDidMount() {   
-    this.setRightWidth();
-    window.addEventListener('resize', this.setRightWidth);
-  }
-  
-  componentDidUpdate() {
-    this.setRightWidth();
-  }
+  // static getDerivedStateFromProps(props, state) {
+  //   return {
+  //     width: this.wrapper ? this.wrapper.offsetWidth : 'auto',
+  //   };
+  // }
 
-  componentWillUnmount() {
-    window.removeEventListener('resize', this.setRightWidth);
+  componentDidMount() {
+    const scrollBarWidth = this.wrapper.offsetWidth - this.wrapper.clientWidth;
+    this.scroll.style.width = `calc(100% + ${scrollBarWidth}px)`;
   }
-
-  /**
-   *由于滚动条会占用位置，所以动态设置宽度
-   *
-   * @memberof EventCalendar
-   */
-  setRightWidth=() => {
-    if (this.scroll && this.wrapper) {
-      this.scroll.style.width = `${this.wrapper.offsetWidth}px`;
-    }
-  }
-
+ 
   calculateTime = () => {
     const { mode, pos, baseDate } = this.state;
     const start = moment(baseDate).startOf(mode).add(pos, mode);
@@ -117,7 +104,7 @@ class EventCalendar extends Component {
   }
 
   render() {
-    const { mode, currentDate } = this.state;
+    const { mode, currentDate, width } = this.state;
     const { showMode, times } = this.props;
     
     const { start, end } = this.calculateTime();
@@ -138,6 +125,7 @@ class EventCalendar extends Component {
 今天
 
             </Button> */}
+
             {
               currentDate && currentDate.format('LL')
             }

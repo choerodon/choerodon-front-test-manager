@@ -59,7 +59,7 @@
     top: 60px;
 
   }
-  // &-scroll-wrapper{
-  //   width: calc(100% + 8px);
-  // }
+  &-scroll-wrapper{
+    position: absolute; //chrome在某些情况下width 100% 并不是100% 而是少了滚动条宽度，加上absolute解决
+  }
 }

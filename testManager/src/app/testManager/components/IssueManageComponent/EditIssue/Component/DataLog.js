@@ -357,7 +357,7 @@ class DataLog extends Component {
                     }}
                   >
                     {
-                      i && origin[i].lastUpdatedBy === origin[i - 1].lastUpdatedBy ? null : (
+                      i && origin[i].lastUpdatedBy === origin[i - 1].lastUpdatedBy || !datalog.name ? null : (
                         <UserHead
                           user={{
                             id: datalog.lastUpdatedBy,
@@ -375,27 +375,28 @@ class DataLog extends Component {
                 </div>
                 <div style={{ flex: 1, borderBottom: '1px solid rgba(0, 0, 0, 0.12)', padding: '8.5px 0' }}>
                   <div>
-                    <Popover
-                      placement="bottomLeft"
-                      content={(
-                        <div style={{ padding: '5px 2px 0' }}>
-                          <div
-                            style={{
-                              width: 62,
-                              height: 62,
-                              background: '#c5cbe8',
-                              color: '#6473c3',
-                              overflow: 'hidden',
-                              display: 'flex',
-                              justifyContent: 'center',
-                              alignItems: 'center',
-                              textAlign: 'center',
-                              borderRadius: '50%',
-                              fontSize: '28px',
-                              margin: '0 auto',
-                            }}
-                          >
-                            {
+                    {datalog.name ? (
+                      <Popover
+                        placement="bottomLeft"
+                        content={(
+                          <div style={{ padding: '5px 2px 0' }}>
+                            <div
+                              style={{
+                                width: 62,
+                                height: 62,
+                                background: '#c5cbe8',
+                                color: '#6473c3',
+                                overflow: 'hidden',
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                textAlign: 'center',
+                                borderRadius: '50%',
+                                fontSize: '28px',
+                                margin: '0 auto',
+                              }}
+                            >
+                              {
                               datalog.imageUrl ? (
                                 <img src={datalog.imageUrl} alt="" style={{ width: '100%' }} />
                               ) : (
@@ -407,32 +408,33 @@ class DataLog extends Component {
                                 </span>
                               )
                             }
-                          </div>
-                          <h1 style={{
-                            margin: '8px auto 18px', fontSize: '13px', lineHeight: '20px', textAlign: 'center', 
-                          }}
-                          >
-                            {datalog.name}
-                          </h1>
-                          <div style={{
-                            color: 'rgba(0, 0, 0, 0.65)', fontSize: '13px', textAlign: 'center', display: 'flex', 
-                          }}
-                          >
-                            <Icon type="markunread" style={{ lineHeight: '20px' }} />
-                            <span style={{
-                              marginLeft: 6, lineHeight: '20px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', 
+                            </div>
+                            <h1 style={{
+                              margin: '8px auto 18px', fontSize: '13px', lineHeight: '20px', textAlign: 'center', 
                             }}
                             >
-                              {datalog.email}
-                            </span>
+                              {datalog.name}
+                            </h1>
+                            <div style={{
+                              color: 'rgba(0, 0, 0, 0.65)', fontSize: '13px', textAlign: 'center', display: 'flex', 
+                            }}
+                            >
+                              <Icon type="markunread" style={{ lineHeight: '20px' }} />
+                              <span style={{
+                                marginLeft: 6, lineHeight: '20px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', 
+                              }}
+                              >
+                                {datalog.email}
+                              </span>
+                            </div>
                           </div>
-                        </div>
                       )}
-                    >
-                      <span style={{ color: '#303f9f' }}>
-                        {`${datalog.name} `}
-                      </span>
-                    </Popover>
+                      >
+                        <span style={{ color: '#303f9f' }}>
+                          {`${datalog.name || '系统'} `}
+                        </span>
+                      </Popover>
+                    ) : '系统'}
 
                     <div style={{ display: 'inline' }}>
                       <span>

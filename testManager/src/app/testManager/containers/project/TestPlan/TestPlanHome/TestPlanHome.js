@@ -13,12 +13,14 @@ import {
   getExecutesByCycleId, editExecuteDetail, deleteExecute,
 } from '../../../../api/cycleApi';
 import { getStatusList } from '../../../../api/TestStatusApi';
+import { getPrioritys } from '../../../../api/agileApi';
 import {
   EventCalendar, PlanTree, CreateCycle, EditStage, EditCycle, ExportSide,
 } from '../../../../components/TestPlanComponent';
 import {
-  RichTextShow, SelectFocusLoad, StatusTags, DragTable, ResizeAble,
+  RichTextShow, SelectFocusLoad, StatusTags, DragTable, SmartTooltip,
 } from '../../../../components/CommonComponent';
+import { renderPriority } from '../../../../components/IssueManageComponent/IssueTable/tags';
 import { getUsers } from '../../../../api/IamApi';
 import TestPlanStore from '../../../../store/project/TestPlan/TestPlanStore';
 import {
@@ -34,10 +36,11 @@ class TestPlanHome extends Component {
   state = {
     CreateCycleVisible: false,
     statusList: [],
+    prioritys: [],
   }
 
   componentDidMount() {
-    TestPlanStore.setFilters({});
+    TestPlanStore.setFilters({ });
     TestPlanStore.setAssignedTo(null);
     TestPlanStore.setLastUpdatedBy(null);
     this.refresh();
@@ -48,9 +51,10 @@ class TestPlanHome extends Component {
   }
 
   refresh = () => {
-    getStatusList('CYCLE_CASE').then((statusList) => {
-      this.setState({ statusList });
+    Promise.all([getStatusList('CYCLE_CASE'), getPrioritys()]).then(([statusList, prioritys]) => {
+      this.setState({ statusList, prioritys });
     });
+
     TestPlanStore.getTree();
   }
 
@@ -175,7 +179,7 @@ class TestPlanHome extends Component {
   }
 
   render() {
-    const { CreateCycleVisible, statusList } = this.state;
+    const { CreateCycleVisible, statusList, prioritys } = this.state;
     const treeShow = TestPlanStore.treeShow;
     const {
       testList, executePagination, loading, rightLoading, times, calendarShowMode,
@@ -187,12 +191,12 @@ class TestPlanHome extends Component {
     } = currentCycle;
     const columns = [{
       title: 'ID',
-      dataIndex: 'issueName',
-      key: 'issueName',
+      dataIndex: 'issueNum',
+      key: 'issueNum',
       flex: 1,
       // filters: [],
       // onFilter: (value, record) => 
-      //   record.issueInfosDTO && record.issueInfosDTO.issueName.indexOf(value) === 0,  
+      //   record.issueInfosDTO && record.issueInfosDTO.issueNum.indexOf(value) === 0,  
       render(issueId, record) {
         const { issueInfosDTO } = record;
         return (
@@ -200,7 +204,7 @@ class TestPlanHome extends Component {
             <Tooltip
               title={(
                 <div>
-                  <div>{issueInfosDTO.issueName}</div>
+                  <div>{issueInfosDTO.issueNum}</div>
                   {/* <div>{issueInfosDTO.summary}</div> */}
                 </div>
               )}
@@ -213,7 +217,7 @@ class TestPlanHome extends Component {
                 to={issueLink(issueInfosDTO.issueId, issueInfosDTO.typeCode)}
                 target="_blank"
               >
-                {issueInfosDTO.issueName}
+                {issueInfosDTO.issueNum}
               </Link>
             </Tooltip>
           )
@@ -223,27 +227,28 @@ class TestPlanHome extends Component {
       title: '用例名',
       dataIndex: 'summary',
       key: 'summary',
+      filters: [],
       flex: 2,
       render(issueId, record) {
         const { issueInfosDTO } = record;
         return (
           issueInfosDTO && (
-            <Tooltip
-              placement="topLeft"
-              title={(              
-                <div>{issueInfosDTO.summary}</div>          
-              )}
-            >
-              <span
-                className="c7ntest-text-dot"
-                style={{
-                  width: 100,
-                }}
-              >
-                {issueInfosDTO.summary}
-              </span>
-            </Tooltip>
+            <SmartTooltip>
+              {issueInfosDTO.summary}
+            </SmartTooltip>            
           )
+        );
+      },
+    }, {
+      title: '用例优先级',
+      dataIndex: 'priorityId',
+      key: 'priorityId',
+      filters: prioritys.map(priority => ({ text: priority.name, value: priority.id })),
+      flex: 1,
+      render(issueId, record) {
+        const { issueInfosDTO } = record;
+        return (
+          issueInfosDTO && renderPriority(issueInfosDTO.priorityDTO)
         );
       },
     }, {
@@ -303,7 +308,7 @@ class TestPlanHome extends Component {
                       to={issueLink(defect.issueInfosDTO.issueId, defect.issueInfosDTO.typeCode)}
                       target="_blank"
                     >
-                      {defect.issueInfosDTO.issueName}
+                      {defect.issueInfosDTO.issueNum}
                     </Link>
                     <div>{defect.issueInfosDTO.summary}</div>
                   </div>
@@ -312,7 +317,7 @@ class TestPlanHome extends Component {
             </div>
           )}
         >
-          {defects.map((defect, i) => defect.issueInfosDTO && defect.issueInfosDTO.issueName).join(',')}
+          {defects.map((defect, i) => defect.issueInfosDTO && defect.issueInfosDTO.issueNum).join(',')}
         </Tooltip>
       ),
     },
@@ -326,7 +331,7 @@ class TestPlanHome extends Component {
           <div
             className="c7ntest-text-dot"
           >
-            {lastUpdateUser.realName}
+            {lastUpdateUser && lastUpdateUser.realName}
           </div>
         );
       },

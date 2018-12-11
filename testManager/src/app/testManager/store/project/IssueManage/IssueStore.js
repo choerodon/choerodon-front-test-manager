@@ -60,7 +60,6 @@ class IssueStore {
   @observable tableDraging = false;
 
   @observable treeShow = false;
-  // @observable expand = false;
 
   // @observable selectedIssue={};
 
@@ -174,6 +173,16 @@ class IssueStore {
     this.issues = data;
   }
 
+  /**
+   * 当issue更新时,本地更新单个issue
+   * @param {*} data 
+   */
+  @action updateSingleIssue(data) {    
+    const originIssues = this.issues;
+    const index = _.findIndex(originIssues, { issueId: data.issueId });
+    originIssues[index] = { ...originIssues[index], ...data };      
+  }
+
   @action setIssueIds(issueIds) {
     this.issueIds = issueIds;
   }
@@ -238,17 +247,10 @@ class IssueStore {
     this.copy = flag;
   }
 
-  @action setExpand(flag) {
-    this.expand = this.expand;
-  }
-
-  @action setSelectedIssue(selectedIssue) {
-    this.selectedIssue = selectedIssue;
-  }
 
   @action setDraggingTableItems(draggingTableItems) {
     // console.log('set', draggingTableItems);
-    this.draggingTableItems = draggingTableItems;
+    this.draggingTableItems = draggingTableItems.filter(issue => issue.typeCode !== 'issue_auto_test');
   }
 
   @action setTableDraging(flag) {

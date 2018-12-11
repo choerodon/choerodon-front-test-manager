@@ -4,10 +4,13 @@ import {
 import { stores } from 'choerodon-front-boot';
 
 import { BaseTreeProto } from '../prototype';
+import { getProjectId } from '../../../common/utils';
 
 const { AppState } = stores;
 class TestExecuteStore extends BaseTreeProto {
   @observable leftVisible = true;
+
+  @observable preProjectId = getProjectId();
 
   @observable executePagination = {
     current: 1,
@@ -27,6 +30,10 @@ class TestExecuteStore extends BaseTreeProto {
 
   @action setTreeAssignedTo(treeAssignedTo) {
     this.treeAssignedTo = treeAssignedTo;
+  }
+
+  @action setPreProjectId(projectId) {
+    this.preProjectId = projectId;
   }
 
   @computed get getExecutePagination() {

@@ -16,7 +16,7 @@ const Option = Select.Option;
 class SelectVariable extends Component {
   state = {
     selectApp: false,
-    envs: [],
+    // envs: [],
   }
 
   /**
@@ -55,23 +55,23 @@ class SelectVariable extends Component {
   }
 
   handleSelectEnv=(envId, other) => {
-    const { envs } = this.state;
-    CreateAutoTestStore.setEnv(_.find(envs, { id: envId }));
+    const { envList } = CreateAutoTestStore;
+    CreateAutoTestStore.setEnv(_.find(envList, { id: envId }));
   }
 
   loadEnvs=() => {
-    getEnvs().then((envs) => {
-      this.setState({
-        envs,
-      });
+    getEnvs().then((res) => {
+      CreateAutoTestStore.setEnvList(res.content);      
     });
   }
 
   render() {
     const { intl } = this.props;
-    const { selectApp, envs } = this.state;
+    const { selectApp } = this.state;
     const { formatMessage } = intl;
-    const { app, env, version } = CreateAutoTestStore;
+    const {
+      app, env, version, appVersion, envList,
+    } = CreateAutoTestStore;
     return (
       <div className="deployApp-app">
         <p>
@@ -84,9 +84,9 @@ class SelectVariable extends Component {
             <span className="section-title">{formatMessage({ id: 'autoteststep_one_app' })}</span>
           </div>
           <div className="autotest-text">
-            {app && (
+            {app.id && (
               <div className="section-text-margin">
-                <Tooltip title={<FormattedMessage id={this.state.is_project ? 'project' : 'market'} />}><span className={`icon ${this.state.is_project ? 'icon-project' : 'icon-apps'} section-text-icon`} /></Tooltip>
+                <Tooltip title={<FormattedMessage id="project" />}><span className="icon icon-project section-text-icon" /></Tooltip>
                 <span className="section-text">
                   {app.name}
                   {'('}
@@ -97,7 +97,7 @@ class SelectVariable extends Component {
             )}
             <a
               role="none"
-              className={`${app ? '' : 'section-text-margin'}`}
+              className={`${app.id ? '' : 'section-text-margin'}`}
               onClick={this.showSideBar}
             >
               {formatMessage({ id: 'autotestapp_add' })}
@@ -136,7 +136,8 @@ class SelectVariable extends Component {
             filter
             onFocus={this.loadEnvs}
           >
-            {envs.map(v => (
+            {envList.map(v => (
+              // <Option value={v.id} key={v.id} disabled={!v.connect}>
               <Option value={v.id} key={v.id} disabled={!v.connect}>
                 {v.connect ? <span className="c7ntest-ist-status_on" /> : <span className="c7ntest-ist-status_off" />}
                 {v.name}
@@ -148,7 +149,7 @@ class SelectVariable extends Component {
           <Button
             type="primary"
             funcType="raised"
-          // disabled={!(this.state.appId)}
+            disabled={!app.id || !appVersion.id || !version.versionId || !env.id}
             onClick={CreateAutoTestStore.nextStep}
           >
             {formatMessage({ id: 'next' })}

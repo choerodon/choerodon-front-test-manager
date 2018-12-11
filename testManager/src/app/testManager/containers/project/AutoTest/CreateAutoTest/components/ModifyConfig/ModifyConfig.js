@@ -1,8 +1,6 @@
 
 import React, { Component } from 'react';
-import {
-  Select, Button, Radio, Steps, Icon, Tooltip, Form,
-} from 'choerodon-ui';
+import { Button } from 'choerodon-ui';
 import { observer } from 'mobx-react';
 import { injectIntl, FormattedMessage } from 'react-intl';
 
@@ -23,7 +21,8 @@ class ModifyConfig extends Component {
   }
 
   loadYaml=() => {
-    getYaml().then((data) => {
+    const { app, appVersion, env } = CreateAutoTestStore;
+    getYaml(app.id, appVersion.id, env.id).then((data) => {
       if (data) {
         CreateAutoTestStore.setConfigValue(data);
       }

@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import { observer } from 'mobx-react';
 import {
-  Menu, Input, Dropdown, Button, Popover, Tooltip, 
+  Menu, Input, Dropdown, Button, Popover,  
 } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 import './TreeTitle.scss';
+import { SmartTooltip } from '../../CommonComponent';
 import { editFolder, deleteCycleOrFolder } from '../../../api/cycleApi';
 import TestExecuteStore from '../../../store/project/TestExecute/TestExecuteStore';
 
@@ -165,12 +166,10 @@ class TreeTitle extends Component {
               }}
             />
           )
-          : (
-            <div className="c7ntest-tree-title-text">
-              <Tooltip title={title}>
-                {title}
-              </Tooltip>
-            </div>
+          : (            
+            <SmartTooltip width={78}>
+              {title}
+            </SmartTooltip>      
           )}
 
         {Object.keys(ProcessBar).length > 0

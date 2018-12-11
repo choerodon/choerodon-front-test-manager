@@ -160,13 +160,13 @@ class ExecuteDetail extends Component {
               />
             </Tooltip>
             <span><FormattedMessage id="execute_detail" /></span>
-            <span 
+            {/* <span 
               title={issueInfosDTO && issueInfosDTO.summary}
               style={{ display: 'inline-block', marginLeft: 15, width: 100 }}
               className="c7ntest-text-dot"
             >
               {issueInfosDTO && issueInfosDTO.summary}
-            </span>
+            </span> */}
           </div>
         )}
         >
@@ -200,7 +200,7 @@ class ExecuteDetail extends Component {
         </Header>
 
         <Spin spinning={loading}>
-          <Content>
+          <Content title={issueInfosDTO && `用例“${issueInfosDTO.summary}”的执行详情`}>
             <TestExecuteInfo disabled={disabled} />
             <Card
               title={null}
