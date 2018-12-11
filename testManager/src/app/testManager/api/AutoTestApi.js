@@ -37,10 +37,22 @@ export function getAppVersions(appId, pagination, filter) {
   return request.post(`/devops/v1/projects/${getProjectId()}/app_versions/list_by_options?appId=${appId}&page=${current - 1}&size=${pageSize}&sort=id,desc`, { searchParam: filter });
 }
 export function getEnvs() {
-  return request.post(`/devops/v1/organizations/${getOrganizationId()}/clusters/page_cluster?page=0&size=12&sort=id,desc`, { 
-    param: '',
-    searchParam: {}, 
-  });   
+  return request.post(
+    `/devops/v1/organizations/${getOrganizationId()}/clusters/page_cluster?page=0&size=12&sort=id,desc`, 
+    { 
+      param: '',
+      searchParam: {}, 
+    },
+  );   
+}
+export function getAllEnvs() {
+  return request.post(
+    `/devops/v1/organizations/${getOrganizationId()}/clusters/page_cluster?doPage=false`,
+    { 
+      param: '',
+      searchParam: {}, 
+    },
+  );   
 }
 export function runTestInstant(scheduleTaskDTO) {
   return request.post(`/test/v1/projects/${getProjectId()}/app_instances`, scheduleTaskDTO);   

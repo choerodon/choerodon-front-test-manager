@@ -64,7 +64,8 @@ class SmartTooltip extends Component {
 }
 
 SmartTooltip.propTypes = {
-
+  placement: PropTypes.string,
+  style: PropTypes.object,
 };
 
 export default SmartTooltip;

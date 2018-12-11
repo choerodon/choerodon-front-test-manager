@@ -14,7 +14,7 @@ import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/base16-dark.css';
 import { User, SmartTooltip } from '../../../../components/CommonComponent';
 import {
-  getApps, getTestHistoryByApp, reRunTest, getLog,
+  getApps, getTestHistoryByApp, reRunTest, getAllEnvs,
 } from '../../../../api/AutoTestApi';
 import {
   PODSTATUS, TESTRESULT, PodStatus, TestResult,
@@ -32,6 +32,7 @@ class AutoTestList extends Component {
   state = {
     appList: [],
     historyList: [],
+    envList: [],
     currentApp: null,
     loading: false,
     selectLoading: false,
@@ -63,12 +64,15 @@ class AutoTestList extends Component {
     this.setState({
       selectLoading: true,
     });
-    getApps({
-      page: 0,
-      size: 10,
-      sort: { field: 'id', order: 'desc' },
-      postData: { searchParam, param: '' },
-    }).then((data) => {
+    Promise.all([
+      getApps({
+        page: 0,
+        size: 10,
+        sort: { field: 'id', order: 'desc' },
+        postData: { searchParam, param: '' },
+      }),
+      getAllEnvs(),
+    ]).then(([data, envs]) => {
       // 默认取第一个
       if (data.failed) {
         Choerodon.prompt(data.failed);
@@ -77,12 +81,14 @@ class AutoTestList extends Component {
       if (!currentApp && !value && data.content.length > 0) {
         this.loadTestHistoryByApp({ appId: data.content[0].id });
         this.setState({
+          envList: envs.content,
           currentApp: data.content[0].id,
           appList: data.content,
           selectLoading: false,
         });
       } else {
         this.setState({
+          envList: envs.content,
           appList: data.content,
           selectLoading: false,
         });
@@ -198,12 +204,11 @@ class AutoTestList extends Component {
 
   render() {
     const {
-      appList, selectLoading, currentApp, historyList, loading, 
+      appList, selectLoading, currentApp, historyList, loading, envList,
       pagination,
     } = this.state;
     const appOptions = appList.map(app => <Option value={app.id}>{app.name}</Option>);
-   
-
+    const ENVS = envList.map(env => ({ text: env.name, value: env.id }));
     const columns = [{
       title: '测试状态',
       dataIndex: 'podStatus',
@@ -213,6 +218,17 @@ class AutoTestList extends Component {
         const { testAppInstanceDTO } = record;
         const { podStatus } = testAppInstanceDTO || {};
         return PodStatus(podStatus);
+      },
+    }, {
+      title: '环境',
+      dataIndex: 'envId',
+      key: 'envId',
+      filters: ENVS,
+      render: (env, record) => {
+        const { testAppInstanceDTO } = record;
+        const { envId } = testAppInstanceDTO || {};       
+        const target = _.find(envList, { id: envId });
+        return <span>{target && target.name}</span>;
       },
     }, {
       title: '执行方',
@@ -311,7 +327,7 @@ class AutoTestList extends Component {
             <span><FormattedMessage id="refresh" /></span>
           </Button>
         </Header>
-        <Content        
+        <Content
           title={<FormattedMessage id="autotestlist_content_title" values={{ name: getProjectName() }} />}
           description={<FormattedMessage id="autotestlist_content_description" />}
         // link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management/test-report/report/"
@@ -329,8 +345,8 @@ class AutoTestList extends Component {
           </Select>
           <Table loading={loading} columns={columns} dataSource={historyList} pagination={pagination} onChange={this.handleTableChange} />
           <ContainerLog
-            ref={this.saveRef('ContainerLog')}               
-          />         
+            ref={this.saveRef('ContainerLog')}
+          />
         </Content>
       </Page>
     );
