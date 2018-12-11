@@ -127,11 +127,11 @@ class AutoTestList extends Component {
   }
 
   handleRerunTest = (record) => {
+    this.setState({
+      loading: true,
+    });
     const { id } = record;
     reRunTest({ historyId: id }).then((res) => {
-      this.setState({
-        loading: true,
-      });
       this.loadTestHistoryByApp();
     }).catch((err) => {
       this.setState({
@@ -189,10 +189,10 @@ class AutoTestList extends Component {
       <Menu.Item key="retry">
         重新执行
       </Menu.Item>
-      <Menu.Item key="cycle">
+      <Menu.Item key="cycle" disabled={!record.cycleId}>
         测试循环
       </Menu.Item>
-      <Menu.Item key="report">
+      <Menu.Item key="report" disabled={!record.resultId}>
         测试报告
       </Menu.Item>
     </Menu>

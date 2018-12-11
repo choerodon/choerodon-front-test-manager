@@ -67,8 +67,9 @@ class ContainerLog extends Component {
 
   loadLog = (followingOK) => {
     const {
-      envId, podName, containerName, following, logType, logId,
+      envId, podName, containerName, following, logType, 
     } = this.state;
+    const logId = this.state.logId || ~~(Math.random() * 1000);
     // const logId = Math.random();
     const authToken = document.cookie.split('=')[1];
     const logs = [];
@@ -85,8 +86,8 @@ class ContainerLog extends Component {
         });
       } else {
         try { // PRO_DEVOPS_HOST
-          const ws = new WebSocket(`${'ws://devops-service-front.staging.saas.hand-china.com'}/ws/log?key=env:${'choerodon-test'}.envId:${envId}.log:${logId || Math.random()}&podName=${podName}&containerName=${containerName}&logId=${logId}&token=${authToken}`);
-          console.log(ws);
+          const ws = new WebSocket(`${'ws://devops-service-front.staging.saas.hand-china.com'}/ws/log?key=cluster:${envId}.log:${logId}&env=${'choerodon-test'}&podName=${podName}&containerName=${containerName}&logId=${logId}&token=${authToken}`);
+          // console.log(ws);
           this.setState({ ws, following: true });
           if (!followingOK) {
             editor.setValue('Loading...');
