@@ -325,7 +325,7 @@ class ConfirmInfo extends Component {
               style={{ width: '248px' }}
               format="YYYY-MM-DD HH:mm:ss"
               disabledDate={this.disabledEndDate.bind(this)}
-              // disabledTime={this.disabledDateEndTime.bind(this)}
+              disabledTime={this.disabledDateEndTime.bind(this)}
               showTime={{ defaultValue: moment() }}
               // getCalendarContainer={() => document.getElementsByClassName('ant-modal-body')[document.getElementsByClassName('ant-modal-body').length - 1]}
               onChange={this.onEndChange}
@@ -357,10 +357,10 @@ class ConfirmInfo extends Component {
             {getFieldDecorator('simpleRepeatInterval', {
               rules: [{
                 required: triggerType === 'easy',
-                // message: intl.formatMessage({ id: `${intlPrefix}.repeat.required` }),
+                message: intl.formatMessage({ id: `${intlPrefix}.repeat.required` }),
               }, {
                 pattern: /^[1-9]\d*$/,
-                // message: intl.formatMessage({ id: `${intlPrefix}.repeat.pattern` }),
+                message: intl.formatMessage({ id: `${intlPrefix}.repeat.pattern` }),
               }],
               validateFirst: true,
             })(
@@ -393,10 +393,10 @@ class ConfirmInfo extends Component {
             {getFieldDecorator('simpleRepeatCount', {
               rules: [{
                 required: triggerType === 'easy',
-                // message: intl.formatMessage({ id: `${intlPrefix}.repeat.time.required` }),
+                message: intl.formatMessage({ id: `${intlPrefix}.repeat.time.required` }),
               }, {
                 pattern: /^[1-9]\d*$/,
-                // message: intl.formatMessage({ id: `${intlPrefix}.repeat.pattern` }),
+                message: intl.formatMessage({ id: `${intlPrefix}.repeat.pattern` }),
               }],
             })(
               <Input style={{ width: '100px' }} autoComplete="off" label="执行次数" />,
@@ -411,7 +411,7 @@ class ConfirmInfo extends Component {
             {getFieldDecorator('cronExpression', {
               rules: [{
                 required: triggerType === 'cron',
-                // message: intl.formatMessage({ id: `${intlPrefix}.cron.expression.required` }),
+                message: intl.formatMessage({ id: `${intlPrefix}.cron.expression.required` }),
               }],
             })(
               <Input style={{ width: 512 }} autoComplete="off" label="Cron表达式" />,

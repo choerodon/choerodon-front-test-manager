@@ -77,6 +77,7 @@ class ModifyConfig extends Component {
             type="primary"
             funcType="raised"
             onClick={CreateAutoTestStore.nextStep}
+            disabled={!data}
           >
             {formatMessage({ id: 'next' })}
           </Button>
