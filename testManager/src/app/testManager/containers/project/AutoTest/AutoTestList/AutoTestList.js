@@ -226,7 +226,7 @@ class AutoTestList extends Component {
       filters: ENVS,
       render: (env, record) => {
         const { testAppInstanceDTO } = record;
-        const { envId } = testAppInstanceDTO || {};       
+        const { envId } = testAppInstanceDTO || {};
         const target = _.find(envList, { id: envId });
         return <span>{target && target.name}</span>;
       },
@@ -287,8 +287,9 @@ class AutoTestList extends Component {
         } = record;
         return (
           <div style={{ display: 'flex' }}>
+            <div className="c7ntest-flex-space"></div>
             <Dropdown overlay={this.getMenu(record)} trigger={['click']}>
-              <Button shape="circle" icon="more_vert" />
+              <Button shape="circle" icon="more_vert" style={{ marginRight: -5 }} />
             </Dropdown>
             {/* <div className="c7ntest-flex-space" />
             <Tooltip title={<FormattedMessage id="container.log" />}>
