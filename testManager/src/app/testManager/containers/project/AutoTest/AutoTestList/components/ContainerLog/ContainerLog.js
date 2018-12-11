@@ -51,6 +51,9 @@ class ContainerLog extends Component {
    * 关闭日志
    */
   close = () => {
+    this.setState({
+      visible: false,
+    });  
     const editor = this.editorLog.getCodeMirror();
     const { ws } = this.state;
     clearInterval(this.timer);
@@ -58,12 +61,9 @@ class ContainerLog extends Component {
     if (ws) {
       ws.close();
     }
-    this.setState({
-      visible: false,
-    }, () => {
-      editor.setValue('');
-    });
+    editor.setValue('');
   };
+
 
   loadLog = (followingOK) => {
     const {
@@ -144,7 +144,7 @@ class ContainerLog extends Component {
             }
           });
         } catch (e) {
-          console.log(e);
+          // console.log(e);
           editor.setValue('连接失败');
         }
       }
@@ -233,14 +233,14 @@ class ContainerLog extends Component {
         onOk={this.close}
         className="c7ntest-podLog-content c7ntest-region"
         okText={<FormattedMessage id="close" />}
-        okCancel={false}
+        okCancel={false}       
       >
         <Content className="sidebar-content" code="container.log" values={{ name: podName }}>
           <section className="c7ntest-podLog-section">
             <div className="c7ntest-podLog-hei-wrap">
               <div className="c7ntest-podShell-title">
                 <FormattedMessage id="container.term.log" />
-                <Select value={containerName} onChange={this.containerChange}>
+                <Select value={containerName}>
                   <Option key={logId} value={`${logId}+${containerName}`}>{containerName}</Option>
                 </Select>
                 <Button type="primary" funcType="flat" shape="circle" icon="fullscreen" onClick={this.setFullscreen} />
@@ -255,7 +255,6 @@ class ContainerLog extends Component {
                 ref={this.saveRef('editorLog')}
                 value="Loading..."
                 className="c7ntest-podLog-editor"
-                onChange={code => this.props.ChangeCode(code)}
                 options={options}
               />
               <div className={`c7ntest-podLog-action log-goTop ${fullscreen ? 'g-top' : ''}`} onClick={this.goTop} role="none">Go Top</div>
