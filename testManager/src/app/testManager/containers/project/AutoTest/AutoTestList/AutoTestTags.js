@@ -13,7 +13,7 @@ export const PODSTATUS = [{
   value: 1,
 }, {
   icon: 'check_circle',
-  text: '通过',
+  text: '完成',
   color: '#00BF96',
   value: 2,
 }, {

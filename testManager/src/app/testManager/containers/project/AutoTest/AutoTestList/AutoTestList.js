@@ -210,7 +210,7 @@ class AutoTestList extends Component {
     const appOptions = appList.map(app => <Option value={app.id}>{app.name}</Option>);
     const ENVS = envList.map(env => ({ text: env.name, value: env.id }));
     const columns = [{
-      title: '测试状态',
+      title: '运行状态',
       dataIndex: 'podStatus',
       key: 'podStatus',
       filters: PODSTATUS,

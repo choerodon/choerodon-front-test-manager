@@ -141,7 +141,7 @@ const zhCN = {
   status_side_content_description: '您可以创建自定义状态，包括执行状态和步骤状态。',
   status_side_edit_content_description: '您可以自定义状态，包括执行状态和步骤状态。',
   // 报表
-  report_title: '报表',
+  report_title: '测试管理报表',
   report_switch: '切换报表',
   report_dropDown_demand: '要求到缺陷',
   report_dropDown_defect: '缺陷到要求',
