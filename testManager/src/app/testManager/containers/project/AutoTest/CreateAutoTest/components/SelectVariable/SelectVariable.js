@@ -84,7 +84,8 @@ class SelectVariable extends Component {
             <span className="section-title">{formatMessage({ id: 'autoteststep_one_app' })}</span>
           </div>
           <div className="autotest-text">
-            {app.id && (
+            {/* 选择应用版本后才显示应用 */}
+            {appVersion.id && (
               <div className="section-text-margin">
                 <Tooltip title={<FormattedMessage id="project" />}><span className="icon icon-project section-text-icon" /></Tooltip>
                 <span className="section-text">
@@ -97,7 +98,7 @@ class SelectVariable extends Component {
             )}
             <a
               role="none"
-              className={`${app.id ? '' : 'section-text-margin'}`}
+              className={`${appVersion.id ? '' : 'section-text-margin'}`}
               onClick={this.showSideBar}
             >
               {formatMessage({ id: 'autotestapp_add' })}
@@ -154,7 +155,7 @@ class SelectVariable extends Component {
           >
             {formatMessage({ id: 'next' })}
           </Button>
-          <Button funcType="raised" className="c7ntest-autotest-clear">{formatMessage({ id: 'cancel' })}</Button>
+          <Button funcType="raised" className="c7ntest-autotest-clear" onClick={CreateAutoTestStore.cancelTest}>{formatMessage({ id: 'cancel' })}</Button>
         </section>
         <SelectAppAndVersion
           show={selectApp}

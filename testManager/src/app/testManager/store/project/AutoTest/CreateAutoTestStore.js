@@ -73,6 +73,26 @@ class CreateAutoTestStore {
     this.currentStep -= 1;
   }
 
+  /**
+   * 取消部署，数据初始化
+   *
+   * @memberof CreateAutoTestStore
+   */
+  @action cancelTest = () => {
+    this.currentStep = 1;
+    this.app = {};
+    this.appVersion = {};
+    this.version = {};
+    this.appVersionPagination = {
+      current: 1,
+      total: 0,
+      pageSize: 10,
+    };
+    this.env = {};
+    this.configValue = null;
+    this.newConfigValue = null;
+  }
+
   @action setConfigValue(configValue) {
     this.configValue = configValue;
     this.newConfigValue = configValue;
