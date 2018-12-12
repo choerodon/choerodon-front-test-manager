@@ -241,7 +241,7 @@ class SelectAppAndVersion extends Component {
     const { loading } = this.state;
     const { app, appList } = CreateAutoTestStore;
     const projectName = AppState.currentMenuType.name;
-    const appOptions = appList.map(app => <Option value={app.id} key={app.id}>{app.name}</Option>);
+    const appOptions = appList.map(a => <Option value={a.id} key={a.id}>{a.name}</Option>);
     return (
       <SideBar
         title={<FormattedMessage id="autoteststep_one_app" />}
