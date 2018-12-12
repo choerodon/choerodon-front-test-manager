@@ -32,17 +32,17 @@ class SelectVersion extends Component {
         label="版本" 
         loading={loading}   
         style={{ width: 200 }}       
-        onFocus={() => {
-          this.setState({
-            loading: true,
-          });
-          getProjectVersion().then((Data) => {
-            this.setState({
-              List: Data,
-              loading: false,
-            });
-          });
-        }}
+        // onFocus={() => {
+        //   this.setState({
+        //     loading: true,
+        //   });
+        //   getProjectVersion().then((Data) => {
+        //     this.setState({
+        //       List: Data,
+        //       loading: false,
+        //     });
+        //   });
+        // }}
         {...this.props}
       >
         {Options}

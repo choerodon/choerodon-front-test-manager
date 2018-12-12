@@ -127,11 +127,11 @@ class AutoTestList extends Component {
   }
 
   handleRerunTest = (record) => {
+    this.setState({
+      loading: true,
+    });
     const { id } = record;
     reRunTest({ historyId: id }).then((res) => {
-      this.setState({
-        loading: true,
-      });
       this.loadTestHistoryByApp();
     }).catch((err) => {
       this.setState({
@@ -189,10 +189,10 @@ class AutoTestList extends Component {
       <Menu.Item key="retry">
         重新执行
       </Menu.Item>
-      <Menu.Item key="cycle">
+      <Menu.Item key="cycle" disabled={!record.cycleId}>
         测试循环
       </Menu.Item>
-      <Menu.Item key="report">
+      <Menu.Item key="report" disabled={!record.resultId}>
         测试报告
       </Menu.Item>
     </Menu>
@@ -210,7 +210,7 @@ class AutoTestList extends Component {
     const appOptions = appList.map(app => <Option value={app.id}>{app.name}</Option>);
     const ENVS = envList.map(env => ({ text: env.name, value: env.id }));
     const columns = [{
-      title: '测试状态',
+      title: '运行状态',
       dataIndex: 'podStatus',
       key: 'podStatus',
       filters: PODSTATUS,
@@ -226,7 +226,7 @@ class AutoTestList extends Component {
       filters: ENVS,
       render: (env, record) => {
         const { testAppInstanceDTO } = record;
-        const { envId } = testAppInstanceDTO || {};       
+        const { envId } = testAppInstanceDTO || {};
         const target = _.find(envList, { id: envId });
         return <span>{target && target.name}</span>;
       },
@@ -287,8 +287,9 @@ class AutoTestList extends Component {
         } = record;
         return (
           <div style={{ display: 'flex' }}>
+            <div className="c7ntest-flex-space"></div>
             <Dropdown overlay={this.getMenu(record)} trigger={['click']}>
-              <Button shape="circle" icon="more_vert" />
+              <Button shape="circle" icon="more_vert" style={{ marginRight: -5 }} />
             </Dropdown>
             {/* <div className="c7ntest-flex-space" />
             <Tooltip title={<FormattedMessage id="container.log" />}>
