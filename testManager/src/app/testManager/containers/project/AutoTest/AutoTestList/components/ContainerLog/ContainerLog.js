@@ -86,7 +86,7 @@ class ContainerLog extends Component {
         });
       } else {
         try { // PRO_DEVOPS_HOST
-          const ws = new WebSocket(`${'ws://devops-service-front.staging.saas.hand-china.com'}/ws/log?key=cluster:${envId}.log:${logId}&env=${'choerodon-test'}&podName=${podName}&containerName=${containerName}&logId=${logId}&token=${authToken}`);
+          const ws = new WebSocket(`PRO_DEVOPS_HOST/ws/log?key=cluster:${envId}.log:${logId}&env=${'choerodon-test'}&podName=${podName}&containerName=${containerName}&logId=${logId}&token=${authToken}`);
           // console.log(ws);
           this.setState({ ws, following: true });
           if (!followingOK) {
