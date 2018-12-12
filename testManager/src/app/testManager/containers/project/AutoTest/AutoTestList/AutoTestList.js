@@ -287,7 +287,7 @@ class AutoTestList extends Component {
         } = record;
         return (
           <div style={{ display: 'flex' }}>
-            <div className="c7ntest-flex-space"></div>
+            <div className="c7ntest-flex-space" />
             <Dropdown overlay={this.getMenu(record)} trigger={['click']}>
               <Button shape="circle" icon="more_vert" style={{ marginRight: -5 }} />
             </Dropdown>

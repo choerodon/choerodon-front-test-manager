@@ -3,7 +3,9 @@ import { observer } from 'mobx-react';
 import { withRouter } from 'react-router-dom';
 import _ from 'lodash';
 import { injectIntl, FormattedMessage } from 'react-intl';
-import { Modal, Table, Select } from 'choerodon-ui';
+import {
+  Modal, Table, Select, Spin, 
+} from 'choerodon-ui';
 import { stores, Content } from 'choerodon-front-boot';
 import './SelectAppAndVersion.scss';
 import { getApps, getAppVersions } from '../../../../../../api/AutoTestApi';
@@ -14,11 +16,15 @@ const { AppState } = stores;
 const { Option } = Select;
 @observer
 class SelectAppAndVersion extends Component {
+  state = {
+    loading: true,
+  }
+
   componentDidMount() {
     this.loadApps();
   }
 
-  loadApps = (value = '') => {    
+  loadApps = (value = '') => {
     const { app, appVersionPagination } = CreateAutoTestStore;
     const { current, pageSize: size } = appVersionPagination;
     let searchParam = {};
@@ -34,23 +40,30 @@ class SelectAppAndVersion extends Component {
       // 默认取第一个
       if (data.failed) {
         Choerodon.prompt(data.failed);
-        return; 
+        return;
       }
       CreateAutoTestStore.setAppList(data.content);
       if (data.content.length > 0 && data.content[0].id && !app.id) {
-        this.loadAppVersions(app.id || data.content[0].id);       
-        CreateAutoTestStore.setApp(data.content[0]);        
+        this.loadAppVersions(app.id || data.content[0].id);
+        CreateAutoTestStore.setApp(data.content[0]);
       }
     });
   }
 
   loadAppVersions = (appId, pagination = CreateAutoTestStore.appVersionPagination, filters = {}) => {
-    getAppVersions(appId, pagination, filters).then((data) => {      
+    this.setState({
+      loading: true,
+    });
+    getAppVersions(appId, pagination, filters).then((data) => {
       CreateAutoTestStore.setAppVersionList(data.content);
       CreateAutoTestStore.setAppVersionPagination({
         current: data.number + 1,
         pageSize: data.size,
         total: data.totalElements,
+      });
+    }).finally(() => {
+      this.setState({
+        loading: false,
       });
     });
   }
@@ -158,13 +171,13 @@ class SelectAppAndVersion extends Component {
    * @param record
    */
   handleSelectApp = (id) => {
-    this.loadAppVersions(id);    
+    this.loadAppVersions(id);
     const { app, appList } = CreateAutoTestStore;
-    CreateAutoTestStore.setApp(_.find(appList, { id }));    
+    CreateAutoTestStore.setApp(_.find(appList, { id }));
   };
 
-  handleSelectAppVersion=(record) => {  
-    CreateAutoTestStore.setAppVersion(record);    
+  handleSelectAppVersion = (record) => {
+    CreateAutoTestStore.setAppVersion(record);
   }
 
   /**
@@ -225,6 +238,7 @@ class SelectAppAndVersion extends Component {
 
   render() {
     const { intl: { formatMessage }, show, handleCancel } = this.props;
+    const { loading } = this.state;
     const { app, appList } = CreateAutoTestStore;
     const projectName = AppState.currentMenuType.name;
     const appOptions = appList.map(app => <Option value={app.id} key={app.id}>{app.name}</Option>);
@@ -238,21 +252,23 @@ class SelectAppAndVersion extends Component {
         onCancel={handleCancel}
       >
         <Content className="c7ntest-deployApp-sidebar sidebar-content" code="autotest.sidebar" value={projectName}>
-          <Select
-            style={{ width: 200, marginBottom: 30 }}
-            label="应用名称"
-            onChange={this.handleSelectApp}
-            value={app.id}
-            filter
-            filterOption={false}
-            onFilterChange={(value) => { this.loadApps(value); }}
-          >
-            {appOptions}
-          </Select>
-          <div>
-            {this.getProjectTable()}
-          </div>
-        </Content>
+          <Spin spinning={loading}>
+            <Select
+              style={{ width: 200, marginBottom: 30 }}
+              label="应用名称"
+              onChange={this.handleSelectApp}
+              value={app.id}
+              filter
+              filterOption={false}
+              onFilterChange={(value) => { this.loadApps(value); }}
+            >
+              {appOptions}
+            </Select>
+            <div>
+              {this.getProjectTable()}
+            </div>
+          </Spin>
+        </Content>  
       </SideBar>);
   }
 }
