@@ -100,7 +100,6 @@ class AutoTestList extends Component {
     this.loadTestHistoryByApp({ appId });
     this.setState({
       currentApp: appId,
-
     });
   }
 

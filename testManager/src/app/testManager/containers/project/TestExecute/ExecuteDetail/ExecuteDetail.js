@@ -48,6 +48,16 @@ class ExecuteDetail extends Component {
       } else {
         history.replace(executeDetailLink(toExecuteId));
       }
+      ExecuteDetailStore.setDetailPagination({
+        current: 1,
+        total: 0,
+        pageSize: 5,
+      });
+      ExecuteDetailStore.setHistoryPagination({
+        current: 1,
+        total: 0,
+        pageSize: 5,
+      });
     }
   }
 
