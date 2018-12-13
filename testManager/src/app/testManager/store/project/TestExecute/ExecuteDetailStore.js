@@ -250,6 +250,19 @@ class ExecuteDetailStore {
     this.userList = userList;
   }
 
+  @action clearPagination=() => {
+    this.historyPagination = {
+      current: 1,
+      total: 0,
+      pageSize: 5,
+    };
+    this.detailPagination = {
+      current: 1,
+      total: 0,
+      pageSize: 5,
+    };
+  }
+
   @action setHistoryPagination = (historyPagination) => {
     this.historyPagination = historyPagination;
   }
