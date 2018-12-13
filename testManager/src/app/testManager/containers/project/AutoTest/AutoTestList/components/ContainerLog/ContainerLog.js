@@ -241,7 +241,7 @@ class ContainerLog extends Component {
             <div className="c7ntest-podLog-hei-wrap">
               <div className="c7ntest-podShell-title">
                 <FormattedMessage id="container.term.log" />
-                <Select value={containerName}>
+                <Select value={containerName} style={{ marginLeft: 5 }}>
                   <Option key={logId} value={`${logId}+${containerName}`}>{containerName}</Option>
                 </Select>
                 <Button type="primary" funcType="flat" shape="circle" icon="fullscreen" onClick={this.setFullscreen} />
