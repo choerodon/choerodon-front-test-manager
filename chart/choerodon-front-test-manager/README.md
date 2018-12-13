@@ -51,6 +51,9 @@ env.open.PRO_TITLE_NAME|页面显示标题
 env.open.PRO_HEADER_TITLE_NAME|页面header标题
 env.open.PRO_HTTP|使用协议
 env.open.PRO_WEBSOCKET_SERVER|websocket地址
+env.open.PRO_AGILE_HOST|敏捷文件服务地址
+env.open.PRO_FILE_SERVICE|文件服务地址
+env.open.PRO_DEVOPS_HOST|Devops的websocket地址
 service.enable|创建service对象
 ingress.enable|创建ingress对象
 ingress.host|域名地址，此处不能带http://
