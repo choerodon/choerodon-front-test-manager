@@ -7,7 +7,8 @@
 - **Test Execute Management**
 - **Test Result Management**
 - **Test Status Management**
-
+- **Auto Test**
+  
 ## Environment Support
 
 Modern browsers and Internet Explorer 10+（Currently, it is best to browse through Google.）

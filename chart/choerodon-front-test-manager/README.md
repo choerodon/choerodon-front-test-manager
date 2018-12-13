@@ -50,6 +50,7 @@ env.open.PRO_CLIENT_ID|client id
 env.open.PRO_TITLE_NAME|页面显示标题
 env.open.PRO_HEADER_TITLE_NAME|页面header标题
 env.open.PRO_HTTP|使用协议
+env.open.PRO_WEBSOCKET_SERVER|websocket地址
 service.enable|创建service对象
 ingress.enable|创建ingress对象
 ingress.host|域名地址，此处不能带http://
