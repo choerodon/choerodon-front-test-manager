@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import {
   Page, Header, Content,
 } from 'choerodon-front-boot';
@@ -148,7 +149,7 @@ class AutoTestList extends Component {
     this.props.history.push(commonLink(`/AutoTest/report/${resultId}`));
   }
 
-  toTestExecute = (cycleId) => {
+  toTestExecute = (cycleId) => {    
     this.props.history.push(cycleLink(cycleId));
   }
 
@@ -168,10 +169,10 @@ class AutoTestList extends Component {
         this.handleRerunTest(record);
         break;
       }
-      case 'cycle': {
-        this.toTestExecute(cycleId);
-        break;
-      }
+      // case 'cycle': {
+      //   this.toTestExecute(cycleId);
+      //   break;
+      // }
       case 'report': {
         this.toReport(resultId);
         break;
@@ -189,7 +190,7 @@ class AutoTestList extends Component {
         重新执行
       </Menu.Item>
       <Menu.Item key="cycle" disabled={!record.cycleId}>
-        测试循环
+        <Link to={cycleLink(record.cycleId)} target="_blank">测试循环</Link>
       </Menu.Item>
       <Menu.Item key="report" disabled={!record.resultId}>
         测试报告
