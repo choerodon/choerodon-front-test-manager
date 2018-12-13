@@ -7,7 +7,7 @@
 - **Test Execute Management**
 - **Test Result Management**
 - **Test Status Management**
-- **Auto Test**
+- **Automation Test**
   
 ## Environment Support
 
