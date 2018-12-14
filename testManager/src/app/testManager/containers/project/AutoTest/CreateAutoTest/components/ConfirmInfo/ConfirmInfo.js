@@ -189,10 +189,11 @@ class ConfirmInfo extends Component {
       //   ? null : this.state.instanceId || (instances && instances.length === 1 && instances[0].id),
     };
     const { testType } = this.state;
-    this.setState({
-      loading: true,
-    });
+
     if (testType === 'instant') {
+      this.setState({
+        loading: true,
+      });
       // 立即执行
       runTestInstant(applicationDeployDTO).then((res) => {
         this.setState({
@@ -209,7 +210,7 @@ class ConfirmInfo extends Component {
       this.props.form.validateFieldsAndScroll((err, values) => {
         if (!err) {
           this.setState({
-            // isSubmitting: true,
+            loading: true,
           });
           const flag = values.triggerType === 'simple-trigger';
           const {
