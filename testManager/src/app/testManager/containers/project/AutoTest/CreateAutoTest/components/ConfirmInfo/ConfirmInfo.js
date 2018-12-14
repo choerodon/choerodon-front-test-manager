@@ -438,6 +438,7 @@ class ConfirmInfo extends Component {
 
   toTestHistory = () => {
     this.props.history.push(commonLink('/AutoTest/list'));
+    CreateAutoTestStore.clearTestInfo();
   }
 
   render() {
@@ -584,7 +585,7 @@ class ConfirmInfo extends Component {
         <section className="deployApp-section">
           <Button type="primary" funcType="raised" onClick={this.handleDeploy} loading={loading}>{formatMessage({ id: 'autotestbtn_autotest' })}</Button>
           <Button funcType="raised" onClick={CreateAutoTestStore.preStep}>{formatMessage({ id: 'previous' })}</Button>
-          <Button funcType="raised" className="c7ntest-autotest-clear" onClick={CreateAutoTestStore.cancelTest}>{formatMessage({ id: 'cancel' })}</Button>
+          <Button funcType="raised" className="c7ntest-autotest-clear" onClick={CreateAutoTestStore.clearTestInfo}>{formatMessage({ id: 'cancel' })}</Button>
         </section>
       </section>
     );

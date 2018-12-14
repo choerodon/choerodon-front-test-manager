@@ -78,7 +78,7 @@ class CreateAutoTestStore {
    *
    * @memberof CreateAutoTestStore
    */
-  @action cancelTest = () => {
+  @action clearTestInfo = () => {
     this.currentStep = 1;
     this.app = {};
     this.appVersion = {};

@@ -155,7 +155,7 @@ class SelectVariable extends Component {
           >
             {formatMessage({ id: 'next' })}
           </Button>
-          <Button funcType="raised" className="c7ntest-autotest-clear" onClick={CreateAutoTestStore.cancelTest}>{formatMessage({ id: 'cancel' })}</Button>
+          <Button funcType="raised" className="c7ntest-autotest-clear" onClick={CreateAutoTestStore.clearTestInfo}>{formatMessage({ id: 'cancel' })}</Button>
         </section>
         <SelectAppAndVersion
           show={selectApp}

@@ -430,6 +430,7 @@ class TestExecuteHome extends Component {
   }
 
   handleExecuteTableChange = (pagination, filters, sorter) => {
+    console.log(filters);
     TestExecuteStore.setExecutePagination(pagination);
     this.setState({
       rightLoading: true,
@@ -1056,12 +1057,14 @@ class TestExecuteHome extends Component {
                       )}
                     </div>
                     <Table
+                      rowKey={record => record.executeId}
                       pagination={executePagination}
                       loading={rightLoading}
                       onChange={this.handleExecuteTableChange}
                       dataSource={testList}
-                      columns={leftVisible ? columns
-                        : columns.slice(0, 4).concat(otherColumns).concat(columns.slice(4))}
+                      // columns={leftVisible ? columns
+                      //   : columns.slice(0, 4).concat(otherColumns).concat(columns.slice(4))}
+                      columns={columns}
                     />
                   </div>
                 </div>

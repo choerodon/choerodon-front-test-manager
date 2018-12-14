@@ -82,7 +82,7 @@ class ModifyConfig extends Component {
             {formatMessage({ id: 'next' })}
           </Button>
           <Button onClick={CreateAutoTestStore.preStep} funcType="raised">{formatMessage({ id: 'previous' })}</Button>
-          <Button funcType="raised" className="c7ntest-autotest-clear" onClick={CreateAutoTestStore.cancelTest}>{formatMessage({ id: 'cancel' })}</Button>
+          <Button funcType="raised" className="c7ntest-autotest-clear" onClick={CreateAutoTestStore.clearTestInfo}>{formatMessage({ id: 'cancel' })}</Button>
         </section>
       </div>
     );

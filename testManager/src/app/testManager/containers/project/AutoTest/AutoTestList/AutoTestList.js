@@ -35,7 +35,7 @@ class AutoTestList extends Component {
     historyList: [],
     envList: [],
     currentApp: null,
-    loading: false,
+    loading: true,
     selectLoading: false,
     pagination: {
       current: 1,

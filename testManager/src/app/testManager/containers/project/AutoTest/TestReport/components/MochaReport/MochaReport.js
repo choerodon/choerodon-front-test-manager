@@ -26,6 +26,8 @@ const columns = [{
   title: '名称',
   dataIndex: 'title',
   key: 'title',
+  filters: [],
+  onFilter: (value, record) => record.title.indexOf(value) === 0,
   render: (title, record) => {
     const { tests } = record;
     return (

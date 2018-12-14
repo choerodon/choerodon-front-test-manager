@@ -21,7 +21,7 @@ export function getExecutesByCycleId(pagination, cycleId, filters, type) {
   };
   if (Filters) {
     Object.keys(filters).forEach((filter) => {
-      console.log(filter, Filters);
+      // console.log(filter, Filters);
       if (['priorityId'].includes(filter)) {
         Filters.searchDTO.advancedSearchArgs[filter] = Filters[filter];
       } else if (['summary'].includes(filter)) {
