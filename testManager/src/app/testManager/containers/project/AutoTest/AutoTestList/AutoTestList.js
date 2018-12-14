@@ -207,7 +207,7 @@ class AutoTestList extends Component {
       pagination,
     } = this.state;
     const appOptions = appList.map(app => <Option value={app.id}>{app.name}</Option>);
-    const ENVS = envList.map(env => ({ text: env.name, value: env.id }));
+    const ENVS = envList.map(env => ({ text: env.name, value: env.id.toString() }));
     const columns = [{
       title: '运行状态',
       dataIndex: 'podStatus',
