@@ -104,7 +104,7 @@ class DuringChart extends Component {
         data: tests.map(during => during.title),
       },
       yAxis: {
-        name: '时间',
+        name: '时间(ms)',
         type: 'value',
 
         nameTextStyle: {
