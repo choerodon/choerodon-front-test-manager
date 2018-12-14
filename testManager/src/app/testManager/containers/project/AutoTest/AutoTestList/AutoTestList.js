@@ -189,7 +189,7 @@ class AutoTestList extends Component {
         重新执行
       </Menu.Item>
       <Menu.Item key="cycle" disabled={!record.cycleId}>
-        <Link to={cycleLink(record.cycleId)} target="_blank">测试循环</Link>
+        {record.cycleId ? <Link to={cycleLink(record.cycleId)} target="_blank">测试循环</Link> : '测试循环'}        
       </Menu.Item>
       <Menu.Item key="report" disabled={!record.resultId}>
         测试报告
