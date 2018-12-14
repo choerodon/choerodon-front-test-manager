@@ -17,7 +17,7 @@ const { Option } = Select;
 @observer
 class SelectAppAndVersion extends Component {
   state = {
-    loading: true,
+    loading: false,
   }
 
   componentDidMount() {
@@ -46,6 +46,10 @@ class SelectAppAndVersion extends Component {
       if (data.content.length > 0 && data.content[0].id && !app.id) {
         this.loadAppVersions(app.id || data.content[0].id);
         CreateAutoTestStore.setApp(data.content[0]);
+      } else {
+        this.setState({
+          loading: false,
+        });
       }
     });
   }
