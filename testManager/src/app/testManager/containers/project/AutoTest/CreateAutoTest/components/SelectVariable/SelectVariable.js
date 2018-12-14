@@ -7,7 +7,7 @@ import { observer } from 'mobx-react';
 import _ from 'lodash';
 import { YamlEditor, SelectVersion } from '../../../../../../components/CommonComponent';
 import CreateAutoTestStore from '../../../../../../store/project/AutoTest/CreateAutoTestStore';
-import { getEnvs } from '../../../../../../api/AutoTestApi';
+import { getAllEnvs } from '../../../../../../api/AutoTestApi';
 import SelectAppAndVersion from '../SelectAppAndVersion';
 
 const Option = Select.Option;
@@ -60,8 +60,8 @@ class SelectVariable extends Component {
   }
 
   loadEnvs=() => {
-    getEnvs().then((res) => {
-      CreateAutoTestStore.setEnvList(res.content);      
+    getAllEnvs().then((res) => {
+      CreateAutoTestStore.setEnvList(res);      
     });
   }
 

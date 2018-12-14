@@ -10,7 +10,6 @@ import {
 import TimeAgo from 'timeago-react';
 import { FormattedMessage } from 'react-intl';
 import _ from 'lodash';
-import CodeMirror from 'react-codemirror';
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/base16-dark.css';
 import { User, SmartTooltip } from '../../../../components/CommonComponent';
@@ -82,21 +81,21 @@ class AutoTestList extends Component {
       if (!currentApp && !value && data.content.length > 0) {
         this.loadTestHistoryByApp({ appId: data.content[0].id });
         this.setState({
-          envList: envs.content,
+          envList: envs,
           currentApp: data.content[0].id,
           appList: data.content,
           selectLoading: false,
         });
       } else {
         this.setState({
-          envList: envs.content,
+          envList: envs,
           appList: data.content,
           selectLoading: false,
         });
       }
     });
   }
-
+  
   handleAppChange = (appId) => {
     this.loadTestHistoryByApp({ appId });
     this.setState({
