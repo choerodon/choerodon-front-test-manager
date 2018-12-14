@@ -34,6 +34,10 @@ class CreateIssueTiny extends Component {
       });
       const testType = IssueStore.getTestType;
       const defaultPriority = IssueStore.getDefaultPriority;
+      if (!defaultPriority) {
+        Choerodon.prompt('未找到优先级');
+        return;
+      }
       const data = {
         priorityCode: `priority-${defaultPriority}`,
         priorityId: defaultPriority,
@@ -59,6 +63,9 @@ class CreateIssueTiny extends Component {
           });
         })
         .catch((error) => {
+          this.setState({  
+            createLoading: false,
+          });
         });
     }
   }
