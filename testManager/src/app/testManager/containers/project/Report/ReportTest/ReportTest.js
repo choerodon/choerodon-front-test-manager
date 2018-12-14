@@ -475,7 +475,7 @@ class ReportTest extends Component {
         title: '类型',
         dataIndex: 'issueTypeId',
         key: 'issueTypeId',
-        filters: issueTypes.map(type => ({ text: type.name, value: type.id })),
+        filters: issueTypes.map(type => ({ text: type.name, value: type.id.toString() })),
         filterMultiple: true,
       },
       // {
@@ -520,7 +520,7 @@ class ReportTest extends Component {
         title: '状态',
         dataIndex: 'statusId',
         key: 'statusId',
-        filters: issueStatusList.map(status => ({ text: status.name, value: status.id })),
+        filters: issueStatusList.map(status => ({ text: status.name, value: status.id.toString() })),
         filterMultiple: true,
         // filteredValue: IssueStore.filteredInfo.statusId || null,
       },
