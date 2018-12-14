@@ -18,6 +18,11 @@ const STATUS = {
     name: '失败',
     code: 'error',
   },
+  skipped: {
+    name: '跳过',
+    code: 'error',
+    color: '#fbc02d',
+  },
   slow: 'red',
   medium: '#fbc02d',
   fast: 'rgba(0,0,0,.38)',
@@ -69,11 +74,12 @@ const columns = [{
         );
       }
     } else {
-      const { state } = record;
+      const { skipped } = record;     
+      const state = skipped ? 'skipped' : record.state;     
       // console.log(state);
       return (
         <span>
-          <StatusTags name={STATUS[state].name} colorCode={STATUS[state].code} />
+          <StatusTags name={STATUS[state].name} color={STATUS[state].color} colorCode={STATUS[state].code} />
         </span>
       );
     }
@@ -89,7 +95,7 @@ const columns = [{
     return (
       <div>
         <span style={{ display: 'inline-block', width: 60 }}>
-          {duration > 1000 ? `${duration / 1000}s` : `${duration}ms`}
+          {duration > 1000 ? `${duration / 1000}s` : `${duration || 0}ms`}
         </span>
         <Icon type="APItest" style={{ color: timedOut ? 'red' : STATUS[speed] || 'rgba(0,0,0,.38)' }} />
       </div>
@@ -104,7 +110,7 @@ class MochaReport extends Component {
   }
 
   loadTestReport = (id) => {
-    console.log(id);
+    // console.log(id);
     this.setState({
       loading: true,
     });
@@ -169,7 +175,9 @@ class MochaReport extends Component {
     const {
       passPercent, skipped, duration, passes, failures, start, end, testsRegistered,
     } = stats;
+    
     const { suites } = tests[0] || { suites: [] };
+    // console.log(suites.map(suite => ({ ...suite, children: suite.tests })));
     return (
       loading
         ? <Progress type="loading" className="spin-container" />
@@ -212,6 +220,7 @@ class MochaReport extends Component {
             <span style={{ fontSize: '14px', fontWeight: 500 }}>测试时长表</span>
             <DuringChart />
             <Table
+              rowKey={record => record.uuid}
               columns={columns}
               dataSource={suites.map(suite => ({ ...suite, children: suite.tests }))}
             />
