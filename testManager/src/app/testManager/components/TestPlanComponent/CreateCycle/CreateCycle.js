@@ -101,21 +101,22 @@ class CreateCycle extends Component {
     ));
     return (
       <div>
-        <Spin spinning={loading}>
-          <Sidebar
-            title={<FormattedMessage id="cycle_create_title" />}
-            visible={visible}
-            onOk={this.onOk}
-            onCancel={onCancel}
+        
+        <Sidebar
+          title={<FormattedMessage id="cycle_create_title" />}
+          visible={visible}
+          onOk={this.onOk}
+          onCancel={onCancel}
+        >
+          <Content
+            style={{
+              padding: '0 0 10px 0',
+            }}
+            title={<FormattedMessage id="cycle_create_content_title" values={{ name: getProjectName() }} />}
+            description={<FormattedMessage id="cycle_create_content_description" />}
+            link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management/test-cycle/create-cycle/"
           >
-            <Content
-              style={{
-                padding: '0 0 10px 0',
-              }}
-              title={<FormattedMessage id="cycle_create_content_title" values={{ name: getProjectName() }} />}
-              description={<FormattedMessage id="cycle_create_content_description" />}
-              link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management/test-cycle/create-cycle/"
-            >
+            <Spin spinning={loading}>
               <Form>
                 <FormItem
                   // {...formItemLayout}
@@ -231,9 +232,9 @@ class CreateCycle extends Component {
                   )}
                 </FormItem>
               </Form>
-            </Content>
-          </Sidebar>
-        </Spin>
+            </Spin>
+          </Content>
+        </Sidebar>
       </div>
     );
   }

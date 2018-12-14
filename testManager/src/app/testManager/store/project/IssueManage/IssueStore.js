@@ -277,6 +277,8 @@ class IssueStore {
     const priority = _.find(this.prioritys, { default: true });
     if (priority) {
       return priority.id;
+    } else if (this.prioritys.length > 0) {
+      return this.prioritys[0].id;
     }
     return null;
   }
