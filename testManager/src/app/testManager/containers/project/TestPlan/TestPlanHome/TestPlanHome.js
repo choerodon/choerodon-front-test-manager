@@ -243,7 +243,7 @@ class TestPlanHome extends Component {
       title: '用例优先级',
       dataIndex: 'priorityId',
       key: 'priorityId',
-      filters: prioritys.map(priority => ({ text: priority.name, value: priority.id })),
+      filters: prioritys.map(priority => ({ text: priority.name, value: priority.id.toString() })),
       flex: 1,
       render(issueId, record) {
         const { issueInfosDTO } = record;
@@ -255,7 +255,7 @@ class TestPlanHome extends Component {
       title: <FormattedMessage id="status" />,
       dataIndex: 'executionStatus',
       key: 'executionStatus',
-      filters: statusList.map(status => ({ text: status.statusName, value: status.statusId })),
+      filters: statusList.map(status => ({ text: status.statusName, value: status.statusId.toString() })),
       // onFilter: (value, record) => record.executionStatus === value,  
       flex: 1,
       render(executionStatus) {
