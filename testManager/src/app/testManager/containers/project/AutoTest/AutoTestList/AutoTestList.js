@@ -182,7 +182,7 @@ class AutoTestList extends Component {
 
   getMenu = record => (
     <Menu onClick={this.handleItemClick.bind(this, record)} style={{ margin: '10px 0 0 28px' }}>
-      <Menu.Item key="log" disabled={record.testAppInstanceDTO.podStatus === 0}>
+      <Menu.Item key="log" disabled={record.testAppInstanceDTO.podStatus === 0 || !record.testAppInstanceDTO.logId}>
         查看日志
       </Menu.Item>
       <Menu.Item key="retry">
