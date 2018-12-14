@@ -27,7 +27,7 @@ const columns = [{
   dataIndex: 'title',
   key: 'title',
   filters: [],
-  onFilter: (value, record) => record.title.indexOf(value) === 0,
+  onFilter: (value, record) => record.title.toUpperCase().indexOf(value.toUpperCase()) !== -1,
   render: (title, record) => {
     const { tests } = record;
     return (
