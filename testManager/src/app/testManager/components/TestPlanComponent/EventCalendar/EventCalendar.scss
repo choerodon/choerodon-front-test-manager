@@ -7,6 +7,9 @@
     display: flex;
     align-items: center;
     margin-bottom: 15px;
+    &-title {
+      font-size: 16px;
+    }
     &-radio {
       margin-left: 10px;
     }

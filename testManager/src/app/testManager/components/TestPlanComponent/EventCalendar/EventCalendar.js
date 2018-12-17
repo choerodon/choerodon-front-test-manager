@@ -214,7 +214,8 @@ class EventCalendar extends Component {
       <div className="c7ntest-EventCalendar" style={{ height: showMode === 'multi' ? '100%' : '162px' }}>
         {/* 头部 */}
         <div className="c7ntest-EventCalendar-header">
-          <div style={{ fontWeight: 500 }}>{moment(start).format('YYYY年M月')}</div>
+          {/* <div style={{ fontWeight: 500 }}>{moment(start).format('YYYY年M月')}</div> */}
+          <div className="c7ntest-EventCalendar-header-title">计划日历</div>
           <div className="c7ntest-flex-space" />
           <div className="c7ntest-EventCalendar-header-skip">
             {/* <span style={{ color: 'rgba(0,0,0,0.65)', marginRight: 7 }}>跳转到</span> */}
