@@ -1,21 +1,24 @@
 .CalendarBackItem {
   min-width: 30px;
   flex: 1;
-  display: inline-block; 
-  border-right: 1px solid rgba(0, 0, 0, 0.12);
-  // box-shadow: 1px 0 0 rgba(0, 0, 0, 0.12);  
+  display: inline-block;
+  border-right: 1px solid rgba(0, 0, 0, 0.12); // box-shadow: 1px 0 0 rgba(0, 0, 0, 0.12);  
   height: 100%;
-  padding-top: 5px;
   text-align: center;
   font-weight: 500;
+  &-content {
+    padding-top: 5px;
+    position: relative;
+    background: white;
+    border-top: 1px solid rgba(0, 0, 0, 0.12);
+    border-right: 1px solid rgba(0, 0, 0, 0.12); // box-shadow: 1px 0 0 rgba(0, 0, 0, 0.12);  
+    margin-right: -1px; // 保证下方滚动时不会把边框覆盖
+    z-index: 2; //保证下方滚动时不会把日期显示覆盖
+  }
 }
 
-// .CalendarBackItem:after {
-//   content: '';
-//   border-right: 1px solid rgba(0, 0, 0, 0.12);
-//   min-width: 30px;
-//   height: 100%;
-//   padding-top: 5px;
-//   text-align: center;
-//   font-weight: 500;
-// }
+.CalendarBackItem:first-child .CalendarBackItem-content {
+  margin-left: -1px; // border: none;
+  border-left: 1px solid rgba(0, 0, 0, 0.12);
+}
+

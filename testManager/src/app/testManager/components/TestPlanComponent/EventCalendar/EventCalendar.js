@@ -8,7 +8,7 @@ import { RadioButton } from '../../CommonComponent';
 import './EventCalendar.scss';
 import CalendarBackItem from './CalendarBackItem';
 import EventItem from './EventItem';
-
+const { RangePicker } = DatePicker;
 const moment = extendMoment(Moment);
 class EventCalendar extends Component {
   constructor(props) {
@@ -141,7 +141,7 @@ class EventCalendar extends Component {
     e.preventDefault();
     this.initScrollPosition = {
       x: e.clientX,
-      y:e.clientY,
+      y: e.clientY,
       left: this.scroller.scrollLeft,
       top: this.scroller.scrollTop,
     }
@@ -162,6 +162,21 @@ class EventCalendar extends Component {
     document.removeEventListener('mousemove', this.handleMouseMove);
     document.removeEventListener('mouseup', this.handleMouseUp);
   }
+  // 滚动时保持日期固定在头部
+  handleScroll = (e) => {
+    this.BackItems.style.top = `${e.target.scrollTop}px`;
+  }
+  /**
+   * 时间范围改变
+   *
+   * @memberof EventCalendar
+   */
+  handleRangeChange = (range) => {
+    this.setState({
+      baseDate: range[0],
+      endDate: range[1]
+    })
+  }
   render() {
     const { mode, currentDate, width, singleWidth } = this.state;
     const { showMode, times } = this.props;
@@ -169,26 +184,31 @@ class EventCalendar extends Component {
     const { start, end } = this.calculateTime();
     const range = moment.range(start, end);
     const timeArray = Array.from(range.by('day'));
-
+    const dateFormat = 'YYYY/MM/DD';
     return (
       <div className="c7ntest-EventCalendar" style={{ height: showMode === 'multi' ? '100%' : '162px' }}>
+        {/* 头部 */}
         <div className="c7ntest-EventCalendar-header">
           <div style={{ fontWeight: 500 }}>{moment(start).format('YYYY年M月')}</div>
           <div className="c7ntest-flex-space" />
           <div className="c7ntest-EventCalendar-header-skip">
-            <span style={{ color: 'rgba(0,0,0,0.65)', marginRight: 7 }}>跳转到</span>
+            {/* <span style={{ color: 'rgba(0,0,0,0.65)', marginRight: 7 }}>跳转到</span> */}
             {/* <Button
               onClick={() => { this.handleBaseChange(moment()); }}
               style={{ fontWeight: 500 }}
             >
-今天
-
+            今天
             </Button> */}
 
-            {
+            {/* {
               currentDate && currentDate.format('LL')
-            }
-            <DatePicker allowClear={false} onChange={this.handleCalendarChange} value={currentDate} />
+            } */}
+            <RangePicker
+              onChange={this.handleRangeChange}
+              defaultValue={[start, end]}
+              format={dateFormat}
+            />
+            {/* <DatePicker allowClear={false} onChange={this.handleCalendarChange} value={currentDate} /> */}
           </div>
           {/* <div className="c7ntest-EventCalendar-header-radio">
             <RadioButton
@@ -207,27 +227,22 @@ class EventCalendar extends Component {
             <Icon
               className="c7ntest-pointer"
               type="keyboard_arrow_left"
+
               onClick={() => {
-                this.setState({
-                  currentDate: null,
-                  pos: this.state.pos - 1,
-                });
+                this.scroller.scrollLeft -= 100
               }}
             />
             <Icon
               className="c7ntest-pointer"
               type="keyboard_arrow_right"
               onClick={() => {
-                this.setState({
-                  currentDate: null,
-                  pos: this.state.pos + 1,
-                });
+                this.scroller.scrollLeft += 100
               }}
             />
           </div>
         </div>
-        {/* <div> */}
-        <div className="c7ntest-EventCalendar-scroller" onMouseDown={this.handleMouseDown} ref={this.saveRef('scroller')}>
+        {/* 滚动区域 */}
+        <div className="c7ntest-EventCalendar-scroller" onScroll={this.handleScroll} onMouseDown={this.handleMouseDown} ref={this.saveRef('scroller')}>
           <div className="c7ntest-EventCalendar-content">
             <div className="c7ntest-EventCalendar-BackItems" ref={this.saveRef('BackItems')}>
               {
@@ -235,7 +250,6 @@ class EventCalendar extends Component {
               }
             </div>
             <div className="c7ntest-EventCalendar-eventContainer" ref={this.saveRef('wrapper')}>
-              {/* <div className="c7ntest-EventCalendar-scroll-wrapper" ref={this.saveRef('scroll')}>          */}
               {times.map(event => (
                 <EventItem
                   onClick={this.props.onItemClick}
@@ -246,7 +260,6 @@ class EventCalendar extends Component {
                   singleWidth={singleWidth}
                 />
               ))}
-              {/* </div> */}
             </div>
           </div>
         </div>
