@@ -1,5 +1,7 @@
 .CalendarBackItem {
+  min-width: 30px;
   flex: 1;
+  display: inline-block; 
   border-right: 1px solid rgba(0, 0, 0, 0.12);
   // box-shadow: 1px 0 0 rgba(0, 0, 0, 0.12);  
   height: 100%;
@@ -7,3 +9,13 @@
   text-align: center;
   font-weight: 500;
 }
+
+// .CalendarBackItem:after {
+//   content: '';
+//   border-right: 1px solid rgba(0, 0, 0, 0.12);
+//   min-width: 30px;
+//   height: 100%;
+//   padding-top: 5px;
+//   text-align: center;
+//   font-weight: 500;
+// }

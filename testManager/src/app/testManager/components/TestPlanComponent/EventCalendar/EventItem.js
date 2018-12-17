@@ -86,7 +86,6 @@ class EventItem extends Component {
   }
 
   render() {
-    // const { range } = this.props;
     return (
       <div style={{ width: '100%', display: 'flex' }} className="c7ntest-EventItem">
         {this.renderItems()}
