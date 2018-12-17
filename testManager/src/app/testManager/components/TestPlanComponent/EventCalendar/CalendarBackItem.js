@@ -15,10 +15,10 @@ class CalendarBackItem extends Component {
         <div className="CalendarBackItem-content">
           <Tooltip title={moment(date).format('LL')}>
             <div>
-              {moment(date).format('dd')}
+              {moment(date).format('dddd')}
             </div>
-            <div>
-              {moment(date).format('MMM Do')}
+            <div style={{ marginTop: 5 }}>
+              {moment(date).format('MMMDo')}
             </div>
           </Tooltip>
         </div>

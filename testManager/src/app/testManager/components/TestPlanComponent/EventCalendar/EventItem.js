@@ -4,11 +4,27 @@ import { extendMoment } from 'moment-range';
 import './EventItem.scss';
 import { Tooltip } from 'choerodon-ui';
 
-const background = {
-  topversion: '#A1C4FD',
-  version: '#78A9F7',
-  cycle: '#5094FF',
-  folder: '#4677DD',
+const styles = {
+  topversion: {
+    borderTop: '4px solid #3F51B5',
+    background: '#E8ECFC',
+    color: '#3F51B5',
+  },
+  version: {
+    borderTop: '4px solid #FFB100',
+    background: '#FFF8E7',
+    color: '#FFB100',
+  },
+  cycle: {
+    borderTop: '4px solid #00BFA5',
+    background: '#E5F9F6',
+    color: '#00BFA5',
+  },
+  folder: {
+    // borderTop: '4px solid #3F51B5',
+    background: '#E9F1FF',
+    color: '#4D90FE',
+  },
 };
 const moment = extendMoment(Moment);
 class EventItem extends Component {
@@ -72,7 +88,7 @@ class EventItem extends Component {
         style={{
           flex,
           // display: flex === 0 && 'none',
-          background: background[type],
+          ...styles[type],
         }}
       >
         <Tooltip title={title} placement="topLeft">
