@@ -91,6 +91,7 @@ class AutoTestList extends Component {
           envList: envs,
           appList: data.content,
           selectLoading: false,
+          loading: false,
         });
       }
     });
@@ -109,14 +110,18 @@ class AutoTestList extends Component {
       filter,
     });
     getTestHistoryByApp(appId, pagination, filter).then((history) => {
-      this.setState({
-        loading: false,
+      this.setState({      
         historyList: history.content,
         pagination: {
           current: history.number + 1,
           total: history.totalElements,
           pageSize: history.size,
         },
+      });
+    }).finally(() => {
+      this.setState({        
+        selectLoading: false,
+        loading: false,
       });
     });
   }
