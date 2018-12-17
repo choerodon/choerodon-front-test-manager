@@ -8,6 +8,7 @@ import { RadioButton } from '../../CommonComponent';
 import './EventCalendar.scss';
 import CalendarBackItem from './CalendarBackItem';
 import EventItem from './EventItem';
+
 const { RangePicker } = DatePicker;
 const moment = extendMoment(Moment);
 class EventCalendar extends Component {
@@ -72,21 +73,26 @@ class EventCalendar extends Component {
     // this.scroll.style.width = `calc(100% + ${scrollBarWidth}px)`;
     // 设置事件区域宽度
     this.wrapper.style.width = `${this.BackItems.clientWidth}px`;
-    this.calculateItemWidth()
+    this.calculateItemWidth();
   }
+
   componentDidUpdate(prevProps, prevState) {
     this.wrapper.style.width = `${this.BackItems.clientWidth}px`;
   }
+
   calculateItemWidth = () => {
     const { baseDate, endDate } = this.state;
-    const range = moment.range(baseDate, endDate).diff('days') || 1;
+    const range = moment.range(baseDate, endDate).diff('days') + 1 || 1;
     const singleWidth = this.BackItems.clientWidth / range;
     this.setState({
-      singleWidth
-    })
+      singleWidth,
+    });
   }
+
   calculateTime = () => {
-    const { mode, pos, baseDate, endDate } = this.state;
+    const {
+      mode, pos, baseDate, endDate, 
+    } = this.state;
     const start = moment(baseDate).startOf('day');
     // const start = moment(baseDate).startOf('week').add(pos, mode);
     // const end = moment(baseDate).endOf(mode).add(pos, mode);
@@ -124,6 +130,7 @@ class EventCalendar extends Component {
   saveRef = name => (ref) => {
     this[name] = ref;
   }
+
   // handleScroll = (e) => {
   //   // 左侧滚动距离
   //   const scrollLeft=e.target.scrollLeft;
@@ -144,10 +151,11 @@ class EventCalendar extends Component {
       y: e.clientY,
       left: this.scroller.scrollLeft,
       top: this.scroller.scrollTop,
-    }
+    };
     document.addEventListener('mouseup', this.handleMouseUp);
     document.addEventListener('mousemove', this.handleMouseMove);
   }
+
   handleMouseMove = (e) => {
     e.stopPropagation();
     e.preventDefault();
@@ -158,14 +166,17 @@ class EventCalendar extends Component {
       this.scroller.scrollTop = this.initScrollPosition.top - posY;
     }
   }
+
   handleMouseUp = (e) => {
     document.removeEventListener('mousemove', this.handleMouseMove);
     document.removeEventListener('mouseup', this.handleMouseUp);
   }
+
   // 滚动时保持日期固定在头部
   handleScroll = (e) => {
     this.BackItems.style.top = `${e.target.scrollTop}px`;
   }
+
   /**
    * 时间范围改变
    *
@@ -174,11 +185,25 @@ class EventCalendar extends Component {
   handleRangeChange = (range) => {
     this.setState({
       baseDate: range[0],
-      endDate: range[1]
-    })
+      endDate: range[1],
+    });
   }
+
+  // 左右切换日期
+  skipTo = (mode) => { 
+    const { singleWidth } = this.state;
+    console.log(singleWidth);
+    if (mode === 'pre') {
+      this.scroller.scrollLeft -= singleWidth * 30;
+    } else {
+      this.scroller.scrollLeft += singleWidth * 30;
+    }
+  }
+
   render() {
-    const { mode, currentDate, width, singleWidth } = this.state;
+    const {
+      mode, currentDate, width, singleWidth, 
+    } = this.state;
     const { showMode, times } = this.props;
 
     const { start, end } = this.calculateTime();
@@ -227,17 +252,12 @@ class EventCalendar extends Component {
             <Icon
               className="c7ntest-pointer"
               type="keyboard_arrow_left"
-
-              onClick={() => {
-                this.scroller.scrollLeft -= 100
-              }}
+              onClick={this.skipTo.bind(this, 'pre')}
             />
             <Icon
               className="c7ntest-pointer"
               type="keyboard_arrow_right"
-              onClick={() => {
-                this.scroller.scrollLeft += 100
-              }}
+              onClick={this.skipTo.bind(this, 'next')}
             />
           </div>
         </div>

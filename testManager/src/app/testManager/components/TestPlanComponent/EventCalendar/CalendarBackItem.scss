@@ -1,13 +1,17 @@
 .CalendarBackItem {
-  min-width: 30px;
+  min-width: 50px;
   flex: 1;
   display: inline-block;
   border-right: 1px solid rgba(0, 0, 0, 0.12); // box-shadow: 1px 0 0 rgba(0, 0, 0, 0.12);  
   height: 100%;
   text-align: center;
   font-weight: 500;
+  &:first-of-type &-content {
+    margin-left: -1px; // border: none;
+    border-left: 1px solid rgba(0, 0, 0, 0.12);
+  }
   &-content {
-    padding-top: 5px;
+    padding: 5px;  
     position: relative;
     background: white;
     border-top: 1px solid rgba(0, 0, 0, 0.12);
@@ -16,9 +20,3 @@
     z-index: 2; //保证下方滚动时不会把日期显示覆盖
   }
 }
-
-.CalendarBackItem:first-child .CalendarBackItem-content {
-  margin-left: -1px; // border: none;
-  border-left: 1px solid rgba(0, 0, 0, 0.12);
-}
-
