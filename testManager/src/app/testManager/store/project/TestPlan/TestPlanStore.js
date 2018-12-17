@@ -78,7 +78,7 @@ class TestPlanStore extends BaseTreeProto {
   @observable assignedTo = null;
 
   @observable lastUpdatedBy = null;
-
+  
   getTree = () => new Promise((resolve) => {
     this.enterLoading();
     getStatusList('CYCLE_CASE').then((statusList) => {
@@ -224,7 +224,7 @@ class TestPlanStore extends BaseTreeProto {
       }
     }
   }
-
+  
   @action setPreProjectId(projectId) {
     this.preProjectId = projectId;
   }

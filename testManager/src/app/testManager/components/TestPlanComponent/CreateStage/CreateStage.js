@@ -125,21 +125,22 @@ class CreateStage extends Component {
     ));
     return (
       <div>
-        <Spin spinning={loading}>
-          <Sidebar
+        
+        <Sidebar
+          title={<FormattedMessage id="testPlan_createStage" />}
+          visible={visible}
+          onOk={this.onOk}
+          onCancel={onCancel}
+        >
+          <Content
+            style={{
+              padding: '0 0 10px 0',
+            }}
             title={<FormattedMessage id="testPlan_createStage" />}
-            visible={visible}
-            onOk={this.onOk}
-            onCancel={onCancel}
+            description={<FormattedMessage id="testPlan_createStageIn" values={{ cycleName: title }} />}
+            link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management/test-cycle/create-cycle/"
           >
-            <Content
-              style={{
-                padding: '0 0 10px 0',
-              }}
-              title={<FormattedMessage id="testPlan_createStage" />}
-              description={<FormattedMessage id="testPlan_createStageIn" values={{ cycleName: title }} />}
-              link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management/test-cycle/create-cycle/"
-            >
+            <Spin spinning={loading}>
               <Form>                
                 <FormItem
                   // {...formItemLayout}
@@ -218,9 +219,9 @@ class CreateStage extends Component {
                   )}
                 </FormItem>
               </Form>
-            </Content>
-          </Sidebar>
-        </Spin>
+            </Spin>
+          </Content>
+        </Sidebar>
       </div>
     );
   }

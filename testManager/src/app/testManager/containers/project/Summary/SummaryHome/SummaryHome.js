@@ -8,7 +8,7 @@ import { FormattedMessage } from 'react-intl';
 import moment from 'moment';
 import _ from 'lodash';
 import ReactEcharts from 'echarts-for-react';
-import { RadioButton } from '../../../../components/CommonComponent';
+import { RadioButton, SmartTooltip } from '../../../../components/CommonComponent';
 import {
   getCaseNotPlain, getCaseNotRun, getCaseNum, getCycleRange, getCreateRange, getIssueStatistic,
 } from '../../../../api/summaryApi';
@@ -354,6 +354,8 @@ class SummaryHome extends Component {
       title: <FormattedMessage id="summary_version" />,
       dataIndex: 'name',
       key: 'name',
+      width: '50%',
+      render: name => <SmartTooltip style={{ maxWidth: 250 }}>{name}</SmartTooltip>,
     }, {
       title: <FormattedMessage id="summary_num" />,
       dataIndex: 'num',
@@ -363,15 +365,19 @@ class SummaryHome extends Component {
       title: <FormattedMessage id="summary_label" />,
       dataIndex: 'name',
       key: 'name',
+      width: '50%',
+      render: name => <SmartTooltip style={{ maxWidth: 250 }}>{name}</SmartTooltip>,
     }, {
       title: <FormattedMessage id="summary_num" />,
       dataIndex: 'num',
       key: 'num',
+      width: '50%',
     }];
     const componentColumns = [{
       title: <FormattedMessage id="summary_component" />,
       dataIndex: 'name',
       key: 'name',
+      render: name => <SmartTooltip style={{ maxWidth: 250 }}>{name}</SmartTooltip>,
     }, {
       title: <FormattedMessage id="summary_num" />,
       dataIndex: 'num',

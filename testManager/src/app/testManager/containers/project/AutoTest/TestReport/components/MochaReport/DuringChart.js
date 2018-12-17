@@ -9,7 +9,7 @@ class DuringChart extends Component {
   getOption() {
     // const { intl: { formatMessage } } = this.props;
     const tests = ReportStore.getTests;
-    console.log(tests);
+    // console.log(tests);
     const { stats } = ReportStore;
     // console.log(tests);
     const averageDuration = [];
@@ -104,7 +104,7 @@ class DuringChart extends Component {
         data: tests.map(during => during.title),
       },
       yAxis: {
-        name: '时间',
+        name: '时间(ms)',
         type: 'value',
 
         nameTextStyle: {

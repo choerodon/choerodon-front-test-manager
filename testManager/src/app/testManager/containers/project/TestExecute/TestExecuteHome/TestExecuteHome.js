@@ -430,6 +430,7 @@ class TestExecuteHome extends Component {
   }
 
   handleExecuteTableChange = (pagination, filters, sorter) => {
+    console.log(filters);
     TestExecuteStore.setExecutePagination(pagination);
     this.setState({
       rightLoading: true,
@@ -654,7 +655,7 @@ class TestExecuteHome extends Component {
       title: '用例优先级',
       dataIndex: 'priorityId',
       key: 'priorityId',
-      filters: prioritys.map(priority => ({ text: priority.name, value: priority.id })),
+      filters: prioritys.map(priority => ({ text: priority.name, value: priority.id.toString() })),
       flex: 1,
       render(issueId, record) {
         const { issueInfosDTO } = record;
@@ -663,10 +664,10 @@ class TestExecuteHome extends Component {
         );
       },
     }, {
-      title: <FormattedMessage id="status" />,
+      title: '状态',
       dataIndex: 'executionStatus',
       key: 'executionStatus',
-      filters: statusList.map(status => ({ text: status.statusName, value: status.statusId })),
+      filters: statusList.map(status => ({ text: status.statusName, value: status.statusId.toString() })),
       // onFilter: (value, record) => record.executionStatus === value,  
       flex: 1,
       render(executionStatus) {
@@ -1056,12 +1057,14 @@ class TestExecuteHome extends Component {
                       )}
                     </div>
                     <Table
+                      rowKey={record => record.executeId}
                       pagination={executePagination}
                       loading={rightLoading}
                       onChange={this.handleExecuteTableChange}
                       dataSource={testList}
-                      columns={leftVisible ? columns
-                        : columns.slice(0, 4).concat(otherColumns).concat(columns.slice(4))}
+                      // columns={leftVisible ? columns
+                      //   : columns.slice(0, 4).concat(otherColumns).concat(columns.slice(4))}
+                      columns={columns}
                     />
                   </div>
                 </div>

@@ -123,3 +123,32 @@ All notable changes to choerodon-front-agile will be documented in this file.
 - Old values appear when table edits are saved
 - Test plan, test execution table style adjustment
 - Don't return to the first page after modifying the test case
+
+
+## [0.12.0] - 2018-12-14
+
+### Add
+
+#### 0.12.0 Significantly added features
+
+- Add `Automation Test` module
+- Add `Automation Test` type of issue
+- `Automation Test Issue` only used for automation test. Can not edit, drug.
+
+### Modify
+
+#### 0.12.0 Significantly modify the feature
+
+- Update dashboard and icon
+- Add assign in batches function in the `Test Plan` moudle
+- Show the priority in `Test Plan` and `Test Execution` moudle
+- Add filter with priority in `Test Plan` and `Test Execution` moudle
+- Change the position of issue name in `Execution Details` moudle
+
+### Fix
+
+#### 0.12.0 Significant repair features
+
+- Fix the bug of data  in `Test Plan` and `Test Execution` when switching project
+- Fix the bug of data in test step when switching the previous\next in the execution details
+- Fix problems of data display in dashboard

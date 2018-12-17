@@ -42,6 +42,9 @@ env:
       PRO_API_HOST: api.staging.example.com
       PRO_HEADER_TITLE_NAME: Choerodon
       PRO_WEBSOCKET_SERVER: ws://ws.example.com
+      PRO_AGILE_HOST: http://minio.example.com
+      PRO_FILE_SERVICE: http://minio.example.com
+      PRO_DEVOPS_HOST: ws://ws.example.com
       
 resources:
   # We usually recommend not to specify default resources and to leave this as a conscious

@@ -189,10 +189,11 @@ class ConfirmInfo extends Component {
       //   ? null : this.state.instanceId || (instances && instances.length === 1 && instances[0].id),
     };
     const { testType } = this.state;
-    this.setState({
-      loading: true,
-    });
+
     if (testType === 'instant') {
+      this.setState({
+        loading: true,
+      });
       // 立即执行
       runTestInstant(applicationDeployDTO).then((res) => {
         this.setState({
@@ -209,7 +210,7 @@ class ConfirmInfo extends Component {
       this.props.form.validateFieldsAndScroll((err, values) => {
         if (!err) {
           this.setState({
-            // isSubmitting: true,
+            loading: true,
           });
           const flag = values.triggerType === 'simple-trigger';
           const {
@@ -438,6 +439,7 @@ class ConfirmInfo extends Component {
 
   toTestHistory = () => {
     this.props.history.push(commonLink('/AutoTest/list'));
+    CreateAutoTestStore.clearTestInfo();
   }
 
   render() {
@@ -584,7 +586,7 @@ class ConfirmInfo extends Component {
         <section className="deployApp-section">
           <Button type="primary" funcType="raised" onClick={this.handleDeploy} loading={loading}>{formatMessage({ id: 'autotestbtn_autotest' })}</Button>
           <Button funcType="raised" onClick={CreateAutoTestStore.preStep}>{formatMessage({ id: 'previous' })}</Button>
-          <Button funcType="raised" className="c7ntest-autotest-clear" onClick={CreateAutoTestStore.cancelTest}>{formatMessage({ id: 'cancel' })}</Button>
+          <Button funcType="raised" className="c7ntest-autotest-clear" onClick={CreateAutoTestStore.clearTestInfo}>{formatMessage({ id: 'cancel' })}</Button>
         </section>
       </section>
     );

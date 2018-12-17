@@ -1,7 +1,7 @@
 import {
   observable, action, toJS, computed,
 } from 'mobx';
-import data from './mocha.json';
+// import data from './mocha.json';
 
 const transduce = (items, mapper, reducer, initial) => items.reduce(
   (acc, item, index) => reducer(acc, mapper(item, index), index),
@@ -25,24 +25,10 @@ class ReportStore {
 
   @observable showPending = true;
 
-  @observable showSkipped = false;
+  @observable showSkipped = true;
 
   @observable sideNavOpen = false;
 
-  constructor(data = {}, config = {}) {
-    // Object.assign(this, config, {
-    //   allSuites: data.suites ? [data.suites] : [],
-    //   enableChart: !!config.enableCharts,
-    //   initialLoadTimeout: 300,
-    //   reportTitle: config.reportTitle || data.reportTitle,
-    //   showHooksOptions: ['failed', 'always', 'never', 'context'],
-    //   stats: data.stats || {},
-    // });
-
-    // extendObservable(this, {
-
-    // });
-  }
 
   @action
   setReport(report) {
@@ -168,4 +154,4 @@ class ReportStore {
   }
 }
 
-export default new ReportStore(data, {});
+export default new ReportStore();

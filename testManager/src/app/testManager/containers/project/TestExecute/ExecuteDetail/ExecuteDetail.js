@@ -34,6 +34,7 @@ const styles = {
 class ExecuteDetail extends Component {
   componentDidMount() {
     const { id } = this.props.match.params;
+    ExecuteDetailStore.clearPagination();
     ExecuteDetailStore.getInfo(id);
   }
 
@@ -48,6 +49,7 @@ class ExecuteDetail extends Component {
       } else {
         history.replace(executeDetailLink(toExecuteId));
       }
+      ExecuteDetailStore.clearPagination();
     }
   }
 

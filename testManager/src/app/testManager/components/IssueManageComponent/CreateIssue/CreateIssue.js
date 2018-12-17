@@ -42,24 +42,24 @@ class CreateIssue extends Component {
       originFixVersions: [],
       originUsers: [],
 
-      origin: {},
+      // origin: {},
       folders: [],
     };
   }
 
   componentDidMount() {
     this.getPrioritys();
-    this.getProjectSetting();
+    // this.getProjectSetting();
   }
 
-  getProjectSetting() {
-    axios.get(`/agile/v1/projects/${AppState.currentMenuType.id}/project_info`)
-      .then((res) => {
-        this.setState({
-          origin: res,
-        });
-      });
-  }
+  // getProjectSetting() {
+  //   axios.get(`/agile/v1/projects/${AppState.currentMenuType.id}/project_info`)
+  //     .then((res) => {
+  //       this.setState({
+  //         origin: res,
+  //       });
+  //     });
+  // }
 
   onFilterChange(input) {
     if (!sign) {
@@ -302,7 +302,7 @@ class CreateIssue extends Component {
             <FormItem style={{ width: 520 }}>
               {getFieldDecorator('priorityId', {
                 rules: [{ required: true, message: '优先级为必选项' }],
-                initialValue: this.state.origin.defaultPriorityCode,
+                // initialValue: this.state.origin.defaultPriorityCode,
               })(
                 <Select
                   label={<FormattedMessage id="issue_issueFilterByPriority" />}

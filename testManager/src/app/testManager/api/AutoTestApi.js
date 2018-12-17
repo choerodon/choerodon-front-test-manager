@@ -46,13 +46,7 @@ export function getEnvs() {
   );   
 }
 export function getAllEnvs() {
-  return request.post(
-    `/devops/v1/organizations/${getOrganizationId()}/clusters/page_cluster?doPage=false`,
-    { 
-      param: '',
-      searchParam: {}, 
-    },
-  );   
+  return request.get(`/devops/v1/projects/${getProjectId()}/envs/clusters`);   
 }
 export function runTestInstant(scheduleTaskDTO) {
   return request.post(`/test/v1/projects/${getProjectId()}/app_instances`, scheduleTaskDTO);   
