@@ -24,6 +24,7 @@ const styles = {
     // borderTop: '4px solid #3F51B5',
     background: '#E9F1FF',
     color: '#4D90FE',
+    lineHeight: '34px',
   },
 };
 const moment = extendMoment(Moment);
