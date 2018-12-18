@@ -60,8 +60,24 @@ export function clone(cycleId, data, type) {
 export function addFolder(data) {
   return request.post(`/test/v1/projects/${getProjectId()}/cycle`, data);
 }
+/**
+ * 修改循环或阶段信息
+ * @param {*} data 
+ */
 export function editFolder(data) {
   return request.put(`/test/v1/projects/${getProjectId()}/cycle`, data);
+}
+/**
+ * 拖动改变日期
+ * @param {*} data 
+ */
+export function editCycleTime(data) {
+  // return request.put(`/test/v1/projects/${getProjectId()}/cycle`, data);
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve();
+    }, 300);
+  });
 }
 export function exportCycle(cycleId) {
   return request.get(`/test/v1/projects/${getProjectId()}/cycle/case/download/excel/${cycleId}`);

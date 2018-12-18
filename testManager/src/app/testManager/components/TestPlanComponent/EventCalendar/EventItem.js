@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import Moment from 'moment';
 import { extendMoment } from 'moment-range';
-import './EventItem.scss';
 import { Tooltip } from 'choerodon-ui';
+import TestPlanStore from '../../../store/project/TestPlan/TestPlanStore';
+import { editFolder } from '../../../api/cycleApi';
+import './EventItem.scss';
 
 const styles = {
   topversion: {
@@ -29,11 +31,29 @@ const styles = {
 };
 const moment = extendMoment(Moment);
 class EventItem extends Component {
-  constructor(props) {
-    super(props);
+  state = {
+    type: null,
+    title: null,
+    preFlex: 0,
+    flex: 0,
+    lastFlex: 0,
+    initFlex: {
+      preFlex: 0,
+      flex: 0,
+      lastFlex: 0,
+    },
+    mode: 'left',
+    resizing: false,
+  };
+
+  static getDerivedStateFromProps(props, state) {
+    // 调整大小时以state为准
+    if (state.resizing) {
+      return null;
+    }
     const {
       range, itemRange, data,
-    } = this.props;
+    } = props;
     const { type, title } = data;
     let preFlex = 0;
     let flex = 0;
@@ -51,7 +71,7 @@ class EventItem extends Component {
       preFlex = preRange.diff('days');
       lastFlex = lastRange.diff('days');
     }
-    this.state = {
+    return {
       type,
       title,
       preFlex,
@@ -62,7 +82,6 @@ class EventItem extends Component {
         flex,
         lastFlex,
       },
-      resizing: false,
     };
   }
 
@@ -111,18 +130,23 @@ class EventItem extends Component {
    */
   handleItemResize = (mode, multiple) => {
     // console.log(mode, multiple);
-    const {
+    let {
       preFlex, flex, lastFlex,
     } = this.state.initFlex;
     if (mode === 'left') {
-      this.setState({
-        preFlex: preFlex + multiple,
-        flex: flex - multiple,
-      });
+      preFlex += multiple;
+      flex -= multiple;      
     } else {
+      flex += multiple;
+      lastFlex -= multiple;
+    }
+    // 最小为一天
+    if (flex > 0) {
       this.setState({
-        flex: flex + multiple,
-        lastFlex: lastFlex - multiple,
+        preFlex,
+        flex,
+        lastFlex,
+        mode,
       });
     }
   }
@@ -172,21 +196,56 @@ class EventItem extends Component {
    * 
    */
   handleMouseUp = (e) => {
+    document.removeEventListener('mousemove', this.handleMouseMove);
+    document.removeEventListener('mouseup', this.handleMouseUp);
     const {
       preFlex,
       flex,
       lastFlex,
+      initFlex,
     } = this.state;
-    this.setState({
-      resizing: false,
+    this.setState({    
       initFlex: {
         preFlex,
         flex,
         lastFlex,
       },
     });
-    document.removeEventListener('mousemove', this.handleMouseMove);
-    document.removeEventListener('mouseup', this.handleMouseUp);
+    this.updateCycle();
+  }
+
+  /**
+   *更新循环或阶段
+   *
+   * @paramter vary 日期改变量，正
+   */
+  updateCycle=() => {
+    const { preFlex, lastFlex, mode } = this.state;
+    const { range, itemRange, data } = this.props;
+    const { start, end } = range;
+    console.log(start, end, preFlex, lastFlex);    
+    const fromDate = mode === 'left' ? moment(start).add(preFlex, 'days') : moment(data.fromDate);
+    const toDate = mode === 'right' ? moment(end).subtract(lastFlex, 'days') : moment(data.toDate);
+    console.log(fromDate.format('LL'), toDate.format('LL'), mode);
+    console.log(this.props.data);
+    const updateData = {
+      cycleId: data.cycleId,
+      type: 'cycle',
+      fromDate: fromDate ? fromDate.format('YYYY-MM-DD HH:mm:ss') : null,
+      toDate: toDate ? toDate.format('YYYY-MM-DD HH:mm:ss') : null,
+    };    
+    editFolder(updateData).then((res) => {
+      TestPlanStore.getTree().finally(() => {
+        this.setState({
+          resizing: false, // 不在mouseup设置而是延迟设置false,防止旧值闪现
+        });
+      });
+    }).catch((err) => {
+      Choerodon.prompt('网络错误');
+      this.setState({
+        resizing: false, // 不在mouseup设置而是延迟设置false,防止旧值闪现
+      });
+    });
   }
 
   render() {

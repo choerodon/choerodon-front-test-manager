@@ -78,6 +78,7 @@ class EventCalendar extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     this.wrapper.style.width = `${this.BackItems.clientWidth}px`;
+    // this.calculateItemWidth();
   }
 
   calculateItemWidth = () => {
