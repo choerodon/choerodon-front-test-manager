@@ -72,14 +72,15 @@ class EventCalendar extends Component {
 
   componentDidMount() {
     // 设置事件区域宽度
-    const scrollBarWidth = this.scroller.offsetWidth - this.scroller.clientWidth;
-    this.wrapper.style.width = `${Math.ceil(this.HeaderItems.clientWidth) - scrollBarWidth}px`;
-    this.HeaderItems.style.paddingRight = `${scrollBarWidth}px`;   
+    const scrollBarWidth = this.scroller.offsetWidth - this.scroller.clientWidth;  
+    console.log(this.HeaderItems.offsetWidth);
+    this.wrapper.style.width = `${this.HeaderItems.offsetWidth}px`;
+    this.fakeScrollBar.style.width = `${scrollBarWidth}px`;
     this.calculateItemWidth();
   }
 
   componentDidUpdate(prevProps, prevState) {
-    this.wrapper.style.width = `${this.BackItems.clientWidth}px`;
+    // this.wrapper.style.width = `${this.BackItems.clientWidth}px`;
     // this.calculateItemWidth();
   }
 
@@ -304,8 +305,9 @@ class EventCalendar extends Component {
             <div style={{ position: 'relative', height: '100%', width: '100%' }}>
               <div className="c7ntest-EventCalendar-HeaderItems" ref={this.saveRef('HeaderItems')}>
                 {
-                timeArray.map((m, i) => <CalendarBackItem ref={this.saveRef(`item_${i}`)} date={m} />)
-              }
+                  timeArray.map((m, i) => <CalendarBackItem ref={this.saveRef(`item_${i}`)} date={m} />)
+                }
+                <div className="c7ntest-EventCalendar-fake-scrollBar" ref={this.saveRef('fakeScrollBar')} />
               </div>
             </div>
           </div>
@@ -319,15 +321,15 @@ class EventCalendar extends Component {
             <div style={{ position: 'relative' }} ref={this.saveRef('wrapper')}>
               <div className="c7ntest-EventCalendar-BackItems" ref={this.saveRef('BackItems')}>
                 {
-                timeArray.map((m, i) => <div className="c7ntest-EventCalendar-BackItems-item" />)
-              }
+                  timeArray.map((m, i) => <div className="c7ntest-EventCalendar-BackItems-item" />)
+                }
               </div>
               <div className="c7ntest-EventCalendar-eventContainer" ref={this.saveRef('events')}>
                 {times.map(event => (
                   <EventItem
                     onClick={this.props.onItemClick}
                     itemRange={moment.range(event.start, event.end)}
-                  // totalRange={timeArray.length}
+                    // totalRange={timeArray.length}
                     data={event}
                     range={range}
                     singleWidth={singleWidth}

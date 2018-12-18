@@ -58,7 +58,7 @@
     height: 54px;
   }
   &-HeaderItems {
-    padding-right: 8px;
+    // padding-right: 8px;
     height: 100%;
     min-width: 100%;
     left: 0;
@@ -80,7 +80,7 @@
     display: flex; // width: fit-content;
     white-space: nowrap;
     border-left: 1px solid rgba(0, 0, 0, 0.12);
-    // border-right: none;
+    border-right: none;
     border-top: none;
     &-item {
       min-width: 70px; // width: 64px;
