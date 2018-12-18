@@ -31,7 +31,7 @@ export default class TestProgress extends Component {
           this.loadProgressByVersion(latestVersionId);
         }
         this.setState({
-          versionList: res,
+          versionList: res.reverse(),
          
         });
       }
@@ -105,7 +105,7 @@ export default class TestProgress extends Component {
   renderContent = () => {
     const { versionList, currentVersion } = this.state;
     const menu = (
-      <Menu onClick={this.handleMenuClick} style={{ height: 200, overflow: 'hidden auto' }}>
+      <Menu onClick={this.handleMenuClick} style={{ height: 200, overflowX: 'hidden', overflowY: 'auto' }}>
         {
           versionList.map(item => (
             <Menu.Item key={item.versionId}>
