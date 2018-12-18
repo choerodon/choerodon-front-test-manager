@@ -72,16 +72,21 @@ class EventCalendar extends Component {
 
   componentDidMount() {
     // 设置事件区域宽度
-    const scrollBarWidth = this.scroller.offsetWidth - this.scroller.clientWidth;  
-    console.log(this.HeaderItems.offsetWidth);
-    this.wrapper.style.width = `${this.HeaderItems.offsetWidth}px`;
-    this.fakeScrollBar.style.width = `${scrollBarWidth}px`;
+    this.setRightWidth();
     this.calculateItemWidth();
   }
 
   componentDidUpdate(prevProps, prevState) {
     // this.wrapper.style.width = `${this.BackItems.clientWidth}px`;
     // this.calculateItemWidth();
+    this.setRightWidth();
+  }
+
+  setRightWidth=() => {
+    const scrollBarWidth = this.scroller.offsetWidth - this.scroller.clientWidth;  
+    console.log(this.HeaderItems.offsetWidth);
+    this.fakeScrollBar.style.width = `${scrollBarWidth}px`;
+    this.wrapper.style.width = `${Math.ceil(this.HeaderItems.offsetWidth) - scrollBarWidth}px`;
   }
 
   calculateItemWidth = () => {
