@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
-import Moment from 'moment';
+import ReactDOM from 'react-dom';
+import Moment, { months } from 'moment';
 import { extendMoment } from 'moment-range';
 import { Icon } from 'choerodon-ui';
+import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import { DatePicker, Button } from 'choerodon-ui';
 import { RadioButton } from '../../CommonComponent';
@@ -22,8 +24,8 @@ class EventCalendar extends Component {
       endDate = times[times.length - 1].end ? moment(times[times.length - 1].end).startOf('day') : moment();
     }
     const range = moment.range(baseDate, endDate);
+    this.currentDate = baseDate;
     this.state = {
-      currentDate: null,
       baseDate,
       endDate,
       dates: range.diff('days'),
@@ -82,9 +84,10 @@ class EventCalendar extends Component {
   }
 
   calculateItemWidth = () => {
-    const { baseDate, endDate } = this.state;
-    const range = moment.range(baseDate, endDate).diff('days') + 1 || 1;
-    const singleWidth = this.BackItems.clientWidth / range;
+    const { baseDate, endDate, dates } = this.state;
+    console.log(dates);
+    // const range = moment.range(baseDate, endDate).diff('days') + 1 || 1;
+    const singleWidth = this.BackItems.clientWidth / (dates + 1) + 1;
     this.setState({
       singleWidth,
     });
@@ -92,7 +95,7 @@ class EventCalendar extends Component {
 
   calculateTime = () => {
     const {
-      mode, pos, baseDate, endDate, 
+      mode, pos, baseDate, endDate,
     } = this.state;
     const start = moment(baseDate).startOf('day');
     // const start = moment(baseDate).startOf('week').add(pos, mode);
@@ -169,13 +172,28 @@ class EventCalendar extends Component {
   }
 
   handleMouseUp = (e) => {
+    this.setCurrentDate();
+    console.log('up');
     document.removeEventListener('mousemove', this.handleMouseMove);
     document.removeEventListener('mouseup', this.handleMouseUp);
   }
 
   // 滚动时保持日期固定在头部
   handleScroll = (e) => {
-    this.BackItems.style.top = `${e.target.scrollTop}px`;
+    // 设置头的位置，固定
+    const { scrollTop, scrollLeft } = e.target;
+    this.BackItems.style.top = `${scrollTop}px`;
+    console.log('scroll');
+  }
+
+  setCurrentDate = () => {
+    const { scrollTop, scrollLeft } = this.scroller;
+    console.log(scrollLeft);    
+    const { singleWidth, baseDate } = this.state;
+    const leapDays = Math.floor(scrollLeft / singleWidth);
+    const currentDate = moment(baseDate).add(leapDays, 'days');
+    this.currentDate = currentDate;
+    // console.log(currentDate.format('LL'));
   }
 
   /**
@@ -191,19 +209,39 @@ class EventCalendar extends Component {
   }
 
   // 左右切换日期
-  skipTo = (mode) => { 
-    const { singleWidth } = this.state;
-    console.log(singleWidth);
-    if (mode === 'pre') {
-      this.scroller.scrollLeft -= singleWidth * 30;
+  skipTo = (mode) => {
+    console.log(mode);
+    const { baseDate, endDate } = this.state;
+    // 计算目标时间
+    const targetDate = mode === 'pre'
+      ? moment(this.currentDate).subtract(1, 'months')
+      : moment(this.currentDate).add(1, 'months');
+    // 当前时间范围
+    const range = moment.range(baseDate, endDate);
+    // 如果目标时间在当前范围
+    console.log({ targetDate: targetDate.format('LL'), currentDate: this.currentDate.format('LL') });
+    if (range.contains(targetDate)) {
+      const skipRange = moment.range(baseDate, targetDate);
+      console.log(this.currentDate.format('LL'), targetDate.format('LL'));
+      const days = skipRange.diff('days');
+      console.log(days, moment.range(baseDate, targetDate).diff('days'));
+      // 目标位置dom 
+      const targetDOM = ReactDOM.findDOMNode(this[`item_${days}`]);
+      if (targetDOM) {
+        const left = targetDOM.offsetLeft;       
+        this.scroller.scrollLeft = left;
+        this.currentDate = targetDate;
+      }
     } else {
-      this.scroller.scrollLeft += singleWidth * 30;
+      // 设置滚动到最右或最左侧，并且设置当前时间
+      this.scroller.scrollLeft = mode === 'pre' ? 0 : this.BackItems.scrollWidth;
+      this.currentDate = mode === 'pre' ? baseDate : endDate;   
     }
   }
 
   render() {
     const {
-      mode, currentDate, width, singleWidth, 
+      mode, currentDate, width, singleWidth,
     } = this.state;
     const { showMode, times } = this.props;
 
@@ -264,11 +302,11 @@ class EventCalendar extends Component {
           </div>
         </div>
         {/* 滚动区域 */}
-        <div className="c7ntest-EventCalendar-scroller" onScroll={this.handleScroll} onMouseDown={this.handleMouseDown} ref={this.saveRef('scroller')}>
+        <div className="c7ntest-EventCalendar-scroller" onScroll={this.handleScroll} onMouseDown={this.handleMouseDown} ref={this.saveRef('scroller')} role="none">
           <div className="c7ntest-EventCalendar-content">
             <div className="c7ntest-EventCalendar-BackItems" ref={this.saveRef('BackItems')}>
               {
-                timeArray.map(m => <CalendarBackItem date={m} />)
+                timeArray.map((m, i) => <CalendarBackItem ref={this.saveRef(`item_${i}`)} date={m} />)
               }
             </div>
             <div className="c7ntest-EventCalendar-eventContainer" ref={this.saveRef('wrapper')}>
