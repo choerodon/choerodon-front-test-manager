@@ -76,11 +76,15 @@ class EventCalendar extends Component {
     // 设置事件区域宽度
     console.log(this.HeaderItems.clientWidth, this.HeaderItems.offsetWidth);
     // this.wrapper.style.width = `${this.HeaderItems.clientWidth - 8}px`;
-    this.wrapper.style.width = `${this.HeaderItems.clientWidth}px`;
+    this.HeaderItems.style.paddingRight = `${8}px`;
+    this.wrapper.style.width = `${this.HeaderItems.clientWidth - 8}px`;
+    // this.wrapper.style.paddingRight = `${8}px`;
     // this.BackItems.style.width = `${this.HeaderItems.clientWidth - 4}px`;
     const scrollBarWidth = this.wrapper.offsetWidth - this.wrapper.clientWidth;
-    this.BackItems.style.width = `calc(100% + ${scrollBarWidth}px)`;
-
+    // this.BackItems.style.width = `calc(100% + ${8}px)`;
+    // this.events.style.width = `calc(100% + ${8}px)`;
+    // this.BackItems.style.marginRight = `-${8}px)`;
+    // this.events.style.marginRight = `-${8}px)`;
     // this.wrapper.style.width = `${this.HeaderItems.clientWidth - 4}px`;
     
     this.calculateItemWidth();
@@ -330,7 +334,7 @@ class EventCalendar extends Component {
                 timeArray.map((m, i) => <div className="c7ntest-EventCalendar-BackItems-item" />)
               }
               </div>
-              <div className="c7ntest-EventCalendar-eventContainer">
+              <div className="c7ntest-EventCalendar-eventContainer" ref={this.saveRef('events')}>
                 {times.map(event => (
                   <EventItem
                     onClick={this.props.onItemClick}

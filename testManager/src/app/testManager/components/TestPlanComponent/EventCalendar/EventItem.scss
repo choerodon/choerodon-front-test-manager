@@ -4,6 +4,9 @@
   line-height: 30px;
   color: white;
   margin-top: 5px;
+  &:first-of-type {
+    margin-top: 0px;
+  }
   &-event {
     cursor: pointer;
     background: #5094FF;
@@ -22,8 +25,8 @@
       &-resizer-left {
         left: -4px;
       }
-      &-resizer-right {        
-        right: -4px;        
+      &-resizer-right {
+        right: -4px;
       }
     }
   }
