@@ -69,9 +69,7 @@
     bottom: 0; // height: 100%; 
     display: flex; // width: fit-content;
     white-space: nowrap;
-    border: 1px solid rgba(0, 0, 0, 0.12);
-    border-right: none;
-    // border-top: none;
+    border-left: 1px solid rgba(0, 0, 0, 0.12);   
   }
   &-BackItems {
     min-width: 100%; // width: 4000px;
