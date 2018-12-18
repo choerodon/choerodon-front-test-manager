@@ -240,6 +240,7 @@ class EventItem extends Component {
       cycleId: data.cycleId,
       parentCycleId: data.parentCycleId,
       type: data.type,
+      objectVersionNumber: data.objectVersionNumber,
       fromDate: fromDate ? fromDate.format('YYYY-MM-DD HH:mm:ss') : null,
       toDate: toDate ? toDate.format('YYYY-MM-DD HH:mm:ss') : null,
     };    

@@ -135,18 +135,6 @@ class EventCalendar extends Component {
     this[name] = ref;
   }
 
-  // handleScroll = (e) => {
-  //   // 左侧滚动距离
-  //   const scrollLeft=e.target.scrollLeft;
-  //   this.updateCurrentDate(scrollLeft)    
-  // }
-  // updateCurrentDate=(scrollLeft)=>{
-  //   const { baseDate, singleWidth } = this.state;    
-  //   const pos= ~~scrollLeft/singleWidth;
-  //   this.setState({
-  //     singleWidth
-  //   })
-  // }
   handleMouseDown = (e) => {
     e.stopPropagation();
     e.preventDefault();
@@ -182,8 +170,10 @@ class EventCalendar extends Component {
   handleScroll = (e) => {
     // 设置头的位置，固定
     const { scrollTop, scrollLeft } = e.target;
-    this.BackItems.style.top = `${scrollTop}px`;
-    console.log('scroll');
+    requestAnimationFrame(() => {
+      this.BackItems.style.top = `${scrollTop}px`;
+      console.log('scroll');
+    });
   }
 
   setCurrentDate = () => {

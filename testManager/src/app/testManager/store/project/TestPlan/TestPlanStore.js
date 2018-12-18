@@ -23,13 +23,7 @@ function traverseTree(node) {
     tmpNode = stack.pop();
     const { type, key } = tmpNode;
     if (key.split('-').length === 3 || type === 'cycle') {
-      tmpNode.children = tmpNode.children.sort((a, b) => {
-        if (moment(a.fromDate).isAfter(moment(b.fromDate))) {
-          return 1;
-        } else {
-          return -1;
-        }
-      }).map((child, i) => ({ ...child, key: `${key}-${i}` }));
+      tmpNode.children = tmpNode.children.map((child, i) => ({ ...child, key: `${key}-${i}` }));
     } 
     if (tmpNode.children && tmpNode.children.length > 0) {
       let i = tmpNode.children.length - 1;
