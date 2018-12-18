@@ -74,7 +74,15 @@ class EventCalendar extends Component {
     // const scrollBarWidth = this.wrapper.offsetWidth - this.wrapper.clientWidth;
     // this.scroll.style.width = `calc(100% + ${scrollBarWidth}px)`;
     // 设置事件区域宽度
-    this.wrapper.style.width = `${this.BackItems.clientWidth}px`;
+    console.log(this.HeaderItems.clientWidth, this.HeaderItems.offsetWidth);
+    // this.wrapper.style.width = `${this.HeaderItems.clientWidth - 8}px`;
+    this.wrapper.style.width = `${this.HeaderItems.clientWidth}px`;
+    // this.BackItems.style.width = `${this.HeaderItems.clientWidth - 4}px`;
+    const scrollBarWidth = this.wrapper.offsetWidth - this.wrapper.clientWidth;
+    this.BackItems.style.width = `calc(100% + ${scrollBarWidth}px)`;
+
+    // this.wrapper.style.width = `${this.HeaderItems.clientWidth - 4}px`;
+    
     this.calculateItemWidth();
   }
 
@@ -168,17 +176,20 @@ class EventCalendar extends Component {
 
   // 滚动时保持日期固定在头部
   handleScroll = (e) => {
+    console.log('scroll');
     // 设置头的位置，固定
     const { scrollTop, scrollLeft } = e.target;
-    requestAnimationFrame(() => {
-      this.BackItems.style.top = `${scrollTop}px`;
-      console.log('scroll');
-    });
+    console.log(scrollLeft);
+    this.header.scrollLeft = scrollLeft;
+    // requestAnimationFrame(() => {
+    //   this.BackItems.style.top = `${scrollTop}px`;
+    //   console.log('scroll');
+    // });
   }
 
   setCurrentDate = () => {
     const { scrollTop, scrollLeft } = this.scroller;
-    console.log(scrollLeft);    
+    console.log(scrollLeft);
     const { singleWidth, baseDate } = this.state;
     const leapDays = Math.floor(scrollLeft / singleWidth);
     const currentDate = moment(baseDate).add(leapDays, 'days');
@@ -218,14 +229,14 @@ class EventCalendar extends Component {
       // 目标位置dom 
       const targetDOM = findDOMNode(this[`item_${days}`]);
       if (targetDOM) {
-        const left = targetDOM.offsetLeft;       
+        const left = targetDOM.offsetLeft;
         this.scroller.scrollLeft = left;
         this.currentDate = targetDate;
       }
     } else {
       // 设置滚动到最右或最左侧，并且设置当前时间
       this.scroller.scrollLeft = mode === 'pre' ? 0 : this.BackItems.scrollWidth;
-      this.currentDate = mode === 'pre' ? baseDate : endDate;   
+      this.currentDate = mode === 'pre' ? baseDate : endDate;
     }
   }
 
@@ -292,24 +303,45 @@ class EventCalendar extends Component {
           </div>
         </div>
         {/* 滚动区域 */}
-        <div className="c7ntest-EventCalendar-scroller" onScroll={this.handleScroll} onMouseDown={this.handleMouseDown} ref={this.saveRef('scroller')} role="none">
-          <div className="c7ntest-EventCalendar-content">
-            <div className="c7ntest-EventCalendar-BackItems" ref={this.saveRef('BackItems')}>
-              {
+        {/* <div style={{ width: 968, overflow: 'auto' }}>
+          <div style={{ width: 4684, height: 50 }} />
+        </div> */}
+
+        <div className="c7ntest-EventCalendar-content">
+          <div className="c7ntest-EventCalendar-fixed-header" ref={this.saveRef('header')}>
+            <div style={{ position: 'relative', height: '100%', width: '100%' }}>
+              <div className="c7ntest-EventCalendar-HeaderItems" ref={this.saveRef('HeaderItems')}>
+                {
                 timeArray.map((m, i) => <CalendarBackItem ref={this.saveRef(`item_${i}`)} date={m} />)
               }
+              </div>
             </div>
-            <div className="c7ntest-EventCalendar-eventContainer" ref={this.saveRef('wrapper')}>
-              {times.map(event => (
-                <EventItem
-                  onClick={this.props.onItemClick}
-                  itemRange={moment.range(event.start, event.end)}
+          </div>
+          <div
+            role="none"
+            className="c7ntest-EventCalendar-scroller"
+            ref={this.saveRef('scroller')}
+            onScroll={this.handleScroll}
+            onMouseDown={this.handleMouseDown}
+          >
+            <div style={{ position: 'relative' }} ref={this.saveRef('wrapper')}>
+              <div className="c7ntest-EventCalendar-BackItems" ref={this.saveRef('BackItems')}>
+                {
+                timeArray.map((m, i) => <div className="c7ntest-EventCalendar-BackItems-item" />)
+              }
+              </div>
+              <div className="c7ntest-EventCalendar-eventContainer">
+                {times.map(event => (
+                  <EventItem
+                    onClick={this.props.onItemClick}
+                    itemRange={moment.range(event.start, event.end)}
                   // totalRange={timeArray.length}
-                  data={event}
-                  range={range}
-                  singleWidth={singleWidth}
-                />
-              ))}
+                    data={event}
+                    range={range}
+                    singleWidth={singleWidth}
+                  />
+                ))}
+              </div>
             </div>
           </div>
         </div>
