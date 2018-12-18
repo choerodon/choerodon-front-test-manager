@@ -71,22 +71,10 @@ class EventCalendar extends Component {
   // }
 
   componentDidMount() {
-    // const scrollBarWidth = this.wrapper.offsetWidth - this.wrapper.clientWidth;
-    // this.scroll.style.width = `calc(100% + ${scrollBarWidth}px)`;
     // 设置事件区域宽度
-    console.log(this.HeaderItems.clientWidth, this.HeaderItems.offsetWidth);
-    // this.wrapper.style.width = `${this.HeaderItems.clientWidth - 8}px`;    
-    this.wrapper.style.width = `${Math.ceil(this.HeaderItems.clientWidth) - 8}px`;
-    this.HeaderItems.style.paddingRight = `${8}px`;
-    // this.wrapper.style.paddingRight = `${8}px`;
-    // this.BackItems.style.width = `${this.HeaderItems.clientWidth - 4}px`;
-    const scrollBarWidth = this.wrapper.offsetWidth - this.wrapper.clientWidth;
-    // this.BackItems.style.width = `calc(100% + ${8}px)`;
-    // this.events.style.width = `calc(100% + ${8}px)`;
-    // this.BackItems.style.marginRight = `-${8}px)`;
-    // this.events.style.marginRight = `-${8}px)`;
-    // this.wrapper.style.width = `${this.HeaderItems.clientWidth - 4}px`;
-    
+    const scrollBarWidth = this.scroller.offsetWidth - this.scroller.clientWidth;
+    this.wrapper.style.width = `${Math.ceil(this.HeaderItems.clientWidth) - scrollBarWidth}px`;
+    this.HeaderItems.style.paddingRight = `${scrollBarWidth}px`;   
     this.calculateItemWidth();
   }
 
