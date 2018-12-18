@@ -13,6 +13,7 @@ const types = {
   cycle: '测试循环',
   folder: '测试阶段',
 };
+const canReasize = ['cycle', 'folder'];
 const styles = {
   topversion: {
     borderTop: '4px solid #3F51B5',
@@ -121,9 +122,9 @@ class EventItem extends Component {
       >
         <Tooltip getPopupContainer={() => findDOMNode(this)} title={tipTitle} placement="topLeft">
           <div className="c7ntest-EventItem-event-title c7ntest-text-dot">
-            <div className="c7ntest-EventItem-event-title-resizer-left" onMouseDown={this.handleMouseDown.bind(this, 'left')} ref={this.saveRef('left')} role="none" />
+            {canReasize.includes(type) && <div className="c7ntest-EventItem-event-title-resizer-left" onMouseDown={this.handleMouseDown.bind(this, 'left')} ref={this.saveRef('left')} role="none" />}
             {title}
-            <div className="c7ntest-EventItem-event-title-resizer-right" onMouseDown={this.handleMouseDown.bind(this, 'right')} ref={this.saveRef('right')} role="none" />
+            {canReasize.includes(type) && <div className="c7ntest-EventItem-event-title-resizer-right" onMouseDown={this.handleMouseDown.bind(this, 'right')} ref={this.saveRef('right')} role="none" />}
           </div>
         </Tooltip>
       </div>,
