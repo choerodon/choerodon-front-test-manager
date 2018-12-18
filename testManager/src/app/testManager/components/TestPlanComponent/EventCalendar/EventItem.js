@@ -1,11 +1,18 @@
 import React, { Component } from 'react';
 import Moment from 'moment';
+import { findDOMNode } from 'react-dom';
 import { extendMoment } from 'moment-range';
 import { Tooltip } from 'choerodon-ui';
 import TestPlanStore from '../../../store/project/TestPlan/TestPlanStore';
 import { editFolder } from '../../../api/cycleApi';
 import './EventItem.scss';
 
+const types = {
+  topversion: '版本类型',
+  version: '版本',
+  cycle: '测试循环',
+  folder: '测试阶段',
+};
 const styles = {
   topversion: {
     borderTop: '4px solid #3F51B5',
@@ -99,6 +106,7 @@ class EventItem extends Component {
     const {
       type, title, preFlex, flex, lastFlex,
     } = this.state;
+    const tipTitle = `${types[type]}：${title}`;
     return [
       <div style={{ flex: preFlex }} />,
       <div
@@ -111,7 +119,7 @@ class EventItem extends Component {
           ...styles[type],
         }}
       >
-        <Tooltip title={title} placement="topLeft">
+        <Tooltip getPopupContainer={() => findDOMNode(this)} title={tipTitle} placement="topLeft">
           <div className="c7ntest-EventItem-event-title c7ntest-text-dot">
             <div className="c7ntest-EventItem-event-title-resizer-left" onMouseDown={this.handleMouseDown.bind(this, 'left')} ref={this.saveRef('left')} role="none" />
             {title}
@@ -230,7 +238,8 @@ class EventItem extends Component {
     console.log(this.props.data);
     const updateData = {
       cycleId: data.cycleId,
-      type: 'cycle',
+      parentCycleId: data.parentCycleId,
+      type: data.type,
       fromDate: fromDate ? fromDate.format('YYYY-MM-DD HH:mm:ss') : null,
       toDate: toDate ? toDate.format('YYYY-MM-DD HH:mm:ss') : null,
     };    

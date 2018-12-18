@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
+import { findDOMNode } from 'react-dom';
 import Moment, { months } from 'moment';
 import { extendMoment } from 'moment-range';
 import { Icon } from 'choerodon-ui';
@@ -210,7 +210,7 @@ class EventCalendar extends Component {
 
   // 左右切换日期
   skipTo = (mode) => {
-    console.log(mode);
+    // console.log(mode);
     const { baseDate, endDate } = this.state;
     // 计算目标时间
     const targetDate = mode === 'pre'
@@ -222,11 +222,11 @@ class EventCalendar extends Component {
     console.log({ targetDate: targetDate.format('LL'), currentDate: this.currentDate.format('LL') });
     if (range.contains(targetDate)) {
       const skipRange = moment.range(baseDate, targetDate);
-      console.log(this.currentDate.format('LL'), targetDate.format('LL'));
+      // console.log(this.currentDate.format('LL'), targetDate.format('LL'));
       const days = skipRange.diff('days');
-      console.log(days, moment.range(baseDate, targetDate).diff('days'));
+      // console.log(days, moment.range(baseDate, targetDate).diff('days'));
       // 目标位置dom 
-      const targetDOM = ReactDOM.findDOMNode(this[`item_${days}`]);
+      const targetDOM = findDOMNode(this[`item_${days}`]);
       if (targetDOM) {
         const left = targetDOM.offsetLeft;       
         this.scroller.scrollLeft = left;
@@ -241,7 +241,7 @@ class EventCalendar extends Component {
 
   render() {
     const {
-      mode, currentDate, width, singleWidth,
+      mode, width, singleWidth,
     } = this.state;
     const { showMode, times } = this.props;
 
