@@ -84,7 +84,9 @@ class EventCalendar extends Component {
   setRightWidth = () => {
     const scrollBarWidth = this.scroller.offsetWidth - this.scroller.clientWidth;
     this.fakeScrollBar.style.width = `${scrollBarWidth}px`;
-    this.wrapper.style.width = `${Math.ceil(this.HeaderItems.offsetWidth) - scrollBarWidth}px`;
+    const rightWidth = Math.ceil(this.HeaderItems.offsetWidth);
+    this.wrapper.style.width = `${rightWidth - scrollBarWidth}px`;
+    // this.HeaderItems.style.width = `${rightWidth}px`; // 防止tooltip引起的宽度变化
     // 设置高度，防止滚动条跳动，虽然EventItem设置了key，但依然会重新挂载，不清楚原因
     this.events.style.height = `${this.events.offsetHeight}px`;
   }
@@ -158,6 +160,14 @@ class EventCalendar extends Component {
     // 设置头的位置，固定
     const { scrollLeft } = e.target;
     this.header.scrollLeft = scrollLeft;
+  }
+
+  // tooltip会引起header的滚动，在此将header和scroller同步滚动
+  handleHeaderScroll=(e) => {
+    const { scrollLeft } = e.target;
+    if (this.scroller.scrollLeft !== scrollLeft) {
+      this.scroller.scrollLeft = scrollLeft;
+    }
   }
 
   /**
@@ -253,7 +263,7 @@ class EventCalendar extends Component {
           </div>
         </div>
         <div className="c7ntest-EventCalendar-content">
-          <div className="c7ntest-EventCalendar-fixed-header" ref={this.saveRef('header')}>
+          <div className="c7ntest-EventCalendar-fixed-header" ref={this.saveRef('header')} onScroll={this.handleHeaderScroll}>
             <div style={{ position: 'relative', height: '100%', width: '100%' }}>
               <div className="c7ntest-EventCalendar-HeaderItems" ref={this.saveRef('HeaderItems')}>
                 {

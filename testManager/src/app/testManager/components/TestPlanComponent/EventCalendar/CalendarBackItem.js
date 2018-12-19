@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Tooltip } from 'choerodon-ui';
+import { findDOMNode } from 'react-dom';
 import moment from 'moment';
 import './CalendarBackItem.scss';
 
@@ -13,7 +14,7 @@ class CalendarBackItem extends Component {
         style={{ color: moment(date).day() === 6 || moment(date).day() === 0 ? '#303F9F' : 'black' }}
       >
         <div className="CalendarBackItem-content">
-          <Tooltip title={moment(date).format('LL')}>
+          <Tooltip title={moment(date).format('LL')} placement="topLeft">
             <div>
               {moment(date).format('dddd')}
             </div>
