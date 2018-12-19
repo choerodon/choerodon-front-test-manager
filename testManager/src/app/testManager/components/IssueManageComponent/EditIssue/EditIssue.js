@@ -831,12 +831,10 @@ class EditIssueNarrow extends Component {
         originData={this.transToArr(componentIssueRelDTOList, 'name', 'array')}
       >
         <Text>
-          {data => (
-            <div style={{ color: '#3f51b5' }}>
-              <p style={{ color: '#3f51b5', wordBreak: 'break-word', marginBottom: 0 }}>
-                {this.transToArr(data, 'name')}
-              </p>
-            </div>
+          {data => (            
+            <p style={{ color: '#3f51b5', wordBreak: 'break-word', marginBottom: 0 }}>
+              {this.transToArr(data, 'name')}
+            </p>           
           )}
         </Text>
         <Edit>
@@ -899,12 +897,14 @@ class EditIssueNarrow extends Component {
                   this.transToArr(data, 'labelName', 'array').map(label => (
                     <div
                       key={label}
+                      className="c7ntest-text-dot"
                       style={{
                         color: '#000',
                         borderRadius: '100px',
                         fontSize: '13px',
                         lineHeight: '24px',
                         padding: '2px 12px',
+                        maxWidth: 100,
                         background: 'rgba(0, 0, 0, 0.08)',
                         marginRight: '8px',
                         marginBottom: 3,
