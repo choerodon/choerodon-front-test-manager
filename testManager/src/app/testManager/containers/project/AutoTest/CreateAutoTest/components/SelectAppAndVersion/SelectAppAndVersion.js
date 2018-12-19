@@ -4,7 +4,7 @@ import { withRouter } from 'react-router-dom';
 import _ from 'lodash';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import {
-  Modal, Table, Select, Spin, 
+  Modal, Table, Select, Spin,
 } from 'choerodon-ui';
 import { stores, Content } from 'choerodon-front-boot';
 import './SelectAppAndVersion.scss';
@@ -21,7 +21,47 @@ class SelectAppAndVersion extends Component {
   }
 
   componentDidMount() {
-    this.loadApps();
+    this.loadAppAndVersions();
+  }
+
+  loadAppAndVersions = (value = '') => {
+    const { app, appVersionPagination } = CreateAutoTestStore;
+    const { current, pageSize: size } = appVersionPagination;
+    let searchParam = {};
+    if (value !== '') {
+      searchParam = { name: [value] };
+    }
+    getApps({
+      page: current - 1,
+      size,
+      sort: { field: 'id', order: 'desc' },
+      postData: { searchParam, param: '' },
+    }).then((data) => {
+      // 默认取第一个
+      if (data.failed) {
+        Choerodon.prompt(data.failed);
+        return;
+      }
+      CreateAutoTestStore.setAppList(data.content);
+      const appList = data.content;
+      let targetApp = app;
+      // 查看store中的app是否存在且合法
+      if (!app.id || !_.find(appList, { id: app.id })) {
+        if (data.content[0].id) {
+          targetApp = data.content[0];
+        }
+      }
+      // 是否有app
+      if (targetApp.id) {
+        this.loadAppVersions(targetApp.id);
+        CreateAutoTestStore.setApp(targetApp);
+      } else {
+        CreateAutoTestStore.setApp({});
+        this.setState({
+          loading: false,
+        });
+      }
+    });
   }
 
   loadApps = (value = '') => {
@@ -43,14 +83,6 @@ class SelectAppAndVersion extends Component {
         return;
       }
       CreateAutoTestStore.setAppList(data.content);
-      if (data.content.length > 0 && data.content[0].id && !app.id) {
-        this.loadAppVersions(app.id || data.content[0].id);
-        CreateAutoTestStore.setApp(data.content[0]);
-      } else {
-        this.setState({
-          loading: false,
-        });
-      }
     });
   }
 
@@ -272,7 +304,7 @@ class SelectAppAndVersion extends Component {
               {this.getProjectTable()}
             </div>
           </Spin>
-        </Content>  
+        </Content>
       </SideBar>);
   }
 }
