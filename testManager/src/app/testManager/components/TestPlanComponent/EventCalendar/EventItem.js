@@ -213,14 +213,21 @@ class EventItem extends Component {
       lastFlex,
       initFlex,
     } = this.state;
-    this.setState({    
-      initFlex: {
-        preFlex,
-        flex,
-        lastFlex,
-      },
-    });
-    this.updateCycle();
+    // 只在数据变化时才请求
+    if (preFlex === initFlex.preFlex && flex === initFlex.flex && lastFlex === initFlex.lastFlex) {
+      this.setState({
+        resizing: false,
+      });
+    } else {
+      this.setState({    
+        initFlex: {
+          preFlex,
+          flex,
+          lastFlex,
+        },
+      });
+      this.updateCycle();
+    }
   }
 
   /**

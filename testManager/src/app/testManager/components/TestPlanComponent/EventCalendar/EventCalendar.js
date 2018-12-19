@@ -22,12 +22,11 @@ class EventCalendar extends Component {
       baseDate = times[0].start ? moment(times[0].start).startOf('day') : moment();
       endDate = times[times.length - 1].end ? moment(times[times.length - 1].end).startOf('day') : moment();
     }
-    const range = moment.range(baseDate, endDate);
+    
     this.currentDate = baseDate;
     this.state = {
       baseDate, // 显示的开始时间
-      endDate, // 显示的结束时间
-      dates: range.diff('days'),
+      endDate, // 显示的结束时间      
       mode: 'month',
       width: 'auto',
       singleWidth: 0, // 单个日期所占宽度
@@ -90,11 +89,16 @@ class EventCalendar extends Component {
     this.events.style.height = `${this.events.offsetHeight}px`;
   }
 
+  /**
+   *计算单个日期所占宽度
+   *
+   */
   calculateItemWidth = () => {
-    const { dates, singleWidth } = this.state;
-    const newSingleWidth = this.BackItems.clientWidth / (dates + 1) + 1;
+    const { baseDate, endDate, singleWidth } = this.state;
+    const range = moment.range(baseDate, endDate);
+    const dates = range.diff('days');
+    const newSingleWidth = this.BackItems.clientWidth / (dates + 1) + 1;    
     if (newSingleWidth !== singleWidth) {
-      // console.log(newSingleWidth, singleWidth);
       this.setState({
         singleWidth: newSingleWidth,
       });
