@@ -116,7 +116,7 @@ class EventItem extends Component {
         className="c7ntest-EventItem-event"
         style={{
           flex,
-          // display: flex === 0 && 'none',
+          display: flex === 0 && 'none',
           ...styles[type],
         }}
       >
