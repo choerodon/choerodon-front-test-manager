@@ -354,6 +354,10 @@ class TestPlanStore extends BaseTreeProto {
     this.CurrentEditCycle = {};
     this.EditCycleVisible = false;
   }
+
+  @computed get getTimes() {
+    return toJS(this.times);
+  }
 }
 
 export default new TestPlanStore();

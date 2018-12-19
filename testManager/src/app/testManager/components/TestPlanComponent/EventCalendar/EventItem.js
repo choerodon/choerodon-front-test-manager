@@ -53,7 +53,7 @@ class EventItem extends Component {
     mode: 'left',
     resizing: false,
   };
-
+  
   static getDerivedStateFromProps(props, state) {
     // 调整大小时以state为准
     if (state.resizing) {
@@ -232,11 +232,11 @@ class EventItem extends Component {
     const { preFlex, lastFlex, mode } = this.state;
     const { range, itemRange, data } = this.props;
     const { start, end } = range;
-    console.log(start, end, preFlex, lastFlex);    
+    // console.log(start, end, preFlex, lastFlex);    
     const fromDate = mode === 'left' ? moment(start).add(preFlex, 'days') : moment(data.fromDate);
     const toDate = mode === 'right' ? moment(end).subtract(lastFlex, 'days') : moment(data.toDate);
-    console.log(fromDate.format('LL'), toDate.format('LL'), mode);
-    console.log(this.props.data);
+    // console.log(fromDate.format('LL'), toDate.format('LL'), mode);
+    // console.log(this.props.data);
     const updateData = {
       cycleId: data.cycleId,
       parentCycleId: data.parentCycleId,
