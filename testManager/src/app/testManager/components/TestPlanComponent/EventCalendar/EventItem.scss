@@ -19,13 +19,15 @@
         top: 0;
         height: 100%;
         width: 8px;
-        cursor: e-resize;
+       
         position: absolute;
       }
       &-resizer-left {
+        cursor: e-resize;
         left: -4px;
       }
       &-resizer-right {
+        cursor: w-resize;
         right: -4px;
       }
     }
