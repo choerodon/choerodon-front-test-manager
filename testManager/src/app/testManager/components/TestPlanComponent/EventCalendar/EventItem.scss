@@ -1,15 +1,33 @@
-.c7ntest-EventItem {  
+.c7ntest-EventItem {
   border-radius: 2px;
-  height: 30px;
+  height: 34px;
   line-height: 30px;
   color: white;
   margin-top: 5px;
-  &-event{
+  &:first-of-type {
+    margin-top: 0px;
+  }
+  &-event {
     cursor: pointer;
     background: #5094FF;
     overflow: hidden;
-    &-title{
-      margin-left: 10px;
+    &-title {
+      position: relative;
+      padding-left: 10px;
+      &-resizer-left,
+      &-resizer-right {
+        top: 0;
+        height: 100%;
+        width: 8px;
+        cursor: e-resize;
+        position: absolute;
+      }
+      &-resizer-left {
+        left: -4px;
+      }
+      &-resizer-right {
+        right: -4px;
+      }
     }
   }
 }

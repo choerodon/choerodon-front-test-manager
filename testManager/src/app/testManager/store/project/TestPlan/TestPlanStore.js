@@ -30,7 +30,7 @@ function traverseTree(node) {
           return -1;
         }
       }).map((child, i) => ({ ...child, key: `${key}-${i}` }));
-    } 
+    }
     if (tmpNode.children && tmpNode.children.length > 0) {
       let i = tmpNode.children.length - 1;
       for (i = tmpNode.children.length - 1; i >= 0; i -= 1) {
@@ -78,7 +78,7 @@ class TestPlanStore extends BaseTreeProto {
   @observable assignedTo = null;
 
   @observable lastUpdatedBy = null;
-  
+
   getTree = () => new Promise((resolve) => {
     this.enterLoading();
     getStatusList('CYCLE_CASE').then((statusList) => {
@@ -120,19 +120,19 @@ class TestPlanStore extends BaseTreeProto {
         page: executePagination.current - 1,
         size: executePagination.pageSize,
       }, data.cycleId,
-      {
-        ...filters,
-        lastUpdatedBy: [Number(this.lastUpdatedBy) || null],
-        assignedTo: [Number(this.assignedTo) || null],
-      }).then((cycle) => {
-        this.rightLeaveLoading();
-        this.setTestList(cycle.content);
-        this.setExecutePagination({
-          current: executePagination.current,
-          pageSize: executePagination.pageSize,
-          total: cycle.totalElements,
+        {
+          ...filters,
+          lastUpdatedBy: [Number(this.lastUpdatedBy) || null],
+          assignedTo: [Number(this.assignedTo) || null],
+        }).then((cycle) => {
+          this.rightLeaveLoading();
+          this.setTestList(cycle.content);
+          this.setExecutePagination({
+            current: executePagination.current,
+            pageSize: executePagination.pageSize,
+            total: cycle.totalElements,
+          });
         });
-      });
     }
   }
 
@@ -167,19 +167,19 @@ class TestPlanStore extends BaseTreeProto {
         page: 0,
         size: executePagination.pageSize,
       }, data.cycleId,
-      {
-        ...filters,
-        lastUpdatedBy: [Number(this.lastUpdatedBy) || null],
-        assignedTo: [Number(this.assignedTo) || null],
-      }).then((cycle) => {
-        this.rightLeaveLoading();
-        this.setTestList(cycle.content);
-        this.setExecutePagination({
-          current: 1,
-          pageSize: executePagination.pageSize,
-          total: cycle.totalElements,
+        {
+          ...filters,
+          lastUpdatedBy: [Number(this.lastUpdatedBy) || null],
+          assignedTo: [Number(this.assignedTo) || null],
+        }).then((cycle) => {
+          this.rightLeaveLoading();
+          this.setTestList(cycle.content);
+          this.setExecutePagination({
+            current: 1,
+            pageSize: executePagination.pageSize,
+            total: cycle.totalElements,
+          });
         });
-      });
     }
     // }
   }
@@ -224,7 +224,7 @@ class TestPlanStore extends BaseTreeProto {
       }
     }
   }
-  
+
   @action setPreProjectId(projectId) {
     this.preProjectId = projectId;
   }
@@ -359,6 +359,10 @@ class TestPlanStore extends BaseTreeProto {
   @action ExitEditCycle() {
     this.CurrentEditCycle = {};
     this.EditCycleVisible = false;
+  }
+
+  @computed get getTimes() {
+    return toJS(this.times)
   }
 }
 

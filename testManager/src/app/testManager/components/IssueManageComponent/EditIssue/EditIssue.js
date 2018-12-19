@@ -832,11 +832,9 @@ class EditIssueNarrow extends Component {
       >
         <Text>
           {data => (
-            <div style={{ color: '#3f51b5' }}>
-              <p style={{ color: '#3f51b5', wordBreak: 'break-word', marginBottom: 0 }}>
-                {this.transToArr(data, 'name')}
-              </p>
-            </div>
+            <p style={{ color: '#3f51b5', marginBottom: 0 }} className="c7ntest-text-dot">
+              {this.transToArr(data, 'name')}
+            </p>
           )}
         </Text>
         <Edit>
@@ -1260,9 +1258,9 @@ class EditIssueNarrow extends Component {
                   </TextEditToggle>
                   <div style={{ flexShrink: 0, color: 'rgba(0, 0, 0, 0.65)' }}>
                     {!disabled && (
-                    <Dropdown overlay={getMenu()} trigger={['click']}>
-                      <Button icon="more_vert" />
-                    </Dropdown>
+                      <Dropdown overlay={getMenu()} trigger={['click']}>
+                        <Button icon="more_vert" />
+                      </Dropdown>
                     )}
                   </div>
                 </div>

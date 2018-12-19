@@ -58,7 +58,7 @@ class TestPlanHome extends Component {
     TestPlanStore.getTree();
   }
 
-  onItemClick = (item) => {
+  handleItemClick = (item) => {
     const { type } = item;
     if (type === 'folder') {
       TestPlanStore.EditStage(item);
@@ -182,8 +182,9 @@ class TestPlanHome extends Component {
     const { CreateCycleVisible, statusList, prioritys } = this.state;
     const treeShow = TestPlanStore.treeShow;
     const {
-      testList, executePagination, loading, rightLoading, times, calendarShowMode,
+      testList, executePagination, loading, rightLoading, calendarShowMode,
     } = TestPlanStore;
+    const times = TestPlanStore.getTimes;
     const currentCycle = TestPlanStore.getCurrentCycle;
 
     const {
@@ -540,7 +541,7 @@ class TestPlanHome extends Component {
               {/* <Spin spinning={loading}> */}
               {key ? (
                 <div className="c7ntest-TestPlan-content-right">
-                  <EventCalendar key={currentCycle.cycleId} showMode={calendarShowMode} times={times} onItemClick={this.onItemClick} />
+                  <EventCalendar key={currentCycle.key} showMode={calendarShowMode} times={times} onItemClick={this.handleItemClick} />
                   {calendarShowMode === 'single' && (
                     <div className="c7ntest-TestPlan-content-right-bottom">
                       <div style={{ display: 'flex', marginBottom: 20 }}>

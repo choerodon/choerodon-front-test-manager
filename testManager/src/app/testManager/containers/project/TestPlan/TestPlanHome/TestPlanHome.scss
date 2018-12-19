@@ -1,9 +1,12 @@
 .c7ntest-TestPlan {
   .ant-spin-nested-loading {
+    width: 100%;
+    min-width: 0; //火狐浏览器下flex的overflow会失效，解决
     flex: 1;
   }
   .ant-spin-container {
     height: 100%;
+    width: 100%;
   }
   &-content {
     height: 100%;
@@ -22,8 +25,7 @@
       overflow-x: hidden;
       overflow-y: auto;
       &-bottom {
-        margin-bottom: 30px;
-        // display: none;
+        margin-bottom: 30px; // display: none;
         // height: 400px;
       }
     }
