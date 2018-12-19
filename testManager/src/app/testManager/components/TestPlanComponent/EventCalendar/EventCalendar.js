@@ -323,7 +323,7 @@ class EventCalendar extends Component {
             onScroll={this.handleScroll}
             onMouseDown={this.handleMouseDown}
           >
-            <div style={{ position: 'relative' }} ref={this.saveRef('wrapper')}>
+            <div style={{ position: 'relative', minHeight: '100%' }} ref={this.saveRef('wrapper')}>
               <div className="c7ntest-EventCalendar-BackItems" ref={this.saveRef('BackItems')}>
                 {
                   timeArray.map((m, i) => <div className="c7ntest-EventCalendar-BackItems-item" />)
