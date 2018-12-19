@@ -4,6 +4,7 @@ import {
 } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 import { Page, Header, Content } from 'choerodon-front-boot';
+import { Tree } from '../../../../components/CommonComponent';
 import { CreateStatus, EditStatusSide } from '../../../../components/CustomStatusComponent';
 import { getProjectName } from '../../../../common/utils';
 import { getStatusList, deleteStatus } from '../../../../api/TestStatusApi';
@@ -188,6 +189,7 @@ class CustomStatusHome extends Component {
           >
             <Tabs defaultActiveKey="CYCLE_CASE" onChange={this.handleTabChange}>
               <TabPane tab={<FormattedMessage id="status_executeStatus" />} key="CYCLE_CASE">
+                <Tree />
                 <Table
                   rowKey="statusId"
                   // pagination={statusPagination}

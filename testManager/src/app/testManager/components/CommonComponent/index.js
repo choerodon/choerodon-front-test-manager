@@ -16,3 +16,4 @@ export { default as SelectFolder } from './SelectFolder';
 export { default as Upload } from './Upload';
 export { default as SimpleSelect } from './SimpleSelect';
 export { default as SmartTooltip } from './SmartTooltip';
+export { default as Tree } from './Tree';

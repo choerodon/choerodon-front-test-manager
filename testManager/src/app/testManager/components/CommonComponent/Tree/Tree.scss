@@ -1,0 +1,25 @@
+.c7ntest-tree {
+  .ant-tree-icon__customize {
+    i.icon {
+      float: left;
+      line-height: 22px;
+      margin-right: 5px;
+    }
+  }
+  .ant-tree-title {
+    display: inline-block; // float: right;
+    flex: 1
+  }
+   li .ant-tree-node-content-wrapper.ant-tree-node-selected {
+    background: rgba(0, 0, 0, 0.04);
+  }
+   li .ant-tree-node-content-wrapper {
+    width: calc(100% - 22px);
+    display: inline-flex;
+    align-items: center;
+    height: 30px;
+  }
+  .ant-tree-switcher {
+    margin-top: 3px;
+  }
+}
