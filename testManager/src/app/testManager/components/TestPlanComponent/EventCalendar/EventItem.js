@@ -120,11 +120,11 @@ class EventItem extends Component {
           ...styles[type],
         }}
       >
+        {canReasize.includes(type) && <div className="c7ntest-EventItem-event-resizer-left" onMouseDown={this.handleMouseDown.bind(this, 'left')} ref={this.saveRef('left')} role="none" />}
+        {canReasize.includes(type) && <div className="c7ntest-EventItem-event-resizer-right" onMouseDown={this.handleMouseDown.bind(this, 'right')} ref={this.saveRef('right')} role="none" />}
         <Tooltip getPopupContainer={() => findDOMNode(this)} title={tipTitle} placement="topLeft">
           <div className="c7ntest-EventItem-event-title c7ntest-text-dot">
-            {canReasize.includes(type) && <div className="c7ntest-EventItem-event-title-resizer-left" onMouseDown={this.handleMouseDown.bind(this, 'left')} ref={this.saveRef('left')} role="none" />}
-            {title}
-            {canReasize.includes(type) && <div className="c7ntest-EventItem-event-title-resizer-right" onMouseDown={this.handleMouseDown.bind(this, 'right')} ref={this.saveRef('right')} role="none" />}
+            {title}            
           </div>
         </Tooltip>
       </div>,
@@ -252,6 +252,7 @@ class EventItem extends Component {
       fromDate: fromDate ? fromDate.format('YYYY-MM-DD HH:mm:ss') : null,
       toDate: toDate ? toDate.format('YYYY-MM-DD HH:mm:ss') : null,
     };    
+    TestPlanStore.enterLoading();
     editFolder(updateData).then((res) => {
       TestPlanStore.getTree().finally(() => {
         this.setState({
@@ -260,6 +261,7 @@ class EventItem extends Component {
       });
     }).catch((err) => {
       Choerodon.prompt('网络错误');
+      TestPlanStore.leaveLoading();
       this.setState({
         resizing: false, // 不在mouseup设置而是延迟设置false,防止旧值闪现
       });

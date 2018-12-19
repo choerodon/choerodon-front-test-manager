@@ -10,26 +10,30 @@
   &-event {
     cursor: pointer;
     background: #5094FF;
-    overflow: hidden;
+    position: relative;
+    // overflow: hidden;
+    width: 100%;
+    &-resizer-left,
+    &-resizer-right {
+      top: 0;
+      height: 100%;
+      width: 20px;
+      position: absolute;
+      z-index: 2;
+    }
+    &-resizer-left {
+      cursor: e-resize;
+      left: 0;
+      margin-left: -10px;
+    }
+    &-resizer-right {
+      cursor: w-resize;
+      right: -10px;
+    }
     &-title {
-      position: relative;
-      padding-left: 10px;
-      &-resizer-left,
-      &-resizer-right {
-        top: 0;
-        height: 100%;
-        width: 8px;
-       
-        position: absolute;
-      }
-      &-resizer-left {
-        cursor: e-resize;
-        left: -4px;
-      }
-      &-resizer-right {
-        cursor: w-resize;
-        right: -4px;
-      }
+      position: absolute;
+      width: 100%;
+      padding: 0 10px;
     }
   }
 }
