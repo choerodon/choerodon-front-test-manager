@@ -87,7 +87,7 @@ class EventCalendar extends Component {
     this.fakeScrollBar.style.width = `${scrollBarWidth}px`;
     this.wrapper.style.width = `${Math.ceil(this.HeaderItems.offsetWidth) - scrollBarWidth}px`;
     // 设置高度，防止滚动条跳动，虽然EventItem设置了key，但依然会重新挂载，不清楚原因
-    this.events.style.height = `${this.events.offsetWidth}px`;
+    this.events.style.height = `${this.events.offsetHeight}px`;
   }
 
   calculateItemWidth = () => {
@@ -98,14 +98,6 @@ class EventCalendar extends Component {
       this.setState({
         singleWidth: newSingleWidth,
       });
-    }
-  }
-
-  scrollTo = ({ scrollLeft, scrollTop }) => {
-    if (scrollLeft !== 0 || scrollTop !== 0) {
-      console.log(scrollLeft, scrollTop);
-      this.scroller.scrollLeft = scrollLeft;
-      this.scroller.scrollTop = 500;
     }
   }
 
