@@ -20,9 +20,9 @@ class EventCalendar extends Component {
     let endDate = moment();
     if (times && times.length > 0) {
       baseDate = times[0].start ? moment(times[0].start).startOf('day') : moment();
-      endDate = times[times.length - 1].end ? moment(times[times.length - 1].end).startOf('day') : moment();
+      endDate = moment.max(times.map(time => moment(time.end)));
     }
-    
+
     this.currentDate = baseDate;
     this.state = {
       baseDate, // 显示的开始时间
@@ -78,7 +78,7 @@ class EventCalendar extends Component {
 
   componentDidUpdate(prevProps, prevState, snapshot) {
     this.calculateItemWidth();
-    this.setRightWidth();   
+    this.setRightWidth();
   }
 
   setRightWidth = () => {
@@ -97,7 +97,7 @@ class EventCalendar extends Component {
     const { baseDate, endDate, singleWidth } = this.state;
     const range = moment.range(baseDate, endDate);
     const dates = range.diff('days');
-    const newSingleWidth = this.BackItems.clientWidth / (dates + 1) + 1;    
+    const newSingleWidth = this.BackItems.clientWidth / (dates + 1) + 1;
     if (newSingleWidth !== singleWidth) {
       this.setState({
         singleWidth: newSingleWidth,
@@ -218,13 +218,13 @@ class EventCalendar extends Component {
 
   render() {
     const {
-      mode, width, singleWidth, 
+      mode, width, singleWidth,
     } = this.state;
-    const { showMode, times } = this.props;    
+    const { showMode, times } = this.props;
     const { start, end } = this.calculateTime();
     const range = moment.range(start, end);
     const timeArray = Array.from(range.by('day'));
-    const dateFormat = 'YYYY/MM/DD';   
+    const dateFormat = 'YYYY/MM/DD';
     return (
       <div className="c7ntest-EventCalendar" style={{ height: showMode === 'multi' ? '100%' : '162px' }}>
         {/* 头部 */}
