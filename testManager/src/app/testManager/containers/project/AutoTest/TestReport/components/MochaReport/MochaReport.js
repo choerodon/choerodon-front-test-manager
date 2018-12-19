@@ -217,7 +217,7 @@ class MochaReport extends Component {
                 </div>
               </div>
             </div>
-            <span style={{ fontSize: '14px', fontWeight: 500 }}>测试时长表</span>
+            <div style={{ fontSize: '14px', fontWeight: 500, marginTop: 12 }}>测试时长表</div>
             <DuringChart />
             <Table
               rowKey={record => record.uuid}
