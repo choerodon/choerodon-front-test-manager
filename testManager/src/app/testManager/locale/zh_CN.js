@@ -229,8 +229,8 @@ const zhCN = {
 
   // 测试用例
   issue_name: '测试用例',
-  issue_noIssueTitle: '根据当前搜索条件没有查询到问题',
-  issue_noIssueDescription: '尝试修改您的过滤选项或者在下面创建新的问题',
+  issue_noIssueTitle: '根据当前搜索条件没有查询到测试用例',
+  issue_noIssueDescription: '尝试修改您的过滤选项或者在下面创建新的测试用例',
   issue_createTestIssue: '创建测试用例',
   issue_importIssue: '导入测试用例',
   issue_filterTestIssue: '过滤表',
