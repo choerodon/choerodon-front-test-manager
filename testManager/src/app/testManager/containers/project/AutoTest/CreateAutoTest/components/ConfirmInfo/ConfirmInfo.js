@@ -180,7 +180,7 @@ class ConfirmInfo extends Component {
       isNotChange,
       appId: app.id,
       code: app.code,
-      appVerisonId: appVersion.id || 5,
+      appVersionId: appVersion.id || 5,
       environmentId: env.id || 144,
       projectVersionId: version.versionId,
       values: newYaml,
