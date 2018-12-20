@@ -23,14 +23,11 @@
     }
     &-resizer-left {
       cursor: e-resize;
-      left: 0;
-      margin-left: -10px;
+      left: -10px;     
     }
     &-resizer-right {
       cursor: w-resize;
-      right: 0;
-      margin-right: -10px;
-      // right: -10px;
+      right: -10px;      
     }
     &-title {
       position: absolute;
