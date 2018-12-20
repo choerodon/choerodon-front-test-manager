@@ -541,7 +541,11 @@ class TestPlanHome extends Component {
               {/* <Spin spinning={loading}> */}
               {key ? (
                 <div className="c7ntest-TestPlan-content-right">
+<<<<<<< HEAD
                   <EventCalendar key={currentCycle.key} showMode={calendarShowMode} times={times} onItemClick={this.handleItemClick} />
+=======
+                  <EventCalendar key={currentCycle.key} showMode={calendarShowMode} times={times} onItemClick={this.onItemClick} />
+>>>>>>> [FIX]修复日历的key
                   {calendarShowMode === 'single' && (
                     <div className="c7ntest-TestPlan-content-right-bottom">
                       <div style={{ display: 'flex', marginBottom: 20 }}>
