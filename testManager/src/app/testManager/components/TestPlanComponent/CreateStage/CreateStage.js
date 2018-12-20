@@ -43,8 +43,8 @@ class CreateStage extends Component {
           parentCycleId: cycleId,
           versionId,        
           type: 'folder',
-          fromDate: fromDate ? fromDate.format('YYYY-MM-DD HH:mm:ss') : null,
-          toDate: toDate ? toDate.format('YYYY-MM-DD HH:mm:ss') : null,
+          fromDate: fromDate ? fromDate.startOf('day').format('YYYY-MM-DD HH:mm:ss') : null,
+          toDate: toDate ? toDate.endOf('day').format('YYYY-MM-DD HH:mm:ss') : null,
          
         }).then((res) => {
           if (res.failed) {
