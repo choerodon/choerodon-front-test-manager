@@ -39,8 +39,8 @@ class EditStage extends Component {
             cycleId: initialValue.cycleId,
             objectVersionNumber: initialValue.objectVersionNumber,
             type: 'folder',
-            fromDate: fromDate ? fromDate.format('YYYY-MM-DD HH:mm:ss') : null,
-            toDate: toDate ? toDate.format('YYYY-MM-DD HH:mm:ss') : null,
+            fromDate: fromDate ? fromDate.startOf('day').format('YYYY-MM-DD HH:mm:ss') : null,
+            toDate: toDate ? toDate.endOf('day').format('YYYY-MM-DD HH:mm:ss') : null,
           },
         }).then((res) => {
           if (res.failed) {
@@ -171,7 +171,7 @@ class EditStage extends Component {
                       format="YYYY-MM-DD"
                       disabledDate={this.disabledStartDate}
                       style={{ width: 500 }}
-                      label={<FormattedMessage id="cycle_startTime" />}
+                      label={<FormattedMessage id="cycle_startTime" />}                      
                     />,
                   )}
                 </FormItem>
@@ -186,7 +186,7 @@ class EditStage extends Component {
                       disabledDate={this.disabledEndDate}
                       label={<FormattedMessage id="cycle_endTime" />}
                       format="YYYY-MM-DD"
-                      style={{ width: 500 }}
+                      style={{ width: 500 }}                      
                     />,
                   )}
                 </FormItem>

@@ -109,6 +109,10 @@ class CreateAutoTestStore {
   @computed get getNewConfigValue() {
     return toJS(this.newConfigValue);
   }
+
+  @computed get getAppList() {
+    return toJS(this.appList);
+  }
 }
 
 export default new CreateAutoTestStore();

@@ -180,7 +180,7 @@ class ConfirmInfo extends Component {
       isNotChange,
       appId: app.id,
       code: app.code,
-      appVerisonId: appVersion.id || 5,
+      appVersionId: appVersion.id || 5,
       environmentId: env.id || 144,
       projectVersionId: version.versionId,
       values: newYaml,
@@ -486,7 +486,7 @@ class ConfirmInfo extends Component {
           </div>
           {/* 定时执行 */}
           {testType === 'timing' && this.renderTimingExecute()}
-          <div>
+          {/* <div>
             <div className="deployApp-title">
               <span className="deployApp-title-text">
                 {'测试框架：'}
@@ -500,7 +500,7 @@ class ConfirmInfo extends Component {
                 {')'}
               </span>
             </div>
-          </div>
+          </div> */}
           <div>
             <div className="deployApp-title">
               <span className="deployApp-title-text">
