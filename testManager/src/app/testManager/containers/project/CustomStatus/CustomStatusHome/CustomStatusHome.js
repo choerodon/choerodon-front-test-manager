@@ -4,7 +4,6 @@ import {
 } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 import { Page, Header, Content } from 'choerodon-front-boot';
-import { Tree } from '../../../../components/CommonComponent';
 import { CreateStatus, EditStatusSide } from '../../../../components/CustomStatusComponent';
 import { getProjectName } from '../../../../common/utils';
 import { getStatusList, deleteStatus } from '../../../../api/TestStatusApi';
@@ -25,12 +24,7 @@ class CustomStatusHome extends Component {
       statusName: null,
       description: null,
       statusColor: null,
-    },
-    statusPagination: {
-      current: 1,
-      total: 0,
-      pageSize: 10,
-    },
+    },  
   }
 
   componentDidMount() {
@@ -56,9 +50,6 @@ class CustomStatusHome extends Component {
     this.getList(this.state.statusType);
   }
 
-  handleStatusTableChange = (pagination, filters, sorter) => {
-    // this.getList(pagination);
-  }
 
   handleTabChange = (key) => {
     this.setState({
@@ -89,14 +80,12 @@ class CustomStatusHome extends Component {
         });
       },         
     });
-    
-    // window.console.log(data);
   }
 
   render() {
     const {
       loading, statusType,
-      createVisible, editVisible, statusPagination, statusList,
+      createVisible, editVisible, statusList,
       editing,
     } = this.state;
     const columns = [{
@@ -167,49 +156,40 @@ class CustomStatusHome extends Component {
           onCancel={() => { this.setState({ editVisible: false }); }}
           onOk={() => { this.setState({ editVisible: false }); this.getList(statusType); }}
         />
-
-        <Header title={<FormattedMessage id="status_title" />}>
-          <Button onClick={() => { this.setState({ createVisible: true }); }}>
-            <Icon type="playlist_add" />
-            <span><FormattedMessage id="status_create" /></span>
-          </Button>
-          <Button onClick={this.refresh}>
-            <Icon type="autorenew icon" />
-            <span><FormattedMessage id="refresh" /></span>
-          </Button>
-        </Header>
-        <Spin spinning={loading}>
-          <Content
-            // style={{
-            //   padding: '0 0 10px 0',
-            // }}
-            title={<FormattedMessage id="status_custom_home_title" values={{ name: getProjectName() }} />}
-            description={<FormattedMessage id="status_custom_home_description" />}
-            link="http://choerodon.io/zh/docs/user-guide/test-management/setting/status/"
-          >
-            <Tabs defaultActiveKey="CYCLE_CASE" onChange={this.handleTabChange}>
-              <TabPane tab={<FormattedMessage id="status_executeStatus" />} key="CYCLE_CASE">
-                <Tree />
-                <Table
-                  rowKey="statusId"
-                  // pagination={statusPagination}
-                  columns={columns}
-                  dataSource={statusList}
-                // onChange={this.handleStatusTableChange}
-                />
-              </TabPane>
-              <TabPane tab={<FormattedMessage id="status_steptatus" />} key="CASE_STEP">
-                <Table
-                  rowKey="statusId"
-                  // pagination={statusPagination}
-                  columns={columns}
-                  dataSource={statusList}
-                // onChange={this.handleStatusTableChange}
-                />
-              </TabPane>
-            </Tabs>
-          </Content>
-        </Spin>
+        <Page>
+          <Header title={<FormattedMessage id="status_title" />}>
+            <Button icon="playlist_add" onClick={() => { this.setState({ createVisible: true }); }}>
+              <FormattedMessage id="status_create" />
+            </Button>
+            <Button icon="autorenew" onClick={this.refresh}>
+              <FormattedMessage id="refresh" />
+            </Button>
+          </Header>
+          <Spin spinning={loading}>
+            <Content            
+              title={<FormattedMessage id="status_custom_home_title" values={{ name: getProjectName() }} />}
+              description={<FormattedMessage id="status_custom_home_description" />}
+              link="http://choerodon.io/zh/docs/user-guide/test-management/setting/status/"
+            >
+              <Tabs defaultActiveKey="CYCLE_CASE" onChange={this.handleTabChange}>
+                <TabPane tab={<FormattedMessage id="status_executeStatus" />} key="CYCLE_CASE">                
+                  <Table
+                    rowKey="statusId"               
+                    columns={columns}
+                    dataSource={statusList}
+                  />
+                </TabPane>
+                <TabPane tab={<FormattedMessage id="status_steptatus" />} key="CASE_STEP">
+                  <Table
+                    rowKey="statusId" 
+                    columns={columns}
+                    dataSource={statusList}
+                  />
+                </TabPane>
+              </Tabs>
+            </Content>
+          </Spin>
+        </Page>
       </div>
     );
   }

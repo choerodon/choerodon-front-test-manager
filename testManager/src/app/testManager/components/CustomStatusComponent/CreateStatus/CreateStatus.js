@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-  Form, Input, Select, Modal, Spin, Icon, 
+  Form, Input, Select, Modal, Spin, 
 } from 'choerodon-ui';
 import { Content } from 'choerodon-front-boot';
 import { FormattedMessage } from 'react-intl';
@@ -32,10 +32,6 @@ class CreateStatus extends Component {
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
         this.setState({ loading: true });
-        window.console.log('Received values of form: ', {
-          ...values,
-          ...{ statusColor },
-        });
         createStatus({
           ...values,
           ...{ statusColor },
@@ -78,10 +74,7 @@ class CreateStatus extends Component {
               link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management/setting/status/"
             >
               <Form>
-                <FormItem
-                  // {...formItemLayout}
-                  label={null}
-                >
+                <FormItem>
                   {getFieldDecorator('statusType', {
                     initialValue: 'CYCLE_CASE',
                     rules: [{
@@ -94,10 +87,7 @@ class CreateStatus extends Component {
                     </Select>,
                   )}
                 </FormItem>
-                <FormItem
-                  // {...formItemLayout}
-                  label={null}
-                >
+                <FormItem>
                   {getFieldDecorator('statusName', {
                     rules: [{
                       required: true, message: '请输入状态!',
@@ -106,19 +96,12 @@ class CreateStatus extends Component {
                     <Input style={{ width: 500 }} maxLength={30} label={<FormattedMessage id="status" />} />,
                   )}
                 </FormItem>
-                <FormItem
-                  // {...formItemLayout}
-                  label={null}
-                >
+                <FormItem>
                   {getFieldDecorator('description', {
-                    // rules: [{
-                    //   required: true, message: '请输入说明!',
-                    // }],
+            
                   })(
                     <Input style={{ width: 500 }} maxLength={30} label={<FormattedMessage id="comment" />} />,
-                    // <div style={{ width: 500 }}>
-                    //   <TextArea maxLength={30} label="说明" placeholder="说明" autosize />
-                    // </div>
+                   
                   )}
                 </FormItem>
 
@@ -127,8 +110,7 @@ class CreateStatus extends Component {
                   {'：'}
                   <div
                     className="c7ntest-CreateStatus-color-picker-show"
-                    role="none"
-                    // style={{ background: statusColor }}
+                    role="none"                  
                     onClick={(e) => {
                       e.stopPropagation();
                       this.setState({ pickShow: true });
@@ -152,8 +134,7 @@ class CreateStatus extends Component {
                       onChangeComplete={(color) => {
                         const {
                           r, g, b, a, 
-                        } = color.rgb;
-                        // window.console.log(color);
+                        } = color.rgb;                      
                         this.setState({ statusColor: `rgba(${r},${g},${b},${a})` });
                       }}
                     />

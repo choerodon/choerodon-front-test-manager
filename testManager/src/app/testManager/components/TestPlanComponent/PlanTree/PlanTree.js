@@ -1,22 +1,16 @@
 import React, { Component } from 'react';
 import { Tree, Input, Icon } from 'choerodon-ui';
 import { observer } from 'mobx-react';
-import { stores } from 'choerodon-front-boot';
 import _ from 'lodash';
-import moment from 'moment';
 import './PlanTree.scss';
-import FileSaver from 'file-saver';
 import TestPlanStore from '../../../store/project/TestPlan/TestPlanStore';
 import CloneCycle from '../CloneCycle';
 import CloneStage from '../CloneStage';
 import AssignBatch from '../AssignBatch';
-import {  
-  clone, addFolder, exportCycle, 
-} from '../../../api/cycleApi';
+import { addFolder } from '../../../api/cycleApi';
 import PlanTreeTitle from './PlanTreeTitle';
 import CreateStage from '../CreateStage';
 
-const { AppState } = stores;
 const { TreeNode } = Tree;
 
 @observer
@@ -35,19 +29,13 @@ class PlanTree extends Component {
     currentEditValue: {},    
   }
 
-  componentDidMount() {
-    // this.getTree();
-  }
-
   refresh = () => {
     TestPlanStore.getTree();
   }
 
   addFolder = (item, e, type) => {
     const { value } = e.target;
-    TestPlanStore.enterLoading();
-    // window.console.log(this.state.currentCycle);
-
+    TestPlanStore.enterLoading();    
     addFolder({
       type: 'folder',
       cycleName: value,
@@ -75,9 +63,7 @@ class PlanTree extends Component {
         this.setState({
           currentCloneStage: item,
           CloneStageVisible: true,
-        });
-        // const parentKey = this.getParentKey(item.key, TestPlanStore.getTreeData);
-        // TestPlanStore.addItemByParentKey(parentKey, { ...item, ...{ key: `${parentKey}-CLONE_FOLDER`, type: 'CLONE_FOLDER' } });
+        });      
         break;
       }
       case 'ASSIGN_BATCH': {
@@ -87,10 +73,7 @@ class PlanTree extends Component {
         });
         break;
       }
-      case 'CLONE_CYCLE': {
-        // const parentKey = this.getParentKey(item.key, TestExecuteStore.getTreeData);
-        // TestExecuteStore.addItemByParentKey(parentKey, 
-        // { ...item, ...{ key: `${parentKey}-CLONE_CYCLE`, type: 'CLONE_CYCLE' } });
+      case 'CLONE_CYCLE': {      
         this.setState({
           currentCloneCycle: item,
           CloneCycleVisible: true,
@@ -108,16 +91,6 @@ class PlanTree extends Component {
         this.setState({
           CreateStageIn: item,
           CreateStageVisible: true,
-        });
-        // 自动展开当前项
-
-        break;
-      }
-      case 'EXPORT_CYCLE': {
-        exportCycle(item.cycleId).then((data) => {
-          const blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-          const fileName = `${AppState.currentMenuType.name}.xlsx`;
-          FileSaver.saveAs(blob, fileName);
         });
         break;
       }
@@ -242,32 +215,6 @@ class PlanTree extends Component {
     });
   }
 
-
-  // Clone = (item, e, type) => {
-  //   const { value } = e.target;
-  //   // window.console.log(item, value);
-  //   // e.target.focus();
-  //   if (value === item.title) {
-  //     Choerodon.prompt('请更改名字');
-  //     TestPlanStore.removeAdding();
-  //   } else {
-  //     TestPlanStore.enterLoading();
-  //     clone(item.cycleId, { cycleName: value }, type).then((data) => {
-  //       TestPlanStore.leaveLoading();
-  //       if (data.failed) {
-  //         Choerodon.prompt('名字重复');
-  //         TestPlanStore.removeAdding();
-  //       } else {
-  //         this.refresh();
-  //       }
-  //     }).catch(() => {
-  //       Choerodon.prompt('网络出错');
-  //       TestPlanStore.leaveLoading();
-  //       TestPlanStore.removeAdding();
-  //     });
-  //   }
-  // }
-
   render() {
     const { onClose } = this.props;
     const {
@@ -321,8 +268,7 @@ class PlanTree extends Component {
           </div>
         </div>
         
-        <div className="c7ntest-PlanTree-tree">
-          
+        <div className="c7ntest-PlanTree-tree">          
           <Tree
             selectedKeys={selectedKeys}
             expandedKeys={expandedKeys}
