@@ -125,7 +125,7 @@ export default class IssueManage extends Component {
   }
 
 
-  downloadTemplate() {
+  downloadTemplate=() => {
     downloadTemplate().then((excel) => {
       const blob = new Blob([excel], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
       const fileName = '导入模板.xlsx';
@@ -189,7 +189,7 @@ export default class IssueManage extends Component {
             <Icon type="file_upload icon" />
             <FormattedMessage id="import" />
           </Button>
-          <Button className="leftBtn" onClick={() => this.downloadTemplate()}>
+          <Button className="leftBtn" onClick={this.downloadTemplate}>
             <Icon type="get_app icon" />
             下载模板
           </Button>

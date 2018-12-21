@@ -120,19 +120,19 @@ class TestPlanStore extends BaseTreeProto {
         page: executePagination.current - 1,
         size: executePagination.pageSize,
       }, data.cycleId,
-        {
-          ...filters,
-          lastUpdatedBy: [Number(this.lastUpdatedBy) || null],
-          assignedTo: [Number(this.assignedTo) || null],
-        }).then((cycle) => {
-          this.rightLeaveLoading();
-          this.setTestList(cycle.content);
-          this.setExecutePagination({
-            current: executePagination.current,
-            pageSize: executePagination.pageSize,
-            total: cycle.totalElements,
-          });
+      {
+        ...filters,
+        lastUpdatedBy: [Number(this.lastUpdatedBy) || null],
+        assignedTo: [Number(this.assignedTo) || null],
+      }).then((cycle) => {
+        this.rightLeaveLoading();
+        this.setTestList(cycle.content);
+        this.setExecutePagination({
+          current: executePagination.current,
+          pageSize: executePagination.pageSize,
+          total: cycle.totalElements,
         });
+      });
     }
   }
 
@@ -167,19 +167,19 @@ class TestPlanStore extends BaseTreeProto {
         page: 0,
         size: executePagination.pageSize,
       }, data.cycleId,
-        {
-          ...filters,
-          lastUpdatedBy: [Number(this.lastUpdatedBy) || null],
-          assignedTo: [Number(this.assignedTo) || null],
-        }).then((cycle) => {
-          this.rightLeaveLoading();
-          this.setTestList(cycle.content);
-          this.setExecutePagination({
-            current: 1,
-            pageSize: executePagination.pageSize,
-            total: cycle.totalElements,
-          });
+      {
+        ...filters,
+        lastUpdatedBy: [Number(this.lastUpdatedBy) || null],
+        assignedTo: [Number(this.assignedTo) || null],
+      }).then((cycle) => {
+        this.rightLeaveLoading();
+        this.setTestList(cycle.content);
+        this.setExecutePagination({
+          current: 1,
+          pageSize: executePagination.pageSize,
+          total: cycle.totalElements,
         });
+      });
     }
     // }
   }
@@ -362,7 +362,7 @@ class TestPlanStore extends BaseTreeProto {
   }
 
   @computed get getTimes() {
-    return toJS(this.times)
+    return toJS(this.times);
   }
 }
 
