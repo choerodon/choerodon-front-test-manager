@@ -8,6 +8,7 @@ import {
 import { FormattedMessage } from 'react-intl';
 import { Draggable, Droppable } from 'react-beautiful-dnd';
 import FileSaver from 'file-saver';
+import { SmartTooltip } from '../../CommonComponent'; 
 import IssueTreeStore from '../../../store/project/IssueManage/IssueTreeStore';
 import {
   editFolder, deleteFolder, moveIssues, copyIssues, exportIssuesFromFolder, exportIssuesFromVersion,
@@ -263,9 +264,9 @@ class IssueTreeTitle extends Component {
           )
           : (
             <div className="c7ntest-issue-tree-title-text">
-              <Tooltip title={title} placement="topLeft">
+              <SmartTooltip title={title} placement="topLeft">
                 {title}
-              </Tooltip>
+              </SmartTooltip>
             </div>
           )}
         <div role="none" className="c7ntest-issue-tree-title-actionButton" onClick={e => e.stopPropagation()}>

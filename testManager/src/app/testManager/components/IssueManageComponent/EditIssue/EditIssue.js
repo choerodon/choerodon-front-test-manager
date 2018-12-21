@@ -1517,7 +1517,7 @@ class EditIssueNarrow extends Component {
                         </div>
                       </div>
                       {/* --- */}
-                      <div style={{ flex: 1, marginTop: mode === 'wide' && 62 }}>
+                      <div style={{ flex: 1, marginTop: mode === 'wide' && 70 }}>
                         {/* 日期 */}
                         <div className="line-start mt-10">
                           <div className="c7ntest-property-wrapper">
@@ -1597,8 +1597,7 @@ class EditIssueNarrow extends Component {
                     }}
                     />
                     <div className="c7ntest-title-right" style={{ marginLeft: '14px', position: 'relative' }}>
-                      <Button disabled={disabled} className="leftBtn" funcTyp="flat" onClick={this.createIssueStep}>
-                        <Icon type="playlist_add icon" style={{ marginRight: 2 }} />
+                      <Button disabled={disabled} icon="playlist_add" className="leftBtn" funcTyp="flat" onClick={this.createIssueStep}>                      
                         <FormattedMessage id="issue_edit_addTestDetail" />
                       </Button>
                     </div>
