@@ -446,7 +446,7 @@ class DataLog extends Component {
                       <span>
                         {this.getMode3(datalog)}
                       </span>
-                      <span style={{ color: '#303f9f' }}>
+                      <span style={{ color: '#303f9f', wordBreak: 'break-all' }}>
                         {this.getMode4(datalog)}
                       </span>
                       <span>
