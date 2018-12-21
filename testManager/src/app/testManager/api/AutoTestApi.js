@@ -1,7 +1,6 @@
 
 import axios from 'axios';
 import { getProjectId, getOrganizationId, request } from '../common/utils';
-// import './AutoTestApiMock';
 
 
 export function getTestHistoryByApp(appId, pagination, filter) {
