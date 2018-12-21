@@ -127,6 +127,7 @@ class EventCalendar extends Component {
   handleMouseDown = (e) => {
     e.stopPropagation();
     e.preventDefault();
+    this.scroller.style.cursor = 'grabbing';
     this.initScrollPosition = {
       x: e.clientX,
       y: e.clientY,
@@ -150,6 +151,7 @@ class EventCalendar extends Component {
   }
 
   handleMouseUp = (e) => {
+    this.scroller.style.cursor = 'grab';
     this.setCurrentDate();
     document.removeEventListener('mousemove', this.handleMouseMove);
     document.removeEventListener('mouseup', this.handleMouseUp);

@@ -52,11 +52,12 @@ class EventItem extends Component {
     },
     mode: 'left',
     resizing: false,
+    done: true,
   };
   
   static getDerivedStateFromProps(props, state) {
     // 调整大小时以state为准
-    if (state.resizing) {
+    if (!state.done) {
       return null;
     }
     const {
@@ -166,6 +167,7 @@ class EventItem extends Component {
     // console.log(this[mode].getBoundingClientRect().left, e.clientX);
     this.setState({
       resizing: true,
+      done: false,
       mode,
     });
     this.initScrollPosition = {
@@ -207,6 +209,9 @@ class EventItem extends Component {
   handleMouseUp = (e) => {
     document.removeEventListener('mousemove', this.handleMouseMove);
     document.removeEventListener('mouseup', this.handleMouseUp);
+    this.setState({
+      resizing: false,
+    });
     const {
       preFlex,
       flex,
@@ -215,8 +220,8 @@ class EventItem extends Component {
     } = this.state;
     // 只在数据变化时才请求
     if (preFlex === initFlex.preFlex && flex === initFlex.flex && lastFlex === initFlex.lastFlex) {
-      this.setState({
-        resizing: false,
+      this.setState({        
+        done: true,
       });
     } else {
       this.setState({    
@@ -256,14 +261,14 @@ class EventItem extends Component {
     editFolder(updateData).then((res) => {
       TestPlanStore.getTree().finally(() => {
         this.setState({
-          resizing: false, // 不在mouseup设置而是延迟设置false,防止旧值闪现
+          done: true, // 不在mouseup设置而是延迟设置false,防止旧值闪现
         });
       });
     }).catch((err) => {
       Choerodon.prompt('网络错误');
       TestPlanStore.leaveLoading();
       this.setState({
-        resizing: false, // 不在mouseup设置而是延迟设置false,防止旧值闪现
+        done: true, // 不在mouseup设置而是延迟设置false,防止旧值闪现
       });
     });
   }
