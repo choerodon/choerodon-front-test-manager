@@ -208,7 +208,20 @@ class IssueTreeTitle extends Component {
       // } else {
       // if (type === 'cycle') {         
       items = items.concat([
-        <Permission type={Menutype} projectId={projectId} organizationId={orgId} service={['agile-service.issue.deleteIssue']}>
+        <Permission
+          type={Menutype}
+          projectId={projectId}
+          organizationId={orgId}         
+          service={['agile-service.project-info.updateProjectInfo']}
+          noAccessChildren={(
+            <Menu.Item
+              key="delete"
+              disabled
+            >
+              <FormattedMessage id="issue_tree_delete" />
+            </Menu.Item>
+          )}
+        >
           <Menu.Item key="delete">
             <FormattedMessage id="issue_tree_delete" />
           </Menu.Item>

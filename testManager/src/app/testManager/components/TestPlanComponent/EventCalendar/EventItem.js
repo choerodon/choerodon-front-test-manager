@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import Moment from 'moment';
-import { findDOMNode } from 'react-dom';
 import { extendMoment } from 'moment-range';
 import { Tooltip } from 'choerodon-ui';
 import TestPlanStore from '../../../store/project/TestPlan/TestPlanStore';
@@ -274,7 +273,7 @@ class EventItem extends Component {
   }
 
   render() {
-    const { resizing } = this.state;
+    const { resizing, mode } = this.state;
     return (
       <div style={{ width: '100%', display: 'flex' }} className="c7ntest-EventItem">
         {/* 拖动时，创建一个蒙层来显示拖动效果，防止鼠标指针闪烁 */}
@@ -286,7 +285,7 @@ class EventItem extends Component {
             bottom: 0,
             right: 0,
             zIndex: 9999,
-            cursor: 'e-resize',
+            cursor: mode === 'left' ? 'e-resize' : 'w-resize',
           }}
           />
         )}
