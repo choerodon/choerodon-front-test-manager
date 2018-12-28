@@ -12,27 +12,31 @@ const types = {
   cycle: '测试循环',
   folder: '测试阶段',
 };
-const canReasize = ['cycle', 'folder'];
+const canReasizes = ['cycle', 'folder'];
 const styles = {
   topversion: {
     borderTop: '4px solid #3F51B5',
     background: '#E8ECFC',
+    tipBackground: 'rgba(63,81,181,0.6)',
     color: '#3F51B5',
   },
   version: {
     borderTop: '4px solid #FFB100',
     background: '#FFF8E7',
+    tipBackground: 'rgba(255,177,0,0.6)',
     color: '#FFB100',
   },
   cycle: {
     borderTop: '4px solid #00BFA5',
     background: '#E5F9F6',
+    tipBackground: 'rgba(0,191,165,0.6)',
     color: '#00BFA5',
   },
   folder: {
     // borderTop: '4px solid #3F51B5',
     background: '#E9F1FF',
     color: '#4D90FE',
+    tipBackground: 'rgba(77,144,254,0.6)',
     lineHeight: '34px',
   },
 };
@@ -52,6 +56,7 @@ class EventItem extends Component {
     mode: 'left',
     resizing: false,
     done: true,
+    enter: false,
   };
   
   static getDerivedStateFromProps(props, state) {
@@ -105,14 +110,17 @@ class EventItem extends Component {
 
   renderItems = () => {
     const {
-      type, title, preFlex, flex, lastFlex,
+      type, title, preFlex, flex, lastFlex, enter, resizing,
     } = this.state;
     const tipTitle = `${types[type]}：${title}`;
+    const canReasize = canReasizes.includes(type);
     return [
       <div style={{ flex: preFlex }} />,
       <div
         role="none"
         onClick={this.handleItemClick}
+        onMouseEnter={this.handleMouseEnter}
+        onMouseLeave={this.handleMouseLeave}
         className="c7ntest-EventItem-event"
         style={{
           flex,
@@ -120,8 +128,10 @@ class EventItem extends Component {
           ...styles[type],
         }}
       >
-        {canReasize.includes(type) && <div className="c7ntest-EventItem-event-resizer-left" style={{ left: preFlex === 0 ? 0 : -10 }} onMouseDown={this.handleMouseDown.bind(this, 'left')} ref={this.saveRef('left')} role="none" />}
-        {canReasize.includes(type) && <div className="c7ntest-EventItem-event-resizer-right" style={{ right: lastFlex === 0 ? 0 : -10 }} onMouseDown={this.handleMouseDown.bind(this, 'right')} ref={this.saveRef('right')} role="none" />}
+        {canReasize && <div className="c7ntest-EventItem-event-resizer-left" style={{ left: preFlex === 0 ? 0 : -10 }} onMouseDown={this.handleMouseDown.bind(this, 'left')} ref={this.saveRef('left')} role="none" />}
+        {canReasize && <div className="c7ntest-EventItem-event-resizer-right" style={{ right: lastFlex === 0 ? 0 : -10 }} onMouseDown={this.handleMouseDown.bind(this, 'right')} ref={this.saveRef('right')} role="none" />}
+        {(enter || resizing) && <div className="c7ntest-EventItem-event-tip-left" style={{ background: styles[type].tipBackground }} />}
+        {(enter || resizing) && <div className="c7ntest-EventItem-event-tip-right" style={{ background: styles[type].tipBackground }} />}
         <Tooltip getPopupContainer={() => document.getElementsByClassName('c7ntest-EventCalendar-content')[0]} title={tipTitle} placement="topLeft">
           <div className="c7ntest-EventItem-event-title c7ntest-text-dot">
             {title}            
@@ -234,6 +244,26 @@ class EventItem extends Component {
     }
   }
 
+  handleMouseEnter=() => {
+    const { type } = this.state;
+    const canReasize = canReasizes.includes(type);
+    if (canReasize) {
+      this.setState({
+        enter: true,
+      });
+    }
+  }
+
+  handleMouseLeave=() => {
+    const { type } = this.state;
+    const canReasize = canReasizes.includes(type);
+    if (canReasize) {
+      this.setState({
+        enter: false,
+      });
+    }
+  }
+
   /**
    *更新循环或阶段
    *
@@ -285,7 +315,7 @@ class EventItem extends Component {
             bottom: 0,
             right: 0,
             zIndex: 9999,
-            cursor: mode === 'left' ? 'e-resize' : 'w-resize',
+            cursor: 'col-resize',
           }}
           />
         )}
