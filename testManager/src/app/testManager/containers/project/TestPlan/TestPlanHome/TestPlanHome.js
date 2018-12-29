@@ -9,9 +9,7 @@ import {
   Tooltip, Button, Icon, Spin, Modal,
 } from 'choerodon-ui';
 import { Link } from 'react-router-dom';
-import {
-  getExecutesByCycleId, editExecuteDetail, deleteExecute,
-} from '../../../../api/cycleApi';
+import { editExecuteDetail, deleteExecute } from '../../../../api/cycleApi';
 import { getStatusList } from '../../../../api/TestStatusApi';
 import { getPrioritys } from '../../../../api/agileApi';
 import {
@@ -58,7 +56,7 @@ class TestPlanHome extends Component {
     TestPlanStore.getTree();
   }
 
-  onItemClick = (item) => {
+  handleItemClick = (item) => {
     const { type } = item;
     if (type === 'folder') {
       TestPlanStore.EditStage(item);
@@ -73,24 +71,7 @@ class TestPlanHome extends Component {
       TestPlanStore.setFilters(filters);
       TestPlanStore.rightEnterLoading();
       TestPlanStore.setExecutePagination(pagination);
-      const currentCycle = TestPlanStore.getCurrentCycle;
-      getExecutesByCycleId({
-        size: pagination.pageSize,
-        page: pagination.current - 1,
-      }, currentCycle.cycleId,
-      {
-        ...filters,
-        lastUpdatedBy: [Number(this.lastUpdatedBy)],
-        assignedTo: [Number(this.assignedTo)],
-      }).then((cycle) => {
-        TestPlanStore.rightLeaveLoading();
-        TestPlanStore.setTestList(cycle.content);
-        TestPlanStore.setExecutePagination({
-          current: cycle.number + 1,
-          pageSize: pagination.pageSize,
-          total: cycle.totalElements,
-        });
-      });
+      TestPlanStore.reloadCycle();
     }
   }
 
@@ -121,21 +102,7 @@ class TestPlanHome extends Component {
         nextRank,
       },
     }).then((res) => {
-      const { executePagination } = TestPlanStore;
-      const currentCycle = TestPlanStore.getCurrentCycle;
-      getExecutesByCycleId({
-        page: executePagination.current - 1,
-        size: executePagination.pageSize,
-      }, currentCycle.cycleId).then((cycle) => {
-        TestPlanStore.rightLeaveLoading();
-        TestPlanStore.setTestList(cycle.content);
-        TestPlanStore.setExecutePagination({
-          current: cycle.number + 1,
-          pageSize: executePagination.pageSize,
-          total: cycle.totalElements,
-        });
-        // window.console.log(cycle);
-      });
+      TestPlanStore.reloadCycle();
     }).catch((err) => {
       Choerodon.prompt('网络错误');
       TestPlanStore.rightLeaveLoading();
@@ -151,23 +118,10 @@ class TestPlanHome extends Component {
       onOk: () => {
         TestPlanStore.rightEnterLoading();
         deleteExecute(executeId)
-          .then((res) => {
-            const { executePagination } = TestPlanStore;
-            const currentCycle = TestPlanStore.getCurrentCycle;
-            getExecutesByCycleId({
-              page: executePagination.current - 1,
-              size: executePagination.pageSize,
-            }, currentCycle.cycleId).then((cycle) => {
-              TestPlanStore.rightLeaveLoading();
-              TestPlanStore.setTestList(cycle.content);
-              TestPlanStore.setExecutePagination({
-                current: cycle.number + 1,
-                pageSize: executePagination.pageSize,
-                total: cycle.totalElements,
-              });
-              // window.console.log(cycle);
-            });
-          }).catch(() => {
+          .then((res) => {    
+            TestPlanStore.reloadCycle();
+          }).catch((err) => {
+            console.log(err);
             Choerodon.prompt('网络异常');
             TestPlanStore.rightLeaveLoading();
           });
