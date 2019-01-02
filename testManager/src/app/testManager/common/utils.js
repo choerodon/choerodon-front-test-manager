@@ -286,7 +286,7 @@ export function color2rgba(color, alpha = 1) {
  * @param {*} ms 
  */
 export function humanizeDuration(ms, config = {}) {
-  return humanize(ms, {     
+  return humanize(ms, {
     language: 'zh_CN',
     delimiter: '',
     spacer: '',
@@ -299,28 +299,32 @@ export const getProjectId = () => AppState.currentMenuType.id;
 export const getProjectName = () => AppState.currentMenuType.name;
 export const getOrganizationId = () => AppState.currentMenuType.organizationId;
 
-export function request() { }
-['get', 'post', 'options', 'delete', 'put'].forEach((type) => {
-  request[type] = (...args) => new Promise((resolve, reject) => {
-    let url = args[0];
-
-    if (Object.keys(getParams(url)).length > 0) {
-      url += `&organizationId=${getOrganizationId()}`;
-    } else {
-      url += `?organizationId=${getOrganizationId()}`;
-    }
-    // eslint-disable-next-line no-param-reassign 
-    args[0] = url;
-    axios[type](...args).then((data) => {
-      // if (data && data.failed) {
-      //   // Choerodon.prompt(data.message);
-      //   resolve(data);
-      // } else {
-      resolve(data);
-      // }
-    }).catch((error) => {
-      // Choerodon.prompt(error.message);
-      reject(error);
+// 全局拦截
+class Request {
+  constructor() {
+    ['get', 'post', 'options', 'delete', 'put'].forEach((type) => {
+      this[type] = (...args) => new Promise((resolve, reject) => {
+        let url = args[0];
+        if (Object.keys(getParams(url)).length > 0) {
+          url += `&organizationId=${getOrganizationId()}`;
+        } else {
+          url += `?organizationId=${getOrganizationId()}`;
+        }
+        // eslint-disable-next-line no-param-reassign 
+        args[0] = url;
+        axios[type](...args).then((data) => {
+          // if (data && data.failed) {
+          //   // Choerodon.prompt(data.message);
+          //   resolve(data);
+          // } else {
+          resolve(data);
+          // }
+        }).catch((error) => {
+          // Choerodon.prompt(error.message);
+          reject(error);
+        });
+      });
     });
-  });
-});
+  }
+}
+export const request = new Request();

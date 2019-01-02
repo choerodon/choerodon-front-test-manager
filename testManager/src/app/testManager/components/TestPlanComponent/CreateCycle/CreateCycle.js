@@ -2,19 +2,15 @@ import React, { Component } from 'react';
 import {
   Form, Input, Select, Modal, Spin, DatePicker, 
 } from 'choerodon-ui';
-import moment from 'moment';
-import { Content, stores } from 'choerodon-front-boot';
+import { Content } from 'choerodon-front-boot';
 import { FormattedMessage } from 'react-intl';
 import { getProjectVersion } from '../../../api/agileApi';
 import { addCycle } from '../../../api/cycleApi';
 import { getProjectName } from '../../../common/utils';
 
 const { Option } = Select;
-const { AppState } = stores;
 const FormItem = Form.Item;
 const { Sidebar } = Modal;
-const { TextArea } = Input;
-
 class CreateCycle extends Component {
   state = {
     versions: [],
@@ -35,7 +31,6 @@ class CreateCycle extends Component {
         this.setState({ loading: true });
         window.console.log('Received values of form: ', values);
         const { fromDate, toDate } = values;
-
         addCycle({
           ...values,
           ...{
@@ -101,7 +96,6 @@ class CreateCycle extends Component {
     ));
     return (
       <div>
-        
         <Sidebar
           title={<FormattedMessage id="cycle_create_title" />}
           visible={visible}
@@ -118,10 +112,7 @@ class CreateCycle extends Component {
           >
             <Spin spinning={loading}>
               <Form>
-                <FormItem
-                  // {...formItemLayout}
-                  label={null}
-                >
+                <FormItem>
                   {getFieldDecorator('versionId', {
                     rules: [{
                       required: true, message: '请选择版本!',
@@ -137,64 +128,31 @@ class CreateCycle extends Component {
                     </Select>,
                   )}
                 </FormItem>
-                <FormItem
-                  // {...formItemLayout}
-                  label={null}
-                >
+                <FormItem>
                   {getFieldDecorator('cycleName', {
                     rules: [{
                       required: true, message: '请输入名称!',
                     }],
                   })(
-                    <Input style={{ width: 500 }} maxLength={30} label={<FormattedMessage id="name" />} />,
-                    // <div style={{ width: 500 }}>
-                    //   <TextArea maxLength={30} label="说明" placeholder="说明" autosize />
-                    // </div>
+                    <Input style={{ width: 500 }} maxLength={30} label={<FormattedMessage id="name" />} />,                  
                   )}
                 </FormItem>
-                <FormItem
-                  // {...formItemLayout}
-                  label={null}
-                >
-                  {getFieldDecorator('description', {
-                    // rules: [{
-                    //   required: true, message: '请输入说明!',
-                    // }],
+                <FormItem>
+                  {getFieldDecorator('description', {                  
                   })(
-                    <Input style={{ width: 500 }} maxLength={30} label={<FormattedMessage id="comment" />} />,
-                    // <div style={{ width: 500 }}>
-                    //   <TextArea maxLength={30} label="说明" placeholder="说明" autosize />
-                    // </div>
+                    <Input style={{ width: 500 }} maxLength={30} label={<FormattedMessage id="comment" />} />,                  
                   )}
                 </FormItem>
-                <FormItem
-                  // {...formItemLayout}
-                  label={null}
-                >
-                  {getFieldDecorator('build', {
-                    // rules: [{
-                    //   required: true, message: '请输入构建号!',
-                    // }],
+                <FormItem>
+                  {getFieldDecorator('build', {          
                   })(
-                    <Input style={{ width: 500 }} maxLength={30} label={<FormattedMessage id="cycle_build" />} />,
-                    // <div style={{ width: 500 }}>
-                    //   <TextArea maxLength={30} label="说明" placeholder="说明" autosize />
-                    // </div>
+                    <Input style={{ width: 500 }} maxLength={30} label={<FormattedMessage id="cycle_build" />} />,                  
                   )}
                 </FormItem>
-                <FormItem
-                  // {...formItemLayout}
-                  label={null}
-                >
-                  {getFieldDecorator('environment', {
-                    // rules: [{
-                    //   required: true, message: '请输入环境!',
-                    // }],
+                <FormItem>
+                  {getFieldDecorator('environment', {                
                   })(
-                    <Input style={{ width: 500 }} maxLength={30} label={<FormattedMessage id="cycle_environment" />} />,
-                    // <div style={{ width: 500 }}>
-                    //   <TextArea maxLength={30} label="说明" placeholder="说明" autosize />
-                    // </div>
+                    <Input style={{ width: 500 }} maxLength={30} label={<FormattedMessage id="cycle_environment" />} />,                  
                   )}
                 </FormItem>
                 <FormItem>
@@ -208,10 +166,7 @@ class CreateCycle extends Component {
                       disabledDate={this.disabledStartDate}
                       style={{ width: 500 }}
                       label={<FormattedMessage id="cycle_startTime" />}
-                    />,
-                    // <div style={{ width: 500 }}>
-                    //   <TextArea maxLength={30} label="说明" placeholder="说明" autosize />
-                    // </div>
+                    />,                    
                   )}
                 </FormItem>
                 <FormItem>
@@ -225,10 +180,7 @@ class CreateCycle extends Component {
                       label={<FormattedMessage id="cycle_endTime" />}
                       format="YYYY-MM-DD"
                       style={{ width: 500 }}
-                    />,
-                    // <div style={{ width: 500 }}>
-                    //   <TextArea maxLength={30} label="说明" placeholder="说明" autosize />
-                    // </div>
+                    />,                    
                   )}
                 </FormItem>
               </Form>

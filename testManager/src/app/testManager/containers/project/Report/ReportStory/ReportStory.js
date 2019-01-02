@@ -5,7 +5,7 @@ import {
 } from 'choerodon-front-boot';
 import { Link } from 'react-router-dom';
 import {
-  Table, Menu, Dropdown, Button, Icon, Collapse, Tooltip,
+  Table, Button, Icon, Collapse, Tooltip,
 } from 'choerodon-ui';
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
@@ -14,7 +14,7 @@ import { getReportsFromStory } from '../../../../api/reportApi';
 import { getIssueTypes, getIssueStatus } from '../../../../api/agileApi';
 import { getStatusList } from '../../../../api/TestStatusApi';
 import {
-  issueLink, cycleLink, executeDetailShowLink, getProjectName, 
+  issueLink, cycleLink, executeDetailShowLink, getProjectName,
 } from '../../../../common/utils';
 import './ReportStory.scss';
 
@@ -40,10 +40,8 @@ class ReportStory extends Component {
     },
     openId: {},
     search: {
-      advancedSearchArgs: {
-      },
-      searchArgs: {
-      },
+      advancedSearchArgs: {},
+      searchArgs: {},
     },
   }
 
@@ -60,20 +58,20 @@ class ReportStory extends Component {
     const Pagination = pagination || this.state.pagination;
     const Search = search || this.state.search;
     this.setState({ loading: true });
-    Promise.all([getReportsFromStory({
-      page: Pagination.current - 1,
-      size: Pagination.pageSize,
-    }, Search),
-    getStatusList('CYCLE_CASE'),
-    getIssueTypes(),
-    getIssueTypes('agile'),
-    getIssueStatus(),
+    Promise.all([
+      getReportsFromStory({
+        page: Pagination.current - 1,
+        size: Pagination.pageSize,
+      }, Search),
+      getStatusList('CYCLE_CASE'),
+      getIssueTypes(),
+      getIssueTypes('agile'),
+      getIssueStatus(),
     ])
       .then(([reportData, statusList, issueTypes, agileTypeList, issueStatusList]) => {
         if (reportData.totalElements !== undefined) {
           this.setState({
             loading: false,
-            // reportList: reportData.content,
             statusList,
             issueTypes: issueTypes.concat(agileTypeList),
             issueStatusList,
@@ -81,8 +79,7 @@ class ReportStory extends Component {
             reportList: reportData.content,
             pagination: {
               current: Pagination.current,
-              pageSize: Pagination.pageSize,
-              // total: reportData.totalElements,
+              pageSize: Pagination.pageSize,            
               total: reportData.totalElements,
             },
           });
@@ -327,11 +324,7 @@ class ReportStory extends Component {
           <div>
             {linkedTestIssues.map((testIssue, i) => {
               const { testCycleCaseES, issueId } = testIssue;
-
-              // console.log()
-              const totalExecute = testCycleCaseES.length;
-              // const todoExecute = 0;
-              // let doneExecute = 0;
+              const totalExecute = testCycleCaseES.length;           
               const executeStatus = {};
               const caseShow = testCycleCaseES.map((execute) => {
                 // 执行的颜色
@@ -339,10 +332,7 @@ class ReportStory extends Component {
                 const statusColor = _.find(statusList, { statusId: executionStatus })
                   ? _.find(statusList, { statusId: executionStatus }).statusColor : '';
                 const statusName = _.find(statusList, { statusId: executionStatus })
-                  && _.find(statusList, { statusId: executionStatus }).statusName;
-                // if (statusColor !== 'gray') {
-                //   doneExecute += 1;
-                // }
+                  && _.find(statusList, { statusId: executionStatus }).statusName;                
                 if (!executeStatus[statusName]) {
                   executeStatus[statusName] = 1;
                 } else {
@@ -376,8 +366,7 @@ class ReportStory extends Component {
                       <Icon type="explicit2" style={{ marginLeft: 10, color: 'black' }} />
                     </Link>
                   </div>);
-              });
-              // window.console.log(executeStatus);
+              });             
               return openId[record.defectInfo.issueId] && openId[record.defectInfo.issueId]
                 .includes(`${issueId}-${i}`) ? (
                   <div
@@ -478,11 +467,9 @@ class ReportStory extends Component {
                                   </div>
                                 );
                               }) : <div className="c7ntest-issue-show-container">－</div>}
-
                           </div>
                         );
                       })
-
                     }
                   </div>
                 )
@@ -508,7 +495,6 @@ class ReportStory extends Component {
                                 </span>
                               );
                             })}
-
                           </div>
                         );
                       })}
@@ -527,24 +513,6 @@ class ReportStory extends Component {
           backPath={`/testManager/report?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}&organizationId=${organizationId}`}
         >
           <ReporterSwitcher />
-          {/* <Button
-            style={{ marginLeft: 30 }}
-            onClick={() => {
-              this.setState({
-                selectVisible: true,
-              });
-            }}
-          >
-            <Icon type="open_in_new" />
-            <span>
-              <FormattedMessage id="report_chooseQuestion" />
-            </span>
-          </Button> */}
-          {/* <Dropdown overlay={menu} trigger="click">
-            <a className="ant-dropdown-link" href="#">
-          导出 <Icon type="arrow_drop_down" />
-            </a>
-          </Dropdown>    */}
           <Button onClick={this.getInfo} style={{ marginLeft: 30 }}>
             <Icon type="autorenew icon" />
             <span>
@@ -552,10 +520,7 @@ class ReportStory extends Component {
             </span>
           </Button>
         </Header>
-        <Content
-          // style={{
-          //   padding: '0 0 10px 0',
-          // }}
+        <Content        
           title={<FormattedMessage id="report_content_title" values={{ name: getProjectName() }} />}
           description={<FormattedMessage id="report_content_description" />}
           link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management/test-report/report/"
@@ -583,7 +548,6 @@ class ReportStory extends Component {
             dataSource={reportList}
             onChange={this.handleTableChange}
           />
-          {/* <ReportStoryArea demands={reportList} /> */}
         </Content>
       </Page>
     );

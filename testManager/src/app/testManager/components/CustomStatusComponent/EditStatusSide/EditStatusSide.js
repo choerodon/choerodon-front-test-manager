@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-  Form, Input, Modal, Spin, 
+  Form, Input, Modal, Spin,
 } from 'choerodon-ui';
 import { Content } from 'choerodon-front-boot';
 import { FormattedMessage } from 'react-intl';
@@ -29,10 +29,9 @@ class EditStatusSide extends Component {
       });
     }
   }
-  
+
   onOk = () => {
     const { statusColor } = this.state;
-    // window.console.log(statusColor);
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
         this.setState({ loading: true });
@@ -47,14 +46,14 @@ class EditStatusSide extends Component {
         }).catch(() => {
           Choerodon.prompt('网络异常');
           this.setState({ loading: false });
-        });       
+        });
       }
     });
   }
 
   render() {
     const {
-      visible, onCancel, type, 
+      visible, onCancel, type,
     } = this.props;
     const { statusColor, loading, pickShow } = this.state;
     const { getFieldDecorator } = this.props.form;
@@ -66,7 +65,7 @@ class EditStatusSide extends Component {
             visible={visible}
             onOk={this.onOk}
             onCancel={onCancel}
-          >        
+          >
             <Content
               style={{
                 padding: '0 0 10px 0',
@@ -76,10 +75,7 @@ class EditStatusSide extends Component {
               link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management/setting/status/"
             >
               <Form>
-                <FormItem
-                  // {...formItemLayout}
-                  label={null}
-                >
+                <FormItem>
                   {getFieldDecorator('statusName', {
                     rules: [{
                       required: true, message: '请输入状态!',
@@ -88,19 +84,11 @@ class EditStatusSide extends Component {
                     <Input style={{ width: 500 }} maxLength={30} label={<FormattedMessage id="status" />} />,
                   )}
                 </FormItem>
-                <FormItem
-                  // {...formItemLayout}
-                  label={null}
-                >
+                <FormItem>
                   {getFieldDecorator('description', {
-                    // rules: [{
-                    //   required: true, message: '请输入说明!',
-                    // }],
                   })(
                     <Input style={{ width: 500 }} maxLength={30} label={<FormattedMessage id="comment" />} />,
-                    // <div style={{ width: 500 }}>
-                    //   <TextArea maxLength={30} label="说明" placeholder="说明" autosize />
-                    // </div>
+
                   )}
                 </FormItem>
 
@@ -110,22 +98,21 @@ class EditStatusSide extends Component {
                   <div
                     className="c7ntest-EditStatusSide-color-picker-show"
                     role="none"
-                    // style={{ background: statusColor }}
                     onClick={(e) => {
                       e.stopPropagation();
                       this.setState({ pickShow: true });
                     }}
-                  >            
+                  >
                     <div style={{ background: statusColor }}>
                       <div className="c7ntest-EditStatusSide-color-picker-show-rec-con">
                         <div className="c7ntest-EditStatusSide-color-picker-show-rec" />
                       </div>
-                    </div>                                        
+                    </div>
                   </div>
                   <div
                     style={pickShow
                       ? {
-                        display: 'block', position: 'absolute', bottom: 20, left: 60, 
+                        display: 'block', position: 'absolute', bottom: 20, left: 60,
                       }
                       : { display: 'none' }}
                   >
@@ -133,16 +120,15 @@ class EditStatusSide extends Component {
                       color={statusColor}
                       onChangeComplete={(color) => {
                         const {
-                          r, g, b, a, 
+                          r, g, b, a,
                         } = color.rgb;
-                        // window.console.log(color);
                         this.setState({ statusColor: `rgba(${r},${g},${b},${a})` });
                       }}
                     />
                   </div>
                 </div>
               </Form>
-            </Content>        
+            </Content>
           </Sidebar>
         </Spin>
       </div>

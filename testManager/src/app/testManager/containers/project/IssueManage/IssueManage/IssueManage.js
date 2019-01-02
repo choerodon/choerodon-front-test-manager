@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
-import { observer } from 'mobx-react';
+import { observer, inject } from 'mobx-react';
 import _ from 'lodash';
-import { Page, Header, Content } from 'choerodon-front-boot';
+import {
+  Page, Header, Content, stores,
+} from 'choerodon-front-boot';
 import {
   Table, Button, Pagination, Icon,
 } from 'choerodon-ui';
@@ -20,6 +22,12 @@ import ExportSide from '../../../../components/IssueManageComponent/ExportSide';
 import { CreateIssueTiny } from './components';
 import './IssueManage.scss';
 
+const EditIssueWidth = {
+  narrow: 440,
+  medium: '54%',
+  wide: '72%',
+};
+@inject('MenuStore')
 @observer
 export default class IssueManage extends Component {
   state = {
@@ -41,7 +49,7 @@ export default class IssueManage extends Component {
     const barFilters = paramName ? [paramName] : [];
     IssueStore.setBarFilters(barFilters);
     IssueStore.init();
-    IssueStore.loadIssues().then((res) => {     
+    IssueStore.loadIssues().then((res) => {
       if (paramIssueId) {
         this.setState({
           selectedIssue: res.content.length ? res.content[0] : {},
@@ -106,7 +114,7 @@ export default class IssueManage extends Component {
     if (barFilters === undefined || barFilters.length === 0) {
       IssueStore.setBarFilters(undefined);
     }
-    
+
     const { statusId, priorityId } = filters;
     const { issueNum, summary } = filters;
     const search = {
@@ -125,7 +133,7 @@ export default class IssueManage extends Component {
   }
 
 
-  downloadTemplate=() => {
+  downloadTemplate = () => {
     downloadTemplate().then((excel) => {
       const blob = new Blob([excel], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
       const fileName = '导入模板.xlsx';
@@ -133,6 +141,18 @@ export default class IssueManage extends Component {
     });
   }
 
+  getMode = () => {
+    // 左侧菜单状态 true 折叠 false未折叠
+    const MenuCollapsed = this.props.MenuStore.collapsed;
+    const treeShow = IssueStore.treeShow;
+    if (!treeShow) {
+      return 'wide';
+    } else if (treeShow && !MenuCollapsed) {
+      return 'narrow';
+    } else {
+      return 'medium';
+    }
+  }
 
   saveRef = name => (ref) => {
     this[name] = ref;
@@ -143,6 +163,7 @@ export default class IssueManage extends Component {
     const treeShow = IssueStore.treeShow;
     const prioritys = IssueStore.getPrioritys;
     const issueStatusList = IssueStore.getIssueStatus;
+    const EditIssueMode = this.getMode();
     const filterColumns = [
       {
         title: <FormattedMessage id="issue_issueFilterByNum" />,
@@ -334,13 +355,13 @@ export default class IssueManage extends Component {
             className="c7ntest-sidebar"
             style={{
               display: expand ? '' : 'none',
-              width: treeShow ? 440 : '72%',
+              width: EditIssueWidth[EditIssueMode],
             }}
           >
             {
               expand ? (
                 <EditIssue
-                  mode={treeShow ? 'narrow' : 'wide'}
+                  mode={EditIssueMode === 'narrow' ? 'narrow' : 'wide'}
                   ref={(instance) => {
                     if (instance) { this.EditIssue = instance; }
                   }}
@@ -355,7 +376,7 @@ export default class IssueManage extends Component {
                     this.setState({
                       expand: false,
                       selectedIssue: {},
-                    });                
+                    });
                     IssueStore.loadIssues();
                   }}
                   onUpdate={this.handleIssueUpdate.bind(this)}

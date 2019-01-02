@@ -1,3 +1,11 @@
+/*
+ * @Author: LainCarl 
+ * @Date: 2018-12-21 14:16:35 
+ * @Last Modified by: LainCarl
+ * @Last Modified time: 2018-12-21 14:17:35
+ * @Feature:  选择应用以及版本
+ */
+
 import React, { Component } from 'react';
 import { observer } from 'mobx-react';
 import { withRouter } from 'react-router-dom';
@@ -24,6 +32,11 @@ class SelectAppAndVersion extends Component {
     this.loadAppAndVersions();
   }
 
+  /**
+   * 加载应用以及版本，默认选择第一个应用
+   *
+   * 
+   */
   loadAppAndVersions = (value = '') => {
     const { app, appVersionPagination } = CreateAutoTestStore;
     const { current, pageSize: size } = appVersionPagination;

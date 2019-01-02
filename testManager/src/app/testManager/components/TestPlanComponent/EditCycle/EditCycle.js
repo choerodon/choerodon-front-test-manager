@@ -29,7 +29,7 @@ class EditCycle extends Component {
     }
   }
 
-  onCancel=() => {
+  onCancel = () => {
     TestPlanStore.ExitEditCycle();
   }
 
@@ -77,7 +77,7 @@ class EditCycle extends Component {
     });
   }
 
-  disabledStartDate = (startValue) => { 
+  disabledStartDate = (startValue) => {
     const { getFieldValue } = this.props.form;
     const endValue = getFieldValue('toDate');
     const children = TestPlanStore.CurrentEditCycle.children || [];
@@ -90,7 +90,7 @@ class EditCycle extends Component {
       return false;
     }
     if (children.length > 0) {
-      return startValue.valueOf() > endValue.valueOf() || startValue > moment.min(starts);   
+      return startValue.valueOf() > endValue.valueOf() || startValue > moment.min(starts);
     } else {
       return startValue.valueOf() > endValue.valueOf();
     }
@@ -98,7 +98,7 @@ class EditCycle extends Component {
 
   disabledEndDate = (endValue) => {
     const { getFieldValue } = this.props.form;
-    const startValue = getFieldValue('fromDate'); 
+    const startValue = getFieldValue('fromDate');
     const children = TestPlanStore.CurrentEditCycle.children || [];
     // 子元素最小的时间
     const ends = children.map(child => moment(child.toDate));
@@ -109,7 +109,7 @@ class EditCycle extends Component {
       return endValue.valueOf() <= startValue.valueOf() || endValue < moment(moment.max(ends)).startOf('day');
     } else {
       return endValue.valueOf() <= startValue.valueOf();
-    }   
+    }
   }
 
   render() {
@@ -126,7 +126,6 @@ class EditCycle extends Component {
     ));
     return (
       <div>
-        
         <Sidebar
           destroyOnClose
           title="修改测试循环"
@@ -144,31 +143,7 @@ class EditCycle extends Component {
           >
             <Spin spinning={loading}>
               <Form>
-                {/* <FormItem
-                  // {...formItemLayout}
-                  label={null}
-                >
-                  {getFieldDecorator('versionId', {
-                    initialValue: versionId,
-                    rules: [{
-                      required: true, message: '请选择版本!',
-                    }],
-                  })(
-                    <Select
-                      loading={selectLoading}
-                      onFocus={this.getProjectVersion}
-                      style={{ width: 500, margin: '0 0 10px 0' }}
-                      label="版本"
-
-                    >
-                      {options}
-                    </Select>,
-                  )}
-                </FormItem> */}
-                <FormItem
-                  // {...formItemLayout}
-                  label={null}
-                >
+                <FormItem>
                   {getFieldDecorator('cycleName', {
                     initialValue: title,
                     rules: [{
@@ -176,57 +151,27 @@ class EditCycle extends Component {
                     }],
                   })(
                     <Input style={{ width: 500 }} maxLength={30} label="名称" />,
-                    // <div style={{ width: 500 }}>
-                    //   <TextArea maxLength={30} label="说明" placeholder="说明" autosize />
-                    // </div>
                   )}
                 </FormItem>
-                <FormItem
-                  // {...formItemLayout}
-                  label={null}
-                >
+                <FormItem>
                   {getFieldDecorator('description', {
                     initialValue: description,
-                    // rules: [{
-                    //   required: true, message: '请输入说明!',
-                    // }],
                   })(
                     <Input style={{ width: 500 }} maxLength={30} label="说明" />,
-                    // <div style={{ width: 500 }}>
-                    //   <TextArea maxLength={30} label="说明" placeholder="说明" autosize />
-                    // </div>
                   )}
                 </FormItem>
-                <FormItem
-                  // {...formItemLayout}
-                  label={null}
-                >
+                <FormItem>
                   {getFieldDecorator('build', {
                     initialValue: build,
-                    // rules: [{
-                    //   required: true, message: '请输入构建号!',
-                    // }],
                   })(
                     <Input style={{ width: 500 }} maxLength={30} label="构建号" />,
-                    // <div style={{ width: 500 }}>
-                    //   <TextArea maxLength={30} label="说明" placeholder="说明" autosize />
-                    // </div>
                   )}
                 </FormItem>
-                <FormItem
-                  // {...formItemLayout}
-                  label={null}
-                >
+                <FormItem>
                   {getFieldDecorator('environment', {
                     initialValue: environment,
-                    // rules: [{
-                    //   required: true, message: '请输入环境!',
-                    // }],
                   })(
                     <Input style={{ width: 500 }} maxLength={30} label="环境" />,
-                    // <div style={{ width: 500 }}>
-                    //   <TextArea maxLength={30} label="说明" placeholder="说明" autosize />
-                    // </div>
                   )}
                 </FormItem>
                 <FormItem>
@@ -242,9 +187,6 @@ class EditCycle extends Component {
                       style={{ width: 500 }}
                       label="开始日期"
                     />,
-                    // <div style={{ width: 500 }}>
-                    //   <TextArea maxLength={30} label="说明" placeholder="说明" autosize />
-                    // </div>
                   )}
                 </FormItem>
                 <FormItem>
@@ -260,15 +202,12 @@ class EditCycle extends Component {
                       style={{ width: 500 }}
                       label="结束日期"
                     />,
-                    // <div style={{ width: 500 }}>
-                    //   <TextArea maxLength={30} label="说明" placeholder="说明" autosize />
-                    // </div>
                   )}
                 </FormItem>
               </Form>
             </Spin>
           </Content>
-        </Sidebar>        
+        </Sidebar>
       </div>
     );
   }

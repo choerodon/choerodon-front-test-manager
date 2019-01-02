@@ -10,7 +10,7 @@ const pageDetail = {
 
   // 报表
   report_content_title: '项目"{name}"的报表',
-  report_content_description: '两种可跟踪性报告可用：要求 -> 测试 -> 执行 -> 缺陷，缺陷 -> 执行 -> 测试 -> 。  点击您需要查看的报告类型可以查看具体的详细内容。',
+  report_content_description: '两种可跟踪性报告可用：要求 -> 测试 -> 执行 -> 缺陷，缺陷 -> 执行 -> 测试 -> 要求。  点击您需要查看的报告类型可以查看具体的详细内容。',
 
   cycle_description: '循环摘要使用树状图查看本项目中不同版本所对应的测试情况。',
 };

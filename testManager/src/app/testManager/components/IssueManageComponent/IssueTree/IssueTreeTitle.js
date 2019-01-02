@@ -8,6 +8,7 @@ import {
 import { FormattedMessage } from 'react-intl';
 import { Draggable, Droppable } from 'react-beautiful-dnd';
 import FileSaver from 'file-saver';
+import { SmartTooltip } from '../../CommonComponent'; 
 import IssueTreeStore from '../../../store/project/IssueManage/IssueTreeStore';
 import {
   editFolder, deleteFolder, moveIssues, copyIssues, exportIssuesFromFolder, exportIssuesFromVersion,
@@ -207,7 +208,20 @@ class IssueTreeTitle extends Component {
       // } else {
       // if (type === 'cycle') {         
       items = items.concat([
-        <Permission type={Menutype} projectId={projectId} organizationId={orgId} service={['agile-service.issue.deleteIssue']}>
+        <Permission
+          type={Menutype}
+          projectId={projectId}
+          organizationId={orgId}         
+          service={['agile-service.project-info.updateProjectInfo']}
+          noAccessChildren={(
+            <Menu.Item
+              key="delete"
+              disabled
+            >
+              <FormattedMessage id="issue_tree_delete" />
+            </Menu.Item>
+          )}
+        >
           <Menu.Item key="delete">
             <FormattedMessage id="issue_tree_delete" />
           </Menu.Item>
@@ -263,9 +277,9 @@ class IssueTreeTitle extends Component {
           )
           : (
             <div className="c7ntest-issue-tree-title-text">
-              <Tooltip title={title} placement="topLeft">
+              <SmartTooltip title={title} placement="topLeft">
                 {title}
-              </Tooltip>
+              </SmartTooltip>
             </div>
           )}
         <div role="none" className="c7ntest-issue-tree-title-actionButton" onClick={e => e.stopPropagation()}>

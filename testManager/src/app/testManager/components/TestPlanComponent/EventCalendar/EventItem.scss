@@ -10,9 +10,22 @@
   &-event {
     cursor: pointer;
     background: #5094FF;
-    position: relative;
-    // overflow: hidden;
+    position: relative; // overflow: hidden;
     width: 100%;
+    &-tip-left,
+    &-tip-right {
+      top: 4px;
+      height: calc(100% - 8px);
+      border-radius: 3px;
+      width: 6px;
+      position: absolute;
+    }
+    &-tip-left {
+      left: 4px;
+    }
+    &-tip-right {
+      right: 4px;
+    }
     &-resizer-left,
     &-resizer-right {
       top: 0;
@@ -22,17 +35,17 @@
       z-index: 2;
     }
     &-resizer-left {
-      cursor: e-resize;
-      left: -10px;     
+      cursor: col-resize;
+      left: -10px;
     }
     &-resizer-right {
-      cursor: w-resize;
-      right: -10px;      
+      cursor: col-resize;
+      right: -10px;
     }
     &-title {
       position: absolute;
       width: 100%;
-      padding: 0 10px;
+      padding: 0 15px;
     }
   }
 }

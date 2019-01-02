@@ -1,19 +1,12 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
-import {
-  Menu, Dropdown, Icon, Button,
-} from 'choerodon-ui';
-import {
-  Page, Header, Content, stores, 
-} from 'choerodon-front-boot';
+import { Page, Header, Content } from 'choerodon-front-boot';
 import { FormattedMessage } from 'react-intl';
-import { getProjectName } from '../../../../common/utils';
+import { getProjectName, commonLink } from '../../../../common/utils';
 import { ReporterSwitcher } from '../../../../components/ReportComponent';
 import Pic from './pic.svg';
 import Pic2 from './pic2.svg';
 
-
-const { AppState } = stores;
 const styles = {
   itemContainer: {
     marginRight: 24,
@@ -30,8 +23,7 @@ const styles = {
     width: 220,
     height: 154,
     textAlign: 'center',
-    lineHeight: '154px',
-    // padding: '30px 10px',
+    lineHeight: '154px',   
     boxShadow: '0 1px 0 0 rgba(0,0,0,0.16), 0 0 0 1px rgba(0,0,0,0.12), 0 2px 1px -1px rgba(0,0,0,0.12)',
     borderRadius: 2, 
     background: 'white',
@@ -43,51 +35,38 @@ const styles = {
     fontWeight: 500, 
   },
 };
-class ReportHome extends Component {
-  render() {
-    const urlParams = AppState.currentMenuType;
-    const { organizationId } = AppState.currentMenuType;    
-    return (
-      <Page className="c7ntest-report-home">
-        <Header title={<FormattedMessage id="report_title" />}>
-          <ReporterSwitcher isHome />
-        </Header>
-        <Content
-          // style={{
-          //   padding: '0 0 10px 0',
-          // }}
-          title={<FormattedMessage id="report_content_title" values={{ name: getProjectName() }} />}
-          description={<FormattedMessage id="report_content_description" />}
-          link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management/test-report/report/"
-        >
-          <div style={{ display: 'flex' }}>
-            <Link to={`/testManager/report/story?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}&organizationId=${organizationId}`}>
-              <div style={styles.itemContainer}>
-                <div style={styles.imgContainer}>
-                  <img src={Pic} alt="" />
-                </div>
-                <div style={styles.itemTextBold}><FormattedMessage id="report_demandToDefect" /></div>
-                <div style={{ color: 'rgba(0,0,0,0.65)' }}><FormattedMessage id="report_demandToDefect_description" /></div>
-              </div>
-            </Link>
-            <Link to={`/testManager/report/test?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}&organizationId=${organizationId}`}>
-              <div style={styles.itemContainer}>
-                <div style={styles.imgContainer}>
-                  <img src={Pic2} alt="" />
-                </div>
-                <div style={styles.itemTextBold}><FormattedMessage id="report_defectToDemand" /></div>
-                <div style={{ color: 'rgba(0,0,0,0.65)' }}><FormattedMessage id="report_defectToDemand_description" /></div>
-              </div>
-            </Link>
+const ReportHome = () => (
+  <Page className="c7ntest-report-home">
+    <Header title={<FormattedMessage id="report_title" />}>
+      <ReporterSwitcher isHome />
+    </Header>
+    <Content         
+      title={<FormattedMessage id="report_content_title" values={{ name: getProjectName() }} />}
+      description={<FormattedMessage id="report_content_description" />}
+      link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management/test-report/report/"
+    >
+      <div style={{ display: 'flex' }}>
+        <Link to={commonLink('/report/story')}>
+          <div style={styles.itemContainer}>
+            <div style={styles.imgContainer}>
+              <img src={Pic} alt="" />
+            </div>
+            <div style={styles.itemTextBold}><FormattedMessage id="report_demandToDefect" /></div>
+            <div style={{ color: 'rgba(0,0,0,0.65)' }}><FormattedMessage id="report_demandToDefect_description" /></div>
           </div>
-        </Content>
-      </Page>
-    );
-  }
-}
-
-ReportHome.propTypes = {
-
-};
+        </Link>
+        <Link to={commonLink('/report/test')}>
+          <div style={styles.itemContainer}>
+            <div style={styles.imgContainer}>
+              <img src={Pic2} alt="" />
+            </div>
+            <div style={styles.itemTextBold}><FormattedMessage id="report_defectToDemand" /></div>
+            <div style={{ color: 'rgba(0,0,0,0.65)' }}><FormattedMessage id="report_defectToDemand_description" /></div>
+          </div>
+        </Link>
+      </div>
+    </Content>
+  </Page>
+);
 
 export default ReportHome;

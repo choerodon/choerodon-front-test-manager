@@ -22,7 +22,7 @@ const ReporterSwitcher = (props) => {
       {
         !props.isHome && (
           <Menu.Item key="2">
-            <Link to={commonLink('report')}>
+            <Link to={commonLink('/report')}>
               <FormattedMessage id="report_dropDown_home" />
             </Link>
           </Menu.Item>

@@ -5,7 +5,7 @@ import {
 } from 'choerodon-front-boot';
 import { Link } from 'react-router-dom';
 import {
-  Table, Menu, Dropdown, Button, Icon, Collapse, Tooltip,
+  Table, Button, Icon, Collapse, Tooltip,
 } from 'choerodon-ui';
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
@@ -31,7 +31,6 @@ class ReportTest extends Component {
     selectVisible: false,
     loading: false,
     reportList: [],
-    // issueStatusList: [],
     statusList: [],
     stepStatusList: [],
     issueTypes: [],
@@ -44,10 +43,8 @@ class ReportTest extends Component {
     openId: [],
     issueIds: [],
     search: {
-      advancedSearchArgs: {
-      },
-      searchArgs: {
-      },
+      advancedSearchArgs: { },
+      searchArgs: { },
     },
   }
 
@@ -59,16 +56,14 @@ class ReportTest extends Component {
     this.setState({
       loading: true,
     });
-    Promise.all([
-      // getIssueStatus(),
+    Promise.all([    
       getStatusList('CYCLE_CASE'),
       getStatusList('CASE_STEP'),
       this.getReportsFromDefect(),
       getIssueTypes(),
       getIssueTypes('agile'),
       getIssueStatus(),
-    ]).then(([
-      // issueStatusList, 
+    ]).then(([   
       statusList,
       stepStatusList,
       any,
@@ -76,13 +71,11 @@ class ReportTest extends Component {
       agileTypeList,
       issueStatusList,
     ]) => {
-      this.setState({
-        // issueStatusList,
+      this.setState({      
         statusList,
         stepStatusList,
         issueTypes: issueTypes.concat(agileTypeList),
-        issueStatusList,
-        // loading: false,
+        issueStatusList,     
         openId: [],
       });
     });
@@ -555,25 +548,7 @@ class ReportTest extends Component {
           title={<FormattedMessage id="report_defectToDemand" />}
           backPath={`/testManager/report?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}&organizationId=${organizationId}`}
         >
-          <ReporterSwitcher />
-          {/* <Button
-            style={{ marginLeft: 30 }}
-            onClick={() => {
-              this.setState({
-                selectVisible: true,
-              });
-            }}
-          >
-            <Icon type="open_in_new" />
-            <span>
-              <FormattedMessage id="report_chooseQuestion" />
-            </span>
-          </Button> */}
-          {/* <Dropdown overlay={menu} trigger="click">
-            <a className="ant-dropdown-link" href="#">
-          导出 <Icon type="arrow_drop_down" />
-            </a>
-          </Dropdown>    */}
+          <ReporterSwitcher />          
           <Button onClick={this.getInfo} style={{ marginLeft: 30 }}>
             <Icon type="autorenew icon" />
             <span>
@@ -581,10 +556,7 @@ class ReportTest extends Component {
             </span>
           </Button>
         </Header>
-        <Content
-          // style={{
-          //   padding: '0 0 10px 0',
-          // }}
+        <Content         
           title={<FormattedMessage id="report_content_title" values={{ name: getProjectName() }} />}
           description={<FormattedMessage id="report_content_description" />}
           link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management/test-report/report/"

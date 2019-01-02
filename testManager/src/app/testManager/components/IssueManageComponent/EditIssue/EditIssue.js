@@ -831,10 +831,10 @@ class EditIssueNarrow extends Component {
         originData={this.transToArr(componentIssueRelDTOList, 'name', 'array')}
       >
         <Text>
-          {data => (            
+          {data => (
             <p style={{ color: '#3f51b5', wordBreak: 'break-word', marginBottom: 0 }}>
               {this.transToArr(data, 'name')}
-            </p>           
+            </p>
           )}
         </Text>
         <Edit>
@@ -1152,6 +1152,7 @@ class EditIssueNarrow extends Component {
     const fixVersionsFixed = _.filter(fixVersionsTotal, { statusCode: 'archived' }) || [];
     const fixVersions = _.filter(fixVersionsTotal, v => v.statusCode !== 'archived') || [];
     const menu = AppState.currentMenuType;
+    const loginUserId = AppState.userInfo.id;
     const {
       type, id: projectId, organizationId: orgId, name,
     } = menu;
@@ -1164,7 +1165,20 @@ class EditIssueNarrow extends Component {
         <Menu.Item key="copy">
           <FormattedMessage id="issue_edit_copyIssue" />
         </Menu.Item>
-        <Permission type={type} projectId={projectId} organizationId={orgId} service={['agile-service.issue.deleteIssue']}>
+        <Permission
+          type={type}
+          projectId={projectId}
+          organizationId={orgId}
+          service={['agile-service.project-info.updateProjectInfo']}
+          noAccessChildren={(
+            <Menu.Item
+              key="1"
+              disabled={loginUserId !== issueInfo.createdBy}
+            >
+              <FormattedMessage id="delete" />
+            </Menu.Item>
+          )}
+        >
           <Menu.Item key="1">
             <FormattedMessage id="delete" />
           </Menu.Item>
@@ -1517,7 +1531,7 @@ class EditIssueNarrow extends Component {
                         </div>
                       </div>
                       {/* --- */}
-                      <div style={{ flex: 1, marginTop: mode === 'wide' && 62 }}>
+                      <div style={{ flex: 1, marginTop: mode === 'wide' && 70 }}>
                         {/* 日期 */}
                         <div className="line-start mt-10">
                           <div className="c7ntest-property-wrapper">
@@ -1597,8 +1611,7 @@ class EditIssueNarrow extends Component {
                     }}
                     />
                     <div className="c7ntest-title-right" style={{ marginLeft: '14px', position: 'relative' }}>
-                      <Button disabled={disabled} className="leftBtn" funcTyp="flat" onClick={this.createIssueStep}>
-                        <Icon type="playlist_add icon" style={{ marginRight: 2 }} />
+                      <Button disabled={disabled} icon="playlist_add" className="leftBtn" funcTyp="flat" onClick={this.createIssueStep}>
                         <FormattedMessage id="issue_edit_addTestDetail" />
                       </Button>
                     </div>

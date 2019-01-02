@@ -1,28 +1,24 @@
 import React, { Component } from 'react';
 import { observer } from 'mobx-react';
 import {
-  Menu, Input, Dropdown, Button, Popover, Tooltip, Icon, Modal,
+  Menu, Dropdown, Button, Tooltip, Icon, Modal,
 } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 import { SmartTooltip } from '../../CommonComponent';
 import './PlanTreeTitle.scss';
-import { editFolder, deleteCycleOrFolder } from '../../../api/cycleApi';
+import { deleteCycleOrFolder } from '../../../api/cycleApi';
 import { syncFolder, syncFoldersInCycle, syncFoldersInVersion } from '../../../api/IssueManageApi';
 import TestPlanStore from '../../../store/project/TestPlan/TestPlanStore';
 
 const { confirm } = Modal;
 @observer
 class PlanTreeTitle extends Component {
-  state = {
-    editing: false,
-  }
-
-  sync=(item) => {
+  sync = (item) => {
     const {
-      type, cycleId, folderId, versionId, 
+      type, cycleId, folderId, versionId,
     } = item;
     TestPlanStore.enterLoading();
-    if (type === 'folder') {      
+    if (type === 'folder') {
       syncFolder(folderId, cycleId).then((res) => {
         TestPlanStore.getTree();
       });
@@ -40,7 +36,6 @@ class PlanTreeTitle extends Component {
   handleItemClick = ({ item, key, keyPath }) => {
     const { data, refresh } = this.props;
     const { type, folderId, cycleId } = data;
-    // window.console.log(this.props.data, { item, key, keyPath });
     switch (key) {
       case 'add': {
         this.props.callback(data, 'ADD_FOLDER');
@@ -53,9 +48,6 @@ class PlanTreeTitle extends Component {
       case 'edit': {
         if (type === 'folder') {
           TestPlanStore.EditStage(data);
-          // this.setState({
-          //   editing: true,
-          // });
         } else if (type === 'cycle') {
           TestPlanStore.EditCycle(data);
         }
@@ -74,23 +66,19 @@ class PlanTreeTitle extends Component {
                 refresh();
               }
             }).catch((err) => {
-    
+
             });
-          },         
+          },
         });
-       
+
         break;
       }
       case 'clone': {
         if (type === 'folder') {
           this.props.callback(data, 'CLONE_FOLDER');
-          // cloneFolder(cycleId, data).then((data) => {
-
-          // });
         } else if (type === 'cycle') {
           this.props.callback(data, 'CLONE_CYCLE');
         }
-        // this.props.refresh();
         break;
       }
       case 'export': {
@@ -103,19 +91,6 @@ class PlanTreeTitle extends Component {
       }
       default: break;
     }
-  }
-
-  handleEdit = (data) => {
-    editFolder(data).then((res) => {
-      if (res.failed) {
-        Choerodon.prompt('文件夹名字重复');
-      } else {
-        this.props.refresh();
-      }
-    });
-    this.setState({
-      editing: false,
-    });
   }
 
   render() {
@@ -139,7 +114,7 @@ class PlanTreeTitle extends Component {
           items.push(
             <Menu.Item key="assign">
               批量指派
-            </Menu.Item>, 
+            </Menu.Item>,
           );
         }
         items = items.concat([
@@ -156,46 +131,23 @@ class PlanTreeTitle extends Component {
           //   {type === 'folder' ? <FormattedMessage id="cycle_exportFolder" /> : <FormattedMessage id="cycle_exportCycle" />}
           // </Menu.Item>,
           <Menu.Item key="sync">
-            <FormattedMessage id="cycle_sync" /> 
+            <FormattedMessage id="cycle_sync" />
           </Menu.Item>,
-          
+
         ]);
       }
       return <Menu onClick={this.handleItemClick} style={{ margin: '10px 0 0 28px' }}>{items}</Menu>;
     };
 
-    const { editing } = this.state;
     const { title, data } = this.props;
-
 
     return (
       <div className="c7ntest-plan-tree-title">
-        {editing
-          ? (
-            <Input
-              style={{ width: 78 }}
-              defaultValue={this.props.text}
-              autoFocus
-              onBlur={(e) => {
-                this.handleEdit({
-                  cycleId: data.cycleId,
-                  cycleName: e.target.value,
-                  type: 'folder',
-                  objectVersionNumber: data.objectVersionNumber,
-                });
-              }}
-            />
-          )
-          : (
-            <SmartTooltip width={!data.type && '120px'} className="c7ntest-plan-tree-title-text">
-              {title}
-            </SmartTooltip>  
-          )}   
+        <SmartTooltip width={!data.type && '120px'} className="c7ntest-plan-tree-title-text">
+          {title}
+        </SmartTooltip>
         {
-    
           <div role="none" className="c7ntest-plan-tree-title-actionButton" onClick={e => e.stopPropagation()}>
-            {/* {data.type === 'temp'
-              ? null : */}
             {data.type
               ? (
                 <Dropdown overlay={getMenu(data.type)} trigger={['click']}>
@@ -207,13 +159,9 @@ class PlanTreeTitle extends Component {
                   <Icon type="sync" className="c7ntest-add-folder" onClick={this.sync.bind(this, data)} />
                 </Tooltip>
               )
-                }
-            {/* } */}
+            }
           </div>
-            
-          }     
-        
-
+        }
       </div>
     );
   }

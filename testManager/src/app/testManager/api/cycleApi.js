@@ -7,7 +7,7 @@ export function getCycleTree(assignedTo) {
 export function getExecutesByCycleId(pagination, cycleId, filters, type) {
   const { size, page } = pagination;
   const Filters = {
-    ...filters,
+    ...filters || {},
     searchDTO: {
       advancedSearchArgs: {
         statusId: [],
@@ -20,7 +20,7 @@ export function getExecutesByCycleId(pagination, cycleId, filters, type) {
     },
   };
   if (Filters) {
-    Object.keys(filters).forEach((filter) => {
+    Object.keys(filters || {}).forEach((filter) => {
       // console.log(filter, Filters);
       if (['priorityId'].includes(filter)) {
         Filters.searchDTO.advancedSearchArgs[filter] = Filters[filter];

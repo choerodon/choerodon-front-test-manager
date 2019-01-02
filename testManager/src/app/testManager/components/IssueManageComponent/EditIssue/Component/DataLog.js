@@ -436,7 +436,7 @@ class DataLog extends Component {
                       </Popover>
                     ) : '系统'}
 
-                    <div style={{ display: 'inline' }}>
+                    <div style={{ display: 'inline', wordBreak: 'break-all' }}>
                       <span>
                         {this.getMode1(datalog)}
                       </span>

@@ -1,6 +1,6 @@
 "test-manager":
   icon: test
-  sort: 5
+  sort: 4
   project:
     - "summary":
         icon: table_chart

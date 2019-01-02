@@ -3,16 +3,15 @@ import {
   Form, Input, Select, Modal, Spin, DatePicker, 
 } from 'choerodon-ui';
 import moment from 'moment';
-import { Content, stores } from 'choerodon-front-boot';
+import { Content } from 'choerodon-front-boot';
 import { FormattedMessage } from 'react-intl';
 import { addFolder } from '../../../api/cycleApi';
 import { getFoldersByVersion } from '../../../api/IssueManageApi';
 
 const { Option } = Select;
-const { AppState } = stores;
 const FormItem = Form.Item;
 const { Sidebar } = Modal;
-const { TextArea } = Input;
+
 
 class CreateStage extends Component {
   state = {
@@ -30,14 +29,10 @@ class CreateStage extends Component {
 
   onOk = () => {
     this.props.form.validateFieldsAndScroll((err, values) => {
-      if (!err) {
-        // this.setState({ loading: true });
-        // window.console.log('Received values of form: ', values);
+      if (!err) {        
         const { fromDate, toDate } = values;
-        const {
-          visible, onOk, onCancel, CreateStageIn, 
-        } = this.props;
-        const { cycleName, cycleId, versionId } = CreateStageIn;
+        const { CreateStageIn } = this.props;
+        const { cycleId, versionId } = CreateStageIn;
         addFolder({
           ...values,          
           parentCycleId: cycleId,
@@ -65,10 +60,8 @@ class CreateStage extends Component {
     this.setState({
       selectLoading: true,
     });
-    const {
-      visible, onOk, onCancel, CreateStageIn, 
-    } = this.props;
-    const { cycleName, versionId } = CreateStageIn;
+    const { CreateStageIn } = this.props;
+    const { versionId } = CreateStageIn;
     getFoldersByVersion(versionId).then((folders) => {
       this.setState({
         folders,
@@ -78,9 +71,7 @@ class CreateStage extends Component {
   }
 
   disabledStartDate = (startValue) => {
-    const {
-      visible, onOk, onCancel, CreateStageIn, 
-    } = this.props;
+    const { CreateStageIn } = this.props;
     const { fromDate, toDate } = CreateStageIn;    
     const { getFieldValue } = this.props.form;
     const endValue = getFieldValue('toDate');
@@ -94,9 +85,7 @@ class CreateStage extends Component {
   }
 
   disabledEndDate = (endValue) => {
-    const {
-      visible, onOk, onCancel, CreateStageIn, 
-    } = this.props;    
+    const { CreateStageIn } = this.props;    
     const { fromDate, toDate } = CreateStageIn;    
     const { getFieldValue } = this.props.form;
     const startValue = getFieldValue('fromDate'); 
@@ -124,8 +113,7 @@ class CreateStage extends Component {
       </Option>
     ));
     return (
-      <div>
-        
+      <div>        
         <Sidebar
           title={<FormattedMessage id="testPlan_createStage" />}
           visible={visible}
@@ -142,10 +130,7 @@ class CreateStage extends Component {
           >
             <Spin spinning={loading}>
               <Form>                
-                <FormItem
-                  // {...formItemLayout}
-                  label={null}
-                >
+                <FormItem>
                   {getFieldDecorator('cycleName', {
                     rules: [{
                       required: true, message: '请输入名称!',
@@ -154,22 +139,15 @@ class CreateStage extends Component {
                     <Input style={{ width: 500 }} maxLength={30} label={<FormattedMessage id="name" />} />,                    
                   )}
                 </FormItem>
-                <FormItem
-                  // {...formItemLayout}
-                  label={null}
-                >
+                <FormItem>
+                
                   {getFieldDecorator('description', {
-                    // rules: [{
-                    //   required: true, message: '请输入说明!',
-                    // }],
+                  
                   })(
                     <Input style={{ width: 500 }} maxLength={30} label={<FormattedMessage id="comment" />} />,
                   )}
                 </FormItem>
-                <FormItem
-                  // {...formItemLayout}
-                  label={null}
-                >
+                <FormItem>
                   {getFieldDecorator('folderId', {
                     rules: [{
                       required: true, message: '请选择文件夹!',

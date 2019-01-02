@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import Moment from 'moment';
-import { findDOMNode } from 'react-dom';
 import { extendMoment } from 'moment-range';
 import { Tooltip } from 'choerodon-ui';
 import TestPlanStore from '../../../store/project/TestPlan/TestPlanStore';
@@ -13,27 +12,31 @@ const types = {
   cycle: '测试循环',
   folder: '测试阶段',
 };
-const canReasize = ['cycle', 'folder'];
+const canReasizes = ['cycle', 'folder'];
 const styles = {
   topversion: {
     borderTop: '4px solid #3F51B5',
     background: '#E8ECFC',
+    tipBackground: 'rgba(63,81,181,0.6)',
     color: '#3F51B5',
   },
   version: {
     borderTop: '4px solid #FFB100',
     background: '#FFF8E7',
+    tipBackground: 'rgba(255,177,0,0.6)',
     color: '#FFB100',
   },
   cycle: {
     borderTop: '4px solid #00BFA5',
     background: '#E5F9F6',
+    tipBackground: 'rgba(0,191,165,0.6)',
     color: '#00BFA5',
   },
   folder: {
     // borderTop: '4px solid #3F51B5',
     background: '#E9F1FF',
     color: '#4D90FE',
+    tipBackground: 'rgba(77,144,254,0.6)',
     lineHeight: '34px',
   },
 };
@@ -52,11 +55,13 @@ class EventItem extends Component {
     },
     mode: 'left',
     resizing: false,
+    done: true,
+    enter: false,
   };
   
   static getDerivedStateFromProps(props, state) {
     // 调整大小时以state为准
-    if (state.resizing) {
+    if (!state.done) {
       return null;
     }
     const {
@@ -105,14 +110,17 @@ class EventItem extends Component {
 
   renderItems = () => {
     const {
-      type, title, preFlex, flex, lastFlex,
+      type, title, preFlex, flex, lastFlex, enter, resizing,
     } = this.state;
     const tipTitle = `${types[type]}：${title}`;
+    const canReasize = canReasizes.includes(type);
     return [
       <div style={{ flex: preFlex }} />,
       <div
         role="none"
         onClick={this.handleItemClick}
+        onMouseEnter={this.handleMouseEnter}
+        onMouseLeave={this.handleMouseLeave}
         className="c7ntest-EventItem-event"
         style={{
           flex,
@@ -120,9 +128,11 @@ class EventItem extends Component {
           ...styles[type],
         }}
       >
-        {canReasize.includes(type) && <div className="c7ntest-EventItem-event-resizer-left" style={{ left: preFlex === 0 ? 0 : -10 }} onMouseDown={this.handleMouseDown.bind(this, 'left')} ref={this.saveRef('left')} role="none" />}
-        {canReasize.includes(type) && <div className="c7ntest-EventItem-event-resizer-right" style={{ right: lastFlex === 0 ? 0 : -10 }} onMouseDown={this.handleMouseDown.bind(this, 'right')} ref={this.saveRef('right')} role="none" />}
-        <Tooltip getPopupContainer={() => findDOMNode(this)} title={tipTitle} placement="topLeft">
+        {canReasize && <div className="c7ntest-EventItem-event-resizer-left" style={{ left: preFlex === 0 ? 0 : -10 }} onMouseDown={this.handleMouseDown.bind(this, 'left')} ref={this.saveRef('left')} role="none" />}
+        {canReasize && <div className="c7ntest-EventItem-event-resizer-right" style={{ right: lastFlex === 0 ? 0 : -10 }} onMouseDown={this.handleMouseDown.bind(this, 'right')} ref={this.saveRef('right')} role="none" />}
+        {(enter || resizing) && <div className="c7ntest-EventItem-event-tip-left" style={{ background: styles[type].tipBackground }} />}
+        {(enter || resizing) && <div className="c7ntest-EventItem-event-tip-right" style={{ background: styles[type].tipBackground }} />}
+        <Tooltip getPopupContainer={() => document.getElementsByClassName('c7ntest-EventCalendar-content')[0]} title={tipTitle} placement="topLeft">
           <div className="c7ntest-EventItem-event-title c7ntest-text-dot">
             {title}            
           </div>
@@ -166,6 +176,7 @@ class EventItem extends Component {
     // console.log(this[mode].getBoundingClientRect().left, e.clientX);
     this.setState({
       resizing: true,
+      done: false,
       mode,
     });
     this.initScrollPosition = {
@@ -207,6 +218,9 @@ class EventItem extends Component {
   handleMouseUp = (e) => {
     document.removeEventListener('mousemove', this.handleMouseMove);
     document.removeEventListener('mouseup', this.handleMouseUp);
+    this.setState({
+      resizing: false,
+    });
     const {
       preFlex,
       flex,
@@ -215,8 +229,8 @@ class EventItem extends Component {
     } = this.state;
     // 只在数据变化时才请求
     if (preFlex === initFlex.preFlex && flex === initFlex.flex && lastFlex === initFlex.lastFlex) {
-      this.setState({
-        resizing: false,
+      this.setState({        
+        done: true,
       });
     } else {
       this.setState({    
@@ -227,6 +241,26 @@ class EventItem extends Component {
         },
       });
       this.updateCycle();
+    }
+  }
+
+  handleMouseEnter=() => {
+    const { type } = this.state;
+    const canReasize = canReasizes.includes(type);
+    if (canReasize) {
+      this.setState({
+        enter: true,
+      });
+    }
+  }
+
+  handleMouseLeave=() => {
+    const { type } = this.state;
+    const canReasize = canReasizes.includes(type);
+    if (canReasize) {
+      this.setState({
+        enter: false,
+      });
     }
   }
 
@@ -256,20 +290,20 @@ class EventItem extends Component {
     editFolder(updateData).then((res) => {
       TestPlanStore.getTree().finally(() => {
         this.setState({
-          resizing: false, // 不在mouseup设置而是延迟设置false,防止旧值闪现
+          done: true, // 不在mouseup设置而是延迟设置false,防止旧值闪现
         });
       });
     }).catch((err) => {
       Choerodon.prompt('网络错误');
       TestPlanStore.leaveLoading();
       this.setState({
-        resizing: false, // 不在mouseup设置而是延迟设置false,防止旧值闪现
+        done: true, // 不在mouseup设置而是延迟设置false,防止旧值闪现
       });
     });
   }
 
   render() {
-    const { resizing } = this.state;
+    const { resizing, mode } = this.state;
     return (
       <div style={{ width: '100%', display: 'flex' }} className="c7ntest-EventItem">
         {/* 拖动时，创建一个蒙层来显示拖动效果，防止鼠标指针闪烁 */}
@@ -281,7 +315,7 @@ class EventItem extends Component {
             bottom: 0,
             right: 0,
             zIndex: 9999,
-            cursor: 'e-resize',
+            cursor: 'col-resize',
           }}
           />
         )}
