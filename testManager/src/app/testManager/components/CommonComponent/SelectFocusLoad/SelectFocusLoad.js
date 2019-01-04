@@ -104,17 +104,6 @@ class SelectFocusLoad extends Component {
             });
           });
         }}
-        onFocus={() => {
-          this.setState({
-            loading: true,
-          });
-          request().then((Data) => {
-            this.setState({
-              List: Data.content,
-              loading: false,
-            });
-          });
-        }}
         {...this.props}
       >
         {Options}

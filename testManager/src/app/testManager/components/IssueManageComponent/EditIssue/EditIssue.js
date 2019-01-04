@@ -1021,17 +1021,6 @@ class EditIssueNarrow extends Component {
             }}
             loading={selectLoading}
             style={{ width: 200 }}
-            onFocus={() => {
-              this.setState({
-                selectLoading: true,
-              });
-              getUsers().then((res) => {
-                this.setState({
-                  userList: res.content,
-                  selectLoading: false,
-                });
-              });
-            }}
           >
             {userOptions}
           </Select>
@@ -1107,18 +1096,7 @@ class EditIssueNarrow extends Component {
               });
             }}
             loading={selectLoading}
-            style={{ width: 200 }}
-            onFocus={() => {
-              this.setState({
-                selectLoading: true,
-              });
-              getUsers().then((res) => {
-                this.setState({
-                  userList: res.content,
-                  selectLoading: false,
-                });
-              });
-            }}
+            style={{ width: 200 }}            
           >
             {userOptions}
           </Select>
