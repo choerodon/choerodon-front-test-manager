@@ -307,8 +307,7 @@ class TestExecuteInfo extends Component {
                     filterOption={false}
                     onFilterChange={(value) => { ExecuteDetailStore.loadUserList(value); }}
                     loading={selectLoading}
-                    style={{ width: 200 }}
-                    onFocus={() => { ExecuteDetailStore.loadUserList(); }}
+                    style={{ width: 200 }}                    
                   >
                     {userOptions}
                   </Select>
