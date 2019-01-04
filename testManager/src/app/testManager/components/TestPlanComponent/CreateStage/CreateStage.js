@@ -56,7 +56,10 @@ class CreateStage extends Component {
     });
   }
 
-  loadFolders = () => {
+  loadFolders = (value) => {
+    if (value !== '') {
+      return;
+    }
     this.setState({
       selectLoading: true,
     });
@@ -155,7 +158,7 @@ class CreateStage extends Component {
                   })(
                     <Select
                       loading={selectLoading}
-                      onFocus={this.loadFolders}
+                      onFilterChange={this.loadFolders}
                       style={{ width: 500, margin: '0 0 10px 0' }}
                       label={<FormattedMessage id="testPlan_linkFolder" />}
                       optionFilterProp="children"

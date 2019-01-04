@@ -9,6 +9,7 @@ import { DatePicker } from 'choerodon-ui';
 import './EventCalendar.scss';
 import CalendarBackItem from './CalendarBackItem';
 import EventItem from './EventItem';
+import { addResizeListener, removeResizeListener } from '../../../common/ResizeListener';
 
 const { RangePicker } = DatePicker;
 const moment = extendMoment(Moment);
@@ -67,6 +68,9 @@ class EventCalendar extends Component {
     this.setRightWidth();
     // 计算单个日期所占宽度
     this.calculateItemWidth();
+    // 监听
+    addResizeListener(this.header, this.setRightWidth);
+    addResizeListener(this.header, this.calculateItemWidth);
   }
 
   getSnapshotBeforeUpdate(prevProps, prevState) {
@@ -81,6 +85,12 @@ class EventCalendar extends Component {
     this.setRightWidth();
   }
 
+  componentWillUnmount() {
+    removeResizeListener(this.header, this.setRightWidth);
+    removeResizeListener(this.header, this.calculateItemWidth);
+  }
+
+  // 设置事件区域宽度
   setRightWidth = () => {
     const scrollBarWidth = this.scroller.offsetWidth - this.scroller.clientWidth;
     this.fakeScrollBar.style.width = `${scrollBarWidth}px`;
@@ -88,6 +98,7 @@ class EventCalendar extends Component {
     this.wrapper.style.width = `${rightWidth - scrollBarWidth}px`;
     // this.HeaderItems.style.width = `${rightWidth}px`; // 防止tooltip引起的宽度变化
     // 设置高度，防止滚动条跳动，虽然EventItem设置了key，但依然会重新挂载，不清楚原因
+    // 原因是不直接设置具体数据
     this.events.style.height = `${this.events.offsetHeight}px`;
   }
 
@@ -165,7 +176,7 @@ class EventCalendar extends Component {
   }
 
   // tooltip会引起header的滚动，在此将header和scroller同步滚动
-  handleHeaderScroll=(e) => {
+  handleHeaderScroll = (e) => {
     const { scrollLeft } = e.target;
     if (this.scroller.scrollLeft !== scrollLeft) {
       this.scroller.scrollLeft = scrollLeft;

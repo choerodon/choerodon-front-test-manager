@@ -13,6 +13,7 @@ import IssueStore from '../../../../store/project/IssueManage/IssueStore';
 import pic from '../../../../assets/问题管理－空.png';
 import { loadIssue, downloadTemplate } from '../../../../api/IssueManageApi';
 import { commonLink, getParams } from '../../../../common/utils';
+import RunWhenProjectChange from '../../../../common/RunWhenProjectChange';
 import EmptyBlock from '../../../../components/IssueManageComponent/EmptyBlock';
 import CreateIssue from '../../../../components/IssueManageComponent/CreateIssue';
 import EditIssue from '../../../../components/IssueManageComponent/EditIssue';
@@ -37,6 +38,9 @@ export default class IssueManage extends Component {
   }
 
   componentDidMount() {
+    RunWhenProjectChange(() => {
+      console.log('change');
+    });
     this.getInit();
   }
 
