@@ -14,7 +14,7 @@ import {
   addDefects, editCycle, removeDefect,
 } from '../../../api/ExecuteDetailApi';
 import { FullEditor, Upload as UploadButton } from '../../CommonComponent';
-import CreateBug from './CreateBug';
+import CreateBug from '../CreateBug/CreateBug';
 import ExecuteDetailStore from '../../../store/project/TestExecute/ExecuteDetailStore';
 import './TestExecuteInfo.scss';
 
@@ -76,7 +76,6 @@ const { Text, Edit } = TextEditToggle;
 class TestExecuteInfo extends Component {
   state = {
     edit: false,
-    createBugShow: false,
   }
 
   handleUpload = (files) => {
@@ -178,13 +177,15 @@ class TestExecuteInfo extends Component {
 
   render() {
     const { disabled } = this.props;
-    const { createBugShow } = this.state;
     const statusList = ExecuteDetailStore.getStatusList;
     const issueList = ExecuteDetailStore.getIssueList;
     const userList = ExecuteDetailStore.getUserList;
     const cycleData = ExecuteDetailStore.getCycleData;
-    // debugger;
     const selectLoading = ExecuteDetailStore.selectLoading;
+    const createBugShow = ExecuteDetailStore.getCreateBugShow;
+    const defectType = ExecuteDetailStore.getDefectType;
+    const createDectTypeId = ExecuteDetailStore.getCreateDectTypeId;
+
     const {
       executionStatus, assigneeUser, lastUpdateUser,
       lastUpdateDate, comment, defects,
@@ -481,7 +482,7 @@ class TestExecuteInfo extends Component {
         </div>
         {
           ExecuteDetailStore.getCreateBugShow && (
-            <CreateBug visible={ExecuteDetailStore.getCreateBugShow} defectType={ExecuteDetailStore.getDefectType} id={ExecuteDetailStore.getCreateDectTypeId} onCancel={this.handleHiddenCresteBug} onOk={this.handleHiddenCresteBug} />
+            <CreateBug visible={createBugShow} defectType={defectType} id={createDectTypeId} onCancel={this.handleHiddenCresteBug} onOk={this.handleHiddenCresteBug} />
           )
         }
       </div>
