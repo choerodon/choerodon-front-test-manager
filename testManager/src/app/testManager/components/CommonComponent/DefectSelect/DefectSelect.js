@@ -5,7 +5,6 @@ import { FormattedMessage } from 'react-intl';
 import { removeDefect, addDefects } from '../../../api/ExecuteDetailApi';
 import { getIssuesForDefects } from '../../../api/agileApi';
 import './DefectSelect.scss';
-import CreateBug from '../../ExecuteComponent/TestExecuteInfo/CreateBug';
 import ExecuteDetailStore from '../../../store/project/TestExecute/ExecuteDetailStore';
 
 const { Option } = Select;
@@ -79,7 +78,7 @@ class DefectSelect extends Component {
   }
 
   render() {  
-    const {executeStepId} = this.props;        
+    const { executeStepId } = this.props;        
     const { handleSubmit } = this.props.bugsToggleRef;
     const {
       defects, selectLoading, defectIds, issueList, originDefects, createBugShow, 

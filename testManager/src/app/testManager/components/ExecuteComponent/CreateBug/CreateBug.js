@@ -4,7 +4,7 @@ import _ from 'lodash';
 import {
   Select, Form, Input, Button, Modal, Icon, Tooltip,
 } from 'choerodon-ui';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, injectIntl } from 'react-intl';
 import {
   handleFileUpload, beforeTextUpload, getProjectName, getProjectId, getOrganizationId,
 } from '../../../common/utils';
@@ -16,6 +16,7 @@ import { WYSIWYGEditor, FullEditor } from '../../CommonComponent';
 import UserHead from '../../IssueManageComponent/UserHead';
 import TypeTag from '../../IssueManageComponent/AgileTypeTag';
 import UploadButton from '../../IssueManageComponent/CommonComponent/UploadButton';
+import ExecuteDetailStore from '../../../store/project/TestExecute/ExecuteDetailStore';
 import './CreateBug.scss';
 
 const { AppState } = stores;
@@ -24,6 +25,7 @@ const { Option } = Select;
 const FormItem = Form.Item;
 const sign = false;
 
+@injectIntl
 class CreateBug extends Component {
   debounceFilterIssues = _.debounce((input) => {
     this.setState({ selectLoading: true });
@@ -183,6 +185,7 @@ class CreateBug extends Component {
                     }
                   }
                   onOk(res);
+                  ExecuteDetailStore.getInfo();
                 })
                 .catch(() => {
                   onOk();
@@ -195,6 +198,7 @@ class CreateBug extends Component {
                 onCancel,
                 store,
                 form,
+                intl,
               } = this.props;
               const { getFieldDecorator } = form;
               const {
@@ -249,14 +253,14 @@ class CreateBug extends Component {
                         </Select>
                         <FormItem label={<FormattedMessage id="createBug_field_summary" />} style={{ width: 520 }}>
                           {getFieldDecorator('summary', {
-                            rules: [{ required: true, message: <FormattedMessage id="createBug_field_summaryRequire" /> }],
+                            rules: [{ required: true, message: intl.formatMessage({ id: 'createBug_field_summaryRequire' }) }],
                           })(
                             <Input label={<FormattedMessage id="createBug_field_summary" />} maxLength={44} placeholder={<FormattedMessage id="createBug_fielf_summaryPlaceHolder" />} />,
                           )}
                         </FormItem>
                         <FormItem label={<FormattedMessage id="createBug_field_priority" />} style={{ width: 520 }}>
                           {getFieldDecorator('priorityId', {
-                            rules: [{ required: true, message: <FormattedMessage id="createBug_field_priorityRequire" /> }],
+                            rules: [{ required: true, message: intl.formatMessage({ id: 'createBug_field_priorityRequire' }) }],
                             initialValue: defaultPriority ? defaultPriority.id : '',
                           })(
                             <Select
