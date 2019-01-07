@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import { Select } from 'choerodon-ui';
 import _ from 'lodash';
+import { FormattedMessage } from 'react-intl';
 import { removeDefect, addDefects } from '../../../api/ExecuteDetailApi';
 import { getIssuesForDefects } from '../../../api/agileApi';
 import './DefectSelect.scss';
-import SelectCreateIssueFooter from '../SelectCreateIssueFooter';
+import CreateBug from '../../ExecuteComponent/TestExecuteInfo/CreateBug';
+import ExecuteDetailStore from '../../../store/project/TestExecute/ExecuteDetailStore';
 
 const { Option } = Select;
 class DefectSelect extends Component {
@@ -17,6 +19,7 @@ class DefectSelect extends Component {
       defects: defects || [],
       defectIds: defects ? defects.map(defect => defect.issueId.toString()) : [],
       originDefects: defects ? defects.map(defect => defect.issueId.toString()) : [],
+      createBugShow: false,
     };
   }
 
@@ -71,9 +74,15 @@ class DefectSelect extends Component {
     });
   }
 
-  render() {
+  handleHiddenCresteBug = () => {
+    ExecuteDetailStore.setCreateBugShow(false);
+  }
+
+  render() {  
+    const {executeStepId} = this.props;        
+    const { handleSubmit } = this.props.bugsToggleRef;
     const {
-      defects, selectLoading, defectIds, issueList, originDefects, 
+      defects, selectLoading, defectIds, issueList, originDefects, createBugShow, 
     } = this.state;
     const defectsOptions = issueList.map(issue => (
       <Option key={issue.issueId} value={issue.issueId.toString()}>
@@ -82,36 +91,52 @@ class DefectSelect extends Component {
         {issue.summary}
       </Option>
     ));
-    return (     
-      <Select          
-        dropdownStyle={{        
-          width: 300,  
-        }}
-        getPopupContainer={this.props.getPopupContainer}
-        autoFocus
-        filter
-        mode="multiple"
-        dropdownMatchSelectWidth={false}
-        filterOption={false}
-        loading={selectLoading}
-        defaultValue={defects.map(defect => defect.issueId.toString())}
-        footer={<SelectCreateIssueFooter />}
-        style={{ width: '100%' }}
-        onChange={this.handleDefectsChange}
-        onFilterChange={(value) => {
-          this.setState({
-            selectLoading: true,
-          });
-          getIssuesForDefects(value).then((issueData) => {
+    return (  
+      <div>
+        <Select          
+          dropdownStyle={{        
+            width: 300,  
+          }}
+          getPopupContainer={this.props.getPopupContainer}
+          autoFocus
+          filter
+          mode="multiple"
+          dropdownMatchSelectWidth={false}
+          filterOption={false}
+          loading={selectLoading}
+          defaultValue={defects.map(defect => defect.issueId.toString())}
+          footer={(
+            <div 
+              style={{ color: '#3f51b5', cursor: 'pointer' }}
+              role="none"
+              onClick={() => {
+                handleSubmit();
+                ExecuteDetailStore.setCreateBugShow(true);
+                ExecuteDetailStore.setDefectType('CASE_STEP');
+                ExecuteDetailStore.setCreateDectTypeId(executeStepId);
+              }}
+            >
+              <FormattedMessage id="issue_create_bug" />
+            </div>
+          )}
+          style={{ width: '100%' }}
+          onChange={this.handleDefectsChange}
+          onFilterChange={(value) => {
             this.setState({
-              issueList: issueData.content,
-              selectLoading: false,
+              selectLoading: true,
             });
-          });
-        }}
-      >
-        {defectsOptions}
-      </Select>
+            getIssuesForDefects(value).then((issueData) => {
+              this.setState({
+                issueList: issueData.content,
+                selectLoading: false,
+              });
+            });
+          }}
+        >
+          {defectsOptions}
+        </Select>
+      </div>   
+     
     );
   }
 }

@@ -28,6 +28,15 @@ class TextEditToggle extends Component {
     originData: null,
     newData: null,
   }
+
+  componentDidMount() {
+    // eslint-disable-next-line no-unused-expressions
+    this.props.saveRef && this.props.saveRef(this);
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    this.props.saveRef && this.props.saveRef(this);
+  }
   
   static defaultProps = {
     // hasFeedback: false,
@@ -69,7 +78,7 @@ class TextEditToggle extends Component {
     // 如果点击不在当前元素内，就调用submit提交数据
     if (!contains(root, target)) {
       // console.log(target);
-      this.onSubmit();
+      this.handleSubmit();
     }
   }
 
@@ -80,7 +89,7 @@ class TextEditToggle extends Component {
   }
 
   // 提交编辑
-  onSubmit = () => {
+  handleSubmit = () => {
     document.removeEventListener('mousedown', this.onDocumentClick);
     try {
       this.props.form.validateFields((err, values) => {

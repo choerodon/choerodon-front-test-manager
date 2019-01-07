@@ -326,5 +326,27 @@ const enUS = {
   dashboard_cycle: '测试循环',
   dashboard_execute: '执行测试',
   dashboard_report: '测试报告',
+
+  // 新增缺陷侧边栏
+  createBug_title: 'Create bug',
+  createBug_okText: 'create',
+  createBug_cancelText: 'cancel',
+  createBug_content_title: 'Create a defect in the test case "{name}"',
+  createBug_content_description: 'Please enter the details of the question below, including a detailed description, personnel information, version information, progress estimates, priorities, and more. You can help people understand tasks faster and more comprehensively through a rich task description, while better controlling the progress of the problem.',
+  createBug_field_issueType: 'issue type',
+  createBug_field_summary: 'summary',
+  createBug_field_summaryRequire: 'summary is required.',
+  createBug_fielf_summaryPlaceHolder: 'Please enter a issue summary',
+  createBug_field_priority: 'priority',
+  createBug_field_priorityRequire: 'priority is required',
+  createBug_field_description: 'description',
+  createBug_field_descriptionFullEdit: 'Full screen edit',
+  createBug_field_assignee: 'assignee',
+  createBug_field_epic: 'epic',
+  createBug_field_sprint: 'sprint',
+  createBug_field_fixVersion: 'fix version',
+  createBug_field_component: 'component',
+  createBug_field_label: 'label',
+  createBug_field_annex: 'annex',
 };
 export default enUS;

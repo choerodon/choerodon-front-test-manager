@@ -365,6 +365,30 @@ const zhCN = {
   autotestbtn_autotest: '执行测试',
   app_name: '名称',
   app_code: '编码',
+
+  // 新增缺陷侧边栏
+  createBug_title: '新增缺陷',
+  createBug_okText: '创建',
+  createBug_cancelText: '取消',
+  createBug_content_title: '在测试用例“{name}”中创建缺陷',
+  createBug_content_description: '请在下面输入问题的详细信息，包含详细描述、人员信息、版本信息、进度预估、优先级等等。您可以通过丰富的任务描述帮助相关人员更快更全面的理解任务，同时更好的把控问题进度。',
+  createBug_field_issueType: '问题类型',
+  createBug_field_summary: '概要',
+  createBug_field_summaryRequire: '概要为必输项',
+  createBug_fielf_summaryPlaceHolder: '请输入问题概要',
+  createBug_field_priority: '优先级',
+  createBug_field_priorityRequire: '优先级为必选项',
+  createBug_field_description: '描述',
+  createBug_field_descriptionFullEdit: '全屏编辑',
+  createBug_field_assignee: '经办人',
+  createBug_field_epic: '史诗',
+  createBug_field_sprint: '冲刺',
+  createBug_field_fixVersion: '修复版本',
+  createBug_field_component: '模块',
+  createBug_field_label: '标签',
+  createBug_field_annex: '附件',
+
+
   // yaml
   'yaml.new': '新增',
   'yaml.lastModify': '修改',
