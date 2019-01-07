@@ -5,7 +5,6 @@ import moment from 'moment';
 import { getCycleTree, getExecutesByCycleId } from '../../../api/cycleApi';
 import { getStatusList } from '../../../api/TestStatusApi';
 import { BaseTreeProto } from '../prototype';
-import { getProjectId } from '../../../common/utils';
 /**
  * 非递归遍历树 将测试阶段按照时间排序
  *
@@ -41,8 +40,6 @@ function traverseTree(node) {
 }
 
 class TestPlanStore extends BaseTreeProto {
-  @observable preProjectId = getProjectId();
-
   @observable treeShow = true;
 
   @observable statusList = [];
@@ -79,6 +76,41 @@ class TestPlanStore extends BaseTreeProto {
 
   @observable lastUpdatedBy = null;
 
+  @action clearStore = () => {
+    this.treeShow = true;
+    this.statusList = [];
+    this.times = [];
+    this.dataList = [];
+    this.testList = [];
+    this.executePagination = {
+      current: 1,
+      total: 0,
+      pageSize: 5,
+    };
+    this.loading = false;
+    this.filters = {};
+    this.rightLoading = false;
+    this.calendarShowMode = 'single';
+    this.EditCycleVisible = false;
+    this.CurrentEditCycle = {};
+    this.EditStageVisible = false;
+    this.CurrentEditStage = {};
+    this.assignedTo = null;
+    this.lastUpdatedBy = null;
+    this.treeData = [
+      {
+        title: '所有版本',
+        key: '0',
+        children: [],
+      },
+    ];  
+    this.expandedKeys = ['0'];  
+    this.selectedKeys = [];  
+    this.addingParent = null;  
+    this.currentCycle = {};  
+    this.preCycle = {};
+  }
+
   getTree = () => new Promise((resolve) => {
     this.enterLoading();
     getStatusList('CYCLE_CASE').then((statusList) => {
@@ -97,12 +129,6 @@ class TestPlanStore extends BaseTreeProto {
     }).finally(() => {
       this.leaveLoading();
     });
-    const preProjectId = this.preProjectId;
-    this.setPreProjectId(getProjectId());
-    // 切换项目不取数据，因为数据库中没存projectId
-    if (getProjectId() !== preProjectId) {
-      this.setCurrentCycle({});
-    }
     // 如果选中了项，就刷新table数据
     const currentCycle = this.getCurrentCycle;
     const selectedKeys = this.getSelectedKeys;
@@ -225,9 +251,6 @@ class TestPlanStore extends BaseTreeProto {
     }
   }
 
-  @action setPreProjectId(projectId) {
-    this.preProjectId = projectId;
-  }
 
   @action setTreeShow(treeShow) {
     this.treeShow = treeShow;

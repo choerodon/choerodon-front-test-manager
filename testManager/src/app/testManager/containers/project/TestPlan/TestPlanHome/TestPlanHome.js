@@ -24,6 +24,7 @@ import TestPlanStore from '../../../../store/project/TestPlan/TestPlanStore';
 import {
   delta2Html, delta2Text, issueLink, executeDetailShowLink,
 } from '../../../../common/utils';
+import RunWhenProjectChange from '../../../../common/RunWhenProjectChange';
 import './TestPlanHome.scss';
 import noRight from '../../../../assets/noright.svg';
 
@@ -38,9 +39,11 @@ class TestPlanHome extends Component {
   }
 
   componentDidMount() {
-    TestPlanStore.setFilters({ });
+    RunWhenProjectChange(TestPlanStore.clearStore);
+    TestPlanStore.setFilters({});
     TestPlanStore.setAssignedTo(null);
     TestPlanStore.setLastUpdatedBy(null);
+
     this.refresh();
   }
 
