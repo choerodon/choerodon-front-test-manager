@@ -1,6 +1,5 @@
 import { getProjectId, request } from '../common/utils';
 
-// 123
 /**
  *获取当前项目的所有版本
  *
@@ -122,4 +121,43 @@ export function getPrioritys() {
  */
 export function getIssueStatus(applyType) {
   return request.get(`/issue/v1/projects/${getProjectId()}/schemes/query_status_by_project_id?apply_type=${applyType || 'test'}`);
+}
+
+/**
+ *获取当前项目的史诗列表
+ *
+ * @export
+ * @returns
+ */
+export function getEpics() {
+  return request.get(`/agile/v1/projects/${getProjectId()}/issues/epics?apply_type=agile`);
+}
+
+/**
+ *获取当前项目的未关闭的冲刺列表
+ *
+ * @export
+ * @returns
+ */
+export function getSprintsUnClosed() {
+  return request.get(`/agile/v1/projects/${getProjectId()}/sprint/unclosed`);
+}
+
+/**
+ *获取当前项目的用户列表
+ *
+ * @export
+ * @returns
+ */
+
+export function getUsers() {
+  return request.get(`/iam/v1/projects/${getProjectId()}/users?size=40`);
+}
+
+export function createIssue(issueObj, projectId = getProjectId()) {
+  const issue = {
+    projectId,
+    ...issueObj,
+  };
+  return request.post(`/agile/v1/projects/${projectId}/issues?applyType=agile`, issue);
 }

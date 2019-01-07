@@ -4,7 +4,6 @@ export { default as SelectFocusLoad } from './SelectFocusLoad';
 export { default as User } from './User/User';
 export { default as UploadInTable } from './UploadInTable';
 export { default as DefectSelect } from './DefectSelect';
-export { default as SelectCreateIssueFooter } from './SelectCreateIssueFooter';
 export { default as RadioButton } from './RadioButton';
 export { default as StatusTags } from './StatusTags';
 export { default as FullEditor } from './FullEditor';

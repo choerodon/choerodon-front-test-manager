@@ -216,6 +216,7 @@ class StepTable extends Component {
       key: 'defects',
       render: (defects, record) => (
         <TextEditToggle
+          saveRef={(bugsToggle) => { this[`bugsToggle_${record.stepId}`] = bugsToggle; }}
           disabled={disabled}
           onSubmit={() => {   
             if (that.needAdd.length > 0) {
@@ -227,44 +228,45 @@ class StepTable extends Component {
               ExecuteDetailStore.loadDetailList();
             }
           }}
-          // originData={{ defects }}
+            // originData={{ defects }}
           onCancel={ExecuteDetailStore.loadDetailList}
         >
           <Text>
             {
-              defects.length > 0 ? (
-              // <Tooltip title={(
-                <div>
-                  {defects.map((defect, i) => (
-                    <div style={{
-                      fontSize: '13px',                 
+                defects.length > 0 ? (
+                // <Tooltip title={(
+                  <div>
+                    {defects.map((defect, i) => (
+                      <div style={{
+                        fontSize: '13px',                 
+                      }}
+                      >
+                        {defect.issueInfosDTO && defect.issueInfosDTO.issueName}
+                      </div>))}
+                  </div>
+                // )}
+                // >
+                // <div>
+                // {defects.map((defect, i) => defect.issueInfosDTO && defect.issueInfosDTO.issueName).join(',')}
+                // </div> */}
+                // </Tooltip> 
+                ) : (
+                  <div
+                    style={{
+                      width: 100,
+                      height: 20,
                     }}
-                    >
-                      {defect.issueInfosDTO && defect.issueInfosDTO.issueName}
-                    </div>))}
-                </div>
-              // )}
-              // >
-              // <div>
-              // {defects.map((defect, i) => defect.issueInfosDTO && defect.issueInfosDTO.issueName).join(',')}
-              // </div> */}
-              // </Tooltip> 
-              ) : (
-                <div
-                  style={{
-                    width: 100,
-                    height: 20,
-                  }}
-                />
-              )
-            }
+                  />
+                )
+              }
           </Text>
           <Edit>
             <DefectSelect
-              defects={defects}
-              setNeedAdd={(needAdd) => { that.needAdd = needAdd; }}
-              executeStepId={record.executeStepId}
-            />
+                defects={defects}
+                setNeedAdd={(needAdd) => { that.needAdd = needAdd; }}
+                executeStepId={record.executeStepId}
+                bugsToggleRef={this[`bugsToggle_${record.stepId}`]}
+              />
           </Edit>
         </TextEditToggle>
       ),

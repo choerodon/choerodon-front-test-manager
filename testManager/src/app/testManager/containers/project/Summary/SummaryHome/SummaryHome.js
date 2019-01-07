@@ -355,7 +355,7 @@ class SummaryHome extends Component {
       dataIndex: 'name',
       key: 'name',
       width: '50%',
-      render: name => <SmartTooltip style={{ maxWidth: 250 }}>{name}</SmartTooltip>,
+      render: name => <SmartTooltip style={{ maxWidth: 200 }}>{name}</SmartTooltip>,
     }, {
       title: <FormattedMessage id="summary_num" />,
       dataIndex: 'num',
@@ -366,7 +366,7 @@ class SummaryHome extends Component {
       dataIndex: 'name',
       key: 'name',
       width: '50%',
-      render: name => <SmartTooltip style={{ maxWidth: 250 }}>{name}</SmartTooltip>,
+      render: name => <SmartTooltip style={{ maxWidth: 200 }}>{name}</SmartTooltip>,
     }, {
       title: <FormattedMessage id="summary_num" />,
       dataIndex: 'num',
@@ -377,7 +377,7 @@ class SummaryHome extends Component {
       title: <FormattedMessage id="summary_component" />,
       dataIndex: 'name',
       key: 'name',
-      render: name => <SmartTooltip style={{ maxWidth: 250 }}>{name}</SmartTooltip>,
+      render: name => <SmartTooltip style={{ maxWidth: 200 }}>{name}</SmartTooltip>,
     }, {
       title: <FormattedMessage id="summary_num" />,
       dataIndex: 'num',

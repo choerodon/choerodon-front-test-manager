@@ -25,6 +25,7 @@ class TypeTag extends Component {
           <Icon
             style={{ fontSize: '14px' }}
             type={icon}
+            color="#fff"
           />
         </div>
         {

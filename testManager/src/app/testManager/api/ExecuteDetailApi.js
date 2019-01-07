@@ -47,3 +47,13 @@ export function getCycleHistiorys(pagination, cycleCaseId) {
 
   return request.get(`test/v1/projects/${getProjectId()}/cycle/case/history/${cycleCaseId}?size=${size}&page=${page}`);
 }
+
+/**
+ * 增加缺陷弹框增加缺陷
+ * 
+ */
+export function addBug(defectType, id, data) {
+  return request.post(`/v1/projects/${getProjectId()}/defect/createIssueAndDefect/${defectType}/${id}?applyType=test`, {
+    IssueCreateDTO: data, 
+  });
+}

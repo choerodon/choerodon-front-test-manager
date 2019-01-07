@@ -6,7 +6,7 @@ import _ from 'lodash';
 import { observer } from 'mobx-react';
 import { FormattedMessage } from 'react-intl';
 import {
-  TextEditToggle, RichTextShow, User, SelectCreateIssueFooter, StatusTags,
+  TextEditToggle, RichTextShow, User, StatusTags,
 } from '../../CommonComponent';
 import { uploadFile, deleteAttachment } from '../../../api/FileApi';
 import { delta2Html } from '../../../common/utils';
@@ -14,6 +14,7 @@ import {
   addDefects, editCycle, removeDefect,
 } from '../../../api/ExecuteDetailApi';
 import { FullEditor, Upload as UploadButton } from '../../CommonComponent';
+import CreateBug from './CreateBug';
 import ExecuteDetailStore from '../../../store/project/TestExecute/ExecuteDetailStore';
 import './TestExecuteInfo.scss';
 
@@ -75,6 +76,7 @@ const { Text, Edit } = TextEditToggle;
 class TestExecuteInfo extends Component {
   state = {
     edit: false,
+    createBugShow: false,
   }
 
   handleUpload = (files) => {
@@ -170,8 +172,13 @@ class TestExecuteInfo extends Component {
     });
   }
 
+  handleHiddenCresteBug = () => {
+    ExecuteDetailStore.setCreateBugShow(false);
+  }
+
   render() {
     const { disabled } = this.props;
+    const { createBugShow } = this.state;
     const statusList = ExecuteDetailStore.getStatusList;
     const issueList = ExecuteDetailStore.getIssueList;
     const userList = ExecuteDetailStore.getUserList;
@@ -336,6 +343,8 @@ class TestExecuteInfo extends Component {
                 {'：'}
               </div>
               <TextEditToggle
+                // ref={(bugsToggle) => { this.bugsToggle = bugsToggle; }}
+                saveRef={(bugsToggle) => { this.bugsToggle = bugsToggle; }}
                 disabled={disabled}
                 formKey="defects"
                 onSubmit={this.addDefects}
@@ -365,7 +374,20 @@ class TestExecuteInfo extends Component {
                     mode="multiple"
                     filterOption={false}
                     loading={selectLoading}
-                    footer={<SelectCreateIssueFooter />}
+                    footer={(
+                      <div 
+                        style={{ color: '#3f51b5', cursor: 'pointer' }}
+                        role="none"
+                        onClick={() => {
+                          this.bugsToggle.handleSubmit();
+                          ExecuteDetailStore.setCreateBugShow(true);
+                          ExecuteDetailStore.setDefectType('CYCLE_CASE');
+                          ExecuteDetailStore.setCreateDectTypeId(ExecuteDetailStore.id);
+                        }}
+                      >
+                        <FormattedMessage id="issue_create_bug" />
+                      </div>
+                    )}
                     // value={defectIds}
                     style={{ minWidth: 250 }}
                     onChange={this.handleDefectsChange}
@@ -457,6 +479,11 @@ class TestExecuteInfo extends Component {
             </div>
           </div>
         </div>
+        {
+          ExecuteDetailStore.getCreateBugShow && (
+            <CreateBug visible={ExecuteDetailStore.getCreateBugShow} defectType={ExecuteDetailStore.getDefectType} id={ExecuteDetailStore.getCreateDectTypeId} onCancel={this.handleHiddenCresteBug} onOk={this.handleHiddenCresteBug} />
+          )
+        }
       </div>
     );
   }

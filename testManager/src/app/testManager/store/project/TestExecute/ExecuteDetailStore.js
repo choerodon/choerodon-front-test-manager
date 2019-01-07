@@ -9,7 +9,7 @@ import {
 } from '../../../api/ExecuteDetailApi';
 import { getStatusList } from '../../../api/TestStatusApi';
 import { getUsers } from '../../../api/IamApi';
-import { getIssueList, getIssuesForDefects } from '../../../api/agileApi';
+import { getIssueList, getIssuesForDefects, createBug } from '../../../api/agileApi';
 
 @store('ExecuteDetailStore')
 class ExecuteDetailStore {
@@ -58,6 +58,36 @@ class ExecuteDetailStore {
   // constructor() {
 
   // }
+  @observable createBugShow = false;
+
+  @computed get getCreateBugShow() {
+    return this.createBugShow;
+  }
+
+  @action setCreateBugShow(data) {
+    this.createBugShow = data;
+  }
+
+  @observable defectType = '';
+
+  @computed get getDefectType() {
+    return this.defectType;
+  }
+
+  @action setDefectType(data) {
+    this.defectType = data;
+  }
+
+  @observable createDectTypeId = 0;
+
+  @computed get getCreateDectTypeId() {
+    return this.createDectTypeId;
+  }
+
+  @action setCreateDectTypeId(data) {
+    this.createDectTypeId = data;
+  }
+
   getInfo = (id = this.id) => {
     this.enterloading();
     this.setId(id);
