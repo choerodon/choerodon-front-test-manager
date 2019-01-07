@@ -38,9 +38,7 @@ export default class IssueManage extends Component {
   }
 
   componentDidMount() {
-    RunWhenProjectChange(() => {
-      console.log('change');
-    });
+    RunWhenProjectChange(IssueStore.clearStore);
     this.getInit();
   }
 

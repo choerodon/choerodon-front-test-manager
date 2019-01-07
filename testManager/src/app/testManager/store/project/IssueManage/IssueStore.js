@@ -61,7 +61,37 @@ class IssueStore {
 
   @observable treeShow = false;
 
-  // @observable selectedIssue={};
+  @action clearStore = () => {
+    this.issues = [];
+    this.issueIds = [];
+    this.versions = [];
+    this.prioritys = [];
+    this.issueTypes = [];
+    this.issueStatusList = [];
+    this.selectedVersion = null;
+    this.pagination = {
+      current: 1,
+      pageSize: 10,
+      total: 0,
+    };
+    this.filter = {
+      advancedSearchArgs: {},
+      searchArgs: {},
+    };
+    this.filteredInfo = {};
+    this.order = {
+      orderField: '',
+      orderType: '',
+    };
+    this.loading = true;
+    this.paramName = undefined;
+    this.paramIssueId = undefined;
+    this.barFilters = undefined;
+    this.draggingTableItems = [];
+    this.copy = false;
+    this.tableDraging = false;
+    this.treeShow = false;
+  }
 
   init() {
     this.setOrder({
@@ -119,7 +149,7 @@ class IssueStore {
             funcArr.push(getAllIssues(Page, size, this.getFilter, orderField, orderType));
           } else if (type === 'topversion') {
             // 2.加载某一类versions
-            const versions = children.map(child => child.versionId);      
+            const versions = children.map(child => child.versionId);
             funcArr.push(getIssuesByVersion(versions,
               Page, size, this.getFilter, orderField, orderType));
           } else if (type === 'version') {
@@ -177,10 +207,10 @@ class IssueStore {
    * 当issue更新时,本地更新单个issue
    * @param {*} data 
    */
-  @action updateSingleIssue(data) {    
+  @action updateSingleIssue(data) {
     const originIssues = this.issues;
     const index = _.findIndex(originIssues, { issueId: data.issueId });
-    originIssues[index] = { ...originIssues[index], ...data };      
+    originIssues[index] = { ...originIssues[index], ...data };
   }
 
   @action setIssueIds(issueIds) {

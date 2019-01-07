@@ -209,7 +209,7 @@ class TextEditToggle extends Component {
           ) : children.map(child => (this.wrapChildren(child.props.children)))
         }
         <div style={{ textAlign: 'right', lineHeight: '20px' }}>
-          <Icon type="done" className="c7ntest-TextEditToggle-edit-icon" onClick={this.onSubmit} />
+          <Icon type="done" className="c7ntest-TextEditToggle-edit-icon" onClick={this.handleSubmit} />
           <Icon type="close" className="c7ntest-TextEditToggle-edit-icon" onClick={this.leaveEditing} />
         </div>
       </div>

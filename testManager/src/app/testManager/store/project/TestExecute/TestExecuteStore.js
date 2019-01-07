@@ -4,13 +4,10 @@ import {
 import { stores } from 'choerodon-front-boot';
 
 import { BaseTreeProto } from '../prototype';
-import { getProjectId } from '../../../common/utils';
 
 const { AppState } = stores;
 class TestExecuteStore extends BaseTreeProto {
   @observable leftVisible = true;
-
-  @observable preProjectId = getProjectId();
 
   @observable executePagination = {
     current: 1,
@@ -19,6 +16,28 @@ class TestExecuteStore extends BaseTreeProto {
   };
 
   @observable treeAssignedTo = 0;
+
+  @action clearStore = () => {
+    this.treeAssignedTo = 0;
+    this.leftVisible = true;    
+    this.executePagination = {
+      current: 1,
+      total: 0,
+      pageSize: 5,
+    };
+    this.treeData = [
+      {
+        title: '所有版本',
+        key: '0',
+        children: [],
+      },
+    ];  
+    this.expandedKeys = ['0'];  
+    this.selectedKeys = [];  
+    this.addingParent = null;  
+    this.currentCycle = {};  
+    this.preCycle = {};
+  }
 
   @action setLeftVisible(leftVisible) {
     this.leftVisible = leftVisible;
@@ -32,9 +51,6 @@ class TestExecuteStore extends BaseTreeProto {
     this.treeAssignedTo = treeAssignedTo;
   }
 
-  @action setPreProjectId(projectId) {
-    this.preProjectId = projectId;
-  }
 
   @computed get getExecutePagination() {
     return toJS(this.executePagination);
