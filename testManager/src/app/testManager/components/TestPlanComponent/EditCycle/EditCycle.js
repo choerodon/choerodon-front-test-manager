@@ -208,13 +208,8 @@ class EditCycle extends Component {
             </Spin>
           </Content>
         </Sidebar>
-      </div>
-    );
+      </div>);
   }
 }
-
-EditCycle.propTypes = {
-
-};
 
 export default Form.create()(EditCycle);
