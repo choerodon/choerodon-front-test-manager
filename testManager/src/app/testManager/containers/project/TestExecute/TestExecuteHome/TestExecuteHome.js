@@ -540,13 +540,13 @@ class TestExecuteHome extends Component {
       delete cycleData.nextRank;
       cycleData.assignedTo = cycleData.assignedTo || 0;
       this.setState({
-        rightLoading: true,
+        loading: true,
       });
-      editCycle(cycleData).then((Data) => {
-        this.reloadExecutes();
+      editCycle(cycleData).then((Data) => {        
+        this.refresh();
       }).catch((error) => {
         this.setState({
-          rightLoading: false,
+          loading: false,
         });
         Choerodon.prompt('网络错误');
       });
