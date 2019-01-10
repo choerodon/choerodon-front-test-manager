@@ -74,7 +74,6 @@ class TestPlanHome extends Component {
     if (barFilters && barFilters.length > 0) {
       Filters.summary = barFilters;
     }
-    console.log(barFilters);
     if (pagination.current) {
       TestPlanStore.setFilters(Filters);
       TestPlanStore.rightEnterLoading();

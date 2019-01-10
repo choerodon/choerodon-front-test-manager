@@ -286,7 +286,7 @@ class TestExecuteHome extends Component {
   // 默认展开并加载右侧数据
   setExpandDefault = (defaultExpandKeyItem) => {
     if (defaultExpandKeyItem) {
-      TestExecuteStore.setExpandedKeys([defaultExpandKeyItem.key]);
+      TestExecuteStore.setExpandedKeys([this.getParentKey(defaultExpandKeyItem.key)]);      
       TestExecuteStore.setSelectedKeys([defaultExpandKeyItem.key]);
       TestExecuteStore.setCurrentCycle(defaultExpandKeyItem);
       this.setState({
