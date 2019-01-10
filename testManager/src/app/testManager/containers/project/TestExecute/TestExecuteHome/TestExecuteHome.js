@@ -785,7 +785,7 @@ class TestExecuteHome extends Component {
     }, {
       title: '',
       key: 'action',
-      width: '10%',
+      width: 90,
       render: (text, record) => (
         record.projectId !== 0
         && (
