@@ -430,23 +430,23 @@ class ReportStory extends Component {
                                 const { issueInfosDTO } = defect;
                                 return (
                                   <div className="c7ntest-issue-show-container">
-                                    <Tooltip title={issueInfosDTO && issueInfosDTO.issueNum}>
+                                    <Tooltip title={issueInfosDTO && issueInfosDTO.issueName}>
                                       <Link
                                         className="c7ntest-showId"
                                         to={issueLink(issueInfosDTO && issueInfosDTO.issueId,
                                           issueInfosDTO && issueInfosDTO.typeCode)}
                                         target="_blank"
                                       >
-                                        {issueInfosDTO && issueInfosDTO.issueNum}
+                                        {issueInfosDTO && issueInfosDTO.issueName}
                                       </Link>
                                     </Tooltip>
                                     <div className="c7ntest-issue-status-icon">
                                       <span style={{
-                                        color: issueInfosDTO && issueInfosDTO.issueColor,
-                                        borderColor: issueInfosDTO && issueInfosDTO.issueColor,
+                                        color: issueInfosDTO && STATUS[issueInfosDTO.statusMapDTO.type],
+                                        borderColor: issueInfosDTO && STATUS[issueInfosDTO.statusMapDTO.type],
                                       }}
                                       >
-                                        {issueInfosDTO && issueInfosDTO.issueStatusName}
+                                        {issueInfosDTO && issueInfosDTO.statusMapDTO.name}
                                       </span>
                                     </div>
                                     {defect.defectType === 'CASE_STEP'
