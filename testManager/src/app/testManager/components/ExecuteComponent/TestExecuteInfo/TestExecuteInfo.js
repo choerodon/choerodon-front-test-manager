@@ -356,10 +356,9 @@ class TestExecuteInfo extends Component {
                   {defects.length > 0 ? (
                     <div
                       style={{
-                        maxWidth: 300,
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        whiteSpace: 'nowrap',
+                        maxWidth: 300,                        
+                        whiteSpace: 'pre-wrap',
+                        wordBreak: 'break-word',
                       }}
                     >
                       {defects.map((defect, i) => defect.issueInfosDTO.issueName).join('，')}
