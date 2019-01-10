@@ -360,6 +360,11 @@ class EditIssueNarrow extends Component {
         break;
       }
       default: {
+        if (key === 'summary' && value === '') {
+          Choerodon.prompt('用例名不可为空！');
+          done();
+          break;
+        }
         issue = { ...issue, ...newValue };
         updateIssue(issue)
           .then((res) => {
@@ -1096,7 +1101,7 @@ class EditIssueNarrow extends Component {
               });
             }}
             loading={selectLoading}
-            style={{ width: 200 }}            
+            style={{ width: 200 }}
           >
             {userOptions}
           </Select>
