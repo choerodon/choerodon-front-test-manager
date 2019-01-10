@@ -26,7 +26,7 @@ import {
   TreeTitle, CreateCycle, EditCycle, ShowCycleData, CloneCycle,
 } from '../../../../components/TestExecuteComponent';
 import {
-  RichTextShow, SelectFocusLoad, RadioButton, StatusTags,
+  RichTextShow, SelectFocusLoad, RadioButton, StatusTags, SmartTooltip,
 } from '../../../../components/CommonComponent';
 import {
   delta2Html, delta2Text, issueLink, getParams, executeDetailLink, 
@@ -595,7 +595,7 @@ class TestExecuteHome extends Component {
         const { issueInfosDTO } = record;
         return (
           issueInfosDTO && (
-            <Tooltip
+            <SmartTooltip
               title={(
                 <div>
                   <div>{issueInfosDTO.issueNum}</div>
@@ -613,7 +613,7 @@ class TestExecuteHome extends Component {
               >
                 {issueInfosDTO.issueNum}
               </Link>
-            </Tooltip>
+            </SmartTooltip>
           )
         );
       },
@@ -629,7 +629,7 @@ class TestExecuteHome extends Component {
         const { issueInfosDTO } = record;
         return (
           issueInfosDTO && (
-            <Tooltip
+            <SmartTooltip
               placement="topLeft"
               title={(
                 <div>{issueInfosDTO.summary}</div>
@@ -643,7 +643,7 @@ class TestExecuteHome extends Component {
               >
                 {issueInfosDTO.summary}
               </span>
-            </Tooltip>
+            </SmartTooltip>
           )
         );
       },
@@ -690,7 +690,7 @@ class TestExecuteHome extends Component {
       flex: 1,
       render(comment) {
         return (
-          <Tooltip title={<RichTextShow data={delta2Html(comment)} />}>
+          <SmartTooltip title={<RichTextShow data={delta2Html(comment)} />}>
             <div
               className="c7ntest-text-dot"
             // style={{
@@ -699,7 +699,7 @@ class TestExecuteHome extends Component {
             >
               {delta2Text(comment)}
             </div>
-          </Tooltip>
+          </SmartTooltip>
         );
       },
     },
@@ -709,7 +709,7 @@ class TestExecuteHome extends Component {
       key: 'defects',
       flex: 1,
       render: defects => (
-        <Tooltip
+        <SmartTooltip
           placement="topLeft"
           title={(
             <div>
@@ -733,7 +733,7 @@ class TestExecuteHome extends Component {
           )}
         >
           {defects.map((defect, i) => defect.issueInfosDTO && defect.issueInfosDTO.issueNum).join(',')}
-        </Tooltip>
+        </SmartTooltip>
       ),
     },
     {
@@ -782,7 +782,7 @@ class TestExecuteHome extends Component {
     }, {
       title: '',
       key: 'action',
-      flex: 1,
+      width: '10%',
       render: (text, record) => (
         record.projectId !== 0
         && (
