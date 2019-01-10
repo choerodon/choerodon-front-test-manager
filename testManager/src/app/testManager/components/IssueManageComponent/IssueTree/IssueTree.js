@@ -44,6 +44,11 @@ class IssueTree extends Component {
   }
 
   addFolder = (item, e, type) => {
+    if (e.target.value === '') {
+      Choerodon.prompt('文件夹名不能为空');
+      IssueTreeStore.removeAdding();
+      return;
+    }
     IssueTreeStore.setLoading(true);
     addFolder({
       name: e.target.value,
