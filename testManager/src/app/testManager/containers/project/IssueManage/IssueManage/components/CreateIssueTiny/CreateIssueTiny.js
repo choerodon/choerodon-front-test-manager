@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import {
   Button, Input, Icon, Select, 
 } from 'choerodon-ui';
+import { observer } from 'mobx-react';
 import { FormattedMessage } from 'react-intl';
 import _ from 'lodash';
 import { getProjectId } from '../../../../../../common/utils';
@@ -10,6 +11,7 @@ import IssueStore from '../../../../../../store/project/IssueManage/IssueStore';
 import IssueTreeStore from '../../../../../../store/project/IssueManage/IssueTreeStore';
 
 const { Option } = Select;
+@observer
 class CreateIssueTiny extends Component {
   state={
     creating: false,

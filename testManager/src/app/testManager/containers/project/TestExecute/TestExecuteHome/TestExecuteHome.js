@@ -425,12 +425,15 @@ class TestExecuteHome extends Component {
     });
   }
 
-  handleExecuteTableChange = (pagination, filters, sorter) => {
-    console.log(filters);
+  handleExecuteTableChange = (pagination, filters, sorter, barFilters) => {
+    const Filters = { ...filters };
+    if (barFilters && barFilters.length > 0) {
+      Filters.summary = barFilters;
+    }
     TestExecuteStore.setExecutePagination(pagination);
     this.setState({
       rightLoading: true,
-      filters,
+      filters: Filters,
     }, () => {
       this.loadExecutes();
     });

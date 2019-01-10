@@ -68,10 +68,15 @@ class TestPlanHome extends Component {
     }
   }
 
-  handleExecuteTableChange = (pagination, filters, sorter) => {
+  handleExecuteTableChange = (pagination, filters, sorter, barFilters) => {
     // window.console.log(pagination, filters, sorter);
+    const Filters = { ...filters };
+    if (barFilters && barFilters.length > 0) {
+      Filters.summary = barFilters;
+    }
+    console.log(barFilters);
     if (pagination.current) {
-      TestPlanStore.setFilters(filters);
+      TestPlanStore.setFilters(Filters);
       TestPlanStore.rightEnterLoading();
       TestPlanStore.setExecutePagination(pagination);
       TestPlanStore.reloadCycle();
