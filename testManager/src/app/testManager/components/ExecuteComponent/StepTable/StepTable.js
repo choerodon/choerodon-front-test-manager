@@ -42,7 +42,7 @@ class StepTable extends Component {
     const options = stepStatusList.map((status) => {
       const { statusName, statusId, statusColor } = status;
       return (
-        <Option value={statusId} key={statusId}>
+        <Option value={statusId} key={statusId} title="">
           <StatusTags
             color={statusColor}
             name={statusName}
@@ -262,11 +262,11 @@ class StepTable extends Component {
           </Text>
           <Edit>
             <DefectSelect
-                defects={defects}
-                setNeedAdd={(needAdd) => { that.needAdd = needAdd; }}
-                executeStepId={record.executeStepId}
-                bugsToggleRef={this[`bugsToggle_${record.stepId}`]}
-              />
+              defects={defects}
+              setNeedAdd={(needAdd) => { that.needAdd = needAdd; }}
+              executeStepId={record.executeStepId}
+              bugsToggleRef={this[`bugsToggle_${record.stepId}`]}
+            />
           </Edit>
         </TextEditToggle>
       ),

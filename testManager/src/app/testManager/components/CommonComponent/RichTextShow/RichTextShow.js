@@ -96,7 +96,7 @@ class RichTextShow extends Component {
           this.state.open ? (
             <Lightbox
               mainSrc={this.state.src}
-              // onCloseRequest={() => this.setState({ open: false })}
+              onCloseRequest={() => this.setState({ open: false })}
               imageTitle="images"
             />
           ) : null

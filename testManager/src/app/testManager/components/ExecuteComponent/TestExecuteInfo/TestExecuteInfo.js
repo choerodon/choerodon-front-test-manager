@@ -9,7 +9,7 @@ import {
   TextEditToggle, RichTextShow, User, StatusTags,
 } from '../../CommonComponent';
 import { uploadFile, deleteAttachment } from '../../../api/FileApi';
-import { delta2Html } from '../../../common/utils';
+import { delta2Html, beforeTextUpload, returnBeforeTextUpload } from '../../../common/utils';
 import {
   addDefects, editCycle, removeDefect,
 } from '../../../api/ExecuteDetailApi';
@@ -148,11 +148,14 @@ class TestExecuteInfo extends Component {
       window.console.log('add', List.filter(item => !oldList.includes(item)));
     }
   }
+ 
+  handleCommentSave=(value) => {
+    beforeTextUpload(value, {}, this.submit, 'comment');    
+  }
 
-  submit = (updateData) => {
-    // window.console.log('submit', originData);
+  submit = (updateData) => {    
     const cycleData = ExecuteDetailStore.getCycleData;
-    const newData = { ...cycleData, ...updateData };
+    const newData = { ...cycleData, ...updateData };    
     newData.assignedTo = newData.assignedTo || 0;
     // 删除一些不必要字段
     delete newData.defects;
@@ -424,7 +427,7 @@ class TestExecuteInfo extends Component {
                 initValue={comment}
                 visible={this.state.edit}
                 onCancel={() => this.setState({ edit: false })}
-                onOk={(value) => { this.submit({ comment: JSON.stringify(value) }); }}
+                onOk={this.handleCommentSave}
               />
             </div>
             <div style={{
