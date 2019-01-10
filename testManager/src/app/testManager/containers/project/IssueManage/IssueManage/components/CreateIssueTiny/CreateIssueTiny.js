@@ -83,8 +83,7 @@ class CreateIssueTiny extends Component {
           {
             _.find(versions, { versionId: selectedVersion })
               ? (
-                <div style={{ display: 'flex', alignItems: 'center', marginTop: -8 }}>
-                  <span className="c7ntest-add-select-version-prefix">V</span>
+                <div style={{ display: 'flex', alignItems: 'center', marginTop: -8 }}>                 
                   <Select
                     disabled={IssueTreeStore.currentCycle.versionId}
                     onChange={(value) => {
