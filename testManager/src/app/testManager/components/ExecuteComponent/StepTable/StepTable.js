@@ -42,7 +42,7 @@ class StepTable extends Component {
     const options = stepStatusList.map((status) => {
       const { statusName, statusId, statusColor } = status;
       return (
-        <Option value={statusId} key={statusId} title="">
+        <Option value={statusId} key={statusId} title={statusName}>
           <StatusTags
             color={statusColor}
             name={statusName}
