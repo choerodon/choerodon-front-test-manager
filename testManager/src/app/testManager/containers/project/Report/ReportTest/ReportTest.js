@@ -14,7 +14,7 @@ import { getReportsFromDefect, getReportsFromDefectByIssueIds } from '../../../.
 import { getStatusList } from '../../../../api/TestStatusApi';
 import { getIssueTypes, getIssueStatus } from '../../../../api/agileApi';
 import {
-  issueLink, cycleLink, executeDetailShowLink, getProjectName, 
+  issueLink, cycleLink, executeDetailShowLink, getProjectName,
 } from '../../../../common/utils';
 import './ReportTest.scss';
 
@@ -56,14 +56,14 @@ class ReportTest extends Component {
     this.setState({
       loading: true,
     });
-    Promise.all([    
+    Promise.all([
       getStatusList('CYCLE_CASE'),
       getStatusList('CASE_STEP'),
       this.getReportsFromDefect(),
       getIssueTypes(),
       getIssueTypes('agile'),
       getIssueStatus(),
-    ]).then(([   
+    ]).then(([
       statusList,
       stepStatusList,
       any,
@@ -71,11 +71,11 @@ class ReportTest extends Component {
       agileTypeList,
       issueStatusList,
     ]) => {
-      this.setState({      
+      this.setState({
         statusList,
         stepStatusList,
         issueTypes: issueTypes.concat(agileTypeList),
-        issueStatusList,     
+        issueStatusList,
         openId: [],
       });
     });
@@ -238,7 +238,7 @@ class ReportTest extends Component {
                   <div className="c7ntest-collapse-show-item">
                     <Icon type="navigate_next" className="c7ntest-collapse-icon" />
                     <Tooltip title={issueName}>
-                      <Link className="c7ntest-showId" to={issueLink(issueId, typeCode)} target="_blank">
+                      <Link className="c7ntest-showId" to={issueLink(issueId, typeCode, issueName)} target="_blank">
                         {issueName}
                       </Link>
                     </Tooltip>
@@ -372,7 +372,7 @@ class ReportTest extends Component {
       key: 'cycleId',
       width: '25%',
       render(cycleId, record) {
-        // const { linkedTestIssues } = record; 
+        // const { linkedTestIssues } = record;
         const { testCycleCaseES, testCycleCaseStepES } = record;
         const { issueId } = record.issueInfosDTO;
         const caseShow = testCycleCaseES.concat(testCycleCaseStepES).map((execute) => {
@@ -385,7 +385,7 @@ class ReportTest extends Component {
             <div className="c7ntest-issue-show-container">
               <div className="c7ntest-collapse-show-item">
                 <Tooltip title={issueName}>
-                  <Link className="c7ntest-showId" to={issueLink(issueInfosDTO && issueInfosDTO.issueId, typeCode)} target="_blank">
+                  <Link className="c7ntest-showId" to={issueLink(issueInfosDTO && issueInfosDTO.issueId, typeCode, issueName)} target="_blank">
                     {issueName}
                   </Link>
                 </Tooltip>
@@ -426,7 +426,8 @@ class ReportTest extends Component {
         const { testCycleCaseES, testCycleCaseStepES } = record;
         const { issueId } = record.issueInfosDTO;
         const caseShow = testCycleCaseES.concat(testCycleCaseStepES).map((execute, i) => {
-          const { issueLinkDTOS } = execute;
+          const { issueLinkDTOS, issueInfosDTO: { issueName } } = execute;
+          debugger;
           // window.console.log(issueLinkDTOS.length);
           const issueLinks = issueLinkDTOS && issueLinkDTOS.map((link) => {
             const { issueNum, summary, statusMapDTO } = link;
@@ -435,7 +436,7 @@ class ReportTest extends Component {
               <div className="c7ntest-issue-show-container">
                 <div className="c7ntest-collapse-show-item">
                   <Tooltip title={issueNum}>
-                    <Link className="c7ntest-showId" to={issueLink(link.linkedIssueId, link.typeCode)} target="_blank">
+                    <Link className="c7ntest-showId" to={issueLink(link.linkedIssueId, link.typeCode, issueName)} target="_blank">
                       {issueNum}
                     </Link>
                   </Tooltip>
@@ -548,7 +549,7 @@ class ReportTest extends Component {
           title={<FormattedMessage id="report_defectToDemand" />}
           backPath={`/testManager/report?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}&organizationId=${organizationId}`}
         >
-          <ReporterSwitcher />          
+          <ReporterSwitcher />
           <Button onClick={this.getInfo} style={{ marginLeft: 30 }}>
             <Icon type="autorenew icon" />
             <span>
@@ -556,7 +557,7 @@ class ReportTest extends Component {
             </span>
           </Button>
         </Header>
-        <Content         
+        <Content
           title={<FormattedMessage id="report_content_title" values={{ name: getProjectName() }} />}
           description={<FormattedMessage id="report_content_description" />}
           link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management/test-report/report/"
