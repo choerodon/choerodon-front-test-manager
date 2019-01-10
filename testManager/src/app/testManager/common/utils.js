@@ -234,13 +234,15 @@ export function commonLink(link) {
 
   return encodeURI(`/testManager${link}?type=${type}&id=${projectId}&organizationId=${organizationId}&name=${name}`);
 }
-export function issueLink(issueId, typeCode) {
+export function issueLink(issueId, typeCode, issueName = null) {
   const menu = AppState.currentMenuType;
   const {
     type, id: projectId, name, organizationId,
   } = menu;
   if (typeCode === 'issue_test' || typeCode === 'issue_auto_test') {
     return encodeURI(`/testManager/IssueManage?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}&paramIssueId=${issueId}`);
+  } else if (issueName) {
+    return encodeURI(`/agile/issue?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}&paramIssueId=${issueId}&paramName=${issueName}`);
   } else {
     return encodeURI(`/agile/issue?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}&paramIssueId=${issueId}`);
   }
@@ -269,8 +271,8 @@ export function executeDetailShowLink(executeId) {
 
 /**
  * 颜色转rgba
- * @param {*} color 
- * @param {*} alpha 
+ * @param {*} color
+ * @param {*} alpha
  */
 export function color2rgba(color, alpha = 1) {
   if (typeof color !== 'string') {
@@ -282,8 +284,8 @@ export function color2rgba(color, alpha = 1) {
   return `rgba(${r},${g},${b},${alpha})`;
 }
 /**
- * 时间（毫秒）转文字显示 
- * @param {*} ms 
+ * 时间（毫秒）转文字显示
+ * @param {*} ms
  */
 export function humanizeDuration(ms, config = {}) {
   return humanize(ms, {
@@ -310,7 +312,7 @@ class Request {
         } else {
           url += `?organizationId=${getOrganizationId()}`;
         }
-        // eslint-disable-next-line no-param-reassign 
+        // eslint-disable-next-line no-param-reassign
         args[0] = url;
         axios[type](...args).then((data) => {
           // if (data && data.failed) {
