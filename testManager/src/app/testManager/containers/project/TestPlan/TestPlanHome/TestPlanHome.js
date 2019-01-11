@@ -179,7 +179,7 @@ class TestPlanHome extends Component {
                 style={{
                   width: 100,
                 }}
-                to={issueLink(issueInfosDTO.issueId, issueInfosDTO.typeCode)}
+                to={issueLink(issueInfosDTO.issueId, issueInfosDTO.typeCode, issueInfosDTO.issueNum)}
                 target="_blank"
               >
                 {issueInfosDTO.issueNum}
@@ -270,7 +270,7 @@ class TestPlanHome extends Component {
                       style={{
                         color: 'white',
                       }}
-                      to={issueLink(defect.issueInfosDTO.issueId, defect.issueInfosDTO.typeCode)}
+                      to={issueLink(defect.issueInfosDTO.issueId, defect.issueInfosDTO.typeCode, defect.issueInfosDTO.issueNum)}
                       target="_blank"
                     >
                       {defect.issueInfosDTO.issueNum}

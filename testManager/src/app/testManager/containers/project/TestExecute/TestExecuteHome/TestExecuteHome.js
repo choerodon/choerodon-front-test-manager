@@ -214,8 +214,8 @@ class TestExecuteHome extends Component {
       title: Choerodon.getMessage('确认删除吗?', 'Confirm delete'),
       content:
   <div style={{ marginBottom: 32 }}>
-          {Choerodon.getMessage('当你点击删除后，该条数据将被永久删除，不可恢复!', 'When you click delete, after which the data will be permanently deleted and irreversible!')}
-        </div>,
+    {Choerodon.getMessage('当你点击删除后，该条数据将被永久删除，不可恢复!', 'When you click delete, after which the data will be permanently deleted and irreversible!')}
+  </div>,
       onOk: () => {
         // that.setState({
         //   rightLoading: true,
@@ -614,7 +614,7 @@ class TestExecuteHome extends Component {
                 style={{
                   width: 100,
                 }}
-                to={issueLink(issueInfosDTO.issueId, issueInfosDTO.typeCode)}
+                to={issueLink(issueInfosDTO.issueId, issueInfosDTO.typeCode, issueInfosDTO.issueNum)}
                 target="_blank"
               >
                 {issueInfosDTO.issueNum}
@@ -726,7 +726,7 @@ class TestExecuteHome extends Component {
                       style={{
                         color: 'white',
                       }}
-                      to={issueLink(defect.issueInfosDTO.issueId, defect.issueInfosDTO.typeCode)}
+                      to={issueLink(defect.issueInfosDTO.issueId, defect.issueInfosDTO.typeCode, defect.issueInfosDTO.issueNum)}
                       target="_blank"
                     >
                       {defect.issueInfosDTO.issueNum}
@@ -1081,15 +1081,15 @@ class TestExecuteHome extends Component {
                 </div>
               ) : (
                 <div style={{
-                    display: 'flex', alignItems: 'center', height: 250, margin: '88px auto', padding: '50px 75px', border: '1px dashed rgba(0,0,0,0.54)',
-                  }}
-                  >
-                    <img src={noRight} alt="" />
-                    <div style={{ marginLeft: 40 }}>
-                      <div style={{ fontSize: '14px', color: 'rgba(0,0,0,0.65)' }}>根据当前选定的测试循环没有查询到循环信息</div>
-                      <div style={{ fontSize: '20px', marginTop: 10 }}>尝试在您的树状图中选择测试循环</div>
-                    </div>
+                  display: 'flex', alignItems: 'center', height: 250, margin: '88px auto', padding: '50px 75px', border: '1px dashed rgba(0,0,0,0.54)',
+                }}
+                >
+                  <img src={noRight} alt="" />
+                  <div style={{ marginLeft: 40 }}>
+                    <div style={{ fontSize: '14px', color: 'rgba(0,0,0,0.65)' }}>根据当前选定的测试循环没有查询到循环信息</div>
+                    <div style={{ fontSize: '20px', marginTop: 10 }}>尝试在您的树状图中选择测试循环</div>
                   </div>
+                </div>
               )}
             </div>
           </Spin>

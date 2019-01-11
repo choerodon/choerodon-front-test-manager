@@ -249,7 +249,7 @@ class ReportStory extends Component {
                 </div>
               )}
               >
-                <Link className="c7ntest-showId" to={issueLink(issueId, typeCode)} target="_blank">
+                <Link className="c7ntest-showId" to={issueLink(issueId, typeCode, issueName)} target="_blank">
                   {issueName}
                 </Link>
               </Tooltip>
@@ -366,7 +366,7 @@ class ReportStory extends Component {
                       <Icon type="explicit2" style={{ marginLeft: 10, color: 'black' }} />
                     </Link>
                   </div>
-);
+                );
               });             
               return openId[record.defectInfo.issueId] && openId[record.defectInfo.issueId]
                 .includes(`${issueId}-${i}`) ? (
@@ -435,7 +435,7 @@ class ReportStory extends Component {
                                       <Link
                                         className="c7ntest-showId"
                                         to={issueLink(issueInfosDTO && issueInfosDTO.issueId,
-                                          issueInfosDTO && issueInfosDTO.typeCode)}
+                                          issueInfosDTO && issueInfosDTO.typeCode, issueInfosDTO && issueInfosDTO.issueName)}
                                         target="_blank"
                                       >
                                         {issueInfosDTO && issueInfosDTO.issueName}
@@ -489,7 +489,7 @@ class ReportStory extends Component {
                                   color: '#3F51B5',
                                 }}
                                 >
-                                  <Link className="c7ntest-showId" to={issueLink(issueInfosDTO && issueInfosDTO.issueId, issueInfosDTO && issueInfosDTO.typeCode)} target="_blank">
+                                  <Link className="c7ntest-showId" to={issueLink(issueInfosDTO && issueInfosDTO.issueId, issueInfosDTO && issueInfosDTO.typeCode, issueInfosDTO && issueInfosDTO.issueName)} target="_blank">
                                     {issueInfosDTO && issueInfosDTO.issueName}
                                   </Link>
                                   {i === defects.concat(subStepDefects).length - 1 ? null : '，'}
