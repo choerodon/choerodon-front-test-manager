@@ -43,7 +43,7 @@ class StepTable extends Component {
       const { statusName, statusId, statusColor } = status;
       return (
         <Option value={statusId} key={statusId} title={statusName}>
-          <StatusTags
+          <StatusTags 
             color={statusColor}
             name={statusName}
           />          
@@ -141,12 +141,13 @@ class StepTable extends Component {
                 
               </Text>
               <Edit>
-                <Select autoFocus style={{ width: 85 }}>
+                <Select autoFocus>
                   {options}
                 </Select>
               </Edit>
             </TextEditToggle>
-          </div>);
+          </div>
+        );
       },
     },
     {
@@ -250,7 +251,8 @@ class StepTable extends Component {
                       }}
                       >
                         {defect.issueInfosDTO && defect.issueInfosDTO.issueName}
-                      </div>))}
+                      </div>
+                    ))}
                   </div>
                 // )}
                 // >
@@ -289,7 +291,8 @@ class StepTable extends Component {
           pagination={detailPagination}
           onChange={ExecuteDetailStore.loadDetailList}
         />
-      </div>);
+      </div>
+    );
   }
 }
 
