@@ -1,5 +1,4 @@
 
-import axios from 'axios';
 import { getProjectId, getOrganizationId, request } from '../common/utils';
 
 

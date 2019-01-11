@@ -29,7 +29,7 @@ import {
   RichTextShow, SelectFocusLoad, RadioButton, StatusTags, SmartTooltip,
 } from '../../../../components/CommonComponent';
 import {
-  delta2Html, delta2Text, issueLink, getParams, executeDetailLink, 
+  delta2Html, delta2Text, issueLink, getParams, executeDetailLink,
 } from '../../../../common/utils';
 import RunWhenProjectChange from '../../../../common/RunWhenProjectChange';
 import TestExecuteStore from '../../../../store/project/TestExecute/TestExecuteStore';
@@ -64,7 +64,7 @@ function traverseTree(node) {
           return -1;
         }
       }).map((child, i) => ({ ...child, key: `${key}-${i}` }));
-    } 
+    }
     if (tmpNode.children && tmpNode.children.length > 0) {
       let i = tmpNode.children.length - 1;
       for (i = tmpNode.children.length - 1; i >= 0; i -= 1) {
@@ -136,7 +136,7 @@ class TestExecuteHome extends Component {
     }
   }
 
-  reloadExecutes = () => {    
+  reloadExecutes = () => {
     this.setState({
       rightLoading: true,
     });
@@ -257,7 +257,7 @@ class TestExecuteHome extends Component {
       ]);
 
       // window.console.log(dataList);
-    });    
+    });
     // 如果选中了项，就刷新table数据
     const currentCycle = TestExecuteStore.getCurrentCycle;
     const selectedKeys = TestExecuteStore.getSelectedKeys;
@@ -286,7 +286,7 @@ class TestExecuteHome extends Component {
   // 默认展开并加载右侧数据
   setExpandDefault = (defaultExpandKeyItem) => {
     if (defaultExpandKeyItem) {
-      TestExecuteStore.setExpandedKeys([this.getParentKey(defaultExpandKeyItem.key)]);      
+      TestExecuteStore.setExpandedKeys([this.getParentKey(defaultExpandKeyItem.key)]);
       TestExecuteStore.setSelectedKeys([defaultExpandKeyItem.key]);
       TestExecuteStore.setCurrentCycle(defaultExpandKeyItem);
       this.setState({
@@ -474,7 +474,8 @@ class TestExecuteHome extends Component {
           )}
           icon={icon}
           data={item}
-        />);
+        />
+      );
     } else if (type === 'ADD_FOLDER') {
       return (
         <TreeNode
@@ -491,7 +492,8 @@ class TestExecuteHome extends Component {
           )}
           icon={icon}
           data={item}
-        />);
+        />
+      );
     } else if (children) {
       const title = index > -1 ? (
         <span>
@@ -529,7 +531,8 @@ class TestExecuteHome extends Component {
         icon={icon}
         {...item}
         data={item}
-      />);
+      />
+    );
   });
 
   quickPass(execute) {
@@ -545,7 +548,7 @@ class TestExecuteHome extends Component {
       this.setState({
         loading: true,
       });
-      editCycle(cycleData).then((Data) => {        
+      editCycle(cycleData).then((Data) => {
         this.refresh();
       }).catch((error) => {
         this.setState({
