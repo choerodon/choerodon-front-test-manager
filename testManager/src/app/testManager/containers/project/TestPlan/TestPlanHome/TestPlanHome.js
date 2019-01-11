@@ -200,7 +200,7 @@ class TestPlanHome extends Component {
           issueInfosDTO && (
             <SmartTooltip>
               {issueInfosDTO.summary}
-            </SmartTooltip>            
+            </SmartTooltip>
           )
         );
       },
@@ -340,21 +340,21 @@ class TestPlanHome extends Component {
               <Button
                 shape="circle"
                 funcType="flat"
-                icon="explicit2"              
+                icon="explicit2"
                 onClick={() => {
                   const { history } = this.props;
                   history.push(executeDetailShowLink(record.executeId));
                 }}
-              /> 
+              />
             </Tooltip>
             <Button
               shape="circle"
               funcType="flat"
-              icon="delete_forever"            
+              icon="delete_forever"
               onClick={() => {
                 this.deleteExecute(record);
               }}
-            />            
+            />
           </div>
         )
       ),
@@ -494,12 +494,12 @@ class TestPlanHome extends Component {
               )}
               <div className="c7ntest-TestPlan-tree">
                 {treeShow && (
-                // <ResizeAble>
-                <PlanTree
-                  ref={(tree) => { this.PlanTree = tree; }}
-                  onClose={() => { TestPlanStore.setTreeShow(false); }}
-                />
-                // </ResizeAble>
+                  // <ResizeAble>
+                  <PlanTree
+                    ref={(tree) => { this.PlanTree = tree; }}
+                    onClose={() => { TestPlanStore.setTreeShow(false); }}
+                  />
+                  // </ResizeAble>
                 )}
               </div>
               {/* <Spin spinning={loading}> */}
@@ -509,7 +509,16 @@ class TestPlanHome extends Component {
                   {calendarShowMode === 'single' && (
                     <div className="c7ntest-TestPlan-content-right-bottom">
                       <div style={{ display: 'flex', marginBottom: 20 }}>
-                        <SelectFocusLoad
+                        <div style={{
+                          fontWeight: 600,
+                          marginTop: 18,
+                          marginRight: 10,
+                          fontSize: '14px',
+                        }}
+                        >
+                          筛选:
+                        </div>
+                        <SelectFocusLoad                       
                           label={<FormattedMessage id="cycle_executeBy" />}
                           request={getUsers}
                           onChange={(value) => {
