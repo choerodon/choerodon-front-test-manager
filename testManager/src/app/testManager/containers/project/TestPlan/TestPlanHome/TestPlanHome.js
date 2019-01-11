@@ -128,7 +128,7 @@ class TestPlanHome extends Component {
           .then((res) => {
             const { executePagination } = TestPlanStore;
             const currentCycle = TestPlanStore.getCurrentCycle;
-            console.log(currentCycle);
+            // console.log(currentCycle);
             TestPlanStore.reloadCycle();
           }).catch((err) => {
             console.log(err);

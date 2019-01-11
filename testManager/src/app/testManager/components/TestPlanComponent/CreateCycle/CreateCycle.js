@@ -29,7 +29,7 @@ class CreateCycle extends Component {
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
         this.setState({ loading: true });
-        window.console.log('Received values of form: ', values);
+        // window.console.log('Received values of form: ', values);
         const { fromDate, toDate } = values;
         addCycle({
           ...values,

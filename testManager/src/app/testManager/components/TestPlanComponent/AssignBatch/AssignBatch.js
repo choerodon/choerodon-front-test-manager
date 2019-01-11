@@ -18,7 +18,7 @@ class AssignBatch extends PureComponent {
       this.setState({
         loading: true,
       });
-      console.log(currentEditValue);
+      // console.log(currentEditValue);
       assignBatch(assign, cycleId).then((res) => {
         this.props.onOk();
       }).catch((err) => {

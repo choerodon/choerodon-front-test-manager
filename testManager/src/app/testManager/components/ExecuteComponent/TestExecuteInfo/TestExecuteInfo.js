@@ -128,7 +128,7 @@ class TestExecuteInfo extends Component {
     const cycleData = ExecuteDetailStore.getCycleData;
     const defectIds = ExecuteDetailStore.getDefectIds;
     const oldList = [...defectIds];
-    window.console.log('old', oldList, 'new', List);
+    // window.console.log('old', oldList, 'new', List);
     // 删除元素
     if (oldList.length > List.length) {
       const deleteEle = oldList.filter(old => !List.includes(old));
@@ -143,9 +143,9 @@ class TestExecuteInfo extends Component {
           });
         }
       }
-      window.console.log('delete');
+      // window.console.log('delete');
     } else {
-      window.console.log('add', List.filter(item => !oldList.includes(item)));
+      // window.console.log('add', List.filter(item => !oldList.includes(item)));
     }
   }
  

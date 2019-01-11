@@ -62,7 +62,7 @@ class IssueTreeTitle extends Component {
             });
           },
           onCancel() {
-            console.log('Cancel');
+            // console.log('Cancel');
           },
         });   
         

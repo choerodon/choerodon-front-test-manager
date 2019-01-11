@@ -38,7 +38,7 @@ class CopyIssue extends Component {
           subTask: copySubIssue || false,
           summary: issueSummary || false,
         };
-        window.console.log(copyConditionDTO);
+        // window.console.log(copyConditionDTO);
         this.setState({
           loading: true,
         });

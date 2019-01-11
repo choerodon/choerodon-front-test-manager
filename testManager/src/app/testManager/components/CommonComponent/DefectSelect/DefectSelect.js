@@ -53,9 +53,9 @@ class DefectSelect extends Component {
         // window.console.log(defects, oldList, deleteEle, List);
         removeDefect(_.find(defects, { issueId: Number(deleteEle[0]) }).id);
       }
-      window.console.log('delete');
+      // window.console.log('delete');
     } else {
-      window.console.log('add', List.filter(item => !oldList.includes(item)));
+      // window.console.log('add', List.filter(item => !oldList.includes(item)));
     }
     // 收集需要添加的缺陷
     const needAdd = issueList

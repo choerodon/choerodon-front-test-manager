@@ -103,13 +103,13 @@ class TestExecuteTable extends Component {
 
   handleClickMenu(e) {
     if (e.key === 'edit') {
-      window.console.log('edit');
+      // window.console.log('edit');
     } else if (e.key === 'clone') {
-      window.console.log('clone');
+      // window.console.log('clone');
     } else if (e.key === 'delete') {
-      window.console.log('delete');
+      // window.console.log('delete');
     } else if (e.key === 'add') {
-      window.console.log('add');
+      // window.console.log('add');
     }
   }
 

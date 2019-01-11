@@ -109,7 +109,7 @@ class ReportStory extends Component {
     const {
       issueNum, summary, assignee, sprint, version, component, epic, content,
     } = filters;
-    console.log(barFilters);
+    // console.log(barFilters);
     const search = {
       content: barFilters[0] ? barFilters[0] : content ? content[0] : '',
       advancedSearchArgs: {
@@ -365,7 +365,8 @@ class ReportStory extends Component {
                     >
                       <Icon type="explicit2" style={{ marginLeft: 10, color: 'black' }} />
                     </Link>
-                  </div>);
+                  </div>
+);
               });             
               return openId[record.defectInfo.issueId] && openId[record.defectInfo.issueId]
                 .includes(`${issueId}-${i}`) ? (
