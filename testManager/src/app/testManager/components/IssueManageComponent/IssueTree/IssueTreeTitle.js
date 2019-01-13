@@ -62,7 +62,7 @@ class IssueTreeTitle extends Component {
             });
           },
           onCancel() {
-            console.log('Cancel');
+            // console.log('Cancel');
           },
         });   
         
@@ -260,6 +260,13 @@ class IssueTreeTitle extends Component {
               defaultValue={data.title}
               autoFocus
               onBlur={(e) => {
+                if (e.target.value === '') {
+                  Choerodon.prompt('文件夹名不能为空');  
+                  this.setState({
+                    editing: false,
+                  });               
+                  return;
+                }
                 if (e.target.value === data.title) {
                   this.setState({
                     editing: false,

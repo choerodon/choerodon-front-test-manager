@@ -109,7 +109,7 @@ class ReportStory extends Component {
     const {
       issueNum, summary, assignee, sprint, version, component, epic, content,
     } = filters;
-    console.log(barFilters);
+    // console.log(barFilters);
     const search = {
       content: barFilters[0] ? barFilters[0] : content ? content[0] : '',
       advancedSearchArgs: {
@@ -249,7 +249,7 @@ class ReportStory extends Component {
                 </div>
               )}
               >
-                <Link className="c7ntest-showId" to={issueLink(issueId, typeCode)} target="_blank">
+                <Link className="c7ntest-showId" to={issueLink(issueId, typeCode, issueName)} target="_blank">
                   {issueName}
                 </Link>
               </Tooltip>
@@ -365,7 +365,8 @@ class ReportStory extends Component {
                     >
                       <Icon type="explicit2" style={{ marginLeft: 10, color: 'black' }} />
                     </Link>
-                  </div>);
+                  </div>
+                );
               });             
               return openId[record.defectInfo.issueId] && openId[record.defectInfo.issueId]
                 .includes(`${issueId}-${i}`) ? (
@@ -430,23 +431,23 @@ class ReportStory extends Component {
                                 const { issueInfosDTO } = defect;
                                 return (
                                   <div className="c7ntest-issue-show-container">
-                                    <Tooltip title={issueInfosDTO && issueInfosDTO.issueNum}>
+                                    <Tooltip title={issueInfosDTO && issueInfosDTO.issueName}>
                                       <Link
                                         className="c7ntest-showId"
                                         to={issueLink(issueInfosDTO && issueInfosDTO.issueId,
-                                          issueInfosDTO && issueInfosDTO.typeCode)}
+                                          issueInfosDTO && issueInfosDTO.typeCode, issueInfosDTO && issueInfosDTO.issueName)}
                                         target="_blank"
                                       >
-                                        {issueInfosDTO && issueInfosDTO.issueNum}
+                                        {issueInfosDTO && issueInfosDTO.issueName}
                                       </Link>
                                     </Tooltip>
                                     <div className="c7ntest-issue-status-icon">
                                       <span style={{
-                                        color: issueInfosDTO && issueInfosDTO.issueColor,
-                                        borderColor: issueInfosDTO && issueInfosDTO.issueColor,
+                                        color: issueInfosDTO && STATUS[issueInfosDTO.statusMapDTO.type],
+                                        borderColor: issueInfosDTO && STATUS[issueInfosDTO.statusMapDTO.type],
                                       }}
                                       >
-                                        {issueInfosDTO && issueInfosDTO.issueStatusName}
+                                        {issueInfosDTO && issueInfosDTO.statusMapDTO.name}
                                       </span>
                                     </div>
                                     {defect.defectType === 'CASE_STEP'
@@ -488,7 +489,7 @@ class ReportStory extends Component {
                                   color: '#3F51B5',
                                 }}
                                 >
-                                  <Link className="c7ntest-showId" to={issueLink(issueInfosDTO && issueInfosDTO.issueId, issueInfosDTO && issueInfosDTO.typeCode)} target="_blank">
+                                  <Link className="c7ntest-showId" to={issueLink(issueInfosDTO && issueInfosDTO.issueId, issueInfosDTO && issueInfosDTO.typeCode, issueInfosDTO && issueInfosDTO.issueName)} target="_blank">
                                     {issueInfosDTO && issueInfosDTO.issueName}
                                   </Link>
                                   {i === defects.concat(subStepDefects).length - 1 ? null : '，'}

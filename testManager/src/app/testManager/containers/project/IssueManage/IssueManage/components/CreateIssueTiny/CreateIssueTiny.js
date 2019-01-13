@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import {
   Button, Input, Icon, Select, 
 } from 'choerodon-ui';
+import { observer } from 'mobx-react';
 import { FormattedMessage } from 'react-intl';
 import _ from 'lodash';
 import { getProjectId } from '../../../../../../common/utils';
@@ -10,6 +11,7 @@ import IssueStore from '../../../../../../store/project/IssueManage/IssueStore';
 import IssueTreeStore from '../../../../../../store/project/IssueManage/IssueTreeStore';
 
 const { Option } = Select;
+@observer
 class CreateIssueTiny extends Component {
   state={
     creating: false,
@@ -81,8 +83,7 @@ class CreateIssueTiny extends Component {
           {
             _.find(versions, { versionId: selectedVersion })
               ? (
-                <div style={{ display: 'flex', alignItems: 'center', marginTop: -8 }}>
-                  <span className="c7ntest-add-select-version-prefix">V</span>
+                <div style={{ display: 'flex', alignItems: 'center', marginTop: -8 }}>                 
                   <Select
                     disabled={IssueTreeStore.currentCycle.versionId}
                     onChange={(value) => {

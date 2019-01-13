@@ -96,6 +96,10 @@ class CreateIssue extends Component {
 
   getPrioritys() {
     getPrioritys().then((priorities) => {
+      const defaultPriority = _.find(priorities, { default: true });
+      if (defaultPriority) {
+        this.props.form.setFieldsValue({ priorityId: defaultPriority.id });
+      }
       this.setState({
         originPriorities: priorities,
       });

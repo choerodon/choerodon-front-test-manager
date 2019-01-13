@@ -9,7 +9,7 @@ import {
   TextEditToggle, RichTextShow, User, StatusTags,
 } from '../../CommonComponent';
 import { uploadFile, deleteAttachment } from '../../../api/FileApi';
-import { delta2Html } from '../../../common/utils';
+import { delta2Html, beforeTextUpload, returnBeforeTextUpload } from '../../../common/utils';
 import {
   addDefects, editCycle, removeDefect,
 } from '../../../api/ExecuteDetailApi';
@@ -128,7 +128,7 @@ class TestExecuteInfo extends Component {
     const cycleData = ExecuteDetailStore.getCycleData;
     const defectIds = ExecuteDetailStore.getDefectIds;
     const oldList = [...defectIds];
-    window.console.log('old', oldList, 'new', List);
+    // window.console.log('old', oldList, 'new', List);
     // 删除元素
     if (oldList.length > List.length) {
       const deleteEle = oldList.filter(old => !List.includes(old));
@@ -143,16 +143,19 @@ class TestExecuteInfo extends Component {
           });
         }
       }
-      window.console.log('delete');
+      // window.console.log('delete');
     } else {
-      window.console.log('add', List.filter(item => !oldList.includes(item)));
+      // window.console.log('add', List.filter(item => !oldList.includes(item)));
     }
   }
+ 
+  handleCommentSave=(value) => {
+    beforeTextUpload(value, {}, this.submit, 'comment');    
+  }
 
-  submit = (updateData) => {
-    // window.console.log('submit', originData);
+  submit = (updateData) => {    
     const cycleData = ExecuteDetailStore.getCycleData;
-    const newData = { ...cycleData, ...updateData };
+    const newData = { ...cycleData, ...updateData };    
     newData.assignedTo = newData.assignedTo || 0;
     // 删除一些不必要字段
     delete newData.defects;
@@ -356,10 +359,9 @@ class TestExecuteInfo extends Component {
                   {defects.length > 0 ? (
                     <div
                       style={{
-                        maxWidth: 300,
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        whiteSpace: 'nowrap',
+                        maxWidth: 300,                        
+                        whiteSpace: 'pre-wrap',
+                        wordBreak: 'break-word',
                       }}
                     >
                       {defects.map((defect, i) => defect.issueInfosDTO.issueName).join('，')}
@@ -425,7 +427,7 @@ class TestExecuteInfo extends Component {
                 initValue={comment}
                 visible={this.state.edit}
                 onCancel={() => this.setState({ edit: false })}
-                onOk={(value) => { this.submit({ comment: JSON.stringify(value) }); }}
+                onOk={this.handleCommentSave}
               />
             </div>
             <div style={{

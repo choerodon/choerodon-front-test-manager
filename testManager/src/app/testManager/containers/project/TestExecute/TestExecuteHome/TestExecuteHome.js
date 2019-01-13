@@ -26,10 +26,10 @@ import {
   TreeTitle, CreateCycle, EditCycle, ShowCycleData, CloneCycle,
 } from '../../../../components/TestExecuteComponent';
 import {
-  RichTextShow, SelectFocusLoad, RadioButton, StatusTags,
+  RichTextShow, SelectFocusLoad, RadioButton, StatusTags, SmartTooltip,
 } from '../../../../components/CommonComponent';
 import {
-  delta2Html, delta2Text, issueLink, getParams, executeDetailLink, 
+  delta2Html, delta2Text, issueLink, getParams, executeDetailLink,
 } from '../../../../common/utils';
 import RunWhenProjectChange from '../../../../common/RunWhenProjectChange';
 import TestExecuteStore from '../../../../store/project/TestExecute/TestExecuteStore';
@@ -64,7 +64,7 @@ function traverseTree(node) {
           return -1;
         }
       }).map((child, i) => ({ ...child, key: `${key}-${i}` }));
-    } 
+    }
     if (tmpNode.children && tmpNode.children.length > 0) {
       let i = tmpNode.children.length - 1;
       for (i = tmpNode.children.length - 1; i >= 0; i -= 1) {
@@ -136,7 +136,7 @@ class TestExecuteHome extends Component {
     }
   }
 
-  reloadExecutes = () => {    
+  reloadExecutes = () => {
     this.setState({
       rightLoading: true,
     });
@@ -257,7 +257,7 @@ class TestExecuteHome extends Component {
       ]);
 
       // window.console.log(dataList);
-    });    
+    });
     // 如果选中了项，就刷新table数据
     const currentCycle = TestExecuteStore.getCurrentCycle;
     const selectedKeys = TestExecuteStore.getSelectedKeys;
@@ -286,7 +286,7 @@ class TestExecuteHome extends Component {
   // 默认展开并加载右侧数据
   setExpandDefault = (defaultExpandKeyItem) => {
     if (defaultExpandKeyItem) {
-      TestExecuteStore.setExpandedKeys([defaultExpandKeyItem.key]);
+      TestExecuteStore.setExpandedKeys([this.getParentKey(defaultExpandKeyItem.key)]);
       TestExecuteStore.setSelectedKeys([defaultExpandKeyItem.key]);
       TestExecuteStore.setCurrentCycle(defaultExpandKeyItem);
       this.setState({
@@ -425,12 +425,15 @@ class TestExecuteHome extends Component {
     });
   }
 
-  handleExecuteTableChange = (pagination, filters, sorter) => {
-    console.log(filters);
+  handleExecuteTableChange = (pagination, filters, sorter, barFilters) => {
+    const Filters = { ...filters };
+    if (barFilters && barFilters.length > 0) {
+      Filters.summary = barFilters;
+    }
     TestExecuteStore.setExecutePagination(pagination);
     this.setState({
       rightLoading: true,
-      filters,
+      filters: Filters,
     }, () => {
       this.loadExecutes();
     });
@@ -471,7 +474,8 @@ class TestExecuteHome extends Component {
           )}
           icon={icon}
           data={item}
-        />);
+        />
+      );
     } else if (type === 'ADD_FOLDER') {
       return (
         <TreeNode
@@ -488,7 +492,8 @@ class TestExecuteHome extends Component {
           )}
           icon={icon}
           data={item}
-        />);
+        />
+      );
     } else if (children) {
       const title = index > -1 ? (
         <span>
@@ -526,7 +531,8 @@ class TestExecuteHome extends Component {
         icon={icon}
         {...item}
         data={item}
-      />);
+      />
+    );
   });
 
   quickPass(execute) {
@@ -540,13 +546,13 @@ class TestExecuteHome extends Component {
       delete cycleData.nextRank;
       cycleData.assignedTo = cycleData.assignedTo || 0;
       this.setState({
-        rightLoading: true,
+        loading: true,
       });
       editCycle(cycleData).then((Data) => {
-        this.reloadExecutes();
+        this.refresh();
       }).catch((error) => {
         this.setState({
-          rightLoading: false,
+          loading: false,
         });
         Choerodon.prompt('网络错误');
       });
@@ -595,7 +601,7 @@ class TestExecuteHome extends Component {
         const { issueInfosDTO } = record;
         return (
           issueInfosDTO && (
-            <Tooltip
+            <SmartTooltip
               title={(
                 <div>
                   <div>{issueInfosDTO.issueNum}</div>
@@ -608,12 +614,12 @@ class TestExecuteHome extends Component {
                 style={{
                   width: 100,
                 }}
-                to={issueLink(issueInfosDTO.issueId, issueInfosDTO.typeCode)}
+                to={issueLink(issueInfosDTO.issueId, issueInfosDTO.typeCode, issueInfosDTO.issueNum)}
                 target="_blank"
               >
                 {issueInfosDTO.issueNum}
               </Link>
-            </Tooltip>
+            </SmartTooltip>
           )
         );
       },
@@ -629,7 +635,7 @@ class TestExecuteHome extends Component {
         const { issueInfosDTO } = record;
         return (
           issueInfosDTO && (
-            <Tooltip
+            <SmartTooltip
               placement="topLeft"
               title={(
                 <div>{issueInfosDTO.summary}</div>
@@ -643,7 +649,7 @@ class TestExecuteHome extends Component {
               >
                 {issueInfosDTO.summary}
               </span>
-            </Tooltip>
+            </SmartTooltip>
           )
         );
       },
@@ -690,7 +696,7 @@ class TestExecuteHome extends Component {
       flex: 1,
       render(comment) {
         return (
-          <Tooltip title={<RichTextShow data={delta2Html(comment)} />}>
+          <SmartTooltip title={<RichTextShow data={delta2Html(comment)} />}>
             <div
               className="c7ntest-text-dot"
             // style={{
@@ -699,7 +705,7 @@ class TestExecuteHome extends Component {
             >
               {delta2Text(comment)}
             </div>
-          </Tooltip>
+          </SmartTooltip>
         );
       },
     },
@@ -709,7 +715,7 @@ class TestExecuteHome extends Component {
       key: 'defects',
       flex: 1,
       render: defects => (
-        <Tooltip
+        <SmartTooltip
           placement="topLeft"
           title={(
             <div>
@@ -720,7 +726,7 @@ class TestExecuteHome extends Component {
                       style={{
                         color: 'white',
                       }}
-                      to={issueLink(defect.issueInfosDTO.issueId, defect.issueInfosDTO.typeCode)}
+                      to={issueLink(defect.issueInfosDTO.issueId, defect.issueInfosDTO.typeCode, defect.issueInfosDTO.issueNum)}
                       target="_blank"
                     >
                       {defect.issueInfosDTO.issueNum}
@@ -733,7 +739,7 @@ class TestExecuteHome extends Component {
           )}
         >
           {defects.map((defect, i) => defect.issueInfosDTO && defect.issueInfosDTO.issueNum).join(',')}
-        </Tooltip>
+        </SmartTooltip>
       ),
     },
     {
@@ -782,7 +788,7 @@ class TestExecuteHome extends Component {
     }, {
       title: '',
       key: 'action',
-      flex: 1,
+      width: 90,
       render: (text, record) => (
         record.projectId !== 0
         && (
@@ -1031,6 +1037,15 @@ class TestExecuteHome extends Component {
                   <ShowCycleData data={currentCycle} />
                   <div>
                     <div style={{ display: 'flex', marginBottom: 20 }}>
+                      <div style={{
+                        fontWeight: 600,
+                        marginTop: 18,
+                        marginRight: 10,
+                        fontSize: '14px',
+                      }}
+                      >
+                        筛选:
+                      </div>
                       <SelectFocusLoad
                         label={<FormattedMessage id="cycle_executeBy" />}
                         request={getUsers}

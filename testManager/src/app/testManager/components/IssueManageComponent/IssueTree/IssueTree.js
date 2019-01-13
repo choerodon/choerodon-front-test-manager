@@ -44,6 +44,11 @@ class IssueTree extends Component {
   }
 
   addFolder = (item, e, type) => {
+    if (e.target.value === '') {
+      Choerodon.prompt('文件夹名不能为空');
+      IssueTreeStore.removeAdding();
+      return;
+    }
     IssueTreeStore.setLoading(true);
     addFolder({
       name: e.target.value,
@@ -128,7 +133,8 @@ class IssueTree extends Component {
           )}
           icon={icon}
           data={item}
-        />);
+        />
+      );
     } else if (children) {
       const title = index > -1 ? (
         <span>
@@ -163,7 +169,8 @@ class IssueTree extends Component {
         icon={icon}
         {...item}
         data={item}
-      />);
+      />
+    );
   });
 
   /**
@@ -184,7 +191,7 @@ class IssueTree extends Component {
         tempNode.children.forEach((node, i) => {
           const { key, title } = node;
           // 树拖动之后versionId会更新，在这里更新右侧创建用例处的版本
-          if (currentCycle.cycleId === node.cycleId) {
+          if (currentCycle.cycleId && currentCycle.cycleId === node.cycleId) {
             IssueTreeStore.setCurrentCycle(node);
           }
           dataList.push({ key, title });

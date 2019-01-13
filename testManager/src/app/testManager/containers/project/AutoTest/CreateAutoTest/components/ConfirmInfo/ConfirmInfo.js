@@ -169,7 +169,7 @@ class ConfirmInfo extends Component {
     const newYaml = CreateAutoTestStore.getNewConfigValue.yaml;
     const oldvalue = YAML.parse(oldYaml);
     const newvalue = YAML.parse(newYaml);
-    console.log(oldvalue);    
+    // console.log(oldvalue);    
     if (JSON.stringify(oldvalue) !== JSON.stringify(newvalue)) {
       isNotChange = false;
     }
@@ -260,7 +260,8 @@ class ConfirmInfo extends Component {
       content = (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
           <Spin />
-        </div>);
+        </div>
+);
     } else if (cronLoading === 'right') {
       content = (
         <div className="c7ntest-task-deatil-cron-container">

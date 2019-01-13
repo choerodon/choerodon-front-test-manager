@@ -236,7 +236,7 @@ class SelectAppAndVersion extends Component {
    * @param sorter 排序
    */
   tableChange = (pagination, filters, sorter, paras) => {
-    console.log(filters, sorter, paras);
+    // console.log(filters, sorter, paras);
     const { app } = CreateAutoTestStore;
 
     this.loadAppVersions(app.id, pagination, paras.length > 0 ? { version: paras } : filters);
@@ -318,7 +318,8 @@ class SelectAppAndVersion extends Component {
             </div>
           </Spin>
         </Content>
-      </SideBar>);
+      </SideBar>
+);
   }
 }
 

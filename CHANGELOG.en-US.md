@@ -152,3 +152,18 @@ All notable changes to choerodon-front-agile will be documented in this file.
 - Fix the bug of data  in `Test Plan` and `Test Execution` when switching project
 - Fix the bug of data in test step when switching the previous\next in the execution details
 - Fix problems of data display in dashboard
+
+## [0.13.0] - 2019-01-11
+
+### Modify
+
+#### 0.13.0 Significantly modify the feature
+
+- Optimize the calendar component in `Test Plan` module.
+- Optimize the defect correlation function in `Test Execution` .
+
+### Fix
+
+#### 0.13.0 Significant repair features
+
+- Fix the permission matching problem when delete a test case or folder in `Test Case` .

@@ -68,10 +68,14 @@ class TestPlanHome extends Component {
     }
   }
 
-  handleExecuteTableChange = (pagination, filters, sorter) => {
+  handleExecuteTableChange = (pagination, filters, sorter, barFilters) => {
     // window.console.log(pagination, filters, sorter);
+    const Filters = { ...filters };
+    if (barFilters && barFilters.length > 0) {
+      Filters.summary = barFilters;
+    }
     if (pagination.current) {
-      TestPlanStore.setFilters(filters);
+      TestPlanStore.setFilters(Filters);
       TestPlanStore.rightEnterLoading();
       TestPlanStore.setExecutePagination(pagination);
       TestPlanStore.reloadCycle();
@@ -124,7 +128,7 @@ class TestPlanHome extends Component {
           .then((res) => {
             const { executePagination } = TestPlanStore;
             const currentCycle = TestPlanStore.getCurrentCycle;
-            console.log(currentCycle);
+            // console.log(currentCycle);
             TestPlanStore.reloadCycle();
           }).catch((err) => {
             console.log(err);
@@ -175,7 +179,7 @@ class TestPlanHome extends Component {
                 style={{
                   width: 100,
                 }}
-                to={issueLink(issueInfosDTO.issueId, issueInfosDTO.typeCode)}
+                to={issueLink(issueInfosDTO.issueId, issueInfosDTO.typeCode, issueInfosDTO.issueNum)}
                 target="_blank"
               >
                 {issueInfosDTO.issueNum}
@@ -196,7 +200,7 @@ class TestPlanHome extends Component {
           issueInfosDTO && (
             <SmartTooltip>
               {issueInfosDTO.summary}
-            </SmartTooltip>            
+            </SmartTooltip>
           )
         );
       },
@@ -266,7 +270,7 @@ class TestPlanHome extends Component {
                       style={{
                         color: 'white',
                       }}
-                      to={issueLink(defect.issueInfosDTO.issueId, defect.issueInfosDTO.typeCode)}
+                      to={issueLink(defect.issueInfosDTO.issueId, defect.issueInfosDTO.typeCode, defect.issueInfosDTO.issueNum)}
                       target="_blank"
                     >
                       {defect.issueInfosDTO.issueNum}
@@ -336,21 +340,21 @@ class TestPlanHome extends Component {
               <Button
                 shape="circle"
                 funcType="flat"
-                icon="explicit2"              
+                icon="explicit2"
                 onClick={() => {
                   const { history } = this.props;
                   history.push(executeDetailShowLink(record.executeId));
                 }}
-              /> 
+              />
             </Tooltip>
             <Button
               shape="circle"
               funcType="flat"
-              icon="delete_forever"            
+              icon="delete_forever"
               onClick={() => {
                 this.deleteExecute(record);
               }}
-            />            
+            />
           </div>
         )
       ),
@@ -490,12 +494,12 @@ class TestPlanHome extends Component {
               )}
               <div className="c7ntest-TestPlan-tree">
                 {treeShow && (
-                // <ResizeAble>
-                <PlanTree
-                  ref={(tree) => { this.PlanTree = tree; }}
-                  onClose={() => { TestPlanStore.setTreeShow(false); }}
-                />
-                // </ResizeAble>
+                  // <ResizeAble>
+                  <PlanTree
+                    ref={(tree) => { this.PlanTree = tree; }}
+                    onClose={() => { TestPlanStore.setTreeShow(false); }}
+                  />
+                  // </ResizeAble>
                 )}
               </div>
               {/* <Spin spinning={loading}> */}
@@ -505,7 +509,16 @@ class TestPlanHome extends Component {
                   {calendarShowMode === 'single' && (
                     <div className="c7ntest-TestPlan-content-right-bottom">
                       <div style={{ display: 'flex', marginBottom: 20 }}>
-                        <SelectFocusLoad
+                        <div style={{
+                          fontWeight: 600,
+                          marginTop: 18,
+                          marginRight: 10,
+                          fontSize: '14px',
+                        }}
+                        >
+                          筛选:
+                        </div>
+                        <SelectFocusLoad                       
                           label={<FormattedMessage id="cycle_executeBy" />}
                           request={getUsers}
                           onChange={(value) => {

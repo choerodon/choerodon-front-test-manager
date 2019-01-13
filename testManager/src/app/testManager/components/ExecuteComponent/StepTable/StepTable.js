@@ -42,8 +42,8 @@ class StepTable extends Component {
     const options = stepStatusList.map((status) => {
       const { statusName, statusId, statusColor } = status;
       return (
-        <Option value={statusId} key={statusId}>
-          <StatusTags
+        <Option value={statusId} key={statusId} title={statusName}>
+          <StatusTags 
             color={statusColor}
             name={statusName}
           />          
@@ -58,8 +58,10 @@ class StepTable extends Component {
       render: testStep => (
         // <Tooltip title={testStep}>
         <div 
-          dangerouslySetInnerHTML={{ __html: testStep && testStep.replace(/\n/g, '<br />') }}
-        />
+          className="c7ntest-text-wrap"       
+        >
+          {testStep}
+        </div>
         // </Tooltip>
       ),
     }, {
@@ -69,8 +71,10 @@ class StepTable extends Component {
       render: testData => (
         // <Tooltip title={testData}>
         <div
-          dangerouslySetInnerHTML={{ __html: testData && testData.replace(/\n/g, '<br />') }}
-        /> 
+          className="c7ntest-text-wrap"         
+        > 
+          {testData}
+        </div>
         // </Tooltip>
       ),
     }, {
@@ -80,8 +84,10 @@ class StepTable extends Component {
       render: expectedResult => (
         // <Tooltip title={expectedResult}>
         <div
-          dangerouslySetInnerHTML={{ __html: expectedResult && expectedResult.replace(/\n/g, '<br />') }}
-        />
+          className="c7ntest-text-wrap"      
+        >
+          {expectedResult}
+        </div>
         // </Tooltip> 
       ),
     },
@@ -135,12 +141,13 @@ class StepTable extends Component {
                 
               </Text>
               <Edit>
-                <Select autoFocus style={{ width: 85 }}>
+                <Select autoFocus>
                   {options}
                 </Select>
               </Edit>
             </TextEditToggle>
-          </div>);
+          </div>
+        );
       },
     },
     {
@@ -159,9 +166,11 @@ class StepTable extends Component {
             <Text>
               {data => (
                 <div 
-                  style={{ minHeight: 20 }}
-                  dangerouslySetInnerHTML={{ __html: delta2Text(data) && delta2Text(data).replace(/\n/g, '<br />') }}
-                />
+                  className="c7ntest-text-wrap"
+                  style={{ minHeight: 20 }}                 
+                >
+                  {delta2Text(data)}
+                </div>
               )}              
             </Text>
             <Edit>
@@ -242,7 +251,8 @@ class StepTable extends Component {
                       }}
                       >
                         {defect.issueInfosDTO && defect.issueInfosDTO.issueName}
-                      </div>))}
+                      </div>
+                    ))}
                   </div>
                 // )}
                 // >
@@ -262,11 +272,11 @@ class StepTable extends Component {
           </Text>
           <Edit>
             <DefectSelect
-                defects={defects}
-                setNeedAdd={(needAdd) => { that.needAdd = needAdd; }}
-                executeStepId={record.executeStepId}
-                bugsToggleRef={this[`bugsToggle_${record.stepId}`]}
-              />
+              defects={defects}
+              setNeedAdd={(needAdd) => { that.needAdd = needAdd; }}
+              executeStepId={record.executeStepId}
+              bugsToggleRef={this[`bugsToggle_${record.stepId}`]}
+            />
           </Edit>
         </TextEditToggle>
       ),
@@ -281,7 +291,8 @@ class StepTable extends Component {
           pagination={detailPagination}
           onChange={ExecuteDetailStore.loadDetailList}
         />
-      </div>);
+      </div>
+    );
   }
 }
 
