@@ -79,7 +79,7 @@ class ReportStory extends Component {
             reportList: reportData.content,
             pagination: {
               current: Pagination.current,
-              pageSize: Pagination.pageSize,            
+              pageSize: Pagination.pageSize,
               total: reportData.totalElements,
             },
           });
@@ -324,7 +324,7 @@ class ReportStory extends Component {
           <div>
             {linkedTestIssues.map((testIssue, i) => {
               const { testCycleCaseES, issueId } = testIssue;
-              const totalExecute = testCycleCaseES.length;           
+              const totalExecute = testCycleCaseES.length;
               const executeStatus = {};
               const caseShow = testCycleCaseES.map((execute) => {
                 // 执行的颜色
@@ -332,7 +332,7 @@ class ReportStory extends Component {
                 const statusColor = _.find(statusList, { statusId: executionStatus })
                   ? _.find(statusList, { statusId: executionStatus }).statusColor : '';
                 const statusName = _.find(statusList, { statusId: executionStatus })
-                  && _.find(statusList, { statusId: executionStatus }).statusName;                
+                  && _.find(statusList, { statusId: executionStatus }).statusName;
                 if (!executeStatus[statusName]) {
                   executeStatus[statusName] = 1;
                 } else {
@@ -354,7 +354,8 @@ class ReportStory extends Component {
                       </Tooltip>
                     </div>
                     <div
-                      className="c7ntest-collapse-text-icon"
+                      title={statusName}
+                      className="c7ntest-collapse-text-icon c7ntest-text-dot"
                       style={{ color: statusColor, borderColor: statusColor }}
                     >
                       {statusName}
@@ -367,7 +368,7 @@ class ReportStory extends Component {
                     </Link>
                   </div>
                 );
-              });             
+              });
               return openId[record.defectInfo.issueId] && openId[record.defectInfo.issueId]
                 .includes(`${issueId}-${i}`) ? (
                   <div
@@ -521,7 +522,7 @@ class ReportStory extends Component {
             </span>
           </Button>
         </Header>
-        <Content        
+        <Content
           title={<FormattedMessage id="report_content_title" values={{ name: getProjectName() }} />}
           description={<FormattedMessage id="report_content_description" />}
           link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management/test-report/report/"

@@ -301,7 +301,8 @@ class ReportTest extends Component {
                 </Tooltip>
               </div>
               <div
-                className="c7ntest-collapse-text-icon"
+                title={statusName}
+                className="c7ntest-collapse-text-icon c7ntest-text-dot"
                 style={{ color: statusColor, borderColor: statusColor }}
               >
                 {statusName}
@@ -426,8 +427,7 @@ class ReportTest extends Component {
         const { testCycleCaseES, testCycleCaseStepES } = record;
         const { issueId } = record.issueInfosDTO;
         const caseShow = testCycleCaseES.concat(testCycleCaseStepES).map((execute, i) => {
-          const { issueLinkDTOS, issueInfosDTO: { issueName } } = execute;
-          debugger;
+          const { issueLinkDTOS, issueInfosDTO: { issueName } } = execute; 
           // window.console.log(issueLinkDTOS.length);
           const issueLinks = issueLinkDTOS && issueLinkDTOS.map((link) => {
             const { issueNum, summary, statusMapDTO } = link;
