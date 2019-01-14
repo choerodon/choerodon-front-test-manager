@@ -11,7 +11,8 @@ const pageDetail = {
   // 报表
   report_content_title: '项目"{name}"的报表',
   report_content_description: '两种可跟踪性报告可用：要求 -> 测试 -> 执行 -> 缺陷，缺陷 -> 执行 -> 测试 -> 要求。  点击您需要查看的报告类型可以查看具体的详细内容。',
-
+  report_progress_content_title: '执行进度',
+  report_progress_content_description: '您可以在此页面一目了然地了解测试执行进度。',
   cycle_description: '循环摘要使用树状图查看本项目中不同版本所对应的测试情况。',
 };
 
@@ -145,11 +146,14 @@ const zhCN = {
   report_switch: '切换报表',
   report_dropDown_demand: '要求到缺陷',
   report_dropDown_defect: '缺陷到要求',
+  report_dropDown_progress: '执行进度',
   report_dropDown_home: '主页',
   report_demandToDefect: '要求 -> 测试 -> 执行 -> 缺陷',
   report_defectToDemand: '缺陷 -> 执行 -> 测试 -> 要求',
+  report_defectToProgress: '执行进度',
   report_demandToDefect_description: '从类型字段搜索要求或缺陷，然后选择合适版本以缩小范围，最后单击“生成” 创建可跟踪性报告。',
   report_defectToDemand_description: '从类型字段搜索要求或缺陷，然后选择合适版本以缩小范围，最后单击“生成” 创建可跟踪性报告。',
+  report_defectToProgress_description: '统计测试用例执行情况，可以筛选得到各个迭代的不同测试循环中的用例执行状态记录。',
   report_chooseQuestion: '选择问题',
   report_defectCount: '缺陷数',
   report_total: '总共',

@@ -35,7 +35,7 @@ class PlanTreeTitle extends Component {
 
   handleItemClick = ({ item, key, keyPath }) => {
     const { data, refresh } = this.props;
-    const { type, folderId, cycleId } = data;
+    const { type, folderId, cycleId, title } = data;
     switch (key) {
       case 'add': {
         this.props.callback(data, 'ADD_FOLDER');
@@ -55,8 +55,8 @@ class PlanTreeTitle extends Component {
       }
       case 'delete': {
         confirm({
-          title: `确定要删除${type === 'cycle' ? '循环' : '阶段'}?`,
-          content: `${type === 'cycle' ? '循环' : '阶段'}阶段内所有执行将被删除`,
+          title: `确定要删除${type === 'cycle' ? '循环' : '阶段'}“${title}”？`,
+          content: `${type === 'cycle' ? '循环' : '阶段'}“${title}”内所有执行将被删除`,
           onOk() {
             deleteCycleOrFolder(cycleId).then((res) => {
               if (res.failed) {

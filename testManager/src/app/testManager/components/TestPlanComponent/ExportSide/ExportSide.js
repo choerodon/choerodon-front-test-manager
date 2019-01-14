@@ -30,6 +30,9 @@ class ExportSide extends Component {
   handleClose = () => {
     this.setState({
       visible: false,
+      versionId: null,
+      cycleId: null,
+      stageId: null,
     });
   }
 
@@ -43,6 +46,7 @@ class ExportSide extends Component {
     });
     getExportList().then((exportList) => {
       this.setState({
+        // exportList: _.orderBy(exportList, ['lastUpdateDate'], ['desc']),
         exportList,
         loading: false,
       });
