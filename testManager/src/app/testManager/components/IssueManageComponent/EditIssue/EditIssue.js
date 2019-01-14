@@ -12,6 +12,7 @@ import { TextEditToggle, User } from '../../CommonComponent';
 import {
   delta2Html, handleFileUpload, text2Delta, beforeTextUpload, formatDate, returnBeforeTextUpload, color2rgba,
 } from '../../../common/utils';
+import Timeago from "../../CommonComponent/DateTimeAgo/DateTimeAgo";
 import {
   loadDatalogs, loadLinkIssues, loadIssue, updateStatus, updateIssue, createIssueStep,
   createCommit, deleteIssue, loadStatus, cloneIssue, getIssueSteps, getIssueExecutes,
@@ -1532,7 +1533,8 @@ class EditIssueNarrow extends Component {
                             </span>
                           </div>
                           <div className="c7ntest-value-wrapper">
-                            {formatDate(creationDate)}
+                            {/* {formatDate(creationDate)} */}
+                            <Timeago date={creationDate} />
                           </div>
                         </div>
                         <div className="line-start mt-10">
@@ -1543,7 +1545,8 @@ class EditIssueNarrow extends Component {
                             </span>
                           </div>
                           <div className="c7ntest-value-wrapper">
-                            {formatDate(lastUpdateDate)}
+                            {/* {formatDate(lastUpdateDate)} */}
+                            <Timeago date={lastUpdateDate} />
                           </div>
                         </div>
                       </div>
