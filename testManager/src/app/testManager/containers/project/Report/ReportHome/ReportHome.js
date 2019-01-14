@@ -6,6 +6,7 @@ import { getProjectName, commonLink } from '../../../../common/utils';
 import { ReporterSwitcher } from '../../../../components/ReportComponent';
 import Pic from './pic.svg';
 import Pic2 from './pic2.svg';
+import Pic3 from './pic3.svg';
 
 const styles = {
   itemContainer: {
@@ -62,6 +63,15 @@ const ReportHome = () => (
             </div>
             <div style={styles.itemTextBold}><FormattedMessage id="report_defectToDemand" /></div>
             <div style={{ color: 'rgba(0,0,0,0.65)' }}><FormattedMessage id="report_defectToDemand_description" /></div>
+          </div>
+        </Link>
+        <Link to={commonLink('/report/progress')}>
+          <div style={styles.itemContainer}>
+            <div style={styles.imgContainer}>
+              <img src={Pic3} alt="" />
+            </div>
+            <div style={styles.itemTextBold}><FormattedMessage id="report_defectToProgress" /></div>
+            <div style={{ color: 'rgba(0,0,0,0.65)' }}><FormattedMessage id="report_defectToProgress_description" /></div>
           </div>
         </Link>
       </div>

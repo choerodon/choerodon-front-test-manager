@@ -427,7 +427,6 @@ class ReportTest extends Component {
         const { issueId } = record.issueInfosDTO;
         const caseShow = testCycleCaseES.concat(testCycleCaseStepES).map((execute, i) => {
           const { issueLinkDTOS, issueInfosDTO: { issueName } } = execute;
-          debugger;
           // window.console.log(issueLinkDTOS.length);
           const issueLinks = issueLinkDTOS && issueLinkDTOS.map((link) => {
             const { issueNum, summary, statusMapDTO } = link;

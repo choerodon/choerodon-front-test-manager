@@ -7,7 +7,8 @@ const pageDetail = {
   // 报表
   report_content_title: 'Reports of project "{name}"',
   report_content_description: 'There are two kinks of report：demand -> test -> execute -> defect，defect -> execute -> test -> demand 。  Click to choose whick kind of report you want to see。',
-
+  report_progress_content_title: 'execute progress',
+  report_progress_content_description: 'You can see the progress of the test at a glance on this page.',
   // 测试循环
   cycle_description: 'The cycle summary uses the tree view to view the test cases corresponding to different version in this project.',
 };
@@ -138,11 +139,14 @@ const enUS = {
   report_switch: 'Switch report',
   report_dropDown_demand: 'demand to defect',
   report_dropDown_defect: 'defect to demand',
+  report_dropDown_progress: 'execute progress',
   report_dropDown_home: 'home',
   report_demandToDefect: 'demand -> test -> execute -> defect', 
   report_defectToDemand: 'defect -> execute -> test -> demand',
+  report_defectToProgress: 'execute progress',
   report_demandToDefect_description: 'Search for requirements or defects from the Type field, then select the appropriate version to narrow the scope, and finally click Generate to create a traceability report.',
   report_defectToDemand_description: 'Search for requirements or defects from the Type field, then select the appropriate version to narrow the scope, and finally click Generate to create a traceability report.',
+  report_defectToProgress_description: 'Statistics test case execution, you can filter the use case execution status records in different test cycles of each iteration.',
   report_chooseQuestion: 'choose question',
   report_defectCount: 'Defect count',
   report_total: 'Total',
