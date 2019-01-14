@@ -53,7 +53,7 @@ class TestPlanStore extends BaseTreeProto {
   @observable executePagination = {
     current: 1,
     total: 0,
-    pageSize: 5,
+    pageSize: 30,
   }
 
   @observable loading = false;
@@ -85,7 +85,7 @@ class TestPlanStore extends BaseTreeProto {
     this.executePagination = {
       current: 1,
       total: 0,
-      pageSize: 5,
+      pageSize: 30,
     };
     this.loading = false;
     this.filters = {};

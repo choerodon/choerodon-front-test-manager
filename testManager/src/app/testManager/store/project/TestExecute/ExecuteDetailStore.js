@@ -40,7 +40,7 @@ class ExecuteDetailStore {
   @observable detailPagination = {
     current: 1,
     total: 0,
-    pageSize: 5,
+    pageSize: 30,
   };
 
   @observable historyList = [];
@@ -289,7 +289,7 @@ class ExecuteDetailStore {
     this.detailPagination = {
       current: 1,
       total: 0,
-      pageSize: 5,
+      pageSize: 30,
     };
   }
 
