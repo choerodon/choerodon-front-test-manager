@@ -94,7 +94,7 @@ class EditStage extends Component {
   render() {
     const { visible } = this.props;
     const {       
-      title, description, fromDate, toDate, versionName, folderName,
+      title, description, fromDate, toDate, folderVersionName, folderName,
     } = TestPlanStore.CurrentEditStage;
     const { getFieldDecorator } = this.props.form;
     const { loading, selectLoading } = this.state;
@@ -146,7 +146,7 @@ class EditStage extends Component {
                   label={null}
                 >
                   {getFieldDecorator('folderId', {
-                    initialValue: `${versionName}-${folderName}`,
+                    initialValue: `${folderVersionName}-${folderName}`,
                     rules: [{
                       required: true, message: '请选择文件夹!',
                     }],
