@@ -3,6 +3,7 @@ import { Icon, Popconfirm, Popover } from 'choerodon-ui';
 import _ from 'lodash';
 import UserHead from '../../UserHead';
 import { formatDate } from '../../../../common/utils';
+import Timeago from '../../../../components/CommonComponent/DateTimeAgo/DateTimeAgo';
 import './DataLog.scss';
 
 const PROP = {
@@ -459,8 +460,9 @@ class DataLog extends Component {
 
                   </div>
                   <div style={{ marginTop: 5, fontSize: '12px' }}>
-                    {'-'}
-                    {formatDate(datalog.lastUpdateDate)}
+                    {/* {'-'}
+                    {formatDate(datalog.lastUpdateDate)} */}
+                    <Timeago date={datalog.lastUpdateDate} />
                   </div>
                 </div>
               </div>

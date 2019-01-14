@@ -158,19 +158,19 @@ class SummaryHome extends Component {
     if (_.find(source, { creationDay: time })) {
       const { creationDay, issueCount } = _.find(source, { creationDay: time });
       return {
-        time: moment(creationDay).format('D/MMMM'),
+        time: moment(creationDay).format('MM/DD'),
         value: issueCount,
       };
     } else {
       return {
-        time: moment().subtract(range - i - 1, 'days').format('D/MMMM'),
+        time: moment().subtract(range - i - 1, 'days').format('MM/DD'),
         value: 0,
       };
     }
   });
 
   listTransform = list => list.map((item, i) => ({
-    time: moment().subtract(list.length - i - 1, 'days').format('D/MMMM'),
+    time: moment().subtract(list.length - i - 1, 'days').format('MM/DD'),
     value: item,
   }))
 

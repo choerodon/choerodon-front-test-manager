@@ -7,6 +7,7 @@ import { IssueDescription } from '../../CommonComponent';
 import {
   delta2Html, text2Delta, beforeTextUpload, formatDate, 
 } from '../../../../common/utils';
+import Timeago from '../../../../components/CommonComponent/DateTimeAgo/DateTimeAgo';
 import { deleteCommit, updateCommit } from '../../../../api/IssueManageApi';
 import './Comment.scss';
 
@@ -153,8 +154,9 @@ class Comment extends Component {
           </div>
         </div>
         <div className="line-start" style={{ color: 'rgba(0, 0, 0, 0.65)', marginTop: 2 }}>
-          {'-'}
-          {formatDate(commit.lastUpdateDate)}
+          {/* {'-'} */}
+          {/* {formatDate(commit.lastUpdateDate)} */}
+          <Timeago date={commit.lastUpdateDate} />
         </div>
         {
           this.state.expand && (

@@ -53,7 +53,7 @@ class ShowCycleData extends Component {
 ：
                 </div>
                 <div className="c7ntest-right-card-item-text">
-                  {fromDate && moment(fromDate).format('D/MMMM/YY')}
+                  {fromDate && moment(fromDate).format('YYYY/MM/DD')}
                 </div>
               </div>
               <div className="c7ntest-right-card-item">
@@ -117,7 +117,7 @@ class ShowCycleData extends Component {
 ：
                 </div>
                 <div className="c7ntest-right-card-item-text">
-                  {toDate && moment(toDate).format('D/MMMM/YY')} 
+                  {toDate && moment(toDate).format('YYYY/MM/DD')} 
                 </div>
               </div>
               <div className="c7ntest-right-card-item">
@@ -142,7 +142,7 @@ class ShowCycleData extends Component {
 ：
                 </div>
                 <div className="c7ntest-right-card-item-text">
-                  {fromDate && moment(fromDate).format('D/MMMM/YY')}
+                  {fromDate && moment(fromDate).format('YYYY/MM/DD')}
                 </div>
               </div>
               <div className="c7ntest-right-card-item">
@@ -162,7 +162,7 @@ class ShowCycleData extends Component {
 ：
                 </div>
                 <div className="c7ntest-right-card-item-text">
-                  {toDate && moment(toDate).format('D/MMMM/YY')} 
+                  {toDate && moment(toDate).format('YYYY/MM/DD')} 
                 </div>
               </div>      
               <div className="c7ntest-right-card-item">
