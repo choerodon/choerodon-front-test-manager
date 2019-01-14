@@ -25,7 +25,7 @@ class CustomStatusHome extends Component {
       description: null,
       statusColor: null,
     },  
-  }
+  };
 
   componentDidMount() {
     this.getList(this.state.statusType);
@@ -44,11 +44,11 @@ class CustomStatusHome extends Component {
       });
       Choerodon.prompt('网络异常');
     });
-  }
+  };
 
   refresh = () => {
     this.getList(this.state.statusType);
-  }
+  };
 
 
   handleTabChange = (key) => {
@@ -80,7 +80,7 @@ class CustomStatusHome extends Component {
         });
       },         
     });
-  }
+  };
 
   render() {
     const {

@@ -4,7 +4,7 @@ import {
 } from 'choerodon-ui';
 import { Content } from 'choerodon-front-boot';
 import { FormattedMessage } from 'react-intl';
-import { SketchPicker } from 'react-color';
+import { CompactPicker } from 'react-color';
 import './EditStatusSide.scss';
 import { editStatus } from '../../../api/TestStatusApi';
 import { getProjectName } from '../../../common/utils';
@@ -116,7 +116,7 @@ class EditStatusSide extends Component {
                       }
                       : { display: 'none' }}
                   >
-                    <SketchPicker
+                    <CompactPicker
                       color={statusColor}
                       onChangeComplete={(color) => {
                         const {
