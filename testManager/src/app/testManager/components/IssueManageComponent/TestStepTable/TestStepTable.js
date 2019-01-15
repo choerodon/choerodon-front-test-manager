@@ -268,7 +268,7 @@ class TestStepTable extends Component {
           return (
             <div>
               <Tooltip title={<FormattedMessage id="execute_copy" />}>
-                <Button disabled={disabled} shape="circle" funcType="flat" icon="library_books" style={{ margin: '0 5px', color: 'black' }} onClick={() => that.cloneStep(record.id, index)} />
+                <Button disabled={disabled} shape="circle" funcType="flat" icon="library_books" style={{ margin: '0 5px', color: 'black' }} onClick={() => that.cloneStep(record.stepId, index)} />
               </Tooltip>
               <Button disabled={disabled} shape="circle" funcType="flat" icon="delete_forever" style={{ margin: '0 5px', color: 'black' }} onClick={() => that.handleDeleteTestStep(record.stepId)} />
             </div>
