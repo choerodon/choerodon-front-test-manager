@@ -466,7 +466,7 @@ class TestPlanHome extends Component {
           style={{ padding: 0, display: 'flex' }}
         >
           <Spin spinning={loading}>
-            <div className="c7ntest-TestPlan-content" style={{ webkitLineClamp: 2 }}>
+            <div className="c7ntest-TestPlan-content" style={{ WebkitLineClamp: 2 }}>
               <EditCycle visible={TestPlanStore.EditCycleVisible} />
               <EditStage visible={TestPlanStore.EditStageVisible} />
               <CreateCycle

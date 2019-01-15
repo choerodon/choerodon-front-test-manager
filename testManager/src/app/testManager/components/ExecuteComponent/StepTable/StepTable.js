@@ -36,29 +36,39 @@ class StepTable extends Component {
     const { disabled } = this.props;
     const stepStatusList = ExecuteDetailStore.getStepStatusList;
     const detailList = ExecuteDetailStore.getDetailList;
-    const detailPagination = ExecuteDetailStore.getDetailPagination;
 
 
     const options = stepStatusList.map((status) => {
       const { statusName, statusId, statusColor } = status;
       return (
         <Option value={statusId} key={statusId} title={statusName}>
-          <StatusTags 
+          <StatusTags
             color={statusColor}
             name={statusName}
-          />          
+          />
         </Option>
       );
     });
     const columns = [{
+      title: '#',
+      dataIndex: 'order',
+      key: 'order',
+      render: (order, record, index) => (
+        <div
+          className="c7ntest-text-wrap"
+        >
+          {index + 1}
+        </div>
+      ),
+    }, {
       title: <FormattedMessage id="execute_testStep" />,
       dataIndex: 'testStep',
       key: 'testStep',
       width: '10%',
       render: testStep => (
         // <Tooltip title={testStep}>
-        <div 
-          className="c7ntest-text-wrap"       
+        <div
+          className="c7ntest-text-wrap"
         >
           {testStep}
         </div>
@@ -71,8 +81,8 @@ class StepTable extends Component {
       render: testData => (
         // <Tooltip title={testData}>
         <div
-          className="c7ntest-text-wrap"         
-        > 
+          className="c7ntest-text-wrap"
+        >
           {testData}
         </div>
         // </Tooltip>
@@ -84,7 +94,7 @@ class StepTable extends Component {
       render: expectedResult => (
         // <Tooltip title={expectedResult}>
         <div
-          className="c7ntest-text-wrap"      
+          className="c7ntest-text-wrap"
         >
           {expectedResult}
         </div>
@@ -107,7 +117,7 @@ class StepTable extends Component {
                 <a className="c7ntest-text-dot" style={{ margin: '2px 5px', fontSize: '13px' }} href={attachment.url} target="_blank" rel="noopener noreferrer">{attachment.attachmentName}</a>
               </div>
             ))
-                }
+            }
           </div>
         );
       },
@@ -138,7 +148,7 @@ class StepTable extends Component {
                     />
                   );
                 }}
-                
+
               </Text>
               <Edit>
                 <Select autoFocus>
@@ -156,7 +166,7 @@ class StepTable extends Component {
       key: 'comment',
       render(comment, record) {
         return (
-        // <Tooltip title={<RichTextShow data={comment} />}>
+          // <Tooltip title={<RichTextShow data={comment} />}>
           <TextEditToggle
             disabled={disabled}
             formKey="comment"
@@ -165,19 +175,19 @@ class StepTable extends Component {
           >
             <Text>
               {data => (
-                <div 
+                <div
                   className="c7ntest-text-wrap"
-                  style={{ minHeight: 20 }}                 
+                  style={{ minHeight: 20 }}
                 >
                   {delta2Text(data)}
                 </div>
-              )}              
+              )}
             </Text>
             <Edit>
               <TextArea autosize autoFocus />
             </Edit>
           </TextEditToggle>
-        // </Tooltip>
+          // </Tooltip>
         );
       },
     }, {
@@ -227,7 +237,7 @@ class StepTable extends Component {
         <TextEditToggle
           saveRef={(bugsToggle) => { this[`bugsToggle_${record.stepId}`] = bugsToggle; }}
           disabled={disabled}
-          onSubmit={() => {   
+          onSubmit={() => {
             if (that.needAdd.length > 0) {
               ExecuteDetailStore.enterloading();
               addDefects(that.needAdd).then((res) => {
@@ -237,38 +247,38 @@ class StepTable extends Component {
               ExecuteDetailStore.loadDetailList();
             }
           }}
-            // originData={{ defects }}
+          // originData={{ defects }}
           onCancel={ExecuteDetailStore.loadDetailList}
         >
           <Text>
             {
-                defects.length > 0 ? (
+              defects.length > 0 ? (
                 // <Tooltip title={(
-                  <div>
-                    {defects.map((defect, i) => (
-                      <div style={{
-                        fontSize: '13px',                 
-                      }}
-                      >
-                        {defect.issueInfosDTO && defect.issueInfosDTO.issueName}
-                      </div>
-                    ))}
-                  </div>
+                <div>
+                  {defects.map((defect, i) => (
+                    <div style={{
+                      fontSize: '13px',
+                    }}
+                    >
+                      {defect.issueInfosDTO && defect.issueInfosDTO.issueName}
+                    </div>
+                  ))}
+                </div>
                 // )}
                 // >
                 // <div>
                 // {defects.map((defect, i) => defect.issueInfosDTO && defect.issueInfosDTO.issueName).join(',')}
                 // </div> */}
                 // </Tooltip> 
-                ) : (
-                  <div
-                    style={{
-                      width: 100,
-                      height: 20,
-                    }}
-                  />
-                )
-              }
+              ) : (
+                <div
+                  style={{
+                    width: 100,
+                    height: 20,
+                  }}
+                />
+              )
+            }
           </Text>
           <Edit>
             <DefectSelect
@@ -288,8 +298,7 @@ class StepTable extends Component {
           filterBar={false}
           dataSource={detailList}
           columns={columns}
-          pagination={detailPagination}
-          onChange={ExecuteDetailStore.loadDetailList}
+          pagination={false}
         />
       </div>
     );

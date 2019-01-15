@@ -12,7 +12,7 @@ class TestExecuteStore extends BaseTreeProto {
   @observable executePagination = {
     current: 1,
     total: 0,
-    pageSize: 5,
+    pageSize: 50,
   };
 
   @observable treeAssignedTo = 0;
@@ -23,7 +23,7 @@ class TestExecuteStore extends BaseTreeProto {
     this.executePagination = {
       current: 1,
       total: 0,
-      pageSize: 5,
+      pageSize: 50,
     };
     this.treeData = [
       {

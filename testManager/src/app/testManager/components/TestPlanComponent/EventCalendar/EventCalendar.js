@@ -256,6 +256,7 @@ class EventCalendar extends Component {
           <div className="c7ntest-flex-space" />
           <div className="c7ntest-EventCalendar-header-skip">
             <RangePicker
+              // placement="bottomRight"
               onChange={this.handleRangeChange}
               defaultValue={[start, end]}
               format={dateFormat}

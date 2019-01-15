@@ -5,6 +5,7 @@ import {
 import { stores, axios } from 'choerodon-front-boot';
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
+import { cloneStep, updateStep, deleteStep } from '../../../api/IssueManageApi';
 import { DragTable } from '../../CommonComponent';
 import { TextEditToggle, UploadInTable } from '../../CommonComponent';
 import './TestStepTable.scss';
@@ -47,43 +48,42 @@ class TestStepTable extends Component {
       nextRank,
     };
     const projectId = AppState.currentMenuType.id;
-    axios.put(`/test/v1/projects/${projectId}/case/step/change`, testCaseStepDTO)
-      .then((res) => {
-        // save success
-        const a = this.state.data.slice();
-        a[targetIndex] = res;
-        this.setState({
-          data: a,
-        });
+    updateStep(testCaseStepDTO).then((res) => {
+      // save success
+      const Data = [...this.state.data];
+      Data[targetIndex] = res;
+      this.setState({
+        data: Data,
       });
+    });
   }
 
 
   editStep = (record) => {
     const { expectedResult, testStep } = record;
     if (expectedResult !== '' && testStep !== '') {
-      // window.console.log(record);
-      const projectId = AppState.currentMenuType.id;
-      // this.setState({ createLoading: true });
-      axios.put(`/test/v1/projects/${projectId}/case/step/change`, record)
-        .then((res) => {
-          // this.setState({ createLoading: false });
-          this.props.onOk();
-        });
+      const projectId = AppState.currentMenuType.id;     
+      updateStep(record).then((res) => {    
+        this.props.onOk();
+      });
     } else {
       Choerodon.prompt('测试步骤和预期结果为必输项');
     }
   };
 
-  cloneStep = (stepId) => {
+  cloneStep = (stepId, index) => {
+    const { data } = this.state;
+    const lastRank = data[index].rank;
+    const nextRank = data[index + 1] ? data[index + 1].rank : null;
     this.props.enterLoad();
-    axios.post(`/test/v1/projects/${AppState.currentMenuType.id}/case/step/clone`, {
+    cloneStep({
+      lastRank,
+      nextRank,
       stepId,
       issueId: this.props.issueId,
+    }).then((res) => {
+      this.props.onOk();
     })
-      .then((res) => {
-        this.props.onOk();
-      })
       .catch((error) => {
         this.props.leaveLoad();
       });
@@ -100,7 +100,7 @@ class TestStepTable extends Component {
           }
   </div>,
       onOk() {
-        return axios.delete(`/test/v1/projects/${AppState.currentMenuType.id}/case/step`, { data: { stepId } })
+        return deleteStep({ data: { stepId } })
           .then((res) => {
             that.props.onOk();
           });
@@ -264,11 +264,11 @@ class TestStepTable extends Component {
         dataIndex: 'action',
         key: 'action',
         flex: 2,
-        render(attachments, record) {
+        render(attachments, record, index) {
           return (
             <div>
               <Tooltip title={<FormattedMessage id="execute_copy" />}>
-                <Button disabled={disabled} shape="circle" funcType="flat" icon="library_books" style={{ margin: '0 5px', color: 'black' }} onClick={() => that.cloneStep(record.stepId)} />
+                <Button disabled={disabled} shape="circle" funcType="flat" icon="library_books" style={{ margin: '0 5px', color: 'black' }} onClick={() => that.cloneStep(record.id, index)} />
               </Tooltip>
               <Button disabled={disabled} shape="circle" funcType="flat" icon="delete_forever" style={{ margin: '0 5px', color: 'black' }} onClick={() => that.handleDeleteTestStep(record.stepId)} />
             </div>
@@ -277,7 +277,7 @@ class TestStepTable extends Component {
       },
     ];
     return (
-      <div className="c7ntest-TestStepTable">        
+      <div className="c7ntest-TestStepTable">
         <DragTable
           disabled={disabled}
           pagination={false}
@@ -286,7 +286,7 @@ class TestStepTable extends Component {
           columns={mode === 'narrow' ? columns : columns.concat(wideColumns)}
           onDragEnd={this.onDragEnd}
           dragKey="stepId"
-        />     
+        />
       </div>
     );
   }

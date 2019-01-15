@@ -9,7 +9,7 @@ import {
 } from '../../../api/ExecuteDetailApi';
 import { getStatusList } from '../../../api/TestStatusApi';
 import { getUsers } from '../../../api/IamApi';
-import { getIssueList, getIssuesForDefects, createBug } from '../../../api/agileApi';
+import { getIssueList, getIssuesForDefects } from '../../../api/agileApi';
 
 @store('ExecuteDetailStore')
 class ExecuteDetailStore {
@@ -36,12 +36,6 @@ class ExecuteDetailStore {
   @observable stepStatusList = [];
 
   @observable detailList = [];
-
-  @observable detailPagination = {
-    current: 1,
-    total: 0,
-    pageSize: 5,
-  };
 
   @observable historyList = [];
 
@@ -92,11 +86,10 @@ class ExecuteDetailStore {
     this.enterloading();
     this.setId(id);
     const historyPagination = this.historyPagination;
-    const detailPagination = this.detailPagination;
     Promise.all([
       getCycle(id),
       getStatusList('CYCLE_CASE'),
-      getCycleDetails({ page: detailPagination.current - 1, size: detailPagination.pageSize }, id),
+      getCycleDetails(id),
       getStatusList('CASE_STEP'),
       getCycleHistiorys({
         page: historyPagination.current - 1,
@@ -104,15 +97,10 @@ class ExecuteDetailStore {
       }, id),
       getIssuesForDefects(),
     ])
-      .then(([cycleData, statusList, detailData, stepStatusList, historyData, issueData]) => {
+      .then(([cycleData, statusList, detailList, stepStatusList, historyData, issueData]) => {
         this.setCycleData(cycleData);
         this.setStatusList(statusList);
-        this.setDetailList(detailData.content);
-        this.setDetailPagination({
-          current: detailPagination.current,
-          pageSize: detailPagination.pageSize,
-          total: detailData.totalElements,
-        });
+        this.setDetailList(detailList);
         this.setStepStatusList(stepStatusList);
         this.setHistoryPagination({
           current: historyPagination.current,
@@ -145,22 +133,14 @@ class ExecuteDetailStore {
     });
   }
 
-  loadDetailList = (pagination = this.detailPagination) => {
-    const id = this.id;
-    this.enterloading();
-    getCycleDetails({
-      page: pagination.current - 1,
-      size: pagination.pageSize,
-    }, id).then((detail) => {
-      this.setDetailPagination({
-        current: pagination.current,
-        pageSize: pagination.pageSize,
-        total: detail.totalElements,
-      });
-      this.setDetailList(detail.content);
-      this.unloading();
-    });
-  }
+  // loadDetailList = () => {
+  //   const id = this.id;
+  //   this.enterloading();
+  //   getCycleDetails(id).then((detail) => {
+  //     this.setDetailList(detail);
+  //     this.unloading();
+  //   });
+  // }
 
   loadIssueList = (value) => {
     this.selectEnterLoading();
@@ -189,10 +169,6 @@ class ExecuteDetailStore {
 
   @computed get getHistoryPagination() {
     return toJS(this.historyPagination);
-  }
-
-  @computed get getDetailPagination() {
-    return toJS(this.detailPagination);
   }
 
   @computed get getCycleData() {
@@ -280,13 +256,8 @@ class ExecuteDetailStore {
     this.userList = userList;
   }
 
-  @action clearPagination=() => {
+  @action clearPagination = () => {
     this.historyPagination = {
-      current: 1,
-      total: 0,
-      pageSize: 5,
-    };
-    this.detailPagination = {
       current: 1,
       total: 0,
       pageSize: 5,
@@ -295,10 +266,6 @@ class ExecuteDetailStore {
 
   @action setHistoryPagination = (historyPagination) => {
     this.historyPagination = historyPagination;
-  }
-
-  @action setDetailPagination = (detailPagination) => {
-    this.detailPagination = detailPagination;
   }
 
   @action setHistoryList = (historyList) => {
@@ -324,13 +291,6 @@ class ExecuteDetailStore {
   @action unloading = () => {
     this.loading = false;
   }
-
-  // handleHistoryTableChange = (pagination, filters, sorter) => {
-  //   this.LoadHistoryList(pagination);
-  // }
-  // handleDetailTableChange = (pagination, filters, sorter) => {
-  //   this.LoadDetailList(pagination);
-  // }
 }
 
 const executeDetailStore = new ExecuteDetailStore();
