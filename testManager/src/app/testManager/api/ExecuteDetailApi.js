@@ -37,10 +37,8 @@ export function editCycleSide(data) {
 export function editCycleStep(data) {
   return request.put(`/test/v1/projects/${getProjectId()}/cycle/case/step`, data);
 }
-export function getCycleDetails(pagination, cycleCaseId) {
-  const { size, page } = pagination;
-
-  return request.get(`test/v1/projects/${getProjectId()}/cycle/case/step/query/${cycleCaseId}?size=${size}&page=${page}`);
+export function getCycleDetails(cycleCaseId) {
+  return request.get(`test/v1/projects/${getProjectId()}/cycle/case/step/query/${cycleCaseId}`);
 }
 export function getCycleHistiorys(pagination, cycleCaseId) {
   const { size, page } = pagination;
@@ -49,9 +47,9 @@ export function getCycleHistiorys(pagination, cycleCaseId) {
 }
 
 /**
- * 增加缺陷弹框增加缺陷
+ * 在执行详情中为执行或步骤增加缺陷
  * 
  */
-export function addBug(defectType, id, data) {
+export function addBugForExecuteOrStep(defectType, id, data) {
   return request.post(`test/v1/projects/${getProjectId()}/defect/createIssueAndDefect/${defectType}/${id}?applyType=agile`, data);
 }

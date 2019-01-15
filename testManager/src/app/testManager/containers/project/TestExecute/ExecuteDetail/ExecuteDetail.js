@@ -56,6 +56,7 @@ class ExecuteDetail extends Component {
   render() {
     const { disabled } = this.props;  
     const loading = ExecuteDetailStore.loading;
+    const detailList = ExecuteDetailStore.getDetailList;
     const historyList = ExecuteDetailStore.getHistoryList;
     const historyPagination = ExecuteDetailStore.getHistoryPagination;
     const cycleData = ExecuteDetailStore.getCycleData;
@@ -212,6 +213,7 @@ class ExecuteDetail extends Component {
               <div style={{ ...styles.cardTitle, marginBottom: 10 }}>
                 {/* <Icon type="expand_more" /> */}
                 <span style={styles.cardTitleText}><FormattedMessage id="execute_testDetail" /></span>
+                <span style={{ marginLeft: 5 }}>{`（${detailList.length}）`}</span>
               </div>
               <StepTable disabled={disabled} />
 
@@ -223,7 +225,7 @@ class ExecuteDetail extends Component {
             >
               <div style={{ ...styles.cardTitle, marginBottom: 10 }}>
                 {/* <Icon type="expand_more" /> */}
-                <span style={styles.cardTitleText}><FormattedMessage id="execute_executeHistory" /></span>
+                <span style={styles.cardTitleText}><FormattedMessage id="execute_executeHistory" /></span>                
               </div>
               <div style={{ padding: '0 20px' }}>
                 <Table

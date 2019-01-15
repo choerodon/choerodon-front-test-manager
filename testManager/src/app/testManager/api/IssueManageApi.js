@@ -518,3 +518,33 @@ export function getImportHistory() {
 export function cancelImport(historyId) {
   return request.put(`/test/v1/projects/${getProjectId()}/test/fileload/history/cancel?historyId=${historyId}`);
 }
+/**
+ * 克隆一个步骤
+ *
+ * @export
+ * @param {*} data
+ * @returns
+ */
+export function cloneStep(data) {
+  return request.post(`/test/v1/projects/${getProjectId()}/case/step/clone`, data);
+}
+/**
+ * 更新一个步骤
+ *
+ * @export
+ * @param {*} data
+ * @returns
+ */
+export function updateStep(data) {
+  return request.put(`/test/v1/projects/${getProjectId()}/case/step/change`, data);
+}
+/**
+ * 删除一个步骤
+ *
+ * @export
+ * @param {*} data
+ * @returns
+ */
+export function deleteStep(data) {
+  return request.delete(`/test/v1/projects/${getProjectId()}/case/step`, data);
+}
