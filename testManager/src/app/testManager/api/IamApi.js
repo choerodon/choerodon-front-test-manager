@@ -29,7 +29,7 @@ export function getUser(userId) {
  */
 export function getUsers(param) {
   if (param) {
-    return request.get(`/iam/v1/projects/${getProjectId()}/users?param=${param}`);
+    return request.get(`/iam/v1/projects/${getProjectId()}/users?size=40&param=${param}`);
   }
-  return request.get(`/iam/v1/projects/${getProjectId()}/users`);
+  return request.get(`/iam/v1/projects/${getProjectId()}/users?size=40`);
 }

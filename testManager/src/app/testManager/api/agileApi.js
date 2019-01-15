@@ -143,16 +143,6 @@ export function getSprintsUnClosed() {
   return request.get(`/agile/v1/projects/${getProjectId()}/sprint/unclosed`);
 }
 
-/**
- *获取当前项目的用户列表
- *
- * @export
- * @returns
- */
-
-export function getUsers() {
-  return request.get(`/iam/v1/projects/${getProjectId()}/users?size=40`);
-}
 
 export function createIssue(issueObj, projectId = getProjectId()) {
   const issue = {

@@ -100,7 +100,7 @@ class ExecuteDetailStore {
       .then(([cycleData, statusList, detailList, stepStatusList, historyData, issueData]) => {
         this.setCycleData(cycleData);
         this.setStatusList(statusList);
-        this.setDetailList(detailList);
+        this.setDetailList(detailList.content);
         this.setStepStatusList(stepStatusList);
         this.setHistoryPagination({
           current: historyPagination.current,

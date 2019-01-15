@@ -47,9 +47,9 @@ export function getCycleHistiorys(pagination, cycleCaseId) {
 }
 
 /**
- * 增加缺陷弹框增加缺陷
+ * 在执行详情中为执行或步骤增加缺陷
  * 
  */
-export function addBug(defectType, id, data) {
+export function addBugForExecuteOrStep(defectType, id, data) {
   return request.post(`test/v1/projects/${getProjectId()}/defect/createIssueAndDefect/${defectType}/${id}?applyType=agile`, data);
 }
