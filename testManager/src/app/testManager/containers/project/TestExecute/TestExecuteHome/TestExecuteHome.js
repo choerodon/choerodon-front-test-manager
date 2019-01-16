@@ -164,22 +164,22 @@ class TestExecuteHome extends Component {
       page: targetPage,
       size: executePagination.pageSize,
     }, cycleId,
-    {
-      ...filters,
-      lastUpdatedBy: [Number(this.lastUpdatedBy)],
-      assignedTo: [treeAssignedTo || Number(this.assignedTo)],
-    }, type).then((res) => {
-      TestExecuteStore.setExecutePagination({
-        current: res.number + 1,
-        pageSize: res.size,
-        total: res.totalElements,
+      {
+        ...filters,
+        lastUpdatedBy: [Number(this.lastUpdatedBy)],
+        assignedTo: [treeAssignedTo || Number(this.assignedTo)],
+      }, type).then((res) => {
+        TestExecuteStore.setExecutePagination({
+          current: res.number + 1,
+          pageSize: res.size,
+          total: res.totalElements,
+        });
+        this.setState({
+          rightLoading: false,
+          testList: res.content,
+        });
+        // window.console.log(cycle);
       });
-      this.setState({
-        rightLoading: false,
-        testList: res.content,
-      });
-      // window.console.log(cycle);
-    });
   }
 
   generateList = (data) => {
@@ -213,9 +213,9 @@ class TestExecuteHome extends Component {
       width: 560,
       title: Choerodon.getMessage('确认删除吗?', 'Confirm delete'),
       content:
-  <div style={{ marginBottom: 32 }}>
-    {Choerodon.getMessage('当你点击删除后，该条数据将被永久删除，不可恢复!', 'When you click delete, after which the data will be permanently deleted and irreversible!')}
-  </div>,
+        <div style={{ marginBottom: 32 }}>
+          {Choerodon.getMessage('当你点击删除后，该条数据将被永久删除，不可恢复!', 'When you click delete, after which the data will be permanently deleted and irreversible!')}
+        </div>,
       onOk: () => {
         // that.setState({
         //   rightLoading: true,
@@ -624,7 +624,7 @@ class TestExecuteHome extends Component {
         );
       },
     }, {
-      title: '用例名',
+      title: <span>用例名</span>,
       dataIndex: 'summary',
       key: 'summary',
       width: '20%',
@@ -654,7 +654,7 @@ class TestExecuteHome extends Component {
         );
       },
     }, {
-      title: '用例优先级',
+      title: <span>用例优先级</span>,
       dataIndex: 'priorityId',
       key: 'priorityId',
       filters: prioritys.map(priority => ({ text: priority.name, value: priority.id.toString() })),
@@ -666,7 +666,7 @@ class TestExecuteHome extends Component {
         );
       },
     }, {
-      title: '状态',
+      title: <span>状态</span>,
       dataIndex: 'executionStatus',
       key: 'executionStatus',
       filters: statusList.map(status => ({ text: status.statusName, value: status.statusId.toString() })),
@@ -689,7 +689,7 @@ class TestExecuteHome extends Component {
         );
       },
     }, {
-      title: '执行描述',
+      title: <span>执行描述</span>,
       dataIndex: 'comment',
       key: 'comment',
       filters: [],
@@ -1080,17 +1080,17 @@ class TestExecuteHome extends Component {
                   </div>
                 </div>
               ) : (
-                <div style={{
-                  display: 'flex', alignItems: 'center', height: 250, margin: '88px auto', padding: '50px 75px', border: '1px dashed rgba(0,0,0,0.54)',
-                }}
-                >
-                  <img src={noRight} alt="" />
-                  <div style={{ marginLeft: 40 }}>
-                    <div style={{ fontSize: '14px', color: 'rgba(0,0,0,0.65)' }}>根据当前选定的测试循环没有查询到循环信息</div>
-                    <div style={{ fontSize: '20px', marginTop: 10 }}>尝试在您的树状图中选择测试循环</div>
+                  <div style={{
+                    display: 'flex', alignItems: 'center', height: 250, margin: '88px auto', padding: '50px 75px', border: '1px dashed rgba(0,0,0,0.54)',
+                  }}
+                  >
+                    <img src={noRight} alt="" />
+                    <div style={{ marginLeft: 40 }}>
+                      <div style={{ fontSize: '14px', color: 'rgba(0,0,0,0.65)' }}>根据当前选定的测试循环没有查询到循环信息</div>
+                      <div style={{ fontSize: '20px', marginTop: 10 }}>尝试在您的树状图中选择测试循环</div>
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
             </div>
           </Spin>
         </Content>
