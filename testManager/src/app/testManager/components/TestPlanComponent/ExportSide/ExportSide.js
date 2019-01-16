@@ -1,46 +1,50 @@
 import React, { Component } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { Content, stores, WSHandler } from 'choerodon-front-boot';
+import { observer } from 'mobx-react';
 import {
-  Modal, Progress, Table, Button, Icon, Tooltip,
+  Modal, Progress, Table, Button, Icon, Tooltip, Select,
 } from 'choerodon-ui';
 import _ from 'lodash';
 import moment from 'moment';
+import { getProjectVersion } from '../../../api/agileApi';
 import { SelectVersion, SelectFolder, SimpleSelect } from '../../CommonComponent';
 import {
   getCyclesByVersionId, getExportList, getFoldersByCycleId, exportCycle,
 } from '../../../api/cycleApi';
 import { humanizeDuration } from '../../../common/utils';
 import './ExportSide.scss';
+import TestPlanStore from '../../../store/project/TestPlan/TestPlanStore'
+
 
 const { Sidebar } = Modal;
+const {Option} = Select;
 const { AppState } = stores;
 
+@observer
 class ExportSide extends Component {
   state = {
     loading: true,
     visible: false,
-    versionId: null,
-    cycleId: null,
-    stageId: null,
     exportList: [],
+    versionList: [],
+    cycleList: [],
+    stageList: [],
   }
 
 
   handleClose = () => {
     this.setState({
       visible: false,
-      versionId: null,
-      cycleId: null,
-      stageId: null,
     });
+    TestPlanStore.setExportVersionId(null);
+    TestPlanStore.setExportCycleId(null);
+    TestPlanStore.setExportStageId(null);
   }
 
   open = () => {
+    const {exportCycleId, exportVersionId} = TestPlanStore;
     this.setState({
-      // versionId: null,
-      // cycleId: null,
-      // stageId: null,
       visible: true,
       loading: true,
     });
@@ -64,7 +68,31 @@ class ExportSide extends Component {
         loading: false,
       });
     });
+
+    getProjectVersion().then(versionList => {
+      this.setState({
+          versionList,
+      })
+    });
+
+    if (exportVersionId) {
+      getCyclesByVersionId(exportVersionId).then(cycleList => {
+        this.setState({
+          cycleList,
+        })
+      })
+    }
+
+    if(exportCycleId) {
+      getFoldersByCycleId(exportCycleId).then(stageList => {
+        this.setState({
+          stageList,
+        })
+      })
+    }
   }
+
+    
 
   handleOk = () => {
     this.setState({
@@ -72,32 +100,26 @@ class ExportSide extends Component {
     });
   }
 
-  handleVersionChange = (versionId) => {
-    this.setState({
-      versionId,
-      stageId: null,
-    });
+  handleVersionChange = (exportVersionId) => {
+    TestPlanStore.setExportVersionId(exportVersionId);
+    TestPlanStore.setExportStageId(null);
   }
 
-  handleCycleChange = (cycleId) => {
-    this.setState({
-      cycleId,
-    });
+  handleCycleChange = (exportCycleId) => {
+   TestPlanStore.setExportCycleId(exportCycleId);
   }
 
-  handleStageChange = (stageId) => {
-    this.setState({
-      stageId,
-    });
+  handleStageChange = (exportStageId) => {
+    TestPlanStore.setExportStageId(exportStageId);
   }
 
   createExport = () => {
-    const { versionId, cycleId, stageId } = this.state;
-    if (!cycleId) {
+    const { exportVersionId, exportCycleId, exportStageId } = TestPlanStore;
+    if (!exportCycleId) {
       Choerodon.prompt('测试循环为必选项');
       return;
     }
-    exportCycle(stageId || cycleId);
+    exportCycle(exportStageId || exportCycleId);
   }
 
   handleDownload = (fileUrl) => {
@@ -139,8 +161,10 @@ class ExportSide extends Component {
 
   render() {
     const {
-      visible, versionId, cycleId, stageId, exportList, loading,
+      visible, exportList, loading, versionList, cycleList, stageList,
     } = this.state;
+    const {exportVersionId, exportCycleId, exportStageId,} = TestPlanStore;
+    console.log(exportVersionId, exportCycleId, exportStageId);
     const columns = [{
       title: '导出来源',
       dataIndex: 'sourceType',
@@ -222,26 +246,59 @@ class ExportSide extends Component {
         >
           <div className="c7ntest-ExportSide">
             <div style={{ marginBottom: 24 }}>
-              <SelectVersion style={{ width: 100 }} value={versionId} onChange={this.handleVersionChange} />
-              <SimpleSelect
-                style={{ width: 200, margin: '0 20px' }}
-                disabled={!versionId}
-                label="测试循环"
-                value={cycleId}
-                allowClear
-                request={() => getCyclesByVersionId(versionId)}
+               <Select 
+                style={{ width: 100 }} 
+                value={versionList && versionList.length>0 && exportVersionId} 
+                label="版本" 
+                onChange={this.handleVersionChange}
+               >
+               {
+                 versionList && versionList.length > 0 && (
+                   versionList.map(item => {
+                     return (
+                       <Option key={item.versionId} value={item.versionId}>{item.name}</Option>
+                     )
+                   })
+                 )
+               }
+               </Select>
+               <Select 
+                style={{ width: 200, margin: '0 20px' }} 
+                label="测试循环" 
+                disabled={!exportVersionId} 
+                value={cycleList && cycleList.length>0 && exportCycleId} 
                 onChange={this.handleCycleChange}
-                option={{ value: 'cycleId', text: 'cycleName' }}
-              />
-              <SimpleSelect
-                disabled={!cycleId}
-                label="测试阶段"
-                value={stageId}
                 allowClear
-                request={() => getFoldersByCycleId(cycleId)}
+                >
+               {
+                 cycleList && cycleList.length > 0 && (
+                   cycleList.map(item => {
+                     return (
+                       <Option key={item.cycleId} value={item.cycleId}>{item.cycleName}</Option>
+                     )
+                   })
+                 )
+               }
+               </Select>
+               <Select 
+                style={{ minWidth: 150 }} 
+                label="测试阶段" 
+                disabled={!exportCycleId} 
+                value={stageList && stageList.length>0 && exportStageId} 
                 onChange={this.handleStageChange}
-                option={{ value: 'cycleId', text: 'cycleName' }}
-              />
+                allowClear
+                >
+               {
+                 stageList && stageList.length > 0 && (
+                   stageList.map(item => {
+                     return (
+                       <Option key={item.cycleId} value={item.cycleId}>{item.cycleName}</Option>
+                     )
+                   })
+                 )
+               }
+               </Select>
+
               <Button type="primary" icon="playlist_add" onClick={this.createExport}>新建导出</Button>
             </div>
             <WSHandler

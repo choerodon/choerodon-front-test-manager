@@ -7,6 +7,7 @@ import { FormattedMessage } from 'react-intl';
 import { getProjectVersion } from '../../../api/agileApi';
 import { addCycle } from '../../../api/cycleApi';
 import { getProjectName } from '../../../common/utils';
+import TestPlanStore from "../../../store/project/TestPlan/TestPlanStore";
 
 const { Option } = Select;
 const FormItem = Form.Item;
@@ -23,6 +24,10 @@ class CreateCycle extends Component {
     if (this.props.visible === false && nextProps.visible === true) {
       resetFields();
     }
+  }
+
+  componentDidMount() {
+    this.getProjectVersion();
   }
 
   onOk = () => {
@@ -94,6 +99,7 @@ class CreateCycle extends Component {
         {version.name}
       </Option>
     ));
+    console.log(versions && versions.length>0 ? TestPlanStore.exportVersionId : null);
     return (
       <div>
         <Sidebar
@@ -117,10 +123,11 @@ class CreateCycle extends Component {
                     rules: [{
                       required: true, message: '请选择版本!',
                     }],
+                    initialValue: versions && versions.length>0 && TestPlanStore.exportVersionId,
                   })(
                     <Select
-                      loading={selectLoading}
-                      onFocus={this.getProjectVersion}
+                      // loading={selectLoading}
+                      // onFocus={this.getProjectVersion}
                       style={{ width: 500, margin: '0 0 10px 0' }}
                       label={<FormattedMessage id="version" />}
                     >

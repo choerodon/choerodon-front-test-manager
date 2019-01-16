@@ -38,6 +38,8 @@ class ReportProgress extends Component {
       loadData = () => {
         this.setState({
           loading: true,
+          currentVersion: null,
+          currentCycle: null,
         })
         getProjectVersion().then((res) => {
           this.setState({
@@ -249,6 +251,7 @@ class ReportProgress extends Component {
                         className="c7ntest-cycle-filter-item"
                         getPopupContainer={triggerNode => triggerNode.parentNode}
                         value={currentCycle}
+                        allowClear
                         label={<FormattedMessage id="report_progress_cycleLabel" />}
                         onChange={this.handleCycleChange}
                     >
