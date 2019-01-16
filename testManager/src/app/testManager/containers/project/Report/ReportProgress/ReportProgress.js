@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {
     Page, Header, Content, stores,
   } from 'choerodon-front-boot';
-import {Menu, Tooltip, Button, Icon, Dropdown, Select,} from 'choerodon-ui';
+import {Menu, Tooltip, Button, Icon, Dropdown, Select, Spin} from 'choerodon-ui';
 import {FormattedMessage} from 'react-intl';
 import TestProgress from '../../../../dashboard/TestProgress';
 import ReactEcharts from 'echarts-for-react';
@@ -12,6 +12,7 @@ import { loadProgressByVersion } from '../../../../api/DashBoardApi';
 import { getCyclesByVersionId } from '../../../../api/cycleApi';
 import { ReporterSwitcher } from '../../../../components/ReportComponent';
 import {getProjectName} from '../../../../common/utils';
+import EmptyCase from "../../../../assets/emptyCase.svg";
 
 import './ReportProgress.scss';
 
@@ -21,6 +22,7 @@ class ReportProgress extends Component {
     constructor(props) {
         super(props);
         this.state = { 
+            loading: true,
             currentVersion: null,
             currentCycle: null,
             versionList: [],
@@ -34,7 +36,13 @@ class ReportProgress extends Component {
       }
     
       loadData = () => {
+        this.setState({
+          loading: true,
+        })
         getProjectVersion().then((res) => {
+          this.setState({
+            loading: false,
+          })
           if (res && res.length > 0) {
             const latestVersionId = Math.max.apply(null, res.map(item => item.versionId));
             // console.log(latestVersionId);
@@ -46,16 +54,30 @@ class ReportProgress extends Component {
               versionList: res.reverse(),
             });
           }
+        }).catch(e => {
+          console.log(e);
+          this.setState({
+            loading: false,
+          })
         });
       }
 
       loadProgressByVersion = (versionId, cycleId) => {
         // console.log('load', versionId);
+        this.setState({
+          loading: true,
+        })
         loadProgressByVersion(versionId, cycleId).then((res) => {
           this.setState({
             currentVersion: versionId,
             versionProgress: res,
+            loading: false,
           });
+        }).catch(e => {
+          console.log(e);
+          this.setState({
+            loading: false,
+          })
         });
       }
 
@@ -133,51 +155,101 @@ class ReportProgress extends Component {
         return option;
       }
 
+    renderContent = () => {
+      const {loading, currentVersion, currentCycle, versionProgress } = this.state;
+      if(loading) {
+        return (
+          <div className="c7ntest-spinning-wrapper">
+            <Spin spinning={loading} />
+          </div>
+        )
+      }
+      if(versionProgress && versionProgress.length>0) {
+        return (
+          <div className="c7ntest-chartAndTable">
+            <ReactEcharts
+              style={{ width:'60%', height: 350 }}
+              option={this.getOption()}
+            />
+            <div className="c7ntest-tableContainer">
+              <p className="c7ntest-table-title"><FormattedMessage id="report_progress_table_title" /></p>
+              <table>
+                <tr>
+                <td style={{ width: '158px', paddingBottom: 15}}><FormattedMessage id="report_progress_table_statusTd" /></td>
+                <td style={{ width: '62px', paddingBottom: 15}}><FormattedMessage id="report_progress_table_countTd" /></td>
+                </tr>
+                {
+                  versionProgress.map((item, index) => (
+                  <tr>
+                      <td style={{display: 'flex', paddingBottom: 8}}>
+                        <div className="c7ntest-table-icon" style={{ background: item.color }} />
+                        <Tooltip title={item.name}>
+                            <div className="c7ntest-table-name">{item.name}</div>
+                        </Tooltip>
+                      </td>
+                      <td style={{ width: '62px', paddingRight: 15, paddingBottom: 8 }}>{item.value}</td>
+                  </tr>
+                  ))
+                }
+                </table>
+            </div>
+          </div>
+        )
+      } else {
+        return (
+          <div className="c7ntest-emptyCase">
+            <img src={EmptyCase} title="没有测试用例" alt="没有测试用例"/>
+            <div className="c7ntest-emptyCase-detail">{`${currentVersion? '当前版本' : ''}${currentCycle ? '的当前循环' : ''}${currentVersion ? '下' : ''}没有测试用例`}</div>
+          </div>
+        )
+    } 
+    }
+
     render(){
         const urlParams = AppState.currentMenuType;
         const { organizationId } = AppState.currentMenuType;
-        const {versionList, currentVersion, cycleList, currentCycle, versionProgress } = this.state;
+        const {loading, versionList, currentVersion, cycleList, currentCycle, versionProgress } = this.state;
         return (
             <Page className="c7ntest-report-progress">
-            <Header
-              title={<FormattedMessage id="report_defectToProgress" />}
-              backPath={`/testManager/report?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}&organizationId=${organizationId}`}
-            >
-              <ReporterSwitcher />
-              <Button onClick={this.getInfo} style={{ marginLeft: 30 }}>
-                <Icon type="autorenew icon" />
-                <span>
-                  <FormattedMessage id="refresh" />
-                </span>
-              </Button>
-            </Header>
-            <Content        
-              title={<FormattedMessage id="report_progress_content_title" values={{ name: getProjectName() }} />}
-              description={<FormattedMessage id="report_progress_content_description" />}
-              link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management/test-report/report/"
-            >
-             <div className="c7ntest-switch">
-                <div className="c7ntest-switchVersion">
-                    <Select
-                        className="c7ntest-version-filter-item"
-                        getPopupContainer={triggerNode => triggerNode.parentNode}
-                        value={currentVersion}
-                        label="版本"
-                        onChange={this.handleVersionChange}
-                    >
-                        {
-                            versionList.map(item => (
-                                <Option value={item.versionId} key={item.versionId}>{item.name}</Option>
-                            ))
-                        }
-                    </Select>
-                </div>
-                <div className="c7ntest-switchCycle">
+              <Header
+                title={<FormattedMessage id="report_defectToProgress" />}
+                backPath={`/testManager/report?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}&organizationId=${organizationId}`}
+              >
+                <ReporterSwitcher />
+                <Button onClick={this.loadData} style={{ marginLeft: 30 }}>
+                  <Icon type="autorenew icon" />
+                  <span>
+                    <FormattedMessage id="refresh" />
+                  </span>
+                </Button>
+              </Header>
+              <Content        
+                title={<FormattedMessage id="report_progress_content_title" values={{ name: getProjectName() }} />}
+                description={<FormattedMessage id="report_progress_content_description" />}
+                link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management/test-report/report/"
+              >
+              <div className="c7ntest-switch">
+                  <div className="c7ntest-switchVersion">
+                      <Select
+                          className="c7ntest-version-filter-item"
+                          getPopupContainer={triggerNode => triggerNode.parentNode}
+                          value={currentVersion}
+                          label={<FormattedMessage id="report_progress_versionLabel" />}
+                          onChange={this.handleVersionChange}
+                      >
+                          {
+                              versionList.map(item => (
+                                  <Option value={item.versionId} key={item.versionId}>{item.name}</Option>
+                              ))
+                          }
+                      </Select>
+                  </div>
+                  <div className="c7ntest-switchCycle">
                     <Select
                         className="c7ntest-cycle-filter-item"
                         getPopupContainer={triggerNode => triggerNode.parentNode}
                         value={currentCycle}
-                        label="测试循环"
+                        label={<FormattedMessage id="report_progress_cycleLabel" />}
                         onChange={this.handleCycleChange}
                     >
                         {
@@ -187,40 +259,8 @@ class ReportProgress extends Component {
                         }
                     </Select>
                 </div>
-            </div>
-            <div className="c7ntest-chartAndTable">
-                <ReactEcharts
-                    style={{ width:'60%', height: 350 }}
-                    option={this.getOption()}
-                />
-               {
-                   versionProgress && versionProgress.length>0 && (
-                    <div className="c7ntest-tableContainer">
-                        <p className="c7ntest-table-title">数据统计</p>
-                        <table>
-                            <tr>
-                            <td style={{ width: '158px' }}>测试执行状态</td>
-                            <td style={{ width: '62px' }}>执行数量</td>
-                            </tr>
-                            {
-                            versionProgress.map((item, index) => (
-                            <tr>
-                                <td style={{display: 'flex'}}>
-                                <div className="c7ntest-table-icon" style={{ background: item.color }} />
-                                <Tooltip title={item.name}>
-                                    <div className="c7ntest-table-name">{item.name}</div>
-                                </Tooltip>
-                                </td>
-                                <td style={{ width: '62px', paddingRight: 15 }}>{item.value}</td>
-                            </tr>
-                            ))
-                        }
-                        </table>
-                    </div>
-                   )
-               }
-            </div>
-           
+              </div>
+                {this.renderContent()}
             </Content>
             </Page>
            )
