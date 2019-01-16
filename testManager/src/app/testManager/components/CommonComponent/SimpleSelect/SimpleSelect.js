@@ -9,6 +9,15 @@ class SimpleSelect extends Component {
     List: [],
   }
 
+  componentDidMount(){
+    const { request } = this.props;
+    request().then((Data) => {
+      this.setState({
+        List: Data,
+        loading: false,
+      });
+    });
+  }
 
   render() {
     const { request, option } = this.props;
@@ -24,17 +33,17 @@ class SimpleSelect extends Component {
         label="文件夹"
         loading={loading}
         style={{ width: 200 }}
-        onFocus={() => {
-          this.setState({
-            loading: true,
-          });
-          request().then((Data) => {
-            this.setState({
-              List: Data,
-              loading: false,
-            });
-          });
-        }}
+        // onFocus={() => {
+        //   this.setState({
+        //     loading: true,
+        //   });
+        //   request().then((Data) => {
+        //     this.setState({
+        //       List: Data,
+        //       loading: false,
+        //     });
+        //   });
+        // }}
         {...this.props}
       >
         {Options}

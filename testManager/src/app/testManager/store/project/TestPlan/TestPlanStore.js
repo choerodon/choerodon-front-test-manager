@@ -76,6 +76,10 @@ class TestPlanStore extends BaseTreeProto {
 
   @observable lastUpdatedBy = null;
 
+  @observable exportVersionId = null;
+  @observable exportCycleId = null;
+  @observable exportStageId = null;
+
   @action clearStore = () => {
     this.treeShow = true;
     this.statusList = [];
@@ -109,6 +113,9 @@ class TestPlanStore extends BaseTreeProto {
     this.addingParent = null;  
     this.currentCycle = {};  
     this.preCycle = {};
+    this.exportVersionId = null;
+    this.exportCycleId = null;
+    this.exportStageId = null;
   }
 
   getTree = () => new Promise((resolve) => {
@@ -180,13 +187,27 @@ class TestPlanStore extends BaseTreeProto {
     // if (data.versionId) {
     if (selectedKeys) {
       this.setSelectedKeys(selectedKeys);
+      
     }
 
+    if (data.key) {
+      if(data.key.split('-').length === 3) {
+        this.setExportVersionId(data.versionId);
+      }
+      if(data.key.split('-').length === 4) {
+        this.setExportVersionId(data.versionId);
+        this.setExportCycleId(data.cycleId);
+      }
+      if(data.key.split('-').length === 5) {
+        this.setExportVersionId(data.versionId);
+        this.setExportCycleId(data.parentCycleId);
+        this.setExportStageId(data.cycleId);
+      }
+    }
 
     this.rightEnterLoading();
-
-
     this.setCurrentCycle(data);
+
     // window.console.log(data);
     if (data.type === 'folder') {
       getExecutesByCycleId({
@@ -386,6 +407,18 @@ class TestPlanStore extends BaseTreeProto {
 
   @computed get getTimes() {
     return toJS(this.times);
+  }
+
+  @action setExportVersionId(data) {
+    this.exportVersionId = data;
+  }
+
+  @action setExportCycleId(data) {
+    this.exportCycleId =data;
+  }
+
+  @action setExportStageId(data) {
+    this.exportStageId = data;
   }
 }
 

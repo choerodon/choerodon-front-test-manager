@@ -18,7 +18,7 @@ export function addResizeListener(ele, handler) {
   const object = ele._ResizeObject_;
   // 已经存在object元素
   if (object) {
-    _addHandler(object, handler);
+    _addHandler(object, handler, ele);
   } else {
     // 不存在时，创建object元素，并添加监听
     _createObjectElement(ele, handler);

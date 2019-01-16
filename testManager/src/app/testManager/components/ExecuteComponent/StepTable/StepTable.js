@@ -50,7 +50,7 @@ class StepTable extends Component {
       );
     });
     const columns = [{
-      title: '#',
+      title: '步骤',
       dataIndex: 'order',
       key: 'order',
       render: (order, record, index) => (
