@@ -1,5 +1,4 @@
 /* eslint-disable no-param-reassign, no-use-before-define, no-underscore-dangle */
-
 /**
  * 为普通元素添加resize监听
  * 思路：普通元素没有resize事件，所以为目标添加一个object元素，并设置为和目标元素相同位置和大小
@@ -15,49 +14,66 @@ export function addResizeListener(ele, handler) {
   if (getComputedStyle(ele, null).position === 'static') {
     ele.style.position = 'relative';
   }
-  const object = ele._ResizeObject_;
-  // 已经存在object元素
-  if (object) {
-    _addHandler(object, handler, ele);
-  } else {
-    // 不存在时，创建object元素，并添加监听
-    _createObjectElement(ele, handler);
+  let handlers = ele.__resizeListeners__;  
+  if (!handlers) {
+    handlers = [];    
+    ele.__resizeListeners__ = handlers;
+    _createObjectElement(ele);
   }
+  // 增加一个handler
+  handlers.push(handler);
 }
 /**
  * 移除监听
  * @param {*} ele 
  * @param {*} handler 
  */
-export function removeResizeListener(ele, handler) {
-  // 存在object元素，说明加过监听
+export function removeResizeListener(ele, handler) { 
+  const handlers = ele.__resizeListeners__;
   const object = ele._ResizeObject_;
-  if (object) {
-    _removeHandler(object, handler);
+  // 当所有handler都移除之后
+  if (handlers && handlers.length === 1) {
+    if (object) {
+      _removeHandler(object);
+    }
   }
+  handlers.splice(handlers.indexOf(handler), 1);
 }
 /**
  * 创建object并添加监听，！！！objectElement的属性设置和ele的append顺序很重要，否则会不兼容ie
  * @param {*} ele 
  * @param {*} handler 
  */
-function _createObjectElement(ele, handler) {
+function _createObjectElement(ele) {
   const objectElement = document.createElement('object');
   objectElement.setAttribute('style', 'display: block; position: absolute; top: 0; left: 0; height: 100%; width: 100%; overflow: hidden;opacity: 0; pointer-events: none; z-index: -1;');
   // 必须先定义onload事件，再append,来兼容浏览器
-  objectElement.onload = () => _addHandler(objectElement, handler, ele);
+  objectElement.onload = () => _addHandler(objectElement, ele);
   objectElement.type = 'text/html';
   ele.appendChild(objectElement);
   objectElement.data = 'about:blank';
   // 将object元素保存在目标元素上
-  }
-  
-  function _addHandler(objectElement, handler, ele) {
+}
+
+function _addHandler(objectElement, ele) {
   ele._ResizeObject_ = objectElement; // 这里只能在onload后保存，否则firefox中会取不到contentDocument
-  objectElement.contentDocument.defaultView.addEventListener('resize', handler);
+  objectElement.contentDocument.defaultView.__resizeTrigger__ = ele;
+  objectElement.contentDocument.defaultView.addEventListener('resize', _handleResize);
+}
+
+function _removeHandler(objectElement) {
+  objectElement.contentDocument.defaultView.removeEventListener('resize', _handleResize);
+}
+/**
+ * 这里对事件进行执行，执行所有handlers
+ *
+ * @param {*} e
+ */
+function _handleResize(e) {
+  const ele = e.target || e.srcElement;
+  const trigger = ele.__resizeTrigger__;
+  if (trigger) {
+    const handlers = trigger.__resizeListeners__;
+    handlers.forEach(handler => handler());
   }
-
-
-function _removeHandler(objectElement, handler) {
-  objectElement.contentDocument.defaultView.removeEventListener('resize', handler);
 }
