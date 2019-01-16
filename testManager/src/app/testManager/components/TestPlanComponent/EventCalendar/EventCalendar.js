@@ -69,7 +69,7 @@ class EventCalendar extends Component {
     // 计算单个日期所占宽度
     this.calculateItemWidth();
     // 监听
-    addResizeListener(this.header, this.setRightWidth);
+    addResizeListener(this.header, this.setRightWidth);    
     addResizeListener(this.header, this.calculateItemWidth);
   }
 
@@ -91,7 +91,7 @@ class EventCalendar extends Component {
   }
 
   // 设置事件区域宽度
-  setRightWidth = () => {
+  setRightWidth = () => {      
     const scrollBarWidth = this.scroller.offsetWidth - this.scroller.clientWidth;
     this.fakeScrollBar.style.width = `${scrollBarWidth}px`;
     const rightWidth = Math.ceil(this.HeaderItems.offsetWidth);
@@ -106,7 +106,7 @@ class EventCalendar extends Component {
    *计算单个日期所占宽度
    *
    */
-  calculateItemWidth = () => {
+  calculateItemWidth = () => {  
     const { baseDate, endDate, singleWidth } = this.state;
     const range = moment.range(baseDate, endDate);
     const dates = range.diff('days');
