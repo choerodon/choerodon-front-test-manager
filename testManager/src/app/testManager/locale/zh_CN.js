@@ -164,6 +164,15 @@ const zhCN = {
   report_select_allVersion: '所有版本',
   report_select_questionId: '测试问题ID',
   report_select_summary: '摘要',
+
+  // 测试进度报表
+  report_progress_versionLabel: '版本',
+  report_progress_cycleLabel: '测试循环',
+  report_progress_table_title: '数据统计',
+  report_progress_table_statusTd: '测试执行状态',
+  report_progress_table_countTd: '执行数量',
+
+
   // 测试计划
   testPlan_name: '测试计划',
   testPlan_createStage: '添加测试阶段',

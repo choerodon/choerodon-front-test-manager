@@ -157,6 +157,14 @@ const enUS = {
   report_select_allVersion: 'All versions',
   report_select_questionId: 'test question ID',
   report_select_summary: 'summary',
+
+    // 测试进度报表
+    report_progress_versionLabel: 'version',
+    report_progress_cycleLabel: 'test cycle',
+    report_progress_table_title: 'data statistics',
+    report_progress_table_statusTd: 'test execution status',
+    report_progress_table_countTd: 'execution quantity',
+
   // 测试计划
   testPlan_name: 'test plan',
   testPlan_createStage: 'add test stage',

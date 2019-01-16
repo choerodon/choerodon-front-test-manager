@@ -45,8 +45,21 @@ class ExportSide extends Component {
       loading: true,
     });
     getExportList().then((exportList) => {
+      // console.log(moment(moment().unix()).format('YYYY-MM-DD HH:mm:ss'));
+      // console.log(JSON.stringify(_.map(_.map(_.orderBy(_.map(exportList, item => {
+      //   item.creationDate = moment(item.creationDate).unix();
+      //   return item;
+      // }), ['creationDate'], ['desc']), 'creationDate'))));
+
+      // console.log(JSON.stringify(_.map(_.map(_.orderBy(_.map(exportList, item => {
+      //   item.creationDate = moment(item.creationDate).unix();
+      //   return item;
+      // }), ['creationDate'], ['desc']), 'creationDate').map(item => moment(item).format('YYYY-MM-DD HH:mm:ss')))));
       this.setState({
-        // exportList: _.orderBy(exportList, ['lastUpdateDate'], ['desc']),
+        // exportList: _.orderBy(_.map(exportList, item => {
+        //   item.creationDate = moment(item.creationDate).unix();
+        //   return item;
+        // }), ['creationDate'], ['desc']),
         exportList,
         loading: false,
       });
@@ -157,8 +170,13 @@ class ExportSide extends Component {
       title: '导出时间',
       dataIndex: 'creationDate',
       key: 'creationDate',
-      // width: 160,
-      render: creationDate => moment(creationDate).format('YYYY-MM-DD h:mm:ss'),
+      width: 160,
+      // sorter: (rowA,rowB) => {
+      //   // console.log(moment(rowA.creationDate).unix() - moment(rowB.creationDate).unix());
+      //   return moment(rowB.creationDate).unix() - moment(rowA.creationDate).unix();
+      // },
+      // sortOrder: true,
+      render: creationDate => moment(creationDate).format('YYYY-MM-DD HH:mm:ss'),
     }, {
       title: '耗时',
       dataIndex: 'during',

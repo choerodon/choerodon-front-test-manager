@@ -46,4 +46,21 @@
             }
         }
     }
+    .c7ntest-spinning-wrapper{
+        display: flex;
+        justify-content: center;
+        margin-top: 35px;
+    }
+    .c7ntest-emptyCase{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        margin-top: 35px;
+        .c7ntest-emptyCase-detail{
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+        }
+    }
+   
 }
