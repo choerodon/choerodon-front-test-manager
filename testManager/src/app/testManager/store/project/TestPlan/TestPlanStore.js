@@ -40,7 +40,7 @@ function traverseTree(node) {
 }
 
 class TestPlanStore extends BaseTreeProto {
-  @observable treeShow = true;
+  @observable isTreeVisible = true;
 
   @observable statusList = [];
 
@@ -77,11 +77,13 @@ class TestPlanStore extends BaseTreeProto {
   @observable lastUpdatedBy = null;
 
   @observable exportVersionId = null;
+
   @observable exportCycleId = null;
+
   @observable exportStageId = null;
 
   @action clearStore = () => {
-    this.treeShow = true;
+    this.isTreeVisible = true;
     this.statusList = [];
     this.times = [];
     this.dataList = [];
@@ -107,11 +109,11 @@ class TestPlanStore extends BaseTreeProto {
         key: '0',
         children: [],
       },
-    ];  
-    this.expandedKeys = ['0'];  
-    this.selectedKeys = [];  
-    this.addingParent = null;  
-    this.currentCycle = {};  
+    ];
+    this.expandedKeys = ['0'];
+    this.selectedKeys = [];
+    this.addingParent = null;
+    this.currentCycle = {};
     this.preCycle = {};
     this.exportVersionId = null;
     this.exportCycleId = null;
@@ -187,18 +189,17 @@ class TestPlanStore extends BaseTreeProto {
     // if (data.versionId) {
     if (selectedKeys) {
       this.setSelectedKeys(selectedKeys);
-      
     }
 
     if (data.key) {
-      if(data.key.split('-').length === 3) {
+      if (data.key.split('-').length === 3) {
         this.setExportVersionId(data.versionId);
       }
-      if(data.key.split('-').length === 4) {
+      if (data.key.split('-').length === 4) {
         this.setExportVersionId(data.versionId);
         this.setExportCycleId(data.cycleId);
       }
-      if(data.key.split('-').length === 5) {
+      if (data.key.split('-').length === 5) {
         this.setExportVersionId(data.versionId);
         this.setExportCycleId(data.parentCycleId);
         this.setExportStageId(data.cycleId);
@@ -273,8 +274,8 @@ class TestPlanStore extends BaseTreeProto {
   }
 
 
-  @action setTreeShow(treeShow) {
-    this.treeShow = treeShow;
+  @action setIsTreeVisible = (isTreeVisible) => {
+    this.isTreeVisible = isTreeVisible;
   }
 
   @action setAssignedTo(assignedTo) {
@@ -414,7 +415,7 @@ class TestPlanStore extends BaseTreeProto {
   }
 
   @action setExportCycleId(data) {
-    this.exportCycleId =data;
+    this.exportCycleId = data;
   }
 
   @action setExportStageId(data) {

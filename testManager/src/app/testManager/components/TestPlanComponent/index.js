@@ -7,3 +7,5 @@ export { default as EditStage } from './EditStage';
 export { default as EditCycle } from './EditCycle';
 export { default as ExportSide } from './ExportSide';
 export { default as AssignBatch } from './AssignBatch';
+export { default as TreeArea } from './TreeArea';
+export { default as CalendarAndTableArea } from './CalendarAndTableArea';
