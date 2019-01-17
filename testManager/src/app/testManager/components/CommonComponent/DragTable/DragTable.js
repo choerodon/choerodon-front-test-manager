@@ -16,6 +16,7 @@ class DragTable extends Component {
     super(props);
     this.state = {
       data: [],
+      filteredColumns: [],
     };
   }
 
@@ -24,6 +25,17 @@ class DragTable extends Component {
     if (!(this.props.loading === false && nextProps.loading === true)) {
       this.setState({ data: nextProps.dataSource });
     }
+  }
+
+  handleColumnFilterChange=({ selectedKeys }) => {
+    this.setState({
+      filteredColumns: selectedKeys,
+    });
+  }
+
+  shouldColumnShow=(key) => {
+    const { filteredColumns } = this.state;
+    return filteredColumns.length === 0 ? true : filteredColumns.includes(key);
   }
 
   onDragEnd(result) {
@@ -90,8 +102,9 @@ class DragTable extends Component {
   }
 
   renderThead = () => {
-    const { columns } = this.props;
-    const ths = columns.map(column => (
+    const { columns } = this.props;  
+    const Columns = columns.filter(column => this.shouldColumnShow(column.key));
+    const ths = Columns.map(column => (
       <th style={{ flex: column.flex || 1 }}>
         {column.title}
         {' '}
@@ -102,11 +115,12 @@ class DragTable extends Component {
 
   renderTbody(data) {   
     const { columns, dragKey, disabled } = this.props;
+    const Columns = columns.filter(column => this.shouldColumnShow(column.key));
     const rows = data.map((item, index) => (
       disabled
         ? (
           <tr>
-            {columns.map((column) => {
+            {Columns.map((column) => {
               let renderedItem = null;
               const {
                 dataIndex, key, flex, render, 
@@ -132,7 +146,7 @@ class DragTable extends Component {
                 {...provided.draggableProps}
                 {...provided.dragHandleProps}
               >
-                {columns.map((column) => {
+                {Columns.map((column) => {
                   let renderedItem = null;
                   const {
                     dataIndex, key, flex, render, 
@@ -165,6 +179,7 @@ class DragTable extends Component {
           {...this.props}   
           dataSource={data}
           components={this.components}
+          onColumnFilterChange={this.handleColumnFilterChange}
         />
       </div>
     );
