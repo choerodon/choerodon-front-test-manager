@@ -503,7 +503,7 @@ class TestPlanHome extends Component {
                 )}
               </div>
               {/* <Spin spinning={loading}> */}
-              {key ? (
+              {key && times.length > 0 ? (
                 <div className="c7ntest-TestPlan-content-right">
                   <EventCalendar key={currentCycle.key} showMode={calendarShowMode} times={times} onItemClick={this.handleItemClick} />
                   {calendarShowMode === 'single' && (
