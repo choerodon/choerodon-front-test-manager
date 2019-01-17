@@ -332,7 +332,7 @@ class CreateIssue extends Component {
                   <div className="clear-p-mw">
                     <WYSIWYGEditor
                       value={this.state.delta}
-                      style={{ height: 200, width: '100%' }}
+                      style={{ height: 200, width: 520 }}
                       onChange={(value) => {
                         this.setState({ delta: value });
                       }}
