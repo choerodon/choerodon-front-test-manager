@@ -45,6 +45,7 @@ class SelectVersion extends Component {
         // }}
         {...this.props}
       >
+        {this.props.children}
         {Options}
       </Select>
     );

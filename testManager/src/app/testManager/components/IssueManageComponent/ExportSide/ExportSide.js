@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { Content, stores, WSHandler } from 'choerodon-front-boot';
 import {
-  Modal, Progress, Table, Button, Icon, Tooltip,
+  Modal, Progress, Table, Button, Icon, Tooltip, Select,
 } from 'choerodon-ui';
 import _ from 'lodash';
 import moment from 'moment';
@@ -13,7 +13,7 @@ import {
 import { humanizeDuration, getProjectName } from '../../../common/utils';
 import './ExportSide.scss';
 
-
+const { Option } = Select;
 const { Sidebar } = Modal;
 const { AppState } = stores;
 
@@ -21,7 +21,7 @@ class ExportSide extends Component {
   state = {
     loading: true,
     visible: false,
-    versionId: null,
+    versionId: 'all',
     folderId: null,
     exportList: [],
   }
@@ -72,7 +72,7 @@ class ExportSide extends Component {
       exportIssuesFromFolder(folderId).then((data) => {
 
       });
-    } else if (versionId) {
+    } else if (versionId && versionId !== 'all') {
       exportIssuesFromVersion(versionId).then((data) => {
 
       });
@@ -210,7 +210,9 @@ class ExportSide extends Component {
         >
           <div className="c7ntest-ExportSide">
             <div style={{ marginBottom: 24 }}>
-              <SelectVersion allowClear value={versionId || '所有版本'} onChange={this.handleVersionChange} />
+              <SelectVersion allowClear value={versionId} onChange={this.handleVersionChange}>
+                <Option value="all" key="all">所有版本</Option>
+              </SelectVersion>
               <SelectFolder style={{ width: 200, margin: '0 24px' }} label="文件夹" disabled={!versionId} versionId={versionId} value={folderId} allowClear onChange={this.handleFolderChange} />
               <Button type="primary" icon="playlist_add" onClick={this.createExport}>新建导出</Button>
             </div>
