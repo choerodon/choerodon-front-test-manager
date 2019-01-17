@@ -14,11 +14,11 @@ import {
 } from '../../../api/cycleApi';
 import { humanizeDuration } from '../../../common/utils';
 import './ExportSide.scss';
-import TestPlanStore from '../../../store/project/TestPlan/TestPlanStore'
+import TestPlanStore from '../../../store/project/TestPlan/TestPlanStore';
 
 
 const { Sidebar } = Modal;
-const {Option} = Select;
+const { Option } = Select;
 const { AppState } = stores;
 
 @observer
@@ -43,7 +43,7 @@ class ExportSide extends Component {
   }
 
   open = () => {
-    const {exportCycleId, exportVersionId} = TestPlanStore;
+    const { exportCycleId, exportVersionId } = TestPlanStore;
     this.setState({
       visible: true,
       loading: true,
@@ -69,29 +69,28 @@ class ExportSide extends Component {
       });
     });
 
-    getProjectVersion().then(versionList => {
+    getProjectVersion().then((versionList) => {
       this.setState({
-          versionList,
-      })
+        versionList,
+      });
     });
 
     if (exportVersionId) {
-      getCyclesByVersionId(exportVersionId).then(cycleList => {
+      getCyclesByVersionId(exportVersionId).then((cycleList) => {
         this.setState({
           cycleList,
-        })
-      })
+        });
+      });
     }
 
-    if(exportCycleId) {
-      getFoldersByCycleId(exportCycleId).then(stageList => {
+    if (exportCycleId) {
+      getFoldersByCycleId(exportCycleId).then((stageList) => {
         this.setState({
           stageList,
-        })
-      })
+        });
+      });
     }
   }
-
     
 
   handleOk = () => {
@@ -106,7 +105,7 @@ class ExportSide extends Component {
   }
 
   handleCycleChange = (exportCycleId) => {
-   TestPlanStore.setExportCycleId(exportCycleId);
+    TestPlanStore.setExportCycleId(exportCycleId);
   }
 
   handleStageChange = (exportStageId) => {
@@ -163,7 +162,7 @@ class ExportSide extends Component {
     const {
       visible, exportList, loading, versionList, cycleList, stageList,
     } = this.state;
-    const {exportVersionId, exportCycleId, exportStageId,} = TestPlanStore;
+    const { exportVersionId, exportCycleId, exportStageId } = TestPlanStore;
     console.log(exportVersionId, exportCycleId, exportStageId);
     const columns = [{
       title: '导出来源',
@@ -246,58 +245,52 @@ class ExportSide extends Component {
         >
           <div className="c7ntest-ExportSide">
             <div style={{ marginBottom: 24 }}>
-               <Select 
+              <Select 
                 style={{ width: 100 }} 
-                value={versionList && versionList.length>0 && exportVersionId} 
+                value={versionList && versionList.length > 0 && exportVersionId} 
                 label="版本" 
                 onChange={this.handleVersionChange}
-               >
-               {
+              >
+                {
                  versionList && versionList.length > 0 && (
-                   versionList.map(item => {
-                     return (
-                       <Option key={item.versionId} value={item.versionId}>{item.name}</Option>
-                     )
-                   })
+                   versionList.map(item => (
+                     <Option key={item.versionId} value={item.versionId}>{item.name}</Option>
+                   ))
                  )
                }
-               </Select>
-               <Select 
+              </Select>
+              <Select 
                 style={{ width: 200, margin: '0 20px' }} 
                 label="测试循环" 
                 disabled={!exportVersionId} 
-                value={cycleList && cycleList.length>0 && exportCycleId} 
+                value={cycleList && cycleList.length > 0 && exportCycleId} 
                 onChange={this.handleCycleChange}
                 allowClear
-                >
-               {
+              >
+                {
                  cycleList && cycleList.length > 0 && (
-                   cycleList.map(item => {
-                     return (
-                       <Option key={item.cycleId} value={item.cycleId}>{item.cycleName}</Option>
-                     )
-                   })
+                   cycleList.map(item => (
+                     <Option key={item.cycleId} value={item.cycleId}>{item.cycleName}</Option>
+                   ))
                  )
                }
-               </Select>
-               <Select 
+              </Select>
+              <Select 
                 style={{ minWidth: 150 }} 
                 label="测试阶段" 
                 disabled={!exportCycleId} 
-                value={stageList && stageList.length>0 && exportStageId} 
+                value={stageList && stageList.length > 0 && exportStageId} 
                 onChange={this.handleStageChange}
                 allowClear
-                >
-               {
+              >
+                {
                  stageList && stageList.length > 0 && (
-                   stageList.map(item => {
-                     return (
-                       <Option key={item.cycleId} value={item.cycleId}>{item.cycleName}</Option>
-                     )
-                   })
+                   stageList.map(item => (
+                     <Option key={item.cycleId} value={item.cycleId}>{item.cycleName}</Option>
+                   ))
                  )
                }
-               </Select>
+              </Select>
 
               <Button type="primary" icon="playlist_add" onClick={this.createExport}>新建导出</Button>
             </div>
