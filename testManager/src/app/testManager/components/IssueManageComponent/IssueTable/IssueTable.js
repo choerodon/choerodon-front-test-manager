@@ -25,6 +25,7 @@ class IssueTable extends Component {
 
 
   handleColumnFilterChange = ({ selectedKeys }) => {
+    console.log(selectedKeys);
     this.setState({
       filteredColumns: selectedKeys,
     });
@@ -309,7 +310,7 @@ class IssueTable extends Component {
       <div className="c7ntest-issuetable">
         <Table
           filterBar={false}
-          columns={this.columns}
+          columns={columns}
           dataSource={IssueStore.getIssues}
           components={this.getComponents(columns)}
           onColumnFilterChange={this.handleColumnFilterChange}
@@ -358,40 +359,48 @@ class IssueTable extends Component {
     IssueStore.loadIssues(current - 1, size);
   }
 
+  manageVisible=columns => columns.map(column => (this.shouldColumnShow(column) ? column : { ...column, hidden: true }))
+  
   render() {
     const { expand } = this.props;
     const prioritys = IssueStore.getPrioritys;
-    const columns = [
+    const columns = this.manageVisible([
       {
         title: '编号',
         dataIndex: 'issueNum',
-        filters: [],
+        key: 'issueNum',
+        filters: [],        
         render: (issueNum, record) => renderIssueNum(issueNum),
       },
       {
         title: '类型',
         dataIndex: 'issueTypeDTO',
+        key: 'issueTypeDTO',        
         render: (issueTypeDTO, record) => renderType(issueTypeDTO),
       },
       {
         title: '概要',
         dataIndex: 'summary',
-        filters: [],
+        key: 'summary',
+        filters: [],  
         render: (summary, record) => renderSummary(summary),
       },
       {
         title: '版本',
         dataIndex: 'versionIssueRelDTOList',
+        key: 'versionIssueRelDTOList',       
         render: (versionIssueRelDTOList, record) => renderVersions(versionIssueRelDTOList),
       },
       {
         title: '文件夹',
         dataIndex: 'folderName',
+        key: 'folderName',       
         render: (folderName, record) => renderFolder(folderName),
       },
       {
         title: '报告人',
         dataIndex: 'reporter',
+        key: 'reporter',       
         render: (assign, record) => {
           const { reporterId, reporterName, reporterImageUrl } = record;
           return renderReporter(reporterId, reporterName, reporterImageUrl);
@@ -400,11 +409,12 @@ class IssueTable extends Component {
       {
         title: '优先级',
         dataIndex: 'priorityId',
+        key: 'priorityId',        
         filters: prioritys.map(priority => ({ text: priority.name, value: priority.id.toString() })),
         filterMultiple: true,
         render: (priorityId, record) => renderPriority(record.priorityDTO),
       },
-    ];
+    ]);
     return (
       <div className={`c7ntest-issueArea ${expand && 'expand'}`}>
         <div id="template_copy" style={{ display: 'none' }}>
