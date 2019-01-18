@@ -8,7 +8,7 @@ import { FormattedMessage } from 'react-intl';
 import EmptyBlock from '../EmptyBlock';
 import CreateIssueTiny from '../CreateIssueTiny';
 import IssueStore from '../../../store/project/IssueManage/IssueStore';
-
+import TableDraggleItem from './TableDraggleItem';
 import {
   renderType, renderIssueNum, renderSummary, renderPriority, renderVersions, renderFolder,
   renderComponents, renderLabels, renderAssigned, renderStatus, renderReporter,
@@ -36,7 +36,7 @@ class IssueTable extends Component {
         <table>
           <thead>
             {this.renderThead(columns)}
-          </thead>     
+          </thead>
           <Droppable droppableId="dropTable" isDropDisabled>
             {(provided, snapshot) => (
               <tbody
@@ -77,7 +77,7 @@ class IssueTable extends Component {
   }
 
   renderTbody(data, columns) {
-    const { disabled, expand } = this.props;
+    const { disabled, expand, selectedIssue } = this.props;
     const Columns = columns.filter(column => this.shouldColumnShow(column));
     const tds = index => Columns.map((column) => {
       let renderedItem = null;
@@ -99,9 +99,17 @@ class IssueTable extends Component {
       if (disabled) {
         return tds(index);
       } else if (expand) {
-        return this.renderDraggable(issue, index, this.renderNarrowIssue(issue));
+        return (
+          <TableDraggleItem handleClickIssue={this.handleClickIssue.bind(this)} issue={issue} index={index} selectedIssue={selectedIssue} saveRef={(instance) => { this.instance = instance; }}>
+            {this.renderNarrowIssue(issue)}
+          </TableDraggleItem>
+        );
       } else {
-        return this.renderDraggable(issue, index, tds(index));
+        return (
+          <TableDraggleItem handleClickIssue={this.handleClickIssue.bind(this)} issue={issue} index={index} selectedIssue={selectedIssue} saveRef={(instance) => { this.instance = instance; }}>
+            {tds(index)}
+          </TableDraggleItem>
+        );
       }
     });
 
@@ -258,7 +266,7 @@ class IssueTable extends Component {
                   left: 0,
                 }}
                 >
-                  {draggingTableItems.length}
+                  {draggingTableItems.length || 1}
                 </div>
               )
             }
