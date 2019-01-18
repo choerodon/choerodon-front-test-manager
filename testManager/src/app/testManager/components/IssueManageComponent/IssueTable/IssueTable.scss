@@ -1,11 +1,11 @@
 .c7ntest-issueArea {
+  .ant-table-thead > tr > th:focus, .ant-table-tbody > tr > td:focus {
+    background-color: transparent;
+  }
   .ant-pagination-options {
     margin-left: 0;
   }
-  .ant-table-filter-bar {
-    padding-top: 6px;
-    padding-bottom: 5px;
-  }
+
   .IssueTable-drag-prompt {
     position: absolute;
     margin-top: 3px;
@@ -30,7 +30,11 @@
     background: #eee;
   }
   .ant-table-filter-bar {
+    padding-right: 90px;
+    padding-top: 8px;
+    padding-bottom: 7px;
     border-top: none;
+    border-bottom: none;
   }
   .ant-dropdown-trigger {
     bottom: 30;

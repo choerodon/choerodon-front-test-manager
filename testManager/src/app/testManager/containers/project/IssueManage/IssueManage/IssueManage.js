@@ -25,7 +25,7 @@ import './IssueManage.scss';
 const EditIssueWidth = {
   narrow: 440,
   medium: '54%',
-  wide: '72%',
+  wide: '64%',
 };
 @inject('MenuStore')
 @observer
