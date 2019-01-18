@@ -117,10 +117,7 @@ class IssueTable extends Component {
       versionIssueRelDTOList, creationDate, lastUpdateDate,
     } = issue;
     return (
-      <div style={{
-        borderBottom: '1px solid #eee', padding: '12px 16px', cursor: 'pointer', width: '100%',
-      }}
-      >
+      <div style={{ padding: '12px 16px', cursor: 'pointer', width: '100%' }}>
         <div style={{
           display: 'flex', marginBottom: '5px', width: '100%', flex: 1,
         }}

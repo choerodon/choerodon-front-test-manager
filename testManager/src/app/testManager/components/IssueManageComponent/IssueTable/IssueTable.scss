@@ -34,7 +34,7 @@
     padding-top: 8px;
     padding-bottom: 7px;
     border-top: none;
-    border-bottom: none;
+    // border-bottom: none;
   }
   .ant-dropdown-trigger {
     bottom: 30;
@@ -74,7 +74,8 @@
           align-items: center;
           min-height: 40px; // border-bottom: 1px solid #e8e8e8;
           // border-top: 1px solid #e8e8e8;
-          box-shadow: 0 1px 0 0 #e8e8e8, 0 1px 0 0 #e8e8e8 inset;
+          // box-shadow: 0 1px 0 0 #e8e8e8, 0 1px 0 0 #e8e8e8 inset;
+          border-bottom: 1px solid rgb(238, 238, 238);
           .c7ntest-table-item {
             width: 100%;
             min-height: 33px;
