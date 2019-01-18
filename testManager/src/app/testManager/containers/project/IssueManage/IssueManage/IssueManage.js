@@ -1,12 +1,8 @@
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import _ from 'lodash';
-import {
-  Page, Header, Content, stores,
-} from 'choerodon-front-boot';
-import {
-  Table, Button, Pagination, Icon,
-} from 'choerodon-ui';
+import { Page, Header, Content } from 'choerodon-front-boot';
+import { Button, Icon } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 import FileSaver from 'file-saver';
 import IssueStore from '../../../../store/project/IssueManage/IssueStore';

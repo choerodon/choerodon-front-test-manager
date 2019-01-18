@@ -11,14 +11,19 @@ const styles = {
     padding: '0 12px 0 5px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
   },
 };
-export function renderType(issueTypeDTO) {
-  const { name } = issueTypeDTO || {};
+const testTypes = {
+  issue_auto_test: '自动化测试',
+  issue_test: '测试',
+};
+export function renderType(issueTypeDTO, showTypeName) {
+  const { name, typeCode } = issueTypeDTO || {};
   return (
     <Tooltip mouseEnterDelay={0.5} title={`任务类型： ${name}`}>
-      <div>
+      <div style={{ display: 'flex' }}>
         <TypeTag
           type={issueTypeDTO || {}}
         />
+        {showTypeName && <span style={{ marginLeft: 5 }}>{testTypes[typeCode]}</span>}
       </div>
     </Tooltip>
   );
