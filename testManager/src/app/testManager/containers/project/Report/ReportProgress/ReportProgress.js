@@ -251,7 +251,7 @@ class ReportProgress extends Component {
                         className="c7ntest-cycle-filter-item"
                         getPopupContainer={triggerNode => triggerNode.parentNode}
                         value={currentCycle}
-                        allowClear
+                        allowClear={currentCycle ? true : false}
                         label={<FormattedMessage id="report_progress_cycleLabel" />}
                         onChange={this.handleCycleChange}
                     >
