@@ -162,8 +162,7 @@ class ExportSide extends Component {
     const {
       visible, exportList, loading, versionList, cycleList, stageList,
     } = this.state;
-    const { exportVersionId, exportCycleId, exportStageId } = TestPlanStore;
-    console.log(exportVersionId, exportCycleId, exportStageId);
+    const {exportVersionId, exportCycleId, exportStageId,} = TestPlanStore;
     const columns = [{
       title: '导出来源',
       dataIndex: 'sourceType',
@@ -194,11 +193,6 @@ class ExportSide extends Component {
       dataIndex: 'creationDate',
       key: 'creationDate',
       width: 160,
-      // sorter: (rowA,rowB) => {
-      //   // console.log(moment(rowA.creationDate).unix() - moment(rowB.creationDate).unix());
-      //   return moment(rowB.creationDate).unix() - moment(rowA.creationDate).unix();
-      // },
-      // sortOrder: true,
       render: creationDate => moment(creationDate).format('YYYY-MM-DD HH:mm:ss'),
     }, {
       title: '耗时',
@@ -265,9 +259,9 @@ class ExportSide extends Component {
                 disabled={!exportVersionId} 
                 value={cycleList && cycleList.length > 0 && exportCycleId} 
                 onChange={this.handleCycleChange}
-                allowClear
-              >
-                {
+                allowClear={exportCycleId ? true : false}
+                >
+               {
                  cycleList && cycleList.length > 0 && (
                    cycleList.map(item => (
                      <Option key={item.cycleId} value={item.cycleId}>{item.cycleName}</Option>
@@ -281,9 +275,9 @@ class ExportSide extends Component {
                 disabled={!exportCycleId} 
                 value={stageList && stageList.length > 0 && exportStageId} 
                 onChange={this.handleStageChange}
-                allowClear
-              >
-                {
+                allowClear={exportStageId ? true : false}
+                >
+               {
                  stageList && stageList.length > 0 && (
                    stageList.map(item => (
                      <Option key={item.cycleId} value={item.cycleId}>{item.cycleName}</Option>
