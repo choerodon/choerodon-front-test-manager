@@ -10,29 +10,7 @@
         color: rgba(0, 0, 0, 0.65);
     }
 }
-  .expand-sign {
-    .ant-pagination-options-label {
-      display: none;
-    }
-    .ant-select-selection {
-      min-width: unset;
-    }
-    .ant-pagination-total-text,
-    .ant-pagination-first,
-    .ant-pagination-prev,
-    .ant-pagination-last {
-      margin-right: unset;
-    }
-  }
 
-  .ant-pagination-options {
-    margin-left: 0;
-  }
-
-  .ant-table-filter-bar {
-    padding-top: 6px;
-    padding-bottom: 5px;
-  }
 
   .c7ntest-add {
     &-select-version {
@@ -73,25 +51,7 @@
     padding: 5px;
   }
 
-  .c7ntest-bar {
-    .ant-table {
-      display: none;
-    }
 
-    .ant-table-filter-bar {
-      border-top: none;
-    }
-
-    .ant-table-columns-chooser {
-      display: none;
-    }
-    .ant-dropdown-trigger{
-      bottom:30;
-    }
-    .ant-select-selection__rendered{
-      margin-bottom: -4px!important;
-    }
-  }
 
   .c7ntest-count {
     position: relative;
@@ -106,67 +66,7 @@
     }
   }
 
-  .c7ntest-table {
-    margin-top: 2px;
-    padding-left: 24px;
-    // padding-right: 24px;
 
-    .c7ntest-status {
-      border: 1px solid;
-      border-radius: 2px;
-      padding: 0 8px;
-      // display: inline-block;
-    }
-
-    .c7ntest-border-visible {
-      border-left: 3px solid #3f51b5;
-      background: rgba(140, 158, 255, 0.08);
-    }
-
-    .c7ntest-border {
-      border-left: 3px solid transparent;
-    }
-    .c7ntest-table-item {
-      // background: #fff;
-      border-bottom: 1px solid #eee;
-      padding: 5px 16px;
-      transition: all 0.3s ease-in-out;
-    }
-    .c7ntest-table-item:hover {
-      background: #eee;
-    }
-    .c7ntest-avator {
-      display: inline-block;
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      overflow: hidden;
-      margin-right: 5px;
-      text-align: center;
-      line-height: 18px;
-      background: #c5cbe8;
-      color: #6473c3;
-    }
-
-    .c7ntest-level {
-      border-radius: 2px;
-      padding: 0 8px;
-      display: inline-block;
-    }
-
-    .c7ntest-sign {
-      display: inline-block;
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      // margin-right: 11px;
-      text-align: center;
-      color: #fff;
-      line-height: 21px;
-      font-size: 14px;
-      line-height: 16px;
-    }
-  }
 
   .c7ntest-content-container {
     display: flex;
@@ -175,7 +75,7 @@
 
   .c7ntest-sidebar {
     height: calc(100vh - 106px);
-    border-left: 3px solid #d3d3d3;
+    // border-left: 3px solid #d3d3d3;
     overflow: hidden;
   }
 
@@ -332,15 +232,7 @@
     width: 100% !important;
   }
 
-  .ant-table-thead > tr > th:focus, .ant-table-tbody > tr > td:focus {
-    background-color: transparent;
-  }
 
-  .ant-table-filter-bar {
-    padding-right: 90px;
-    padding-top: 8px;
-    padding-bottom: 7px;
-  }
 }
 
 .c7ntest-backlog-sprintType {

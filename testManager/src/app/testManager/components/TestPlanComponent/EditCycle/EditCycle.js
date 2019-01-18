@@ -208,7 +208,8 @@ class EditCycle extends Component {
             </Spin>
           </Content>
         </Sidebar>
-      </div>);
+      </div>
+    );
   }
 }
 

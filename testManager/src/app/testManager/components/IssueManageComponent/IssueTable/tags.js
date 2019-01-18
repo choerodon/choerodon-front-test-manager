@@ -51,39 +51,41 @@ export function renderPriority(priorityDTO) {
     return null;
   }
   const { name } = priorityDTO;
-  return (
-    <div>
-      <Tooltip mouseEnterDelay={0.5} title={`优先级： ${name}`}>
-        <div style={{ margin: '0 5px' }}>
-          <PriorityTag
-            priority={priorityDTO}
-          />
-        </div>
-      </Tooltip>
-    </div>
+  return ( 
+    <Tooltip mouseEnterDelay={0.5} title={`优先级： ${name}`}>
+      <div style={{ display: 'inline-block', margin: '0 5px' }}>
+        <PriorityTag
+          priority={priorityDTO}
+        />
+      </div>
+    </Tooltip>
   );
 }
 export function renderVersions(versions, priorityName) {
   return (
-    versions.map(version => (
-      <div
-        style={{
-          color: 'rgba(0,0,0,0.36)',
-          height: 22,
-          borderWidth: '1px',
-          borderStyle: 'solid',
-          borderColor: 'rgba(0,0,0,0.36)',
-          borderRadius: '2px',
-          fontSize: '13px',
-          lineHeight: '20px',
-          padding: '0 8px',
-          margin: '0 5px',
-        }}
-        className="c7ntest-text-dot"
-      >
-        {version.name}
-      </div>
-    ))
+    <Tooltip mouseEnterDelay={0.5} title={`版本： ${versions.map(version => version.name).join(',')}`}>
+      {versions.map(version => (
+        <div
+          style={{
+            display: 'inline-block',
+            maxWidth: 'calc(100% - 10px)',
+            color: 'rgba(0,0,0,0.36)',
+            height: 22,
+            borderWidth: '1px',
+            borderStyle: 'solid',
+            borderColor: 'rgba(0,0,0,0.36)',
+            borderRadius: '2px',
+            fontSize: '13px',
+            lineHeight: '20px',
+            padding: '0 8px',
+            margin: '0 5px',
+          }}
+          className="c7ntest-text-dot"
+        >
+          {version.name}
+        </div>
+      ))}
+    </Tooltip>
   );
 }
 export function renderEpic(epicName, epicColor) {
@@ -111,23 +113,27 @@ export function renderEpic(epicName, epicColor) {
 export function renderFolder(folderName) {
   return (
     folderName ? (
-      <div
-        style={{
-          color: '#4D90FE',
-          height: 22,
-          borderWidth: '1px',
-          borderStyle: 'solid',
-          borderColor: '#4D90FE',
-          borderRadius: '2px',
-          fontSize: '13px',
-          lineHeight: '20px',
-          padding: '0 8px',
-          margin: '0 5px',
-        }}
-        className="c7ntest-text-dot"
-      >
-        {folderName}
-      </div>
+      <Tooltip mouseEnterDelay={0.5} title={`文件夹： ${folderName}`}>
+        <div
+          style={{
+            display: 'inline-block',
+            maxWidth: 'calc(100% - 10px)',
+            color: '#4D90FE',
+            height: 22,
+            borderWidth: '1px',
+            borderStyle: 'solid',
+            borderColor: '#4D90FE',
+            borderRadius: '2px',
+            fontSize: '13px',
+            lineHeight: '20px',
+            padding: '0 8px',  
+            margin: '0 5px',   
+          }}
+          className="c7ntest-text-dot"
+        >
+          {folderName}
+        </div>
+      </Tooltip>
     ) : null
   );
 }
@@ -168,11 +174,31 @@ export function renderAssigned(assigneeId, assigneeName, imageUrl) {
       <Tooltip mouseEnterDelay={0.5} title={`任务经办人： ${assigneeName}`}>
         <div style={{ margin: '0 5px' }}>
           <UserHead
+            hiddenText
             user={{
               id: assigneeId,
               loginName: '',
               realName: assigneeName,
               avatar: imageUrl,
+            }}
+          />
+        </div>
+      </Tooltip>
+    ) : null
+  );
+}
+export function renderReporter(reporterId, reporterName, reporterImageUrl, hiddenText) {
+  return (
+    reporterId ? (
+      <Tooltip mouseEnterDelay={0.5} title={`任务报告人： ${reporterName}`}>
+        <div style={{ margin: '0 5px' }}>
+          <UserHead
+            hiddenText={hiddenText}
+            user={{
+              id: reporterId,
+              loginName: '',
+              realName: reporterName,
+              avatar: reporterImageUrl,
             }}
           />
         </div>

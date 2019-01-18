@@ -162,7 +162,7 @@ class ExportSide extends Component {
     const {
       visible, exportList, loading, versionList, cycleList, stageList,
     } = this.state;
-    const {exportVersionId, exportCycleId, exportStageId,} = TestPlanStore;
+    const { exportVersionId, exportCycleId, exportStageId  } = TestPlanStore;
     const columns = [{
       title: '导出来源',
       dataIndex: 'sourceType',
@@ -259,9 +259,9 @@ class ExportSide extends Component {
                 disabled={!exportVersionId} 
                 value={cycleList && cycleList.length > 0 && exportCycleId} 
                 onChange={this.handleCycleChange}
-                allowClear={exportCycleId ? true : false}
-                >
-               {
+                allowClear={!!exportCycleId}
+              >
+                {
                  cycleList && cycleList.length > 0 && (
                    cycleList.map(item => (
                      <Option key={item.cycleId} value={item.cycleId}>{item.cycleName}</Option>
@@ -275,9 +275,9 @@ class ExportSide extends Component {
                 disabled={!exportCycleId} 
                 value={stageList && stageList.length > 0 && exportStageId} 
                 onChange={this.handleStageChange}
-                allowClear={exportStageId ? true : false}
-                >
-               {
+                allowClear={!!exportStageId}
+              >
+                {
                  stageList && stageList.length > 0 && (
                    stageList.map(item => (
                      <Option key={item.cycleId} value={item.cycleId}>{item.cycleName}</Option>

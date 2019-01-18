@@ -13,10 +13,10 @@ import { editExecuteDetail, deleteExecute } from '../../../../api/cycleApi';
 import { getStatusList } from '../../../../api/TestStatusApi';
 import { getPrioritys } from '../../../../api/agileApi';
 import {
-  EventCalendar, PlanTree, CreateCycle, EditStage, EditCycle, ExportSide,
+  EventCalendar, CreateCycle, EditStage, EditCycle, ExportSide, TreeArea,
 } from '../../../../components/TestPlanComponent';
 import {
-  RichTextShow, SelectFocusLoad, StatusTags, DragTable, SmartTooltip,
+  RichTextShow, SelectFocusLoad, StatusTags, DragTable, SmartTooltip, Injecter,
 } from '../../../../components/CommonComponent';
 import { renderPriority } from '../../../../components/IssueManageComponent/IssueTable/tags';
 import { getUsers } from '../../../../api/IamApi';
@@ -30,6 +30,7 @@ import noRight from '../../../../assets/noright.svg';
 
 const { confirm } = Modal;
 const moment = extendMoment(Moment);
+
 @observer
 class TestPlanHome extends Component {
   state = {
@@ -43,7 +44,6 @@ class TestPlanHome extends Component {
     TestPlanStore.setFilters({});
     TestPlanStore.setAssignedTo(null);
     TestPlanStore.setLastUpdatedBy(null);
-
     this.refresh();
   }
 
@@ -144,18 +144,11 @@ class TestPlanHome extends Component {
 
   render() {
     const { CreateCycleVisible, statusList, prioritys } = this.state;
-    const treeShow = TestPlanStore.treeShow;
     const {
-      testList, executePagination, loading, rightLoading, calendarShowMode,
+      testList, executePagination, loading, rightLoading, 
     } = TestPlanStore;
-    const times = TestPlanStore.getTimes;
-    const currentCycle = TestPlanStore.getCurrentCycle;
-
-    const {
-      cycleId, title, versionId, key,
-    } = currentCycle;
     const columns = [{
-      title: 'ID',
+      title: <span>ID</span>,
       dataIndex: 'issueNum',
       key: 'issueNum',
       flex: 1,
@@ -189,7 +182,7 @@ class TestPlanHome extends Component {
         );
       },
     }, {
-      title: '用例名',
+      title: <span>用例名</span>,
       dataIndex: 'summary',
       key: 'summary',
       filters: [],
@@ -205,7 +198,7 @@ class TestPlanHome extends Component {
         );
       },
     }, {
-      title: '用例优先级',
+      title: <span>用例优先级</span>,
       dataIndex: 'priorityId',
       key: 'priorityId',
       filters: prioritys.map(priority => ({ text: priority.name, value: priority.id.toString() })),
@@ -236,7 +229,7 @@ class TestPlanHome extends Component {
         );
       },
     }, {
-      title: '执行描述',
+      title: <span>执行描述</span>,
       dataIndex: 'comment',
       key: 'comment',
       filters: [],
@@ -359,105 +352,21 @@ class TestPlanHome extends Component {
         )
       ),
     }];
-    const otherColumns = [
-      // {
-      //   title: <FormattedMessage id="cycle_createExecute_component" />,
-      //   dataIndex: 'issueInfosDTO',
-      //   key: 'component',
-      //   render(issueInfosDTO) {
-      //     if (!issueInfosDTO) {
-      //       return null;
-      //     }
-      //     const { componentIssueRelDTOList } = issueInfosDTO;
-      //     return (
-      //       <Tooltip
-      //         placement="topLeft"
-      //         title={(
-      //           <div>
-      //             {componentIssueRelDTOList && componentIssueRelDTOList.map((component, i) => (
-      //               <div>
-      //                 {component.name}
-      //               </div>
-      //             ))}
-      //           </div>
-      //         )}
-      //       >
-      //         {componentIssueRelDTOList && componentIssueRelDTOList.map((component, i) => component.name).join(',')}
-      //       </Tooltip>
-      //     );
-      //   },
-      // },
-      // {
-      //   title: <FormattedMessage id="cycle_createExecute_label" />,
-      //   dataIndex: 'issueInfosDTO',
-      //   key: 'statusName',
-      //   render(issueInfosDTO) {
-      //     if (!issueInfosDTO) {
-      //       return null;
-      //     }
-      //     const { labelIssueRelDTOList } = issueInfosDTO;
-      //     return (
-      //       <Tooltip
-      //         placement="topLeft"
-      //         title={(
-      //           <div>
-      //             {labelIssueRelDTOList && labelIssueRelDTOList.map((label, i) => (
-      //               <div>
-      //                 {label.labelName}
-      //               </div>
-      //             ))}
-      //           </div>
-      //         )}
-      //       >
-      //         <div style={{
-      //           display: 'flex', flexFlow: 'row wrap', width: '100%', justifyContent: 'space-between', alignItems: 'center', maxHeight: 24, overflow: 'hidden',
-      //         }}
-      //         >
-      //           {labelIssueRelDTOList && labelIssueRelDTOList.map((label, i) => (
-      //             <div
-      //               style={{
-      //                 flexShrink: 0,
-      //                 width: '48%',
-      //                 color: '#000',
-      //                 borderRadius: '100px',
-      //                 fontSize: '13px',
-      //                 lineHeight: '20px',
-      //                 padding: '2px 5px',
-      //                 textAlign: 'center',
-      //                 background: 'rgba(0, 0, 0, 0.08)',
-      //                 // margin: '0 5px',
-      //                 // marginBottom: 3,
-      //               }}
-      //               className="c7ntest-text-dot"
-      //             >
-      //               {label.labelName}
-      //             </div>
-      //           ))}
-      //         </div>
 
-      //       </Tooltip>
-      //     );
-      //   },
-      // },
-    ];
     return (
       <Page className="c7ntest-TestPlan">
         <Header title={<FormattedMessage id="testPlan_name" />}>
           <Button onClick={() => { this.setState({ CreateCycleVisible: true }); }}>
-            <Icon type="playlist_add icon" />
-            <span>
-              <FormattedMessage id="cycle_create_title" />
-            </span>
+            <Icon type="playlist_add icon" />            
+            <FormattedMessage id="cycle_create_title" />           
           </Button>
           <Button className="leftBtn" onClick={() => this.ExportSide.open()}>
             <Icon type="export icon" />
             <FormattedMessage id="export" />
           </Button>
           <Button onClick={this.refresh}>
-            <Icon type="autorenew icon" />
-            <span>
-              <FormattedMessage id="refresh" />
-            </span>
+            <Icon type="autorenew icon" />         
+            <FormattedMessage id="refresh" />
           </Button>
         </Header>
         <Content
@@ -466,102 +375,85 @@ class TestPlanHome extends Component {
           style={{ padding: 0, display: 'flex' }}
         >
           <Spin spinning={loading}>
-            <div className="c7ntest-TestPlan-content" style={{ WebkitLineClamp: 2 }}>
-              <EditCycle visible={TestPlanStore.EditCycleVisible} />
-              <EditStage visible={TestPlanStore.EditStageVisible} />
+            <div className="c7ntest-TestPlan-content">
+              <Injecter store={TestPlanStore} item="EditCycleVisible">
+                {visible => <EditCycle visible={visible} />}
+              </Injecter>
+              <Injecter store={TestPlanStore} item="EditStageVisible">
+                {visible => <EditStage visible={visible} />}
+              </Injecter>
               <CreateCycle
                 visible={CreateCycleVisible}
                 onCancel={() => { this.setState({ CreateCycleVisible: false }); }}
                 onOk={() => { this.setState({ CreateCycleVisible: false }); this.refresh(); }}
               />
               <ExportSide ref={this.saveRef('ExportSide')} />
-              {!treeShow && (
-                <div className="c7ntest-TestPlan-bar">
-                  <div
-                    role="none"
-                    className="c7ntest-TestPlan-bar-button"
-                    onClick={() => { TestPlanStore.setTreeShow(true); }}
-                  >
-                    <Icon type="navigate_next" />
-                  </div>
-                  <p
-                    role="none"
-                    onClick={() => { TestPlanStore.setTreeShow(true); }}
-                  >
-                    <FormattedMessage id="testPlan_name" />
-                  </p>
-                </div>
-              )}
-              <div className="c7ntest-TestPlan-tree">
-                {treeShow && (
-                  // <ResizeAble>
-                  <PlanTree
-                    ref={(tree) => { this.PlanTree = tree; }}
-                    onClose={() => { TestPlanStore.setTreeShow(false); }}
-                  />
-                  // </ResizeAble>
-                )}
-              </div>
-              {/* <Spin spinning={loading}> */}
-              {key && times.length > 0 ? (
-                <div className="c7ntest-TestPlan-content-right">
-                  <EventCalendar key={currentCycle.key} showMode={calendarShowMode} times={times} onItemClick={this.handleItemClick} />
-                  {calendarShowMode === 'single' && (
-                    <div className="c7ntest-TestPlan-content-right-bottom">
-                      <div style={{ display: 'flex', marginBottom: 20 }}>
-                        <div style={{
-                          fontWeight: 600,
-                          marginTop: 18,
-                          marginRight: 10,
-                          fontSize: '14px',
-                        }}
-                        >
-                          筛选:
-                        </div>
-                        <SelectFocusLoad                       
-                          label={<FormattedMessage id="cycle_executeBy" />}
-                          request={getUsers}
-                          onChange={(value) => {
-                            TestPlanStore.setLastUpdatedBy(value);
-                            TestPlanStore.loadCycle();
+              <Injecter store={TestPlanStore} item="isTreeVisible">
+                {isTreeVisible => <TreeArea isTreeVisible={isTreeVisible} setIsTreeVisible={TestPlanStore.setIsTreeVisible} />}
+              </Injecter>
+              <Injecter store={TestPlanStore} item={['currentCycle', 'times', 'calendarShowMode']}>
+                {([currentCycle, times, calendarShowMode]) => (currentCycle.key && times.length > 0 ? (
+                  <div className="c7ntest-TestPlan-content-right">
+                    <EventCalendar key={currentCycle.key} showMode={calendarShowMode} times={times} onItemClick={this.handleItemClick} />
+                    {calendarShowMode === 'single' && (
+                      <div className="c7ntest-TestPlan-content-right-bottom">
+                        <div style={{ display: 'flex', marginBottom: 20 }}>
+                          <div style={{
+                            fontWeight: 600,
+                            marginTop: 18,
+                            marginRight: 10,
+                            fontSize: '14px',
                           }}
-                        />
-                        <div style={{ marginLeft: 20 }}>
-                          <SelectFocusLoad
-                            label={<FormattedMessage id="cycle_assignedTo" />}
+                          >
+                          筛选:
+                          </div>
+                          <SelectFocusLoad                       
+                            label={<FormattedMessage id="cycle_executeBy" />}
                             request={getUsers}
                             onChange={(value) => {
-                              TestPlanStore.setAssignedTo(value);
+                              TestPlanStore.setLastUpdatedBy(value);
                               TestPlanStore.loadCycle();
                             }}
                           />
-                        </div>
+                          <div style={{ marginLeft: 20 }}>
+                            <SelectFocusLoad
+                              label={<FormattedMessage id="cycle_assignedTo" />}
+                              request={getUsers}
+                              onChange={(value) => {
+                                TestPlanStore.setAssignedTo(value);
+                                TestPlanStore.loadCycle();
+                              }}
+                            />
+                          </div>
+                        </div>             
+                        <DragTable
+                          pagination={executePagination}
+                          loading={rightLoading}
+                          onChange={this.handleExecuteTableChange}
+                          dataSource={testList}
+                          columns={columns}
+                          onDragEnd={this.onDragEnd}
+                          dragKey="executeId"
+                        /> 
                       </div>
-                      <DragTable
-                        pagination={executePagination}
-                        loading={rightLoading}
-                        onChange={this.handleExecuteTableChange}
-                        dataSource={testList}
-                        columns={treeShow ? columns
-                          : columns.slice(0, 4).concat(otherColumns).concat(columns.slice(4))}
-                        onDragEnd={this.onDragEnd}
-                        dragKey="executeId"
-                      />
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <div style={{
-                  display: 'flex', alignItems: 'center', height: 250, margin: '88px auto', padding: '50px 75px', border: '1px dashed rgba(0,0,0,0.54)',
-                }}
-                >
-                  <img src={noRight} alt="" />
-                  <div style={{ marginLeft: 40 }}>
-                    <div style={{ fontSize: '14px', color: 'rgba(0,0,0,0.65)' }}>根据当前选定的测试循环没有查询到循环信息</div>
-                    <div style={{ fontSize: '20px', marginTop: 10 }}>尝试在您的树状图中选择测试循环</div>
+                    )}
                   </div>
-                </div>
-              )}
+                ) : (
+                  <div style={{
+                    display: 'flex', alignItems: 'center', height: 250, margin: '88px auto', padding: '50px 75px', border: '1px dashed rgba(0,0,0,0.54)',
+                  }}
+                  >
+                    <img src={noRight} alt="" />
+                    <div style={{ marginLeft: 40 }}>
+                      <div style={{ fontSize: '14px', color: 'rgba(0,0,0,0.65)' }}>根据当前选定的测试循环没有查询到循环信息</div>
+                      <div style={{ fontSize: '20px', marginTop: 10 }}>尝试在您的树状图中选择测试循环</div>
+                    </div>
+                  </div>
+                ))}
+              </Injecter>
+
+              {/* <Spin spinning={loading}> */}
+              
             </div>
           </Spin>
         </Content>

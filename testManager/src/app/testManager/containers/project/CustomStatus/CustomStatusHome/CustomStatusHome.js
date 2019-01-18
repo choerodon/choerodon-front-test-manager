@@ -174,6 +174,7 @@ class CustomStatusHome extends Component {
               <Tabs defaultActiveKey="CYCLE_CASE" onChange={this.handleTabChange}>
                 <TabPane tab={<FormattedMessage id="status_executeStatus" />} key="CYCLE_CASE">                
                   <Table
+                    onColumnFilterChange={arr => console.log(arr)}
                     rowKey="statusId"               
                     columns={columns}
                     dataSource={statusList}
