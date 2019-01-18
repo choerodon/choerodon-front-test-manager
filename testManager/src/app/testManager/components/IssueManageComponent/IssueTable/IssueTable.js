@@ -2,80 +2,159 @@
 import React, { Component } from 'react';
 import _ from 'lodash';
 import { observer } from 'mobx-react';
-import { Spin } from 'choerodon-ui';
+import { Spin, Table, Pagination } from 'choerodon-ui';
 import { Draggable, Droppable, DragDropContext } from 'react-beautiful-dnd';
-
+import { FormattedMessage } from 'react-intl';
+import EmptyBlock from '../EmptyBlock';
+import CreateIssueTiny from '../CreateIssueTiny';
 import IssueStore from '../../../store/project/IssueManage/IssueStore';
 
 import {
   renderType, renderIssueNum, renderSummary, renderPriority, renderVersions, renderFolder,
-  renderComponents, renderLabels, renderAssigned, renderStatus,
+  renderComponents, renderLabels, renderAssigned, renderStatus, renderReporter,
 } from './tags';
 import './IssueTable.scss';
-
+import pic from '../../../assets/问题管理－空.png';
 
 @observer
 class IssueTable extends Component {
-  state = {
-    firstIndex: null,
+  constructor(props) {
+    super(props);
+    this.state = {
+      firstIndex: null,
+      filteredColumns: [],
+    };
+    this.columns = [
+      {
+        title: '编号',
+        dataIndex: 'issueNum',
+        filters: [],
+        render: (issueNum, record) => renderIssueNum(issueNum),
+      },
+      {
+        title: '类型',
+        dataIndex: 'issueTypeDTO',
+        render: (issueTypeDTO, record) => renderType(issueTypeDTO),
+      },
+      {
+        title: '概要',
+        dataIndex: 'summary',
+        filters: [],
+        render: (summary, record) => renderSummary(summary),
+      },
+      {
+        title: '版本',
+        dataIndex: 'versionIssueRelDTOList',
+        render: (versionIssueRelDTOList, record) => renderVersions(versionIssueRelDTOList),
+      },
+      {
+        title: '文件夹',
+        dataIndex: 'folderName',
+        render: (folderName, record) => renderFolder(folderName),
+      },
+      {
+        title: '报告人',
+        dataIndex: 'reporter',
+        render: (assign, record) => {
+          const { reporterId, reporterName, reporterImageUrl } = record;
+          return renderReporter(reporterId, reporterName, reporterImageUrl);
+        },
+      },
+      {
+        title: '优先级',
+        dataIndex: 'priorityId',
+        filters: props.prioritys.map(priority => ({ text: priority.name, value: priority.id.toString() })),
+        filterMultiple: true,
+        render: (priorityId, record) => renderPriority(record.priorityDTO),
+      },
+    ];
   }
 
-  renderTestIssue(issue) {
-    const {
-      issueId,
-      issueTypeDTO, issueNum, summary, assigneeId, assigneeName, assigneeImageUrl, reporterId,
-      reporterName, reporterImageUrl, statusMapDTO, priorityDTO,
-      folderName, epicColor, componentIssueRelDTOList, labelIssueRelDTOList,
-      versionIssueRelDTOList, creationDate, lastUpdateDate,
-    } = issue;
-    return (
-      <div style={{ marginTop: '5px', marginBottom: '5px', cursor: 'pointer' }}>
-        <div style={{
-          display: 'flex', marginBottom: '5px', width: '100%', flex: 1,
-        }}
-        >
-          {renderType(issueTypeDTO)}
-          {renderIssueNum(issueNum)}
-          {renderSummary(summary)}
-        </div>
-        <div style={{ display: 'flex' }}>
-          {renderPriority(priorityDTO)}
-          {renderVersions(versionIssueRelDTOList)}
-          {renderFolder(folderName)}
-          <div className="c7ntest-flex-space" />
-          {renderAssigned(assigneeId, assigneeName, assigneeImageUrl)}
-          {renderStatus(statusMapDTO)}
-        </div>
-      </div>
-    );
+
+  handleColumnFilterChange = ({ selectedKeys }) => {
+    this.setState({
+      filteredColumns: selectedKeys,
+    });
   }
 
-  renderWideIssue(issue) {
-    const {
-      issueId, issueTypeDTO, issueNum, summary, assigneeId, assigneeName, assigneeImageUrl, reporterId,
-      reporterName, reporterImageUrl, priorityDTO, statusMapDTO,
-      folderName, epicColor, componentIssueRelDTOList, labelIssueRelDTOList,
-      versionIssueRelDTOList, creationDate, lastUpdateDate,
-    } = issue;
-    return (
-      <div style={{
-        display: 'flex', flex: 1, marginTop: '3px', marginBottom: '3px', cursor: 'pointer',
-      }}
-      >
-        {renderType(issueTypeDTO)}
-        {renderIssueNum(issueNum)}
-        {renderSummary(summary)}
-        <div className="c7ntest-flex-space" />
-        {renderPriority(priorityDTO)}
-        {renderVersions(versionIssueRelDTOList)}
-        {renderFolder(folderName)}
-        {/* {renderComponents(componentIssueRelDTOList)} */}
-        {/* 标签 */}
-        {/* {renderLabels(labelIssueRelDTOList)} */}
-        {renderAssigned(assigneeId, assigneeName, assigneeImageUrl)}
-        {renderStatus(statusMapDTO)}
-      </div>
-    );
+
+  components = {
+    table: () => {
+      const table = (
+        <table>
+          <thead>
+            {this.renderThead()}
+          </thead>
+          <Droppable droppableId="dropTable" isDropDisabled>
+            {(provided, snapshot) => (
+              <tbody
+                ref={provided.innerRef}
+              >
+                {this.renderTbody(IssueStore.getIssues)}
+                {provided.placeholder}
+              </tbody>
+            )}
+          </Droppable>
+        </table>
+      );
+      return (
+        <DragDropContext onDragEnd={this.onDragEnd.bind(this)} onDragStart={this.onDragStart}>
+          {table}
+        </DragDropContext>
+      );
+    },
+
+  }
+
+  shouldColumnShow = (column) => {
+    if (column.title === '' || !column.dataIndex) {
+      return true;
+    }
+    const { filteredColumns } = this.state;
+    return filteredColumns.length === 0 ? true : filteredColumns.includes(column.dataIndex);
+  }
+
+  renderThead = () => {
+    const { columns } = this;
+    const Columns = columns.filter(column => this.shouldColumnShow(column));
+    const ths = Columns.map(column => (
+      <th style={{ flex: column.flex || 1 }}>
+        {column.title}
+        {' '}
+      </th>
+    ));
+    return (<tr>{ths}</tr>);
+  }
+
+  renderTbody(data) {
+    const { disabled, selectedIssue } = this.props;
+    const draggingTableItems = IssueStore.getDraggingTableItems;
+    const { columns } = this;
+    const Columns = columns.filter(column => this.shouldColumnShow(column));
+    const tds = index => Columns.map((column) => {
+      let renderedItem = null;
+      const {
+        dataIndex, key, flex, render,
+      } = column;
+      if (render) {
+        renderedItem = render(data[index][dataIndex], data[index], index);
+      } else {
+        renderedItem = data[index][dataIndex];
+      }
+      return (
+        <td style={{ flex: flex || 1 }}>
+          {renderedItem}
+        </td>
+      );
+    });
+    const rows = data.map((item, index) => (
+      disabled
+        ? tds(index)
+        : (
+          this.renderDraggable(item, index, tds(index))
+        )
+    ));
+    return rows;
   }
 
   renderNarrowIssue(issue) {
@@ -87,36 +166,27 @@ class IssueTable extends Component {
       versionIssueRelDTOList, creationDate, lastUpdateDate,
     } = issue;
     return (
-      <div style={{ marginTop: '5px', marginBottom: '5px', cursor: 'pointer' }}>
+      <div style={{ 
+        borderBottom: '1px solid #eee', padding: '12px 16px', cursor: 'pointer', 
+      }}
+      >
         <div style={{
           display: 'flex', marginBottom: '5px', width: '100%', flex: 1,
         }}
         >
           {renderType(issueTypeDTO)}
           {renderIssueNum(issueNum)}
-          {renderSummary(summary)}
-        </div>
-        <div style={{ display: 'flex' }}>
-
+          <div className="c7ntest-flex-space" />
           {renderVersions(versionIssueRelDTOList)}
           {renderFolder(folderName)}
-          <div className="c7ntest-flex-space" />
-          {/* {renderAssigned(assigneeId, assigneeName, assigneeImageUrl)} */}
-          {renderStatus(statusMapDTO)}
+          {renderReporter(reporterId, reporterName, reporterImageUrl, true)}
+          {renderPriority(priorityDTO)}
+        </div>
+        <div style={{ display: 'flex' }}>
+          {renderSummary(summary)}
         </div>
       </div>
     );
-  }
-
-  renderIssue = (issue) => {
-    const { expand, treeShow } = this.props;
-    if (!expand) {
-      return this.renderWideIssue(issue);
-    } else if (expand && !treeShow) {
-      return this.renderNarrowIssue(issue);
-    } else {
-      return this.renderTestIssue(issue);
-    }
   }
 
   onDragEnd = (result) => {
@@ -208,23 +278,148 @@ class IssueTable extends Component {
     });
   }
 
+  renderDraggable = (issue, index, inner) => {
+    const { selectedIssue } = this.props;
+    const draggingTableItems = IssueStore.getDraggingTableItems;
+    return (
+      <Draggable key={issue.issueId} draggableId={issue.issueId} index={index} isDragDisabled={issue.typeCode === 'issue_auto_test'}>
+        {(provided, snapshotinner) => (
+          <tr
+            ref={provided.innerRef}
+            {...provided.draggableProps}
+            {...provided.dragHandleProps}
+            style={{
+              background: !snapshotinner.isDragging && issue.typeCode !== 'issue_auto_test' && _.find(draggingTableItems, { issueId: issue.issueId }) && 'rgb(235, 242, 249)',
+              position: 'relative',
+              ...provided.draggableProps.style,
+            }}
+            onClick={this.handleClickIssue.bind(this, issue, index)}
+            className={issue.issueId === selectedIssue.issueId ? 'c7ntest-border-visible c7ntest-table-item' : 'c7ntest-border c7ntest-table-item'}
+          >
+            {snapshotinner.isDragging
+            && (
+              <div style={{
+                position: 'absolute',
+                width: 20,
+                height: 20,
+                background: 'red',
+                textAlign: 'center',
+                color: 'white',
+                borderRadius: '50%',
+                top: 0,
+                left: 0,
+              }}
+              >
+                {draggingTableItems.length}
+              </div>
+            )
+          }
+            {snapshotinner.isDragging
+            && (
+              <div className="IssueTable-drag-prompt">
+                <div>
+                  {'复制或移动测试用例'}
+                </div>
+                <div> 按下ctrl/command复制</div>
+                <div
+                  ref={(instance) => { this.instance = instance; }}
+                >
+                  <div>
+                    {'当前状态：'}
+                    <span style={{ fontWeight: 500 }}>移动</span>
+                  </div>
+                </div>
+              </div>
+            )
+          }
+            {inner}
+          </tr>
+        )
+      }
+      </Draggable>
+    );
+  }
+
+  renderTable = () => {
+    const { expand } = this.props;
+    return expand ? (
+      <DragDropContext onDragEnd={this.onDragEnd} onDragStart={this.onDragStart}>
+        <Droppable droppableId="dropTable" isDropDisabled>
+          {(provided, snapshot) => (
+            <div ref={provided.innerRef} style={{ display: 'flex', flexDirection: 'column' }}>
+              {
+                _.slice(IssueStore.getIssues).map((issue, i) => (
+                  this.renderDraggable(issue, i, this.renderNarrowIssue(issue))
+                ))
+              }
+              {provided.placeholder}
+            </div>
+          )}
+        </Droppable>
+      </DragDropContext>
+    ) : (
+      <div className="c7ntest-issuetable">
+        <Table
+          filterBar={false}
+          columns={this.columns}
+          dataSource={IssueStore.getIssues}
+          components={this.components}
+          onColumnFilterChange={this.handleColumnFilterChange}
+          pagination={false}
+        />
+      </div>
+    );
+  }
+
+  renderItems = () => {
+
+  }
+
+  handleFilterChange = (pagination, filters, sorter, barFilters) => {
+    // 条件变化返回第一页
+    IssueStore.setPagination({
+      current: 1,
+      pageSize: IssueStore.pagination.pageSize,
+      total: IssueStore.pagination.total,
+    });
+    IssueStore.setFilteredInfo(filters);
+    IssueStore.setBarFilters(barFilters);
+    // window.console.log(pagination, filters, sorter, barFilters[0]);
+    if (barFilters === undefined || barFilters.length === 0) {
+      IssueStore.setBarFilters(undefined);
+    }
+
+    const { statusId, priorityId } = filters;
+    const { issueNum, summary } = filters;
+    const search = {
+      advancedSearchArgs: {
+        statusId: statusId || [],
+        priorityId: priorityId || [],
+      },
+      searchArgs: {
+        issueNum: issueNum && issueNum.length ? issueNum[0] : barFilters[0],
+        summary: summary && summary.length ? summary[0] : '',
+      },
+    };
+    IssueStore.setFilter(search);
+    const { current, pageSize } = IssueStore.pagination;
+    IssueStore.loadIssues(current - 1, pageSize);
+  }
+
+  handlePaginationChange(page, pageSize) {
+    IssueStore.loadIssues(page - 1, pageSize);
+  }
+
+  handlePaginationShowSizeChange(current, size) {
+    IssueStore.loadIssues(current - 1, size);
+  }
+
   render() {
     const {
-      expand, selectedIssue, setSelectIssue, setExpand,
+      expand, selectedIssue, setSelectIssue, setExpand, prioritys, issueStatusList,
     } = this.props;
-    const draggingTableItems = IssueStore.getDraggingTableItems;
-    // console.log('render', draggingTableItems);
-    // const columns = [
-    //   {
-    //     title: 'summary',
-    //     dataIndex: 'summary',
-    //     render: (summary, record) => (
-    //       expand ? this.renderNarrowIssue(record) : this.renderTestIssue(record)
-    //     ),
-    //   },
-    // ];
     return (
-      <Spin spinning={IssueStore.loading}>
+      <div>
         <div id="template_copy" style={{ display: 'none' }}>
           {'当前状态：'}
           <span style={{ fontWeight: 500 }}>复制</span>
@@ -233,79 +428,83 @@ class IssueTable extends Component {
           {'当前状态：'}
           <span style={{ fontWeight: 500 }}>移动</span>
         </div>
-        <DragDropContext onDragEnd={this.onDragEnd} onDragStart={this.onDragStart}>
-          <Droppable droppableId="dropTable" isDropDisabled>
-            {(provided, snapshot) => (
-              <div ref={provided.innerRef}>
-                {
-                  _.slice(IssueStore.getIssues).map((issue, i) => (
-                    <Draggable key={issue.issueId} draggableId={issue.issueId} index={i} isDragDisabled={issue.typeCode === 'issue_auto_test'}>
-                      {
-                        (providedinner, snapshotinner) => (
-                          <div
-                            ref={providedinner.innerRef}
-                            {...providedinner.draggableProps}
-                            {...providedinner.dragHandleProps}
-                          >
-                            <div
-                              role="none"
-                              onClick={this.handleClickIssue.bind(this, issue, i)}
-                              className={issue.issueId === selectedIssue.issueId ? 'c7ntest-border-visible c7ntest-table-item' : 'c7ntest-border c7ntest-table-item'}
-                              style={{
-                                background: !snapshotinner.isDragging && issue.typeCode !== 'issue_auto_test' && _.find(draggingTableItems, { issueId: issue.issueId }) && 'rgb(235, 242, 249)',
-                                position: 'relative',
-                              }}
-                            >
-                              {snapshotinner.isDragging
-                                && (
-                                  <div style={{
-                                    position: 'absolute',
-                                    width: 20,
-                                    height: 20,
-                                    background: 'red',
-                                    textAlign: 'center',
-                                    color: 'white',
-                                    borderRadius: '50%',
-                                    top: 0,
-                                    left: 0,
-                                  }}
-                                  >
-                                    {draggingTableItems.length}
-                                  </div>
-                                )
-                              }
-                              {snapshotinner.isDragging
-                                && (
-                                  <div className="IssueTable-drag-prompt">
-                                    <div>
-                                      {'复制或移动测试用例'}
-                                    </div>
-                                    <div> 按下ctrl/command复制</div>
-                                    <div
-                                      ref={(instance) => { this.instance = instance; }}
-                                    >
-                                      <div>
-                                        {'当前状态：'}
-                                        <span style={{ fontWeight: 500 }}>移动</span>
-                                      </div>
-                                    </div>
-                                  </div>
-                                )
-                              }
-                              {this.renderIssue(issue)}
-                            </div>
-                          </div>
-                        )
-                      }
-                    </Draggable>
-                  ))
-                }
-                {provided.placeholder}
+
+        <section className="c7ntest-bar">
+          <Table
+            rowKey={record => record.id}
+            columns={this.columns}
+            dataSource={[]}
+            filterBar
+            showHeader={false}
+            onChange={this.handleFilterChange}
+            onColumnFilterChange={this.handleColumnFilterChange}
+            pagination={false}
+            filters={IssueStore.barFilters || []}
+            filterBarPlaceholder={<FormattedMessage id="issue_filterTestIssue" />}
+          />
+        </section>
+        <section
+          className={`c7ntest-table ${this.state.expand ? 'expand-sign' : ''}`}
+          style={{
+            // paddingRight: this.state.expand ? '0' : '24px',
+            boxSizing: 'border-box',
+            width: '100%',
+          }}
+        >
+          {
+            IssueStore.issues.length === 0 && !IssueStore.loading ? (
+              <EmptyBlock
+                style={{ marginTop: 40 }}
+                border
+                pic={pic}
+                title={<FormattedMessage id="issue_noIssueTitle" />}
+                des={<FormattedMessage id="issue_noIssueDescription" />}
+              />
+            ) : (
+              <Spin spinning={IssueStore.loading}>
+                {this.renderTable()}
+              </Spin>
+            )
+          }
+          <div className="c7ntest-backlog-sprintIssue">
+            <div
+              style={{
+                userSelect: 'none',
+                background: 'white',
+                padding: '12px 0 12px 20px',
+                fontSize: 13,
+                display: 'flex',
+                alignItems: 'center',
+                borderBottom: '1px solid #e8e8e8',
+              }}
+            >
+              {/* table底部创建用例 */}
+              <CreateIssueTiny />
+            </div>
+          </div>
+          {
+            IssueStore.issues.length !== 0 ? (
+              <div style={{
+                display: 'flex', justifyContent: 'flex-end', marginTop: 16, marginBottom: 16,
+              }}
+              >
+                <Pagination
+                  current={IssueStore.pagination.current}
+                  defaultCurrent={1}
+                  defaultPageSize={10}
+                  pageSize={IssueStore.pagination.pageSize}
+                  showSizeChanger
+                  total={IssueStore.pagination.total}
+                  onChange={this.handlePaginationChange.bind(this)}
+                  onShowSizeChange={this.handlePaginationShowSizeChange.bind(this)}
+                />
               </div>
-            )}
-          </Droppable>
-        </DragDropContext>
-      </Spin>
+            ) : null
+          }
+
+        </section>
+      </div>
+
     );
   }
 }

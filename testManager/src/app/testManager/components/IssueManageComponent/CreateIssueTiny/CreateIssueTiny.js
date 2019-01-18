@@ -5,10 +5,10 @@ import {
 import { observer } from 'mobx-react';
 import { FormattedMessage } from 'react-intl';
 import _ from 'lodash';
-import { getProjectId } from '../../../../../../common/utils';
-import { createIssue } from '../../../../../../api/IssueManageApi';
-import IssueStore from '../../../../../../store/project/IssueManage/IssueStore';
-import IssueTreeStore from '../../../../../../store/project/IssueManage/IssueTreeStore';
+import { getProjectId } from '../../../common/utils';
+import { createIssue } from '../../../api/IssueManageApi';
+import IssueStore from '../../../store/project/IssueManage/IssueStore';
+import IssueTreeStore from '../../../store/project/IssueManage/IssueTreeStore';
 
 const { Option } = Select;
 @observer

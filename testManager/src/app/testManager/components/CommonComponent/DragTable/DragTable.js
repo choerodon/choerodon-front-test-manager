@@ -33,9 +33,12 @@ class DragTable extends Component {
     });
   }
 
-  shouldColumnShow=(key) => {
+  shouldColumnShow=(column) => {
+    if (column.title === '' || !column.dataIndex) {
+      return true;
+    }
     const { filteredColumns } = this.state;
-    return filteredColumns.length === 0 ? true : filteredColumns.includes(key);
+    return filteredColumns.length === 0 ? true : filteredColumns.includes(column.key);
   }
 
   onDragEnd(result) {
@@ -103,7 +106,7 @@ class DragTable extends Component {
 
   renderThead = () => {
     const { columns } = this.props;  
-    const Columns = columns.filter(column => this.shouldColumnShow(column.key));
+    const Columns = columns.filter(column => this.shouldColumnShow(column));
     const ths = Columns.map(column => (
       <th style={{ flex: column.flex || 1 }}>
         {column.title}
@@ -115,7 +118,7 @@ class DragTable extends Component {
 
   renderTbody(data) {   
     const { columns, dragKey, disabled } = this.props;
-    const Columns = columns.filter(column => this.shouldColumnShow(column.key));
+    const Columns = columns.filter(column => this.shouldColumnShow(column));
     const rows = data.map((item, index) => (
       disabled
         ? (

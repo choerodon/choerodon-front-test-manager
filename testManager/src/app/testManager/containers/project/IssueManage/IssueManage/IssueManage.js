@@ -10,17 +10,16 @@ import {
 import { FormattedMessage } from 'react-intl';
 import FileSaver from 'file-saver';
 import IssueStore from '../../../../store/project/IssueManage/IssueStore';
-import pic from '../../../../assets/问题管理－空.png';
+
 import { loadIssue, downloadTemplate } from '../../../../api/IssueManageApi';
 import { commonLink, getParams } from '../../../../common/utils';
 import RunWhenProjectChange from '../../../../common/RunWhenProjectChange';
-import EmptyBlock from '../../../../components/IssueManageComponent/EmptyBlock';
+
 import CreateIssue from '../../../../components/IssueManageComponent/CreateIssue';
 import EditIssue from '../../../../components/IssueManageComponent/EditIssue';
 import IssueTree from '../../../../components/IssueManageComponent/IssueTree';
 import IssueTable from '../../../../components/IssueManageComponent/IssueTable';
 import ExportSide from '../../../../components/IssueManageComponent/ExportSide';
-import { CreateIssueTiny } from './components';
 import './IssueManage.scss';
 
 const EditIssueWidth = {
@@ -95,45 +94,6 @@ export default class IssueManage extends Component {
   //   IssueStore.loadIssues(current - 1, pageSize);
   // }
 
-  handlePaginationChange(page, pageSize) {
-    IssueStore.loadIssues(page - 1, pageSize);
-  }
-
-  handlePaginationShowSizeChange(current, size) {
-    IssueStore.loadIssues(current - 1, size);
-  }
-
-  handleFilterChange = (pagination, filters, sorter, barFilters) => {
-    // 条件变化返回第一页
-    IssueStore.setPagination({
-      current: 1,
-      pageSize: IssueStore.pagination.pageSize,
-      total: IssueStore.pagination.total,
-    });
-    IssueStore.setFilteredInfo(filters);
-    IssueStore.setBarFilters(barFilters);
-    // window.console.log(pagination, filters, sorter, barFilters[0]);
-    if (barFilters === undefined || barFilters.length === 0) {
-      IssueStore.setBarFilters(undefined);
-    }
-
-    const { statusId, priorityId } = filters;
-    const { issueNum, summary } = filters;
-    const search = {
-      advancedSearchArgs: {
-        statusId: statusId || [],
-        priorityId: priorityId || [],
-      },
-      searchArgs: {
-        issueNum: issueNum && issueNum.length ? issueNum[0] : barFilters[0],
-        summary: summary && summary.length ? summary[0] : '',
-      },
-    };
-    IssueStore.setFilter(search);
-    const { current, pageSize } = IssueStore.pagination;
-    IssueStore.loadIssues(current - 1, pageSize);
-  }
-
 
   downloadTemplate = () => {
     downloadTemplate().then((excel) => {
@@ -166,35 +126,7 @@ export default class IssueManage extends Component {
     const prioritys = IssueStore.getPrioritys;
     const issueStatusList = IssueStore.getIssueStatus;
     const EditIssueMode = this.getMode();
-    const filterColumns = [
-      {
-        title: <FormattedMessage id="issue_issueFilterByNum" />,
-        dataIndex: 'issueNum',
-        key: 'issueNum',
-        filters: [],
-      },
-      {
-        title: <FormattedMessage id="issue_issueFilterBySummary" />,
-        dataIndex: 'summary',
-        key: 'summary',
-        filters: [],
-      },
-      {
-        title: <FormattedMessage id="issue_issueFilterByPriority" />,
-        dataIndex: 'priorityId',
-        key: 'priorityId',
-        filters: prioritys.map(priority => ({ text: priority.name, value: priority.id.toString() })),
-        filterMultiple: true,
-      },
-      {
-        title: <FormattedMessage id="issue_issueFilterByStatus" />,
-        dataIndex: 'statusId',
-        key: 'statusId',
-        filters: issueStatusList.map(status => ({ text: status.name, value: status.id.toString() })),
-        filterMultiple: true,
-        filteredValue: IssueStore.filteredInfo.statusId || null,
-      },
-    ];
+
     return (
       <Page className="c7ntest-Issue c7ntest-region">
         <Header
@@ -264,92 +196,23 @@ export default class IssueManage extends Component {
               overflowX: 'hidden',
             }}
           >
-            <section className="c7ntest-bar">
-              <Table
-                rowKey={record => record.id}
-                columns={filterColumns}
-                dataSource={[]}
-                filterBar
-                showHeader={false}
-                onChange={this.handleFilterChange}
-                pagination={false}
-                filters={IssueStore.barFilters || []}
-                filterBarPlaceholder={<FormattedMessage id="issue_filterTestIssue" />}
-              />
-            </section>
-            <section
-              className={`c7ntest-table ${this.state.expand ? 'expand-sign' : ''}`}
-              style={{
-                paddingRight: this.state.expand ? '0' : '24px',
-                boxSizing: 'border-box',
-                width: '100%',
+            <IssueTable
+              prioritys={prioritys}
+              issueStatusList={issueStatusList}
+              setExpand={(value) => {
+                this.setState({
+                  expand: value,
+                });
               }}
-            >
-              {
-                IssueStore.issues.length === 0 && !IssueStore.loading ? (
-                  <EmptyBlock
-                    style={{ marginTop: 40 }}
-                    border
-                    pic={pic}
-                    title={<FormattedMessage id="issue_noIssueTitle" />}
-                    des={<FormattedMessage id="issue_noIssueDescription" />}
-                  />
-                ) : (
-                  <IssueTable
-                    setExpand={(value) => {
-                      this.setState({
-                        expand: value,
-                      });
-                    }}
-                    setSelectIssue={(value) => {
-                      this.setState({
-                        selectedIssue: value,
-                      });
-                    }}
-                    selectedIssue={selectedIssue}
-                    expand={expand}
-                    treeShow={treeShow}
-                  />
-                )
-              }
-
-              <div className="c7ntest-backlog-sprintIssue">
-                <div
-                  style={{
-                    userSelect: 'none',
-                    background: 'white',
-                    padding: '12px 0 12px 20px',
-                    fontSize: 13,
-                    display: 'flex',
-                    alignItems: 'center',
-                    borderBottom: '1px solid #e8e8e8',
-                  }}
-                >
-                  {/* table底部创建用例 */}
-                  <CreateIssueTiny />
-                </div>
-              </div>
-              {
-                IssueStore.issues.length !== 0 ? (
-                  <div style={{
-                    display: 'flex', justifyContent: 'flex-end', marginTop: 16, marginBottom: 16,
-                  }}
-                  >
-                    <Pagination
-                      current={IssueStore.pagination.current}
-                      defaultCurrent={1}
-                      defaultPageSize={10}
-                      pageSize={IssueStore.pagination.pageSize}
-                      showSizeChanger
-                      total={IssueStore.pagination.total}
-                      onChange={this.handlePaginationChange.bind(this)}
-                      onShowSizeChange={this.handlePaginationShowSizeChange.bind(this)}
-                    />
-                  </div>
-                ) : null
-              }
-
-            </section>
+              setSelectIssue={(value) => {
+                this.setState({
+                  selectedIssue: value,
+                });
+              }}
+              selectedIssue={selectedIssue}
+              expand={expand}
+              treeShow={treeShow}
+            />
 
           </div>
           <ExportSide ref={this.saveRef('ExportSide')} />

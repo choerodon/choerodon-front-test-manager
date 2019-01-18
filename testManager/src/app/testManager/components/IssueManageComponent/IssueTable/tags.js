@@ -68,6 +68,8 @@ export function renderVersions(versions, priorityName) {
     versions.map(version => (
       <div
         style={{
+          display: 'inline-block',
+          maxWidth: 'calc(100% - 10px)',
           color: 'rgba(0,0,0,0.36)',
           height: 22,
           borderWidth: '1px',
@@ -113,6 +115,8 @@ export function renderFolder(folderName) {
     folderName ? (
       <div
         style={{
+          display: 'inline-block',
+          maxWidth: 'calc(100% - 10px)',
           color: '#4D90FE',
           height: 22,
           borderWidth: '1px',
@@ -121,8 +125,8 @@ export function renderFolder(folderName) {
           borderRadius: '2px',
           fontSize: '13px',
           lineHeight: '20px',
-          padding: '0 8px',
-          margin: '0 5px',
+          padding: '0 8px',  
+          margin: '0 5px',   
         }}
         className="c7ntest-text-dot"
       >
@@ -168,11 +172,31 @@ export function renderAssigned(assigneeId, assigneeName, imageUrl) {
       <Tooltip mouseEnterDelay={0.5} title={`任务经办人： ${assigneeName}`}>
         <div style={{ margin: '0 5px' }}>
           <UserHead
+            hiddenText
             user={{
               id: assigneeId,
               loginName: '',
               realName: assigneeName,
               avatar: imageUrl,
+            }}
+          />
+        </div>
+      </Tooltip>
+    ) : null
+  );
+}
+export function renderReporter(reporterId, reporterName, reporterImageUrl, hiddenText) {
+  return (
+    reporterId ? (
+      <Tooltip mouseEnterDelay={0.5} title={`任务报告人： ${reporterName}`}>
+        <div style={{ margin: '0 5px' }}>
+          <UserHead
+            hiddenText={hiddenText}
+            user={{
+              id: reporterId,
+              loginName: '',
+              realName: reporterName,
+              avatar: reporterImageUrl,
             }}
           />
         </div>

@@ -148,7 +148,7 @@ class TestPlanHome extends Component {
       testList, executePagination, loading, rightLoading, 
     } = TestPlanStore;
     const columns = [{
-      title: 'ID',
+      title: <span>ID</span>,
       dataIndex: 'issueNum',
       key: 'issueNum',
       flex: 1,
@@ -182,7 +182,7 @@ class TestPlanHome extends Component {
         );
       },
     }, {
-      title: '用例名',
+      title: <span>用例名</span>,
       dataIndex: 'summary',
       key: 'summary',
       filters: [],
@@ -198,7 +198,7 @@ class TestPlanHome extends Component {
         );
       },
     }, {
-      title: '用例优先级',
+      title: <span>用例优先级</span>,
       dataIndex: 'priorityId',
       key: 'priorityId',
       filters: prioritys.map(priority => ({ text: priority.name, value: priority.id.toString() })),
@@ -229,7 +229,7 @@ class TestPlanHome extends Component {
         );
       },
     }, {
-      title: '执行描述',
+      title: <span>执行描述</span>,
       dataIndex: 'comment',
       key: 'comment',
       filters: [],
