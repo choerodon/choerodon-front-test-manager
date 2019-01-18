@@ -122,9 +122,8 @@ export default class IssueManage extends Component {
 
   render() {
     const { expand, createIssueShow, selectedIssue } = this.state;
-    const treeShow = IssueStore.treeShow;
-    const prioritys = IssueStore.getPrioritys;
-    const issueStatusList = IssueStore.getIssueStatus;
+    const treeShow = IssueStore.treeShow;   
+    
     const EditIssueMode = this.getMode();
 
     return (
@@ -197,8 +196,6 @@ export default class IssueManage extends Component {
             }}
           >
             <IssueTable
-              prioritys={prioritys}
-              issueStatusList={issueStatusList}
               setExpand={(value) => {
                 this.setState({
                   expand: value,

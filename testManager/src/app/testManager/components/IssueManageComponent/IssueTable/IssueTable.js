@@ -18,57 +18,10 @@ import pic from '../../../assets/问题管理－空.png';
 
 @observer
 class IssueTable extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      firstIndex: null,
-      filteredColumns: [],
-    };
-    this.columns = [
-      {
-        title: '编号',
-        dataIndex: 'issueNum',
-        filters: [],
-        render: (issueNum, record) => renderIssueNum(issueNum),
-      },
-      {
-        title: '类型',
-        dataIndex: 'issueTypeDTO',
-        render: (issueTypeDTO, record) => renderType(issueTypeDTO),
-      },
-      {
-        title: '概要',
-        dataIndex: 'summary',
-        filters: [],
-        render: (summary, record) => renderSummary(summary),
-      },
-      {
-        title: '版本',
-        dataIndex: 'versionIssueRelDTOList',
-        render: (versionIssueRelDTOList, record) => renderVersions(versionIssueRelDTOList),
-      },
-      {
-        title: '文件夹',
-        dataIndex: 'folderName',
-        render: (folderName, record) => renderFolder(folderName),
-      },
-      {
-        title: '报告人',
-        dataIndex: 'reporter',
-        render: (assign, record) => {
-          const { reporterId, reporterName, reporterImageUrl } = record;
-          return renderReporter(reporterId, reporterName, reporterImageUrl);
-        },
-      },
-      {
-        title: '优先级',
-        dataIndex: 'priorityId',
-        filters: props.prioritys.map(priority => ({ text: priority.name, value: priority.id.toString() })),
-        filterMultiple: true,
-        render: (priorityId, record) => renderPriority(record.priorityDTO),
-      },
-    ];
-  }
+  state = {
+    firstIndex: null,
+    filteredColumns: [],
+  };
 
 
   handleColumnFilterChange = ({ selectedKeys }) => {
@@ -78,19 +31,19 @@ class IssueTable extends Component {
   }
 
 
-  components = {
+  getComponents = columns => ({
     table: () => {
       const table = (
         <table>
           <thead>
-            {this.renderThead()}
+            {this.renderThead(columns)}
           </thead>
           <Droppable droppableId="dropTable" isDropDisabled>
             {(provided, snapshot) => (
               <tbody
                 ref={provided.innerRef}
               >
-                {this.renderTbody(IssueStore.getIssues)}
+                {this.renderTbody(IssueStore.getIssues, columns)}
                 {provided.placeholder}
               </tbody>
             )}
@@ -103,8 +56,7 @@ class IssueTable extends Component {
         </DragDropContext>
       );
     },
-
-  }
+  })
 
   shouldColumnShow = (column) => {
     if (column.title === '' || !column.dataIndex) {
@@ -114,8 +66,7 @@ class IssueTable extends Component {
     return filteredColumns.length === 0 ? true : filteredColumns.includes(column.dataIndex);
   }
 
-  renderThead = () => {
-    const { columns } = this;
+  renderThead = (columns) => {
     const Columns = columns.filter(column => this.shouldColumnShow(column));
     const ths = Columns.map(column => (
       <th style={{ flex: column.flex || 1 }}>
@@ -126,10 +77,8 @@ class IssueTable extends Component {
     return (<tr>{ths}</tr>);
   }
 
-  renderTbody(data) {
+  renderTbody(data, columns) {
     const { disabled, selectedIssue } = this.props;
-    const draggingTableItems = IssueStore.getDraggingTableItems;
-    const { columns } = this;
     const Columns = columns.filter(column => this.shouldColumnShow(column));
     const tds = index => Columns.map((column) => {
       let renderedItem = null;
@@ -166,8 +115,8 @@ class IssueTable extends Component {
       versionIssueRelDTOList, creationDate, lastUpdateDate,
     } = issue;
     return (
-      <div style={{ 
-        borderBottom: '1px solid #eee', padding: '12px 16px', cursor: 'pointer', 
+      <div style={{
+        borderBottom: '1px solid #eee', padding: '12px 16px', cursor: 'pointer',
       }}
       >
         <div style={{
@@ -297,50 +246,50 @@ class IssueTable extends Component {
             className={issue.issueId === selectedIssue.issueId ? 'c7ntest-border-visible c7ntest-table-item' : 'c7ntest-border c7ntest-table-item'}
           >
             {snapshotinner.isDragging
-            && (
-              <div style={{
-                position: 'absolute',
-                width: 20,
-                height: 20,
-                background: 'red',
-                textAlign: 'center',
-                color: 'white',
-                borderRadius: '50%',
-                top: 0,
-                left: 0,
-              }}
-              >
-                {draggingTableItems.length}
-              </div>
-            )
-          }
-            {snapshotinner.isDragging
-            && (
-              <div className="IssueTable-drag-prompt">
-                <div>
-                  {'复制或移动测试用例'}
-                </div>
-                <div> 按下ctrl/command复制</div>
-                <div
-                  ref={(instance) => { this.instance = instance; }}
+              && (
+                <div style={{
+                  position: 'absolute',
+                  width: 20,
+                  height: 20,
+                  background: 'red',
+                  textAlign: 'center',
+                  color: 'white',
+                  borderRadius: '50%',
+                  top: 0,
+                  left: 0,
+                }}
                 >
+                  {draggingTableItems.length}
+                </div>
+              )
+            }
+            {snapshotinner.isDragging
+              && (
+                <div className="IssueTable-drag-prompt">
                   <div>
-                    {'当前状态：'}
-                    <span style={{ fontWeight: 500 }}>移动</span>
+                    {'复制或移动测试用例'}
+                  </div>
+                  <div> 按下ctrl/command复制</div>
+                  <div
+                    ref={(instance) => { this.instance = instance; }}
+                  >
+                    <div>
+                      {'当前状态：'}
+                      <span style={{ fontWeight: 500 }}>移动</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            )
-          }
+              )
+            }
             {inner}
           </tr>
         )
-      }
+        }
       </Draggable>
     );
   }
 
-  renderTable = () => {
+  renderTable = (columns) => {
     const { expand } = this.props;
     return expand ? (
       <DragDropContext onDragEnd={this.onDragEnd} onDragStart={this.onDragStart}>
@@ -363,16 +312,12 @@ class IssueTable extends Component {
           filterBar={false}
           columns={this.columns}
           dataSource={IssueStore.getIssues}
-          components={this.components}
+          components={this.getComponents(columns)}
           onColumnFilterChange={this.handleColumnFilterChange}
           pagination={false}
         />
       </div>
     );
-  }
-
-  renderItems = () => {
-
   }
 
   handleFilterChange = (pagination, filters, sorter, barFilters) => {
@@ -415,9 +360,51 @@ class IssueTable extends Component {
   }
 
   render() {
-    const {
-      expand, selectedIssue, setSelectIssue, setExpand, prioritys, issueStatusList,
-    } = this.props;
+    const prioritys = IssueStore.getPrioritys;
+    const columns = [
+      {
+        title: '编号',
+        dataIndex: 'issueNum',
+        filters: [],
+        render: (issueNum, record) => renderIssueNum(issueNum),
+      },
+      {
+        title: '类型',
+        dataIndex: 'issueTypeDTO',
+        render: (issueTypeDTO, record) => renderType(issueTypeDTO),
+      },
+      {
+        title: '概要',
+        dataIndex: 'summary',
+        filters: [],
+        render: (summary, record) => renderSummary(summary),
+      },
+      {
+        title: '版本',
+        dataIndex: 'versionIssueRelDTOList',
+        render: (versionIssueRelDTOList, record) => renderVersions(versionIssueRelDTOList),
+      },
+      {
+        title: '文件夹',
+        dataIndex: 'folderName',
+        render: (folderName, record) => renderFolder(folderName),
+      },
+      {
+        title: '报告人',
+        dataIndex: 'reporter',
+        render: (assign, record) => {
+          const { reporterId, reporterName, reporterImageUrl } = record;
+          return renderReporter(reporterId, reporterName, reporterImageUrl);
+        },
+      },
+      {
+        title: '优先级',
+        dataIndex: 'priorityId',
+        filters: prioritys.map(priority => ({ text: priority.name, value: priority.id.toString() })),
+        filterMultiple: true,
+        render: (priorityId, record) => renderPriority(record.priorityDTO),
+      },
+    ];
     return (
       <div>
         <div id="template_copy" style={{ display: 'none' }}>
@@ -428,11 +415,10 @@ class IssueTable extends Component {
           {'当前状态：'}
           <span style={{ fontWeight: 500 }}>移动</span>
         </div>
-
         <section className="c7ntest-bar">
           <Table
             rowKey={record => record.id}
-            columns={this.columns}
+            columns={columns}
             dataSource={[]}
             filterBar
             showHeader={false}
@@ -462,7 +448,7 @@ class IssueTable extends Component {
               />
             ) : (
               <Spin spinning={IssueStore.loading}>
-                {this.renderTable()}
+                {this.renderTable(columns)}
               </Spin>
             )
           }
