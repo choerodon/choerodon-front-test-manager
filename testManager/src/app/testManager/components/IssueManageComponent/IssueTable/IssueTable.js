@@ -360,7 +360,7 @@ class IssueTable extends Component {
         title: '类型',
         dataIndex: 'issueTypeDTO',
         key: 'issueTypeDTO',
-        render: (issueTypeDTO, record) => renderType(issueTypeDTO),
+        render: (issueTypeDTO, record) => renderType(issueTypeDTO, true),
       },
       {
         title: '概要',

@@ -16,7 +16,7 @@ class TypeTag extends Component {
             display: 'flex',
             width: 20,
             height: 20,
-            borderRadius: '50%',
+            borderRadius: '4px',
             color: '#fff',
             justifyContent: 'center',
             alignItems: 'center',
