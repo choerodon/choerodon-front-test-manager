@@ -25,7 +25,6 @@ class IssueTable extends Component {
 
 
   handleColumnFilterChange = ({ selectedKeys }) => {
-    console.log(selectedKeys);
     this.setState({
       filteredColumns: selectedKeys,
     });
@@ -37,7 +36,7 @@ class IssueTable extends Component {
         <table>
           <thead>
             {this.renderThead(columns)}
-          </thead>
+          </thead>     
           <Droppable droppableId="dropTable" isDropDisabled>
             {(provided, snapshot) => (
               <tbody
@@ -78,7 +77,7 @@ class IssueTable extends Component {
   }
 
   renderTbody(data, columns) {
-    const { disabled, selectedIssue } = this.props;
+    const { disabled, expand } = this.props;
     const Columns = columns.filter(column => this.shouldColumnShow(column));
     const tds = index => Columns.map((column) => {
       let renderedItem = null;
@@ -96,13 +95,16 @@ class IssueTable extends Component {
         </td>
       );
     });
-    const rows = data.map((item, index) => (
-      disabled
-        ? tds(index)
-        : (
-          this.renderDraggable(item, index, tds(index))
-        )
-    ));
+    const rows = data.map((issue, index) => {
+      if (disabled) {
+        return tds(index);
+      } else if (expand) {
+        return this.renderDraggable(issue, index, this.renderNarrowIssue(issue));
+      } else {
+        return this.renderDraggable(issue, index, tds(index));
+      }
+    });
+
     return rows;
   }
 
@@ -116,7 +118,7 @@ class IssueTable extends Component {
     } = issue;
     return (
       <div style={{
-        borderBottom: '1px solid #eee', padding: '12px 16px', cursor: 'pointer',
+        borderBottom: '1px solid #eee', padding: '12px 16px', cursor: 'pointer', width: '100%',
       }}
       >
         <div style={{
@@ -289,36 +291,21 @@ class IssueTable extends Component {
     );
   }
 
-  renderTable = (columns) => {
-    const { expand } = this.props;
-    return expand ? (
-      <DragDropContext onDragEnd={this.onDragEnd} onDragStart={this.onDragStart}>
-        <Droppable droppableId="dropTable" isDropDisabled>
-          {(provided, snapshot) => (
-            <div ref={provided.innerRef} style={{ display: 'flex', flexDirection: 'column' }}>
-              {
-                _.slice(IssueStore.getIssues).map((issue, i) => (
-                  this.renderDraggable(issue, i, this.renderNarrowIssue(issue))
-                ))
-              }
-              {provided.placeholder}
-            </div>
-          )}
-        </Droppable>
-      </DragDropContext>
-    ) : (
-      <div className="c7ntest-issuetable">
-        <Table
-          filterBar={false}
-          columns={columns}
-          dataSource={IssueStore.getIssues}
-          components={this.getComponents(columns)}
-          onColumnFilterChange={this.handleColumnFilterChange}
-          pagination={false}
-        />
-      </div>
-    );
-  }
+  renderTable = columns => (
+    <div className="c7ntest-issuetable">
+      <Table
+        // filterBar={false}
+        columns={columns}
+        dataSource={IssueStore.getIssues}
+        components={this.getComponents(columns)}
+        onChange={this.handleFilterChange}
+        onColumnFilterChange={this.handleColumnFilterChange}
+        pagination={false}
+        filters={IssueStore.barFilters || []}
+        filterBarPlaceholder={<FormattedMessage id="issue_filterTestIssue" />}
+      />
+    </div>
+  )
 
   handleFilterChange = (pagination, filters, sorter, barFilters) => {
     // 条件变化返回第一页
@@ -359,8 +346,8 @@ class IssueTable extends Component {
     IssueStore.loadIssues(current - 1, size);
   }
 
-  manageVisible=columns => columns.map(column => (this.shouldColumnShow(column) ? column : { ...column, hidden: true }))
-  
+  manageVisible = columns => columns.map(column => (this.shouldColumnShow(column) ? column : { ...column, hidden: true }))
+
   render() {
     const { expand } = this.props;
     const prioritys = IssueStore.getPrioritys;
@@ -369,38 +356,38 @@ class IssueTable extends Component {
         title: '编号',
         dataIndex: 'issueNum',
         key: 'issueNum',
-        filters: [],        
+        filters: [],
         render: (issueNum, record) => renderIssueNum(issueNum),
       },
       {
         title: '类型',
         dataIndex: 'issueTypeDTO',
-        key: 'issueTypeDTO',        
+        key: 'issueTypeDTO',
         render: (issueTypeDTO, record) => renderType(issueTypeDTO),
       },
       {
         title: '概要',
         dataIndex: 'summary',
         key: 'summary',
-        filters: [],  
+        filters: [],
         render: (summary, record) => renderSummary(summary),
       },
       {
         title: '版本',
         dataIndex: 'versionIssueRelDTOList',
-        key: 'versionIssueRelDTOList',       
+        key: 'versionIssueRelDTOList',
         render: (versionIssueRelDTOList, record) => renderVersions(versionIssueRelDTOList),
       },
       {
         title: '文件夹',
         dataIndex: 'folderName',
-        key: 'folderName',       
+        key: 'folderName',
         render: (folderName, record) => renderFolder(folderName),
       },
       {
         title: '报告人',
         dataIndex: 'reporter',
-        key: 'reporter',       
+        key: 'reporter',
         render: (assign, record) => {
           const { reporterId, reporterName, reporterImageUrl } = record;
           return renderReporter(reporterId, reporterName, reporterImageUrl);
@@ -409,7 +396,7 @@ class IssueTable extends Component {
       {
         title: '优先级',
         dataIndex: 'priorityId',
-        key: 'priorityId',        
+        key: 'priorityId',
         filters: prioritys.map(priority => ({ text: priority.name, value: priority.id.toString() })),
         filterMultiple: true,
         render: (priorityId, record) => renderPriority(record.priorityDTO),
@@ -425,22 +412,8 @@ class IssueTable extends Component {
           {'当前状态：'}
           <span style={{ fontWeight: 500 }}>移动</span>
         </div>
-        <section className="c7ntest-bar">
-          <Table
-            rowKey={record => record.id}
-            columns={columns}
-            dataSource={[]}
-            filterBar
-            showHeader={false}
-            onChange={this.handleFilterChange}
-            onColumnFilterChange={this.handleColumnFilterChange}
-            pagination={false}
-            filters={IssueStore.barFilters || []}
-            filterBarPlaceholder={<FormattedMessage id="issue_filterTestIssue" />}
-          />
-        </section>
         <section
-          style={{            
+          style={{
             boxSizing: 'border-box',
             width: '100%',
           }}

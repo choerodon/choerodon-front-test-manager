@@ -29,19 +29,14 @@
   .c7ntest-table-item:hover {
     background: #eee;
   }
-  .c7ntest-bar {
-    .ant-table {
-      display: none;
-    }
-    .ant-table-filter-bar {
-      border-top: none;
-    }
-    .ant-dropdown-trigger {
-      bottom: 30;
-    }
-    .ant-select-selection__rendered {
-      margin-bottom: -4px !important;
-    }
+  .ant-table-filter-bar {
+    border-top: none;
+  }
+  .ant-dropdown-trigger {
+    bottom: 30;
+  }
+  .ant-select-selection__rendered {
+    margin-bottom: -4px !important;
   }
   .c7ntest-issuetable {
     .ant-table-placeholder {
@@ -100,6 +95,9 @@
 }
 
 .c7ntest-issueArea.expand {
+  thead {
+    display: none;
+  }
   .ant-pagination-options-label {
     display: none;
   }
@@ -112,9 +110,7 @@
   .ant-pagination-last {
     margin-right: unset;
   }
-  
   .ant-table-columns-chooser {
     display: none;
   }
-  
 }
