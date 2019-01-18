@@ -30,7 +30,6 @@ class IssueTable extends Component {
     });
   }
 
-
   getComponents = columns => ({
     table: () => {
       const table = (
@@ -360,6 +359,7 @@ class IssueTable extends Component {
   }
 
   render() {
+    const { expand } = this.props;
     const prioritys = IssueStore.getPrioritys;
     const columns = [
       {
@@ -406,7 +406,7 @@ class IssueTable extends Component {
       },
     ];
     return (
-      <div>
+      <div className={`c7ntest-issueArea ${expand && 'expand'}`}>
         <div id="template_copy" style={{ display: 'none' }}>
           {'当前状态：'}
           <span style={{ fontWeight: 500 }}>复制</span>
@@ -430,9 +430,7 @@ class IssueTable extends Component {
           />
         </section>
         <section
-          className={`c7ntest-table ${this.state.expand ? 'expand-sign' : ''}`}
-          style={{
-            // paddingRight: this.state.expand ? '0' : '24px',
+          style={{            
             boxSizing: 'border-box',
             width: '100%',
           }}
