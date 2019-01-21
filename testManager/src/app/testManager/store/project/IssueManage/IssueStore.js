@@ -194,7 +194,7 @@ class IssueStore {
           resolve(res);
           this.setLoading(false);
         });
-      });
+      })
     });
   }
 

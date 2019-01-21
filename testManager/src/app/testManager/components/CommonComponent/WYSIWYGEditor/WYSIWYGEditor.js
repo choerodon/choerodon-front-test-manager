@@ -2,10 +2,9 @@ import React, { Component } from 'react';
 import ReactQuill, { Quill } from 'react-quill';
 import { Button } from 'choerodon-ui';
 import 'react-quill/dist/quill.snow.css';
-import ImageDrop from './ImageDrop';
 import './WYSIWYGEditor.scss';
 
-Quill.register('modules/imageDrop', ImageDrop);
+// Quill.register('modules/imageDrop', ImageDrop);
 
 class WYSIWYGEditor extends Component {
   state = {
@@ -19,7 +18,6 @@ class WYSIWYGEditor extends Component {
       ['link', 'image'],
       // ['clean'],
     ],
-    imageDrop: true,
   };
 
   formats = [
@@ -40,19 +38,7 @@ class WYSIWYGEditor extends Component {
     borderRight: 'none',
   };
 
-  isHasImg = (delta) => {
-    let pass = false;
-    if (delta && delta.ops) {
-      delta.ops.forEach((item) => {
-        if (item.insert && item.insert.image) {
-          pass = true;
-        }
-      });
-    }
-    return pass;
-  };
-
-  handleChange = (content, delta, source, editor) => {
+  handleChange = (content, delta, source, editor) => {   
     const value = editor.getContents();
     this.setState({
       value: value.ops,
