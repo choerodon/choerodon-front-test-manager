@@ -419,7 +419,8 @@ class SummaryHome extends Component {
                       }}
                     />
                     <FormattedMessage id="summary_totalRest_tip3" />
-                  </div>)
+                  </div>
+)
                 }
                 title={null}
               >
@@ -443,7 +444,8 @@ class SummaryHome extends Component {
                       }}
                     />
                     <FormattedMessage id="summary_totalExexute_tip3" />
-                  </div>)
+                  </div>
+)
                 }
                 title={null}
               >
@@ -479,6 +481,7 @@ class SummaryHome extends Component {
                 </div>
                 <Table
                   // rowKey="name"
+                  autoScroll={false}
                   style={{ height: 180 }}
                   columns={versionColumns}
                   pagination={{ pageSize: 5, showSizeChanger: false }}
@@ -495,6 +498,7 @@ class SummaryHome extends Component {
                 </div>
                 <Table
                   // rowKey="name"
+                  autoScroll={false}
                   style={{ height: 180 }}
                   columns={componentColumns}
                   pagination={{ pageSize: 5, showSizeChanger: false }}
@@ -511,6 +515,7 @@ class SummaryHome extends Component {
                 </div>
                 <Table
                   // rowKey="name"
+                  autoScroll={false}
                   style={{ height: 180 }}
                   columns={labelColumns}
                   pagination={{ pageSize: 5, showSizeChanger: false }}
