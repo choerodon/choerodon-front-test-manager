@@ -40,19 +40,7 @@ class WYSIWYGEditor extends Component {
     borderRight: 'none',
   };
 
-  isHasImg = (delta) => {
-    let pass = false;
-    if (delta && delta.ops) {
-      delta.ops.forEach((item) => {
-        if (item.insert && item.insert.image) {
-          pass = true;
-        }
-      });
-    }
-    return pass;
-  };
-
-  handleChange = (content, delta, source, editor) => {
+  handleChange = (content, delta, source, editor) => {   
     const value = editor.getContents();
     this.setState({
       value: value.ops,
