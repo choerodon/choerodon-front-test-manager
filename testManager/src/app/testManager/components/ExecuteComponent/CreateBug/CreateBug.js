@@ -70,6 +70,15 @@ class CreateBug extends Component {
     });
   }
 
+  handleUserSelectChange = (value) => {
+    const {users} = this.state;
+    if(!users.length) {
+      this.props.form.setFieldsValue({
+        assigneeId: undefined,
+      });
+    }
+  }
+
   setFileList = (data) => {
     this.setState({ fileList: data });
   }
@@ -299,6 +308,7 @@ class CreateBug extends Component {
                     allowClear
                     loading={selectLoading}
                     onFilterChange={this.loadUsers}
+                    onChange={this.handleUserSelectChange}
                   >
                     {users && users.length && users.map(user => (
                       <Option key={user.id} value={user.id}>

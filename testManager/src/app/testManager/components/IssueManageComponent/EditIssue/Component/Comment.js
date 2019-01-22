@@ -117,7 +117,9 @@ class Comment extends Component {
                 color="#3f51b5"
               />
             </div>
-            <span style={{ color: 'rgba(0, 0, 0, 0.65)' }}>添加了评论</span>
+            <div className="line-start" style={{ color: 'rgba(0, 0, 0, 0.65)', marginLeft: 15 }}>
+              <Timeago date={commit.lastUpdateDate} />
+            </div>
           </div>
           <div className="c7ntest-action">
             <Icon
@@ -153,11 +155,7 @@ class Comment extends Component {
             /> */}
           </div>
         </div>
-        <div className="line-start" style={{ color: 'rgba(0, 0, 0, 0.65)', marginTop: 2 }}>
-          {/* {'-'} */}
-          {/* {formatDate(commit.lastUpdateDate)} */}
-          <Timeago date={commit.lastUpdateDate} />
-        </div>
+        
         {
           this.state.expand && (
             <div className="c7ntest-conent-commit" style={{ marginTop: 10 }}>
