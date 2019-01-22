@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { findDOMNode } from 'react-dom';
 import Moment from 'moment';
 import { extendMoment } from 'moment-range';
 import { Tooltip } from 'choerodon-ui';
@@ -40,6 +41,45 @@ const styles = {
     lineHeight: '34px',
   },
 };
+const AUTOSCROLL_RATE = 7;
+const isScrollable = (...values) => values.some(value => value === 'auto' || value === 'scroll');
+function findScroller(n) {
+  let node = n;
+  while (node) {
+    const style = window.getComputedStyle(node);
+    if (isScrollable(style.overflow, style.overflowY, style.overflowX)) {
+      return node;
+    } else {
+      node = node.parentNode;
+    }
+  }
+  return null;
+}
+// const easeInOutCubic = (t, b, c, d) => {
+//   const cc = c - b;
+//   t /= d / 2;
+//   if (t < 1) {
+//     return cc / 2 * t * t * t + b;
+//   } else {
+//     return cc / 2 * ((t -= 2) * t * t + 2) + b;
+//   }
+// };
+// const scrollToTop = (e) => {
+//   const scrollTop = this.getCurrentScrollTop();
+//   const startTime = Date.now();
+//   const scrollTimer = () => {
+//     const timestamp = Date.now();
+//     const time = timestamp - startTime;
+//     this.setScrollTop(easeInOutCubic(time, scrollTop, 0, 450));
+//     if (time < 450) {
+//     } else {
+//       this.setScrollTop(0);
+//     }
+//   };
+//   (this.props.onClick || noop)(e);
+// }
+
+
 const moment = extendMoment(Moment);
 class EventItem extends Component {
   state = {
@@ -58,7 +98,8 @@ class EventItem extends Component {
     done: true,
     enter: false,
   };
-  
+
+
   static getDerivedStateFromProps(props, state) {
     // 调整大小时以state为准
     if (!state.done) {
@@ -98,6 +139,63 @@ class EventItem extends Component {
     };
   }
 
+  prepareForScroll=() => {
+    const scroller = findScroller(findDOMNode(this));
+    const { left, width } = scroller.getBoundingClientRect();
+    const scrollRightPosition = left + width;
+    const scrollLeftPosition = left;
+    this.autoScroll = {
+      scroller,
+      scrollLeftPosition,
+      scrollRightPosition,
+    };
+  }
+
+  // 拖动时，当鼠标到边缘时，自动滚动
+  startAutoScroll = (initMouseX, mode) => {
+    // console.log('start');
+    const {
+      scroller,
+      scrollLeftPosition,
+      scrollRightPosition,
+    } = this.autoScroll;
+    const initScrollLeft = scroller.scrollLeft;
+    // 到最左或最右，停止滚动
+    const shouldStop = () => (mode === 'right' && ~~(scroller.scrollLeft + scroller.offsetWidth) === scroller.scrollWidth)
+    || (mode === 'left' && scroller.scrollLeft === 0);
+    if (shouldStop()) {
+      cancelAnimationFrame(this.scrollTimer);
+      return;
+    }
+    if (this.scrollTimer) {
+      cancelAnimationFrame(this.scrollTimer);
+    }
+    const scrollFunc = () => {
+      if (mode === 'right') {
+        scroller.scrollLeft += AUTOSCROLL_RATE; 
+      } else {
+        scroller.scrollLeft -= AUTOSCROLL_RATE;
+      }      
+      const { scrollLeft } = this.initScrollPosition;
+      this.initScrollPosition.scrollPos = scroller.scrollLeft - scrollLeft;
+      // 因为鼠标并没有move，所以这里要手动触发，否则item的宽度不会变化
+      this.fireResize(initMouseX);
+
+      if (shouldStop()) {
+        cancelAnimationFrame(this.scrollTimer);
+      } else {
+        this.scrollTimer = requestAnimationFrame(scrollFunc);
+      }
+    };
+    this.scrollTimer = requestAnimationFrame(scrollFunc);
+  }
+
+  // 停止自动滚动
+  stopAutoScroll = () => {
+    cancelAnimationFrame(this.scrollTimer);
+    // console.log('stop');
+  }
+
   handleItemClick = () => {
     if (this.props.onClick) {
       this.props.onClick(this.props.data);
@@ -134,7 +232,7 @@ class EventItem extends Component {
         {(enter || resizing) && <div className="c7ntest-EventItem-event-tip-right" style={{ background: styles[type].tipBackground }} />}
         <Tooltip getPopupContainer={() => document.getElementsByClassName('c7ntest-EventCalendar-content')[0]} title={tipTitle} placement="topLeft">
           <div className="c7ntest-EventItem-event-title c7ntest-text-dot">
-            {title}            
+            {title}
           </div>
         </Tooltip>
       </div>,
@@ -154,13 +252,13 @@ class EventItem extends Component {
     } = this.state.initFlex;
     if (mode === 'left') {
       preFlex += multiple;
-      flex -= multiple;      
+      flex -= multiple;
     } else {
       flex += multiple;
       lastFlex -= multiple;
-    }
+    }  
     // 最小为一天
-    if (flex > 0) {
+    if (flex > 0 && preFlex >= 0 && lastFlex >= 0) {
       this.setState({
         preFlex,
         flex,
@@ -173,14 +271,19 @@ class EventItem extends Component {
   handleMouseDown = (mode, e) => {
     e.stopPropagation();
     e.preventDefault();
+    // 为自动滚动做准备
+    this.prepareForScroll();
     // console.log(this[mode].getBoundingClientRect().left, e.clientX);
     this.setState({
       resizing: true,
       done: false,
       mode,
     });
+    const { scroller } = this.autoScroll;
     this.initScrollPosition = {
       x: e.clientX,
+      scrollPos: 0,
+      scrollLeft: scroller.scrollLeft,
     };
     document.addEventListener('mouseup', this.handleMouseUp);
     document.addEventListener('mousemove', this.handleMouseMove);
@@ -189,10 +292,30 @@ class EventItem extends Component {
   handleMouseMove = (e) => {
     e.stopPropagation();
     e.preventDefault();
+    const {
+      scroller,
+      scrollLeftPosition,
+      scrollRightPosition,
+    } = this.autoScroll;
+    this.initMouseX = e.clientX;
+    if (scrollLeftPosition >= e.clientX) {
+      this.startAutoScroll(e.clientX, 'left');
+    } else if (scrollRightPosition <= e.clientX) {
+      this.startAutoScroll(e.clientX, 'right');
+    } else {
+      this.stopAutoScroll(e.clientX);
+    }
+
+    this.fireResize(e.clientX);
+  }
+
+  // 触发item的宽度变化
+  fireResize = (clientX) => {
     const { mode } = this.state;
     if (this.initScrollPosition) {
       // resize的变化量
-      const posX = e.clientX - this.initScrollPosition.x;
+      const { x, scrollPos } = this.initScrollPosition;
+      const posX = clientX - this.initScrollPosition.x + scrollPos;
       const { singleWidth } = this.props;
       // console.log(posX, singleWidth / 2);
       // 一个日历日期所占宽度
@@ -229,11 +352,11 @@ class EventItem extends Component {
     } = this.state;
     // 只在数据变化时才请求
     if (preFlex === initFlex.preFlex && flex === initFlex.flex && lastFlex === initFlex.lastFlex) {
-      this.setState({        
+      this.setState({
         done: true,
       });
     } else {
-      this.setState({    
+      this.setState({
         initFlex: {
           preFlex,
           flex,
@@ -244,7 +367,7 @@ class EventItem extends Component {
     }
   }
 
-  handleMouseEnter=() => {
+  handleMouseEnter = () => {
     const { type } = this.state;
     const canReasize = canReasizes.includes(type);
     if (canReasize) {
@@ -254,7 +377,7 @@ class EventItem extends Component {
     }
   }
 
-  handleMouseLeave=() => {
+  handleMouseLeave = () => {
     const { type } = this.state;
     const canReasize = canReasizes.includes(type);
     if (canReasize) {
@@ -269,7 +392,7 @@ class EventItem extends Component {
    *
    * @paramter vary 日期改变量，正
    */
-  updateCycle=() => {
+  updateCycle = () => {
     const { preFlex, lastFlex, mode } = this.state;
     const { range, itemRange, data } = this.props;
     const { start, end } = range;
@@ -285,7 +408,7 @@ class EventItem extends Component {
       objectVersionNumber: data.objectVersionNumber,
       fromDate: fromDate ? fromDate.format('YYYY-MM-DD HH:mm:ss') : null,
       toDate: toDate ? toDate.format('YYYY-MM-DD HH:mm:ss') : null,
-    };    
+    };
     TestPlanStore.enterLoading();
     editFolder(updateData).then((res) => {
       TestPlanStore.getTree().finally(() => {

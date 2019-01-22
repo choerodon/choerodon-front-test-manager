@@ -31,7 +31,7 @@ class EventCalendar extends Component {
       mode: 'month',
       width: 'auto',
       singleWidth: 0, // 单个日期所占宽度
-    };
+    }; 
   }
 
 
