@@ -22,7 +22,7 @@ const PROP = {
 };
 const PROP_SIMPLE = {
   Component: '模块',
-  'Fix Version': '修复版本',
+  'Fix Version': '测试用例',
   'Epic Child': '史诗关联任务',
   description: '描述',
   Attachment: '附件',
@@ -44,13 +44,16 @@ class DataLog extends Component {
       if (['labels', 'Component', 'Fix Version', 'Epic Child', 'WorklogId', 'Epic Child'].includes(field)) {
         return '创建';
       }
+      if (['Attachment'].includes(field)) {
+        return '上传';
+      }
       return '更新';
     } else if (oldValue && newValue) {
       // xxx -> yyy
       if (['Epic Link', 'Sprint', 'Story Points', 'timeestimate', 'summary', 'Epic Name', 'priority', 'assignee', 'reporter'].includes(field)) {
         return '将';
       }
-      if (['description', 'Attachment', 'WorklogId', 'Comment', 'timespent'].includes(field)) {
+      if (['description', 'WorklogId', 'Comment', 'timespent'].includes(field)) {
         return '更新';
       }
       if (field === 'status') {
@@ -69,10 +72,15 @@ class DataLog extends Component {
       if (['Epic Link', 'Sprint', 'assignee', 'reporter', 'labels', 'WorklogId', 'Comment', 'Component', 'Fix Version', 'Epic Child', 'resolution'].includes(field)) {
         return '移除';
       }
+      if (['Attachment'].includes(field)) {
+        if (oldString && !newString) {
+          return '删除';
+        }
+      }
       if (['Story Points', 'timeestimate'].includes(field)) {
         return '将';
       }
-      if (['Attachment', 'timespent'].includes(field)) {
+      if (['timespent'].includes(field)) {
         return '更新';
       }
     } else {
@@ -178,7 +186,7 @@ class DataLog extends Component {
       if (['Epic Link', 'Sprint', 'Story Points', 'timeestimate', 'summary', 'Epic Name', 'priority', 'assignee', 'reporter'].includes(field)) {
         return ` 【${oldString}】 `;
       }
-      if (['description', 'Attachment', 'WorklogId', 'Rank', 'Comment'].includes(field)) {
+      if (['description', 'WorklogId', 'Rank', 'Comment'].includes(field)) {
         return '';
       }
       if (field === 'status') {
@@ -188,8 +196,11 @@ class DataLog extends Component {
       // yyy -> null
       if (['Story Points', 'timeestimate'].includes(field)) {
         return ` 【${oldString}】 `;
-      } else if (['Attachment', 'timespent'].includes(field)) {
+      } else if (['timespent'].includes(field)) {
         return '';
+      } else if (field === 'Attachment') {
+        const attachnewArr = oldString.split('_');
+        return ` 【${decodeURI(attachnewArr.slice(2, attachnewArr.length).join('_'))}】 `;
       } else {
         return ` 【${oldString}】 `;
       }
@@ -274,11 +285,15 @@ class DataLog extends Component {
       if (['Epic Link', 'Sprint', 'Story Points', 'timeestimate', 'summary', 'Epic Name', 'assignee', 'reporter'].includes(field)) {
         return ` 【${newString}】 `;
       }
-      if (['description', 'Attachment', 'WorklogId', 'Rank', 'Comment', 'timespent'].includes(field)) {
+      if (['description', 'WorklogId', 'Rank', 'Comment', 'timespent'].includes(field)) {
         return '';
       }
-      if (['labels', 'Component', 'Fix Version', 'Epic Child'].includes(field)) {
+      if (['labels', 'Component', 'Epic Child'].includes(field)) {
         return ` 【${newString}】 `;
+      }
+      if (field === 'Attachment') {
+        const attachnewArr = newString.split('_');
+        return ` 【${decodeURI(attachnewArr.slice(2, attachnewArr.length).join('_'))}】 `;
       }
     } else if (oldValue && newValue) {
       // xxx -> yyy
