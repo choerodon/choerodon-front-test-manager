@@ -145,7 +145,7 @@ class TestPlanHome extends Component {
   render() {
     const { CreateCycleVisible, statusList, prioritys } = this.state;
     const {
-      testList, executePagination, loading, rightLoading, 
+      testList, executePagination, loading, rightLoading,
     } = TestPlanStore;
     const columns = [{
       title: <span>ID</span>,
@@ -357,15 +357,15 @@ class TestPlanHome extends Component {
       <Page className="c7ntest-TestPlan">
         <Header title={<FormattedMessage id="testPlan_name" />}>
           <Button onClick={() => { this.setState({ CreateCycleVisible: true }); }}>
-            <Icon type="playlist_add icon" />            
-            <FormattedMessage id="cycle_create_title" />           
+            <Icon type="playlist_add icon" />
+            <FormattedMessage id="cycle_create_title" />
           </Button>
           <Button className="leftBtn" onClick={() => this.ExportSide.open()}>
             <Icon type="export icon" />
             <FormattedMessage id="export" />
           </Button>
           <Button onClick={this.refresh}>
-            <Icon type="autorenew icon" />         
+            <Icon type="autorenew icon" />
             <FormattedMessage id="refresh" />
           </Button>
         </Header>
@@ -391,8 +391,8 @@ class TestPlanHome extends Component {
               <Injecter store={TestPlanStore} item="isTreeVisible">
                 {isTreeVisible => <TreeArea isTreeVisible={isTreeVisible} setIsTreeVisible={TestPlanStore.setIsTreeVisible} />}
               </Injecter>
-              <Injecter store={TestPlanStore} item={['currentCycle', 'times', 'calendarShowMode']}>
-                {([currentCycle, times, calendarShowMode]) => (currentCycle.key && times.length > 0 ? (
+              <Injecter store={TestPlanStore} item={['currentCycle', 'times', 'calendarShowMode', 'getTimesLength']}>
+                {([currentCycle, times, calendarShowMode, getTimesLength]) => (currentCycle.key && getTimesLength ? (
                   <div className="c7ntest-TestPlan-content-right">
                     <EventCalendar key={currentCycle.key} showMode={calendarShowMode} times={times} onItemClick={this.handleItemClick} />
                     {calendarShowMode === 'single' && (
@@ -405,9 +405,9 @@ class TestPlanHome extends Component {
                             fontSize: '14px',
                           }}
                           >
-                          筛选:
+                            筛选:
                           </div>
-                          <SelectFocusLoad                       
+                          <SelectFocusLoad
                             label={<FormattedMessage id="cycle_executeBy" />}
                             request={getUsers}
                             onChange={(value) => {
@@ -425,7 +425,7 @@ class TestPlanHome extends Component {
                               }}
                             />
                           </div>
-                        </div>             
+                        </div>
                         <DragTable
                           pagination={executePagination}
                           loading={rightLoading}
@@ -434,10 +434,10 @@ class TestPlanHome extends Component {
                           columns={columns}
                           onDragEnd={this.onDragEnd}
                           dragKey="executeId"
-                        /> 
+                        />
                       </div>
                     )}
-                  </div>
+                  </div> 
                 ) : (
                   <div style={{
                     display: 'flex', alignItems: 'center', height: 250, margin: '88px auto', padding: '50px 75px', border: '1px dashed rgba(0,0,0,0.54)',
@@ -453,7 +453,7 @@ class TestPlanHome extends Component {
               </Injecter>
 
               {/* <Spin spinning={loading}> */}
-              
+
             </div>
           </Spin>
         </Content>

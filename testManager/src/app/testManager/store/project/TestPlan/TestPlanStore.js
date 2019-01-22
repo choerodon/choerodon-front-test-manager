@@ -177,9 +177,8 @@ class TestPlanStore extends BaseTreeProto {
   } = {}) => {
     const { executePagination, filters } = this;
     const data = node ? node.props.data : this.getCurrentCycle;
-    // 点所有的都生成事件日历
-    this.clearTimes();
-    this.generateTimes([data]);
+    // 点所有的都生成事件日历  
+    this.updateTimes([data]);
     if (data.type === 'folder') {
       this.setCalendarShowMode('single');
     } else {
@@ -261,10 +260,9 @@ class TestPlanStore extends BaseTreeProto {
       // } else
       // 两种情况，version或者cycle和文件夹，version没有type
       if (currentCycle.key === node.key) {
-        this.setCurrentCycle(node);
-        this.clearTimes();
+        this.setCurrentCycle(node);       
         // debugger;
-        this.generateTimes([node]);
+        this.updateTimes([node]);        
       }
       this.dataList.push({ key, title });
       if (node.children) {
@@ -294,11 +292,17 @@ class TestPlanStore extends BaseTreeProto {
     this.filters = filters;
   }
 
-  @action clearTimes = () => {
-    this.times = [];
+  @action setTimes = (times) => {
+    this.times = times;
   }
 
-  @action generateTimes = (data) => {
+  updateTimes=(data) => {
+    const times = [];
+    this.generateTimes(data, times);
+    this.setTimes(times);
+  }
+
+  generateTimes = (data, times) => {
     for (let i = 0; i < data.length; i += 1) {
       const node = data[i];
       const {
@@ -315,7 +319,7 @@ class TestPlanStore extends BaseTreeProto {
         const starts = stepChildren.filter(child => child.fromDate && child.toDate).map(child => moment(child.fromDate));
         const ends = stepChildren.filter(child => child.fromDate && child.toDate).map(child => moment(child.toDate));
         if (starts.length > 0 && ends.length > 0) {
-          this.times.push({
+          times.push({
             ...node,
             // children, 不需要编辑，不用限制时间的选择，所有不用传children
             type: 'topversion',
@@ -329,7 +333,7 @@ class TestPlanStore extends BaseTreeProto {
         const starts = children.filter(child => child.fromDate && child.toDate).map(child => moment(child.fromDate));
         const ends = children.filter(child => child.fromDate && child.toDate).map(child => moment(child.toDate));
         if (starts.length > 0 && ends.length > 0) {
-          this.times.push({
+          times.push({
             ...node,
             // children,
             type: 'version',
@@ -338,7 +342,7 @@ class TestPlanStore extends BaseTreeProto {
           });
         }
       } else if (fromDate && toDate) {
-        this.times.push({
+        times.push({
           ...node,
           children,
           start: moment(fromDate),
@@ -347,7 +351,7 @@ class TestPlanStore extends BaseTreeProto {
       }
 
       if (node.children) {
-        this.generateTimes(node.children);
+        this.generateTimes(node.children, times);
       }
     }
   }
@@ -408,6 +412,10 @@ class TestPlanStore extends BaseTreeProto {
 
   @computed get getTimes() {
     return toJS(this.times);
+  }
+
+  @computed get getTimesLength() {    
+    return this.times.length > 0;
   }
 
   @action setExportVersionId(data) {
