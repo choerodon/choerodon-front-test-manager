@@ -308,6 +308,15 @@ class IssueTable extends Component {
         pagination={false}
         filters={IssueStore.barFilters || []}
         filterBarPlaceholder={<FormattedMessage id="issue_filterTestIssue" />}
+        empty={(
+          <EmptyBlock
+            style={{ marginTop: 40 }}
+            border
+            pic={pic}
+            title={<FormattedMessage id="issue_noIssueTitle" />}
+            des={<FormattedMessage id="issue_noIssueDescription" />}
+          />
+        )}
       />
     </div>
   )
@@ -402,12 +411,12 @@ class IssueTable extends Component {
       {
         title: '报告人',
         dataIndex: 'reporter',
-        key: 'reporter',       
+        key: 'reporter',
         render: (assign, record) => {
           const { reporterId, reporterName, reporterImageUrl } = record;
           return renderReporter(reporterId, reporterName, reporterImageUrl);
         },
-      },      
+      },
       {
         title: '优先级',
         dataIndex: 'priorityId',
@@ -428,8 +437,8 @@ class IssueTable extends Component {
       {
         title: '状态',
         dataIndex: 'statusId',
-        key: 'statusId',   
-        filters: issueStatusList.map(status => ({ text: status.name, value: status.id.toString() })),     
+        key: 'statusId',
+        filters: issueStatusList.map(status => ({ text: status.name, value: status.id.toString() })),
         filterMultiple: true,
         render: (statusMapDTO, record) => renderStatus(record.statusMapDTO),
       },
@@ -450,21 +459,11 @@ class IssueTable extends Component {
             width: '100%',
           }}
         >
-          {
-            IssueStore.issues.length === 0 && !IssueStore.loading ? (
-              <EmptyBlock
-                style={{ marginTop: 40 }}
-                border
-                pic={pic}
-                title={<FormattedMessage id="issue_noIssueTitle" />}
-                des={<FormattedMessage id="issue_noIssueDescription" />}
-              />
-            ) : (
-              <Spin spinning={IssueStore.loading}>
-                {this.renderTable(columns)}
-              </Spin>
-            )
-          }
+
+          <Spin spinning={IssueStore.loading}>
+            {this.renderTable(columns)}
+          </Spin>
+
           <div className="c7ntest-backlog-sprintIssue">
             <div
               style={{
