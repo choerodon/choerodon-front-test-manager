@@ -38,7 +38,10 @@ class CreateLinkTask extends Component {
     this.setState({
       selectLoading: true,
     });
-    axios.get(`/agile/v1/projects/${AppState.currentMenuType.id}/issue_link_types`)
+    axios.post(`/agile/v1/projects/${AppState.currentMenuType.id}/issue_link_types/query_all`, {
+      contents: [],
+      linkName: '',
+    })
       .then((res) => {
         this.setState({
           selectLoading: false,
