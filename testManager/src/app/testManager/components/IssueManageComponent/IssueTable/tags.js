@@ -173,13 +173,13 @@ export function renderLabels(labels) {
     ))
   );
 }
-export function renderAssigned(assigneeId, assigneeName, imageUrl) {
+export function renderAssigned(assigneeId, assigneeName, imageUrl, hiddenText) {
   return (
     assigneeId ? (
       <Tooltip mouseEnterDelay={0.5} title={`任务经办人： ${assigneeName}`}>
         <div style={{ margin: '0 5px' }}>
           <UserHead
-            hiddenText
+            hiddenText={hiddenText}
             user={{
               id: assigneeId,
               loginName: '',

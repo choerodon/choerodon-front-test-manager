@@ -20,7 +20,7 @@ import pic from '../../../assets/问题管理－空.png';
 class IssueTable extends Component {
   state = {
     firstIndex: null,
-    filteredColumns: [],
+    filteredColumns: ['issueNum', 'issueTypeDTO', 'summary', 'versionIssueRelDTOList', 'folderName', 'reporter', 'priorityId'],
   };
 
 
@@ -308,6 +308,15 @@ class IssueTable extends Component {
         pagination={false}
         filters={IssueStore.barFilters || []}
         filterBarPlaceholder={<FormattedMessage id="issue_filterTestIssue" />}
+        empty={(
+          <EmptyBlock
+            style={{ marginTop: 40 }}
+            border
+            pic={pic}
+            title={<FormattedMessage id="issue_noIssueTitle" />}
+            des={<FormattedMessage id="issue_noIssueDescription" />}
+          />
+        )}
       />
     </div>
   )
@@ -351,11 +360,21 @@ class IssueTable extends Component {
     IssueStore.loadIssues(current - 1, size);
   }
 
-  manageVisible = columns => columns.map(column => (this.shouldColumnShow(column) ? column : { ...column, hidden: true }))
+  manageVisible = (columns) => {
+    const { filteredColumns } = this.state;
+    // const initShowColumns = columns.filter(column => !column.hidden).map(column => column.dataIndex);
+    // if (filteredColumns.length !== initShowColumns.length) {
+    //   this.setState({
+    //     filteredColumns: initShowColumns,
+    //   });
+    // }  
+    return columns.map(column => (this.shouldColumnShow(column) ? { ...column, hidden: false } : { ...column, hidden: true }));
+  }
 
   render() {
     const { expand } = this.props;
     const prioritys = IssueStore.getPrioritys;
+    const issueStatusList = IssueStore.getIssueStatus;
     const columns = this.manageVisible([
       {
         title: '编号',
@@ -406,6 +425,23 @@ class IssueTable extends Component {
         filterMultiple: true,
         render: (priorityId, record) => renderPriority(record.priorityDTO),
       },
+      {
+        title: '经办人',
+        dataIndex: 'assign',
+        key: 'assign',
+        render: (assign, record) => {
+          const { assigneeId, assigneeName, assigneeImageUrl } = record;
+          return renderAssigned(assigneeId, assigneeName, assigneeImageUrl);
+        },
+      },
+      {
+        title: '状态',
+        dataIndex: 'statusId',
+        key: 'statusId',
+        filters: issueStatusList.map(status => ({ text: status.name, value: status.id.toString() })),
+        filterMultiple: true,
+        render: (statusMapDTO, record) => renderStatus(record.statusMapDTO),
+      },
     ]);
     return (
       <div className={`c7ntest-issueArea ${expand && 'expand'}`}>
@@ -423,21 +459,11 @@ class IssueTable extends Component {
             width: '100%',
           }}
         >
-          {
-            IssueStore.issues.length === 0 && !IssueStore.loading ? (
-              <EmptyBlock
-                style={{ marginTop: 40 }}
-                border
-                pic={pic}
-                title={<FormattedMessage id="issue_noIssueTitle" />}
-                des={<FormattedMessage id="issue_noIssueDescription" />}
-              />
-            ) : (
-              <Spin spinning={IssueStore.loading}>
-                {this.renderTable(columns)}
-              </Spin>
-            )
-          }
+
+          <Spin spinning={IssueStore.loading}>
+            {this.renderTable(columns)}
+          </Spin>
+
           <div className="c7ntest-backlog-sprintIssue">
             <div
               style={{
