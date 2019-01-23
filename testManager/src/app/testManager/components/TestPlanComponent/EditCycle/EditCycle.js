@@ -83,16 +83,10 @@ class EditCycle extends Component {
     const children = TestPlanStore.CurrentEditCycle.children || [];
     // 子元素最小的时间
     const starts = children.map(child => moment(child.fromDate));
-    // console.log(starts, moment.min(starts), endValue.format('YYYYMMDD'));
-    // console.log(startValue, endValue);
-    // moment.max(a, b);
-    if (!startValue || !endValue) {
-      return false;
-    }
     if (children.length > 0) {
-      return startValue.valueOf() > endValue.valueOf() || startValue > moment.min(starts);
+      return (endValue ? startValue > endValue : false) || startValue > moment.min(starts);
     } else {
-      return startValue.valueOf() > endValue.valueOf();
+      return (endValue ? startValue > endValue : false);
     }
   }
 
@@ -101,14 +95,11 @@ class EditCycle extends Component {
     const startValue = getFieldValue('fromDate');
     const children = TestPlanStore.CurrentEditCycle.children || [];
     // 子元素最小的时间
-    const ends = children.map(child => moment(child.toDate));
-    if (!endValue || !startValue) {
-      return false;
-    }
+    const ends = children.map(child => moment(child.toDate));    
     if (children.length > 0) {
-      return endValue.valueOf() <= startValue.valueOf() || endValue < moment(moment.max(ends)).startOf('day');
+      return (startValue ? endValue <= startValue : false) || endValue < moment(moment.max(ends)).startOf('day');
     } else {
-      return endValue.valueOf() <= startValue.valueOf();
+      return (startValue ? endValue <= startValue : false);
     }
   }
 
