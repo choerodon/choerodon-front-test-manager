@@ -341,6 +341,7 @@ class EventItem extends Component {
   handleMouseUp = (e) => {
     document.removeEventListener('mousemove', this.handleMouseMove);
     document.removeEventListener('mouseup', this.handleMouseUp);
+    this.stopAutoScroll();
     this.setState({
       resizing: false,
     });
