@@ -28,7 +28,7 @@ class EmptyBlock extends Component {
           </div>
           <div
             className="c7ntest-textWrap"
-            style={{ width: this.props.textWidth || 150 }}
+            // style={{ width: this.props.textWidth || 150 }}
           >
             <h1 className="c7ntest-title">
               {this.props.title || ''}

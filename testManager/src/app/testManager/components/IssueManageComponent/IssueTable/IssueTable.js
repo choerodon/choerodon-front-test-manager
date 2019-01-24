@@ -14,7 +14,7 @@ import {
   renderComponents, renderLabels, renderAssigned, renderStatus, renderReporter,
 } from './tags';
 import './IssueTable.scss';
-import pic from '../../../assets/问题管理－空.png';
+import pic from '../../../assets/testCaseEmpty.svg';
 
 @observer
 class IssueTable extends Component {
