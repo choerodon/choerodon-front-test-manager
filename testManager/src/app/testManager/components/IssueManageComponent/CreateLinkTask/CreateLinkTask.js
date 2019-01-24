@@ -47,7 +47,7 @@ class CreateLinkTask extends Component {
           selectLoading: false,
           originLinks: res,
         });
-        this.transform(res);
+        this.transform(res.content);
       });
   }
 
