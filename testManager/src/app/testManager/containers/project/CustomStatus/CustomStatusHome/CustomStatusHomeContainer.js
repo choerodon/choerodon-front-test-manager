@@ -2,7 +2,7 @@
  * @Author: LainCarl 
  * @Date: 2019-01-25 11:36:37 
  * @Last Modified by: LainCarl
- * @Last Modified time: 2019-01-25 11:43:50
+ * @Last Modified time: 2019-01-25 13:41:58
  * @Feature: 用户自定状态容器组件
  */
 
@@ -165,7 +165,8 @@ class CustomStatusHomeContainer extends Component {
       if (res.failed) {
         Choerodon.prompt('状态或颜色不能相同');
       } else {
-        this.handleCreateStatusOk();
+        this.ToggleCreateStatusVisible(false);
+        this.loadStatusList();
       }
       this.setState({ CreateStatusLoading: false });
     }).catch(() => {
@@ -182,8 +183,13 @@ class CustomStatusHomeContainer extends Component {
   handleEditStatusSubmit = (modifyedStatus) => {
     this.setState({ EditStatusLoading: true });
     editStatus(modifyedStatus).then((res) => {
-      this.setState({ EditStatusLoading: false });
-      this.handleEditStatusOk();
+      if (res.failed) {
+        Choerodon.prompt('状态或颜色不能相同');
+      } else {
+        this.ToggleEditStatusVisible(false);
+        this.loadStatusList();
+      }
+      this.setState({ EditStatusLoading: false });   
     }).catch(() => {
       Choerodon.prompt('网络异常');
       this.setState({ EditStatusLoading: false });
