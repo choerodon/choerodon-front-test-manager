@@ -2,7 +2,7 @@
  * @Author: LainCarl 
  * @Date: 2019-01-25 11:37:12 
  * @Last Modified by: LainCarl
- * @Last Modified time: 2019-01-25 13:36:06
+ * @Last Modified time: 2019-01-25 13:51:42
  * @Feature: 编辑状态侧边栏 
  */
 
@@ -59,7 +59,7 @@ class EditStatus extends Component {
     });
   }
 
-  render() {
+  render() {    
     const {
       visible, onCancel, loading, initValue,
     } = this.props;

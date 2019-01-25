@@ -2,11 +2,11 @@
  * @Author: LainCarl 
  * @Date: 2019-01-25 11:36:56 
  * @Last Modified by: LainCarl
- * @Last Modified time: 2019-01-25 13:36:34
+ * @Last Modified time: 2019-01-25 13:56:36
  * @Feature: 创建状态侧边栏
  */
 
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {
   Form, Input, Select, Modal, 
@@ -30,7 +30,7 @@ const propTypes = {
   onCancel: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,
 };
-class CreateStatus extends PureComponent {
+class CreateStatus extends Component {
   state = {
     pickShow: false,
     statusColor: 'GRAY',
@@ -55,7 +55,7 @@ class CreateStatus extends PureComponent {
       }
     });
   }
-
+  
   render() {
     const {
       visible, onCancel, loading,
@@ -103,14 +103,11 @@ class CreateStatus extends PureComponent {
                 )}
               </FormItem>
               <FormItem>
-                {getFieldDecorator('description', {
-            
+                {getFieldDecorator('description', {            
                 })(
-                  <Input style={{ width: 500 }} maxLength={30} label={<FormattedMessage id="comment" />} />,
-                   
+                  <Input style={{ width: 500 }} maxLength={30} label={<FormattedMessage id="comment" />} />,                   
                 )}
               </FormItem>
-
               <div role="none" className="c7ntest-CreateStatus-color-picker-container" onClick={e => e.stopPropagation()}>
                 <FormattedMessage id="color" />
                 {'：'}
