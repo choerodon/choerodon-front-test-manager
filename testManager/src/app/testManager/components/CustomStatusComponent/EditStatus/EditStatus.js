@@ -1,22 +1,39 @@
+/*
+ * @Author: LainCarl 
+ * @Date: 2019-01-25 11:37:12 
+ * @Last Modified by: LainCarl
+ * @Last Modified time: 2019-01-25 11:48:46
+ * @Feature: 编辑状态侧边栏 
+ */
+
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import {
   Form, Input, Modal, Spin,
 } from 'choerodon-ui';
 import { Content } from 'choerodon-front-boot';
 import { FormattedMessage } from 'react-intl';
 import { CompactPicker } from 'react-color';
-import './EditStatusSide.scss';
-import { editStatus } from '../../../api/TestStatusApi';
+import './EditStatus.scss';
 import { getProjectName } from '../../../common/utils';
 
 const FormItem = Form.Item;
 const { Sidebar } = Modal;
+const defaultProps = {
 
-class EditStatusSide extends Component {
+};
+
+const propTypes = {
+  visible: PropTypes.bool.isRequired,
+  loading: PropTypes.bool.isRequired,
+  initValue: PropTypes.shape({}).isRequired,
+  onCancel: PropTypes.func.isRequired,
+  onSubmit: PropTypes.func.isRequired,
+};
+class EditStatus extends Component {
   state = {
     pickShow: false,
     statusColor: '',
-    loading: false,
   }
 
   componentWillReceiveProps(nextProps) {
@@ -30,22 +47,15 @@ class EditStatusSide extends Component {
     }
   }
 
-  onOk = () => {
+  handleOk = () => {
     const { statusColor } = this.state;
+    const { initValue, onSubmit } = this.props;
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
-        this.setState({ loading: true });
-        const { initValue, onOk } = this.props;
-        editStatus({
+        onSubmit({
           ...initValue,
           ...values,
           ...{ statusColor },
-        }).then((data) => {
-          this.setState({ loading: false });
-          onOk();
-        }).catch(() => {
-          Choerodon.prompt('网络异常');
-          this.setState({ loading: false });
         });
       }
     });
@@ -53,17 +63,17 @@ class EditStatusSide extends Component {
 
   render() {
     const {
-      visible, onCancel, type,
+      visible, onCancel, loading, initValue,
     } = this.props;
-    const { statusColor, loading, pickShow } = this.state;
+    const { statusColor, pickShow } = this.state;
     const { getFieldDecorator } = this.props.form;
     return (
       <div onClick={() => { this.setState({ pickShow: false }); }} role="none">
         <Spin spinning={loading}>
           <Sidebar
-            title={`编辑“${type === 'CYCLE_CASE' ? '执行' : '步骤'}”状态`}
+            title={`编辑“${initValue.statusType === 'CYCLE_CASE' ? '执行' : '步骤'}”状态`}
             visible={visible}
-            onOk={this.onOk}
+            onOk={this.handleOk}
             onCancel={onCancel}
           >
             <Content
@@ -92,11 +102,11 @@ class EditStatusSide extends Component {
                   )}
                 </FormItem>
 
-                <div role="none" className="c7ntest-EditStatusSide-color-picker-container" onClick={e => e.stopPropagation()}>
+                <div role="none" className="c7ntest-EditStatus-color-picker-container" onClick={e => e.stopPropagation()}>
                   <FormattedMessage id="color" />
                   {'：'}
                   <div
-                    className="c7ntest-EditStatusSide-color-picker-show"
+                    className="c7ntest-EditStatus-color-picker-show"
                     role="none"
                     onClick={(e) => {
                       e.stopPropagation();
@@ -104,8 +114,8 @@ class EditStatusSide extends Component {
                     }}
                   >
                     <div style={{ background: statusColor }}>
-                      <div className="c7ntest-EditStatusSide-color-picker-show-rec-con">
-                        <div className="c7ntest-EditStatusSide-color-picker-show-rec" />
+                      <div className="c7ntest-EditStatus-color-picker-show-rec-con">
+                        <div className="c7ntest-EditStatus-color-picker-show-rec" />
                       </div>
                     </div>
                   </div>
@@ -136,8 +146,6 @@ class EditStatusSide extends Component {
   }
 }
 
-EditStatusSide.propTypes = {
-
-};
-
-export default Form.create()(EditStatusSide);
+EditStatus.propTypes = propTypes;
+EditStatus.defaultProps = defaultProps;
+export default Form.create()(EditStatus);

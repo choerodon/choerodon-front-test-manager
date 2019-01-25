@@ -1,4 +1,13 @@
-import React, { Component } from 'react';
+/*
+ * @Author: LainCarl 
+ * @Date: 2019-01-25 11:36:56 
+ * @Last Modified by:   LainCarl 
+ * @Last Modified time: 2019-01-25 11:36:56 
+ * @Feature: 创建状态侧边栏
+ */
+
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import {
   Form, Input, Select, Modal, Spin, 
 } from 'choerodon-ui';
@@ -6,15 +15,23 @@ import { Content } from 'choerodon-front-boot';
 import { FormattedMessage } from 'react-intl';
 import { CompactPicker } from 'react-color';
 import './CreateStatus.scss';
-import { createStatus } from '../../../api/TestStatusApi';
 import { getProjectName } from '../../../common/utils';
 
 const FormItem = Form.Item;
 const { Sidebar } = Modal;
 const Option = Select.Option;
-class CreateStatus extends Component {
+const defaultProps = {
+ 
+};
+
+const propTypes = {
+  visible: PropTypes.bool.isRequired,
+  loading: PropTypes.bool.isRequired,
+  onCancel: PropTypes.func.isRequired,
+  onSubmit: PropTypes.func.isRequired,
+};
+class CreateStatus extends PureComponent {
   state = {
-    loading: false,
     pickShow: false,
     statusColor: 'GRAY',
   }
@@ -26,25 +43,14 @@ class CreateStatus extends Component {
     }
   }
 
-  onOk = () => {
+  handleOk = () => {
     const { statusColor } = this.state;
-    const { onOk } = this.props;
+    const { onSubmit } = this.props;
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
-        this.setState({ loading: true });
-        createStatus({
+        onSubmit({
           ...values,
           ...{ statusColor },
-        }).then((res) => {
-          if (res.failed) {
-            Choerodon.prompt('状态或颜色不能相同');
-          } else {
-            onOk();
-          }
-          this.setState({ loading: false });
-        }).catch(() => {
-          Choerodon.prompt('网络异常');
-          this.setState({ loading: false });
         });
       }
     });
@@ -52,17 +58,17 @@ class CreateStatus extends Component {
 
   render() {
     const {
-      visible, onOk, onCancel, type, 
+      visible, onCancel, loading,
     } = this.props;
     const { getFieldDecorator, getFieldValue } = this.props.form;
-    const { pickShow, statusColor, loading } = this.state;
+    const { pickShow, statusColor } = this.state;
     return (
       <div onClick={() => { this.setState({ pickShow: false }); }} role="none">
         <Spin spinning={loading}>
           <Sidebar
             title={`创建“${getFieldValue('statusType') === 'CYCLE_CASE' ? '执行' : '步骤'}”状态`}
             visible={visible}
-            onOk={this.onOk}
+            onOk={this.handleOk}
             onCancel={onCancel}
           >
             <Content
@@ -149,8 +155,6 @@ class CreateStatus extends Component {
   }
 }
 
-CreateStatus.propTypes = {
-
-};
-
+CreateStatus.propTypes = propTypes;
+CreateStatus.defaultProps = defaultProps;
 export default Form.create()(CreateStatus);

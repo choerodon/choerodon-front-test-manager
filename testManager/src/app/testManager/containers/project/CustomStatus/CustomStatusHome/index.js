@@ -1,3 +1,3 @@
-import CustomStatusHome from './CustomStatusHome';
+import CustomStatusHomeContainer from './CustomStatusHomeContainer';
 
-export default CustomStatusHome;
+export default CustomStatusHomeContainer;
