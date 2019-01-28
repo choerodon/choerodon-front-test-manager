@@ -104,6 +104,14 @@ class DragTable extends Component {
  
   }
 
+  handleRow=(item, e) => {
+    console.log(item, e);
+    const { onRow } = this.props;
+    if (onRow(item).onClick) {
+      onRow(item).onClick(e);
+    }
+  }
+
   renderThead = () => {
     const { columns } = this.props;  
     const Columns = columns.filter(column => this.shouldColumnShow(column));
@@ -117,12 +125,14 @@ class DragTable extends Component {
   }
 
   renderTbody(data) {   
-    const { columns, dragKey, disabled } = this.props;
+    const {
+      columns, dragKey, disabled,  
+    } = this.props;
     const Columns = columns.filter(column => this.shouldColumnShow(column));
     const rows = data.map((item, index) => (
       disabled
         ? (
-          <tr>
+          <tr onClick={this.handleRow.bind(this, item)}>
             {Columns.map((column) => {
               let renderedItem = null;
               const {
@@ -148,6 +158,7 @@ class DragTable extends Component {
                 ref={provided.innerRef}
                 {...provided.draggableProps}
                 {...provided.dragHandleProps}
+                onClick={this.handleRow.bind(this, item)}
               >
                 {Columns.map((column) => {
                   let renderedItem = null;

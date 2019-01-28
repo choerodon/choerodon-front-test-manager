@@ -40,3 +40,24 @@
 .c7ntest-icon-in-table:hover {
   background: rgba(0, 0, 0, 0.08);
 }
+.c7ntest-select {
+  height: 35px;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  padding: 0 5px; // Select 下划线
+  .ant-select-underline {
+    display: none;
+  }
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.04);
+  }
+  .ant-select-selection__placeholder {
+    color: #3f51b5;
+  }
+}
+.c7ntest-select.ant-select-has-value {
+  .ant-select-arrow {
+    top: 2px;
+  }
+}

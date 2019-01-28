@@ -26,7 +26,7 @@ import {
   TreeTitle, CreateCycle, EditCycle, ShowCycleData, CloneCycle,
 } from '../../../../components/TestExecuteComponent';
 import {
-  RichTextShow, SelectFocusLoad, RadioButton, StatusTags, SmartTooltip,
+  RichTextShow, SelectFocusLoad, RadioButton, StatusTags, SmartTooltip, TestProgressLine,
 } from '../../../../components/CommonComponent';
 import {
   delta2Html, delta2Text, issueLink, getParams, executeDetailLink,
@@ -425,6 +425,16 @@ class TestExecuteHome extends Component {
     });
   }
 
+  /**
+   * 点击table的一项
+   *
+   * @memberof TestPlanHome
+   */
+  handleTableRowClick = (record) => {
+    const { history } = this.props;
+    history.push(executeDetailLink(record.executeId));
+  }
+
   handleExecuteTableChange = (pagination, filters, sorter, barFilters) => {
     const Filters = { ...filters };
     if (barFilters && barFilters.length > 0) {
@@ -437,6 +447,22 @@ class TestExecuteHome extends Component {
     }, () => {
       this.loadExecutes();
     });
+  }
+
+  calculateNum = (cycleCaseList) => {
+    const total = Object.keys(cycleCaseList).length;
+    let notExecute = 0;
+    const { statusList } = this.state;
+    for (let i = 0; i < statusList.length; i += 1) {
+      const status = statusList[i];
+      if (cycleCaseList[status.statusColor] && status.statusName === '未执行' && status.projectId === 0) {
+        notExecute += 1;
+      }
+    }
+    return {
+      execute: total - notExecute,
+      total,
+    };
   }
 
   renderTreeNodes = data => data.map((item) => {
@@ -535,10 +561,20 @@ class TestExecuteHome extends Component {
     );
   });
 
-  quickPass(execute) {
+  quickPass(execute, e) {
+    e.stopPropagation();
+    this.quickPassOrFail(execute, '通过');
+  }
+
+  quickFail(execute, e) {
+    e.stopPropagation();
+    this.quickPassOrFail(execute, '失败');
+  }
+
+  quickPassOrFail(execute, text) {
     const cycleData = { ...execute };
-    if (_.find(this.state.statusList, { projectId: 0, statusName: '通过' })) {
-      cycleData.executionStatus = _.find(this.state.statusList, { projectId: 0, statusName: '通过' }).statusId;
+    if (_.find(this.state.statusList, { projectId: 0, statusName: text })) {
+      cycleData.executionStatus = _.find(this.state.statusList, { projectId: 0, statusName: text }).statusId;
       delete cycleData.defects;
       delete cycleData.caseAttachment;
       delete cycleData.testCycleCaseStepES;
@@ -557,7 +593,7 @@ class TestExecuteHome extends Component {
         Choerodon.prompt('网络错误');
       });
     } else {
-      Choerodon.prompt('未找到通过');
+      Choerodon.prompt('未找到对应状态');
     }
   }
 
@@ -587,7 +623,9 @@ class TestExecuteHome extends Component {
     const leftVisible = TestExecuteStore.leftVisible;
     const treeAssignedTo = TestExecuteStore.treeAssignedTo;
     const executePagination = TestExecuteStore.getExecutePagination;
-    const { cycleId, title, type } = currentCycle;
+    const {
+      cycleId, title, type, cycleCaseList,
+    } = currentCycle;
     const prefix = <Icon type="filter_list" />;
     const columns = [{
       title: <span>ID</span>,
@@ -601,7 +639,7 @@ class TestExecuteHome extends Component {
         const { issueInfosDTO } = record;
         return (
           issueInfosDTO && (
-            <SmartTooltip
+            <Tooltip
               title={(
                 <div>
                   <div>{issueInfosDTO.issueNum}</div>
@@ -619,38 +657,102 @@ class TestExecuteHome extends Component {
               >
                 {issueInfosDTO.issueNum}
               </Link>
-            </SmartTooltip>
+            </Tooltip>
           )
         );
       },
     }, {
-      title: <span>用例名</span>,
+      title: <span>用例名称</span>,
       dataIndex: 'summary',
       key: 'summary',
-      width: '20%',
       filters: [],
-      // onFilter: (value, record) => 
-      //   record.issueInfosDTO && record.issueInfosDTO.issueNum.indexOf(value) === 0,  
+      flex: 2,
       render(issueId, record) {
         const { issueInfosDTO } = record;
         return (
           issueInfosDTO && (
-            <SmartTooltip
-              placement="topLeft"
-              title={(
-                <div>{issueInfosDTO.summary}</div>
-              )}
-            >
-              <span
-                className="c7ntest-text-dot"
-                style={{
-                  width: 100,
-                }}
-              >
-                {issueInfosDTO.summary}
-              </span>
+            <SmartTooltip>
+              {issueInfosDTO.summary}
             </SmartTooltip>
           )
+        );
+      },
+    },
+    // {
+    //   title: <FormattedMessage id="bug" />,
+    //   dataIndex: 'defects',
+    //   key: 'defects',
+    //   flex: 1,
+    //   render: defects => (
+    //     <Tooltip
+    //       placement="topLeft"
+    //       title={(
+    //         <div>
+    //           {defects.map((defect, i) => (
+    //             defect.issueInfosDTO && (
+    //               <div>
+    //                 <Link
+    //                   style={{
+    //                     color: 'white',
+    //                   }}
+    //                   to={issueLink(defect.issueInfosDTO.issueId, defect.issueInfosDTO.typeCode, defect.issueInfosDTO.issueNum)}
+    //                   target="_blank"
+    //                 >
+    //                   {defect.issueInfosDTO.issueNum}
+    //                 </Link>
+    //                 <div>{defect.issueInfosDTO.summary}</div>
+    //               </div>
+    //             )
+    //           ))}
+    //         </div>
+    //       )}
+    //     >
+    //       {defects.map((defect, i) => defect.issueInfosDTO && defect.issueInfosDTO.issueNum).join(',')}
+    //     </Tooltip>
+    //   ),
+    // },
+    {
+      title: <FormattedMessage id="cycle_executeBy" />,
+      dataIndex: 'lastUpdateUser',
+      key: 'lastUpdateUser',
+      flex: 1,
+      render(lastUpdateUser) {
+        return (
+          <div
+            className="c7ntest-text-dot"
+          >
+            {lastUpdateUser && lastUpdateUser.realName}
+          </div>
+        );
+      },
+    },
+    //  {
+    //   title: <FormattedMessage id="cycle_executeTime" />,
+    //   dataIndex: 'lastUpdateDate',
+    //   key: 'lastUpdateDate',
+    //   flex: 1,
+    //   render(lastUpdateDate) {
+    //     return (
+    //       <div
+    //         className="c7ntest-text-dot"
+    //       >
+    //         {lastUpdateDate && moment(lastUpdateDate).format('YYYY-MM-DD')}
+    //       </div>
+    //     );
+    //   },
+    // },
+    {
+      title: <FormattedMessage id="cycle_assignedTo" />,
+      dataIndex: 'assigneeUser',
+      key: 'assigneeUser',
+      flex: 1,
+      render(assigneeUser) {
+        return (
+          <div
+            className="c7ntest-text-dot"
+          >
+            {assigneeUser && assigneeUser.realName}
+          </div>
         );
       },
     }, {
@@ -666,7 +768,7 @@ class TestExecuteHome extends Component {
         );
       },
     }, {
-      title: <span>状态</span>,
+      title: <FormattedMessage id="status" />,
       dataIndex: 'executionStatus',
       key: 'executionStatus',
       filters: statusList.map(status => ({ text: status.statusName, value: status.statusId.toString() })),
@@ -676,10 +778,6 @@ class TestExecuteHome extends Component {
         const statusColor = _.find(statusList, { statusId: executionStatus })
           ? _.find(statusList, { statusId: executionStatus }).statusColor : '';
         return (
-          // <div style={{ ...styles.statusOption, ...{ background: statusColor } }}>
-          //   {_.find(statusList, { statusId: executionStatus })
-          //     && _.find(statusList, { statusId: executionStatus }).statusName}
-          // </div>
           _.find(statusList, { statusId: executionStatus }) && (
             <StatusTags
               color={statusColor}
@@ -688,104 +786,26 @@ class TestExecuteHome extends Component {
           )
         );
       },
-    }, {
-      title: <span>执行描述</span>,
-      dataIndex: 'comment',
-      key: 'comment',
-      filters: [],
-      flex: 1,
-      render(comment) {
-        return (
-          <SmartTooltip title={<RichTextShow data={delta2Html(comment)} />}>
-            <div
-              className="c7ntest-text-dot"
-            // style={{
-            //   width: 65,
-            // }}
-            >
-              {delta2Text(comment)}
-            </div>
-          </SmartTooltip>
-        );
-      },
     },
+    // {
+    //   title: <span>执行描述</span>,
+    //   dataIndex: 'comment',
+    //   key: 'comment',
+    //   filters: [],
+    //   flex: 1,
+    //   render(comment) {
+    //     return (
+    //       <Tooltip title={<RichTextShow data={delta2Html(comment)} />}>
+    //         <div
+    //           className="c7ntest-text-dot"
+    //         >
+    //           {delta2Text(comment)}
+    //         </div>
+    //       </Tooltip>
+    //     );
+    //   },
+    // },
     {
-      title: <FormattedMessage id="bug" />,
-      dataIndex: 'defects',
-      key: 'defects',
-      flex: 1,
-      render: defects => (
-        <SmartTooltip
-          placement="topLeft"
-          title={(
-            <div>
-              {defects.map((defect, i) => (
-                defect.issueInfosDTO && (
-                  <div>
-                    <Link
-                      style={{
-                        color: 'white',
-                      }}
-                      to={issueLink(defect.issueInfosDTO.issueId, defect.issueInfosDTO.typeCode, defect.issueInfosDTO.issueNum)}
-                      target="_blank"
-                    >
-                      {defect.issueInfosDTO.issueNum}
-                    </Link>
-                    <div>{defect.issueInfosDTO.summary}</div>
-                  </div>
-                )
-              ))}
-            </div>
-          )}
-        >
-          {defects.map((defect, i) => defect.issueInfosDTO && defect.issueInfosDTO.issueNum).join(',')}
-        </SmartTooltip>
-      ),
-    },
-    {
-      title: <FormattedMessage id="cycle_executeBy" />,
-      dataIndex: 'lastUpdateUser',
-      key: 'lastUpdateUser',
-      flex: 1,
-      render(lastUpdateUser) {
-        return (
-          <div
-            className="c7ntest-text-dot"
-          >
-            {lastUpdateUser && lastUpdateUser.realName}
-          </div>
-        );
-      },
-    }, {
-      title: <FormattedMessage id="cycle_executeTime" />,
-      dataIndex: 'lastUpdateDate',
-      key: 'lastUpdateDate',
-      flex: 1,
-      render(lastUpdateDate) {
-        return (
-          <div
-            className="c7ntest-text-dot"
-          >
-            {/* {lastUpdateDate && moment(lastUpdateDate).format('D/MMMM/YY')} */}
-            {lastUpdateDate && moment(lastUpdateDate).format('YYYY-MM-DD')}
-          </div>
-        );
-      },
-    }, {
-      title: <FormattedMessage id="cycle_assignedTo" />,
-      dataIndex: 'assigneeUser',
-      key: 'assigneeUser',
-      flex: 1,
-      render(assigneeUser) {
-        return (
-          <div
-            className="c7ntest-text-dot"
-          >
-            {assigneeUser && assigneeUser.realName}
-          </div>
-        );
-      },
-    }, {
       title: '',
       key: 'action',
       width: 90,
@@ -794,27 +814,11 @@ class TestExecuteHome extends Component {
         && (
           <div style={{ display: 'flex' }}>
             <Tooltip title={<FormattedMessage id="execute_quickPass" />}>
-              <Button shape="circle" funcType="flat" icon="pass" onClick={this.quickPass.bind(this, record)} />
+              <Button shape="circle" funcType="flat" icon="check_circle" onClick={this.quickPass.bind(this, record)} />
             </Tooltip>
-            <Tooltip title="跳转至执行详情">
-              <Button
-                shape="circle"
-                funcType="flat"
-                icon="explicit-outline"
-                // style={{ margin: '0 10px' }}
-                onClick={() => {
-                  const { history } = this.props;
-                  history.push(executeDetailLink(record.executeId));
-                }}
-              />
+            <Tooltip title={<FormattedMessage id="execute_quickFail" />}>
+              <Button shape="circle" funcType="flat" icon="cancel" onClick={this.quickFail.bind(this, record)} />
             </Tooltip>
-            {/* <Icon
-              type="delete_forever"
-              style={{ cursor: 'pointer' }}
-              onClick={() => {
-                this.deleteExecute(record);
-              }}
-            /> */}
           </div>
         )
       ),
@@ -916,7 +920,7 @@ class TestExecuteHome extends Component {
       },
     };
     if (type === 'cycle') {
-      columns.splice(2, 0, nameColumn);
+      columns.splice(4, 0, nameColumn);
     }
     return (
       <Page className="c7ntest-cycle">
@@ -1026,28 +1030,30 @@ class TestExecuteHome extends Component {
               <div style={{ width: 1, background: 'rgba(0,0,0,0.26)' }} />
               {cycleId ? (
                 <div className="c7ntest-ch-right">
-                  <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <div>
+                  <div style={{ display: 'flex', alignItems: 'center', }}>
+                    <div style={{ fontSize: '20px' }}>
                       {type === 'folder' ? <FormattedMessage id="cycle_stageName" />
                         : <FormattedMessage id="cycle_cycleName" />}
                       <span>{`：${title}`}</span>
                     </div>
+                    <TestProgressLine style={{ margin: '0 20px' }} progress={cycleCaseList} />
+                    {`已测:${this.calculateNum(cycleCaseList).execute}/${this.calculateNum(cycleCaseList).total}`}
                     <div style={{ flex: 1, visiblity: 'hidden' }} />
                   </div>
                   <ShowCycleData data={currentCycle} />
                   <div>
-                    <div style={{ display: 'flex', marginBottom: 20 }}>
+                    <div style={{ display: 'flex', marginBottom: 20, alignItems: 'center' }}>
                       <div style={{
                         fontWeight: 600,
-                        marginTop: 18,
                         marginRight: 10,
                         fontSize: '14px',
                       }}
                       >
-                        筛选:
+                        快速筛选:
                       </div>
                       <SelectFocusLoad
-                        label={<FormattedMessage id="cycle_executeBy" />}
+                        className="c7ntest-select"
+                        placeholder={<FormattedMessage id="cycle_executeBy" />}
                         request={getUsers}
                         onChange={(value) => {
                           this.lastUpdatedBy = value;
@@ -1055,16 +1061,16 @@ class TestExecuteHome extends Component {
                         }}
                       />
                       {treeAssignedTo === 0 && (
-                        <div style={{ marginLeft: 20 }}>
-                          <SelectFocusLoad
-                            label={<FormattedMessage id="cycle_assignedTo" />}
-                            request={getUsers}
-                            onChange={(value) => {
-                              this.assignedTo = value;
-                              this.loadCycle();
-                            }}
-                          />
-                        </div>
+                        <SelectFocusLoad
+                          style={{ marginLeft: 20, width: 200 }}
+                          className="c7ntest-select"
+                          placeholder={<FormattedMessage id="cycle_assignedTo" />}
+                          request={getUsers}
+                          onChange={(value) => {
+                            this.assignedTo = value;
+                            this.loadCycle();
+                          }}
+                        />
                       )}
                     </div>
                     <Table
@@ -1076,6 +1082,9 @@ class TestExecuteHome extends Component {
                       // columns={leftVisible ? columns
                       //   : columns.slice(0, 4).concat(otherColumns).concat(columns.slice(4))}
                       columns={columns}
+                      onRow={record => ({
+                        onClick: (event) => { this.handleTableRowClick(record); },
+                      })}
                     />
                   </div>
                 </div>
