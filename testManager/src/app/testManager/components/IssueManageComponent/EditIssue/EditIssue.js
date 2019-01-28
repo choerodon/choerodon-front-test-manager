@@ -266,7 +266,13 @@ class EditIssueNarrow extends Component {
         fileList,
         linkIssues,
         datalogs,
-        testStepData,
+        // testStepData,
+        testStepData: testStepData.map(step => {
+          return {
+            ...step,
+            stepIsCreating: false,
+          }
+        }),
         testExecuteData,
         issueLoading: false,
       });
@@ -654,6 +660,25 @@ class EditIssueNarrow extends Component {
     });
   }
 
+  // createIssueStep = () => {
+  //   const { issueInfo, testStepData } = this.state;
+  //   const { issueId } = issueInfo;
+  //   const lastRank = testStepData.length
+  //     ? testStepData[testStepData.length - 1].rank : null;
+  //   const testCaseStepDTO = {
+  //     attachments: [],
+  //     issueId,
+  //     lastRank,
+  //     nextRank: null,
+  //     testStep: '测试步骤',
+  //     testData: '测试数据',
+  //     expectedResult: '预期结果',
+  //   };
+  //   createIssueStep(testCaseStepDTO).then(() => {
+  //     this.reloadIssue();
+  //   });
+  // }
+
   createIssueStep = () => {
     const { issueInfo, testStepData } = this.state;
     const { issueId } = issueInfo;
@@ -664,13 +689,15 @@ class EditIssueNarrow extends Component {
       issueId,
       lastRank,
       nextRank: null,
-      testStep: '测试步骤',
-      testData: '测试数据',
-      expectedResult: '预期结果',
+      testStep: '',
+      testData: '',
+      expectedResult: '',
+      stepIsCreating: true,
     };
-    createIssueStep(testCaseStepDTO).then(() => {
-      this.reloadIssue();
+    this.setState({
+      testStepData: [...testStepData, testCaseStepDTO],
     });
+   
   }
 
   /**
@@ -1596,11 +1623,6 @@ class EditIssueNarrow extends Component {
                       flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px',
                     }}
                     />
-                    <div className="c7ntest-title-right" style={{ marginLeft: '14px', position: 'relative' }}>
-                      <Button disabled={disabled} icon="playlist_add" className="leftBtn" funcTyp="flat" onClick={this.createIssueStep}>
-                        <FormattedMessage id="issue_edit_addTestDetail" />
-                      </Button>
-                    </div>
                   </div>
                   <div className="c7ntest-content-wrapper" style={{ paddingLeft: 0 }}>
                     <TestStepTable
@@ -1622,6 +1644,11 @@ class EditIssueNarrow extends Component {
                         this.reloadIssue();
                       }}
                     />
+                    <div className="c7ntest-title-right" style={{ marginLeft: '3px', position: 'relative' }}>
+                      <Button disabled={disabled} icon="playlist_add" className="leftBtn" funcTyp="flat" onClick={this.createIssueStep}>
+                        <FormattedMessage id="issue_edit_addTestDetail" />
+                      </Button>
+                    </div>
                   </div>
                 </div>
                 {/* 测试执行 */}

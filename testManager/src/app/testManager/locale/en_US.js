@@ -80,6 +80,8 @@ const enUS = {
   execute_stepStatus: 'Status',
   execute_comment: 'Comment',    
   execute_copy: 'Copy test step',
+  excute_save: 'Save',
+  excute_cancel: 'Cancel',
   // 执行历史记录表格
   execute_history_oldValue: 'Old value',
   execute_history_newValue: 'New value',  

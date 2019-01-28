@@ -3,6 +3,7 @@ import {
   Modal, Select, Form, Input, Spin, 
 } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
+import _ from 'lodash';
 import { getProjectVersion } from '../../../api/agileApi';
 import { clone } from '../../../api/cycleApi';
 
@@ -27,11 +28,13 @@ class CloneCycle extends Component {
     this.setState({
       loading: true,
     });
-    const { versionId } = nextProps.currentCloneCycle;
+    // const { versionId } = nextProps.currentCloneCycle;
     const { setFieldsValue } = this.props.form;
     getProjectVersion().then((versions) => {
+      const reverseVersions = _.reverse(versions);
+      const { versionId } = reverseVersions[0] && reverseVersions[0];
       this.setState({
-        versions,        
+        versions: reverseVersions,        
         loading: false,
       });
       setFieldsValue({ versionId });
