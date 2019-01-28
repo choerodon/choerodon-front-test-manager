@@ -18,7 +18,7 @@
   .c7ntest-TestExecuteHome {
     height: 100%;
     display: flex;
-    table{
+    table {
       table-layout: fixed;
     }
     .ant-table-thead>tr>th,
@@ -62,15 +62,14 @@
   }
   .c7ntest-ch-left {
     margin-left: 24px;
-    height: 100%;
-    // margin-left: 10px;
+    height: 100%; // margin-left: 10px;
     width: 310px; // border-right: 1px solid rgba(0, 0, 0, 0.36);
     // padding-bottom: 30px;
     .c7ntest-chlh-tree {
       margin-left: -4px;
     }
     overflow: hidden;
-    .c7ntest-TestExecuteHome-button{
+    .c7ntest-TestExecuteHome-button {
       margin: 0 7px;
     }
   }
@@ -116,8 +115,7 @@
     background-color: #3F51B5;
     color: white;
     text-align: center;
-    line-height: 19px;
-    // margin: 0 7px;
+    line-height: 19px; // margin: 0 7px;
     border-radius: 3px;
   }
   .ant-tree-icon__customize {

@@ -188,7 +188,7 @@ class TestPlanHome extends Component {
         );
       },
     }, {
-      title: <span>用例名</span>,
+      title: <span>用例名称</span>,
       dataIndex: 'summary',
       key: 'summary',
       filters: [],
@@ -201,6 +201,84 @@ class TestPlanHome extends Component {
               {issueInfosDTO.summary}
             </SmartTooltip>
           )
+        );
+      },
+    }, 
+    // {
+    //   title: <FormattedMessage id="bug" />,
+    //   dataIndex: 'defects',
+    //   key: 'defects',
+    //   flex: 1,
+    //   render: defects => (
+    //     <Tooltip
+    //       placement="topLeft"
+    //       title={(
+    //         <div>
+    //           {defects.map((defect, i) => (
+    //             defect.issueInfosDTO && (
+    //               <div>
+    //                 <Link
+    //                   style={{
+    //                     color: 'white',
+    //                   }}
+    //                   to={issueLink(defect.issueInfosDTO.issueId, defect.issueInfosDTO.typeCode, defect.issueInfosDTO.issueNum)}
+    //                   target="_blank"
+    //                 >
+    //                   {defect.issueInfosDTO.issueNum}
+    //                 </Link>
+    //                 <div>{defect.issueInfosDTO.summary}</div>
+    //               </div>
+    //             )
+    //           ))}
+    //         </div>
+    //       )}
+    //     >
+    //       {defects.map((defect, i) => defect.issueInfosDTO && defect.issueInfosDTO.issueNum).join(',')}
+    //     </Tooltip>
+    //   ),
+    // },
+    {
+      title: <FormattedMessage id="cycle_executeBy" />,
+      dataIndex: 'lastUpdateUser',
+      key: 'lastUpdateUser',
+      flex: 1,
+      render(lastUpdateUser) {
+        return (
+          <div
+            className="c7ntest-text-dot"
+          >
+            {lastUpdateUser && lastUpdateUser.realName}
+          </div>
+        );
+      },
+    },
+    //  {
+    //   title: <FormattedMessage id="cycle_executeTime" />,
+    //   dataIndex: 'lastUpdateDate',
+    //   key: 'lastUpdateDate',
+    //   flex: 1,
+    //   render(lastUpdateDate) {
+    //     return (
+    //       <div
+    //         className="c7ntest-text-dot"
+    //       >
+    //         {lastUpdateDate && moment(lastUpdateDate).format('YYYY-MM-DD')}
+    //       </div>
+    //     );
+    //   },
+    // },
+    {
+      title: <FormattedMessage id="cycle_assignedTo" />,
+      dataIndex: 'assigneeUser',
+      key: 'assigneeUser',
+      flex: 1,
+      render(assigneeUser) {
+        return (
+          <div
+            className="c7ntest-text-dot"
+          >
+            {assigneeUser && assigneeUser.realName}
+          </div>
         );
       },
     }, {
@@ -234,100 +312,26 @@ class TestPlanHome extends Component {
           )
         );
       },
-    }, {
-      title: <span>执行描述</span>,
-      dataIndex: 'comment',
-      key: 'comment',
-      filters: [],
-      flex: 1,
-      render(comment) {
-        return (
-          <Tooltip title={<RichTextShow data={delta2Html(comment)} />}>
-            <div
-              className="c7ntest-text-dot"
-            >
-              {delta2Text(comment)}
-            </div>
-          </Tooltip>
-        );
-      },
-    },
+    }, 
+    // {
+    //   title: <span>执行描述</span>,
+    //   dataIndex: 'comment',
+    //   key: 'comment',
+    //   filters: [],
+    //   flex: 1,
+    //   render(comment) {
+    //     return (
+    //       <Tooltip title={<RichTextShow data={delta2Html(comment)} />}>
+    //         <div
+    //           className="c7ntest-text-dot"
+    //         >
+    //           {delta2Text(comment)}
+    //         </div>
+    //       </Tooltip>
+    //     );
+    //   },
+    // },
     {
-      title: <FormattedMessage id="bug" />,
-      dataIndex: 'defects',
-      key: 'defects',
-      flex: 1,
-      render: defects => (
-        <Tooltip
-          placement="topLeft"
-          title={(
-            <div>
-              {defects.map((defect, i) => (
-                defect.issueInfosDTO && (
-                  <div>
-                    <Link
-                      style={{
-                        color: 'white',
-                      }}
-                      to={issueLink(defect.issueInfosDTO.issueId, defect.issueInfosDTO.typeCode, defect.issueInfosDTO.issueNum)}
-                      target="_blank"
-                    >
-                      {defect.issueInfosDTO.issueNum}
-                    </Link>
-                    <div>{defect.issueInfosDTO.summary}</div>
-                  </div>
-                )
-              ))}
-            </div>
-          )}
-        >
-          {defects.map((defect, i) => defect.issueInfosDTO && defect.issueInfosDTO.issueNum).join(',')}
-        </Tooltip>
-      ),
-    },
-    {
-      title: <FormattedMessage id="cycle_executeBy" />,
-      dataIndex: 'lastUpdateUser',
-      key: 'lastUpdateUser',
-      flex: 1,
-      render(lastUpdateUser) {
-        return (
-          <div
-            className="c7ntest-text-dot"
-          >
-            {lastUpdateUser && lastUpdateUser.realName}
-          </div>
-        );
-      },
-    }, {
-      title: <FormattedMessage id="cycle_executeTime" />,
-      dataIndex: 'lastUpdateDate',
-      key: 'lastUpdateDate',
-      flex: 1,
-      render(lastUpdateDate) {
-        return (
-          <div
-            className="c7ntest-text-dot"
-          >
-            {lastUpdateDate && moment(lastUpdateDate).format('YYYY-MM-DD')}
-          </div>
-        );
-      },
-    }, {
-      title: <FormattedMessage id="cycle_assignedTo" />,
-      dataIndex: 'assigneeUser',
-      key: 'assigneeUser',
-      flex: 1,
-      render(assigneeUser) {
-        return (
-          <div
-            className="c7ntest-text-dot"
-          >
-            {assigneeUser && assigneeUser.realName}
-          </div>
-        );
-      },
-    }, {
       title: '',
       key: 'action',
       flex: 1,
@@ -335,7 +339,7 @@ class TestPlanHome extends Component {
         record.projectId !== 0
         && (
           <div style={{ display: 'flex' }}>
-            <Tooltip title="跳转至执行详情">
+            {/* <Tooltip title="跳转至执行详情">
               <Button
                 shape="circle"
                 funcType="flat"
@@ -345,11 +349,15 @@ class TestPlanHome extends Component {
                   history.push(executeDetailShowLink(record.executeId));
                 }}
               />
-            </Tooltip>
+            </Tooltip> */}
+            <div className="c7ntest-flex-space" />
             <Button
               shape="circle"
               funcType="flat"
               icon="delete_forever"
+              style={{
+                marginRight: 10,
+              }}
               onClick={() => {
                 this.deleteExecute(record);
               }}
@@ -403,34 +411,34 @@ class TestPlanHome extends Component {
                     <EventCalendar key={currentCycle.key} showMode={calendarShowMode} times={times} onItemClick={this.handleItemClick} />
                     {calendarShowMode === 'single' && (
                       <div className="c7ntest-TestPlan-content-right-bottom">
-                        <div style={{ display: 'flex', marginBottom: 20 }}>
+                        <div style={{ display: 'flex', marginBottom: 20, alignItems: 'center' }}>
                           <div style={{
-                            fontWeight: 600,
-                            marginTop: 18,
+                            fontWeight: 600,                    
                             marginRight: 10,
                             fontSize: '14px',
                           }}
                           >
-                            筛选:
+                            快速筛选:
                           </div>
                           <SelectFocusLoad
-                            label={<FormattedMessage id="cycle_executeBy" />}
+                            className="c7ntest-select"
+                            placeholder={<FormattedMessage id="cycle_executeBy" />}
                             request={getUsers}
                             onChange={(value) => {
                               TestPlanStore.setLastUpdatedBy(value);
                               TestPlanStore.loadCycle();
                             }}
-                          />
-                          <div style={{ marginLeft: 20 }}>
-                            <SelectFocusLoad
-                              label={<FormattedMessage id="cycle_assignedTo" />}
-                              request={getUsers}
-                              onChange={(value) => {
-                                TestPlanStore.setAssignedTo(value);
-                                TestPlanStore.loadCycle();
-                              }}
-                            />
-                          </div>
+                          />                          
+                          <SelectFocusLoad
+                            style={{ marginLeft: 20, width: 200 }}
+                            className="c7ntest-select"
+                            placeholder={<FormattedMessage id="cycle_assignedTo" />}                              
+                            request={getUsers}
+                            onChange={(value) => {
+                              TestPlanStore.setAssignedTo(value);
+                              TestPlanStore.loadCycle();
+                            }}
+                          />                        
                         </div>
                         <DragTable
                           pagination={executePagination}
