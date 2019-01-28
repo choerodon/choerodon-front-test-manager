@@ -87,6 +87,8 @@ const zhCN = {
   execute_stepStatus: '状态',
   execute_comment: '注释',
   execute_copy: '复制测试步骤',
+  excute_save: '保存',
+  excute_cancel: '取消',
   // 执行历史记录表格
   execute_history_oldValue: '原值',
   execute_history_newValue: '新值',

@@ -111,6 +111,14 @@ class TestStepTable extends Component {
     });
   }
 
+  createStep() {
+
+  }
+
+  cancelStep() {
+
+  }
+
   render() {
     const that = this;
     const {
@@ -121,6 +129,7 @@ class TestStepTable extends Component {
       title: null,
       dataIndex: 'stepId',
       key: 'stepId',
+      width: 10,
       render(stepId, record, index) {
         return index + 1;
       },
@@ -128,7 +137,7 @@ class TestStepTable extends Component {
       title: <FormattedMessage id="execute_testStep" />,
       dataIndex: 'testStep',
       key: 'testStep',
-      flex: 3,
+      flex: 2,
       render(testStep, record) {
         return (
           <div className="item-container">
@@ -159,7 +168,7 @@ class TestStepTable extends Component {
       title: <FormattedMessage id="execute_testData" />,
       dataIndex: 'testData',
       key: 'testData',
-      flex: 3,
+      flex: 2,
       render(testData, record) {
         return (
           <div className="item-container">
@@ -190,7 +199,7 @@ class TestStepTable extends Component {
         title: <FormattedMessage id="execute_expectedOutcome" />,
         dataIndex: 'expectedResult',
         key: 'expectedResult',
-        flex: 3,
+        // flex: 3,
         render(expectedResult, record) {
           return (
             <div className="item-container">
@@ -221,7 +230,7 @@ class TestStepTable extends Component {
         title: <FormattedMessage id="execute_stepAttachment" />,
         dataIndex: 'attachments',
         key: 'attachments',
-        flex: 3,
+        // flex: 3,
         render(attachments, record) {
           return (
             <div className="item-container">
@@ -263,19 +272,49 @@ class TestStepTable extends Component {
         title: null,
         dataIndex: 'action',
         key: 'action',
-        flex: 2,
+        // flex: 2,
         render(attachments, record, index) {
-          return (
+          const {stepIsCreating} = record;
+
+          return !stepIsCreating ? (
             <div>
               <Tooltip title={<FormattedMessage id="execute_copy" />}>
                 <Button disabled={disabled} shape="circle" funcType="flat" icon="library_books" style={{ margin: '0 5px', color: 'black' }} onClick={() => that.cloneStep(record.stepId, index)} />
               </Tooltip>
               <Button disabled={disabled} shape="circle" funcType="flat" icon="delete_forever" style={{ margin: '0 5px', color: 'black' }} onClick={() => that.handleDeleteTestStep(record.stepId)} />
             </div>
-          );
+          ) : (
+            <div>
+            <Tooltip title={<FormattedMessage id="execute_save" />}>
+              <Button disabled={disabled} shape="circle" funcType="flat" icon="done" style={{ margin: '0 5px', color: 'black' }} onClick={() => that.createStep(record.stepId, index)} />
+            </Tooltip>
+            <Tooltip title={<FormattedMessage id="excute_cancel" />}>
+              <Button disabled={disabled} shape="circle" funcType="flat" icon="close" style={{ margin: '0 5px', color: 'black' }} onClick={() => that.cancelStep(record.stepId)} />
+            </Tooltip>
+          </div>
+          )
         },
       },
     ];
+    const createColumn = [
+     { title: null,
+        dataIndex: 'createAction',
+        key: 'createAction',
+        // flex: 2,
+        render(attachments, record, index) {
+          const {stepIsCreating} = record;
+          return stepIsCreating && (
+            <div>
+              <Tooltip title={<FormattedMessage id="execute_save" />}>
+                <Button disabled={disabled} shape="circle" funcType="flat" icon="done" style={{ margin: '0 5px', color: 'black' }} onClick={() => that.createStep(record.stepId, index)} />
+              </Tooltip>
+              <Tooltip title={<FormattedMessage id="excute_cancel" />}>
+                <Button disabled={disabled} shape="circle" funcType="flat" icon="close" style={{ margin: '0 5px', color: 'black' }} onClick={() => that.cancelStep(record.stepId)} />
+              </Tooltip>
+            </div>
+          );
+        },}
+    ]
     return (
       <div className="c7ntest-TestStepTable">
         <DragTable
@@ -283,7 +322,8 @@ class TestStepTable extends Component {
           pagination={false}
           filterBar={false}
           dataSource={this.state.data}
-          columns={mode === 'narrow' ? columns : columns.concat(wideColumns)}
+          columns={mode === 'narrow' ? columns.concat(createColumn) : columns.concat(wideColumns)}
+          // columns={mode === 'narrow' ? columns : columns.concat(wideColumns)}
           onDragEnd={this.onDragEnd}
           dragKey="stepId"
         />

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import {
   Modal, Select, Form, Input, Spin, 
 } from 'choerodon-ui';
+import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import { getProjectVersion } from '../../../api/agileApi';
 import { clone } from '../../../api/cycleApi';
@@ -27,8 +28,9 @@ class CloneCycle extends Component {
       selectLoading: true,
     });
     getProjectVersion().then((versions) => {
+      console.log(_.reverse(versions));
       this.setState({
-        versions,
+        versions: _.reverse(versions),
         selectLoading: false,
       });
     });
@@ -83,6 +85,7 @@ class CloneCycle extends Component {
                 rules: [{
                   required: true, message: '请选择版本!',
                 }],
+                initialValue: versions[0] && versions[0].versionId,
               })(
                 <Select
                 // style={{ width: 500, margin: '0 0 10px 0' }}
