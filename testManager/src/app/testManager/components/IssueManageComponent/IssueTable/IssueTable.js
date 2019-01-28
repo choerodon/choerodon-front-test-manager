@@ -459,7 +459,6 @@ class IssueTable extends Component {
             width: '100%',
           }}
         >
-
           <Spin spinning={IssueStore.loading}>
             {this.renderTable(columns)}
           </Spin>
@@ -499,7 +498,6 @@ class IssueTable extends Component {
               </div>
             ) : null
           }
-
         </section>
       </div>
 

@@ -1,14 +1,16 @@
 import {
-  observable, action, computed, toJS, 
+  observable, action, computed, toJS,
 } from 'mobx';
 import { BaseTreeProto } from '../prototype';
 
 class IssueTreeStore extends BaseTreeProto {
-  @observable loading=false;
+  @observable loading = false;
 
   @observable draggingFolders = [];
 
   @observable isCopy = false;
+
+  @observable dataList = [];
 
   @computed get getDraggingFolders() {
     return toJS(this.draggingFolders);
@@ -24,6 +26,10 @@ class IssueTreeStore extends BaseTreeProto {
 
   @action setDraggingFolders(draggingFolders) {
     this.draggingFolders = draggingFolders;
+  }
+
+  @action setDataList = (dataList) => {
+    this.dataList = dataList;
   }
 }
 

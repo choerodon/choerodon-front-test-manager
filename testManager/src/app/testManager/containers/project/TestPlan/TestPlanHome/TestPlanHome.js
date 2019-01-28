@@ -117,7 +117,7 @@ class TestPlanHome extends Component {
   }
 
   deleteExecute = (record) => {
-    const { executeId, cycleId } = record;
+    const { executeId } = record;
     confirm({
       width: 560,
       title: Choerodon.getMessage('确认删除吗?', 'Confirm delete'),
@@ -125,10 +125,7 @@ class TestPlanHome extends Component {
       onOk: () => {
         TestPlanStore.rightEnterLoading();
         deleteExecute(executeId)
-          .then((res) => {
-            const { executePagination } = TestPlanStore;
-            const currentCycle = TestPlanStore.getCurrentCycle;
-            // console.log(currentCycle);
+          .then((res) => {           
             TestPlanStore.reloadCycle();
           }).catch((err) => {
             console.log(err);
@@ -136,7 +133,6 @@ class TestPlanHome extends Component {
             TestPlanStore.rightLeaveLoading();
           });
       },
-      onCancel() { },
       okText: '删除',
       okType: 'danger',
     });
@@ -451,9 +447,6 @@ class TestPlanHome extends Component {
                   </div>
                 ))}
               </Injecter>
-
-              {/* <Spin spinning={loading}> */}
-
             </div>
           </Spin>
         </Content>

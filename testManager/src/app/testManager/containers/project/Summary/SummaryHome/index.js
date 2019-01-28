@@ -1,3 +1,3 @@
-import SummaryHome from './SummaryHome';
+import SummaryHomeContainer from './SummaryHomeContainer';
 
-export default SummaryHome;
+export default SummaryHomeContainer;

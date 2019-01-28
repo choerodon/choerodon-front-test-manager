@@ -17,6 +17,7 @@ import IssueTree from '../../../../components/IssueManageComponent/IssueTree';
 import IssueTable from '../../../../components/IssueManageComponent/IssueTable';
 import ExportSide from '../../../../components/IssueManageComponent/ExportSide';
 import './IssueManage.scss';
+import IssueTreeStore from '../../../../store/project/IssueManage/IssueTreeStore';
 
 const EditIssueWidth = {
   narrow: 440,
@@ -56,8 +57,32 @@ export default class IssueManage extends Component {
     });
   }
 
-  handleCreateIssue() {
+  /**
+   *
+   * 用例创建后，默认选到目标文件夹
+   * @param {*} issue
+   * @param {*} folderId
+   * @memberof IssueManage
+   */
+  handleCreateIssue(issue, folderId) {
     this.setState({ createIssueShow: false });
+    let targetCycle = null;
+    // 如果指定了文件夹就设置文件夹，否则设置版本
+    if (folderId) {
+      targetCycle = _.find(IssueTreeStore.dataList, { cycleId: folderId });
+    } else {
+      const versionId = issue.versionIssueRelDTOList[0].versionId;
+      targetCycle = _.find(IssueTreeStore.dataList, { versionId });
+    }    
+    if (targetCycle) {      
+      const expandKeys = IssueTreeStore.getExpandedKeys;
+      // 设置当前选中项
+      IssueTreeStore.setCurrentCycle(targetCycle);
+      // 设置当前选中项
+      IssueTreeStore.setSelectedKeys([targetCycle.key]);
+      // 设置展开项，展开父元素
+      IssueTreeStore.setExpandedKeys([...expandKeys, targetCycle.key.split('-').slice(0, -1).join('-')]);      
+    }
     IssueStore.loadIssues();
   }
 
@@ -118,8 +143,8 @@ export default class IssueManage extends Component {
 
   render() {
     const { expand, createIssueShow, selectedIssue } = this.state;
-    const treeShow = IssueStore.treeShow;   
-    
+    const treeShow = IssueStore.treeShow;
+    const currentCycle = IssueTreeStore.getCurrentCycle;
     const EditIssueMode = this.getMode();
 
     return (
@@ -252,6 +277,7 @@ export default class IssueManage extends Component {
                 visible={createIssueShow}
                 onCancel={() => this.setState({ createIssueShow: false })}
                 onOk={this.handleCreateIssue.bind(this)}
+                defaultVersion={currentCycle.versionId}
               />
             )
           }

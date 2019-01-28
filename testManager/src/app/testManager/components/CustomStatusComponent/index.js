@@ -1,4 +1,4 @@
 import CreateStatus from './CreateStatus';
-import EditStatusSide from './EditStatusSide';
+import EditStatus from './EditStatus';
 
-export { CreateStatus, EditStatusSide };
+export { CreateStatus, EditStatus };

@@ -1,3 +1,3 @@
-import AutoTestList from './AutoTestList';
+import AutoTestListContainer from './AutoTestListContainer';
 
-export default AutoTestList;
+export default AutoTestListContainer;

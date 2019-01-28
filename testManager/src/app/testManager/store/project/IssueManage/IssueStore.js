@@ -59,7 +59,7 @@ class IssueStore {
 
   @observable tableDraging = false;
 
-  @observable treeShow = false;
+  @observable treeShow = true;
 
   @action clearStore = () => {
     this.issues = [];
@@ -194,7 +194,7 @@ class IssueStore {
           resolve(res);
           this.setLoading(false);
         });
-      })
+      });
     });
   }
 

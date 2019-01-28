@@ -13,7 +13,7 @@ import { handleFileUpload, beforeTextUpload } from '../../../common/utils';
 import { createIssue, getFoldersByVersion } from '../../../api/IssueManageApi';
 import IssueStore from '../../../store/project/IssueManage/IssueStore';
 import {
-  getLabels, getModules, getPrioritys, getProjectVersion, 
+  getLabels, getModules, getPrioritys, getProjectVersionByStatus, 
 } from '../../../api/agileApi';
 import { getUsers } from '../../../api/IamApi';
 import { FullEditor, WYSIWYGEditor } from '../../CommonComponent';
@@ -49,18 +49,22 @@ class CreateIssue extends Component {
 
   componentDidMount() {
     this.getPrioritys();
-    // this.getProjectSetting();
+    this.loadVersions();
   }
 
-  // getProjectSetting() {
-  //   axios.get(`/agile/v1/projects/${AppState.currentMenuType.id}/project_info`)
-  //     .then((res) => {
-  //       this.setState({
-  //         origin: res,
-  //       });
-  //     });
-  // }
-
+  loadVersions=() => {
+    getProjectVersionByStatus().then((res) => {
+      this.setState({
+        originFixVersions: res,
+        selectLoading: false,
+      });
+      const { setFieldsValue } = this.props.form;
+      if (_.find(res, { versionId: this.props.defaultVersion })) {
+        setFieldsValue({ versionId: this.props.defaultVersion }); 
+      }
+    });
+  }
+  
   onFilterChange(input) {
     if (!sign) {
       this.setState({
@@ -204,12 +208,11 @@ class CreateIssue extends Component {
         this.setState({ createLoading: true });
         const deltaOps = this.state.delta;
         if (deltaOps) {
-          beforeTextUpload(deltaOps, extra, this.handleSave);
+          beforeTextUpload(deltaOps, extra, this.handleSave.bind(this, values.folderId));
         } else {
           extra.description = '';
           this.handleSave(extra, values.folderId);
-        }
-        this.props.onOk(extra);
+        }        
       }
       return null;
     });
@@ -233,9 +236,10 @@ class CreateIssue extends Component {
             handleFileUpload(this.state.fileList, callback, config);
           }
         }
-        this.props.onOk();
+        this.props.onOk(data, folderId);
       })
       .catch((error) => {
+        console.log(error);
       });
   };
 
@@ -400,18 +404,7 @@ class CreateIssue extends Component {
                   onChange={() => {
                     const { resetFields } = this.props.form;
                     resetFields(['folderId']);
-                  }}
-                  onFocus={() => {
-                    this.setState({
-                      selectLoading: true,
-                    });
-                    getProjectVersion(['version_planning', 'released']).then((res) => {
-                      this.setState({
-                        originFixVersions: res,
-                        selectLoading: false,
-                      });
-                    });
-                  }}
+                  }}             
                 >
                   {this.state.originFixVersions.map(version => <Option key={version.name} value={version.versionId}>{version.name}</Option>)}
                 </Select>,
