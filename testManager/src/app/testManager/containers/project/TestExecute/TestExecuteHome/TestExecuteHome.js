@@ -26,7 +26,7 @@ import {
   TreeTitle, CreateCycle, EditCycle, ShowCycleData, CloneCycle,
 } from '../../../../components/TestExecuteComponent';
 import {
-  RichTextShow, SelectFocusLoad, RadioButton, StatusTags, SmartTooltip,
+  RichTextShow, SelectFocusLoad, RadioButton, StatusTags, SmartTooltip, 
 } from '../../../../components/CommonComponent';
 import {
   delta2Html, delta2Text, issueLink, getParams, executeDetailLink,
@@ -164,22 +164,22 @@ class TestExecuteHome extends Component {
       page: targetPage,
       size: executePagination.pageSize,
     }, cycleId,
-      {
-        ...filters,
-        lastUpdatedBy: [Number(this.lastUpdatedBy)],
-        assignedTo: [treeAssignedTo || Number(this.assignedTo)],
-      }, type).then((res) => {
-        TestExecuteStore.setExecutePagination({
-          current: res.number + 1,
-          pageSize: res.size,
-          total: res.totalElements,
-        });
-        this.setState({
-          rightLoading: false,
-          testList: res.content,
-        });
-        // window.console.log(cycle);
+    {
+      ...filters,
+      lastUpdatedBy: [Number(this.lastUpdatedBy)],
+      assignedTo: [treeAssignedTo || Number(this.assignedTo)],
+    }, type).then((res) => {
+      TestExecuteStore.setExecutePagination({
+        current: res.number + 1,
+        pageSize: res.size,
+        total: res.totalElements,
       });
+      this.setState({
+        rightLoading: false,
+        testList: res.content,
+      });
+      // window.console.log(cycle);
+    });
   }
 
   generateList = (data) => {
@@ -213,9 +213,9 @@ class TestExecuteHome extends Component {
       width: 560,
       title: Choerodon.getMessage('确认删除吗?', 'Confirm delete'),
       content:
-        <div style={{ marginBottom: 32 }}>
-          {Choerodon.getMessage('当你点击删除后，该条数据将被永久删除，不可恢复!', 'When you click delete, after which the data will be permanently deleted and irreversible!')}
-        </div>,
+  <div style={{ marginBottom: 32 }}>
+    {Choerodon.getMessage('当你点击删除后，该条数据将被永久删除，不可恢复!', 'When you click delete, after which the data will be permanently deleted and irreversible!')}
+  </div>,
       onOk: () => {
         // that.setState({
         //   rightLoading: true,
@@ -423,6 +423,16 @@ class TestExecuteHome extends Component {
       });
       TestExecuteStore.removeAdding();
     });
+  }
+
+  /**
+   * 点击table的一项
+   *
+   * @memberof TestPlanHome
+   */
+  handleTableRowClick=(record) => {
+    const { history } = this.props;
+    history.push(executeDetailLink(record.executeId));
   }
 
   handleExecuteTableChange = (pagination, filters, sorter, barFilters) => {
@@ -1076,21 +1086,24 @@ class TestExecuteHome extends Component {
                       // columns={leftVisible ? columns
                       //   : columns.slice(0, 4).concat(otherColumns).concat(columns.slice(4))}
                       columns={columns}
+                      onRow={record => ({
+                        onClick: (event) => { this.handleTableRowClick(record); },                             
+                      })}
                     />
                   </div>
                 </div>
               ) : (
-                  <div style={{
-                    display: 'flex', alignItems: 'center', height: 250, margin: '88px auto', padding: '50px 75px', border: '1px dashed rgba(0,0,0,0.54)',
-                  }}
-                  >
-                    <img src={noRight} alt="" />
-                    <div style={{ marginLeft: 40 }}>
-                      <div style={{ fontSize: '14px', color: 'rgba(0,0,0,0.65)' }}>根据当前选定的测试循环没有查询到循环信息</div>
-                      <div style={{ fontSize: '20px', marginTop: 10 }}>您可以点击测试用例进行详细测试执行</div>
-                    </div>
+                <div style={{
+                  display: 'flex', alignItems: 'center', height: 250, margin: '88px auto', padding: '50px 75px', border: '1px dashed rgba(0,0,0,0.54)',
+                }}
+                >
+                  <img src={noRight} alt="" />
+                  <div style={{ marginLeft: 40 }}>
+                    <div style={{ fontSize: '14px', color: 'rgba(0,0,0,0.65)' }}>根据当前选定的测试循环没有查询到循环信息</div>
+                    <div style={{ fontSize: '20px', marginTop: 10 }}>您可以点击测试用例进行详细测试执行</div>
                   </div>
-                )}
+                </div>
+              )}
             </div>
           </Spin>
         </Content>

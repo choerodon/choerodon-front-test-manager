@@ -5,7 +5,7 @@ import {
 } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 import './TreeTitle.scss';
-import { SmartTooltip } from '../../CommonComponent';
+import { SmartTooltip, TestProgressLine } from '../../CommonComponent';
 import { editFolder, deleteCycleOrFolder } from '../../../api/cycleApi';
 import TestExecuteStore from '../../../store/project/TestExecute/TestExecuteStore';
 
@@ -14,19 +14,6 @@ class TreeTitle extends Component {
     editing: false,
   }
 
-  creatProcessBar = (processBar) => {
-    let count = 0;
-    const processBarObject = Object.entries(processBar);
-    for (let a = 0; a < processBarObject.length; a += 1) {
-      count += processBarObject[a][1];
-    }
-    return processBarObject.map((item, i) => {
-      const percentage = (item[1] / count) * 100;
-      return (
-        <span key={Math.random()} className="c7ntest-tree-title-process-bar-fill-item" style={{ backgroundColor: item[0], width: `${percentage}%` }} />
-      );
-    });
-  };
 
   handleItemClick = ({ item, key, keyPath }) => {
     const { data, refresh } = this.props;
@@ -178,21 +165,13 @@ class TreeTitle extends Component {
               content={<div>{content}</div>}
               title={null}
             >
-              <div className="c7ntest-tree-title-process-bar" style={{ marginLeft: data.type === 'cycle' || data.type === 'temp' ? '18px' : 0 }}>
-                <span className="c7ntest-tree-title-process-bar-unfill" />     
-                <div className="c7ntest-tree-title-process-bar-fill-area">
-                  {this.creatProcessBar(ProcessBar)} 
-                </div>          
+              <div>
+                <TestProgressLine style={{ marginLeft: data.type === 'cycle' || data.type === 'temp' ? '18px' : 0 }} progress={ProcessBar} />               
               </div>
             </Popover>
           )
           : (
-            <div className="c7ntest-tree-title-process-bar" style={{ marginLeft: data.type === 'cycle' || data.type === 'temp' ? '18px' : 0 }}>
-              <span className="c7ntest-tree-title-process-bar-unfill" />     
-              <div className="c7ntest-tree-title-process-bar-fill-area">
-                {this.creatProcessBar(ProcessBar)} 
-              </div>                 
-            </div>
+            <TestProgressLine style={{ marginLeft: data.type === 'cycle' || data.type === 'temp' ? '18px' : 0 }} progress={ProcessBar} />
           )}
         {/* <div role="none" className="c7ntest-tree-title-actionButton" onClick={e => e.stopPropagation()}>    
           <Dropdown overlay={getMenu(data.type)} trigger={['click']}>

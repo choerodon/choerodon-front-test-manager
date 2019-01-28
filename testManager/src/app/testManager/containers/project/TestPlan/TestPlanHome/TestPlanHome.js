@@ -68,6 +68,16 @@ class TestPlanHome extends Component {
     }
   }
 
+  /**
+   * 点击table的一项
+   *
+   * @memberof TestPlanHome
+   */
+  handleTableRowClick=(record) => {
+    const { history } = this.props;
+    history.push(executeDetailShowLink(record.executeId));
+  }
+
   handleExecuteTableChange = (pagination, filters, sorter, barFilters) => {
     // window.console.log(pagination, filters, sorter);
     const Filters = { ...filters };
@@ -429,6 +439,9 @@ class TestPlanHome extends Component {
                           dataSource={testList}
                           columns={columns}
                           onDragEnd={this.onDragEnd}
+                          onRow={record => ({
+                            onClick: (event) => { this.handleTableRowClick(record); },                             
+                          })}
                           dragKey="executeId"
                         />
                       </div>
