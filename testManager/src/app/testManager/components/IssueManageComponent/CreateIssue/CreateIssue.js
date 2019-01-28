@@ -13,7 +13,7 @@ import { handleFileUpload, beforeTextUpload } from '../../../common/utils';
 import { createIssue, getFoldersByVersion } from '../../../api/IssueManageApi';
 import IssueStore from '../../../store/project/IssueManage/IssueStore';
 import {
-  getLabels, getModules, getPrioritys, getProjectVersion, 
+  getLabels, getModules, getPrioritys, getProjectVersionByStatus, 
 } from '../../../api/agileApi';
 import { getUsers } from '../../../api/IamApi';
 import { FullEditor, WYSIWYGEditor } from '../../CommonComponent';
@@ -53,13 +53,15 @@ class CreateIssue extends Component {
   }
 
   loadVersions=() => {
-    getProjectVersion(['version_planning', 'released']).then((res) => {
+    getProjectVersionByStatus().then((res) => {
       this.setState({
         originFixVersions: res,
         selectLoading: false,
       });
       const { setFieldsValue } = this.props.form;
-      setFieldsValue({ versionId: this.props.defaultVersion }); 
+      if (_.find(res, { versionId: this.props.defaultVersion })) {
+        setFieldsValue({ versionId: this.props.defaultVersion }); 
+      }
     });
   }
   

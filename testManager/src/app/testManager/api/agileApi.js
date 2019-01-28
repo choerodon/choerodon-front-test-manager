@@ -10,6 +10,15 @@ export function getProjectVersion() {
   return request.get(`agile/v1/projects/${getProjectId()}/product_version/versions`);
 }
 /**
+ *获取当前项目的指定类型的版本
+ *
+ * @export
+ * @returns
+ */
+export function getProjectVersionByStatus(statusList = ['version_planning', 'released']) {
+  return request.post(`agile/v1/projects/${getProjectId()}/product_version/names`, statusList);
+}
+/**
  *获取
  *
  * @export
