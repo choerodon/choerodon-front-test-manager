@@ -49,18 +49,20 @@ class CreateIssue extends Component {
 
   componentDidMount() {
     this.getPrioritys();
-    // this.getProjectSetting();
+    this.loadVersions();
   }
 
-  // getProjectSetting() {
-  //   axios.get(`/agile/v1/projects/${AppState.currentMenuType.id}/project_info`)
-  //     .then((res) => {
-  //       this.setState({
-  //         origin: res,
-  //       });
-  //     });
-  // }
-
+  loadVersions=() => {
+    getProjectVersion(['version_planning', 'released']).then((res) => {
+      this.setState({
+        originFixVersions: res,
+        selectLoading: false,
+      });
+      const { setFieldsValue } = this.props.form;
+      setFieldsValue({ versionId: this.props.defaultVersion }); 
+    });
+  }
+  
   onFilterChange(input) {
     if (!sign) {
       this.setState({
@@ -400,18 +402,7 @@ class CreateIssue extends Component {
                   onChange={() => {
                     const { resetFields } = this.props.form;
                     resetFields(['folderId']);
-                  }}
-                  onFocus={() => {
-                    this.setState({
-                      selectLoading: true,
-                    });
-                    getProjectVersion(['version_planning', 'released']).then((res) => {
-                      this.setState({
-                        originFixVersions: res,
-                        selectLoading: false,
-                      });
-                    });
-                  }}
+                  }}             
                 >
                   {this.state.originFixVersions.map(version => <Option key={version.name} value={version.versionId}>{version.name}</Option>)}
                 </Select>,

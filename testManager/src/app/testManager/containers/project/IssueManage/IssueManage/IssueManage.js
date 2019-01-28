@@ -17,6 +17,7 @@ import IssueTree from '../../../../components/IssueManageComponent/IssueTree';
 import IssueTable from '../../../../components/IssueManageComponent/IssueTable';
 import ExportSide from '../../../../components/IssueManageComponent/ExportSide';
 import './IssueManage.scss';
+import IssueTreeStore from '../../../../store/project/IssueManage/IssueTreeStore';
 
 const EditIssueWidth = {
   narrow: 440,
@@ -118,8 +119,8 @@ export default class IssueManage extends Component {
 
   render() {
     const { expand, createIssueShow, selectedIssue } = this.state;
-    const treeShow = IssueStore.treeShow;   
-    
+    const treeShow = IssueStore.treeShow;
+    const currentCycle = IssueTreeStore.getCurrentCycle;
     const EditIssueMode = this.getMode();
 
     return (
@@ -252,6 +253,7 @@ export default class IssueManage extends Component {
                 visible={createIssueShow}
                 onCancel={() => this.setState({ createIssueShow: false })}
                 onOk={this.handleCreateIssue.bind(this)}
+                defaultVersion={currentCycle.versionId}
               />
             )
           }
