@@ -206,12 +206,11 @@ class CreateIssue extends Component {
         this.setState({ createLoading: true });
         const deltaOps = this.state.delta;
         if (deltaOps) {
-          beforeTextUpload(deltaOps, extra, this.handleSave);
+          beforeTextUpload(deltaOps, extra, this.handleSave.bind(this, values.folderId));
         } else {
           extra.description = '';
           this.handleSave(extra, values.folderId);
-        }
-        this.props.onOk(extra);
+        }        
       }
       return null;
     });
@@ -235,9 +234,10 @@ class CreateIssue extends Component {
             handleFileUpload(this.state.fileList, callback, config);
           }
         }
-        this.props.onOk();
+        this.props.onOk(data, folderId);
       })
       .catch((error) => {
+        console.log(error);
       });
   };
 

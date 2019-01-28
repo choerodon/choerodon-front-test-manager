@@ -14,11 +14,10 @@ import IssueTreeTitle from './IssueTreeTitle';
 import IssueStore from '../../../store/project/IssueManage/IssueStore';
 
 const { TreeNode } = Tree;
-const dataList = [];
 @observer
 class IssueTree extends Component {
   state = {
-    autoExpandParent: false,
+    autoExpandParent: true,
     searchValue: '',
   }
 
@@ -179,6 +178,7 @@ class IssueTree extends Component {
    * @memberof IssueTree
    */
   generateList = (data) => {
+    const dataList = [];
     if (!data) {
       return;
     }
@@ -189,16 +189,21 @@ class IssueTree extends Component {
       const tempNode = stack.pop();
       if (tempNode.children && tempNode.children) {
         tempNode.children.forEach((node, i) => {
-          const { key, title } = node;
+          const {
+            key, title, versionId, cycleId, 
+          } = node;
           // 树拖动之后versionId会更新，在这里更新右侧创建用例处的版本
           if (currentCycle.cycleId && currentCycle.cycleId === node.cycleId) {
             IssueTreeStore.setCurrentCycle(node);
           }
-          dataList.push({ key, title });
+          dataList.push({
+            key, title, versionId, cycleId, 
+          });
           stack.push(tempNode.children[i]);
         });
       }
     }
+    IssueTreeStore.setDataList(dataList);
   }
 
   onExpand = (expandedKeys) => {
@@ -211,7 +216,7 @@ class IssueTree extends Component {
   filterCycle = (value) => {
     // window.console.log(value);
     if (value !== '') {
-      const expandedKeys = dataList.map((item) => {
+      const expandedKeys = IssueTreeStore.dataList.map((item) => {
         if (item.title.indexOf(value) > -1) {
           return this.getParentKey(item.key, IssueTreeStore.getTreeData);
         }
