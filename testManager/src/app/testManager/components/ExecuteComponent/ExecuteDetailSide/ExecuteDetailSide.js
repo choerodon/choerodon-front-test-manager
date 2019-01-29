@@ -217,7 +217,7 @@ class ExecuteDetailSide extends Component {
           <div className="c7ntest-content">
             <div className="c7ntest-content-top">
               <div style={{ display: 'flex', alignItems: 'center' }}>
-                <div style={{ fontSize: '16px' }}>
+                <div style={{ fontSize: '16px', fontWeight: 500 }}>
                   相关用例:
                   <span style={{ color: '#3F51B5', marginLeft: 5 }}>{issueName}</span>
                 </div>
@@ -285,7 +285,7 @@ class ExecuteDetailSide extends Component {
                   </div>
                   <div className="c7ntest-side-item-header-line" />
                   <div className="c7ntest-side-item-header-right">
-                    <Button className="leftBtn" funcType="flat" icon="zoom_out_map" onClick={this.ShowFullEditor}>
+                    <Button className="leftBtn" type="primary" funcType="flat" icon="zoom_out_map" onClick={this.ShowFullEditor}>
                       <FormattedMessage id="execute_edit_fullScreen" />
                     </Button>
                   </div>
@@ -344,7 +344,7 @@ class ExecuteDetailSide extends Component {
                   </div>
                   <div className="c7ntest-side-item-header-line" />
                   <div className="c7ntest-side-item-header-right">
-                    <Button className="leftBtn" funcType="flat">
+                    <Button className="leftBtn" type="primary" funcType="flat">
                       <Icon type="playlist_add" style={{ marginRight: 2 }} />
                       <span>创建缺陷</span>
                     </Button>

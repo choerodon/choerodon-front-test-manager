@@ -43,8 +43,8 @@ const styles = {
   quickOperate: {
     border: '1px solid #00BF96',
     borderRadius: '2px',
-    marginLeft: 5,
-    padding: '0 5px',
+    marginLeft: 15,
+    padding: '1px 5px',
     cursor: 'pointer',
     fontSize: '12px',
   },
@@ -194,6 +194,7 @@ class ExecuteDetail extends Component {
       title: <FormattedMessage id="execute_executeTime" />,
       dataIndex: 'lastUpdateDate',
       key: 'lastUpdateDate',
+      width: '25%',
     }, {
       title: 'Field',
       dataIndex: 'field',
@@ -333,7 +334,7 @@ class ExecuteDetail extends Component {
                     />
                     <span style={{ fontSize: '20px' }}>{issueInfosDTO.summary}</span>
                     <Button funcType="flat" type="primary" onClick={this.handleToggleExecuteDetailSide}>
-                      <Icon type="format_indent_increase" />
+                      <Icon type={visible ? 'format_indent_decrease' : 'format_indent_increase'} />
                       {visible ? '隐藏详情' : '打开详情'}
                     </Button>
                   </div>
@@ -364,6 +365,7 @@ class ExecuteDetail extends Component {
                   失败
                 </span>
               </div>
+
               {/* <TestExecuteInfo disabled={disabled} /> */}
               <Card
                 title={null}
