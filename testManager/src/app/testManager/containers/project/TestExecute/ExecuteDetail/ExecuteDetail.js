@@ -173,8 +173,23 @@ class ExecuteDetail extends Component {
     }
   }
 
+  handleRemoveDefect=(issueId) => {
+    ExecuteDetailStore.enterloading();
+    removeDefect(issueId).then((res) => {
+      ExecuteDetailStore.getInfo();
+    }).catch((error) => {
+      ExecuteDetailStore.unloading();
+    });
+  }
+
   handleHiddenCresteBug = () => {
     ExecuteDetailStore.setCreateBugShow(false);
+  }
+
+  handleCreateBugShow=() => {
+    ExecuteDetailStore.setCreateBugShow(true);
+    ExecuteDetailStore.setDefectType('CYCLE_CASE');
+    ExecuteDetailStore.setCreateDectTypeId(ExecuteDetailStore.id);
   }
 
   render() {
@@ -441,6 +456,8 @@ class ExecuteDetail extends Component {
               onUpload={this.handleUpload}
               onSubmit={this.handleSubmit}
               onCommentSave={this.handleCommentSave}
+              onRemoveDefect={this.handleRemoveDefect}
+              onCreateBugShow={this.handleCreateBugShow}
             />
             {
               createBugShow && (

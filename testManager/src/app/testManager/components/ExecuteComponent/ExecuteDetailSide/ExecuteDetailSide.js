@@ -2,16 +2,14 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { FormattedMessage } from 'react-intl';
 import {
-  Select, Input, Button, Modal, Tooltip, Dropdown, Menu, Spin, Icon, Upload,
+  Button, Tooltip, Icon, Upload,  
 } from 'choerodon-ui';
 import _ from 'lodash';
-import {
-  delta2Html, handleFileUpload, text2Delta, beforeTextUpload, formatDate, returnBeforeTextUpload, color2rgba,
-} from '../../../common/utils';
-import LinkList from '../../IssueManageComponent/EditIssue/Component/LinkList';
+import { delta2Html } from '../../../common/utils';
 import {
   WYSIWYGEditor, Upload as UploadButton, StatusTags, DateTimeAgo, User, RichTextShow, FullEditor,
 } from '../../CommonComponent';
+import DefectList from './DefectList';
 import './ExecuteDetailSide.scss';
 
 const navs = [
@@ -21,69 +19,45 @@ const navs = [
   { code: 'bug', tooltip: '缺陷', icon: 'bug_report' },
 ];
 let sign = true;
+const propTypes = {
+  visible: PropTypes.bool.isRequired,
+  issueInfosDTO: PropTypes.shape({}).isRequired,
+  cycleData: PropTypes.shape({}).isRequired,
+  fileList: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
+  onFileRemove: PropTypes.func.isRequired,
+  status: PropTypes.shape({}).isRequired,
+  onClose: PropTypes.func.isRequired,
+  onUpload: PropTypes.func.isRequired,
+  onCommentSave: PropTypes.func.isRequired,
+  onRemoveDefect: PropTypes.func.isRequired,
+  onCreateBugShow: PropTypes.func.isRequired,
+};
 class ExecuteDetailSide extends Component {
   state = { currentNav: 'detail', FullEditorShow: false, editing: false }
-
-  renderLinkIssues(linkIssues) {
-    const group = _.groupBy(linkIssues, 'ward');
-    return (
-      <div className="c7ntest-tasks">
-        {
-          _.map(group, (issues, ward) => (
-            <div key={ward}>
-              <div style={{ margin: '7px auto' }}>{ward}</div>
-              {
-                _.map(issues, (linkIssue, i) => this.renderLinkList(linkIssue, i))
-              }
-            </div>
-          ))
-        }
-      </div>
-    );
+  
+  componentDidMount() {    
+    document.getElementById('scroll-area').addEventListener('scroll', this.handleScroll);
   }
 
-
-  renderLinkList(link, i) {
-    const { issueInfo } = this.state;
-    const { issueId } = issueInfo;
-    return (
-      <LinkList
-        key={link.linkId}
-        issue={link}
-        i={i}
-        // onOpen={(issueId, linkedIssueId) => {
-        //   const menu = AppState.currentMenuType;
-        //   const { type, id: projectId, name } = menu;
-        //   this.props.history.push(`/agile/issue?
-        // type=${type}&id=${projectId}&name=${name}&paramIssueId=${linkedIssueId}`);
-        //   // this.reloadIssue(issueId === this.state.issueId ? linkedIssueId : issueId);
-        // }}
-        onRefresh={() => {
-          this.reloadIssue(issueId);
-        }}
-      />
-    );
+  componentWillUnmount() {
+    document.getElementById('scroll-area').removeEventListener('scroll', this.handleScroll);
   }
-
-  renderNavs = () => navs.map(nav => (
-    <Tooltip placement="right" title={nav.tooltip}>
-      <li id="DETAILS-nav" className={`c7ntest-li ${this.state.currentNav === nav.code ? 'c7ntest-li-active' : ''}`}>
-        <Icon
-          type={`${nav.icon} c7ntest-icon-li`}
-          role="none"
-          onClick={() => {
-            this.setState({ currentNav: nav.code });
-            this.scrollToAnchor(nav.code);
-          }}
-        />
-      </li>
-    </Tooltip>
-  ))
+  
+  handleScroll=(e) => {
+    if (sign) {
+      const currentNav = this.getCurrentNav(e);
+      if (this.state.currentNav !== currentNav && currentNav) {
+        this.setState({
+          currentNav,
+        });
+      }
+    }
+  }
 
   getCurrentNav(e) {
     return _.find(navs.map(nav => nav.code), i => this.isInLook(document.getElementById(i)));
   }
-
+  
   isInLook(ele) {
     const a = ele.offsetTop;
     const target = document.getElementById('scroll-area');
@@ -107,54 +81,22 @@ class ExecuteDetailSide extends Component {
     }
   }
 
-  renderDescription() {
-    const { issueInfo, editDescriptionShow } = this.state;
-    const { description } = issueInfo;
-    let delta;
-    if (editDescriptionShow === undefined) {
-      return null;
-    }
-    if (!description || editDescriptionShow) {
-      delta = text2Delta(description);
-      return (
-        <div className="line-start mt-10">
-          <WYSIWYGEditor
-            bottomBar
-            value={text2Delta(description)}
-            style={{ height: 200, width: '100%' }}
-            handleDelete={() => {
-              this.setState({
-                editDescriptionShow: false,
-              });
-            }}
-            handleSave={(value) => {
-              this.setState({
-                editDescriptionShow: false,
-              });
-              this.editIssue({ description: value });
-            }}
-          />
-        </div>
-      );
-    } else {
-      delta = delta2Html(description);
-      return (
-        <div className="c7ntest-content-wrapper">
-          <div
-            className="line-start mt-10 c7ntest-description"
-            role="none"
-            onClick={() => {
-              this.setState({
-                editDescriptionShow: true,
-              });
-            }}
-          >
-            {/* <IssueDescription data={delta} /> */}
-          </div>
-        </div>
-      );
-    }
-  }
+
+  renderNavs = () => navs.map(nav => (
+    <Tooltip placement="right" title={nav.tooltip}>
+      <li id="DETAILS-nav" className={`c7ntest-li ${this.state.currentNav === nav.code ? 'c7ntest-li-active' : ''}`}>
+        <Icon
+          type={`${nav.icon} c7ntest-icon-li`}
+          role="none"
+          onClick={() => {
+            this.setState({ currentNav: nav.code });
+            this.scrollToAnchor(nav.code);
+          }}
+        />
+      </li>
+    </Tooltip>
+  ))
+
 
   ShowFullEditor = () => {
     this.setState({
@@ -189,13 +131,14 @@ class ExecuteDetailSide extends Component {
 
   render() {
     const {
-      visible, issueInfosDTO, cycleData, fileList, onFileRemove, status, onClose, onUpload, onCommentSave,
+      visible, issueInfosDTO, cycleData, fileList, onFileRemove, status, onClose, onUpload, 
+      onCommentSave, onRemoveDefect, onCreateBugShow,
     } = this.props;
     const { FullEditorShow, editing } = this.state;
     const { issueName, summary } = issueInfosDTO || {};
     const { statusColor, statusName } = status;
     const {
-      lastUpdateDate, cycleName, lastUpdateUser, comment,
+      lastUpdateDate, cycleName, lastUpdateUser, comment, defects,
     } = cycleData;
     const props = {
       onRemove: onFileRemove,
@@ -232,7 +175,7 @@ class ExecuteDetailSide extends Component {
             </div>
             <div className="c7ntest-content-bottom" id="scroll-area" style={{ position: 'relative' }}>
               {/* 详情 */}
-              <section>
+              <section id="detail">
                 <div className="c7ntest-side-item-header">
                   <div className="c7ntest-side-item-header-left">
                     <Icon type="error_outline" />
@@ -277,7 +220,7 @@ class ExecuteDetailSide extends Component {
                 </div>
               </section>
               {/* 描述 */}
-              <section>
+              <section id="des">
                 <div className="c7ntest-side-item-header">
                   <div className="c7ntest-side-item-header-left">
                     <Icon type="subject" />
@@ -313,7 +256,7 @@ class ExecuteDetailSide extends Component {
                 </div>
               </section>
               {/* 附件 */}
-              <section>
+              <section id="attachment">
                 <div className="c7ntest-side-item-header">
                   <div className="c7ntest-side-item-header-left">
                     <Icon type="attach_file" />
@@ -336,7 +279,7 @@ class ExecuteDetailSide extends Component {
                 </div>
               </section>
               {/* 缺陷 */}
-              <section>
+              <section id="bug">
                 <div className="c7ntest-side-item-header">
                   <div className="c7ntest-side-item-header-left">
                     <Icon type="bug_report" />
@@ -344,13 +287,18 @@ class ExecuteDetailSide extends Component {
                   </div>
                   <div className="c7ntest-side-item-header-line" />
                   <div className="c7ntest-side-item-header-right">
-                    <Button className="leftBtn" type="primary" funcType="flat">
+                    <Button className="leftBtn" type="primary" funcType="flat" onClick={onCreateBugShow}>
                       <Icon type="playlist_add" style={{ marginRight: 2 }} />
                       <span>创建缺陷</span>
                     </Button>
                   </div>
                 </div>
-                <div className="c7ntest-side-item-content" />
+                <div className="c7ntest-side-item-content">                  
+                  <DefectList
+                    defects={defects}
+                    onRemoveDefect={onRemoveDefect}
+                  />
+                </div>
               </section>
             </div>
           </div>
@@ -360,8 +308,6 @@ class ExecuteDetailSide extends Component {
   }
 }
 
-ExecuteDetailSide.propTypes = {
-
-};
+ExecuteDetailSide.propTypes = propTypes;
 
 export default ExecuteDetailSide;
