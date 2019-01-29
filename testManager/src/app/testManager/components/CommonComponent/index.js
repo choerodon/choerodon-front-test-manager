@@ -18,3 +18,4 @@ export { default as SmartTooltip } from './SmartTooltip';
 export { default as Tree } from './Tree';
 export { default as Injecter } from './Injecter';
 export { default as TestProgressLine } from './TestProgressLine';
+export { default as DateTimeAgo } from './DateTimeAgo';

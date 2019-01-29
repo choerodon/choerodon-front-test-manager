@@ -1,6 +1,5 @@
-// export EditTestDetail from './EditTestDetail';
-import ExecuteHistoryTable from './ExecuteHistoryTable';
-import StepTable from './StepTable';
-import TestExecuteInfo from './TestExecuteInfo';
 
-export { ExecuteHistoryTable, StepTable, TestExecuteInfo };
+export { default as ExecuteHistoryTable } from './ExecuteHistoryTable';
+export { default as StepTable } from './StepTable';
+export { default as TestExecuteInfo } from './TestExecuteInfo';
+export { default as ExecuteDetailSide } from './ExecuteDetailSide';

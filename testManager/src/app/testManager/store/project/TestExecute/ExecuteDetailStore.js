@@ -19,13 +19,9 @@ class ExecuteDetailStore {
 
   @observable loading = false;
 
-  @observable edit = false;
-
   @observable selectLoading = false;
 
-  @observable editVisible = false;
-
-  @observable editing = null;
+  @observable ExecuteDetailSideVisible = true;
 
   @observable userList = [];
 
@@ -133,14 +129,14 @@ class ExecuteDetailStore {
     });
   }
 
-  // loadDetailList = () => {
-  //   const id = this.id;
-  //   this.enterloading();
-  //   getCycleDetails(id).then((detail) => {
-  //     this.setDetailList(detail);
-  //     this.unloading();
-  //   });
-  // }
+  loadDetailList = () => {
+    const id = this.id;
+    this.enterloading();
+    getCycleDetails(id).then((detail) => {
+      this.setDetailList(detail);
+      this.unloading();
+    });
+  }
 
   loadIssueList = (value) => {
     this.selectEnterLoading();
@@ -290,6 +286,10 @@ class ExecuteDetailStore {
 
   @action unloading = () => {
     this.loading = false;
+  }
+
+  @action setExecuteDetailSideVisible = (ExecuteDetailSideVisible) => {
+    this.ExecuteDetailSideVisible = ExecuteDetailSideVisible;
   }
 }
 

@@ -50,6 +50,12 @@ class WYSIWYGEditor extends Component {
     }
   };
 
+  componentWillReceiveProps(nextProps) {       
+    if (this.props.value !== nextProps.value) {
+      this.editor.setEditorContents(this.editor.getEditor(), nextProps.value);
+    }  
+  }
+
   render() {
     const { placeholder, value } = this.props;
     let defaultValue = value;
@@ -64,11 +70,12 @@ class WYSIWYGEditor extends Component {
       <div style={{ width: '100%' }}>
         <div style={style} className="react-quill-editor">
           <ReactQuill
+            ref={(editor) => { this.editor = editor; }}
             theme="snow"
             modules={this.modules}
             formats={this.formats}
             style={{ height: editHeight }}
-            placeholder={placeholder || Choerodon.getMessage('描述', 'Description')}
+            placeholder={placeholder || Choerodon.getMessage('描述', 'Description')}            
             defaultValue={defaultValue}
             onChange={this.handleChange}
           />

@@ -92,12 +92,8 @@ class TestExecuteInfo extends Component {
       };
       ExecuteDetailStore.enterloading();
       uploadFile(formData, config).then(() => {
-        ExecuteDetailStore.getInfo();
-        // 清空input值，保证触发change
-        this.uploadInput.value = '';
-      }).catch(() => {
-        // 清空input值，保证触发change
-        this.uploadInput.value = '';
+        ExecuteDetailStore.getInfo();    
+      }).catch(() => {      
         Choerodon.prompt('网络异常');
       });
     }

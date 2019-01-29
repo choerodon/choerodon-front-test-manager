@@ -93,8 +93,8 @@ const zhCN = {
   // 编辑步骤详情侧边栏
   execute_stepDetail: '测试详细信息',
   execute_stepEditTitle: '修改步骤“{testStep}”的信息',
-  execute_quickPass: '直接将执行的状态置为通过',
-  execute_quickFail: '直接将执行的状态置为失败',
+  execute_quickPass: '直接将状态置为通过',
+  execute_quickFail: '直接将状态置为失败',
 
 
   // 测试摘要
