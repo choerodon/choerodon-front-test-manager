@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-  Table, Button, Icon, Card, Spin, Tooltip,
+  Table, Button, Icon, Card, Spin, Tooltip, Select,
 } from 'choerodon-ui';
 import { Page, Header, Content } from 'choerodon-front-boot';
 import { observer } from 'mobx-react';
@@ -16,9 +16,12 @@ import {
 } from '../../../../api/ExecuteDetailApi';
 import { uploadFile, deleteAttachment } from '../../../../api/FileApi';
 import './ExecuteDetail.scss';
-import { StepTable, TestExecuteInfo, ExecuteDetailSide } from '../../../../components/ExecuteComponent';
+import {
+  StepTable, TestExecuteInfo, ExecuteDetailSide, CreateBug,
+} from '../../../../components/ExecuteComponent';
 import ExecuteDetailStore from '../../../../store/project/TestExecute/ExecuteDetailStore';
 
+const { Option } = Select;
 function beforeUpload(file) {
   const isLt2M = file.size / 1024 / 1024 < 30;
   if (!isLt2M) {
@@ -137,17 +140,17 @@ class ExecuteDetail extends Component {
     });
   }
 
-  quickPass=(e) => {
+  quickPass = (e) => {
     e.stopPropagation();
     this.quickPassOrFail('通过');
   }
 
-  quickFail=(e) => {
+  quickFail = (e) => {
     e.stopPropagation();
     this.quickPassOrFail('失败');
   }
 
-  quickPassOrFail=(text) => {
+  quickPassOrFail = (text) => {
     const cycleData = { ...ExecuteDetailStore.getCycleData };
     const statusList = ExecuteDetailStore.statusList;
     if (_.find(statusList, { projectId: 0, statusName: text })) {
@@ -170,6 +173,10 @@ class ExecuteDetail extends Component {
     }
   }
 
+  handleHiddenCresteBug = () => {
+    ExecuteDetailStore.setCreateBugShow(false);
+  }
+
   render() {
     const { disabled } = this.props;
     const loading = ExecuteDetailStore.loading;
@@ -179,10 +186,25 @@ class ExecuteDetail extends Component {
     const cycleData = ExecuteDetailStore.getCycleData;
     const visible = ExecuteDetailStore.ExecuteDetailSideVisible;
     const fileList = ExecuteDetailStore.getFileList;
+    const statusList = ExecuteDetailStore.getStatusList;
+    const createBugShow = ExecuteDetailStore.getCreateBugShow;
+    const defectType = ExecuteDetailStore.getDefectType;
+    const createDectTypeId = ExecuteDetailStore.getCreateDectTypeId;
     const {
       nextExecuteId, lastExecuteId, issueInfosDTO, executionStatus,
     } = cycleData;
     const { statusColor, statusName } = ExecuteDetailStore.getStatusById(executionStatus);
+    const options = statusList.map(status => (
+      <Option value={status.statusId} key={status.statusId}>
+        <StatusTags
+          color={status.statusColor}
+          name={status.statusName}
+        />
+        {/* <div style={{ ...styles.statusOption, ...{ background: status.statusColor } }}>
+          {status.statusName}
+        </div> */}
+      </Option>
+    ));
     const columnsHistory = [{
       title: <FormattedMessage id="execute_executive" />,
       dataIndex: 'user',
@@ -340,8 +362,8 @@ class ExecuteDetail extends Component {
                   </div>
                 )}
               </div>
-              <div style={{ fontSize: '14px' }}>
-                快速操作:                
+              <div style={{ fontSize: '14px', display: 'flex', alignItems: 'center' }}>
+                快速操作:
                 <span
                   style={{
                     ...styles.quickOperate,
@@ -364,6 +386,15 @@ class ExecuteDetail extends Component {
                 >
                   失败
                 </span>
+                <Select
+                  className="c7ntest-select"
+                  placeholder="其他状态"
+                  value={null}
+                  style={{ width: 80, marginLeft: 20 }}
+                  onChange={(id) => { this.handleSubmit({ executionStatus: id }); }}
+                >
+                  {options}
+                </Select>
               </div>
 
               {/* <TestExecuteInfo disabled={disabled} /> */}
@@ -411,6 +442,17 @@ class ExecuteDetail extends Component {
               onSubmit={this.handleSubmit}
               onCommentSave={this.handleCommentSave}
             />
+            {
+              createBugShow && (
+                <CreateBug
+                  visible={createBugShow}
+                  defectType={defectType}
+                  id={createDectTypeId}
+                  onCancel={this.handleHiddenCresteBug}
+                  onOk={this.handleHiddenCresteBug}
+                />
+              )
+            }
           </div>
         </Spin>
       </Page>
