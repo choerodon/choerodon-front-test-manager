@@ -102,11 +102,11 @@ class ReportTest extends Component {
         this.setState({
           loading: false,
           reportList: reportData.content,
-          issueIds: reportData.ids || [],
+          issueIds: reportData.allIdValues || [],
           pagination: {
             current: Pagination.current,
             pageSize: Pagination.pageSize,
-            total: reportData.ids ? reportData.ids.length : 0,
+            total: reportData.allIdValues ? reportData.allIdValues.length : 0,
           },
         });
       } else {
@@ -332,7 +332,8 @@ class ReportTest extends Component {
 
               }
 
-            </div>);
+            </div>
+          );
         });
         return openId.includes(issueId.toString())
           ? (
