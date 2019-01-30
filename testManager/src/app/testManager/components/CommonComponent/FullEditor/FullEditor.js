@@ -34,7 +34,9 @@ class FullEditor extends Component {
   }
 
   render() {
-    const { visible, onCancel, onOk } = this.props;
+    const {
+      visible, onCancel, onOk, loading, 
+    } = this.props;
 
     return (
       <Modal
@@ -44,6 +46,7 @@ class FullEditor extends Component {
         width={1200}
         onCancel={this.props.onCancel}
         onOk={this.handleOk}
+        confirmLoading={loading}
       >
         <WYSIWYGEditor
           value={this.state.delta}

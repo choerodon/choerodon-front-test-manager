@@ -76,14 +76,17 @@ export function convertBase64UrlToBlob(urlData) {
 export function getImgInDelta(deltaOps) {
   const imgBase = [];
   const formData = new FormData();
-  deltaOps.forEach((item) => {
-    if (item.insert && item.insert.image) {
-      if (item.insert.image.split(':').length && item.insert.image.split(':')[0] === 'data') {
-        imgBase.push(item.insert.image);
-        formData.append('file', convertBase64UrlToBlob(item.insert.image), 'blob.png');
+  if (deltaOps instanceof Array) {
+    deltaOps.forEach((item) => {
+      if (item.insert && item.insert.image) {
+        if (item.insert.image.split(':').length && item.insert.image.split(':')[0] === 'data') {
+          imgBase.push(item.insert.image);
+          formData.append('file', convertBase64UrlToBlob(item.insert.image), 'blob.png');
+        }
       }
-    }
-  });
+    });
+  }
+ 
   return { imgBase, formData };
 }
 
@@ -130,7 +133,8 @@ export function beforeTextUpload(text, data, func, pro = 'description') {
     const converter = new QuillDeltaToHtmlConverter(deltaOps, {});
     const html = converter.convert();
     // send.gitlabDescription = html;
-    send[pro] = JSON.stringify(deltaOps);
+    send[pro] = deltaOps ? JSON.stringify(deltaOps):deltaOps;
+
     func(send);
   }
 }

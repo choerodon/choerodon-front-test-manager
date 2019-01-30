@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-  Table, Input, Icon, Select, Tooltip,
+  Table, Input, Icon, Select, Tooltip, Button,
 } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 import _ from 'lodash';
@@ -30,6 +30,36 @@ class StepTable extends Component {
       Choerodon.prompt('网络错误');
     });
   };
+
+  quickPass(stepData, e) {
+    e.stopPropagation();
+    this.quickPassOrFail(stepData, '通过');
+  }
+
+  quickFail(stepData, e) {
+    e.stopPropagation();
+    this.quickPassOrFail(stepData, '失败');
+  }
+
+  quickPassOrFail = (stepData, text) => {
+    const stepStatusList = ExecuteDetailStore.getStepStatusList;
+    const data = { ...stepData };
+    if (_.find(stepStatusList, { projectId: 0, statusName: text })) {
+      data.stepStatus = _.find(stepStatusList, { projectId: 0, statusName: text }).statusId;
+      delete data.defects;
+      delete data.caseAttachment;
+      delete data.stepAttachment;
+      data.assignedTo = data.assignedTo || 0;
+      editCycleStep([data]).then((Data) => {
+        ExecuteDetailStore.loadDetailList();
+      }).catch((error) => {
+        window.console.log(error);
+        Choerodon.prompt('网络错误');
+      });
+    } else {
+      Choerodon.prompt('未找到对应状态');
+    }
+  }
 
   render() {
     const that = this;
@@ -63,8 +93,7 @@ class StepTable extends Component {
     }, {
       title: <FormattedMessage id="execute_testStep" />,
       dataIndex: 'testStep',
-      key: 'testStep',
-      width: '10%',
+      key: 'testStep',     
       render: testStep => (
         // <Tooltip title={testStep}>
         <div
@@ -100,33 +129,11 @@ class StepTable extends Component {
         </div>
         // </Tooltip> 
       ),
-    },
-    {
-      title: <FormattedMessage id="execute_stepAttachment" />,
-      dataIndex: 'stepAttachment',
-      key: 'stepAttachment',
-      render(stepAttachment) {
-        return (
-          <div>
-            {stepAttachment.filter(attachment => attachment.attachmentType === 'CASE_STEP').map(attachment => (
-              <div style={{
-                display: 'flex', fontSize: '12px', flexShrink: 0, margin: '5px 2px', alignItems: 'center',
-              }}
-              >
-                <Icon type="attach_file" style={{ fontSize: '12px', color: 'rgba(0,0,0,0.65)' }} />
-                <a className="c7ntest-text-dot" style={{ margin: '2px 5px', fontSize: '13px' }} href={attachment.url} target="_blank" rel="noopener noreferrer">{attachment.attachmentName}</a>
-              </div>
-            ))
-            }
-          </div>
-        );
-      },
-    },
+    },    
     {
       title: <FormattedMessage id="execute_stepStatus" />,
       dataIndex: 'stepStatus',
-      key: 'stepStatus',
-      // width: 120,
+      key: 'stepStatus',   
       render(stepStatus, record) {
         return (
           <div style={{ width: 85 }}>
@@ -159,8 +166,27 @@ class StepTable extends Component {
           </div>
         );
       },
-    },
-    {
+    }, {
+      title: <FormattedMessage id="execute_stepAttachment" />,
+      dataIndex: 'stepAttachment',
+      key: 'stepAttachment',
+      render(stepAttachment) {
+        return (
+          <div>
+            {stepAttachment.filter(attachment => attachment.attachmentType === 'CASE_STEP').map(attachment => (
+              <div style={{
+                display: 'flex', fontSize: '12px', flexShrink: 0, margin: '5px 2px', alignItems: 'center',
+              }}
+              >
+                <Icon type="attach_file" style={{ fontSize: '12px', color: 'rgba(0,0,0,0.65)' }} />
+                <a className="c7ntest-text-dot" style={{ margin: '2px 5px', fontSize: '13px' }} href={attachment.url} target="_blank" rel="noopener noreferrer">{attachment.attachmentName}</a>
+              </div>
+            ))
+            }
+          </div>
+        );
+      },
+    }, {
       title: <FormattedMessage id="execute_comment" />,
       dataIndex: 'comment',
       key: 'comment',
@@ -196,36 +222,16 @@ class StepTable extends Component {
       key: 'caseAttachment',
       render(stepAttachment, record) {
         return (
-          <TextEditToggle
-            disabled={disabled}
-          >
-            <Text>
-              <div style={{ minHeight: 20 }}>
-                {stepAttachment.filter(attachment => attachment.attachmentType === 'CYCLE_STEP').map(attachment => (
-                  <div style={{
-                    display: 'flex', fontSize: '12px', flexShrink: 0, margin: '5px 2px', alignItems: 'center',
-                  }}
-                  >
-                    <Icon type="attach_file" style={{ fontSize: '12px', color: 'rgba(0,0,0,0.65)' }} />
-                    <a className="c7ntest-text-dot" style={{ margin: '2px 5px', fontSize: '13px' }} href={attachment.url} target="_blank" rel="noopener noreferrer">{attachment.attachmentName}</a>
-                  </div>
-                ))
-                }
-              </div>
-            </Text>
-            <Edit>
-              <UploadInTable
-                fileList={stepAttachment.filter(attachment => attachment.attachmentType === 'CYCLE_STEP')}
-                onOk={ExecuteDetailStore.loadDetailList}
-                enterLoad={ExecuteDetailStore.enterloading}
-                leaveLoad={ExecuteDetailStore.unloading}
-                config={{
-                  attachmentLinkId: record.executeStepId,
-                  attachmentType: 'CYCLE_STEP',
-                }}
-              />
-            </Edit>
-          </TextEditToggle>
+          <UploadInTable
+            fileList={stepAttachment.filter(attachment => attachment.attachmentType === 'CYCLE_STEP')}
+            onOk={ExecuteDetailStore.loadDetailList}
+            enterLoad={ExecuteDetailStore.enterloading}
+            leaveLoad={ExecuteDetailStore.unloading}
+            config={{
+              attachmentLinkId: record.executeStepId,
+              attachmentType: 'CYCLE_STEP',
+            }}
+          />     
         );
       },
     },
@@ -252,8 +258,7 @@ class StepTable extends Component {
         >
           <Text>
             {
-              defects.length > 0 ? (
-                // <Tooltip title={(
+              defects.length > 0 ? (              
                 <div>
                   {defects.map((defect, i) => (
                     <div style={{
@@ -263,13 +268,7 @@ class StepTable extends Component {
                       {defect.issueInfosDTO && defect.issueInfosDTO.issueName}
                     </div>
                   ))}
-                </div>
-                // )}
-                // >
-                // <div>
-                // {defects.map((defect, i) => defect.issueInfosDTO && defect.issueInfosDTO.issueName).join(',')}
-                // </div> */}
-                // </Tooltip> 
+                </div>               
               ) : (
                 <div
                   style={{
@@ -290,6 +289,24 @@ class StepTable extends Component {
           </Edit>
         </TextEditToggle>
       ),
+    }, {
+      title: '',
+      key: 'action',
+      width: 90,
+      fixed: 'right',
+      render: (text, record) => (
+        record.projectId !== 0
+        && (
+          <div style={{ display: 'flex' }}>
+            <Tooltip title={<FormattedMessage id="execute_quickPass" />}>
+              <Button shape="circle" funcType="flat" icon="check_circle" onClick={this.quickPass.bind(this, record)} />
+            </Tooltip>
+            <Tooltip title={<FormattedMessage id="execute_quickFail" />}>
+              <Button shape="circle" funcType="flat" icon="cancel" onClick={this.quickFail.bind(this, record)} />
+            </Tooltip>
+          </div>
+        )
+      ),
     },
     ];
     return (
@@ -299,6 +316,7 @@ class StepTable extends Component {
           dataSource={detailList}
           columns={columns}
           pagination={false}
+          scroll={{ x: 1300 }}
         />
       </div>
     );
