@@ -21,7 +21,7 @@ import { getProjectName, humanizeDuration, cycleLink } from '../../../../common/
 import './AutoTestList.scss';
 
 const { Option } = Select;
-
+const { SubMenu, Item: MenuItem } = Menu;
 const AutoTestList = ({
   loading, 
   appList, 
@@ -40,18 +40,30 @@ const AutoTestList = ({
 }) => {
   const getMenu = record => (
     <Menu onClick={({ item, key, keyPath }) => { onItemClick(record, { item, key, keyPath }); }} style={{ margin: '10px 0 0 28px' }}>
-      <Menu.Item key="log" disabled={record.testAppInstanceDTO.podStatus === 0 || (record.testAppInstanceDTO.podStatus !== 1 && !record.testAppInstanceDTO.logId)}>
+      <MenuItem key="log" disabled={record.testAppInstanceDTO.podStatus === 0 || (record.testAppInstanceDTO.podStatus !== 1 && !record.testAppInstanceDTO.logId)}>
         查看日志
-      </Menu.Item>
-      <Menu.Item key="retry">
+      </MenuItem>
+      <MenuItem key="retry">
         重新执行
-      </Menu.Item>
-      <Menu.Item key="cycle" disabled={!record.cycleId}>
-        {record.cycleId ? <Link to={cycleLink(record.cycleId)} target="_blank">测试循环</Link> : '测试循环'}        
-      </Menu.Item>
-      <Menu.Item key="report" disabled={!record.resultId}>
+      </MenuItem>
+      {record.moreCycle ? (
+        <SubMenu title="测试循环">
+          {
+          record.cycleDTOS.map(cycle => (
+            <MenuItem>
+              <Link to={cycleLink(cycle.cycleId)} target="_blank">{cycle.cycleName}</Link>
+            </MenuItem>
+          ))
+        }   
+        </SubMenu>
+      ) : (
+        <MenuItem key="cycle" disabled={!record.cycleIds}>
+          {record.cycleIds ? <Link to={cycleLink(record.cycleIds)} target="_blank">测试循环</Link> : '测试循环'}        
+        </MenuItem>
+      )}      
+      <MenuItem key="report" disabled={!record.resultId}>
         测试报告
-      </Menu.Item>
+      </MenuItem>
     </Menu>
   );
 

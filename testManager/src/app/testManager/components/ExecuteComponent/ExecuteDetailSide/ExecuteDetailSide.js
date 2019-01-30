@@ -9,6 +9,7 @@ import { delta2Html } from '../../../common/utils';
 import {
   WYSIWYGEditor, Upload as UploadButton, StatusTags, DateTimeAgo, User, RichTextShow, FullEditor,
 } from '../../CommonComponent';
+import TypeTag from '../../IssueManageComponent/TypeTag';
 import DefectList from './DefectList';
 import './ExecuteDetailSide.scss';
 
@@ -135,7 +136,7 @@ class ExecuteDetailSide extends Component {
       onCommentSave, onRemoveDefect, onCreateBugShow,
     } = this.props;
     const { FullEditorShow, editing } = this.state;
-    const { issueName, summary } = issueInfosDTO || {};
+    const { issueNum, summary } = issueInfosDTO || {};
     const { statusColor, statusName } = status;
     const {
       lastUpdateDate, cycleName, lastUpdateUser, comment, defects,
@@ -153,6 +154,14 @@ class ExecuteDetailSide extends Component {
             onOk={onCommentSave}
           />
           <div className="c7ntest-nav">
+            {/* 左上角类型图标 */}
+            <div style={{
+              height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', 
+            }}
+            >
+              <TypeTag type={{ colour: '#4D90FE', icon: 'table_chart' }} />
+            </div>       
+            {/* 下方锚点列表 */}
             <ul className="c7ntest-nav-ul">
               {this.renderNavs()}
             </ul>
@@ -162,7 +171,7 @@ class ExecuteDetailSide extends Component {
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <div style={{ fontSize: '16px', fontWeight: 500 }}>
                   相关用例:
-                  <span style={{ color: '#3F51B5', marginLeft: 5 }}>{issueName}</span>
+                  <span style={{ color: '#3F51B5', marginLeft: 5 }}>{issueNum}</span>
                 </div>
                 <div className="c7ntest-flex-space" />
                 <Button className="leftBtn" funcType="flat" icon="last_page" onClick={onClose}>
