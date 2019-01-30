@@ -9,6 +9,7 @@ import { delta2Html } from '../../../common/utils';
 import {
   WYSIWYGEditor, Upload as UploadButton, StatusTags, DateTimeAgo, User, RichTextShow, FullEditor,
 } from '../../CommonComponent';
+import TypeTag from '../../IssueManageComponent/TypeTag';
 import DefectList from './DefectList';
 import './ExecuteDetailSide.scss';
 
@@ -153,6 +154,14 @@ class ExecuteDetailSide extends Component {
             onOk={onCommentSave}
           />
           <div className="c7ntest-nav">
+            {/* 左上角类型图标 */}
+            <div style={{
+              height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', 
+            }}
+            >
+              <TypeTag type={{ colour: '#4D90FE', icon: 'table_chart' }} />
+            </div>       
+            {/* 下方锚点列表 */}
             <ul className="c7ntest-nav-ul">
               {this.renderNavs()}
             </ul>

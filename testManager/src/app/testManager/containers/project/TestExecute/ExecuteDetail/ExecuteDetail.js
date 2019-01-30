@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import {
   Table, Button, Icon, Card, Spin, Tooltip, Select,
 } from 'choerodon-ui';
-import { Page, Header, Content } from 'choerodon-front-boot';
+import { Page, Header } from 'choerodon-front-boot';
 import { observer } from 'mobx-react';
 import { withRouter } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
