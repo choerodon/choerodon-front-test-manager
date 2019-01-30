@@ -7,11 +7,13 @@ import { asyncRouter, nomatch } from 'choerodon-front-boot';
 
 const IssueManage = asyncRouter(() => (import('./IssueManage')));
 const ImportIssue = asyncRouter(() => (import('./ImportIssue')));
+const TestCaseDetail = asyncRouter(() => (import('./TestCaseDetail')));
 
 const IssueManageIndex = ({ match }) => (
   <Switch>
     <Route exact path={match.url} component={IssueManage} />
     <Route exact path={`${match.url}/import`} component={ImportIssue} />
+    <Route exact path={`${match.url}/testCase/:id?`} component={TestCaseDetail} />
     <Route path="*" component={nomatch} />
   </Switch>
 );

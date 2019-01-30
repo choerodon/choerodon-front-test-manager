@@ -61,6 +61,10 @@ class IssueStore {
 
   @observable treeShow = true;
 
+  @computed get getIssueIds() {
+    return toJS(this.issueIds);
+  }
+
   @action clearStore = () => {
     this.issues = [];
     this.issueIds = [];

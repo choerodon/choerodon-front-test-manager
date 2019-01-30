@@ -126,8 +126,9 @@ class DragTable extends Component {
 
   renderTbody(data) {   
     const {
-      columns, dragKey, disabled,  
+      columns, dragKey, disabled, customDragHandle
     } = this.props;
+    const judgeProps = props => (customDragHandle ? {} : props);
     const Columns = columns.filter(column => this.shouldColumnShow(column));
     const rows = data.map((item, index) => (
       disabled
@@ -136,7 +137,7 @@ class DragTable extends Component {
             {Columns.map((column) => {
               let renderedItem = null;
               const {
-                dataIndex, key, flex, render, 
+                dataIndex, key, flex, render, width,
               } = column;
               if (render) {
                 renderedItem = render(data[index][dataIndex], data[index], index);
@@ -144,7 +145,7 @@ class DragTable extends Component {
                 renderedItem = data[index][dataIndex];
               }
               return (
-                <td style={{ flex: flex || 1 }}>
+                <td style={{ flex: flex || 1, width }}>
                   {renderedItem}
                 </td>
               );
@@ -157,7 +158,7 @@ class DragTable extends Component {
               <tr
                 ref={provided.innerRef}
                 {...provided.draggableProps}
-                {...provided.dragHandleProps}
+                {...judgeProps(provided.dragHandleProps)}
                 onClick={this.handleRow.bind(this, item)}
               >
                 {Columns.map((column) => {
@@ -166,7 +167,7 @@ class DragTable extends Component {
                     dataIndex, key, flex, render, 
                   } = column;
                   if (render) {
-                    renderedItem = render(data[index][dataIndex], data[index], index, snapshot);
+                    renderedItem = render(data[index][dataIndex], data[index], index, provided, snapshot);
                   } else {
                     renderedItem = data[index][dataIndex];
                   }

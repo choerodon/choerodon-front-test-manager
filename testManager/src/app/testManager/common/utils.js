@@ -273,7 +273,9 @@ export function executeDetailLink(executeId) {
 export function executeDetailShowLink(executeId) {
   return commonLink(`/TestPlan/executeShow/${executeId}`);
 }
-
+export function testCaseDetailLink(testCaseId) {
+  return commonLink(`/IssueManage/testCase/${testCaseId}`);
+}
 /**
  * 颜色转rgba
  * @param {*} color

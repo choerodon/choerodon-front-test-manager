@@ -77,7 +77,7 @@ class IssueTable extends Component {
   }
 
   renderTbody(data, columns) {
-    const { disabled, expand, selectedIssue } = this.props;
+    const { disabled, expand, selectedIssue, onRow } = this.props;
     const Columns = columns.filter(column => this.shouldColumnShow(column));
     const tds = index => Columns.map((column) => {
       let renderedItem = null;
@@ -98,15 +98,9 @@ class IssueTable extends Component {
     const rows = data.map((issue, index) => {
       if (disabled) {
         return tds(index);
-      } else if (expand) {
-        return (
-          <TableDraggleItem handleClickIssue={this.handleClickIssue.bind(this)} issue={issue} index={index} selectedIssue={selectedIssue} saveRef={(instance) => { this.instance = instance; }}>
-            {this.renderNarrowIssue(issue)}
-          </TableDraggleItem>
-        );
       } else {
         return (
-          <TableDraggleItem handleClickIssue={this.handleClickIssue.bind(this)} issue={issue} index={index} selectedIssue={selectedIssue} saveRef={(instance) => { this.instance = instance; }}>
+          <TableDraggleItem handleClickIssue={this.handleClickIssue.bind(this)} issue={issue} index={index} selectedIssue={selectedIssue} saveRef={(instance) => { this.instance = instance; }} onRow={onRow}>
             {tds(index)}
           </TableDraggleItem>
         );
@@ -197,7 +191,7 @@ class IssueTable extends Component {
   }
 
   handleClickIssue(issue, index, e) {
-    const { setSelectIssue, setExpand } = this.props;
+    const { setSelectIssue, setExpand, onRow } = this.props;
     const { firstIndex } = this.state;
     // console.log(e.shiftKey, e.ctrlKey, issue, index, firstIndex);
     if (e.shiftKey || e.ctrlKey || e.metaKey) {
@@ -228,6 +222,7 @@ class IssueTable extends Component {
       IssueStore.setDraggingTableItems([]);
       setExpand(true);
       setSelectIssue(issue);
+      onRow(issue).onClick();
     }
     this.setState({
       firstIndex: index,
@@ -296,30 +291,32 @@ class IssueTable extends Component {
     );
   }
 
-  renderTable = columns => (
-    <div className="c7ntest-issuetable">
-      <Table
-        // filterBar={false}
-        columns={columns}
-        dataSource={IssueStore.getIssues}
-        components={this.getComponents(columns)}
-        onChange={this.handleFilterChange}
-        onColumnFilterChange={this.handleColumnFilterChange}
-        pagination={false}
-        filters={IssueStore.barFilters || []}
-        filterBarPlaceholder={<FormattedMessage id="issue_filterTestIssue" />}
-        empty={(
-          <EmptyBlock
-            style={{ marginTop: 40 }}
-            border
-            pic={pic}
-            title={<FormattedMessage id="issue_noIssueTitle" />}
-            des={<FormattedMessage id="issue_noIssueDescription" />}
-          />
-        )}
-      />
-    </div>
-  )
+  renderTable = columns => {
+    return (
+      <div className="c7ntest-issuetable">
+        <Table
+          // filterBar={false}
+          columns={columns}
+          dataSource={IssueStore.getIssues}
+          components={this.getComponents(columns)}
+          onChange={this.handleFilterChange}
+          onColumnFilterChange={this.handleColumnFilterChange}
+          pagination={false}
+          filters={IssueStore.barFilters || []}
+          filterBarPlaceholder={<FormattedMessage id="issue_filterTestIssue" />}
+          empty={(
+            <EmptyBlock
+              style={{ marginTop: 40 }}
+              border
+              pic={pic}
+              title={<FormattedMessage id="issue_noIssueTitle" />}
+              des={<FormattedMessage id="issue_noIssueDescription" />}
+            />
+          )}
+        />
+      </div>
+    )
+  }
 
   handleFilterChange = (pagination, filters, sorter, barFilters) => {
     // 条件变化返回第一页
@@ -372,7 +369,6 @@ class IssueTable extends Component {
   }
 
   render() {
-    const { expand } = this.props;
     const prioritys = IssueStore.getPrioritys;
     const issueStatusList = IssueStore.getIssueStatus;
     const columns = this.manageVisible([
@@ -444,7 +440,7 @@ class IssueTable extends Component {
       },
     ]);
     return (
-      <div className={`c7ntest-issueArea ${expand && 'expand'}`}>
+      <div className="c7ntest-issueArea">
         <div id="template_copy" style={{ display: 'none' }}>
           {'当前状态：'}
           <span style={{ fontWeight: 500 }}>复制</span>

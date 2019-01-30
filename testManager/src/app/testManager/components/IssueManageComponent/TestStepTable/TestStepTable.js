@@ -122,13 +122,14 @@ class TestStepTable extends Component {
   render() {
     const that = this;
     const {
-      onOk, enterLoad, leaveLoad, mode, disabled,
+      onOk, enterLoad, leaveLoad, disabled,
     } = this.props;
 
     const columns = [{
       title: null,
       dataIndex: 'stepId',
       key: 'stepId',
+      flex: 1,
       width: 10,
       render(stepId, record, index) {
         return index + 1;
@@ -199,7 +200,7 @@ class TestStepTable extends Component {
         title: <FormattedMessage id="execute_expectedOutcome" />,
         dataIndex: 'expectedResult',
         key: 'expectedResult',
-        // flex: 3,
+        flex: 2,
         render(expectedResult, record) {
           return (
             <div className="item-container">
@@ -230,7 +231,7 @@ class TestStepTable extends Component {
         title: <FormattedMessage id="execute_stepAttachment" />,
         dataIndex: 'attachments',
         key: 'attachments',
-        // flex: 3,
+        flex: 2,
         render(attachments, record) {
           return (
             <div className="item-container">
@@ -272,12 +273,15 @@ class TestStepTable extends Component {
         title: null,
         dataIndex: 'action',
         key: 'action',
-        // flex: 2,
-        render(attachments, record, index) {
+        flex: 2,
+        render(attachments, record, index, provided, snapshot) {
           const {stepIsCreating} = record;
 
           return !stepIsCreating ? (
             <div>
+               <Tooltip title={<FormattedMessage id="execute_copy" />}>
+                <Icon type="format_indent_decrease" {...provided.dragHandleProps} />
+              </Tooltip>
               <Tooltip title={<FormattedMessage id="execute_copy" />}>
                 <Button disabled={disabled} shape="circle" funcType="flat" icon="library_books" style={{ margin: '0 5px', color: 'black' }} onClick={() => that.cloneStep(record.stepId, index)} />
               </Tooltip>
@@ -285,6 +289,9 @@ class TestStepTable extends Component {
             </div>
           ) : (
             <div>
+              <Tooltip title={<FormattedMessage id="execute_copy" />}>
+                <Icon type="format_indent_decrease" {...provided.dragHandleProps} />
+              </Tooltip>
             <Tooltip title={<FormattedMessage id="execute_save" />}>
               <Button disabled={disabled} shape="circle" funcType="flat" icon="done" style={{ margin: '0 5px', color: 'black' }} onClick={() => that.createStep(record.stepId, index)} />
             </Tooltip>
@@ -322,10 +329,11 @@ class TestStepTable extends Component {
           pagination={false}
           filterBar={false}
           dataSource={this.state.data}
-          columns={mode === 'narrow' ? columns.concat(createColumn) : columns.concat(wideColumns)}
-          // columns={mode === 'narrow' ? columns : columns.concat(wideColumns)}
+          // columns={mode === 'narrow' ? columns.concat(createColumn) : columns.concat(wideColumns)}
+          columns={columns.concat(wideColumns)}
           onDragEnd={this.onDragEnd}
           dragKey="stepId"
+          customDragHandle
         />
       </div>
     );
