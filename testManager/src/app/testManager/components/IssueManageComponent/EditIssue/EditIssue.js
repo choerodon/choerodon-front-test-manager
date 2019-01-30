@@ -14,7 +14,7 @@ import {
 } from '../../../common/utils';
 import Timeago from "../../CommonComponent/DateTimeAgo/DateTimeAgo";
 import {
-  loadDatalogs, loadLinkIssues, loadIssue, updateStatus, updateIssue, createIssueStep,
+  loadDatalogs, loadLinkIssues, loadIssue, updateStatus, updateIssue,
   createCommit, deleteIssue, loadStatus, cloneIssue, getIssueSteps, getIssueExecutes,
 } from '../../../api/IssueManageApi';
 import { getLabels, getPrioritys, getModules } from '../../../api/agileApi';
@@ -31,7 +31,7 @@ import CopyIssue from '../CopyIssue';
 import TestStepTable from '../TestStepTable';
 import TestExecuteTable from '../TestExecuteTable';
 import TypeTag from '../TypeTag';
-
+import IssueTreeStore from '../../../store/project/IssueManage/IssueTreeStore';
 const { AppState } = stores;
 const { Option } = Select;
 const { TextArea } = Input;
@@ -39,16 +39,15 @@ const { confirm } = Modal;
 let sign = true;
 let filterSign = false;
 const { Text, Edit } = TextEditToggle;
-const StatusTagSimple = StatusTag.Simple;
 const navs = [
   { code: 'detail', tooltip: '详情', icon: 'error_outline' },
   { code: 'des', tooltip: '描述', icon: 'subject' },
-  { code: 'test_step', tooltip: '测试详细信息', icon: 'compass' },
-  { code: 'test_execute', tooltip: '测试执行', icon: 'explicit2' },
+  // { code: 'test_step', tooltip: '测试详细信息', icon: 'compass' },
+  // { code: 'test_execute', tooltip: '测试执行', icon: 'explicit2' },
   { code: 'attachment', tooltip: '附件', icon: 'attach_file' },
   { code: 'commit', tooltip: '评论', icon: 'sms_outline' },
   { code: 'data_log', tooltip: '活动日志', icon: 'insert_invitation' },
-  { code: 'link_task', tooltip: '相关任务', icon: 'link' },
+  { code: 'link_task', tooltip: '问题链接', icon: 'link' },
 ];
 const STATUS_ICON = {
   done: {
@@ -86,17 +85,7 @@ class EditIssueNarrow extends Component {
     createLinkTaskShow: false,
     editDescriptionShow: false,
     addingComment: false,
-
     currentNav: 'detail',
-
-    // issue信息
-    issueInfo: {},
-    disabled: false, // 自动化类型不可编辑
-    datalogs: [],
-    fileList: [],
-    testStepData: [],
-    testExecuteData: [],
-
     linkIssues: [],
     StatusList: [],
     priorityList: [],
@@ -110,7 +99,6 @@ class EditIssueNarrow extends Component {
     if (this.props.onRef) {
       this.props.onRef(this);
     }
-    this.reloadIssue(this.props.issueId);
     document.getElementById('scroll-area').addEventListener('scroll', (e) => {
       if (sign) {
         const currentNav = this.getCurrentNav(e);
@@ -123,13 +111,6 @@ class EditIssueNarrow extends Component {
     });
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.issueId !== this.props.issueId) {
-      this.reloadIssue(nextProps.issueId);
-    }
-  }
-
-
   /**
    * Attachment
    */
@@ -137,7 +118,7 @@ class EditIssueNarrow extends Component {
     if (arr.length > 0 && arr.some(one => !one.url)) {
       const config = {
         // issueType: this.state.typeCode,
-        issueId: this.state.issueInfo.issueId,
+        issueId: this.props.issueInfo.issueId,
         fileName: arr[0].name || 'AG_ATTACHMENT',
         projectId: AppState.currentMenuType.id,
       };
@@ -150,24 +131,9 @@ class EditIssueNarrow extends Component {
    * Attachment
    */
   addFileToFileList = (data) => {
-    this.reloadIssue();
+    this.props.reloadIssue();
   }
 
-  setIssueToState = (issue) => {
-    const {
-      issueAttachmentDTOList,
-    } = issue;
-    const fileList = _.map(issueAttachmentDTOList, issueAttachment => ({
-      uid: issueAttachment.attachmentId,
-      name: issueAttachment.fileName,
-      url: issueAttachment.url,
-    }));
-    this.setState({
-      issueInfo: issue,
-      fileList,
-      issueLoading: false,
-    });
-  }
 
   getCurrentNav(e) {
     return _.find(navs.map(nav => nav.code), i => this.isInLook(document.getElementById(i)));
@@ -232,53 +198,7 @@ class EditIssueNarrow extends Component {
       });
     });
   }, 500);
-
-  /**
-   *加载issue以及相关信息
-   *
-   * @param {*} [issueId=this.state.issueInfo.issueId]
-   * @memberof EditIssueNarrow
-   */
-  reloadIssue(issueId = this.state.issueInfo.issueId) {
-    this.setState({
-      addingComment: false,
-      editDescriptionShow: false,
-      issueLoading: true,
-    });
-    Promise.all([
-      loadIssue(issueId),
-      loadLinkIssues(issueId),
-      loadDatalogs(issueId),
-      getIssueSteps(issueId),
-      getIssueExecutes(issueId),
-    ]).then(([issue, linkIssues, datalogs, testStepData, testExecuteData]) => {
-      const {
-        issueAttachmentDTOList,
-      } = issue;
-      const fileList = _.map(issueAttachmentDTOList, issueAttachment => ({
-        uid: issueAttachment.attachmentId,
-        name: issueAttachment.fileName,
-        url: issueAttachment.url,
-      }));
-      this.setState({
-        issueInfo: issue,
-        disabled: issue.typeCode === 'issue_auto_test',
-        fileList,
-        linkIssues,
-        datalogs,
-        // testStepData,
-        testStepData: testStepData.map(step => {
-          return {
-            ...step,
-            stepIsCreating: false,
-          }
-        }),
-        testExecuteData,
-        issueLoading: false,
-      });
-    });
-  }
-
+  
   /**
    *多选提交前的准备，因为可以手动输入，所以会有原先不存在的值提交，后台会自动新建
    *
@@ -305,8 +225,9 @@ class EditIssueNarrow extends Component {
     const key = Object.keys(newValue)[0];
     const value = newValue[key];
     const {
-      issueInfo, StatusList, componentList, labelList,
+      StatusList, componentList, labelList,
     } = this.state;
+    const {issueInfo} = this.props;
     const { issueId, objectVersionNumber } = issueInfo;
 
     let issue = {
@@ -319,7 +240,7 @@ class EditIssueNarrow extends Component {
         if (targetStatus) {
           updateStatus(targetStatus.id, issue.issueId, issue.objectVersionNumber)
             .then((res) => {
-              this.reloadIssue();
+              this.props.reloadIssue();
               if (this.props.onUpdate) {
                 this.props.onUpdate();
               }
@@ -333,7 +254,7 @@ class EditIssueNarrow extends Component {
         issue.componentIssueRelDTOList = this.prepareMutilSelectValueBeforeSubmit(value, componentList, 'name');
         updateIssue(issue)
           .then((res) => {
-            this.reloadIssue();
+            this.props.reloadIssue();
             if (this.props.onUpdate) {
               this.props.onUpdate();
             }
@@ -346,7 +267,7 @@ class EditIssueNarrow extends Component {
         issue.labelIssueRelDTOList = this.prepareMutilSelectValueBeforeSubmit(value, labelList, 'labelName');
         updateIssue(issue)
           .then((res) => {
-            this.reloadIssue();
+            this.props.reloadIssue();
             if (this.props.onUpdate) {
               this.props.onUpdate();
             }
@@ -359,7 +280,7 @@ class EditIssueNarrow extends Component {
         if (value) {
           returnBeforeTextUpload(value, issue, updateIssue, 'description')
             .then((res) => {
-              this.reloadIssue();
+              this.props.reloadIssue();
             }).catch(() => {
               done();
             });
@@ -375,7 +296,7 @@ class EditIssueNarrow extends Component {
         issue = { ...issue, ...newValue };
         updateIssue(issue)
           .then((res) => {
-            this.reloadIssue();
+            this.props.reloadIssue();
             if (this.props.onUpdate) {
               this.props.onUpdate();
             }
@@ -391,7 +312,7 @@ class EditIssueNarrow extends Component {
    * Comment
    */
   handleCreateCommit(newComment) {
-    const { issueInfo } = this.state;
+    const { issueInfo } = this.props;
     const { issueId } = issueInfo;
     const extra = { issueId };
     if (newComment) {
@@ -407,7 +328,7 @@ class EditIssueNarrow extends Component {
    */
   createCommit = (commit) => {
     createCommit(commit).then((res) => {
-      this.reloadIssue();
+      this.props.reloadIssue();
       this.setState({
         addingComment: false,
       });
@@ -429,7 +350,7 @@ class EditIssueNarrow extends Component {
 
 
   handleCreateLinkIssue() {
-    this.reloadIssue();
+    this.props.reloadIssue();
     this.setState({
       createLinkTaskShow: false,
     });
@@ -439,7 +360,7 @@ class EditIssueNarrow extends Component {
   }
 
   handleCopyIssue() {
-    this.reloadIssue();
+    this.props.reloadIssue();
     this.setState({
       copyIssueShow: false,
     });
@@ -453,7 +374,7 @@ class EditIssueNarrow extends Component {
 
 
   handleClickMenu(e) {
-    const { issueInfo } = this.state;
+    const { issueInfo } = this.props;
     const { issueId } = issueInfo;
     switch (e.key) {
       case 'copy': {
@@ -486,7 +407,7 @@ class EditIssueNarrow extends Component {
   }
 
   handleDeleteIssue = (issueId) => {
-    const { issueInfo } = this.state;
+    const { issueInfo } = this.props;
     const { issueNum } = issueInfo;
     confirm({
       width: 560,
@@ -504,7 +425,7 @@ class EditIssueNarrow extends Component {
    */
   renderCommits() {
     const { addingComment } = this.state;
-    const { issueCommentDTOList } = this.state.issueInfo;
+    const { issueCommentDTOList } = this.props.issueInfo;
     return (
       <div>
         {
@@ -523,8 +444,8 @@ class EditIssueNarrow extends Component {
             <Comment
               key={comment.commentId}
               comment={comment}
-              onDeleteComment={() => this.reloadIssue()}
-              onUpdateComment={() => this.reloadIssue()}
+              onDeleteComment={() => this.props.reloadIssue()}
+              onUpdateComment={() => this.props.reloadIssue()}
             />
           ))
         }
@@ -536,7 +457,7 @@ class EditIssueNarrow extends Component {
    * DataLog
    */
   renderDataLogs() {
-    const { datalogs } = this.state;
+    const { datalogs } = this.props;
     return (
       <DataLogs
         datalogs={datalogs}
@@ -565,7 +486,7 @@ class EditIssueNarrow extends Component {
 
 
   renderLinkList(link, i) {
-    const { issueInfo } = this.state;
+    const { issueInfo } = this.props;
     const { issueId } = issueInfo;
     return (
       <LinkList
@@ -577,10 +498,10 @@ class EditIssueNarrow extends Component {
         //   const { type, id: projectId, name } = menu;
         //   this.props.history.push(`/agile/issue?
         // type=${type}&id=${projectId}&name=${name}&paramIssueId=${linkedIssueId}`);
-        //   // this.reloadIssue(issueId === this.state.issueId ? linkedIssueId : issueId);
+        //   // this.props.reloadIssue(issueId === this.state.issueId ? linkedIssueId : issueId);
         // }}
         onRefresh={() => {
-          this.reloadIssue(issueId);
+          this.props.reloadIssue(issueId);
         }}
       />
 
@@ -594,7 +515,8 @@ class EditIssueNarrow extends Component {
    * @memberof EditIssueNarrow
    */
   renderDescription() {
-    const { issueInfo, editDescriptionShow } = this.state;
+    const { editDescriptionShow } = this.state;
+    const {issueInfo} = this.props;
     const { description } = issueInfo;
     let delta;
     if (editDescriptionShow === undefined) {
@@ -648,7 +570,7 @@ class EditIssueNarrow extends Component {
    * @memberof EditIssueNarrow
    */
   loadTransformsByStatusId = (statusId) => {
-    const { issueInfo } = this.state;
+    const { issueInfo } = this.props;
     const { issueTypeDTO, issueId } = issueInfo;
 
     const typeId = issueTypeDTO.id;
@@ -658,46 +580,6 @@ class EditIssueNarrow extends Component {
         selectLoading: false,
       });
     });
-  }
-
-  // createIssueStep = () => {
-  //   const { issueInfo, testStepData } = this.state;
-  //   const { issueId } = issueInfo;
-  //   const lastRank = testStepData.length
-  //     ? testStepData[testStepData.length - 1].rank : null;
-  //   const testCaseStepDTO = {
-  //     attachments: [],
-  //     issueId,
-  //     lastRank,
-  //     nextRank: null,
-  //     testStep: '测试步骤',
-  //     testData: '测试数据',
-  //     expectedResult: '预期结果',
-  //   };
-  //   createIssueStep(testCaseStepDTO).then(() => {
-  //     this.reloadIssue();
-  //   });
-  // }
-
-  createIssueStep = () => {
-    const { issueInfo, testStepData } = this.state;
-    const { issueId } = issueInfo;
-    const lastRank = testStepData.length
-      ? testStepData[testStepData.length - 1].rank : null;
-    const testCaseStepDTO = {
-      attachments: [],
-      issueId,
-      lastRank,
-      nextRank: null,
-      testStep: '',
-      testData: '',
-      expectedResult: '',
-      stepIsCreating: true,
-    };
-    this.setState({
-      testStepData: [...testStepData, testCaseStepDTO],
-    });
-   
   }
 
   /**
@@ -727,14 +609,15 @@ class EditIssueNarrow extends Component {
    */
   renderSelectStatus = () => {
     const {
-      issueInfo, StatusList, selectLoading, disabled,
+       StatusList, selectLoading, disabled,
     } = this.state;
+    const {issueInfo} = this.props;
     const { mode } = this.props;
     const { statusMapDTO } = issueInfo;
     const {
       name: statusName, id: statusId, colour: statusColor, icon: statusIcon, type: statusCode,
     } = statusMapDTO || {};
-    const Tag = mode === 'narrow' ? StatusTag : StatusTagSimple;
+    const Tag = StatusTag;
     return (
       <TextEditToggle
         style={{ width: '100%' }}
@@ -787,8 +670,9 @@ class EditIssueNarrow extends Component {
    */
   renderSelectPriority = () => {
     const {
-      issueInfo, priorityList, selectLoading, disabled,
+       priorityList, selectLoading, disabled,
     } = this.state;
+    const {issueInfo} = this.props;
     const { priorityDTO } = issueInfo;
     const { name: priorityName, id: priorityId, colour: priorityColor } = priorityDTO || {};
     const priorityOptions = priorityList.map(priority => (
@@ -852,8 +736,9 @@ class EditIssueNarrow extends Component {
    */
   renderSelectModule = () => {
     const {
-      issueInfo, componentList, selectLoading, disabled,
+       componentList, selectLoading, disabled,
     } = this.state;
+    const {issueInfo} = this.props;
     const { componentIssueRelDTOList } = issueInfo;
     return (
       <TextEditToggle
@@ -911,8 +796,9 @@ class EditIssueNarrow extends Component {
    */
   renderSelectLabel = () => {
     const {
-      issueInfo, labelList, selectLoading, disabled,
+     labelList, selectLoading, disabled,
     } = this.state;
+    const {issueInfo} = this.props;
     const { labelIssueRelDTOList } = issueInfo;
     return (
       <TextEditToggle
@@ -992,8 +878,9 @@ class EditIssueNarrow extends Component {
    */
   renderSelectPerson = (type) => {
     const {
-      issueInfo, userList, selectLoading, disabled,
+      userList, selectLoading, disabled,
     } = this.state;
+    const {issueInfo} = this.props;
     const { reporterId, reporterName, reporterImageUrl } = issueInfo;
 
     const userOptions = userList.map(user => (
@@ -1069,8 +956,9 @@ class EditIssueNarrow extends Component {
    */
   renderSelectAssign = () => {
     const {
-      issueInfo, userList, selectLoading, disabled,
+     userList, selectLoading, disabled,
     } = this.state;
+    const {issueInfo} = this.props;
     const { assigneeId, assigneeName, assigneeImageUrl } = issueInfo;
     const userOptions = userList.map(user => (
       <Option key={user.id} value={user.id}>
@@ -1140,10 +1028,10 @@ class EditIssueNarrow extends Component {
 
   render() {
     const {
-      issueInfo, issueLoading, FullEditorShow, createLinkTaskShow,
-      copyIssueShow, currentNav, testStepData, testExecuteData,
-      linkIssues, fileList, disabled,
+      issueLoading, FullEditorShow, createLinkTaskShow,
+      copyIssueShow, currentNav,
     } = this.state;
+    const {issueInfo,fileList, disabled, linkIssues,} = this.props;
     const {
       issueId, issueNum, summary, creationDate, lastUpdateDate, description,
       priorityDTO, issueTypeDTO, statusMapDTO, versionIssueRelDTOList,
@@ -1157,6 +1045,9 @@ class EditIssueNarrow extends Component {
     const typeCode = issueTypeDTO ? issueTypeDTO.typeCode : '';
     const typeColor = issueTypeDTO ? issueTypeDTO.colour : '#fab614';
     const typeIcon = issueTypeDTO ? issueTypeDTO.icon : 'help';
+
+    // const currentCycle = IssueTreeStore.currentCycle;
+    // const { cycleId } = currentCycle;
 
 
     const fixVersionsTotal = _.filter(versionIssueRelDTOList, { relationType: 'fix' }) || [];
@@ -1257,7 +1148,7 @@ class EditIssueNarrow extends Component {
                       cursor: 'pointer', fontSize: '13px', lineHeight: '20px', display: 'flex', alignItems: 'center',
                     }}
                     role="none"
-                    onClick={() => this.props.onCancel()}
+                    onClick={() => this.props.onClose()}
                   >
                     <Icon type="last_page" style={{ fontSize: '18px', fontWeight: '500' }} />
                     <FormattedMessage id="issue_edit_hide" />
@@ -1291,96 +1182,6 @@ class EditIssueNarrow extends Component {
                     )}
                   </div>
                 </div>
-                {/* 状态 */}
-                {mode === 'wide' && (
-                  <div className="line-start" style={{ alignItems: 'center' }}>
-                    <div style={{ display: 'flex', flex: 1 }}>
-                      <span
-                        style={{
-                          width: 30,
-                          height: 30,
-                          borderRadius: '50%',
-                          background: STATUS[statusCode] ? `${STATUS[statusCode]}33` : '#ffae0233',
-                          marginRight: 12,
-                          flexShrink: 0,
-                          display: 'flex',
-                          justifyContent: 'center',
-                          alignItems: 'center',
-                        }}
-                      >
-                        <Icon
-                          type={
-                            STATUS_ICON[statusCode]
-                              ? STATUS_ICON[statusCode].icon
-                              : 'timelapse'
-                          }
-                          style={{
-                            fontSize: '24px',
-                            color: STATUS[statusCode] || '#ffae02',
-                          }}
-                        />
-                      </span>
-                      <div>
-                        <div style={{ fontSize: '12px', color: 'rgba(0, 0, 0, 0.54)', marginBottom: 4 }}>
-                          <FormattedMessage id="issue_issueFilterByStatus" />
-                        </div>
-                        <div>
-                          {this.renderSelectStatus()}
-                        </div>
-                      </div>
-                    </div>
-                    <div style={{ display: 'flex', flex: 1 }}>
-                      <span
-                        style={{
-                          width: 30, height: 30, borderRadius: '50%', background: priorityColor ? color2rgba(priorityColor, 0.18) : 'rgba(77, 144, 254, 0.2)', marginRight: 12, flexShrink: 0, display: 'flex', justifyContent: 'center', alignItems: 'center',
-                        }}
-                      >
-                        <Icon type="flag" style={{ fontSize: '24px', color: priorityColor || '#3575df' }} />
-                      </span>
-                      <div>
-                        <div style={{ fontSize: '12px', color: 'rgba(0, 0, 0, 0.54)', marginBottom: 4 }}>
-                          <FormattedMessage id="issue_issueFilterByPriority" />
-                        </div>
-                        <div>
-                          {/* 优先级 */}
-                          {this.renderSelectPriority()}
-                        </div>
-                      </div>
-                    </div>
-                    {/* 版本 */}
-                    <div style={{ display: 'flex', flex: 1 }}>
-                      <span
-                        style={{
-                          width: 30, height: 30, borderRadius: '50%', background: '#d8d8d8', marginRight: 12, flexShrink: 0, display: 'flex', justifyContent: 'center', alignItems: 'center',
-                        }}
-                      >
-                        <Icon type="versionline" style={{ fontSize: '24px', color: 'black' }} />
-                      </span>
-                      <div>
-                        <div style={{ fontSize: '12px', color: 'rgba(0, 0, 0, 0.54)', marginBottom: 4 }}>
-                          <FormattedMessage id="version" />
-                        </div>
-                        <div>
-                          <div>
-                            {
-                              !fixVersionsFixed.length && !fixVersions.length ? '无' : (
-                                <div>
-                                  <div style={{ color: '#000' }}>
-                                    {_.map(fixVersionsFixed, 'name').join(' , ')}
-                                  </div>
-                                  <p style={{ wordBreak: 'break-word', marginBottom: 0 }}>
-                                    {_.map(fixVersions, 'name').join(' , ')}
-                                  </p>
-                                </div>
-                              )
-                            }
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )
-                }
               </div>
             </div>
           </div>
@@ -1399,34 +1200,73 @@ class EditIssueNarrow extends Component {
                       }}
                       />
                     </div>
-                    <div className="c7ntest-content-wrapper" style={{ display: mode === 'narrow' ? 'block' : 'flex' }}>
+                    <div className="c7ntest-content-wrapper" style={{ display: 'flex', flexDirection: 'column' }}>
                       {/* 状态 */}
                       <div style={{ flex: 1 }}>
-                        {mode === 'narrow'
-                          && (
-                            <div>
-                              <div className="line-start mt-10">
-                                <div className="c7ntest-property-wrapper">
-                                  <span className="c7ntest-property">
-                                    {'状态：'}
-                                  </span>
-                                </div>
-                                <div className="c7ntest-value-wrapper">
-                                  {this.renderSelectStatus()}
-                                </div>
-                              </div>
-                              {/* 优先级 */}
-                              <div className="line-start mt-10">
-                                <div className="c7ntest-property-wrapper">
-                                  <span className="c7ntest-property">优先级：</span>
-                                </div>
-                                <div className="c7ntest-value-wrapper">
-                                  {this.renderSelectPriority()}
-                                </div>
+                      
+                        <div>
+                          <div className="line-start mt-10">
+                            <div className="c7ntest-property-wrapper">
+                              <span className="c7ntest-property">
+                                {'状态：'}
+                              </span>
+                            </div>
+                            <div className="c7ntest-value-wrapper">
+                              {this.renderSelectStatus()}
+                            </div>
+                          </div>
+                        
+                          {/* 优先级 */}
+                          <div className="line-start mt-10">
+                            <div className="c7ntest-property-wrapper">
+                              <span className="c7ntest-property">优先级：</span>
+                            </div>
+                            <div className="c7ntest-value-wrapper">
+                              {this.renderSelectPriority()}
+                            </div>
+                          </div>
+
+                          {/* 版本名称 */}
+                          <div className="line-start mt-10">
+                            <div className="c7ntest-property-wrapper">
+                              <span className="c7ntest-property">
+                                <FormattedMessage id="issue_create_content_version" />
+                                {'：'}
+                              </span>
+                            </div>
+                            <div className="c7ntest-value-wrapper">
+                              <div>
+                                {
+                                  !fixVersionsFixed.length && !fixVersions.length ? '无' : (
+                                    <div>
+                                      <div style={{ color: '#000' }}>
+                                        {_.map(fixVersionsFixed, 'name').join(' , ')}
+                                      </div>
+                                      <p style={{ wordBreak: 'break-word', marginBottom: 0 }}>
+                                        {_.map(fixVersions, 'name').join(' , ')}
+                                      </p>
+                                    </div>
+                                  )
+                                }
                               </div>
                             </div>
-                          )
-                        }
+                          </div>
+
+                        {/* 文件夹名称 */}
+                        <div className="line-start mt-10">
+                          <div className="c7ntest-property-wrapper">
+                            <span className="c7ntest-property">
+                              <FormattedMessage id="issue_create_content_folder" />
+                              {'：'}
+                            </span>
+                          </div>
+                          <div className="c7ntest-value-wrapper">
+                            {this.renderSelectLabel()}
+                          </div>
+                        </div>
+
+                        
+                        </div>
                         {/* 模块 */}
                         {
                           typeCode !== 'sub_task' ? (
@@ -1455,40 +1295,7 @@ class EditIssueNarrow extends Component {
                             {this.renderSelectLabel()}
                           </div>
                         </div>
-                        {/* 版本 */}
-                        {mode === 'narrow' && (
-                          <div className="line-start mt-10">
-                            <div className="c7ntest-property-wrapper">
-                              <span className="c7ntest-property">
-                                <FormattedMessage id="issue_create_content_version" />
-                                {'：'}
-                              </span>
-                            </div>
-                            <div className="c7ntest-value-wrapper">
-                              <div>
-                                {
-                                  !fixVersionsFixed.length && !fixVersions.length ? '无' : (
-                                    <div>
-                                      <div style={{ color: '#000' }}>
-                                        {_.map(fixVersionsFixed, 'name').join(' , ')}
-                                      </div>
-                                      <p style={{ wordBreak: 'break-word', marginBottom: 0 }}>
-                                        {_.map(fixVersions, 'name').join(' , ')}
-                                      </p>
-                                    </div>
-                                  )
-                                }
-                              </div>
-                            </div>
-                          </div>
-                        )}
-                        <div className="line-start mt-10">
-                          <div className="c7ntest-property-wrapper">
-                            <span className="c7ntest-subtitle">
-                              <FormattedMessage id="issue_edit_person" />
-                            </span>
-                          </div>
-                        </div>
+                       
                         {/* 报告人 */}
                         <div className="line-start mt-10 assignee">
                           <div className="c7ntest-property-wrapper">
@@ -1542,7 +1349,7 @@ class EditIssueNarrow extends Component {
                         </div>
                       </div>
                       {/* --- */}
-                      <div style={{ flex: 1, marginTop: mode === 'wide' && 70 }}>
+                      <div style={{ flex: 1 }}>
                         {/* 日期 */}
                         <div className="line-start mt-10">
                           <div className="c7ntest-property-wrapper">
@@ -1612,79 +1419,7 @@ class EditIssueNarrow extends Component {
                   </div>
 
                 </div>
-                {/* 测试步骤 */}
-                <div id="test_step">
-                  <div className="c7ntest-title-wrapper">
-                    <div className="c7ntest-title-left">
-                      <Icon type="compass c7ntest-icon-title" />
-                      <FormattedMessage id="issue_edit_testDetail" />
-                    </div>
-                    <div style={{
-                      flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px',
-                    }}
-                    />
-                  </div>
-                  <div className="c7ntest-content-wrapper" style={{ paddingLeft: 0 }}>
-                    <TestStepTable
-                      disabled={disabled}
-                      mode={mode}
-                      issueId={issueId}
-                      data={testStepData}
-                      enterLoad={() => {
-                        this.setState({
-                          issueLoading: true,
-                        });
-                      }}
-                      leaveLoad={() => {
-                        this.setState({
-                          issueLoading: false,
-                        });
-                      }}
-                      onOk={() => {
-                        this.reloadIssue();
-                      }}
-                    />
-                    <div className="c7ntest-title-right" style={{ marginLeft: '3px', position: 'relative' }}>
-                      <Button disabled={disabled} icon="playlist_add" className="leftBtn" funcTyp="flat" onClick={this.createIssueStep}>
-                        <FormattedMessage id="issue_edit_addTestDetail" />
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-                {/* 测试执行 */}
-                <div id="test_execute">
-                  <div className="c7ntest-title-wrapper">
-                    <div className="c7ntest-title-left">
-                      <Icon type="explicit2 c7ntest-icon-title" />
-                      <FormattedMessage id="execute_cycle_execute" />
-                    </div>
-                    <div style={{
-                      flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px',
-                    }}
-                    />
-                  </div>
-                  <div className="c7ntest-content-wrapper" style={{ paddingLeft: 0 }}>
-                    <TestExecuteTable
-                      mode={mode}
-                      issueId={issueId}
-                      data={testExecuteData}
-                      enterLoad={() => {
-                        this.setState({
-                          issueLoading: true,
-                        });
-                      }}
-                      leaveLoad={() => {
-                        this.setState({
-                          issueLoading: false,
-                        });
-                      }}
-                      onOk={() => {
-                        this.reloadIssue();
-                      }}
-                    />
-                  </div>
-                </div>
-
+               
                 {/* 附件 */}
                 <div id="attachment">
                   <div className="c7ntest-title-wrapper">

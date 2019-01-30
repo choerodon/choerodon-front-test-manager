@@ -87,6 +87,7 @@ const zhCN = {
   execute_stepStatus: '状态',
   execute_comment: '注释',
   execute_copy: '复制测试步骤',
+  execute_move: '移动',
   excute_save: '保存',
   excute_cancel: '取消',
   // 执行历史记录表格
@@ -275,6 +276,13 @@ const zhCN = {
   issue_issueCreateAt: '创建于',
   issue_repository: '用例仓库',
   issue_folder: '文件夹',
+  //测试用例详情
+  testCase_detail: '用例详情',
+  testCase_pre: '上一个用例',
+  testCase_next: '下一个用例',
+  testCase_testDetail: '测试详细信息',
+  testCase_testexecute: '测试执行',
+
   // 创建测试用例侧边栏
   issue_create_name: '创建测试用例',
   issue_create_title: '在项目“{name}”中创建测试用例',
@@ -282,6 +290,7 @@ const zhCN = {
   issue_create_content_epic: '史诗',
   issue_create_content_sprint: '冲刺',
   issue_create_content_version: '版本',
+  issue_create_content_folder: '文件夹',
   // 编辑详情侧边栏
   issue_edit_hide: '隐藏详情',
   issue_edit_planTime: '预估时间',

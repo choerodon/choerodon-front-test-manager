@@ -98,24 +98,3 @@
     }
   }
 }
-
-.c7ntest-issueArea.expand {
-  thead {
-    display: none;
-  }
-  .ant-pagination-options-label {
-    display: none;
-  }
-  .ant-select-selection {
-    min-width: unset;
-  }
-  .ant-pagination-total-text,
-  .ant-pagination-first,
-  .ant-pagination-prev,
-  .ant-pagination-last {
-    margin-right: unset;
-  }
-  .ant-table-columns-chooser {
-    display: none;
-  }
-}

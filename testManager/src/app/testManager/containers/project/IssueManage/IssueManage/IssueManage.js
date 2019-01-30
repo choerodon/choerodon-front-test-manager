@@ -8,7 +8,7 @@ import FileSaver from 'file-saver';
 import IssueStore from '../../../../store/project/IssueManage/IssueStore';
 
 import { loadIssue, downloadTemplate } from '../../../../api/IssueManageApi';
-import { commonLink, getParams } from '../../../../common/utils';
+import { commonLink, getParams, testCaseDetailLink } from '../../../../common/utils';
 import RunWhenProjectChange from '../../../../common/RunWhenProjectChange';
 
 import CreateIssue from '../../../../components/IssueManageComponent/CreateIssue';
@@ -137,6 +137,12 @@ export default class IssueManage extends Component {
     }
   }
 
+  handleTableRowClick=(record) => {
+    const { history } = this.props;
+    history.push(testCaseDetailLink(record.issueId));
+  }
+
+
   saveRef = name => (ref) => {
     this[name] = ref;
   }
@@ -230,11 +236,14 @@ export default class IssueManage extends Component {
               selectedIssue={selectedIssue}
               expand={expand}
               treeShow={treeShow}
+              onRow={record => ({
+                onClick: (event) => { this.handleTableRowClick(record); },                             
+              })}
             />
 
           </div>
           <ExportSide ref={this.saveRef('ExportSide')} />
-          <div
+          {/* <div
             className="c7ntest-sidebar"
             style={{
               display: expand ? '' : 'none',
@@ -270,7 +279,7 @@ export default class IssueManage extends Component {
                 />
               ) : null
             }
-          </div>
+          </div> */}
           {
             createIssueShow && (
               <CreateIssue
