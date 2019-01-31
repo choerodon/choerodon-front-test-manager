@@ -1031,7 +1031,7 @@ class EditIssueNarrow extends Component {
       issueLoading, FullEditorShow, createLinkTaskShow,
       copyIssueShow, currentNav,
     } = this.state;
-    const {issueInfo,fileList, disabled, linkIssues,} = this.props;
+    const {issueInfo,fileList, disabled, linkIssues, folderName,} = this.props;
     const {
       issueId, issueNum, summary, creationDate, lastUpdateDate, description,
       priorityDTO, issueTypeDTO, statusMapDTO, versionIssueRelDTOList,
@@ -1261,7 +1261,7 @@ class EditIssueNarrow extends Component {
                             </span>
                           </div>
                           <div className="c7ntest-value-wrapper">
-                            {this.renderSelectLabel()}
+                            {folderName}
                           </div>
                         </div>
 

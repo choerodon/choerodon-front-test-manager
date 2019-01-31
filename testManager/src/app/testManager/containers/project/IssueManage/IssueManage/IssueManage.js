@@ -139,7 +139,7 @@ export default class IssueManage extends Component {
 
   handleTableRowClick=(record) => {
     const { history } = this.props;
-    history.push(testCaseDetailLink(record.issueId));
+    history.push(testCaseDetailLink(record.issueId, record.folderName));
   }
 
 
@@ -243,43 +243,6 @@ export default class IssueManage extends Component {
 
           </div>
           <ExportSide ref={this.saveRef('ExportSide')} />
-          {/* <div
-            className="c7ntest-sidebar"
-            style={{
-              display: expand ? '' : 'none',
-              width: EditIssueWidth[EditIssueMode],
-            }}
-          >
-            {
-              expand ? (
-                <EditIssue
-                  mode={EditIssueMode === 'narrow' ? 'narrow' : 'wide'}
-                  ref={(instance) => {
-                    if (instance) { this.EditIssue = instance; }
-                  }}
-                  issueId={selectedIssue.issueId}
-                  onCancel={() => {
-                    this.setState({
-                      expand: false,
-                      selectedIssue: {},
-                    });
-                  }}
-                  onDeleteIssue={() => {
-                    this.setState({
-                      expand: false,
-                      selectedIssue: {},
-                    });
-                    IssueStore.loadIssues();
-                  }}
-                  onUpdate={this.handleIssueUpdate.bind(this)}
-                  onCopyAndTransformToSubIssue={() => {
-                    const { current, pageSize } = IssueStore.pagination;
-                    IssueStore.loadIssues(current - 1, pageSize);
-                  }}
-                />
-              ) : null
-            }
-          </div> */}
           {
             createIssueShow && (
               <CreateIssue

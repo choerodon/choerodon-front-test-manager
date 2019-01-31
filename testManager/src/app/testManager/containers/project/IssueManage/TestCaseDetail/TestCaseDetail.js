@@ -10,7 +10,7 @@ import moment from 'moment';
 import { FormattedMessage } from 'react-intl';
 import _ from 'lodash';
 import { importIssue } from '../../../../api/FileApi';
-import { commonLink, humanizeDuration, getProjectName, testCaseDetailLink } from '../../../../common/utils';
+import { commonLink, humanizeDuration, getProjectName, testCaseDetailLink, getParams } from '../../../../common/utils';
 import { SelectVersion } from '../../../../components/CommonComponent';
 import {
     loadDatalogs, loadLinkIssues, loadIssue, updateStatus, updateIssue, createIssueStep,
@@ -58,14 +58,18 @@ class TestCaseDetail extends Component {
             lasttestCaseId: null,
             nexttestCaseId: null,
             isExpand: false,
+            folderName: '',
         }
     }
 
 
     componentDidMount() {
         const { id } = this.props.match.params;
+        const Request = getParams(this.props.location.search);
+        const { folderName } = Request;
         this.setState({
             testCaseId:id,
+            folderName,
         })
         const  allIdValues = IssueStore.getIssueIds;
          let testCaseIdIndex;
@@ -135,13 +139,18 @@ class TestCaseDetail extends Component {
     const { lasttestCaseId, nexttestCaseId } = this.state;
     const { disabled, history } = this.props;
     const toTestCaseId = mode === 'pre' ? lasttestCaseId : nexttestCaseId;
+
+    const  allIdValues = IssueStore.getIssueIds;
+    let toTestCaseIdIndex;
+    allIdValues.forEach((valueId, index) => {
+      if(toTestCaseId == valueId) {
+        toTestCaseIdIndex = index;
+        return;
+      }
+    });
+
     if (toTestCaseId) {
-        // if (disabled) {
-        // history.replace(testCaseDetailLink(toTestCaseId));
-        // } else {
-        // history.replace(testCaseDetailLink(toTestCaseId));
-        // }
-        history.replace(testCaseDetailLink(toTestCaseId));
+        history.replace(testCaseDetailLink(toTestCaseId, IssueStore.getIssueFolderNames[toTestCaseIdIndex]));
     }
     }
 
@@ -200,6 +209,7 @@ class TestCaseDetail extends Component {
             lasttestCaseId,
             nexttestCaseId,
             isExpand,
+            folderName,
         } = this.state;
 
         return (
@@ -339,6 +349,7 @@ class TestCaseDetail extends Component {
                   isExpand && (
                     <EditIssue 
                       issueId={testCaseId}
+                      folderName={folderName}
                       issueInfo={issueInfo} 
                       fileList={fileList}
                       linkIssues={linkIssues}

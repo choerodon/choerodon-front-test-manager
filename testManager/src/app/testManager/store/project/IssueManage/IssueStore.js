@@ -61,8 +61,18 @@ class IssueStore {
 
   @observable treeShow = true;
 
+  @observable issueForderNames = [];
+
   @computed get getIssueIds() {
     return toJS(this.issueIds);
+  }
+
+  @computed get getIssueFolderNames() {
+    return toJS(this.issueForderNames);
+  }
+
+  @action setIssueForderNames(data) {
+    this.issueForderNames = data;
   }
 
   @action clearStore = () => {
@@ -178,6 +188,7 @@ class IssueStore {
             this.selectVersion(versions[0].versionId);
           }
           this.setIssues(res.content);
+          this.setIssueForderNames(_.map(res.content, 'folderName'));
           if (Page === 0) {
             this.setIssueIds(res.allIdValues || []);
           }

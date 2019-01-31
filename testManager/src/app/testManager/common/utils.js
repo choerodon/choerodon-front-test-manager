@@ -273,8 +273,12 @@ export function executeDetailLink(executeId) {
 export function executeDetailShowLink(executeId) {
   return commonLink(`/TestPlan/executeShow/${executeId}`);
 }
-export function testCaseDetailLink(testCaseId) {
-  return commonLink(`/IssueManage/testCase/${testCaseId}`);
+export function testCaseDetailLink(testCaseId, folderName) {
+  const menu = AppState.currentMenuType;
+  const {
+    type, id: projectId, name, organizationId,
+  } = menu;
+  return encodeURI(`/testManager/IssueManage/testCase/${testCaseId}?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}&folderName=${folderName}`);
 }
 /**
  * 颜色转rgba
