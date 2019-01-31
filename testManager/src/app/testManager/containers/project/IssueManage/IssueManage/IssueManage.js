@@ -8,7 +8,7 @@ import FileSaver from 'file-saver';
 import IssueStore from '../../../../store/project/IssueManage/IssueStore';
 
 import { loadIssue, downloadTemplate } from '../../../../api/IssueManageApi';
-import { commonLink, getParams } from '../../../../common/utils';
+import { commonLink, getParams, testCaseDetailLink } from '../../../../common/utils';
 import RunWhenProjectChange from '../../../../common/RunWhenProjectChange';
 
 import CreateIssue from '../../../../components/IssueManageComponent/CreateIssue';
@@ -137,6 +137,12 @@ export default class IssueManage extends Component {
     }
   }
 
+  handleTableRowClick=(record) => {
+    const { history } = this.props;
+    history.push(testCaseDetailLink(record.issueId, record.folderName));
+  }
+
+
   saveRef = name => (ref) => {
     this[name] = ref;
   }
@@ -230,47 +236,13 @@ export default class IssueManage extends Component {
               selectedIssue={selectedIssue}
               expand={expand}
               treeShow={treeShow}
+              onRow={record => ({
+                onClick: (event) => { this.handleTableRowClick(record); },                             
+              })}
             />
 
           </div>
           <ExportSide ref={this.saveRef('ExportSide')} />
-          <div
-            className="c7ntest-sidebar"
-            style={{
-              display: expand ? '' : 'none',
-              width: EditIssueWidth[EditIssueMode],
-            }}
-          >
-            {
-              expand ? (
-                <EditIssue
-                  mode={EditIssueMode === 'narrow' ? 'narrow' : 'wide'}
-                  ref={(instance) => {
-                    if (instance) { this.EditIssue = instance; }
-                  }}
-                  issueId={selectedIssue.issueId}
-                  onCancel={() => {
-                    this.setState({
-                      expand: false,
-                      selectedIssue: {},
-                    });
-                  }}
-                  onDeleteIssue={() => {
-                    this.setState({
-                      expand: false,
-                      selectedIssue: {},
-                    });
-                    IssueStore.loadIssues();
-                  }}
-                  onUpdate={this.handleIssueUpdate.bind(this)}
-                  onCopyAndTransformToSubIssue={() => {
-                    const { current, pageSize } = IssueStore.pagination;
-                    IssueStore.loadIssues(current - 1, pageSize);
-                  }}
-                />
-              ) : null
-            }
-          </div>
           {
             createIssueShow && (
               <CreateIssue

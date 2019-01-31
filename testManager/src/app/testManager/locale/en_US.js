@@ -80,6 +80,9 @@ const enUS = {
   execute_stepStatus: 'Status',
   execute_comment: 'Comment',    
   execute_copy: 'Copy test step',
+  execute_move: 'Move',
+  excute_save: 'Save',
+  excute_cancel: 'Cancel',
   // 执行历史记录表格
   execute_history_oldValue: 'Old value',
   execute_history_newValue: 'New value',  
@@ -269,6 +272,8 @@ const enUS = {
   issue_create_content_epic: 'Epic',
   issue_create_content_sprint: 'Sprint',
   issue_create_content_version: 'Version',
+  issue_create_content_folder: 'folder',
+
   // 编辑详情侧边栏
   issue_edit_hide: 'Hide detail',
   issue_edit_planTime: 'Estimated time',
