@@ -28,8 +28,6 @@ import LinkList from './Component/LinkList';
 import PriorityTag from '../PriorityTag';
 import StatusTag from '../StatusTag';
 import CopyIssue from '../CopyIssue';
-import TestStepTable from '../TestStepTable';
-import TestExecuteTable from '../TestExecuteTable';
 import TypeTag from '../TypeTag';
 import IssueTreeStore from '../../../store/project/IssueManage/IssueTreeStore';
 const { AppState } = stores;

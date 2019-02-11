@@ -86,7 +86,6 @@ class TestCaseDetail extends Component {
         })
 
         this.reloadIssue(id);
-        console.log('componentDidMount');
     }
 
     /**
@@ -154,47 +153,6 @@ class TestCaseDetail extends Component {
     }
     }
 
-     // createIssueStep = () => {
-  //   const { issueInfo, testStepData } = this.state;
-  //   const { issueId } = issueInfo;
-  //   const lastRank = testStepData.length
-  //     ? testStepData[testStepData.length - 1].rank : null;
-  //   const testCaseStepDTO = {
-  //     attachments: [],
-  //     issueId,
-  //     lastRank,
-  //     nextRank: null,
-  //     testStep: '测试步骤',
-  //     testData: '测试数据',
-  //     expectedResult: '预期结果',
-  //   };
-  //   createIssueStep(testCaseStepDTO).then(() => {
-  //     this.reloadIssue();
-  //   });
-  // }
-
-  createIssueStep = () => {
-    const { issueInfo, testStepData } = this.state;
-    const { issueId } = issueInfo;
-    const lastRank = testStepData.length
-      ? testStepData[testStepData.length - 1].rank : null;
-    const testCaseStepDTO = {
-      attachments: [],
-      issueId,
-      lastRank,
-      nextRank: null,
-      testStep: '',
-      testData: '',
-      expectedResult: '',
-      stepIsCreating: true,
-    };
-    this.setState({
-      testStepData: [...testStepData, testCaseStepDTO],
-    });
-   
-  }
-
-
     render() {
         const {
             testCaseId,
@@ -211,6 +169,8 @@ class TestCaseDetail extends Component {
             isExpand,
             folderName,
         } = this.state;
+
+        const hasStepIsCreating = testStepData.find(item => item.stepIsCreating);
 
         return (
             <Page className="c7ntest-testCaseDetail">
@@ -308,11 +268,6 @@ class TestCaseDetail extends Component {
                         onOk={() => {
                           this.reloadIssue(testCaseId);
                         }} />
-                        <div className="c7ntest-title-right" style={{ marginLeft: '3px', position: 'relative' }}>
-                        <Button disabled={disabled} style={{ color: '#3F51B5'}} icon="playlist_add" className="leftBtn" funcTyp="flat" onClick={this.createIssueStep}>
-                          <FormattedMessage id="issue_edit_addTestDetail" />
-                        </Button>
-                      </div>
                   </Card>
                   <Card
                     title={null}

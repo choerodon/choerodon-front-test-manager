@@ -5,7 +5,7 @@ import {
 import { stores, axios } from 'choerodon-front-boot';
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
-import { cloneStep, updateStep, deleteStep } from '../../../api/IssueManageApi';
+import { cloneStep, updateStep, deleteStep, createIssueStep } from '../../../api/IssueManageApi';
 import { DragTable } from '../../CommonComponent';
 import { TextEditToggle, UploadInTable } from '../../CommonComponent';
 import './TestStepTable.scss';
@@ -14,18 +14,48 @@ const { confirm } = Modal;
 const { Text, Edit } = TextEditToggle;
 const { AppState } = stores;
 const { TextArea } = Input;
+let didUpdateFlag = false;
 class TestStepTable extends Component {
   constructor(props) {
     super(props);
     this.state = {
       data: [],
+      isEditing: [],
+      createStep: {
+        testStep: '',
+        testData: '',
+        expectedResult: '',
+        attachments: [],
+      }
     };
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.data !== this.props.data && nextProps.data) {
-      this.setState({ data: nextProps.data });
+
+      this.setState({ 
+        data: nextProps.data,
+        isEditing: _.map(nextProps.data, (item, index) => {
+          return (
+            {
+              stepId: item.stepId,
+              index,
+              isStepNameEditing: false,
+              isStepDataEditing: false,
+              isStepExpectedResultEditing: false,
+            }
+          )
+        })
+       });
     }
+  }
+
+  componentWillUpdate() {
+    didUpdateFlag = false;
+  }
+
+  componentDidUpdate() {
+    didUpdateFlag = true;
   }
 
   onDragEnd = (sourceIndex, targetIndex) => {
@@ -58,17 +88,66 @@ class TestStepTable extends Component {
     });
   }
 
+  handleClickCreate = () => {
+    const {issueId, data} = this.props;
+    const {isEditing} = this.state;
+    const lastRank = data.length
+      ? data[data.length - 1].rank : null;
+    const testCaseStepDTO = {
+      attachments: [],
+      issueId,
+      lastRank,
+      nextRank: null,
+      testStep: '',
+      testData: '',
+      expectedResult: '',
+      stepIsCreating: true,
+    };
+    this.setState({
+      data: [...data, testCaseStepDTO],
+      isEditing: [...isEditing, {
+        stepId: undefined,
+        index: data.length,
+        isStepNameEditing: false,
+        isStepDataEditing: false,
+        isStepExpectedResultEditing: false,
+      }],
+      createStep: {
+        testStep: '',
+        testData: '',
+        expectedResult: '',
+        attachments: [],
+      }
+    });
+   
+  }
 
-  editStep = (record) => {
-    const { expectedResult, testStep } = record;
-    if (expectedResult !== '' && testStep !== '') {
-      const projectId = AppState.currentMenuType.id;     
-      updateStep(record).then((res) => {    
+  createIssueStep = () => {
+    const { issueId, data } = this.props;
+    const {createStep} = this.state;
+    const { expectedResult, testStep } = createStep;
+    if(expectedResult && testStep) {
+      const lastRank = data.length
+        ? data[data.length - 1].rank : null;
+      const testCaseStepDTO = {
+        issueId,
+        lastRank,
+        nextRank: null,
+        ...createStep,
+      };
+      createIssueStep(testCaseStepDTO).then(() => {
         this.props.onOk();
       });
     } else {
-      Choerodon.prompt('测试步骤和预期结果为必输项');
+      Choerodon.prompt('测试步骤和预期结果均为必输项');
     }
+  }
+
+
+  editStep = (record) => {
+      updateStep(record).then((res) => {    
+        this.props.onOk();
+      });
   };
 
   cloneStep = (stepId, index) => {
@@ -111,19 +190,187 @@ class TestStepTable extends Component {
     });
   }
 
-  createStep() {
-
+  renderStepName = (record) => {
+    const {disabled} = this.props;
+    const {isEditing, createStep} = this.state;
+    if(disabled) {
+      return (
+        <span>{record.testStep}</span>
+      )
+    } else {
+      const editingStepIndex = _.find(isEditing, item => item.stepId === record.stepId) ? _.find(isEditing, item => item.stepId === record.stepId)['index'] : -1;
+      if(editingStepIndex !== -1) {
+        return isEditing[editingStepIndex].isStepNameEditing ? (
+          <Input 
+            ref={(testStep) => {
+              this[`testStep${record.stepId}`] = testStep;
+            }}
+            // placeholder="测试步骤"
+            defaultValue={record.testStep}
+            onPressEnter={e => this.handleBlurOrEnter(e, record, 'testStep')}
+            onBlur={e => this.handleBlurOrEnter(e, record, 'testStep')}
+          />
+          ) : (
+          <span style={ { color: record.stepIsCreating && !createStep.testStep  ? '#bfbfbf' : '#000' } }>{record.stepIsCreating? (createStep.testStep ? createStep.testStep : '测试步骤') : record.testStep}</span>
+          )
+      }
+    }
   }
 
-  cancelStep() {
+  renderStepTestData = (record) => {
+    const {disabled} = this.props;
+    const {isEditing, createStep} = this.state;
+    if(disabled) {
+      return (
+        <span>{record.testData}</span>
+      )
+    } else {
+      const editingStepIndex = _.find(isEditing, item => item.stepId === record.stepId) ? _.find(isEditing, item => item.stepId === record.stepId)['index'] : -1;
+      if(editingStepIndex !== -1) {
+      return isEditing[editingStepIndex].isStepDataEditing ? (
+        <Input 
+          ref={(testData) => {
+            this[`testData${record.stepId}`] = testData;
+          }}
+          placeholder="测试数据"
+          defaultValue={record.testData}
+          onPressEnter={e => this.handleBlurOrEnter(e, record, 'testData')}
+          onBlur={e => this.handleBlurOrEnter(e, record, 'testData')}
+        />
+        ) : (
+        <span style={ { color: record.stepIsCreating && !createStep.testData  ? '#bfbfbf' : '#000' } }>{record.stepIsCreating? (createStep.testData ? createStep.testData : '测试数据') : record.testData}</span>
+        )
+      }
+    }
+  }
 
+  renderStepExpectedResult = (record) => {
+    const {disabled} = this.props;
+    const {isEditing, createStep} = this.state;
+    if(disabled) {
+      return (
+        <span>{record.expectedResult}</span>
+      )
+    } else {
+      const editingStepIndex = _.find(isEditing, item => item.stepId === record.stepId) ? _.find(isEditing, item => item.stepId === record.stepId)['index'] : -1;
+      if(editingStepIndex !== -1) {
+      return isEditing[editingStepIndex].isStepExpectedResultEditing ? (
+        <Input 
+          ref={(expectedResult) => {
+            this[`expectedResult${record.stepId}`] = expectedResult;
+          }}
+          placeholder="预期结果"
+          defaultValue={record.expectedResult}
+          onPressEnter={e => this.handleBlurOrEnter(e, record, 'expectedResult')}
+          onBlur={e => this.handleBlurOrEnter(e, record, 'expectedResult')}
+        />
+        ) : (
+        <span style={ { color: record.stepIsCreating && !createStep.expectedResult  ? '#bfbfbf' : '#000' } }>{record.stepIsCreating? (createStep.expectedResult ? createStep.expectedResult : '测试结果') : record.expectedResult}</span>
+        )
+      }
+    }
+  }
+
+
+  handleBlurOrEnter = (e, record, editField) => {
+   const {createStep, isEditing} = this.state;
+    
+    if(!record.stepIsCreating) {
+      record[editField] = e.target.value;
+      const { expectedResult, testStep } = record;
+      if(expectedResult !== '' && testStep !== '') {
+        this.editStep({ ...record, [editField]: e.target.value })
+      } else {
+        const editingStepIndex = _.find(isEditing, item => item.stepId === record.stepId)['index'];
+        isEditing[editingStepIndex][`is${_.upperFirst(editField)}Editing`] = true;
+        this.setState({
+          isEditing,
+        })
+        Choerodon.prompt('测试步骤和预期结果均为必输项');
+      }
+    }else {
+      isEditing[isEditing.length - 1][`is${_.upperFirst(editField)}Editing`] = false;
+      console.log(isEditing);
+      this.setState({
+        isEditing,
+      });
+      this.setState({
+        createStep: {
+          ...createStep,
+          [editField]: e.target.value,
+        }
+      });
+       
+      }
+    }
+
+  handleFieldOnClick = (e, record, editField) => {
+    const {disabled} = this.props;
+    const {isEditing} = this.state;
+    if(!disabled) {
+      // let fieldClicked = e.target;
+      // let fieldClickedParent = fieldClicked.parentNode;
+      _.forEach(isEditing, ele => {
+        ele.isStepNameEditing = false;
+        ele.isStepDataEditing =  false;
+        ele.isStepExpectedResultEditing = false;
+      });
+      const editingStepIndex = _.find(isEditing, item => item.stepId === record.stepId)['index'];
+      console.log(0);
+      // isEditing[editingStepIndex].isStepNameEditing = true,
+      isEditing[editingStepIndex][`is${_.upperFirst(editField)}Editing`] = true,
+
+      this.setState({
+        isEditing,
+      });
+
+      setTimeout(() => {
+        if(didUpdateFlag) {
+          let fieldClicked = e.target;
+          let fieldClickedParent = fieldClicked.parentNode;
+          console.log(didUpdateFlag);
+          console.log(fieldClicked);
+          console.log(fieldClickedParent);
+
+          if(fieldClicked.tagName === 'DIV') {
+            // console.log(fieldClicked);
+            fieldClicked.getElementsByTagName('input')[0].focus();
+          } else {
+            // console.log(fieldClickedParent);
+            fieldClickedParent.getElementsByTagName('input')[0].focus();
+          }
+        }
+      }, 300)
+
+    }
+    e.stopPropagation();
+  }
+
+ 
+  cancelCreateStep = (index) => {
+    let {data} = this.state;
+    let cancelStep = _.remove(data, (item, i) => {
+      return index === i;
+    })
+    this.setState({
+      data,
+      createStep: {
+        testStep: '',
+        testData: '',
+        expectedResult: '',
+        attachments: [],
+      }
+    })
   }
 
   render() {
-    const that = this;
     const {
       onOk, enterLoad, leaveLoad, disabled,
     } = this.props;
+
+    const {isEditing, data, createStep} = this.state;
+
+    const hasStepIsCreating = data.find(item => item.stepIsCreating);
 
     const columns = [{
       title: null,
@@ -139,189 +386,186 @@ class TestStepTable extends Component {
       dataIndex: 'testStep',
       key: 'testStep',
       flex: 2,
-      render(testStep, record) {
+      render: (testStep, record) => {
         return (
-          <div className="item-container">
-            <TextEditToggle
-              disabled={disabled}
-              formKey="testStep"
-              onSubmit={value => that.editStep({ ...record, testStep: value })}
-              originData={testStep}
-              rules={[{
-                required: true, message: '请输入步骤名!',
-              }]}
-            >
-              <Text>
-                {data => (
-                  <div className="c7ntest-text-wrap">
-                    {data}
-                  </div>
-                )}
-              </Text>
-              <Edit>
-                <TextArea autoFocus autosize />
-              </Edit>
-            </TextEditToggle>
+          <div 
+            className="item-container"
+            // onClick={e => this.handleFieldOnClick(e, record, 'testStep')}
+            onClick={ e => {
+              if(!disabled) {
+                let fieldClicked = e.target;
+                let fieldClickedParent = fieldClicked.parentNode;
+                _.forEach(isEditing, ele => {
+                  ele.isStepNameEditing = false;
+                  ele.isStepDataEditing =  false;
+                  ele.isStepExpectedResultEditing = false;
+                });
+                const editingStepIndex = _.find(isEditing, item => item.stepId === record.stepId)['index'];
+                isEditing[editingStepIndex].isStepNameEditing = true,
+                this.setState({
+                  isEditing,
+                });
+  
+                setTimeout(() => {
+                  if(fieldClicked.tagName === 'DIV') {
+                    fieldClicked.getElementsByTagName('input')[0].focus();
+                  } else {
+                    fieldClickedParent.getElementsByTagName('input')[0].focus();
+                  }
+                }, 100)
+             
+              }
+              e.stopPropagation();
+            }
+            }
+          >
+          {
+            this.renderStepName(record)
+          }
           </div>
         );
-      },
-    }, {
+    }
+  }, {
       title: <FormattedMessage id="execute_testData" />,
       dataIndex: 'testData',
       key: 'testData',
       flex: 2,
-      render(testData, record) {
+      render: (testData, record) => {
+        return (
+          <div 
+          className="item-container"
+          onClick={(e) => {
+            if(!disabled) {
+              let fieldClicked = e.target;
+              let fieldClickedParent = fieldClicked.parentNode;
+              _.forEach(isEditing, ele => {
+                ele.isStepNameEditing = false;
+                ele.isStepDataEditing =  false;
+                ele.isStepExpectedResultEditing = false;
+              });
+              const editingStepIndex = _.find(isEditing, item => item.stepId === record.stepId)['index'];
+              isEditing[editingStepIndex].isStepDataEditing = true,
+              this.setState({
+                isEditing,
+              });
+
+              setTimeout(() => {
+                if(fieldClicked.tagName === 'DIV') {
+                  fieldClicked.getElementsByTagName('input')[0].focus();
+                } else {
+                  fieldClickedParent.getElementsByTagName('input')[0].focus();
+                }
+              }, 100)
+           
+            }
+            e.stopPropagation();
+          }}
+
+          // onClick = {
+          //   e => this.handleFieldOnClick(e, record, 'testData')
+          // }
+        >
+        {
+            this.renderStepTestData(record)
+          }
+        </div>
+        );
+      },
+    }, {
+      title: <FormattedMessage id="execute_expectedOutcome" />,
+      dataIndex: 'expectedResult',
+      key: 'expectedResult',
+      flex: 2,
+      render: (expectedResult, record) => {
+        return (
+          <div 
+            className="item-container"
+            onClick={(e) => {
+              if(!disabled) {
+                let fieldClicked = e.target;
+                let fieldClickedParent = fieldClicked.parentNode;
+                _.forEach(isEditing, ele => {
+                  ele.isStepNameEditing = false;
+                  ele.isStepDataEditing =  false;
+                  ele.isStepExpectedResultEditing = false;
+                });
+                const editingStepIndex = _.find(isEditing, item => item.stepId === record.stepId)['index'];
+                isEditing[editingStepIndex].isStepExpectedResultEditing = true,
+                this.setState({
+                  isEditing,
+                });
+  
+                setTimeout(() => {
+                  if(fieldClicked.tagName === 'DIV') {
+                    fieldClicked.getElementsByTagName('input')[0].focus();
+                  } else {
+                    fieldClickedParent.getElementsByTagName('input')[0].focus();
+                  }
+                }, 100)
+             
+              }
+              e.stopPropagation();
+            }}
+          >
+          {
+            this.renderStepExpectedResult(record)
+          }
+        </div>
+        );
+      },
+    }, {
+      title: <FormattedMessage id="execute_stepAttachment" />,
+      dataIndex: 'attachments',
+      key: 'attachments',
+      flex: 2,
+      render(attachments, record) {
         return (
           <div className="item-container">
-            <TextEditToggle
-              disabled={disabled}
-              // rules={[{ max: 30, message: '测试数据最长为30' }]}
-              formKey="testData"
-              onSubmit={value => that.editStep({ ...record, testData: value })}
-              originData={testData}
-            >
-              <Text>
-                {data => (
-                  <div className="c7ntest-text-wrap">
-                    {data}
-                  </div>
-                )}
-              </Text>
-              <Edit>
-                <TextArea autoFocus autosize />
-              </Edit>
-            </TextEditToggle>
+            <UploadInTable
+              fileList={record.stepIsCreating ? createStep.attachments : attachments}
+              onOk={onOk}
+              enterLoad={enterLoad}
+              leaveLoad={leaveLoad}
+              config={{
+                attachmentLinkId: record.stepId,
+                attachmentType: 'CASE_STEP',
+              }}
+            />
           </div>
         );
       },
-    }];
-    const wideColumns = [
-      {
-        title: <FormattedMessage id="execute_expectedOutcome" />,
-        dataIndex: 'expectedResult',
-        key: 'expectedResult',
-        flex: 2,
-        render(expectedResult, record) {
-          return (
-            <div className="item-container">
-              <TextEditToggle
-                disabled={disabled}
-                formKey="expectedResult"
-                onSubmit={value => that.editStep({ ...record, expectedResult: value })}
-                originData={expectedResult}
-                rules={[{
-                  required: true, message: '请输入预期结果!',
-                }]}
-              >
-                <Text>
-                  {data => (
-                    <div className="c7ntest-text-wrap">
-                      {data}
-                    </div>
-                  )}
-                </Text>
-                <Edit>
-                  <TextArea autoFocus autosize />
-                </Edit>
-              </TextEditToggle>
-            </div>
-          );
-        },
-      }, {
-        title: <FormattedMessage id="execute_stepAttachment" />,
-        dataIndex: 'attachments',
-        key: 'attachments',
-        flex: 2,
-        render(attachments, record) {
-          return (
-            <div className="item-container">
-              <TextEditToggle
-                disabled={disabled}
-                originData={attachments}
-              >
-                <Text>
-                  <div style={{ minHeight: 20 }}>
-                    {attachments.map(attachment => (
-                      <div style={{
-                        display: 'flex', fontSize: '12px', flexShrink: 0, margin: '5px 2px', alignItems: 'center',
-                      }}
-                      >
-                        <Icon type="attach_file" style={{ fontSize: '12px', color: 'rgba(0,0,0,0.65)' }} />
-                        <a className="c7ntest-text-dot" style={{ margin: '2px 5px', fontSize: '13px' }} href={attachment.url} target="_blank" rel="noopener noreferrer">{attachment.attachmentName}</a>
-                      </div>
-                    ))
-                    }
-                  </div>
-                </Text>
-                <Edit>
-                  <UploadInTable
-                    fileList={attachments}
-                    onOk={onOk}
-                    enterLoad={enterLoad}
-                    leaveLoad={leaveLoad}
-                    config={{
-                      attachmentLinkId: record.stepId,
-                      attachmentType: 'CASE_STEP',
-                    }}
-                  />
-                </Edit>
-              </TextEditToggle>
-            </div>
-          );
-        },
-      }, {
-        title: null,
-        dataIndex: 'action',
-        key: 'action',
-        flex: 2,
-        render(attachments, record, index, provided, snapshot) {
-          const {stepIsCreating} = record;
+    }, {
+      title: null,
+      dataIndex: 'action',
+      key: 'action',
+      flex: 2,
+      render: (attachments, record, index, provided, snapshot) => {
+        const {stepIsCreating} = record;
 
-          return !stepIsCreating ? (
-            <div>
-               <Tooltip title={<FormattedMessage id="execute_copy" />}>
-                <Icon type="format_indent_decrease" {...provided.dragHandleProps} />
-              </Tooltip>
-              <Tooltip title={<FormattedMessage id="execute_copy" />}>
-                <Button disabled={disabled} shape="circle" funcType="flat" icon="library_books" style={{ margin: '0 5px', color: 'black' }} onClick={() => that.cloneStep(record.stepId, index)} />
-              </Tooltip>
-              <Button disabled={disabled} shape="circle" funcType="flat" icon="delete_forever" style={{ margin: '0 5px', color: 'black' }} onClick={() => that.handleDeleteTestStep(record.stepId)} />
-            </div>
-          ) : (
-            <div>
-              <Tooltip title={<FormattedMessage id="execute_copy" />}>
-                <Icon type="format_indent_decrease" {...provided.dragHandleProps} />
-              </Tooltip>
-            <Tooltip title={<FormattedMessage id="execute_save" />}>
-              <Button disabled={disabled} shape="circle" funcType="flat" icon="done" style={{ margin: '0 5px', color: 'black' }} onClick={() => that.createStep(record.stepId, index)} />
+        return !stepIsCreating ? (
+          <div>
+             <Tooltip title={<FormattedMessage id="execute_copy" />}>
+              <Icon type="format_indent_decrease" {...provided.dragHandleProps} />
+            </Tooltip>
+            <Tooltip title={<FormattedMessage id="execute_copy" />}>
+              <Button disabled={disabled} shape="circle" funcType="flat" icon="library_books" style={{ margin: '0 5px', color: 'black' }} onClick={() => this.cloneStep(record.stepId, index)} />
+            </Tooltip>
+            <Button disabled={disabled} shape="circle" funcType="flat" icon="delete_forever" style={{ margin: '0 5px', color: 'black' }} onClick={() => this.handleDeleteTestStep(record.stepId)} />
+          </div>
+        ) : (
+          <div>
+            <div {...provided.dragHandleProps} />
+            <Tooltip title={<FormattedMessage id="excute_save" />}>
+              <Button disabled={disabled} shape="circle" funcType="flat" icon="done" style={{ margin: '0 5px', color: 'black' }} onClick={() => this.createIssueStep()} />
             </Tooltip>
             <Tooltip title={<FormattedMessage id="excute_cancel" />}>
-              <Button disabled={disabled} shape="circle" funcType="flat" icon="close" style={{ margin: '0 5px', color: 'black' }} onClick={() => that.cancelStep(record.stepId)} />
+              <Button disabled={disabled} shape="circle" funcType="flat" icon="close" style={{ margin: '0 5px', color: 'black' }} onClick={() => this.cancelCreateStep(index)} />
             </Tooltip>
-          </div>
-          )
-        },
+        </div>
+        )
       },
-    ];
-    const createColumn = [
-     { title: null,
-        dataIndex: 'createAction',
-        key: 'createAction',
-        // flex: 2,
-        render(attachments, record, index) {
-          const {stepIsCreating} = record;
-          return stepIsCreating && (
-            <div>
-              <Tooltip title={<FormattedMessage id="execute_save" />}>
-                <Button disabled={disabled} shape="circle" funcType="flat" icon="done" style={{ margin: '0 5px', color: 'black' }} onClick={() => that.createStep(record.stepId, index)} />
-              </Tooltip>
-              <Tooltip title={<FormattedMessage id="excute_cancel" />}>
-                <Button disabled={disabled} shape="circle" funcType="flat" icon="close" style={{ margin: '0 5px', color: 'black' }} onClick={() => that.cancelStep(record.stepId)} />
-              </Tooltip>
-            </div>
-          );
-        },}
-    ]
+    },];
+    
     return (
       <div className="c7ntest-TestStepTable">
         <DragTable
@@ -329,12 +573,16 @@ class TestStepTable extends Component {
           pagination={false}
           filterBar={false}
           dataSource={this.state.data}
-          // columns={mode === 'narrow' ? columns.concat(createColumn) : columns.concat(wideColumns)}
-          columns={columns.concat(wideColumns)}
+          columns={columns}
           onDragEnd={this.onDragEnd}
           dragKey="stepId"
           customDragHandle
         />
+          <div className="c7ntest-title-right" style={{ marginLeft: '3px', position: 'relative' }}>
+            <Button disabled={disabled || hasStepIsCreating} style={{ color: disabled || hasStepIsCreating ? '#bfbfbf' : '#3F51B5'}} icon="playlist_add" className="leftBtn" funcTyp="flat" onClick={this.handleClickCreate}>
+              <FormattedMessage id="issue_edit_addTestDetail" />
+            </Button>
+          </div>
       </div>
     );
   }
