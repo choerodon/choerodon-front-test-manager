@@ -107,7 +107,7 @@ class DragTable extends Component {
   handleRow=(item, e) => {
     console.log(item, e);
     const { onRow } = this.props;
-    if (onRow(item).onClick) {
+    if (onRow && onRow(item).onClick) {
       onRow(item).onClick(e);
     }
   }
@@ -126,7 +126,7 @@ class DragTable extends Component {
 
   renderTbody(data) {   
     const {
-      columns, dragKey, disabled, customDragHandle
+      columns, dragKey, disabled, customDragHandle, onRow,
     } = this.props;
     const judgeProps = props => (customDragHandle ? {} : props);
     const Columns = columns.filter(column => this.shouldColumnShow(column));
