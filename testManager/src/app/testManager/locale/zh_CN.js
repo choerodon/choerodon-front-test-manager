@@ -86,7 +86,7 @@ const zhCN = {
   execute_stepAttachment: '步骤附件',
   execute_stepStatus: '状态',
   execute_comment: '注释',
-  execute_copy: '复制测试步骤',
+  execute_copy: '复制',
   execute_move: '移动',
   excute_save: '保存',
   excute_cancel: '取消',
