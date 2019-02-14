@@ -6,7 +6,7 @@
     background: #F5F5F5;
     font-weight: 500;
     .ant-table-row-expand-icon-cell .ant-table-row-expand-icon {
-      visibility: hidden;
+      display: none;
     }
   }
   .ant-table-expanded-row>td:last-child {

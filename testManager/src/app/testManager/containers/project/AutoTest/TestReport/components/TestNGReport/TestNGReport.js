@@ -878,6 +878,7 @@ class TestNGReport extends Component {
                       columns={columns}
                       expandedRowRender={expandedRowRender}
                       dataSource={tests}
+                      pagination={false}
                     />
                   );
                 })
