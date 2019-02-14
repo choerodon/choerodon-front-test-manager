@@ -622,6 +622,31 @@ const data = {
   },
 };
 class TestNGReport extends Component {
+  state = {
+    selectedSuites: [],
+    allSuites: [],
+    filteredSuites: [],
+  }
+
+  handleSelect=(selectedSuites) => {
+    this.setState({
+      selectedSuites,
+    });
+  }
+
+  static getDerivedStateFromProps(props, state) {
+    const filteredSuites = data['testng-results'].suite.filter((suite) => {
+      if (state.selectedSuites.length === 0) { return suite.test; } else {
+        return suite.test && state.selectedSuites.includes(suite.name);
+      }
+    });    
+    const allSuites = data['testng-results'].suite.filter(suite => suite.test);  
+    return {
+      allSuites,
+      filteredSuites,
+    };
+  }
+
   // 统计suite中所有test的通过状况
   calculateTestByTest = (tests) => {
     let pass = 0;
@@ -633,16 +658,16 @@ class TestNGReport extends Component {
       all += this.calculateTestByClass(test.class).all;
       pass += this.calculateTestByClass(test.class).pass;
       skip += this.calculateTestByClass(test.class).skip;
-      fail += this.calculateTestByClass(test.class).fail;      
+      fail += this.calculateTestByClass(test.class).fail;
     });
     tests.push({
-      name: '总计',    
+      name: '总计',
       pass,
       skip,
       fail,
       passPercent: isNaN(pass / all * 100) ? 0 : pass / all * 100,
       class: { 'test-method': [] },
-    });    
+    });
   }
 
   // 统计一个test中的所有class的方法通过情况
@@ -686,7 +711,8 @@ class TestNGReport extends Component {
   }
 
   render() {
-    // const { data } = this.props;
+    const log = data['reporter-output'];
+    const { filteredSuites, allSuites } = this.state;
     const columns = [
       { title: '测试', dataIndex: 'name', key: 'name' },
       {
@@ -729,8 +755,8 @@ class TestNGReport extends Component {
         render: (pass, record) => `${record.passPercent || this.calculateTestByClass(record.class).passPercent}%`,
       },
     ];
-    const suites = data['testng-results'].suite.filter(suite => suite.test);
-    const log = data['reporter-output'];
+    
+    
     const InnerTable = (TestClass) => {
       const { name } = TestClass;
       const innerColumns = [
@@ -759,10 +785,9 @@ class TestNGReport extends Component {
             );
           },
         },
-      ];
-      const status = this.calculateTestByClass(TestClass).passPercent;
+      ];   
       return (
-        <Table          
+        <Table
           filterBar={false}
           columns={innerColumns}
           dataSource={TestClass['test-method']}
@@ -770,8 +795,7 @@ class TestNGReport extends Component {
         />
       );
     };
-    const expandedRowRender = (record) => {
-      const TestClasses = record.class instanceof Array ? record.class : [record.class];
+    const expandedRowRender = (record) => {      
       const { PassClasses, SkipClasses, FailClasses } = this.groupClassByStatus(record.class);
       return (
         <div>
@@ -819,19 +843,25 @@ class TestNGReport extends Component {
             <section style={{ display: 'flex', alignItems: 'center' }}>
               筛选：
               <Select
-                allowClear
-                className="c7ntest-select"
+                mode="multiple"          
+                className="quickSearchSelect"
                 placeholder="Suite"
-              // style={{ width: 200 }}
+                maxTagCount={0}
+                maxTagPlaceholder={ommittedValues => `${ommittedValues.map(item => item).join(', ')}`}              
+                onChange={this.handleSelect}
               >
-                <Option key="1" value="1">
-                  suite
-                </Option>
+                {
+                allSuites.map(suite => (
+                  <Option key={suite.name} value={suite.name}>
+                    {suite.name}
+                  </Option>
+                ))
+              }               
               </Select>
             </section>
             <section>
               {
-                suites.map((suite) => {
+                filteredSuites.map((suite) => {
                   const tests = suite.test instanceof Array ? suite.test : [suite.test];
                   this.calculateTestByTest(tests);
                   return (
