@@ -640,7 +640,7 @@ class TestNGReport extends Component {
       pass,
       skip,
       fail,
-      passPercent: pass / all * 100,
+      passPercent: isNaN(pass / all * 100) ? 0 : pass / all * 100,
       class: { 'test-method': [] },
     });    
   }
@@ -654,13 +654,13 @@ class TestNGReport extends Component {
     let all = 0;
     TestClasses.forEach((TestClass) => {
       // console.log(TestClass);
-      all += TestClass['test-method'].length;
-      pass += TestClass['test-method'].filter(method => method.status === 'PASS').length;
-      skip += TestClass['test-method'].filter(method => method.status === 'SKIP').length;
-      fail += TestClass['test-method'].filter(method => method.status === 'FAIL').length;
+      all += TestClass['test-method'].filter(method => !method['is-config']).length;
+      pass += TestClass['test-method'].filter(method => !method['is-config'] && method.status === 'PASS').length;
+      skip += TestClass['test-method'].filter(method => !method['is-config'] && method.status === 'SKIP').length;
+      fail += TestClass['test-method'].filter(method => !method['is-config'] && method.status === 'FAIL').length;
     });
     return {
-      pass, skip, fail, all, passPercent: pass / all * 100,
+      pass, skip, fail, all, passPercent: isNaN(pass / all * 100) ? 0 : pass / all * 100,
     };
   }
 
@@ -670,11 +670,11 @@ class TestNGReport extends Component {
     const getTestByStatus = (type) => {
       const Classes = JSON.parse(JSON.stringify(TestClasses));
       Classes.forEach((TestClass) => {
-        const len = TestClass['test-method'].filter(method => method.status === type).length;
+        const len = TestClass['test-method'].filter(method => !method['is-config'] && method.status === type).length;
         if (len === 0) {
           TestClass.empty = true;
         }
-        TestClass['test-method'] = TestClass['test-method'].filter(method => method.status === type);
+        TestClass['test-method'] = TestClass['test-method'].filter(method => !method['is-config'] && method.status === type);
       });
 
       return Classes.filter(Class => !Class.empty);
