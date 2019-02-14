@@ -621,6 +621,47 @@ const data = {
     skipped: 2,
   },
 };
+// 统计一个test中的所有class的方法通过情况
+const calculateTestByClass = (classes) => {
+  const TestClasses = classes instanceof Array ? classes : [classes];
+  let pass = 0;
+  let skip = 0;
+  let fail = 0;
+  let all = 0;
+  TestClasses.forEach((TestClass) => {
+    // console.log(TestClass);
+    all += TestClass['test-method'].filter(method => !method['is-config']).length;
+    pass += TestClass['test-method'].filter(method => !method['is-config'] && method.status === 'PASS').length;
+    skip += TestClass['test-method'].filter(method => !method['is-config'] && method.status === 'SKIP').length;
+    fail += TestClass['test-method'].filter(method => !method['is-config'] && method.status === 'FAIL').length;
+  });
+  return {
+    pass, skip, fail, all, passPercent: isNaN(pass / all * 100) ? 0 : pass / all * 100,
+  };
+};
+const calculateTestByTest = (tests) => {
+  let pass = 0;
+  let skip = 0;
+  let fail = 0;
+  let all = 0;
+  tests.forEach((test) => {
+    // console.log(TestClass);
+    all += calculateTestByClass(test.class).all;
+    pass += calculateTestByClass(test.class).pass;
+    skip += calculateTestByClass(test.class).skip;
+    fail += calculateTestByClass(test.class).fail;
+  });
+  tests.push({
+    name: '总计',
+    pass,
+    skip,
+    fail,
+    passPercent: isNaN(pass / all * 100) ? 0 : pass / all * 100,
+    class: { 'test-method': [] },
+  });
+};
+
+
 class TestNGReport extends Component {
   state = {
     selectedSuites: [],
@@ -635,12 +676,17 @@ class TestNGReport extends Component {
   }
 
   static getDerivedStateFromProps(props, state) {
-    const filteredSuites = data['testng-results'].suite.filter((suite) => {
+    const suites = JSON.parse(JSON.stringify(data['testng-results'].suite));
+    const filteredSuites = suites.filter((suite) => {
       if (state.selectedSuites.length === 0) { return suite.test; } else {
         return suite.test && state.selectedSuites.includes(suite.name);
       }
     });    
-    const allSuites = data['testng-results'].suite.filter(suite => suite.test);  
+    const allSuites = suites.filter(suite => suite.test);      
+    filteredSuites.forEach((suite) => {
+      suite.test = suite.test instanceof Array ? suite.test : [suite.test];
+      calculateTestByTest(suite.test);   
+    });         
     return {
       allSuites,
       filteredSuites,
@@ -648,46 +694,7 @@ class TestNGReport extends Component {
   }
 
   // 统计suite中所有test的通过状况
-  calculateTestByTest = (tests) => {
-    let pass = 0;
-    let skip = 0;
-    let fail = 0;
-    let all = 0;
-    tests.forEach((test) => {
-      // console.log(TestClass);
-      all += this.calculateTestByClass(test.class).all;
-      pass += this.calculateTestByClass(test.class).pass;
-      skip += this.calculateTestByClass(test.class).skip;
-      fail += this.calculateTestByClass(test.class).fail;
-    });
-    tests.push({
-      name: '总计',
-      pass,
-      skip,
-      fail,
-      passPercent: isNaN(pass / all * 100) ? 0 : pass / all * 100,
-      class: { 'test-method': [] },
-    });
-  }
 
-  // 统计一个test中的所有class的方法通过情况
-  calculateTestByClass = (classes) => {
-    const TestClasses = classes instanceof Array ? classes : [classes];
-    let pass = 0;
-    let skip = 0;
-    let fail = 0;
-    let all = 0;
-    TestClasses.forEach((TestClass) => {
-      // console.log(TestClass);
-      all += TestClass['test-method'].filter(method => !method['is-config']).length;
-      pass += TestClass['test-method'].filter(method => !method['is-config'] && method.status === 'PASS').length;
-      skip += TestClass['test-method'].filter(method => !method['is-config'] && method.status === 'SKIP').length;
-      fail += TestClass['test-method'].filter(method => !method['is-config'] && method.status === 'FAIL').length;
-    });
-    return {
-      pass, skip, fail, all, passPercent: isNaN(pass / all * 100) ? 0 : pass / all * 100,
-    };
-  }
 
   groupClassByStatus = (classes) => {
     const TestClasses = classes instanceof Array ? classes : [classes];
@@ -726,7 +733,7 @@ class TestNGReport extends Component {
   </span>,
         dataIndex: 'pass',
         key: 'pass',
-        render: (pass, record) => record.pass || this.calculateTestByClass(record.class).pass,
+        render: (pass, record) => record.pass || calculateTestByClass(record.class).pass,
       },
       {
         title:
@@ -736,7 +743,7 @@ class TestNGReport extends Component {
   </span>,
         dataIndex: 'skip',
         key: 'skip',
-        render: (pass, record) => record.skip || this.calculateTestByClass(record.class).skip,
+        render: (pass, record) => record.skip || calculateTestByClass(record.class).skip,
       },
       {
         title:
@@ -746,13 +753,13 @@ class TestNGReport extends Component {
   </span>,
         dataIndex: 'fail',
         key: 'fail',
-        render: (pass, record) => record.fail || this.calculateTestByClass(record.class).fail,
+        render: (pass, record) => record.fail || calculateTestByClass(record.class).fail,
       },
       {
         title: '通过率',
         dataIndex: 'passPercent',
         key: 'passPercent',
-        render: (pass, record) => `${record.passPercent || this.calculateTestByClass(record.class).passPercent}%`,
+        render: (pass, record) => `${record.passPercent || calculateTestByClass(record.class).passPercent}%`,
       },
     ];
     
@@ -840,8 +847,8 @@ class TestNGReport extends Component {
         TestNGReport
         <Tabs defaultActiveKey="1">
           <TabPane tab="总览" key="1">
-            <section style={{ display: 'flex', alignItems: 'center' }}>
-              筛选：
+            <section style={{ display: 'flex', alignItems: 'center', marginBottom: '15px' }}>
+              <span style={{ fontWeight: 500 }}>筛选：</span>
               <Select
                 mode="multiple"          
                 className="quickSearchSelect"
@@ -862,8 +869,7 @@ class TestNGReport extends Component {
             <section>
               {
                 filteredSuites.map((suite) => {
-                  const tests = suite.test instanceof Array ? suite.test : [suite.test];
-                  this.calculateTestByTest(tests);
+                  const tests = suite.test instanceof Array ? suite.test : [suite.test];                  
                   return (
                     <Table
                       rowClassName={(record, index) => (index === tests.length - 1 ? 'c7ntest-table-total' : '')}
