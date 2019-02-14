@@ -79,7 +79,7 @@ const enUS = {
   execute_stepAttachment: 'Step attachment', 
   execute_stepStatus: 'Status',
   execute_comment: 'Comment',    
-  execute_copy: 'Copy test step',
+  execute_copy: 'Copy',
   execute_move: 'Move',
   excute_save: 'Save',
   excute_cancel: 'Cancel',

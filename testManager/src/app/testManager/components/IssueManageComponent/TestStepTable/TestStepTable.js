@@ -232,7 +232,7 @@ class TestStepTable extends Component {
           ref={(testData) => {
             this[`testData${record.stepId}`] = testData;
           }}
-          placeholder="测试数据"
+          // placeholder="测试数据"
           defaultValue={record.testData}
           onPressEnter={e => this.handleBlurOrEnter(e, record, 'testData')}
           onBlur={e => this.handleBlurOrEnter(e, record, 'testData')}
@@ -259,7 +259,7 @@ class TestStepTable extends Component {
           ref={(expectedResult) => {
             this[`expectedResult${record.stepId}`] = expectedResult;
           }}
-          placeholder="预期结果"
+          // placeholder="预期结果"
           defaultValue={record.expectedResult}
           onPressEnter={e => this.handleBlurOrEnter(e, record, 'expectedResult')}
           onBlur={e => this.handleBlurOrEnter(e, record, 'expectedResult')}
@@ -544,9 +544,9 @@ class TestStepTable extends Component {
 
         return !stepIsCreating ? (
           <div>
-             <Tooltip title={<FormattedMessage id="execute_copy" />}>
-              <Icon type="format_indent_decrease" {...provided.dragHandleProps} />
-            </Tooltip>
+             <Tooltip title={<FormattedMessage id="execute_move" />}>
+              <Icon type="open_with" {...provided.dragHandleProps} style={{ marginTop: -5, marginRight: 15}} />
+ </Tooltip>
             <Tooltip title={<FormattedMessage id="execute_copy" />}>
               <Button disabled={disabled} shape="circle" funcType="flat" icon="library_books" style={{ margin: '0 5px', color: 'black' }} onClick={() => this.cloneStep(record.stepId, index)} />
             </Tooltip>
@@ -556,7 +556,7 @@ class TestStepTable extends Component {
           <div>
             <div {...provided.dragHandleProps} />
             <Tooltip title={<FormattedMessage id="excute_save" />}>
-              <Button disabled={disabled} shape="circle" funcType="flat" icon="done" style={{ margin: '0 5px', color: 'black' }} onClick={() => this.createIssueStep()} />
+              <Button disabled={disabled} shape="circle" funcType="flat" icon="done" style={{ margin: '0 -5px 5px', color: 'black' }} onClick={() => this.createIssueStep()} />
             </Tooltip>
             <Tooltip title={<FormattedMessage id="excute_cancel" />}>
               <Button disabled={disabled} shape="circle" funcType="flat" icon="close" style={{ margin: '0 5px', color: 'black' }} onClick={() => this.cancelCreateStep(index)} />
