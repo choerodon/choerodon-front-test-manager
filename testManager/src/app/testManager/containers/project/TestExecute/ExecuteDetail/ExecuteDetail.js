@@ -233,7 +233,7 @@ class ExecuteDetail extends Component {
       key: 'lastUpdateDate',
       width: '25%',
     }, {
-      title: 'Field',
+      title: '字段',
       dataIndex: 'field',
       key: 'field',
     }, {

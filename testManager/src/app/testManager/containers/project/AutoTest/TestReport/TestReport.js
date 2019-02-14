@@ -8,10 +8,14 @@ import { MochaReport, TestNGReport } from './components';
 import { getTestReport } from '../../../../api/AutoTestApi';
 import { commonLink, getProjectName } from '../../../../common/utils';
 
+const ReportComponents = {
+  mocha: MochaReport,
+  TestNG: TestNGReport,
+};
 class TestReport extends Component {
   state = {
     loading: false,
-    ReportData: {},
+    ReportData: { framework: '', json: '{}' },
   }
 
   componentDidMount() {
@@ -37,6 +41,10 @@ class TestReport extends Component {
 
   render() {
     const { loading, ReportData } = this.state;
+    const { framework, json } = ReportData;
+    const Report = ReportComponents[framework] ? ReportComponents[framework] : () => <div />;
+    // const Data = JSON.parse(json);
+    const Data = '';
     return (
       <Page>
         <Header
@@ -55,10 +63,9 @@ class TestReport extends Component {
           description="您可以在此页面一目了然地了解测试报告详情。"
           link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management"
         >
-          {/* <MochaReport data={ReportData} /> */}
           {loading
             ? <Progress type="loading" className="spin-container" />
-            : <TestNGReport data={ReportData} />}
+            : <Report data={Data} />}
         </Content>
       </Page>      
     );

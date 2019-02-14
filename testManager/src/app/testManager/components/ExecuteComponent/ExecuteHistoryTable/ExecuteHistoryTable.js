@@ -70,7 +70,7 @@ class ExecuteHistoryTable extends PureComponent {
       dataIndex: 'lastUpdateDate',
       key: 'lastUpdateDate',
     }, {
-      title: 'Field',
+      title: '字段',
       dataIndex: 'field',
       key: 'field',
     }, {
