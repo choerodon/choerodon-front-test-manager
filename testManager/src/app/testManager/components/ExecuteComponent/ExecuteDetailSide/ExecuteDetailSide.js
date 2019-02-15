@@ -21,7 +21,6 @@ const navs = [
 ];
 let sign = true;
 const propTypes = {
-  visible: PropTypes.bool.isRequired,
   issueInfosDTO: PropTypes.shape({}).isRequired,
   cycleData: PropTypes.shape({}).isRequired,
   fileList: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
@@ -134,7 +133,7 @@ class ExecuteDetailSide extends Component {
 
   render() {
     const {
-      visible, issueInfosDTO, cycleData, fileList, onFileRemove, status, onClose, onUpload, 
+      issueInfosDTO, cycleData, fileList, onFileRemove, status, onClose, onUpload, 
       onCommentSave, onRemoveDefect, onCreateBugShow,
     } = this.props;
     const { FullEditorShow, editing } = this.state;
@@ -146,16 +145,15 @@ class ExecuteDetailSide extends Component {
     const props = {
       onRemove: onFileRemove,
     };
-    return (visible
-      && (
-        <div className="c7ntest-ExecuteDetailSide">
-          <FullEditor
+    return (
+      <div className="c7ntest-ExecuteDetailSide">
+        <FullEditor
             initValue={comment}
             visible={FullEditorShow}
             onCancel={this.HideFullEditor}
             onOk={onCommentSave}
           />
-          <div className="c7ntest-nav">
+        <div className="c7ntest-nav">
             {/* 左上角类型图标 */}
             <div style={{
               height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', 
@@ -168,7 +166,7 @@ class ExecuteDetailSide extends Component {
               {this.renderNavs()}
             </ul>
           </div>
-          <div className="c7ntest-content">
+        <div className="c7ntest-content">
             <div className="c7ntest-content-top">
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <div style={{ fontSize: '16px', fontWeight: 500 }}>
@@ -313,8 +311,8 @@ class ExecuteDetailSide extends Component {
               </section>
             </div>
           </div>
-        </div>
-      )
+      </div>
+     
     );
   }
 }
