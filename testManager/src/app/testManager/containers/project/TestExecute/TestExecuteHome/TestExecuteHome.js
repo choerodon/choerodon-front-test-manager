@@ -450,13 +450,14 @@ class TestExecuteHome extends Component {
   }
 
   calculateNum = (cycleCaseList) => {
-    const total = Object.keys(cycleCaseList).length;
+    let total = 0;
+    Object.keys(cycleCaseList).forEach((key) => { total += cycleCaseList[key]; });
     let notExecute = 0;
     const { statusList } = this.state;
     for (let i = 0; i < statusList.length; i += 1) {
       const status = statusList[i];
       if (cycleCaseList[status.statusColor] && status.statusName === '未执行' && status.projectId === 0) {
-        notExecute += 1;
+        notExecute += cycleCaseList[status.statusColor];
       }
     }
     return {
@@ -1095,9 +1096,9 @@ class TestExecuteHome extends Component {
                 >
                   <img src={noRight} alt="" />
                   <div style={{ marginLeft: 40 }}>
-                      <div style={{ fontSize: '14px', color: 'rgba(0,0,0,0.65)' }}>根据当前选定的测试循环没有查询到循环信息</div>
-                      <div style={{ fontSize: '20px', marginTop: 10 }}>您可以点击测试用例进行详细测试执行</div>
-                    </div>
+                    <div style={{ fontSize: '14px', color: 'rgba(0,0,0,0.65)' }}>根据当前选定的测试循环没有查询到循环信息</div>
+                    <div style={{ fontSize: '20px', marginTop: 10 }}>您可以点击测试用例进行详细测试执行</div>
+                  </div>
                 </div>
               )}
             </div>

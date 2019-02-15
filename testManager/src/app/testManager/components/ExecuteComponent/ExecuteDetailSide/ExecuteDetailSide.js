@@ -41,7 +41,9 @@ class ExecuteDetailSide extends Component {
   }
 
   componentWillUnmount() {
-    document.getElementById('scroll-area').removeEventListener('scroll', this.handleScroll);
+    if (document.getElementById('scroll-area')) {
+      document.getElementById('scroll-area').removeEventListener('scroll', this.handleScroll);
+    }
   }
   
   handleScroll=(e) => {
@@ -171,7 +173,7 @@ class ExecuteDetailSide extends Component {
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <div style={{ fontSize: '16px', fontWeight: 500 }}>
                   相关用例:
-                  <span style={{ color: '#3F51B5', marginLeft: 5 }}>{issueNum}</span>
+                  <span style={{ color: '#3F51B5', marginLeft: 5 }} className="c7ntest-text-dot">{issueNum}</span>
                 </div>
                 <div className="c7ntest-flex-space" />
                 <Button className="leftBtn" funcType="flat" icon="last_page" onClick={onClose}>

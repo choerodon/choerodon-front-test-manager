@@ -140,7 +140,7 @@ class DragTable extends Component {
                 dataIndex, key, flex, render, width,
               } = column;
               if (render) {
-                renderedItem = render(data[index][dataIndex], data[index], index);
+                renderedItem = render(data[index][dataIndex], data[index], index, {}, {});
               } else {
                 renderedItem = data[index][dataIndex];
               }

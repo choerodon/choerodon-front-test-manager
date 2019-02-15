@@ -173,7 +173,7 @@ class StepTable extends Component {
       render(stepAttachment) {
         return (
           <div>
-            {stepAttachment.filter(attachment => attachment.attachmentType === 'CASE_STEP').map(attachment => (
+            {stepAttachment.filter(attachment => attachment.attachmentType === 'CASE_STEP').length > 0 ? stepAttachment.filter(attachment => attachment.attachmentType === 'CASE_STEP').map(attachment => (
               <div style={{
                 display: 'flex', fontSize: '12px', flexShrink: 0, margin: '5px 2px', alignItems: 'center',
               }}
@@ -181,7 +181,7 @@ class StepTable extends Component {
                 <Icon type="attach_file" style={{ fontSize: '12px', color: 'rgba(0,0,0,0.65)' }} />
                 <a className="c7ntest-text-dot" style={{ margin: '2px 5px', fontSize: '13px' }} href={attachment.url} target="_blank" rel="noopener noreferrer">{attachment.attachmentName}</a>
               </div>
-            ))
+            )) : '-'
             }
           </div>
         );
@@ -205,7 +205,7 @@ class StepTable extends Component {
                   className="c7ntest-text-wrap"
                   style={{ minHeight: 20 }}
                 >
-                  {delta2Text(data)}
+                  {delta2Text(data) === '' ? '-' : delta2Text(data)}
                 </div>
               )}
             </Text>

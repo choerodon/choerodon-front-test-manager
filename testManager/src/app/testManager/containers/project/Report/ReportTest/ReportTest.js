@@ -315,18 +315,19 @@ class ReportTest extends Component {
               {
                 i >= testCycleCaseES.length
                   ? (
-                    <div style={{
-                      height: 20,
-                      width: 43,
-                      marginLeft: 30,
-                      color: 'white',
-                      padding: '0 8px',
-                      background: 'rgba(0,0,0,0.20)',
-                      borderRadius: '100px',
-                    }}
+                    <div
+                      style={{
+                        height: 20,
+                        width: 43,
+                        marginLeft: 30,
+                        color: 'white',
+                        padding: '0 8px',
+                        background: 'rgba(0,0,0,0.20)',
+                        borderRadius: '100px',
+                      }}
+                      className="c7ntest-text-dot"
                     >
                       <FormattedMessage id="step" />
-
                     </div>
                   ) : null
 
@@ -427,7 +428,8 @@ class ReportTest extends Component {
         const { testCycleCaseES, testCycleCaseStepES } = record;
         const { issueId } = record.issueInfosDTO;
         const caseShow = testCycleCaseES.concat(testCycleCaseStepES).map((execute, i) => {
-          const { issueLinkDTOS, issueInfosDTO: { issueName } } = execute;
+          const { issueLinkDTOS, issueInfosDTO } = execute;
+          const { issueName } = issueInfosDTO || {};
           // window.console.log(issueLinkDTOS.length);
           const issueLinks = issueLinkDTOS && issueLinkDTOS.map((link) => {
             const { issueNum, summary, statusMapDTO } = link;
