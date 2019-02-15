@@ -169,6 +169,7 @@ class TestTable extends Component {
         maxTagCount={0}
         maxTagPlaceholder={ommittedValues => `${ommittedValues.map(item => item).join(', ')}`}
         onChange={this.handleSelectGroup}
+        getPopupContainer={triggerNode => triggerNode.parentNode}
       >
         {
           allGroups.map(group => (

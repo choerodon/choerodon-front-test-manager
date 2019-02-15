@@ -60,6 +60,7 @@ class TestNGReport extends Component {
                   maxTagCount={0}
                   maxTagPlaceholder={ommittedValues => `${ommittedValues.map(item => item).join(', ')}`}
                   onChange={this.handleSelect}
+                  getPopupContainer={triggerNode => triggerNode.parentNode}
                 >
                   {
                   allSuites.map(suite => (
