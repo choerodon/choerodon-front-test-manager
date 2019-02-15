@@ -4,11 +4,29 @@
       // align-items: flex-start !important;
     }
     td {
-      line-height: 34px;
+      line-height: 26px;
+    }
+    .attachmentsColumn {
+      padding-left: 20px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: inline-block;
     }
     td .item-container {
       padding: 5px 0;
       min-height: 34px;
+      cursor: pointer;
+      .ant-input-wrapper {
+        margin: 0;
+        margin-top: 5px;
+        textArea {
+          line-height: 2;
+        }
+        div {
+          display: none;
+        }
+      }
     }
     td .c7ntest-text-dot {
       line-height: 19px;
@@ -20,5 +38,16 @@
       white-space: pre-wrap;
       word-break: break-all;
     }
+  }  
+}
+.upload-button {
+  display: flex;
+  flex-direction: column-reverse;
+  button {
+    padding: 0 5px;
+    color: #3F51B5;
+  }
+  .ant-upload-list-item-name{
+    color: #3F51B5;
   }
 }

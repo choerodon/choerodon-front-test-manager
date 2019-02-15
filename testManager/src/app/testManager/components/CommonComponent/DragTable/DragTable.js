@@ -137,7 +137,7 @@ class DragTable extends Component {
             {Columns.map((column) => {
               let renderedItem = null;
               const {
-                dataIndex, key, flex, render, width,
+                dataIndex, key, flex, render, width, className,
               } = column;
               if (render) {
                 renderedItem = render(data[index][dataIndex], data[index], index);
@@ -145,7 +145,7 @@ class DragTable extends Component {
                 renderedItem = data[index][dataIndex];
               }
               return (
-                <td style={{ flex: flex || 1, width }}>
+                <td className={className} style={{ flex: flex || 1, width }}>
                   {renderedItem}
                 </td>
               );
@@ -164,7 +164,7 @@ class DragTable extends Component {
                 {Columns.map((column) => {
                   let renderedItem = null;
                   const {
-                    dataIndex, key, flex, render, 
+                    dataIndex, key, flex, render, className,
                   } = column;
                   if (render) {
                     renderedItem = render(data[index][dataIndex], data[index], index, provided, snapshot);
@@ -172,7 +172,7 @@ class DragTable extends Component {
                     renderedItem = data[index][dataIndex];
                   }
                   return (
-                    <td style={{ flex: flex || 1 }}>
+                    <td className={className} style={{ flex: flex || 1 }}>
                       {renderedItem}
                     </td>
                   );
