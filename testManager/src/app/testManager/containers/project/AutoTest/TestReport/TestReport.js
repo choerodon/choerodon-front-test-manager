@@ -6,7 +6,7 @@ import {
 } from 'choerodon-front-boot';
 import { MochaReport, TestNGReport } from './components';
 import { getTestReport } from '../../../../api/AutoTestApi';
-import { commonLink, getProjectName } from '../../../../common/utils';
+import { commonLink } from '../../../../common/utils';
 
 const ReportComponents = {
   mocha: MochaReport,
@@ -14,7 +14,7 @@ const ReportComponents = {
 };
 class TestReport extends Component {
   state = {
-    loading: false,
+    loading: true,
     ReportData: { framework: '', json: '{}' },
   }
 
@@ -43,11 +43,11 @@ class TestReport extends Component {
     const { loading, ReportData } = this.state;
     const { framework, json } = ReportData;
     const Report = ReportComponents[framework] ? ReportComponents[framework] : () => <div />;
-    const Data = JSON.parse(json); 
+    const Data = JSON.parse(json);     
     return (
       <Page>
         <Header
-          title="测试报告"
+          title="自动化测试报告"
           backPath={commonLink('/AutoTest/list')}
         >
           <Button
@@ -56,12 +56,10 @@ class TestReport extends Component {
             <Icon type="autorenew icon" />
             <FormattedMessage id="refresh" />
           </Button>
-        </Header>
+        </Header>        
         <Content 
-          title={`项目“${getProjectName()}”的测试报告`}
-          description="您可以在此页面一目了然地了解测试报告详情。"
-          link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management"
-        >
+          style={{ padding: 0 }}
+        > 
           {loading
             ? <Progress type="loading" className="spin-container" />
             : <Report data={Data} />}
