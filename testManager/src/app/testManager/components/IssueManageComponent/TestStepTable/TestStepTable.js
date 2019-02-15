@@ -6,8 +6,10 @@ import { stores, axios } from 'choerodon-front-boot';
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import { cloneStep, updateStep, deleteStep, createIssueStep } from '../../../api/IssueManageApi';
+import { uploadFile } from '../../../api/FileApi';
 import { DragTable } from '../../CommonComponent';
 import { TextEditToggle, UploadInTable } from '../../CommonComponent';
+import UploadButton from '../../IssueManageComponent/CommonComponent/UploadButton';
 import './TestStepTable.scss';
 
 const { confirm } = Modal;
@@ -25,8 +27,9 @@ class TestStepTable extends Component {
         testStep: '',
         testData: '',
         expectedResult: '',
-        attachments: [],
-      }
+      },
+      fileList: [],
+      createStepId: undefined,
     };
   }
 
@@ -88,6 +91,46 @@ class TestStepTable extends Component {
     });
   }
 
+  setFileList = (data) => {
+    this.setState({ fileList: data });
+  }
+
+  handleFileUpload = (propFileList) => {
+    if(propFileList.length) {
+      const fileList = propFileList.filter(i => !i.url);
+      const config = {
+        attachmentLinkId: this.state.createStepId,
+        attachmentType: 'CASE_STEP',
+      };
+      if (fileList.some(one => !one.url)) {
+        const fileList = propFileList.filter(i => !i.url);
+        const formData = new FormData();
+        fileList.forEach((file) => {
+          // file.name = encodeURI(encodeURI(file.name));
+          formData.append('file', file);
+        });
+        console.log(formData);
+        uploadFile(formData, config).then((res) => {
+          if (res.failed) {
+            this.props.leaveLoad();
+            Choerodon.prompt('不能有重复附件');
+            // this.props.onOk();
+          } 
+          else {
+            this.props.onOk();
+          }
+        }).catch((error) => {
+          window.console.log(error);
+          this.props.leaveLoad();
+          Choerodon.prompt('网络错误');
+        });
+        return false;
+      }
+    } else{
+      this.props.onOk();
+    }
+  }
+
   handleClickCreate = () => {
     const {issueId, data} = this.props;
     const {isEditing} = this.state;
@@ -116,15 +159,16 @@ class TestStepTable extends Component {
         testStep: '',
         testData: '',
         expectedResult: '',
-        attachments: [],
-      }
+      }, 
+      fileList: [],
+      createStepId: undefined,
     });
    
   }
 
   createIssueStep = () => {
     const { issueId, data } = this.props;
-    const {createStep} = this.state;
+    const {createStep, fileList, createStepId} = this.state;
     const { expectedResult, testStep } = createStep;
     if(expectedResult && testStep) {
       const lastRank = data.length
@@ -135,14 +179,24 @@ class TestStepTable extends Component {
         nextRank: null,
         ...createStep,
       };
-      createIssueStep(testCaseStepDTO).then(() => {
-        this.props.onOk();
-      });
+      if(!createStepId) {
+        createIssueStep(testCaseStepDTO).then((res) => {
+          this.setState({
+            createStepId: res.stepId,
+          }, () => {
+              this.handleFileUpload(fileList);
+            }
+          );
+        });
+      } 
+      else {
+        this.handleFileUpload(fileList);
+      }
+      
     } else {
       Choerodon.prompt('测试步骤和预期结果均为必输项');
     }
   }
-
 
   editStep = (record) => {
       updateStep(record).then((res) => {    
@@ -201,10 +255,11 @@ class TestStepTable extends Component {
       const editingStepIndex = _.find(isEditing, item => item.stepId === record.stepId) ? _.find(isEditing, item => item.stepId === record.stepId)['index'] : -1;
       if(editingStepIndex !== -1) {
         return isEditing[editingStepIndex].isStepNameEditing ? (
-          <Input 
+          <TextArea 
             ref={(testStep) => {
               this[`testStep${record.stepId}`] = testStep;
             }}
+            autosize
             // placeholder="测试步骤"
             defaultValue={record.testStep}
             onPressEnter={e => this.handleBlurOrEnter(e, record, 'testStep')}
@@ -228,10 +283,11 @@ class TestStepTable extends Component {
       const editingStepIndex = _.find(isEditing, item => item.stepId === record.stepId) ? _.find(isEditing, item => item.stepId === record.stepId)['index'] : -1;
       if(editingStepIndex !== -1) {
       return isEditing[editingStepIndex].isStepDataEditing ? (
-        <Input 
+        <TextArea 
           ref={(testData) => {
             this[`testData${record.stepId}`] = testData;
           }}
+          autosize
           // placeholder="测试数据"
           defaultValue={record.testData}
           onPressEnter={e => this.handleBlurOrEnter(e, record, 'testData')}
@@ -255,11 +311,12 @@ class TestStepTable extends Component {
       const editingStepIndex = _.find(isEditing, item => item.stepId === record.stepId) ? _.find(isEditing, item => item.stepId === record.stepId)['index'] : -1;
       if(editingStepIndex !== -1) {
       return isEditing[editingStepIndex].isStepExpectedResultEditing ? (
-        <Input 
+        <TextArea 
           ref={(expectedResult) => {
             this[`expectedResult${record.stepId}`] = expectedResult;
           }}
           // placeholder="预期结果"
+          autosize
           defaultValue={record.expectedResult}
           onPressEnter={e => this.handleBlurOrEnter(e, record, 'expectedResult')}
           onBlur={e => this.handleBlurOrEnter(e, record, 'expectedResult')}
@@ -334,10 +391,10 @@ class TestStepTable extends Component {
 
           if(fieldClicked.tagName === 'DIV') {
             // console.log(fieldClicked);
-            fieldClicked.getElementsByTagName('input')[0].focus();
+            fieldClicked.getElementsByTagName('textArea')[0].focus();
           } else {
             // console.log(fieldClickedParent);
-            fieldClickedParent.getElementsByTagName('input')[0].focus();
+            fieldClickedParent.getElementsByTagName('textArea')[0].focus();
           }
         }
       }, 300)
@@ -358,7 +415,6 @@ class TestStepTable extends Component {
         testStep: '',
         testData: '',
         expectedResult: '',
-        attachments: [],
       }
     })
   }
@@ -368,7 +424,7 @@ class TestStepTable extends Component {
       onOk, enterLoad, leaveLoad, disabled,
     } = this.props;
 
-    const {isEditing, data, createStep} = this.state;
+    const {isEditing, data, createStep, fileList} = this.state;
 
     const hasStepIsCreating = data.find(item => item.stepIsCreating);
 
@@ -408,9 +464,9 @@ class TestStepTable extends Component {
   
                 setTimeout(() => {
                   if(fieldClicked.tagName === 'DIV') {
-                    fieldClicked.getElementsByTagName('input')[0].focus();
+                    fieldClicked.getElementsByTagName('textArea')[0].focus();
                   } else {
-                    fieldClickedParent.getElementsByTagName('input')[0].focus();
+                    fieldClickedParent.getElementsByTagName('textArea')[0].focus();
                   }
                 }, 100)
              
@@ -451,9 +507,9 @@ class TestStepTable extends Component {
 
               setTimeout(() => {
                 if(fieldClicked.tagName === 'DIV') {
-                  fieldClicked.getElementsByTagName('input')[0].focus();
+                  fieldClicked.getElementsByTagName('textArea')[0].focus();
                 } else {
-                  fieldClickedParent.getElementsByTagName('input')[0].focus();
+                  fieldClickedParent.getElementsByTagName('textArea')[0].focus();
                 }
               }, 100)
            
@@ -497,9 +553,9 @@ class TestStepTable extends Component {
   
                 setTimeout(() => {
                   if(fieldClicked.tagName === 'DIV') {
-                    fieldClicked.getElementsByTagName('input')[0].focus();
+                    fieldClicked.getElementsByTagName('textArea')[0].focus();
                   } else {
-                    fieldClickedParent.getElementsByTagName('input')[0].focus();
+                    fieldClickedParent.getElementsByTagName('textArea')[0].focus();
                   }
                 }, 100)
              
@@ -518,11 +574,19 @@ class TestStepTable extends Component {
       dataIndex: 'attachments',
       key: 'attachments',
       flex: 2,
-      render(attachments, record) {
+      className: 'attachmentsColumn',
+      render: (attachments, record) => {
         return (
-          <div className="item-container">
-            <UploadInTable
-              fileList={record.stepIsCreating ? createStep.attachments : attachments}
+          <div className="item-container item-container-upload">
+           {record.stepIsCreating ? (
+              <UploadButton 
+                className="createUploadBtn"
+                onRemove={this.setFileList}
+                onBeforeUpload={this.setFileList}
+                fileList={fileList}
+              />
+           ) : (<UploadInTable
+              fileList={attachments}
               onOk={onOk}
               enterLoad={enterLoad}
               leaveLoad={leaveLoad}
@@ -530,7 +594,7 @@ class TestStepTable extends Component {
                 attachmentLinkId: record.stepId,
                 attachmentType: 'CASE_STEP',
               }}
-            />
+            />)}
           </div>
         );
       },
