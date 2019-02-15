@@ -12,7 +12,7 @@ import { TextEditToggle, User } from '../../CommonComponent';
 import {
   delta2Html, handleFileUpload, text2Delta, beforeTextUpload, formatDate, returnBeforeTextUpload, color2rgba,
 } from '../../../common/utils';
-import Timeago from "../../CommonComponent/DateTimeAgo/DateTimeAgo";
+import Timeago from '../../CommonComponent/DateTimeAgo/DateTimeAgo';
 import {
   loadDatalogs, loadLinkIssues, loadIssue, updateStatus, updateIssue,
   createCommit, deleteIssue, loadStatus, cloneIssue, getIssueSteps, getIssueExecutes,
@@ -30,6 +30,7 @@ import StatusTag from '../StatusTag';
 import CopyIssue from '../CopyIssue';
 import TypeTag from '../TypeTag';
 import IssueTreeStore from '../../../store/project/IssueManage/IssueTreeStore';
+
 const { AppState } = stores;
 const { Option } = Select;
 const { TextArea } = Input;
@@ -225,7 +226,7 @@ class EditIssueNarrow extends Component {
     const {
       StatusList, componentList, labelList,
     } = this.state;
-    const {issueInfo} = this.props;
+    const { issueInfo } = this.props;
     const { issueId, objectVersionNumber } = issueInfo;
 
     let issue = {
@@ -455,17 +456,33 @@ class EditIssueNarrow extends Component {
    * DataLog
    */
   renderDataLogs() {
-    const { datalogs } = this.props;
+    const { datalogs, issueInfo } = this.props;
+    const {
+      createdBy,
+      createrImageUrl, createrEmail,
+      createrName, creationDate, issueTypeDTO, 
+    } = issueInfo;
+    const createLog = {
+      email: createrEmail,
+      field: issueTypeDTO.typeCode,
+      imageUrl: createrImageUrl,     
+      name: createrName,
+      lastUpdateDate: creationDate,
+      lastUpdatedBy: createdBy, 
+      newString: 'issueNum',
+      newValue: 'issueNum',
+    };
+    
     return (
       <DataLogs
-        datalogs={datalogs}
+        datalogs={[...datalogs, createLog]}
       />
     );
   }
 
   renderLinkIssues() {
-    const { linkIssues } = this.state;
-    const group = _.groupBy(linkIssues, 'ward');
+    const { linkIssues } = this.props;
+    const group = _.groupBy(linkIssues, 'ward');   
     return (
       <div className="c7ntest-tasks">
         {
@@ -514,7 +531,7 @@ class EditIssueNarrow extends Component {
    */
   renderDescription() {
     const { editDescriptionShow } = this.state;
-    const {issueInfo} = this.props;
+    const { issueInfo } = this.props;
     const { description } = issueInfo;
     let delta;
     if (editDescriptionShow === undefined) {
@@ -607,9 +624,9 @@ class EditIssueNarrow extends Component {
    */
   renderSelectStatus = () => {
     const {
-       StatusList, selectLoading, disabled,
+      StatusList, selectLoading, disabled,
     } = this.state;
-    const {issueInfo} = this.props;
+    const { issueInfo } = this.props;
     const { mode } = this.props;
     const { statusMapDTO } = issueInfo;
     const {
@@ -668,9 +685,9 @@ class EditIssueNarrow extends Component {
    */
   renderSelectPriority = () => {
     const {
-       priorityList, selectLoading, disabled,
+      priorityList, selectLoading, disabled,
     } = this.state;
-    const {issueInfo} = this.props;
+    const { issueInfo } = this.props;
     const { priorityDTO } = issueInfo;
     const { name: priorityName, id: priorityId, colour: priorityColor } = priorityDTO || {};
     const priorityOptions = priorityList.map(priority => (
@@ -734,9 +751,9 @@ class EditIssueNarrow extends Component {
    */
   renderSelectModule = () => {
     const {
-       componentList, selectLoading, disabled,
+      componentList, selectLoading, disabled,
     } = this.state;
-    const {issueInfo} = this.props;
+    const { issueInfo } = this.props;
     const { componentIssueRelDTOList } = issueInfo;
     return (
       <TextEditToggle
@@ -794,9 +811,9 @@ class EditIssueNarrow extends Component {
    */
   renderSelectLabel = () => {
     const {
-     labelList, selectLoading, disabled,
+      labelList, selectLoading, disabled,
     } = this.state;
-    const {issueInfo} = this.props;
+    const { issueInfo } = this.props;
     const { labelIssueRelDTOList } = issueInfo;
     return (
       <TextEditToggle
@@ -878,7 +895,7 @@ class EditIssueNarrow extends Component {
     const {
       userList, selectLoading, disabled,
     } = this.state;
-    const {issueInfo} = this.props;
+    const { issueInfo } = this.props;
     const { reporterId, reporterName, reporterImageUrl } = issueInfo;
 
     const userOptions = userList.map(user => (
@@ -954,9 +971,9 @@ class EditIssueNarrow extends Component {
    */
   renderSelectAssign = () => {
     const {
-     userList, selectLoading, disabled,
+      userList, selectLoading, disabled,
     } = this.state;
-    const {issueInfo} = this.props;
+    const { issueInfo } = this.props;
     const { assigneeId, assigneeName, assigneeImageUrl } = issueInfo;
     const userOptions = userList.map(user => (
       <Option key={user.id} value={user.id}>
@@ -1029,7 +1046,9 @@ class EditIssueNarrow extends Component {
       issueLoading, FullEditorShow, createLinkTaskShow,
       copyIssueShow, currentNav,
     } = this.state;
-    const {issueInfo,fileList, disabled, linkIssues, folderName,} = this.props;
+    const {
+      issueInfo, fileList, disabled, linkIssues, folderName,  
+    } = this.props;
     const {
       issueId, issueNum, summary, creationDate, lastUpdateDate, description,
       priorityDTO, issueTypeDTO, statusMapDTO, versionIssueRelDTOList,
@@ -1250,18 +1269,18 @@ class EditIssueNarrow extends Component {
                             </div>
                           </div>
 
-                        {/* 文件夹名称 */}
-                        <div className="line-start mt-10">
-                          <div className="c7ntest-property-wrapper">
-                            <span className="c7ntest-property">
-                              <FormattedMessage id="issue_create_content_folder" />
-                              {'：'}
-                            </span>
+                          {/* 文件夹名称 */}
+                          <div className="line-start mt-10">
+                            <div className="c7ntest-property-wrapper">
+                              <span className="c7ntest-property">
+                                <FormattedMessage id="issue_create_content_folder" />
+                                {'：'}
+                              </span>
+                            </div>
+                            <div className="c7ntest-value-wrapper">
+                              {folderName}
+                            </div>
                           </div>
-                          <div className="c7ntest-value-wrapper">
-                            {folderName}
-                          </div>
-                        </div>
 
                         
                         </div>

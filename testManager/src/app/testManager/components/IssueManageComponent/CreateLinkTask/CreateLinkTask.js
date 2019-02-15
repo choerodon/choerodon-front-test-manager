@@ -45,7 +45,7 @@ class CreateLinkTask extends Component {
       .then((res) => {
         this.setState({
           selectLoading: false,
-          originLinks: res,
+          originLinks: res.content,
         });
         this.transform(res.content);
       });
