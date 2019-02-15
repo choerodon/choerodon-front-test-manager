@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
-import { Table, Icon, Progress } from 'choerodon-ui';
+import { Table, Icon } from 'choerodon-ui';
+import { Content } from 'choerodon-front-boot';
 import ReactEcharts from 'echarts-for-react';
 import { observer } from 'mobx-react';
 import moment from 'moment';
+import { getProjectName } from '../../../../../../common/utils';
 import { StatusTags } from '../../../../../../components/CommonComponent';
 import { getTestReport } from '../../../../../../api/AutoTestApi';
 import ReportStore from './reportStore';
@@ -179,41 +181,42 @@ class MochaReport extends Component {
     const { suites } = tests[0] || { suites: [] };
     // console.log(suites.map(suite => ({ ...suite, children: suite.tests })));
     return (
-      loading
-        ? <Progress type="loading" className="spin-container" />
-        : (
-          <div className="c7ntest-mochaReport">
-            <div style={{ display: 'flex' }}>
-              <span style={{ fontSize: '14px', fontWeight: 500 }}>测试统计</span>
-              <ReactEcharts
-                style={{ width: '40%' }}
-                option={this.getOption()}
-              />
-              <div className="c7ntest-mochaReport-statistics">
-                <div className="c7ntest-mochaReport-statistics-title">数据统计</div>
+      <Content 
+        title={`项目“${getProjectName()}”的测试报告`}
+        description="您可以在此页面一目了然地了解测试报告详情。"
+        link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management"
+      >    
+        <div className="c7ntest-mochaReport">
+          <div style={{ display: 'flex' }}>
+            <span style={{ fontSize: '14px', fontWeight: 500 }}>测试统计</span>
+            <ReactEcharts
+              style={{ width: '40%' }}
+              option={this.getOption()}
+            />
+            <div className="c7ntest-mochaReport-statistics">
+              <div className="c7ntest-mochaReport-statistics-title">数据统计</div>
+              <div className="c7ntest-mochaReport-statistics-item">
+                {`通过率：${passPercent}%`}
+              </div>
+              <div className="c7ntest-mochaReport-statistics-item">
+                {`测试单元：${stats.suites}`}
                 <div className="c7ntest-mochaReport-statistics-item">
-                  {`通过率：${passPercent}%`}
+                  {`总测试数量：${testsRegistered}`}
                 </div>
                 <div className="c7ntest-mochaReport-statistics-item">
-                  {`测试单元：${stats.suites}`}
-                  <div className="c7ntest-mochaReport-statistics-item">
-                    {`总测试数量：${testsRegistered}`}
-                  </div>
-                  <div className="c7ntest-mochaReport-statistics-item">
-                    {`通过数量：${passes}`}
-                  </div>
-                  <div className="c7ntest-mochaReport-statistics-item">
-                    {`失败数量：${failures}`}
-                  </div>
-                  <div className="c7ntest-mochaReport-statistics-item">
-                    {`总耗时：${duration > 1000 ? `${duration / 1000} 秒` : `${duration} 毫秒`}`}
-                  </div>
-                  <div className="c7ntest-mochaReport-statistics-item">
-                    {`开始时间：${moment(start).format('YYYY-MM-DD hh:mm:ss')}`}
-                  </div>
-                  <div className="c7ntest-mochaReport-statistics-item">
-                    {`结束时间：${moment(end).format('YYYY-MM-DD hh:mm:ss')}`}
-                  </div>
+                  {`通过数量：${passes}`}
+                </div>
+                <div className="c7ntest-mochaReport-statistics-item">
+                  {`失败数量：${failures}`}
+                </div>
+                <div className="c7ntest-mochaReport-statistics-item">
+                  {`总耗时：${duration > 1000 ? `${duration / 1000} 秒` : `${duration} 毫秒`}`}
+                </div>
+                <div className="c7ntest-mochaReport-statistics-item">
+                  {`开始时间：${moment(start).format('YYYY-MM-DD hh:mm:ss')}`}
+                </div>
+                <div className="c7ntest-mochaReport-statistics-item">
+                  {`结束时间：${moment(end).format('YYYY-MM-DD hh:mm:ss')}`}
                 </div>
               </div>
             </div>
@@ -225,7 +228,16 @@ class MochaReport extends Component {
               dataSource={suites.map(suite => ({ ...suite, children: suite.tests }))}
             />
           </div>
-        ));
+          <div style={{ fontSize: '14px', fontWeight: 500, marginTop: 12 }}>测试时长表</div>
+          <DuringChart />
+          <Table
+            rowKey={record => record.uuid}
+            columns={columns}
+            dataSource={suites.map(suite => ({ ...suite, children: suite.tests }))}
+          />
+        </div>
+      </Content>
+    );
   }
 }
 

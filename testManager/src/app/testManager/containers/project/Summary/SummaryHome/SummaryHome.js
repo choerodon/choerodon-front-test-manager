@@ -142,12 +142,12 @@ const SummaryHome = ({
           // width: 8, // 这里是为了突出显示加上的
         },
       },
-      axisLabel: {
-        show: true,
-        textStyle: {
-          color: 'rgba(0,0,0,0.65)',
-        },
-      },
+      // axisLabel: {
+      //   show: true,
+      //   textStyle: {
+      //     color: 'rgba(0,0,0,0.65)',
+      //   },
+      // },
       splitLine: {
         show: true,
         //  改变轴线颜色
