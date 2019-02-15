@@ -43,8 +43,7 @@ class TestReport extends Component {
     const { loading, ReportData } = this.state;
     const { framework, json } = ReportData;
     const Report = ReportComponents[framework] ? ReportComponents[framework] : () => <div />;
-    // const Data = JSON.parse(json);
-    const Data = '';
+    const Data = JSON.parse(json); 
     return (
       <Page>
         <Header
