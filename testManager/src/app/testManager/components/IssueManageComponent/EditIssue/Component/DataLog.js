@@ -3,7 +3,7 @@ import { Icon, Popconfirm, Popover } from 'choerodon-ui';
 import _ from 'lodash';
 import UserHead from '../../UserHead';
 import { formatDate } from '../../../../common/utils';
-import Timeago from '../../../../components/CommonComponent/DateTimeAgo/DateTimeAgo';
+import Timeago from '../../../CommonComponent/DateTimeAgo/DateTimeAgo';
 import './DataLog.scss';
 
 const PROP = {
@@ -22,7 +22,9 @@ const PROP = {
 };
 const PROP_SIMPLE = {
   Component: '模块',
-  'Fix Version': '测试用例',
+  'Fix Version': '版本',
+  issue_test: '测试用例',
+  issue_auto_test: '自动化测试',  
   'Epic Child': '史诗关联任务',
   description: '描述',
   Attachment: '附件',
@@ -41,7 +43,7 @@ class DataLog extends Component {
     } = datalog;
     if (!oldValue && newValue) {
       // null -> xxx
-      if (['labels', 'Component', 'Fix Version', 'Epic Child', 'WorklogId', 'Epic Child'].includes(field)) {
+      if (['labels', 'Component', 'Fix Version', 'Epic Child', 'WorklogId', 'Epic Child', 'issue_test', 'issue_auto_test'].includes(field)) {
         return '创建';
       }
       if (['Attachment'].includes(field)) {
