@@ -43,10 +43,11 @@ class TestNGReport extends Component {
   render() {
     const log = toArray(this.props.data['testng-results']['reporter-output'].line).join('\n');
     const { filteredSuites, allSuites } = this.state;
+    const { creationDate } = this.props;
     return (
       <Content 
         title="自动化测试报告"
-        description={`报告生成时间：${moment().format('YYYY年MM月DD日 HH:mm:ss')}`}    
+        description={`报告生成时间：${moment(creationDate).format('YYYY年MM月DD日 HH:mm:ss')}`}    
       >    
         <div className="c7ntest-TestNGReport">        
           <Tabs defaultActiveKey="1">

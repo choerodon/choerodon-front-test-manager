@@ -41,7 +41,7 @@ class TestReport extends Component {
 
   render() {
     const { loading, ReportData } = this.state;
-    const { framework, json } = ReportData;
+    const { framework, json, creationDate } = ReportData;
     const Report = ReportComponents[framework] ? ReportComponents[framework] : () => <div />;
     const Data = JSON.parse(json);     
     return (
@@ -62,7 +62,7 @@ class TestReport extends Component {
         > 
           {loading
             ? <Progress type="loading" className="spin-container" />
-            : <Report data={Data} />}
+            : <Report data={Data} creationDate={creationDate} />}
         </Content>
       </Page>      
     );
