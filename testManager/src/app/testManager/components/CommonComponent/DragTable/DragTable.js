@@ -105,7 +105,7 @@ class DragTable extends Component {
   }
 
   handleRow=(item, e) => {
-    console.log(item, e);
+    // console.log(item, e);
     const { onRow } = this.props;
     if (onRow && onRow(item).onClick) {
       onRow(item).onClick(e);
