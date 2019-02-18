@@ -111,17 +111,9 @@ class MochaReport extends Component {
     loading: false,
   }
 
-  loadTestReport = (id) => {
-    // console.log(id);
-    this.setState({
-      loading: true,
-    });
-    getTestReport(id).then((report) => {
-      this.setState({
-        loading: false,
-      });
-      ReportStore.setReport(report);
-    });
+  componentDidMount() {
+    const { data } = this.props;
+    ReportStore.setReport(data);
   }
 
   getOption() {
@@ -219,14 +211,7 @@ class MochaReport extends Component {
                   {`结束时间：${moment(end).format('YYYY-MM-DD hh:mm:ss')}`}
                 </div>
               </div>
-            </div>
-            <div style={{ fontSize: '14px', fontWeight: 500, marginTop: 12 }}>测试时长表</div>
-            <DuringChart />
-            <Table
-              rowKey={record => record.uuid}
-              columns={columns}
-              dataSource={suites.map(suite => ({ ...suite, children: suite.tests }))}
-            />
+            </div>            
           </div>
           <div style={{ fontSize: '14px', fontWeight: 500, marginTop: 12 }}>测试时长表</div>
           <DuringChart />
