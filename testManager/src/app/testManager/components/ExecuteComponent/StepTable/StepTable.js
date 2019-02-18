@@ -83,6 +83,7 @@ class StepTable extends Component {
       title: '步骤',
       dataIndex: 'order',
       key: 'order',
+      width: 60, 
       render: (order, record, index) => (
         <div
           className="c7ntest-text-wrap"
@@ -93,7 +94,7 @@ class StepTable extends Component {
     }, {
       title: <FormattedMessage id="execute_testStep" />,
       dataIndex: 'testStep',
-      key: 'testStep',     
+      key: 'testStep',         
       render: testStep => (
         // <Tooltip title={testStep}>
         <div
@@ -317,7 +318,7 @@ class StepTable extends Component {
           dataSource={detailList}
           columns={columns}
           pagination={false}
-          scroll={{ x: 1300 }}
+          scroll={{ x: 1300, y: 500 }}
         />
       </div>
     );

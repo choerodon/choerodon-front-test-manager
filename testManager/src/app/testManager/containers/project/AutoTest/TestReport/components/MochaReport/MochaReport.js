@@ -6,7 +6,6 @@ import { observer } from 'mobx-react';
 import moment from 'moment';
 import { getProjectName } from '../../../../../../common/utils';
 import { StatusTags } from '../../../../../../components/CommonComponent';
-import { getTestReport } from '../../../../../../api/AutoTestApi';
 import ReportStore from './reportStore';
 import DuringChart from './DuringChart';
 import './MochaReport.scss';
@@ -106,11 +105,7 @@ const columns = [{
 }];
 
 @observer
-class MochaReport extends Component {
-  state = {
-    loading: false,
-  }
-
+class MochaReport extends Component { 
   componentDidMount() {
     const { data } = this.props;
     ReportStore.setReport(data);
@@ -128,25 +123,8 @@ class MochaReport extends Component {
         {
           color: ['red', '#00BFA5'],
           type: 'pie',
-          radius: '80%',
-          // radius: ['38px', '68px'],
-          // avoidLabelOverlap: false,
-          hoverAnimation: false,
-          // legendHoverLink: false,
-          // center: ['40%', '42%'],
-          // label: {
-          //   normal: {
-          //     // show: false,
-          //     // position: 'center',
-          //     textStyle: {
-          //       fontSize: '13',
-          //     },
-          //   },
-          //   align: 'right',
-          //   // emphasis: {
-          //   //   show: false,
-          //   // },
-          // },
+          radius: '80%',          
+          hoverAnimation: false,          
           data: [
             { value: stats.failures, name: '失败数量' },
             { value: stats.passes, name: '成功数量' },
@@ -163,15 +141,12 @@ class MochaReport extends Component {
   }
 
   render() {
-    const { loading } = this.state;
     const tests = ReportStore.getFilteredTests;
     const { stats } = ReportStore;
     const {
       passPercent, skipped, duration, passes, failures, start, end, testsRegistered,
-    } = stats;
-    
-    const { suites } = tests[0] || { suites: [] };
-    // console.log(suites.map(suite => ({ ...suite, children: suite.tests })));
+    } = stats;    
+    const { suites } = tests[0] || { suites: [] };    
     return (
       <Content 
         title={`项目“${getProjectName()}”的测试报告`}

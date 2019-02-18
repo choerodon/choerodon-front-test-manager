@@ -233,7 +233,7 @@ class ExecuteDetail extends Component {
       key: 'lastUpdateDate',
       width: '25%',
     }, {
-      title: '字段',
+      title: '操作类型',
       dataIndex: 'field',
       key: 'field',
     }, {
@@ -370,7 +370,7 @@ class ExecuteDetail extends Component {
                       name={statusName}
                     />
                     <span style={{ fontSize: '20px' }}>{issueInfosDTO.summary}</span>
-                    <Button funcType="flat" type="primary" onClick={this.handleToggleExecuteDetailSide}>
+                    <Button funcType="flat" type="primary" onClick={this.handleToggleExecuteDetailSide} style={{ marginLeft: 15 }}>
                       <Icon type={visible ? 'format_indent_decrease' : 'format_indent_increase'} />
                       {visible ? '隐藏详情' : '打开详情'}
                     </Button>
@@ -387,6 +387,7 @@ class ExecuteDetail extends Component {
                   }}
                   role="button"
                   onClick={this.quickPass}
+                  className="c7ntest-quick-pass"
                 >
                   通过
                 </span>
@@ -398,6 +399,7 @@ class ExecuteDetail extends Component {
                   }}
                   role="button"
                   onClick={this.quickFail}
+                  className="c7ntest-quick-fail"
                 >
                   失败
                 </span>

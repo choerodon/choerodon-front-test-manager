@@ -65,7 +65,7 @@ const DefectList = ({ defects, onRemoveDefect }) => {
         }}
         >
           <Tooltip mouseEnterDelay={0.5} title={`任务状态： ${statusName}`}>
-            <div>
+            <div style={{ lineHeight: '10px' }}>
               <StatusTag
                 status={statusMapDTO || {}}
               />

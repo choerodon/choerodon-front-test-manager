@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { FormattedMessage } from 'react-intl';
 import {
   Button, Tooltip, Icon, Upload,  
 } from 'choerodon-ui';
 import _ from 'lodash';
-import { delta2Html } from '../../../common/utils';
+import { delta2Html, issueLink } from '../../../common/utils';
 import {
   WYSIWYGEditor, Upload as UploadButton, StatusTags, DateTimeAgo, User, RichTextShow, FullEditor,
 } from '../../CommonComponent';
@@ -137,7 +138,9 @@ class ExecuteDetailSide extends Component {
       onCommentSave, onRemoveDefect, onCreateBugShow,
     } = this.props;
     const { FullEditorShow, editing } = this.state;
-    const { issueNum, summary } = issueInfosDTO || {};
+    const {
+      issueNum, summary, issueId, issueTypeDTO: { typeCode }, 
+    } = issueInfosDTO || { issueTypeDTO: {} };
     const { statusColor, statusName } = status;
     const {
       lastUpdateDate, cycleName, lastUpdateUser, comment, defects,
@@ -148,169 +151,169 @@ class ExecuteDetailSide extends Component {
     return (
       <div className="c7ntest-ExecuteDetailSide">
         <FullEditor
-            initValue={comment}
-            visible={FullEditorShow}
-            onCancel={this.HideFullEditor}
-            onOk={onCommentSave}
-          />
+          initValue={comment}
+          visible={FullEditorShow}
+          onCancel={this.HideFullEditor}
+          onOk={onCommentSave}
+        />
         <div className="c7ntest-nav">
-            {/* 左上角类型图标 */}
-            <div style={{
-              height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', 
-            }}
-            >
-              <TypeTag type={{ colour: '#4D90FE', icon: 'table_chart' }} />
-            </div>       
-            {/* 下方锚点列表 */}
-            <ul className="c7ntest-nav-ul">
-              {this.renderNavs()}
-            </ul>
-          </div>
+          {/* 左上角类型图标 */}
+          <div style={{
+            height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', 
+          }}
+          >
+            <TypeTag type={{ colour: '#4D90FE', icon: 'table_chart' }} />
+          </div>       
+          {/* 下方锚点列表 */}
+          <ul className="c7ntest-nav-ul">
+            {this.renderNavs()}
+          </ul>
+        </div>
         <div className="c7ntest-content">
-            <div className="c7ntest-content-top">
-              <div style={{ display: 'flex', alignItems: 'center' }}>
-                <div style={{ fontSize: '16px', fontWeight: 500 }}>
+          <div className="c7ntest-content-top">
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <div style={{ fontSize: '16px', fontWeight: 500 }}>
                   相关用例:
-                  <span style={{ color: '#3F51B5', marginLeft: 5 }} className="c7ntest-text-dot">{issueNum}</span>
-                </div>
-                <div className="c7ntest-flex-space" />
-                <Button className="leftBtn" funcType="flat" icon="last_page" onClick={onClose}>
-                  <span>隐藏详情</span>
-                </Button>
+                <Link style={{ color: '#3F51B5', marginLeft: 5 }} className="c7ntest-text-dot" to={issueLink(issueId, typeCode, issueNum)}>{issueNum}</Link>
               </div>
-              <div style={{ fontSize: '20px' }}>
-                {summary}
-              </div>
+              <div className="c7ntest-flex-space" />
+              <Button className="leftBtn" funcType="flat" icon="last_page" onClick={onClose}>
+                <span>隐藏详情</span>
+              </Button>
             </div>
-            <div className="c7ntest-content-bottom" id="scroll-area" style={{ position: 'relative' }}>
-              {/* 详情 */}
-              <section id="detail">
-                <div className="c7ntest-side-item-header">
-                  <div className="c7ntest-side-item-header-left">
-                    <Icon type="error_outline" />
-                    <span>详情</span>
-                  </div>
-                  <div className="c7ntest-side-item-header-line" />
-                  <div className="c7ntest-side-item-header-right" />
-                </div>
-                <div className="c7ntest-side-item-content">
-                  {/* 状态 */}
-                  <div className="c7ntest-item-one-line">
-                    <div className="c7ntest-item-one-line-left">状态：</div>
-                    <div className="c7ntest-item-one-line-right">
-                      <StatusTags
-                        style={{ height: 20, lineHeight: '20px', marginRight: 15 }}
-                        color={statusColor}
-                        name={statusName}
-                      />
-                    </div>
-                  </div>
-                  {/* 阶段名称 */}
-                  <div className="c7ntest-item-one-line">
-                    <div className="c7ntest-item-one-line-left">阶段名称：</div>
-                    <div className="c7ntest-item-one-line-right">
-                      {cycleName}
-                    </div>
-                  </div>
-                  {/* 执行人 */}
-                  <div className="c7ntest-item-one-line">
-                    <div className="c7ntest-item-one-line-left">执行人：</div>
-                    <div className="c7ntest-item-one-line-right">
-                      <User user={lastUpdateUser} />
-                    </div>
-                  </div>
-                  {/* 执行日期 */}
-                  <div className="c7ntest-item-one-line">
-                    <div className="c7ntest-item-one-line-left">执行日期：</div>
-                    <div className="c7ntest-item-one-line-right">
-                      <DateTimeAgo date={lastUpdateDate} />
-                    </div>
-                  </div>
-                </div>
-              </section>
-              {/* 描述 */}
-              <section id="des">
-                <div className="c7ntest-side-item-header">
-                  <div className="c7ntest-side-item-header-left">
-                    <Icon type="subject" />
-                    <span>描述</span>
-                  </div>
-                  <div className="c7ntest-side-item-header-line" />
-                  <div className="c7ntest-side-item-header-right">
-                    <Button className="leftBtn" type="primary" funcType="flat" icon="zoom_out_map" onClick={this.ShowFullEditor}>
-                      <FormattedMessage id="execute_edit_fullScreen" />
-                    </Button>
-                  </div>
-                </div>
-                <div className="c7ntest-side-item-content" style={{ padding: 0 }}>
-                  {comment && !editing
-                    ? (
-                      <div
-                        role="none"
-                        style={{ padding: '15px 15px 15px 23px' }}
-                        onClick={this.enterEditing}
-                      >
-                        <RichTextShow data={delta2Html(comment)} />
-                      </div>
-                    )
-                    : (
-                      <WYSIWYGEditor
-                        bottomBar
-                        value={comment}                        
-                        style={{ height: 200, width: '100%' }}
-                        handleSave={this.handleCommentSave}
-                        handleDelete={this.handleCommentCancel}
-                      />
-                    )}
-                </div>
-              </section>
-              {/* 附件 */}
-              <section id="attachment">
-                <div className="c7ntest-side-item-header">
-                  <div className="c7ntest-side-item-header-left">
-                    <Icon type="attach_file" />
-                    <span>附件</span>
-                  </div>
-                  <div className="c7ntest-side-item-header-line" />
-                  <div className="c7ntest-side-item-header-right">
-                    <UploadButton handleUpload={onUpload}>
-                      <Icon type="file_upload" />
-                      <FormattedMessage id="upload_attachment" />
-                    </UploadButton>
-                  </div>
-                </div>
-                <div className="c7ntest-side-item-content">
-                  <Upload
-                    {...props}
-                    fileList={fileList}
-                    className="upload-button"
-                  />
-                </div>
-              </section>
-              {/* 缺陷 */}
-              <section id="bug">
-                <div className="c7ntest-side-item-header">
-                  <div className="c7ntest-side-item-header-left">
-                    <Icon type="bug_report" />
-                    <span>缺陷</span>
-                  </div>
-                  <div className="c7ntest-side-item-header-line" />
-                  <div className="c7ntest-side-item-header-right">
-                    <Button className="leftBtn" type="primary" funcType="flat" onClick={onCreateBugShow}>
-                      <Icon type="playlist_add" style={{ marginRight: 2 }} />
-                      <span>创建缺陷</span>
-                    </Button>
-                  </div>
-                </div>
-                <div className="c7ntest-side-item-content">                  
-                  <DefectList
-                    defects={defects}
-                    onRemoveDefect={onRemoveDefect}
-                  />
-                </div>
-              </section>
+            <div style={{ fontSize: '20px' }}>
+              {summary}
             </div>
           </div>
+          <div className="c7ntest-content-bottom" id="scroll-area" style={{ position: 'relative' }}>
+            {/* 详情 */}
+            <section id="detail">
+              <div className="c7ntest-side-item-header">
+                <div className="c7ntest-side-item-header-left">
+                  <Icon type="error_outline" />
+                  <span>详情</span>
+                </div>
+                <div className="c7ntest-side-item-header-line" />
+                <div className="c7ntest-side-item-header-right" />
+              </div>
+              <div className="c7ntest-side-item-content">
+                {/* 状态 */}
+                <div className="c7ntest-item-one-line">
+                  <div className="c7ntest-item-one-line-left">状态：</div>
+                  <div className="c7ntest-item-one-line-right">
+                    <StatusTags
+                      style={{ height: 20, lineHeight: '20px', marginRight: 15 }}
+                      color={statusColor}
+                      name={statusName}
+                    />
+                  </div>
+                </div>
+                {/* 阶段名称 */}
+                <div className="c7ntest-item-one-line">
+                  <div className="c7ntest-item-one-line-left">阶段名称：</div>
+                  <div className="c7ntest-item-one-line-right">
+                    {cycleName}
+                  </div>
+                </div>
+                {/* 执行人 */}
+                <div className="c7ntest-item-one-line">
+                  <div className="c7ntest-item-one-line-left">执行人：</div>
+                  <div className="c7ntest-item-one-line-right">
+                    <User user={lastUpdateUser} />
+                  </div>
+                </div>
+                {/* 执行日期 */}
+                <div className="c7ntest-item-one-line">
+                  <div className="c7ntest-item-one-line-left">执行日期：</div>
+                  <div className="c7ntest-item-one-line-right">
+                    <DateTimeAgo date={lastUpdateDate} />
+                  </div>
+                </div>
+              </div>
+            </section>
+            {/* 描述 */}
+            <section id="des">
+              <div className="c7ntest-side-item-header">
+                <div className="c7ntest-side-item-header-left">
+                  <Icon type="subject" />
+                  <span>描述</span>
+                </div>
+                <div className="c7ntest-side-item-header-line" />
+                <div className="c7ntest-side-item-header-right">
+                  <Button className="leftBtn" type="primary" funcType="flat" icon="zoom_out_map" onClick={this.ShowFullEditor}>
+                    <FormattedMessage id="execute_edit_fullScreen" />
+                  </Button>
+                </div>
+              </div>
+              <div className="c7ntest-side-item-content" style={{ padding: '0 15px 0 0' }}>
+                {comment && !editing
+                  ? (
+                    <div
+                      role="none"
+                      style={{ padding: '15px 15px 15px 23px' }}
+                      onClick={this.enterEditing}
+                    >
+                      <RichTextShow data={delta2Html(comment)} />
+                    </div>
+                  )
+                  : (
+                    <WYSIWYGEditor
+                      bottomBar
+                      value={comment}                        
+                      style={{ height: 200, width: '100%' }}
+                      handleSave={this.handleCommentSave}
+                      handleDelete={this.handleCommentCancel}
+                    />
+                  )}
+              </div>
+            </section>
+            {/* 附件 */}
+            <section id="attachment">
+              <div className="c7ntest-side-item-header">
+                <div className="c7ntest-side-item-header-left">
+                  <Icon type="attach_file" />
+                  <span>附件</span>
+                </div>
+                <div className="c7ntest-side-item-header-line" />
+                <div className="c7ntest-side-item-header-right">
+                  <UploadButton handleUpload={onUpload}>
+                    <Icon type="file_upload" />
+                    <FormattedMessage id="upload_attachment" />
+                  </UploadButton>
+                </div>
+              </div>
+              <div className="c7ntest-side-item-content">
+                <Upload
+                  {...props}
+                  fileList={fileList}
+                  className="upload-button"
+                />
+              </div>
+            </section>
+            {/* 缺陷 */}
+            <section id="bug">
+              <div className="c7ntest-side-item-header">
+                <div className="c7ntest-side-item-header-left">
+                  <Icon type="bug_report" />
+                  <span>缺陷</span>
+                </div>
+                <div className="c7ntest-side-item-header-line" />
+                <div className="c7ntest-side-item-header-right">
+                  <Button className="leftBtn" type="primary" funcType="flat" onClick={onCreateBugShow}>
+                    <Icon type="playlist_add" style={{ marginRight: 2 }} />
+                    <span>创建缺陷</span>
+                  </Button>
+                </div>
+              </div>
+              <div className="c7ntest-side-item-content">                  
+                <DefectList
+                  defects={defects}
+                  onRemoveDefect={onRemoveDefect}
+                />
+              </div>
+            </section>
+          </div>
+        </div>
       </div>
      
     );

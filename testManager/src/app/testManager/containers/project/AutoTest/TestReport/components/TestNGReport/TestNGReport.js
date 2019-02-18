@@ -4,9 +4,7 @@ import moment from 'moment';
 import { Content } from 'choerodon-front-boot';
 import { Tabs, Select } from 'choerodon-ui';
 import TestTable from './TestTable';
-import {
-  toArray, calculateTestByTest, 
-} from './utils';
+import { toArray } from './utils';
 import './TestNGReport.scss';
 
 const { TabPane } = Tabs;
