@@ -55,6 +55,10 @@
         box-shadow: 0 1px 0 0 #e8e8e8, 0 1px 0 0 #e8e8e8 inset;
         background: #fff;
         td {
+          // width: 50px;
+          // flex: 1;
+          // line-height: 20px;
+          overflow: hidden;
           padding-left: 20px;
         }
       }
