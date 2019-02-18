@@ -138,6 +138,7 @@ class StepTable extends Component {
         return (
           <div style={{ width: 85 }}>
             <TextEditToggle
+              // simpleMode
               disabled={disabled}
               formKey="stepStatus"
               onSubmit={value => that.editCycleStep({ ...record, stepStatus: value })}
