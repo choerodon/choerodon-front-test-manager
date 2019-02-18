@@ -184,7 +184,7 @@ class TextEditToggle extends Component {
 
   renderChild = () => {
     const { editing, newData } = this.state;
-    const { disabled } = this.props;
+    const { disabled, simpleMode } = this.props;
     const { originData, formKey, rules } = this.props;
     const { getFieldDecorator } = this.props.form;
     // 拿到不同模式下对应的子元素
@@ -208,19 +208,23 @@ class TextEditToggle extends Component {
             </Form>
           ) : children.map(child => (this.wrapChildren(child.props.children)))
         }
-        <div style={{ textAlign: 'right', lineHeight: '20px' }}>
-          <Icon type="done" className="c7ntest-TextEditToggle-edit-icon" onClick={this.handleSubmit} />
-          <Icon type="close" className="c7ntest-TextEditToggle-edit-icon" onClick={this.leaveEditing} />
+        {!simpleMode && (
+        <div>
+          <div style={{ textAlign: 'right', lineHeight: '20px' }}>
+            <Icon type="done" className="c7ntest-TextEditToggle-edit-icon" onClick={this.handleSubmit} />
+            <Icon type="close" className="c7ntest-TextEditToggle-edit-icon" onClick={this.leaveEditing} />
+          </div>
         </div>
+        )}
       </div>
     ) : (
       <div
-        className={disabled ? 'c7ntest-TextEditToggle-text' : 'c7ntest-TextEditToggle-text c7ntest-TextEditToggle-text-active'}
+        className={simpleMode || disabled ? 'c7ntest-TextEditToggle-text' : 'c7ntest-TextEditToggle-text c7ntest-TextEditToggle-text-active'}
         onClick={this.enterEditing}
         role="none"
       >
         {this.renderTextChild(children)}
-        <Icon type="mode_edit" className="c7ntest-TextEditToggle-text-icon" />
+        {!simpleMode && <Icon type="mode_edit" className="c7ntest-TextEditToggle-text-icon" />}
       </div>
     );
   }
