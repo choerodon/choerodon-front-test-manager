@@ -133,7 +133,7 @@ export function beforeTextUpload(text, data, func, pro = 'description') {
     const converter = new QuillDeltaToHtmlConverter(deltaOps, {});
     const html = converter.convert();
     // send.gitlabDescription = html;
-    send[pro] = deltaOps ? JSON.stringify(deltaOps):deltaOps;
+    send[pro] = deltaOps ? JSON.stringify(deltaOps) : deltaOps;
 
     func(send);
   }
@@ -245,7 +245,7 @@ export function issueLink(issueId, typeCode, issueName = null) {
     type, id: projectId, name, organizationId,
   } = menu;
   if (typeCode === 'issue_test' || typeCode === 'issue_auto_test') {
-    return encodeURI(`/testManager/IssueManage?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}&paramIssueId=${issueId}`);
+    return encodeURI(`/testManager/IssueManage/testCase/${issueId}?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}`);
   } else if (issueName) {
     return encodeURI(`/agile/issue?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}&paramIssueId=${issueId}&paramName=${issueName}`);
   } else {

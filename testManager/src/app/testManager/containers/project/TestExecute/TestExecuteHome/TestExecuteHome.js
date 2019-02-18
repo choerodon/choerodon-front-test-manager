@@ -639,7 +639,8 @@ class TestExecuteHome extends Component {
       render(issueId, record) {
         const { issueInfosDTO } = record;
         return (
-          issueInfosDTO && (
+          <div onClick={(e) => { e.stopPropagation(); }} role="none">
+            {issueInfosDTO && (
             <Tooltip
               title={(
                 <div>
@@ -659,7 +660,8 @@ class TestExecuteHome extends Component {
                 {issueInfosDTO.issueNum}
               </Link>
             </Tooltip>
-          )
+            )}
+          </div>
         );
       },
     }, {
