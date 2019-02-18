@@ -10,7 +10,7 @@ import '../../../assets/main.scss';
 import { UploadButtonNow, IssueDescription } from '../CommonComponent';
 import { TextEditToggle, User } from '../../CommonComponent';
 import {
-  delta2Html, handleFileUpload, text2Delta, beforeTextUpload, formatDate, returnBeforeTextUpload, color2rgba,
+  delta2Html, handleFileUpload, text2Delta, beforeTextUpload, formatDate, returnBeforeTextUpload, color2rgba, testCaseTableLink,
 } from '../../../common/utils';
 import Timeago from '../../CommonComponent/DateTimeAgo/DateTimeAgo';
 import {
@@ -387,7 +387,11 @@ class EditIssueNarrow extends Component {
           issueLoading: true,
         });
         cloneIssue(issueId, copyConditionDTO).then((res) => {
+          Choerodon.prompt('复制成功');
           this.handleCopyIssue();
+          this.setState({
+            issueLoading: false,
+          });
         }).catch((err) => {
           this.setState({
             issueLoading: false,
@@ -405,15 +409,28 @@ class EditIssueNarrow extends Component {
     }
   }
 
+  handleLinkToTestCase = () => {
+    const {history} = this.props;
+    history.push(testCaseTableLink());
+  }
+
   handleDeleteIssue = (issueId) => {
-    const { issueInfo } = this.props;
+    const { issueInfo, history } = this.props;
     const { issueNum } = issueInfo;
+    const that = this;
+
     confirm({
       width: 560,
       title: `删除测试用例${issueNum}`,
       content: '这个测试用例将会被彻底删除。包括所有步骤和相关执行',
-      onOk: () => deleteIssue(issueId)
-        .then((res) => { this.props.onDeleteIssue(); }),
+      onOk: () => {
+        return deleteIssue(issueId)
+        .then((res) => { 
+          console.log(1);
+          // const { history } = that.props;
+          this.handleLinkToTestCase();
+        });
+      },
       okText: '删除',
       okType: 'danger',
     });
@@ -1414,7 +1431,7 @@ class EditIssueNarrow extends Component {
                         flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px',
                       }}
                       />
-                      <div className="c7ntest-title-right" style={{ marginLeft: '14px', position: 'relative' }}>
+                      <div  style={{ marginLeft: '14px', position: 'relative' }}>
                         <Button className="leftBtn" funcType="flat" onClick={() => this.setState({ FullEditorShow: true })}>
                           <Icon type="zoom_out_map icon" style={{ marginRight: 2 }} />
                           <span><FormattedMessage id="execute_edit_fullScreen" /></span>
@@ -1469,7 +1486,7 @@ class EditIssueNarrow extends Component {
                       flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px',
                     }}
                     />
-                    <div className="c7ntest-title-right" style={{ marginLeft: '14px' }}>
+                    <div  style={{ marginLeft: '14px' }}>
                       <Button className="leftBtn" funcType="flat" onClick={() => this.setState({ addingComment: true })}>
                         <Icon type="playlist_add icon" />
                         <FormattedMessage id="issue_edit_addComment" />
@@ -1504,7 +1521,7 @@ class EditIssueNarrow extends Component {
                       flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px',
                     }}
                     />
-                    <div className="c7ntest-title-right" style={{ marginLeft: '14px' }}>
+                    <div style={{ marginLeft: '14px' }}>
                       <Button className="leftBtn" funcType="flat" onClick={() => this.setState({ createLinkTaskShow: true })}>
                         <Icon type="playlist_add icon" />
                         <FormattedMessage id="issue_edit_addLinkIssue" />
