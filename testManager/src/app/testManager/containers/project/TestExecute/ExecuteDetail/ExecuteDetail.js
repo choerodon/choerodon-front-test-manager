@@ -444,9 +444,9 @@ class ExecuteDetail extends Component {
               </Card>
             </div>
             {/* 右侧侧边栏 */}
+            {visible && (
             <ExecuteDetailSide
               ref={this.saveRef('ExecuteDetailSide')}
-              visible={visible}
               issueInfosDTO={issueInfosDTO}
               cycleData={cycleData}
               fileList={fileList}
@@ -459,6 +459,7 @@ class ExecuteDetail extends Component {
               onRemoveDefect={this.handleRemoveDefect}
               onCreateBugShow={this.handleCreateBugShow}
             />
+            )}
             {
               createBugShow && (
                 <CreateBug
