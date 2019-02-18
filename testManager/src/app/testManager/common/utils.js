@@ -280,6 +280,9 @@ export function testCaseDetailLink(testCaseId, folderName) {
   } = menu;
   return encodeURI(`/testManager/IssueManage/testCase/${testCaseId}?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}&folderName=${folderName}`);
 }
+export function testCaseTableLink(params) {
+  return commonLink(`/IssueManage`);
+}
 /**
  * 颜色转rgba
  * @param {*} color

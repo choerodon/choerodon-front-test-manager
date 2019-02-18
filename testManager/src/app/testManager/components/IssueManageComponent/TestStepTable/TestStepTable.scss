@@ -24,7 +24,10 @@
           line-height: 2;
         }
         div {
-          display: none;
+          // display: none;
+          .ant-input-border {
+            display: none;
+          }
         }
       }
     }
@@ -40,14 +43,16 @@
     }
   }  
 }
-.upload-button {
-  display: flex;
-  flex-direction: column-reverse;
-  button {
-    padding: 0 5px;
-    color: #3F51B5;
-  }
-  .ant-upload-list-item-name{
-    color: #3F51B5;
+.attachmentsColumn {
+  .upload-button {
+    display: flex;
+    flex-direction: column-reverse;
+    button {
+      padding: 0 5px;
+      color: #3F51B5;
+    }
+    .ant-upload-list-item-name{
+      color: #3F51B5;
+    }
   }
 }
