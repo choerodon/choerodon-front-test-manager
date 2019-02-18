@@ -13,14 +13,18 @@ const InnerTable = (TestClass) => {
   const { name } = TestClass;
   const innerColumns = [
     {
-      title: name, dataIndex: 'name', key: 'name', colSpan: 3,
+      title: name,
+      dataIndex: 'name',
+      key: 'name',
+      colSpan: 3,
+      render: testName => <div className="c7ntest-text-dot">{testName}</div>,
     },
     {
       title: '时长',
       dataIndex: 'duration-ms',
       key: 'duration-ms',
       colSpan: 0,
-      render: duration => `${duration}ms`,
+      render: duration => <div className="c7ntest-text-dot">{`${duration}ms`}</div>,
     },
     {
       title: 'log',
