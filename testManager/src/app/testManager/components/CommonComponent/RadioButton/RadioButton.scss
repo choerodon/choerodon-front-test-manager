@@ -4,7 +4,7 @@
     height: 26px;
     line-height: 26px;
     border: none !important;
-    color:black;
+    color: #3F51B5;
     margin: 0 5px;
   }
   .ant-radio-button-wrapper:not(:first-child)::before {
@@ -13,8 +13,8 @@
     display: none;
   }
   .ant-radio-button-wrapper-checked {
-    color:black;
-    background: rgba($color: #000000, $alpha: 0.04);
+    color:white;
+    background: #3F51B5;
     box-shadow: none;
     border-radius: 2px;
   }
