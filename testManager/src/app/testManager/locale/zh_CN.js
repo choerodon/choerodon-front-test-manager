@@ -301,7 +301,7 @@ const zhCN = {
   issue_edit_person: '人员',
   issue_edit_reporter: '报告人',
   issue_edit_assignToMe: '指派给我',
-  issue_edit_manager: '经办人',
+  issue_edit_manager: '被指定人',
   issue_edit_date: '日期',
   issue_edit_createDate: '创建时间',
   issue_edit_updateDate: '更新时间',
