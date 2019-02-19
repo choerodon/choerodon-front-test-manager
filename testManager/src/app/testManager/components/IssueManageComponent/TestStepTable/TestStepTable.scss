@@ -14,20 +14,24 @@
       display: inline-block;
     }
     td .item-container {
-      padding: 5px 0;
+      padding: 5px;
       min-height: 34px;
       cursor: pointer;
+      .ant-input-focus {
+        padding: 0 3px;
+        border: 1px solid #3F51B5;
+        border-radius: 2px;
+      }
       .ant-input-wrapper {
         margin: 0;
-        margin-top: 5px;
+        // margin-top: 5px;
         textArea {
-          line-height: 2;
+          line-height: 30px;
         }
         div {
-          // display: none;
-          .ant-input-border {
-            display: none;
-          }
+          display: none; // .ant-input-border {
+          //   display: none;
+          // }
         }
       }
     }
@@ -41,8 +45,9 @@
       white-space: pre-wrap;
       word-break: break-all;
     }
-  }  
+  }
 }
+
 .attachmentsColumn {
   .upload-button {
     display: flex;
@@ -51,7 +56,7 @@
       padding: 0 5px;
       color: #3F51B5;
     }
-    .ant-upload-list-item-name{
+    .ant-upload-list-item-name {
       color: #3F51B5;
     }
   }
