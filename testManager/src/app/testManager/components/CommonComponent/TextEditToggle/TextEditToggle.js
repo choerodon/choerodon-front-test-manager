@@ -45,8 +45,6 @@ class TextEditToggle extends Component {
     newData: null,
   }
 
-  PopupContainers = []
-
   componentDidMount() {
     // eslint-disable-next-line no-unused-expressions
     this.props.saveRef && this.props.saveRef(this);
@@ -68,14 +66,19 @@ class TextEditToggle extends Component {
     return null;
   }
 
-  onDocumentClick = (event) => {
+  handleDocumentClick = (event) => {
     const target = event.target;
     const root = findDOMNode(this);
     // 如果点击不在当前元素内，就调用submit提交数据
-    if ([root, ...this.PopupContainers.map(ele => ele.lastChild)].every(ele => !contains(ele, target))) {
+    if (!this.DropdownMouseDown && !contains(root, target)) {
       // console.log(target);
       this.handleSubmit();
     }
+    this.DropdownMouseDown = false;
+  }
+
+  handleDropdownMouseDown = () => {
+    this.DropdownMouseDown = true;
   }
 
   handleDone = () => {
@@ -86,7 +89,7 @@ class TextEditToggle extends Component {
 
   // 提交编辑
   handleSubmit = () => {
-    document.removeEventListener('mousedown', this.onDocumentClick);
+    document.removeEventListener('mousedown', this.handleDocumentClick);
     try {
       this.props.form.validateFields((err, values) => {
         if (!err) {
@@ -122,7 +125,7 @@ class TextEditToggle extends Component {
     if (disabled) {
       return;
     }
-    document.addEventListener('mousedown', this.onDocumentClick);
+    document.addEventListener('mousedown', this.handleDocumentClick);
     this.setState({
       editing: true,
       originData: this.props.originData,
@@ -132,7 +135,7 @@ class TextEditToggle extends Component {
 
   // 取消编辑
   leaveEditing = () => {
-    document.removeEventListener('mousedown', this.onDocumentClick);
+    document.removeEventListener('mousedown', this.handleDocumentClick);
     this.setState({
       editing: false,
     });
@@ -160,20 +163,20 @@ class TextEditToggle extends Component {
     return targetElement;
   }
 
-  // 为子元素加上getPopupContainer，因为默认getPopupContainer是body,点击时判断onDocumentClick会调用onSubmit方法
+  // 为子元素加上getPopupContainer，因为默认getPopupContainer是body,点击时判断handleDocumentClick会调用onSubmit方法
   wrapChildren = (children) => {
     const childrenArray = React.Children.toArray(children);
     // console.log(childrenArray);
     return childrenArray.map((child) => {
       if (!child.props.getPopupContainer) {
         return React.cloneElement(child, {
+          onDropdownMouseDown: this.handleDropdownMouseDown,
           getPopupContainer: () => findDOMNode(this),
         });
       } else {
-        if (this.PopupContainers.indexOf(child.props.getPopupContainer()) === -1) {
-          this.PopupContainers.push(child.props.getPopupContainer());
-        }
-        return child;
+        return React.cloneElement(child, {
+          onDropdownMouseDown: this.handleDropdownMouseDown,
+        });
       }
     });
   }
@@ -189,7 +192,7 @@ class TextEditToggle extends Component {
 
   renderChild = () => {
     const { editing, newData } = this.state;
-    const { disabled, simpleMode } = this.props;
+    const { disabled, simpleMode, noButton } = this.props;
     const { originData, formKey, rules } = this.props;
     const { getFieldDecorator } = this.props.form;
     // 拿到不同模式下对应的子元素
@@ -213,7 +216,7 @@ class TextEditToggle extends Component {
             </Form>
           ) : children.map(child => (this.wrapChildren(child.props.children)))
         }
-        {!simpleMode && (
+        {!noButton && !simpleMode && (
           <div>
             <div style={{ textAlign: 'right', lineHeight: '20px' }}>
               <Icon type="done" className="c7ntest-TextEditToggle-edit-icon" onClick={this.handleSubmit} />
@@ -224,13 +227,13 @@ class TextEditToggle extends Component {
       </div>
     ) : (
       <div
-          className={simpleMode || disabled ? 'c7ntest-TextEditToggle-text' : 'c7ntest-TextEditToggle-text c7ntest-TextEditToggle-text-active'}
-          onClick={this.enterEditing}
-          role="none"
-        >
-          {this.renderTextChild(children)}
-          {!simpleMode && <Icon type="mode_edit" className="c7ntest-TextEditToggle-text-icon" />}
-        </div>
+        className={simpleMode || disabled ? 'c7ntest-TextEditToggle-text' : 'c7ntest-TextEditToggle-text c7ntest-TextEditToggle-text-active'}
+        onClick={this.enterEditing}
+        role="none"
+      >
+        {this.renderTextChild(children)}
+        {!simpleMode && <Icon type="mode_edit" className="c7ntest-TextEditToggle-text-icon" />}
+      </div>
     );
   }
 

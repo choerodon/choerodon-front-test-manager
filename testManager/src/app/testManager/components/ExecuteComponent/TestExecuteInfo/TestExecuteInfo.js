@@ -102,7 +102,7 @@ class TestExecuteInfo extends Component {
 
   addDefects = (issueList) => {
     const cycleData = ExecuteDetailStore.getCycleData;
-    const defectIds = ExecuteDetailStore.getDefectIds;
+    const defectIds = ExecuteDetailStore.getDefectIssueIds;
     const { executeId } = cycleData;
     const needAdd = issueList.filter(issueId => !defectIds.includes(issueId))
       .map(issueId => ({
@@ -122,7 +122,7 @@ class TestExecuteInfo extends Component {
   handleDefectsChange = (List) => {
     // const { originDefects, defectIds, cycleData } = this.state;
     const cycleData = ExecuteDetailStore.getCycleData;
-    const defectIds = ExecuteDetailStore.getDefectIds;
+    const defectIds = ExecuteDetailStore.getDefectIssueIds;
     const oldList = [...defectIds];
     // window.console.log('old', oldList, 'new', List);
     // 删除元素
@@ -190,7 +190,7 @@ class TestExecuteInfo extends Component {
       lastUpdateDate, comment, defects,
     } = cycleData;
     const fileList = ExecuteDetailStore.getFileList;
-    const defectIds = ExecuteDetailStore.getDefectIds;
+    const defectIds = ExecuteDetailStore.getDefectIssueIds;
     
     const props = {
       onRemove: (file) => {

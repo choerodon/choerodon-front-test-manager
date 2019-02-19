@@ -18,7 +18,6 @@ class DefectSelect extends Component {
       defects: defects || [],
       defectIds: defects ? defects.map(defect => defect.issueId.toString()) : [],
       originDefects: defects ? defects.map(defect => defect.issueId.toString()) : [],
-      createBugShow: false,
     };
   }
 
@@ -78,10 +77,10 @@ class DefectSelect extends Component {
   }
 
   render() {  
-    const { executeStepId } = this.props;        
+    const { executeStepId, ...otherProps } = this.props;        
     const { handleSubmit } = this.props.bugsToggleRef;
     const {
-      defects, selectLoading, defectIds, issueList, originDefects, createBugShow, 
+      defects, selectLoading, defectIds, issueList, originDefects,  
     } = this.state;
     const defectsOptions = issueList.map(issue => (
       <Option key={issue.issueId} value={issue.issueId.toString()}>
@@ -90,9 +89,10 @@ class DefectSelect extends Component {
         {issue.summary}
       </Option>
     ));
-    return (  
+    return (
       <div>
-        <Select          
+        <Select  
+          // defaultOpen        
           dropdownStyle={{        
             width: 300,  
           }}
@@ -131,11 +131,11 @@ class DefectSelect extends Component {
               });
             });
           }}
+          {...otherProps}
         >
           {defectsOptions}
         </Select>
-      </div>   
-     
+      </div>
     );
   }
 }
