@@ -173,16 +173,14 @@ class TestPlanHome extends Component {
                 </div>
               )}
             >
-              <Link
+              <div
                 className="c7ntest-text-dot"
                 style={{
-                  width: 100,
-                }}
-                to={issueLink(issueInfosDTO.issueId, issueInfosDTO.typeCode, issueInfosDTO.issueNum)}
-                target="_blank"
+                  width: 100, color: '#3F51B5',
+                }}               
               >
                 {issueInfosDTO.issueNum}
-              </Link>
+              </div>
             </Tooltip>
           )
         );
