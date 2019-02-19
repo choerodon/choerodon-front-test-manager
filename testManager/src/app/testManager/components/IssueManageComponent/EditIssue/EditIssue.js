@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { withRouter } from 'react-router-dom';
 import { stores, Permission } from 'choerodon-front-boot';
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
@@ -10,7 +11,7 @@ import '../../../assets/main.scss';
 import { UploadButtonNow, IssueDescription } from '../CommonComponent';
 import { TextEditToggle, User } from '../../CommonComponent';
 import {
-  delta2Html, handleFileUpload, text2Delta, beforeTextUpload, formatDate, returnBeforeTextUpload, color2rgba, testCaseTableLink,
+  delta2Html, handleFileUpload, text2Delta, beforeTextUpload, formatDate, returnBeforeTextUpload, color2rgba, testCaseTableLink, commonLink,
 } from '../../../common/utils';
 import Timeago from '../../CommonComponent/DateTimeAgo/DateTimeAgo';
 import {
@@ -410,7 +411,7 @@ class EditIssueNarrow extends Component {
   }
 
   handleLinkToTestCase = () => {
-    const {history} = this.props;
+    const { history } = this.props;
     history.push(testCaseTableLink());
   }
 
@@ -423,14 +424,11 @@ class EditIssueNarrow extends Component {
       width: 560,
       title: `删除测试用例${issueNum}`,
       content: '这个测试用例将会被彻底删除。包括所有步骤和相关执行',
-      onOk: () => {
-        return deleteIssue(issueId)
-        .then((res) => { 
-          console.log(1);
-          // const { history } = that.props;
+      onOk: () => deleteIssue(issueId)
+        .then((res) => {      
+          history.push(commonLink('/IssueManage'));
           this.handleLinkToTestCase();
-        });
-      },
+        }),
       okText: '删除',
       okType: 'danger',
     });
@@ -1431,7 +1429,7 @@ class EditIssueNarrow extends Component {
                         flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px',
                       }}
                       />
-                      <div  style={{ marginLeft: '14px', position: 'relative' }}>
+                      <div style={{ marginLeft: '14px', position: 'relative' }}>
                         <Button className="leftBtn" funcType="flat" onClick={() => this.setState({ FullEditorShow: true })}>
                           <Icon type="zoom_out_map icon" style={{ marginRight: 2 }} />
                           <span><FormattedMessage id="execute_edit_fullScreen" /></span>
@@ -1486,7 +1484,7 @@ class EditIssueNarrow extends Component {
                       flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px',
                     }}
                     />
-                    <div  style={{ marginLeft: '14px' }}>
+                    <div style={{ marginLeft: '14px' }}>
                       <Button className="leftBtn" funcType="flat" onClick={() => this.setState({ addingComment: true })}>
                         <Icon type="playlist_add icon" />
                         <FormattedMessage id="issue_edit_addComment" />
@@ -1576,4 +1574,4 @@ class EditIssueNarrow extends Component {
     );
   }
 }
-export default EditIssueNarrow;
+export default withRouter(EditIssueNarrow);
