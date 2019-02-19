@@ -155,31 +155,14 @@ class ExecuteDetailSide extends Component {
       });
     }
   }
-
-  handleDefectsChange = (List) => {
-    // const { originDefects, defectIds, cycleData } = this.state;
+  
+  handleRemoveDefect=(issueId) => {
     const cycleData = ExecuteDetailStore.getCycleData;
     const defectIds = ExecuteDetailStore.getDefectIds;
-    const oldList = [...defectIds];
-    // window.console.log('old', oldList, 'new', List);
-    // 删除元素
-    if (oldList.length > List.length) {
-      const deleteEle = oldList.filter(old => !List.includes(old));
-      // 如果isse已存在，调用删除接口
-      if (defectIds.includes(deleteEle[0].toString())) {
-        if (_.find(cycleData.defects, { issueId: Number(deleteEle[0]) })) {
-          const id = _.find(cycleData.defects, { issueId: Number(deleteEle[0]) }).id;  
-          // cycleData.defects.splice(defectIds.indexOf(deleteEle[0].toString()), 1);
-          removeDefect(id).then((res) => {
-            cycleData.defects.splice(defectIds.indexOf(deleteEle[0]), 1);     
-            ExecuteDetailStore.setCycleData(cycleData);
-          });
-        }
-      }
-      // window.console.log('delete');
-    } else {
-      // window.console.log('add', List.filter(item => !oldList.includes(item)));
-    }
+    const defectId = _.find(cycleData.defects, { issueId: Number(issueId) }).id;
+    removeDefect(defectId).then((res) => {
+      ExecuteDetailStore.removeLocalDefect(defectId);
+    });
   }
 
   render() {
@@ -357,17 +340,11 @@ class ExecuteDetailSide extends Component {
                   <span>缺陷</span>
                 </div>
                 <div className="c7ntest-side-item-header-line" />
-                <div className="c7ntest-side-item-header-right">
-                  {/* <Button className="leftBtn" type="primary" funcType="flat" onClick={onCreateBugShow}>
-                    <Icon type="playlist_add" style={{ marginRight: 2 }} />
-                    <span>创建缺陷</span>
-                  </Button> */}
+                <div className="c7ntest-side-item-header-right">                  
                   <TextEditToggle
                     className="c7ntest-button-defect-select"
-                    simpleMode
-                    // ref={(bugsToggle) => { this.bugsToggle = bugsToggle; }}
-                    saveRef={(bugsToggle) => { this.bugsToggle = bugsToggle; }}
-                    // disabled={disabled}
+                    simpleMode                  
+                    saveRef={(bugsToggle) => { this.bugsToggle = bugsToggle; }}                   
                     formKey="defects"
                     onSubmit={this.addDefects}
                     originData={defectIds}
@@ -380,16 +357,12 @@ class ExecuteDetailSide extends Component {
                       </Button>
                     </Text>
                     <Edit>
-                      <Select
-                        // filter
-                        // allowClear
+                      <Select                       
                         defaultOpen
                         filter
                         mode="multiple"
                         filterOption={false}
-                        getPopupContainer={() => document.getElementById('scroll-area')}
-                        // getPopupContainer={() => findDOMNode(this)}
-                        // loading={selectLoading}    
+                        getPopupContainer={() => document.getElementById('scroll-area')}                        
                         dropdownMatchSelectWidth={false}
                         dropdownClassName="dropdown"
                         footer={(
@@ -407,7 +380,7 @@ class ExecuteDetailSide extends Component {
                           </div>
                         )}
                         style={{ width: 300 }}
-                        onChange={this.handleDefectsChange}
+                        onDeselect={this.handleRemoveDefect}
                         onFilterChange={(value) => { ExecuteDetailStore.loadIssueList(value); }}
                       >
                         {defectsOptions}
