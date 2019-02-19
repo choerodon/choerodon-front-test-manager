@@ -29,6 +29,8 @@ class TextEditToggle extends Component {
     newData: null,
   }
 
+  PopupContainers=[]
+
   componentDidMount() {
     // eslint-disable-next-line no-unused-expressions
     this.props.saveRef && this.props.saveRef(this);
@@ -74,9 +76,9 @@ class TextEditToggle extends Component {
 
   onDocumentClick = (event) => {
     const target = event.target;
-    const root = findDOMNode(this);
+    const root = findDOMNode(this);    
     // 如果点击不在当前元素内，就调用submit提交数据
-    if (!contains(root, target)) {
+    if ([root, ...this.PopupContainers.map(ele => ele.lastChild)].every(ele => !contains(ele, target))) {
       // console.log(target);
       this.handleSubmit();
     }
@@ -168,9 +170,18 @@ class TextEditToggle extends Component {
   wrapChildren = (children) => {
     const childrenArray = React.Children.toArray(children);
     // console.log(childrenArray);
-    return childrenArray.map(child => React.cloneElement(child, {
-      getPopupContainer: () => findDOMNode(this),
-    }));
+    return childrenArray.map((child) => {
+      if (!child.props.getPopupContainer) {
+        return React.cloneElement(child, {
+          getPopupContainer: () => findDOMNode(this),
+        });
+      } else {       
+        if (this.PopupContainers.indexOf(child.props.getPopupContainer()) === -1) {
+          this.PopupContainers.push(child.props.getPopupContainer());    
+        }       
+        return child;
+      }
+    });
   }
 
   renderTextChild=(children) => {
