@@ -29,7 +29,7 @@ class UserHead extends Component {
         className="c7ntest-userHead"
         style={{
           ...this.props.style,
-          display: user.id ? 'inline-flex' : 'none',
+          display: user.id ? 'flex' : 'none',
         }}
       >
         {

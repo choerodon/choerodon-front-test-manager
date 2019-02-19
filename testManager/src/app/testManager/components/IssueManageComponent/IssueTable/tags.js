@@ -177,7 +177,7 @@ export function renderAssigned(assigneeId, assigneeName, imageUrl, hiddenText) {
   return (
     assigneeId ? (
       <Tooltip mouseEnterDelay={0.5} title={`任务经办人： ${assigneeName}`}>
-        <div style={{ margin: '0 5px' }}>
+        <div>
           <UserHead
             hiddenText={hiddenText}
             user={{
@@ -196,7 +196,7 @@ export function renderReporter(reporterId, reporterName, reporterImageUrl, hidde
   return (
     reporterId ? (
       <Tooltip mouseEnterDelay={0.5} title={`任务报告人： ${reporterName}`}>
-        <div style={{ margin: '0 5px' }}>
+        <div>
           <UserHead
             hiddenText={hiddenText}
             user={{
