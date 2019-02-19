@@ -3,6 +3,7 @@ import { Icon, Popconfirm, Tooltip } from 'choerodon-ui';
 import { Link } from 'react-router-dom';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
+import { observer } from 'mobx-react';
 import TypeTag from '../../IssueManageComponent/TypeTag';
 import PriorityTag from '../../IssueManageComponent/PriorityTag';
 import StatusTag from '../../IssueManageComponent/StatusTag';
@@ -101,4 +102,4 @@ DefectList.propTypes = {
 
 };
 
-export default DefectList;
+export default observer(DefectList);
