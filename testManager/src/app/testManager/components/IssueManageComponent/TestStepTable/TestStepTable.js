@@ -447,6 +447,7 @@ class TestStepTable extends Component {
         <div
           role="none"
           className="item-container"
+          style={{ cursor: disabled ? 'auto' : 'pointer'}}
           // onClick={e => this.handleFieldOnClick(e, record, 'testStep')}
           onClick={(e) => {
             if (!disabled) {
@@ -489,6 +490,7 @@ class TestStepTable extends Component {
         <div
           role="none"
           className="item-container"
+          style={{ cursor: disabled ? 'auto' : 'pointer'}}
           onClick={(e) => {
             if (!disabled) {
               const fieldClicked = e.target;
@@ -529,6 +531,7 @@ class TestStepTable extends Component {
         <div
           role="none"
           className="item-container"
+          style={{ cursor: disabled ? 'auto' : 'pointer'}}
           onClick={(e) => {
             if (!disabled) {
               const fieldClicked = e.target;
