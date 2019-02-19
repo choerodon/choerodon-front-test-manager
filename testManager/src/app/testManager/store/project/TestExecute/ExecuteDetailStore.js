@@ -21,7 +21,7 @@ class ExecuteDetailStore {
 
   @observable selectLoading = false;
 
-  @observable ExecuteDetailSideVisible = true;
+  @observable ExecuteDetailSideVisible = false;
 
   @observable userList = [];
 
@@ -168,7 +168,7 @@ class ExecuteDetailStore {
   }
 
   @computed get getCycleData() {
-    return toJS(this.cycleData);
+    return this.cycleData;
   }
 
   @computed get getHistoryList() {
@@ -236,6 +236,14 @@ class ExecuteDetailStore {
     this.cycleData = cycleData;
   }
 
+  @action removeLocalDefect = (defectId) => {
+    _.remove(this.cycleData.defects, { id: defectId });
+  }
+
+  @action removeLocalDefect = (defectId) => {
+    _.remove(this.cycleData.defects, { id: defectId });
+  }
+  
   @action setStatusList = (statusList) => {
     this.statusList = statusList;
   }

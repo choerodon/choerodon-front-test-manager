@@ -628,192 +628,189 @@ class TestExecuteHome extends Component {
       cycleId, title, type, cycleCaseList,
     } = currentCycle;
     const prefix = <Icon type="filter_list" />;
-    const columns = [{
-      title: <span>ID</span>,
-      dataIndex: 'issueNum',
-      key: 'issueNum',
-      flex: 1,
-      // filters: [],
-      // onFilter: (value, record) => 
-      //   record.issueInfosDTO && record.issueInfosDTO.issueNum.indexOf(value) === 0,  
-      render(issueId, record) {
-        const { issueInfosDTO } = record;
-        return (
-          <div onClick={(e) => { e.stopPropagation(); }} role="none">
-            {issueInfosDTO && (
-            <Tooltip
-              title={(
-                <div>
-                  <div>{issueInfosDTO.issueNum}</div>
-                  {/* <div>{issueInfosDTO.summary}</div> */}
-                </div>
-              )}
-            >
-              <Link
-                className="c7ntest-text-dot"
-                style={{
-                  width: 100,
-                }}
-                to={issueLink(issueInfosDTO.issueId, issueInfosDTO.typeCode, issueInfosDTO.issueNum)}
-                target="_blank"
-              >
-                {issueInfosDTO.issueNum}
-              </Link>
-            </Tooltip>
-            )}
-          </div>
-        );
-      },
-    }, {
-      title: <span>用例名称</span>,
-      dataIndex: 'summary',
-      key: 'summary',
-      filters: [],
-      flex: 2,
-      render(issueId, record) {
-        const { issueInfosDTO } = record;
-        return (
-          issueInfosDTO && (
-            <SmartTooltip>
-              {issueInfosDTO.summary}
-            </SmartTooltip>
-          )
-        );
-      },
-    },
-    // {
-    //   title: <FormattedMessage id="bug" />,
-    //   dataIndex: 'defects',
-    //   key: 'defects',
+    const columns = [
+    //   {
+    //   title: <span>ID</span>,
+    //   dataIndex: 'issueNum',
+    //   key: 'issueNum',
     //   flex: 1,
-    //   render: defects => (
-    //     <Tooltip
-    //       placement="topLeft"
-    //       title={(
-    //         <div>
-    //           {defects.map((defect, i) => (
-    //             defect.issueInfosDTO && (
-    //               <div>
-    //                 <Link
-    //                   style={{
-    //                     color: 'white',
-    //                   }}
-    //                   to={issueLink(defect.issueInfosDTO.issueId, defect.issueInfosDTO.typeCode, defect.issueInfosDTO.issueNum)}
-    //                   target="_blank"
-    //                 >
-    //                   {defect.issueInfosDTO.issueNum}
-    //                 </Link>
-    //                 <div>{defect.issueInfosDTO.summary}</div>
-    //               </div>
-    //             )
-    //           ))}
-    //         </div>
-    //       )}
-    //     >
-    //       {defects.map((defect, i) => defect.issueInfosDTO && defect.issueInfosDTO.issueNum).join(',')}
-    //     </Tooltip>
-    //   ),
-    // },
-    {
-      title: <FormattedMessage id="cycle_executeBy" />,
-      dataIndex: 'lastUpdateUser',
-      key: 'lastUpdateUser',
-      flex: 1,
-      render(lastUpdateUser) {
-        return (
-          <div
-            className="c7ntest-text-dot"
-          >
-            {lastUpdateUser && lastUpdateUser.realName}
-          </div>
-        );
-      },
-    },
-    //  {
-    //   title: <FormattedMessage id="cycle_executeTime" />,
-    //   dataIndex: 'lastUpdateDate',
-    //   key: 'lastUpdateDate',
-    //   flex: 1,
-    //   render(lastUpdateDate) {
+    //   render(issueId, record) {
+    //     const { issueInfosDTO } = record;
     //     return (
-    //       <div
-    //         className="c7ntest-text-dot"
-    //       >
-    //         {lastUpdateDate && moment(lastUpdateDate).format('YYYY-MM-DD')}
+    //       <div>
+    //         {issueInfosDTO && (
+    //         <Tooltip
+    //           title={(
+    //             <div>
+    //               <div>{issueInfosDTO.issueNum}</div>
+    //               {/* <div>{issueInfosDTO.summary}</div> */}
+    //             </div>
+    //           )}
+    //         >
+    //           <div
+    //             className="c7ntest-text-dot"
+    //             style={{
+    //               width: 100, color: '#3F51B5',
+    //             }}                
+    //           >
+    //             {issueInfosDTO.issueNum}
+    //           </div>
+    //         </Tooltip>
+    //         )}
     //       </div>
     //     );
     //   },
-    // },
-    {
-      title: <FormattedMessage id="cycle_assignedTo" />,
-      dataIndex: 'assigneeUser',
-      key: 'assigneeUser',
-      flex: 1,
-      render(assigneeUser) {
-        return (
-          <div
-            className="c7ntest-text-dot"
-          >
-            {assigneeUser && assigneeUser.realName}
-          </div>
-        );
+    // }, 
+      {
+        title: <span>用例名称</span>,
+        dataIndex: 'summary',
+        key: 'summary',
+        filters: [],
+        flex: 2,
+        render(issueId, record) {
+          const { issueInfosDTO } = record;
+          return (
+            issueInfosDTO && (
+            <SmartTooltip style={{ color: '#3F51B5' }}>              
+                {issueInfosDTO.summary}            
+            </SmartTooltip>
+            )
+          );
+        },
       },
-    }, {
-      title: <span>用例优先级</span>,
-      dataIndex: 'priorityId',
-      key: 'priorityId',
-      filters: prioritys.map(priority => ({ text: priority.name, value: priority.id.toString() })),
-      flex: 1,
-      render(issueId, record) {
-        const { issueInfosDTO } = record;
-        return (
-          issueInfosDTO && renderPriority(issueInfosDTO.priorityDTO)
-        );
+      // {
+      //   title: <FormattedMessage id="bug" />,
+      //   dataIndex: 'defects',
+      //   key: 'defects',
+      //   flex: 1,
+      //   render: defects => (
+      //     <Tooltip
+      //       placement="topLeft"
+      //       title={(
+      //         <div>
+      //           {defects.map((defect, i) => (
+      //             defect.issueInfosDTO && (
+      //               <div>
+      //                 <Link
+      //                   style={{
+      //                     color: 'white',
+      //                   }}
+      //                   to={issueLink(defect.issueInfosDTO.issueId, defect.issueInfosDTO.typeCode, defect.issueInfosDTO.issueNum)}
+      //                   target="_blank"
+      //                 >
+      //                   {defect.issueInfosDTO.issueNum}
+      //                 </Link>
+      //                 <div>{defect.issueInfosDTO.summary}</div>
+      //               </div>
+      //             )
+      //           ))}
+      //         </div>
+      //       )}
+      //     >
+      //       {defects.map((defect, i) => defect.issueInfosDTO && defect.issueInfosDTO.issueNum).join(',')}
+      //     </Tooltip>
+      //   ),
+      // },
+      {
+        title: <FormattedMessage id="cycle_executeBy" />,
+        dataIndex: 'lastUpdateUser',
+        key: 'lastUpdateUser',
+        flex: 1,
+        render(lastUpdateUser) {
+          return (
+            <div
+              className="c7ntest-text-dot"
+            >
+              {lastUpdateUser && lastUpdateUser.realName}
+            </div>
+          );
+        },
       },
-    }, {
-      title: <FormattedMessage id="status" />,
-      dataIndex: 'executionStatus',
-      key: 'executionStatus',
-      filters: statusList.map(status => ({ text: status.statusName, value: status.statusId.toString() })),
-      // onFilter: (value, record) => record.executionStatus === value,  
-      flex: 1,
-      render(executionStatus) {
-        const statusColor = _.find(statusList, { statusId: executionStatus })
-          ? _.find(statusList, { statusId: executionStatus }).statusColor : '';
-        return (
-          _.find(statusList, { statusId: executionStatus }) && (
+      //  {
+      //   title: <FormattedMessage id="cycle_executeTime" />,
+      //   dataIndex: 'lastUpdateDate',
+      //   key: 'lastUpdateDate',
+      //   flex: 1,
+      //   render(lastUpdateDate) {
+      //     return (
+      //       <div
+      //         className="c7ntest-text-dot"
+      //       >
+      //         {lastUpdateDate && moment(lastUpdateDate).format('YYYY-MM-DD')}
+      //       </div>
+      //     );
+      //   },
+      // },
+      {
+        title: <FormattedMessage id="cycle_assignedTo" />,
+        dataIndex: 'assigneeUser',
+        key: 'assigneeUser',
+        flex: 1,
+        render(assigneeUser) {
+          return (
+            <div
+              className="c7ntest-text-dot"
+            >
+              {assigneeUser && assigneeUser.realName}
+            </div>
+          );
+        },
+      }, {
+        title: <span>用例优先级</span>,
+        dataIndex: 'priorityId',
+        key: 'priorityId',
+        filters: prioritys.map(priority => ({ text: priority.name, value: priority.id.toString() })),
+        flex: 1,
+        render(issueId, record) {
+          const { issueInfosDTO } = record;
+          return (
+            issueInfosDTO && renderPriority(issueInfosDTO.priorityDTO)
+          );
+        },
+      }, {
+        title: <FormattedMessage id="status" />,
+        dataIndex: 'executionStatus',
+        key: 'executionStatus',
+        filters: statusList.map(status => ({ text: status.statusName, value: status.statusId.toString() })),
+        // onFilter: (value, record) => record.executionStatus === value,  
+        flex: 1,
+        render(executionStatus) {
+          const statusColor = _.find(statusList, { statusId: executionStatus })
+            ? _.find(statusList, { statusId: executionStatus }).statusColor : '';
+          return (
+            _.find(statusList, { statusId: executionStatus }) && (
             <StatusTags
               color={statusColor}
               name={_.find(statusList, { statusId: executionStatus }).statusName}
             />
-          )
-        );
+            )
+          );
+        },
       },
-    },
-    // {
-    //   title: <span>执行描述</span>,
-    //   dataIndex: 'comment',
-    //   key: 'comment',
-    //   filters: [],
-    //   flex: 1,
-    //   render(comment) {
-    //     return (
-    //       <Tooltip title={<RichTextShow data={delta2Html(comment)} />}>
-    //         <div
-    //           className="c7ntest-text-dot"
-    //         >
-    //           {delta2Text(comment)}
-    //         </div>
-    //       </Tooltip>
-    //     );
-    //   },
-    // },
-    {
-      title: '',
-      key: 'action',
-      width: 90,
-      render: (text, record) => (
-        record.projectId !== 0
+      // {
+      //   title: <span>执行描述</span>,
+      //   dataIndex: 'comment',
+      //   key: 'comment',
+      //   filters: [],
+      //   flex: 1,
+      //   render(comment) {
+      //     return (
+      //       <Tooltip title={<RichTextShow data={delta2Html(comment)} />}>
+      //         <div
+      //           className="c7ntest-text-dot"
+      //         >
+      //           {delta2Text(comment)}
+      //         </div>
+      //       </Tooltip>
+      //     );
+      //   },
+      // },
+      {
+        title: '',
+        key: 'action',
+        width: 90,
+        render: (text, record) => (
+          record.projectId !== 0
         && (
           <div style={{ display: 'flex' }}>
             <Tooltip title={<FormattedMessage id="execute_quickPass" />}>
@@ -824,8 +821,8 @@ class TestExecuteHome extends Component {
             </Tooltip>
           </div>
         )
-      ),
-    }];
+        ),
+      }];
     const otherColumns = [
       // {
       //   title: <FormattedMessage id="cycle_createExecute_component" />,

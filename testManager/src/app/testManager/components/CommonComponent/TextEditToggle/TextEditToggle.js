@@ -23,11 +23,29 @@ function contains(root, n) {
 }
 @observer
 class TextEditToggle extends Component {
+  static defaultProps = {
+
+  };
+
+  static propTypes = {
+    saveRef: PropTypes.func,
+    className: PropTypes.string,
+    disabled: PropTypes.bool,
+    simpleMode: PropTypes.bool,
+    formKey: PropTypes.string,
+    onSubmit: PropTypes.func,
+    onCancel: PropTypes.func,
+    originData: PropTypes.object,
+    children: PropTypes.node,
+  };
+
   state = {
     editing: false,
     originData: null,
     newData: null,
   }
+
+  PopupContainers = []
 
   componentDidMount() {
     // eslint-disable-next-line no-unused-expressions
@@ -35,39 +53,17 @@ class TextEditToggle extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
+    // eslint-disable-next-line no-unused-expressions
     this.props.saveRef && this.props.saveRef(this);
   }
-  
-  static defaultProps = {
-    // hasFeedback: false,
-    // prefixCls: 'ant-form',
-    // colon: true,
-  };
 
-  static propTypes = {
-    // prefixCls: PropTypes.string,
-    // label: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
-    // labelCol: PropTypes.object,
-    // help: PropTypes.oneOfType([PropTypes.node, PropTypes.bool]),
-    // validateStatus: PropTypes.oneOf(['', 'success', 'warning', 'error', 'validating']),
-    // hasFeedback: PropTypes.bool,
-    // wrapperCol: PropTypes.object,
-    // className: PropTypes.string,
-    // id: PropTypes.string,
-    // children: PropTypes.node,
-    // colon: PropTypes.bool,
-  };
 
   static getDerivedStateFromProps(props, state) {
-    // if (props.formKey === 'statusId') {
-    //   console.log(props.originData, state.originData, state.editing, state.newData);
-    // }
-
     if (props.originData !== state.originData) {
       return {
         originData: props.originData,
         newData: null,
-      };      
+      };
     }
     return null;
   }
@@ -76,13 +72,13 @@ class TextEditToggle extends Component {
     const target = event.target;
     const root = findDOMNode(this);
     // 如果点击不在当前元素内，就调用submit提交数据
-    if (!contains(root, target)) {
+    if ([root, ...this.PopupContainers.map(ele => ele.lastChild)].every(ele => !contains(ele, target))) {
       // console.log(target);
       this.handleSubmit();
     }
   }
 
-  handleDone=() => {
+  handleDone = () => {
     this.setState({
       newData: null,
     });
@@ -168,12 +164,21 @@ class TextEditToggle extends Component {
   wrapChildren = (children) => {
     const childrenArray = React.Children.toArray(children);
     // console.log(childrenArray);
-    return childrenArray.map(child => React.cloneElement(child, {
-      getPopupContainer: () => findDOMNode(this),
-    }));
+    return childrenArray.map((child) => {
+      if (!child.props.getPopupContainer) {
+        return React.cloneElement(child, {
+          getPopupContainer: () => findDOMNode(this),
+        });
+      } else {
+        if (this.PopupContainers.indexOf(child.props.getPopupContainer()) === -1) {
+          this.PopupContainers.push(child.props.getPopupContainer());
+        }
+        return child;
+      }
+    });
   }
 
-  renderTextChild=(children) => {
+  renderTextChild = (children) => {
     const childrenArray = React.Children.toArray(children);
     // console.log(childrenArray);
     return childrenArray.map(child => React.cloneElement(child, {
@@ -209,23 +214,23 @@ class TextEditToggle extends Component {
           ) : children.map(child => (this.wrapChildren(child.props.children)))
         }
         {!simpleMode && (
-        <div>
-          <div style={{ textAlign: 'right', lineHeight: '20px' }}>
-            <Icon type="done" className="c7ntest-TextEditToggle-edit-icon" onClick={this.handleSubmit} />
-            <Icon type="close" className="c7ntest-TextEditToggle-edit-icon" onClick={this.leaveEditing} />
+          <div>
+            <div style={{ textAlign: 'right', lineHeight: '20px' }}>
+              <Icon type="done" className="c7ntest-TextEditToggle-edit-icon" onClick={this.handleSubmit} />
+              <Icon type="close" className="c7ntest-TextEditToggle-edit-icon" onClick={this.leaveEditing} />
+            </div>
           </div>
-        </div>
         )}
       </div>
     ) : (
       <div
-        className={simpleMode || disabled ? 'c7ntest-TextEditToggle-text' : 'c7ntest-TextEditToggle-text c7ntest-TextEditToggle-text-active'}
-        onClick={this.enterEditing}
-        role="none"
-      >
-        {this.renderTextChild(children)}
-        {!simpleMode && <Icon type="mode_edit" className="c7ntest-TextEditToggle-text-icon" />}
-      </div>
+          className={simpleMode || disabled ? 'c7ntest-TextEditToggle-text' : 'c7ntest-TextEditToggle-text c7ntest-TextEditToggle-text-active'}
+          onClick={this.enterEditing}
+          role="none"
+        >
+          {this.renderTextChild(children)}
+          {!simpleMode && <Icon type="mode_edit" className="c7ntest-TextEditToggle-text-icon" />}
+        </div>
     );
   }
 
