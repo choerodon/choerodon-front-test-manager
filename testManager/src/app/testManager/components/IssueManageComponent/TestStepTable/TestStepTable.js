@@ -6,7 +6,7 @@ import { stores, axios } from 'choerodon-front-boot';
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import {
-  cloneStep, updateStep, deleteStep, createIssueStep, 
+  cloneStep, updateStep, deleteStep, createIssueStep,
 } from '../../../api/IssueManageApi';
 import { uploadFile } from '../../../api/FileApi';
 import { DragTable } from '../../CommonComponent';
@@ -20,7 +20,7 @@ const { AppState } = stores;
 const { TextArea } = Input;
 let didUpdateFlag = false;
 let didCreatedFlag = false;
-let createStepId = undefined;
+let createStepId;
 class TestStepTable extends Component {
   constructor(props) {
     super(props);
@@ -41,7 +41,7 @@ class TestStepTable extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.data !== this.props.data && nextProps.data) {
-      this.setState({ 
+      this.setState({
         data: nextProps.data,
         isEditing: _.map(nextProps.data, (item, index) => (
           {
@@ -112,13 +112,12 @@ class TestStepTable extends Component {
           // file.name = encodeURI(encodeURI(file.name));
           formData.append('file', file);
         });
-        if(createStepId) {
+        if (createStepId) {
           uploadFile(formData, config).then((res) => {
             if (res.failed) {
               this.props.leaveLoad();
               Choerodon.prompt('不能有重复附件');
-            } 
-            else {
+            } else {
               createStepId = undefined;
               this.props.onOk();
             }
@@ -130,8 +129,7 @@ class TestStepTable extends Component {
         }
         return false;
       }
-
-    } else{
+    } else {
       this.props.onOk();
     }
   }
@@ -165,7 +163,7 @@ class TestStepTable extends Component {
         testStep: '',
         testData: '',
         expectedResult: '',
-      }, 
+      },
       fileList: [],
       createdStepInfo: {},
     });
@@ -173,7 +171,7 @@ class TestStepTable extends Component {
 
   createIssueStep = () => {
     const { issueId, data } = this.props;
-    const {createStep, fileList} = this.state;
+    const { createStep, fileList } = this.state;
     const { expectedResult, testStep } = createStep;
     if (expectedResult && testStep) {
       const lastRank = data.length
@@ -184,26 +182,24 @@ class TestStepTable extends Component {
         nextRank: null,
         ...createStep,
       };
-      if(!didCreatedFlag) {
+      if (!didCreatedFlag) {
         didCreatedFlag = true;
         createIssueStep(testCaseStepDTO).then((res) => {
           createStepId = res.stepId;
           this.setState({
             createdStepInfo: res,
-          })
+          });
           this.handleFileUpload(fileList);
         });
-      } 
-      else {
+      } else {
         setTimeout(() => {
-          let {createdStepInfo, createStep} = this.state;
+          let { createdStepInfo, createStep } = this.state;
           createdStepInfo = {
             ...createdStepInfo,
             ...createStep,
-            objectVersionNumber: createdStepInfo.objectVersionNumber||1,
-          }
+            objectVersionNumber: createdStepInfo.objectVersionNumber || 1,
+          };
           this.editStep(createdStepInfo, this.handleFileUpload.bind(this, fileList));
-          ;
         }, 300);
       }
     } else {
@@ -212,13 +208,13 @@ class TestStepTable extends Component {
   }
 
   editStep = (record, func) => {
-      updateStep(record).then((res) => {
-        if(func) {
-          func();
-        }else {
-          this.props.onOk();
-        }  
-      });
+    updateStep(record).then((res) => {
+      if (func) {
+        func();
+      } else {
+        this.props.onOk();
+      }
+    });
   };
 
   cloneStep = (stepId, index) => {
@@ -272,19 +268,19 @@ class TestStepTable extends Component {
       const editingStepIndex = _.find(isEditing, item => item.stepId === record.stepId) ? _.find(isEditing, item => item.stepId === record.stepId).index : -1;
       if (editingStepIndex !== -1) {
         return isEditing[editingStepIndex].isStepNameEditing ? (
-          <TextArea 
+          <TextArea
             ref={(testStep) => {
               this[`testStep${record.stepId}`] = testStep;
             }}
             autosize
             // placeholder="测试步骤"
             onBlur={e => this.handleBlurOrEnter(e, record, 'testStep')}
-            defaultValue={record.stepIsCreating? createStep.testStep : record.testStep}
+            defaultValue={record.stepIsCreating ? createStep.testStep : record.testStep}
           />
-          ) : (
-          <span style={ { color: record.stepIsCreating && !createStep.testStep  ? '#bfbfbf' : '#000' } }>{record.stepIsCreating? (createStep.testStep ? createStep.testStep : '测试步骤') : record.testStep}</span>
-          // <span>{record.stepIsCreating? createStep.testStep : record.testStep}</span>
-          )
+        ) : (
+          <span style={{ color: record.stepIsCreating && !createStep.testStep ? '#bfbfbf' : '#000' }}>{record.stepIsCreating ? (createStep.testStep ? createStep.testStep : '测试步骤') : record.testStep}</span>
+        // <span>{record.stepIsCreating? createStep.testStep : record.testStep}</span>
+        );
       }
     }
   }
@@ -295,22 +291,22 @@ class TestStepTable extends Component {
     if (disabled) {
       return (
         <span>{record.testData ? record.testData : '-'}</span>
-      )
+      );
     } else {
-      const editingStepIndex = _.find(isEditing, item => item.stepId === record.stepId) ? _.find(isEditing, item => item.stepId === record.stepId)['index'] : -1;
-      if(editingStepIndex !== -1) {
-      return isEditing[editingStepIndex].isStepDataEditing ? (
-        <TextArea 
-          ref={(testData) => {
-            this[`testData${record.stepId}`] = testData;
-          }}
-          autosize
-          onBlur={e => this.handleBlurOrEnter(e, record, 'testData')}
-          defaultValue={record.stepIsCreating? createStep.testData : record.testData}
-        />
+      const editingStepIndex = _.find(isEditing, item => item.stepId === record.stepId) ? _.find(isEditing, item => item.stepId === record.stepId).index : -1;
+      if (editingStepIndex !== -1) {
+        return isEditing[editingStepIndex].isStepDataEditing ? (
+          <TextArea
+            ref={(testData) => {
+              this[`testData${record.stepId}`] = testData;
+            }}
+            autosize
+            onBlur={e => this.handleBlurOrEnter(e, record, 'testData')}
+            defaultValue={record.stepIsCreating ? createStep.testData : record.testData}
+          />
         ) : (
-        <span style={ { color: record.stepIsCreating && !createStep.testData  ? '#bfbfbf' : '#000' } }>{record.stepIsCreating? (createStep.testData ? createStep.testData : '测试数据') : (record.testData ? record.testData : '-')}</span>
-        )
+          <span style={{ color: record.stepIsCreating && !createStep.testData ? '#bfbfbf' : '#000' }}>{record.stepIsCreating ? (createStep.testData ? createStep.testData : '测试数据') : (record.testData ? record.testData : '-')}</span>
+        );
       }
     }
   }
@@ -323,17 +319,17 @@ class TestStepTable extends Component {
         <span>{record.expectedResult}</span>
       );
     } else {
-      const editingStepIndex = _.find(isEditing, item => item.stepId === record.stepId) ? _.find(isEditing, item => item.stepId === record.stepId)['index'] : -1;
-      if(editingStepIndex !== -1) {
-      return isEditing[editingStepIndex].isStepExpectedResultEditing ? (
-        <TextArea 
-          ref={(expectedResult) => {
-            this[`expectedResult${record.stepId}`] = expectedResult;
-          }}
-          autosize
-          onBlur={e => this.handleBlurOrEnter(e, record, 'expectedResult')}
-          defaultValue={record.stepIsCreating? createStep.expectedResult : record.expectedResult}
-        />
+      const editingStepIndex = _.find(isEditing, item => item.stepId === record.stepId) ? _.find(isEditing, item => item.stepId === record.stepId).index : -1;
+      if (editingStepIndex !== -1) {
+        return isEditing[editingStepIndex].isStepExpectedResultEditing ? (
+          <TextArea
+            ref={(expectedResult) => {
+              this[`expectedResult${record.stepId}`] = expectedResult;
+            }}
+            autosize
+            onBlur={e => this.handleBlurOrEnter(e, record, 'expectedResult')}
+            defaultValue={record.stepIsCreating ? createStep.expectedResult : record.expectedResult}
+          />
         ) : (
           <span style={{ color: record.stepIsCreating && !createStep.expectedResult ? '#bfbfbf' : '#000' }}>{record.stepIsCreating ? (createStep.expectedResult ? createStep.expectedResult : '测试结果') : record.expectedResult}</span>
         );
@@ -344,7 +340,7 @@ class TestStepTable extends Component {
 
   handleBlurOrEnter = (e, record, editField) => {
     const { createStep, isEditing } = this.state;
-    
+
     if (!record.stepIsCreating) {
       record[editField] = e.target.value;
       const { expectedResult, testStep } = record;
@@ -383,7 +379,7 @@ class TestStepTable extends Component {
         ele.isStepDataEditing = false;
         ele.isStepExpectedResultEditing = false;
       });
-      const editingStepIndex = _.find(isEditing, item => item.stepId === record.stepId)['index'];
+      const editingStepIndex = _.find(isEditing, item => item.stepId === record.stepId).index;
       // isEditing[editingStepIndex].isStepNameEditing = true,
       isEditing[editingStepIndex][`is${_.upperFirst(editField)}Editing`] = true,
 
@@ -392,10 +388,10 @@ class TestStepTable extends Component {
       });
 
       setTimeout(() => {
-        if(didUpdateFlag) {
-          let fieldClicked = e.target;
-          let fieldClickedParent = fieldClicked.parentNode;
-          if(fieldClicked.tagName === 'DIV') {
+        if (didUpdateFlag) {
+          const fieldClicked = e.target;
+          const fieldClickedParent = fieldClicked.parentNode;
+          if (fieldClicked.tagName === 'DIV') {
             fieldClicked.getElementsByTagName('textArea')[0].focus();
           } else {
             fieldClickedParent.getElementsByTagName('textArea')[0].focus();
@@ -406,7 +402,7 @@ class TestStepTable extends Component {
     e.stopPropagation();
   }
 
- 
+
   cancelCreateStep = (index) => {
     const { data } = this.state;
     const cancelStep = _.remove(data, (item, i) => index === i);
@@ -446,10 +442,10 @@ class TestStepTable extends Component {
       key: 'testStep',
       flex: 2,
       render: (testStep, record) => (
-        <div 
+        <div
           role="none"
           className="item-container"
-            // onClick={e => this.handleFieldOnClick(e, record, 'testStep')}
+          // onClick={e => this.handleFieldOnClick(e, record, 'testStep')}
           onClick={(e) => {
             if (!disabled) {
               const fieldClicked = e.target;
@@ -464,7 +460,7 @@ class TestStepTable extends Component {
               this.setState({
                 isEditing,
               });
-  
+
               setTimeout(() => {
                 if (fieldClicked.tagName === 'DIV') {
                   fieldClicked.getElementsByTagName('textArea')[0].focus();
@@ -475,7 +471,7 @@ class TestStepTable extends Component {
             }
             e.stopPropagation();
           }
-            }
+          }
         >
           {
             this.renderStepName(record)
@@ -488,7 +484,7 @@ class TestStepTable extends Component {
       key: 'testData',
       flex: 2,
       render: (testData, record) => (
-        <div 
+        <div
           role="none"
           className="item-container"
           onClick={(e) => {
@@ -528,7 +524,7 @@ class TestStepTable extends Component {
       key: 'expectedResult',
       flex: 2,
       render: (expectedResult, record) => (
-        <div 
+        <div
           role="none"
           className="item-container"
           onClick={(e) => {
@@ -545,7 +541,7 @@ class TestStepTable extends Component {
               this.setState({
                 isEditing,
               });
-  
+
               setTimeout(() => {
                 if (fieldClicked.tagName === 'DIV') {
                   fieldClicked.getElementsByTagName('textArea')[0].focus();
@@ -571,7 +567,7 @@ class TestStepTable extends Component {
       render: (attachments, record) => (
         <div className="item-container item-container-upload">
           {record.stepIsCreating ? (
-            <UploadButton 
+            <UploadButton
               className="createUploadBtn"
               onRemove={this.setFileList}
               onBeforeUpload={this.setFileList}
@@ -598,16 +594,18 @@ class TestStepTable extends Component {
       flex: 2,
       render: (attachments, record, index, provided, snapshot) => {
         const { stepIsCreating } = record;
-
         return !stepIsCreating ? (
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-             <Tooltip title={<FormattedMessage id="execute_move" />}>
-              <Icon type="open_with" {...provided.dragHandleProps} style={{ marginRight: 10}} />
+          <div style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'flex-end', minWidth: 92, 
+          }}
+          >
+            <Tooltip title={<FormattedMessage id="execute_move" />}>
+              <Icon type="open_with" {...provided.dragHandleProps} style={{ marginRight: 7 }} />
             </Tooltip>
             <Tooltip title={<FormattedMessage id="execute_copy" />}>
-              <Button disabled={disabled} shape="circle" funcType="flat" icon="library_books" style={{ margin: '0 5px', color: 'black' }} onClick={() => this.cloneStep(record.stepId, index)} />
+              <Button disabled={disabled} shape="circle" funcType="flat" icon="library_books" style={{ color: 'black' }} onClick={() => this.cloneStep(record.stepId, index)} />
             </Tooltip>
-            <Button disabled={disabled} shape="circle" funcType="flat" icon="delete_forever" style={{ margin: '0 5px', color: 'black' }} onClick={() => this.handleDeleteTestStep(record.stepId)} />
+            <Button disabled={disabled} shape="circle" funcType="flat" icon="delete_forever" style={{ color: 'black' }} onClick={() => this.handleDeleteTestStep(record.stepId)} />
           </div>
         ) : (
           <div>
@@ -622,7 +620,7 @@ class TestStepTable extends Component {
         );
       },
     }];
-    
+
     return (
       <div className="c7ntest-TestStepTable">
         <DragTable
@@ -635,11 +633,11 @@ class TestStepTable extends Component {
           dragKey="stepId"
           customDragHandle
         />
-          <div style={{ marginLeft: 3, marginTop: 10, position: 'relative' }}>
-            <Button disabled={disabled || hasStepIsCreating} style={{ color: disabled || hasStepIsCreating ? '#bfbfbf' : '#3F51B5'}} icon="playlist_add" className="leftBtn" funcTyp="flat" onClick={this.handleClickCreate}>
-              <FormattedMessage id="issue_edit_addTestDetail" />
-            </Button>
-          </div>
+        <div style={{ marginLeft: 3, marginTop: 10, position: 'relative' }}>
+          <Button disabled={disabled || hasStepIsCreating} style={{ color: disabled || hasStepIsCreating ? '#bfbfbf' : '#3F51B5' }} icon="playlist_add" className="leftBtn" funcTyp="flat" onClick={this.handleClickCreate}>
+            <FormattedMessage id="issue_edit_addTestDetail" />
+          </Button>
+        </div>
       </div>
     );
   }
