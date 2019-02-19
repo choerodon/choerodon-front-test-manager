@@ -70,7 +70,7 @@ class TestCaseDetail extends Component {
       testCaseId: id,
       folderName,
     });
-    const allIdValues = IssueStore.getIssueIds;
+    const allIdValues = sessionStorage.allIdValues ? sessionStorage.allIdValues.split(',') : IssueStore.getIssueIds;
     let testCaseIdIndex;
     allIdValues.forEach((valueId, index) => {
       if (id == valueId) {
@@ -85,6 +85,12 @@ class TestCaseDetail extends Component {
 
     this.reloadIssue(id);
   }
+
+  // setAllIdValuesSessionStorage(data) {
+  //   if(window.sessionStorage) {
+  //     sessionStorage.allIdValues = sessionStorage.allIdValues || data;
+  //   }
+  // }
 
   /**
    *加载issue以及相关信息
@@ -119,7 +125,6 @@ class TestCaseDetail extends Component {
         fileList,
         linkIssues,
         datalogs,
-        // testStepData,
         testStepData: testStepData.map(step => ({
           ...step,
           stepIsCreating: false,
@@ -134,8 +139,7 @@ class TestCaseDetail extends Component {
       const { lasttestCaseId, nexttestCaseId } = this.state;
       const { disabled, history } = this.props;
       const toTestCaseId = mode === 'pre' ? lasttestCaseId : nexttestCaseId;
-
-      const allIdValues = IssueStore.getIssueIds;
+      const allIdValues = sessionStorage.allIdValues ? sessionStorage.allIdValues.split(',') : IssueStore.getIssueIds;
       let toTestCaseIdIndex;
       allIdValues.forEach((valueId, index) => {
         if (toTestCaseId == valueId) {
@@ -164,8 +168,6 @@ class TestCaseDetail extends Component {
         isExpand,
         folderName,
       } = this.state;
-
-      const hasStepIsCreating = testStepData.find(item => item.stepIsCreating);
 
       return (
         <Page className="c7ntest-testCaseDetail">
@@ -220,24 +222,22 @@ class TestCaseDetail extends Component {
             <div style={{ display: 'flex', height: 'calc(100vh - 107px)' }}>
               <div style={{ overflowY: 'auto' }}>
                 {
-                    !loading && (
-                      <div style={{ display: 'flex', margin: '24px' }}>
-                        <span style={{ fontSize: 20 }}>{issueInfo && issueInfo.summary}</span>
-                        <div 
-                          style={{
-                            display: 'flex', alignItems: 'center', marginLeft: 20, color: '#3F51B5', fontSize: 14, cursor: 'pointer', 
-                          }}  
-                          onClick={() => {
-                            this.setState({
-                              isExpand: !this.state.isExpand,
-                            });
-                          }}
-                        >
-                          <Icon type={isExpand ? 'format_indent_increase' : 'format_indent_decrease'} style={{ verticalAlign: -2, fontSize: 15 }} />
-                          <span style={{ display: 'inline-block', marginLeft: 3 }}>{isExpand ? '隐藏详情' : '显示详情'}</span>
-                        </div>
-                      </div>
-                    )
+                  <div style={{ display: 'flex',  margin: '24px', fontSize: 20, height: '30px' }}>
+                    <span>{issueInfo && issueInfo.summary}</span>
+                    <div 
+                      style={{
+                        display: 'flex', alignItems: 'center', marginLeft: 20, color: '#3F51B5', fontSize: 14, cursor: 'pointer', 
+                      }}  
+                      onClick={() => {
+                        this.setState({
+                          isExpand: !this.state.isExpand,
+                        });
+                      }}
+                    >
+                      <Icon type={isExpand ? 'format_indent_increase' : 'format_indent_decrease'} style={{ verticalAlign: -2, fontSize: 15 }} />
+                      <span style={{ display: 'inline-block', marginLeft: 3 }}>{isExpand ? '隐藏详情' : '显示详情'}</span>
+                    </div>
+                  </div>
                   }
                 <Card
                   title={null}

@@ -136,7 +136,7 @@ class TestStepTable extends Component {
 
   handleClickCreate = () => {
     const { issueId, data } = this.props;
-    const { isEditing } = this.state;
+    const { isEditing } = this.state
     const lastRank = data.length
       ? data[data.length - 1].rank : null;
     const testCaseStepDTO = {
@@ -273,7 +273,7 @@ class TestStepTable extends Component {
               this[`testStep${record.stepId}`] = testStep;
             }}
             autosize
-            // placeholder="测试步骤"
+            placeholder="测试步骤"
             onBlur={e => this.handleBlurOrEnter(e, record, 'testStep')}
             defaultValue={record.stepIsCreating ? createStep.testStep : record.testStep}
           />
@@ -293,17 +293,18 @@ class TestStepTable extends Component {
         <span>{record.testData ? record.testData : '-'}</span>
       );
     } else {
-      const editingStepIndex = _.find(isEditing, item => item.stepId === record.stepId) ? _.find(isEditing, item => item.stepId === record.stepId).index : -1;
-      if (editingStepIndex !== -1) {
-        return isEditing[editingStepIndex].isStepDataEditing ? (
-          <TextArea
-            ref={(testData) => {
-              this[`testData${record.stepId}`] = testData;
-            }}
-            autosize
-            onBlur={e => this.handleBlurOrEnter(e, record, 'testData')}
-            defaultValue={record.stepIsCreating ? createStep.testData : record.testData}
-          />
+      const editingStepIndex = _.find(isEditing, item => item.stepId === record.stepId) ? _.find(isEditing, item => item.stepId === record.stepId)['index'] : -1;
+      if(editingStepIndex !== -1) {
+      return isEditing[editingStepIndex].isStepDataEditing ? (
+        <TextArea 
+          ref={(testData) => {
+            this[`testData${record.stepId}`] = testData;
+          }}
+          autosize
+          onBlur={e => this.handleBlurOrEnter(e, record, 'testData')}
+          defaultValue={record.stepIsCreating? createStep.testData : record.testData}
+          placeholder="测试数据"
+        />
         ) : (
           <span style={{ color: record.stepIsCreating && !createStep.testData ? '#bfbfbf' : '#000' }}>{record.stepIsCreating ? (createStep.testData ? createStep.testData : '测试数据') : (record.testData ? record.testData : '-')}</span>
         );
@@ -319,19 +320,20 @@ class TestStepTable extends Component {
         <span>{record.expectedResult}</span>
       );
     } else {
-      const editingStepIndex = _.find(isEditing, item => item.stepId === record.stepId) ? _.find(isEditing, item => item.stepId === record.stepId).index : -1;
-      if (editingStepIndex !== -1) {
-        return isEditing[editingStepIndex].isStepExpectedResultEditing ? (
-          <TextArea
-            ref={(expectedResult) => {
-              this[`expectedResult${record.stepId}`] = expectedResult;
-            }}
-            autosize
-            onBlur={e => this.handleBlurOrEnter(e, record, 'expectedResult')}
-            defaultValue={record.stepIsCreating ? createStep.expectedResult : record.expectedResult}
-          />
+      const editingStepIndex = _.find(isEditing, item => item.stepId === record.stepId) ? _.find(isEditing, item => item.stepId === record.stepId)['index'] : -1;
+      if(editingStepIndex !== -1) {
+      return isEditing[editingStepIndex].isStepExpectedResultEditing ? (
+        <TextArea 
+          ref={(expectedResult) => {
+            this[`expectedResult${record.stepId}`] = expectedResult;
+          }}
+          autosize
+          onBlur={e => this.handleBlurOrEnter(e, record, 'expectedResult')}
+          defaultValue={record.stepIsCreating? createStep.expectedResult : record.expectedResult}
+          placeholder="预期结果"
+        />
         ) : (
-          <span style={{ color: record.stepIsCreating && !createStep.expectedResult ? '#bfbfbf' : '#000' }}>{record.stepIsCreating ? (createStep.expectedResult ? createStep.expectedResult : '测试结果') : record.expectedResult}</span>
+          <span style={{ color: record.stepIsCreating && !createStep.expectedResult ? '#bfbfbf' : '#000' }}>{record.stepIsCreating ? (createStep.expectedResult ? createStep.expectedResult : '预期结果') : record.expectedResult}</span>
         );
       }
     }
