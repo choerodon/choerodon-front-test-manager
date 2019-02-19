@@ -277,7 +277,7 @@ class TestStepTable extends Component {
               this[`testStep${record.stepId}`] = testStep;
             }}
             autosize
-            // placeholder="测试步骤"
+            placeholder="测试步骤"
             onBlur={e => this.handleBlurOrEnter(e, record, 'testStep')}
             defaultValue={record.stepIsCreating? createStep.testStep : record.testStep}
           />
@@ -307,6 +307,7 @@ class TestStepTable extends Component {
           autosize
           onBlur={e => this.handleBlurOrEnter(e, record, 'testData')}
           defaultValue={record.stepIsCreating? createStep.testData : record.testData}
+          placeholder="测试数据"
         />
         ) : (
         <span style={ { color: record.stepIsCreating && !createStep.testData  ? '#bfbfbf' : '#000' } }>{record.stepIsCreating? (createStep.testData ? createStep.testData : '测试数据') : (record.testData ? record.testData : '-')}</span>
@@ -333,9 +334,10 @@ class TestStepTable extends Component {
           autosize
           onBlur={e => this.handleBlurOrEnter(e, record, 'expectedResult')}
           defaultValue={record.stepIsCreating? createStep.expectedResult : record.expectedResult}
+          placeholder="预期结果"
         />
         ) : (
-          <span style={{ color: record.stepIsCreating && !createStep.expectedResult ? '#bfbfbf' : '#000' }}>{record.stepIsCreating ? (createStep.expectedResult ? createStep.expectedResult : '测试结果') : record.expectedResult}</span>
+          <span style={{ color: record.stepIsCreating && !createStep.expectedResult ? '#bfbfbf' : '#000' }}>{record.stepIsCreating ? (createStep.expectedResult ? createStep.expectedResult : '预期结果') : record.expectedResult}</span>
         );
       }
     }

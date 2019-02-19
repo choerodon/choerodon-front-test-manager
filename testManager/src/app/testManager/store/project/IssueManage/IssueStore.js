@@ -191,6 +191,9 @@ class IssueStore {
           this.setIssueForderNames(_.map(res.content, 'folderName'));
           if (Page === 0) {
             this.setIssueIds(res.allIdValues || []);
+            if(window.sessionStorage) {
+              sessionStorage.allIdValues = res.allIdValues || [];
+            }
           }
           // 调用ids接口不返回总数
           if (Page > 0) {

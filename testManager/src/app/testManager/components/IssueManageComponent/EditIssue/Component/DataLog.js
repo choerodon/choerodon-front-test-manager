@@ -17,7 +17,7 @@ const PROP = {
   // Component: '模块',
   labels: '标签',
   'Epic Link': '史诗',
-  assignee: '经办人',
+  assignee: '被指定人',
   reporter: '报告人',
 };
 const PROP_SIMPLE = {
