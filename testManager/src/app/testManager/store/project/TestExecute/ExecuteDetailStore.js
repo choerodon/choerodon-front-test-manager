@@ -207,7 +207,7 @@ class ExecuteDetailStore {
     });
   }
 
-  @computed get getDefectIds() {
+  @computed get getDefectIssueIds() {
     return this.cycleData.defects.map(defect => defect.issueId.toString());
   }
 
@@ -234,10 +234,6 @@ class ExecuteDetailStore {
   @action setCycleData = (cycleData) => {
     // window.console.log(cycleData, 'set');
     this.cycleData = cycleData;
-  }
-
-  @action removeLocalDefect = (defectId) => {
-    _.remove(this.cycleData.defects, { id: defectId });
   }
 
   @action removeLocalDefect = (defectId) => {

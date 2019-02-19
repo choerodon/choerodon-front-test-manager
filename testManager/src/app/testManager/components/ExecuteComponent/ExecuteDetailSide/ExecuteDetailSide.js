@@ -139,9 +139,9 @@ class ExecuteDetailSide extends Component {
 
   addDefects = (issueList) => {
     const cycleData = ExecuteDetailStore.getCycleData;
-    const defectIds = ExecuteDetailStore.getDefectIds;
+    const defectIssueIds = ExecuteDetailStore.getDefectIssueIds;
     const { executeId } = cycleData;
-    const needAdd = issueList.filter(issueId => !defectIds.includes(issueId))
+    const needAdd = issueList.filter(issueId => !defectIssueIds.includes(issueId))
       .map(issueId => ({
         defectType: 'CYCLE_CASE',
         defectLinkId: executeId,
@@ -155,14 +155,15 @@ class ExecuteDetailSide extends Component {
       });
     }
   }
-  
-  handleRemoveDefect=(issueId) => {
+
+  handleRemoveDefect = (issueId) => {
     const cycleData = ExecuteDetailStore.getCycleData;
-    const defectIds = ExecuteDetailStore.getDefectIds;
-    const defectId = _.find(cycleData.defects, { issueId: Number(issueId) }).id;
-    removeDefect(defectId).then((res) => {
-      ExecuteDetailStore.removeLocalDefect(defectId);
-    });
+    if (_.find(cycleData.defects, { issueId: Number(issueId) })) {
+      const defectId = _.find(cycleData.defects, { issueId: Number(issueId) }).id;
+      removeDefect(defectId).then((res) => {
+        ExecuteDetailStore.removeLocalDefect(defectId);
+      });
+    }
   }
 
   render() {
@@ -171,7 +172,7 @@ class ExecuteDetailSide extends Component {
       onCommentSave, onRemoveDefect, onCreateBugShow,
     } = this.props;
     const issueList = ExecuteDetailStore.getIssueList;
-    const defectIds = ExecuteDetailStore.getDefectIds;
+    const defectIssueIds = ExecuteDetailStore.getDefectIssueIds;
     const { FullEditorShow, editing } = this.state;
     const {
       issueNum, summary, issueId, issueTypeDTO: { typeCode },
@@ -340,14 +341,14 @@ class ExecuteDetailSide extends Component {
                   <span>缺陷</span>
                 </div>
                 <div className="c7ntest-side-item-header-line" />
-                <div className="c7ntest-side-item-header-right">                  
+                <div className="c7ntest-side-item-header-right">
                   <TextEditToggle
                     className="c7ntest-button-defect-select"
-                    simpleMode                  
-                    saveRef={(bugsToggle) => { this.bugsToggle = bugsToggle; }}                   
+                    simpleMode
+                    saveRef={(bugsToggle) => { this.bugsToggle = bugsToggle; }}
                     formKey="defects"
                     onSubmit={this.addDefects}
-                    originData={defectIds}
+                    originData={defectIssueIds}
                     onCancel={this.cancelEdit}
                   >
                     <Text>
@@ -357,12 +358,12 @@ class ExecuteDetailSide extends Component {
                       </Button>
                     </Text>
                     <Edit>
-                      <Select                       
+                      <Select
                         defaultOpen
                         filter
                         mode="multiple"
                         filterOption={false}
-                        getPopupContainer={() => document.getElementById('scroll-area')}                        
+                        getPopupContainer={() => document.getElementById('scroll-area')}
                         dropdownMatchSelectWidth={false}
                         dropdownClassName="dropdown"
                         footer={(

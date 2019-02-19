@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { findDOMNode } from 'react-dom';
 import {
   Table, Input, Icon, Select, Tooltip, Button,
 } from 'choerodon-ui';
@@ -139,7 +140,7 @@ class StepTable extends Component {
         return (
           <div style={{ width: 85 }}>
             <TextEditToggle
-              // simpleMode
+              noButton
               disabled={disabled}
               formKey="stepStatus"
               onSubmit={value => that.editCycleStep({ ...record, stepStatus: value })}
@@ -196,6 +197,7 @@ class StepTable extends Component {
         return (
           // <Tooltip title={<RichTextShow data={comment} />}>
           <TextEditToggle
+            noButton
             disabled={disabled}
             formKey="comment"
             onSubmit={(value) => { that.editCycleStep({ ...record, comment: value }); }}
@@ -243,6 +245,7 @@ class StepTable extends Component {
       key: 'defects',
       render: (defects, record) => (
         <TextEditToggle
+          noButton
           saveRef={(bugsToggle) => { this[`bugsToggle_${record.stepId}`] = bugsToggle; }}
           disabled={disabled}
           onSubmit={() => {
@@ -282,7 +285,8 @@ class StepTable extends Component {
             }
           </Text>
           <Edit>
-            <DefectSelect
+            <DefectSelect              
+              getPopupContainer={() => document.getElementsByClassName('StepTable')[0]}
               defects={defects}
               setNeedAdd={(needAdd) => { that.needAdd = needAdd; }}
               executeStepId={record.executeStepId}
@@ -318,7 +322,7 @@ class StepTable extends Component {
           dataSource={detailList}
           columns={columns}
           pagination={false}
-          scroll={{ x: 1300, y: 500 }}
+          scroll={{ x: 1300, y: 400 }}
         />
       </div>
     );
