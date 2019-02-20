@@ -62,7 +62,7 @@ class TestPlanStore extends BaseTreeProto {
 
   @observable rightLoading = false;
 
-  @observable calendarShowMode = 'single';
+  @observable calendarShowMode = 'multi';
 
   @observable EditCycleVisible = false;
 
@@ -96,7 +96,7 @@ class TestPlanStore extends BaseTreeProto {
     this.loading = false;
     this.filters = {};
     this.rightLoading = false;
-    this.calendarShowMode = 'single';
+    this.calendarShowMode = 'multi';
     this.EditCycleVisible = false;
     this.CurrentEditCycle = {};
     this.EditStageVisible = false;
@@ -128,12 +128,15 @@ class TestPlanStore extends BaseTreeProto {
     getCycleTree().then((data) => {
       traverseTree({ title: '所有版本', key: '0', children: data.versions });
       this.setTreeData([{ title: '所有版本', key: '0', children: data.versions }]);
+      // 默认选中一个项
+      this.selectDefaultNode({ title: '所有版本', key: '0', children: data.versions });
       this.generateList([
         { title: '所有版本', key: '0', children: data.versions },
       ]);
       resolve();
       // window.console.log(dataList);
     }).catch((err) => {
+      console.log(err);
       Choerodon.prompt('网络错误');
     }).finally(() => {
       this.leaveLoading();
@@ -146,6 +149,13 @@ class TestPlanStore extends BaseTreeProto {
       this.reloadCycle();
     }
   })
+
+  selectDefaultNode=(node) => {
+    if (!this.currentCycle.key) {
+      this.setCurrentCycle(node);
+      this.loadCycle(node.key);
+    }
+  }
 
   reloadCycle = () => {
     const data = this.getCurrentCycle;

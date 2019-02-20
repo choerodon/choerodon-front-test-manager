@@ -150,7 +150,8 @@ class PlanTree extends Component {
           )}
           icon={icon}
           data={item}
-        />);
+        />
+      );
     } else if (children) {
       const title = index > -1 ? (
         <span>
@@ -188,7 +189,8 @@ class PlanTree extends Component {
         icon={icon}
         {...item}
         data={item}
-      />);
+      />
+    );
   });
 
   onExpand = (expandedKeys) => {
@@ -270,6 +272,7 @@ class PlanTree extends Component {
         
         <div className="c7ntest-PlanTree-tree">          
           <Tree
+            defaultSelectedKeys={['0']}
             selectedKeys={selectedKeys}
             expandedKeys={expandedKeys}
             showIcon
