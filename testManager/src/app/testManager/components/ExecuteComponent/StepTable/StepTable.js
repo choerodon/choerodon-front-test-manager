@@ -305,10 +305,10 @@ class StepTable extends Component {
         && (
           <div style={{ display: 'flex' }}>
             <Tooltip title={<FormattedMessage id="execute_quickPass" />}>
-              <Button shape="circle" funcType="flat" icon="check_circle" onClick={this.quickPass.bind(this, record)} />
+              <Button disabled={disabled} shape="circle" funcType="flat" icon="check_circle" onClick={this.quickPass.bind(this, record)} />
             </Tooltip>
             <Tooltip title={<FormattedMessage id="execute_quickFail" />}>
-              <Button shape="circle" funcType="flat" icon="cancel" onClick={this.quickFail.bind(this, record)} />
+              <Button disabled={disabled} shape="circle" funcType="flat" icon="cancel" onClick={this.quickFail.bind(this, record)} />
             </Tooltip>
           </div>
         )

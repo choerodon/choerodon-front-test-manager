@@ -448,6 +448,7 @@ class ExecuteDetail extends Component {
             {/* 右侧侧边栏 */}
             {visible && (
             <ExecuteDetailSide
+              disabled={disabled}
               ref={this.saveRef('ExecuteDetailSide')}
               issueInfosDTO={issueInfosDTO}
               cycleData={cycleData}
