@@ -32,6 +32,7 @@ class TestStepTable extends Component {
         testData: '',
         expectedResult: '',
       },
+      lastValue: '',
       fileList: [],
       createdStepInfo: {
 
@@ -52,6 +53,7 @@ class TestStepTable extends Component {
             isStepExpectedResultEditing: false,
           }
         )),
+        lastValue: '',
       });
     }
   }
@@ -166,6 +168,7 @@ class TestStepTable extends Component {
       },
       fileList: [],
       createdStepInfo: {},
+      lastValue: '',
     });
   }
 
@@ -193,7 +196,7 @@ class TestStepTable extends Component {
         });
       } else {
         setTimeout(() => {
-          let { createdStepInfo, createStep } = this.state;
+          let { createdStepInfo, createStep, lastValue } = this.state;
           createdStepInfo = {
             ...createdStepInfo,
             ...createStep,
@@ -278,8 +281,7 @@ class TestStepTable extends Component {
             defaultValue={record.stepIsCreating ? createStep.testStep : record.testStep}
           />
         ) : (
-          <span style={{ color: record.stepIsCreating && !createStep.testStep ? '#bfbfbf' : '#000' }}>{record.stepIsCreating ? (createStep.testStep ? createStep.testStep : '测试步骤') : record.testStep}</span>
-        // <span>{record.stepIsCreating? createStep.testStep : record.testStep}</span>
+          <span className="preWrapSpan" style={{ color: record.stepIsCreating && !createStep.testStep ? '#bfbfbf' : '#000' }}>{record.stepIsCreating ? (createStep.testStep ? createStep.testStep : '测试步骤') : record.testStep}</span>
         );
       }
     }
@@ -306,7 +308,7 @@ class TestStepTable extends Component {
           placeholder="测试数据"
         />
         ) : (
-          <span style={{ color: record.stepIsCreating && !createStep.testData ? '#bfbfbf' : '#000' }}>{record.stepIsCreating ? (createStep.testData ? createStep.testData : '测试数据') : (record.testData ? record.testData : '-')}</span>
+          <span className="preWrapSpan" style={{ color: record.stepIsCreating && !createStep.testData ? '#bfbfbf' : '#000' }}>{record.stepIsCreating ? (createStep.testData ? createStep.testData : '测试数据') : (record.testData ? record.testData : '-')}</span>
         );
       }
     }
@@ -333,7 +335,7 @@ class TestStepTable extends Component {
           placeholder="预期结果"
         />
         ) : (
-          <span style={{ color: record.stepIsCreating && !createStep.expectedResult ? '#bfbfbf' : '#000' }}>{record.stepIsCreating ? (createStep.expectedResult ? createStep.expectedResult : '预期结果') : record.expectedResult}</span>
+          <span className="preWrapSpan" style={{ color: record.stepIsCreating && !createStep.expectedResult ? '#bfbfbf' : '#000' }}>{record.stepIsCreating ? (createStep.expectedResult ? createStep.expectedResult : '预期结果') : record.expectedResult}</span>
         );
       }
     }
@@ -341,14 +343,14 @@ class TestStepTable extends Component {
 
 
   handleBlurOrEnter = (e, record, editField) => {
-    const { createStep, isEditing } = this.state;
+    const { createStep, isEditing, lastValue } = this.state;
 
     if (!record.stepIsCreating) {
       record[editField] = e.target.value;
       const { expectedResult, testStep } = record;
-      if (expectedResult !== '' && testStep !== '') {
+      if (expectedResult !== '' && testStep !== '' && lastValue !== e.target.value) {
         this.editStep({ ...record, [editField]: e.target.value });
-      } else {
+      } else if(expectedResult == '' || testStep == ''){
         const editingStepIndex = _.find(isEditing, item => item.stepId === record.stepId).index;
         isEditing[editingStepIndex][`is${_.upperFirst(editField)}Editing`] = true;
         this.setState({
@@ -462,6 +464,7 @@ class TestStepTable extends Component {
               isEditing[editingStepIndex].isStepNameEditing = true,
               this.setState({
                 isEditing,
+                lastValue: record.stepIsCreating ? createStep.testStep : record.testStep,
               });
 
               setTimeout(() => {
@@ -504,6 +507,7 @@ class TestStepTable extends Component {
               isEditing[editingStepIndex].isStepDataEditing = true,
               this.setState({
                 isEditing,
+                lastValue: record.stepIsCreating ? createStep.testData : record.testData,
               });
 
               setTimeout(() => {
@@ -545,8 +549,8 @@ class TestStepTable extends Component {
               isEditing[editingStepIndex].isStepExpectedResultEditing = true,
               this.setState({
                 isEditing,
+                lastValue: record.stepIsCreating ? createStep.expectedResult : record.expectedResult,
               });
-
               setTimeout(() => {
                 if (fieldClicked.tagName === 'DIV') {
                   fieldClicked.getElementsByTagName('textArea')[0].focus();
@@ -601,7 +605,7 @@ class TestStepTable extends Component {
         const { stepIsCreating } = record;
         return !stepIsCreating ? (
           <div style={{
-            display: 'flex', alignItems: 'center', justifyContent: 'flex-end', minWidth: 92, 
+            display: 'flex', alignItems: 'center', minWidth: 100, 
           }}
           >
             <Tooltip title={<FormattedMessage id="execute_move" />}>
