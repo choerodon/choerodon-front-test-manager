@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import {
   Menu, Dropdown, Icon, Spin, Tooltip,
 } from 'choerodon-ui';
-import { DashBoardNavBar } from 'choerodon-front-boot';
+import { DashBoardNavBar, DashBoardToolBar } from 'choerodon-front-boot';
 import ReactEcharts from 'echarts-for-react';
 import _ from 'lodash';
 import { getProjectVersion } from '../../api/agileApi';
@@ -120,15 +120,17 @@ export default class TestProgress extends Component {
       </Menu>
     );
     return [
-      <div className="switchVersion">
-        <Dropdown overlay={menu} trigger={['click']} getPopupContainer={triggerNode => triggerNode.parentNode}>
-          <a className="ant-dropdown-link versionProgress-select">
-            {_.find(versionList, { versionId: currentVersion }) ? _.find(versionList, { versionId: currentVersion }).name : '切换版本'}
+      <DashBoardToolBar>                 
+        <div className="switchVersion">
+          <Dropdown overlay={menu} trigger={['click']} getPopupContainer={triggerNode => triggerNode.parentNode}>
+            <a className="ant-dropdown-link versionProgress-select">
+              {_.find(versionList, { versionId: currentVersion }) ? _.find(versionList, { versionId: currentVersion }).name : '切换版本'}
             
-            <Icon type="arrow_drop_down" />
-          </a>
-        </Dropdown>
-      </div>,
+              <Icon type="arrow_drop_down" />
+            </a>
+          </Dropdown>
+        </div>
+      </DashBoardToolBar>,      
       <div className="c7ntest-charts">
         <ReactEcharts
           style={{ height: 200 }}
