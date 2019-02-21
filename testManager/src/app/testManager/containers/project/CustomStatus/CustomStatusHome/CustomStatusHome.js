@@ -65,7 +65,7 @@ const CustomStatusHome = ({
     });
   };
   const columns = [{
-    title: <FormattedMessage id="status_type" />,
+    title: <FormattedMessage id="status_name" />,
     dataIndex: 'statusName',
     key: 'statusName',
     filters: [],
