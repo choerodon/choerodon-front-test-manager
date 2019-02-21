@@ -21,7 +21,7 @@ class ExecuteDetailStore {
 
   @observable selectLoading = false;
 
-  @observable ExecuteDetailSideVisible = false;
+  @observable ExecuteDetailSideVisible = true;
 
   @observable userList = [];
 

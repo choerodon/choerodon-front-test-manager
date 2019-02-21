@@ -271,8 +271,7 @@ class PlanTree extends Component {
         </div>
         
         <div className="c7ntest-PlanTree-tree">          
-          <Tree
-            defaultSelectedKeys={['0']}
+          <Tree          
             selectedKeys={selectedKeys}
             expandedKeys={expandedKeys}
             showIcon

@@ -191,7 +191,7 @@ class IssueStore {
           this.setIssueForderNames(_.map(res.content, 'folderName'));
           if (Page === 0) {
             this.setIssueIds(res.allIdValues || []);
-            if(window.sessionStorage) {
+            if (window.sessionStorage) {
               sessionStorage.allIdValues = res.allIdValues || [];
             }
           }

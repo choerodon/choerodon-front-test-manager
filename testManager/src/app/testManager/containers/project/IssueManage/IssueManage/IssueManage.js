@@ -151,8 +151,6 @@ export default class IssueManage extends Component {
     const { expand, createIssueShow, selectedIssue } = this.state;
     const treeShow = IssueStore.treeShow;
     const currentCycle = IssueTreeStore.getCurrentCycle;
-    const EditIssueMode = this.getMode();
-
     return (
       <Page className="c7ntest-Issue c7ntest-region">
         <Header
@@ -193,24 +191,24 @@ export default class IssueManage extends Component {
         <Content style={{ display: 'flex', padding: '0' }}>
           <div className="c7ntest-chs-bar">
             {!treeShow && (
-              <p
-                role="none"
-                onClick={() => {
-                  IssueStore.setTreeShow(true);
-                }}
-              >
-                <FormattedMessage id="issue_repository" />
-              </p>
+            <p
+              role="none"
+              onClick={() => {
+                IssueStore.setTreeShow(true);
+              }}
+            >
+              <FormattedMessage id="issue_repository" />
+            </p>
             )}
           </div>
           <div className="c7ntest-issue-tree">
             {treeShow && (
-              <IssueTree
-                ref={(tree) => { this.tree = tree; }}
-                onClose={() => {
-                  IssueStore.setTreeShow(false);
-                }}
-              />
+            <IssueTree
+              ref={(tree) => { this.tree = tree; }}
+              onClose={() => {
+                IssueStore.setTreeShow(false);
+              }}
+            />
             )}
           </div>
           <div
