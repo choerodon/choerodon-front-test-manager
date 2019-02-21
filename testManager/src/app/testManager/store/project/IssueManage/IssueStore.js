@@ -181,7 +181,7 @@ class IssueStore {
         }
 
         Promise.all(funcArr).then(([versions, prioritys, issueStatusList, res]) => {
-          this.setVersions(versions);
+          this.setVersions(_.reverse(versions));
           this.setPrioritys(prioritys);
           this.setIssueStatusList(issueStatusList);
           if (versions && versions.length > 0) {

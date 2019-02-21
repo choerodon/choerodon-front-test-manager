@@ -96,10 +96,10 @@ class CreateStatus extends Component {
               <FormItem>
                 {getFieldDecorator('statusName', {
                   rules: [{
-                    required: true, message: '请输入状态!',
+                    required: true, message: '请输入状态名称',
                   }],
                 })(
-                  <Input style={{ width: 500 }} maxLength={30} label={<FormattedMessage id="status" />} />,
+                  <Input style={{ width: 500 }} maxLength={30} label={<FormattedMessage id="status_name" />} />,
                 )}
               </FormItem>
               <FormItem>

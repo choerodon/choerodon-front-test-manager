@@ -137,7 +137,7 @@ const zhCN = {
   status_create: '创建状态',
   status_executeStatus: '测试执行状态',
   status_steptatus: '测试步骤状态',
-  status_type: '类型',
+  status_name: '状态名称',
   status_comment: '说明',
   status_color: '颜色',
   // 自定义状态侧边栏 

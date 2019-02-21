@@ -56,7 +56,7 @@ class TestCaseDetail extends Component {
       loading: true,
       lasttestCaseId: null,
       nexttestCaseId: null,
-      isExpand: false,
+      isExpand: true,
       folderName: '',
     };
   }
@@ -300,8 +300,9 @@ class TestCaseDetail extends Component {
               </div>
                
               {
-                  isExpand && (
+                  isExpand && !loading && (
                     <EditIssue 
+                      loading={loading}
                       issueId={testCaseId}
                       folderName={folderName}
                       issueInfo={issueInfo} 
