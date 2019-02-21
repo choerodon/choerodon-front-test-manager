@@ -165,6 +165,9 @@ class CustomStatusHomeContainer extends Component {
       if (res.failed) {
         Choerodon.prompt('状态或颜色不能相同');
       } else {
+        this.setState({
+          statusType: newStatus.statusType,
+        });
         this.ToggleCreateStatusVisible(false);
         this.loadStatusList();
       }

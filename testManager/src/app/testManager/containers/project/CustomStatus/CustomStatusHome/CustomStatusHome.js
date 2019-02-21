@@ -45,6 +45,7 @@ const CustomStatusHome = ({
   createVisible,
   editVisible,
   statusList,
+  statusType,
   CurrentEditStatus,
   EditStatusLoading,
   CreateStatusLoading,
@@ -144,7 +145,7 @@ const CustomStatusHome = ({
             description={<FormattedMessage id="status_custom_home_description" />}
             link="http://choerodon.io/zh/docs/user-guide/test-management/setting/status/"
           >
-            <Tabs defaultActiveKey="CYCLE_CASE" onChange={onTabChange}>
+            <Tabs activeKey={statusType} onChange={onTabChange}>
               <TabPane tab={<FormattedMessage id="status_executeStatus" />} key="CYCLE_CASE">
                 <Table
                   rowKey="statusId"
