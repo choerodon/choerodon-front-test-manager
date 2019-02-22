@@ -35,6 +35,7 @@ const propTypes = {
   onShowCreateClick: PropTypes.func.isRequired,
   onEditStatusClick: PropTypes.func.isRequired,
   onDeleteOk: PropTypes.func.isRequired,
+  onCheckStatusRepeat: PropTypes.func.isRequired,
   onCreateStatusCancel: PropTypes.func.isRequired,
   onEditStatusCancel: PropTypes.func.isRequired,
   onCreateStatusSubmit: PropTypes.func.isRequired,
@@ -54,6 +55,7 @@ const CustomStatusHome = ({
   onShowCreateClick,
   onEditStatusClick,
   onDeleteOk,
+  onCheckStatusRepeat,
   onCreateStatusCancel,
   onEditStatusCancel,
   onCreateStatusSubmit,
@@ -121,13 +123,15 @@ const CustomStatusHome = ({
         visible={createVisible}
         loading={CreateStatusLoading}
         onCancel={onCreateStatusCancel}
-        onSubmit={onCreateStatusSubmit}
+        onCheckStatusRepeat={onCheckStatusRepeat}
+        onSubmit={onCreateStatusSubmit}        
       />
       <EditStatus
         visible={editVisible}
         loading={EditStatusLoading}
         initValue={CurrentEditStatus}
         onCancel={onEditStatusCancel}
+        onCheckStatusRepeat={onCheckStatusRepeat}
         onSubmit={onEditStatusSubmit}
       />
       <Page>

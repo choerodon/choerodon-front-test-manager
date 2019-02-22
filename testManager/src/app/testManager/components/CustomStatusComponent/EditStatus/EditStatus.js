@@ -25,6 +25,7 @@ const propTypes = {
   visible: PropTypes.bool.isRequired,
   loading: PropTypes.bool.isRequired,
   initValue: PropTypes.shape({}).isRequired,
+  onCheckStatusRepeat: PropTypes.func.isRequired,
   onCancel: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,
 };
@@ -32,8 +33,9 @@ class EditStatus extends Component {
   state = {
     pickShow: false,
     statusColor: '',
+    colorRepeat: null,
   }
-
+  
   componentWillReceiveProps(nextProps) {
     const { setFieldsValue } = this.props.form;
     if (this.props.visible === false && nextProps.visible === true) {
@@ -45,11 +47,35 @@ class EditStatus extends Component {
     }
   }
 
+  handleColorChange = (color) => {
+    const {
+      r, g, b, a,
+    } = color.rgb;
+    const statusColor = `rgba(${r},${g},${b},${a})`;
+    const { statusType } = this.props.initValue;
+    this.props.onCheckStatusRepeat({ statusType, statusColor })(null, null, this.handleColorRepeat);
+    this.setState({ statusColor });
+  }
+
+  handleCheckStatusRepeat = (...args) => { 
+    const { getFieldValue } = this.props.form;
+    const statusName = getFieldValue('statusName');    
+    const { statusType, statusId } = this.props.initValue;
+    this.props.onCheckStatusRepeat({ statusId, statusName, statusType })(...args);
+  }
+
+  handleColorRepeat=(errorMessage) => {
+    this.setState({
+      colorRepeat: errorMessage,
+    });
+  }
+
   handleOk = () => {
-    const { statusColor } = this.state;
+    const { statusColor, colorRepeat } = this.state;
     const { initValue, onSubmit } = this.props;
+
     this.props.form.validateFieldsAndScroll((err, values) => {
-      if (!err) {
+      if (!err && !colorRepeat) {
         onSubmit({
           ...initValue,
           ...values,
@@ -59,14 +85,14 @@ class EditStatus extends Component {
     });
   }
 
-  render() {    
+  render() {
     const {
       visible, onCancel, loading, initValue,
     } = this.props;
-    const { statusColor, pickShow } = this.state;
+    const { statusColor, pickShow, colorRepeat } = this.state;
     const { getFieldDecorator } = this.props.form;
     return (
-      <div onClick={() => { this.setState({ pickShow: false }); }} role="none">        
+      <div onClick={() => { this.setState({ pickShow: false }); }} role="none">
         <Sidebar
           title={`编辑“${initValue.statusType === 'CYCLE_CASE' ? '执行' : '步骤'}”状态`}
           visible={visible}
@@ -87,6 +113,8 @@ class EditStatus extends Component {
                 {getFieldDecorator('statusName', {
                   rules: [{
                     required: true, message: '请输入状态!',
+                  }, {
+                    validator: this.handleCheckStatusRepeat,
                   }],
                 })(
                   <Input style={{ width: 500 }} maxLength={30} label={<FormattedMessage id="status" />} />,
@@ -126,14 +154,12 @@ class EditStatus extends Component {
                 >
                   <CompactPicker
                     color={statusColor}
-                    onChangeComplete={(color) => {
-                      const {
-                        r, g, b, a,
-                      } = color.rgb;
-                      this.setState({ statusColor: `rgba(${r},${g},${b},${a})` });
-                    }}
+                    onChangeComplete={this.handleColorChange}
                   />
                 </div>
+              </div>
+              <div className="ant-form-explain" style={{ color: '#d50000', marginTop: 2 }}>
+                {colorRepeat}
               </div>
             </Form>
           </Content>
