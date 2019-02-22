@@ -16,7 +16,7 @@ dashboard:
   - code: "TestProgress"
     icon: execution_schedule
     title: "执行进度"
-    description: "执行进度"
+    description: "版本中测试执行的进度"
     level: project
     sort: 3
     enabled: false
