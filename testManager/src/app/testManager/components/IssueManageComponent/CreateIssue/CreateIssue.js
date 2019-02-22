@@ -13,7 +13,7 @@ import { handleFileUpload, beforeTextUpload } from '../../../common/utils';
 import { createIssue, getFoldersByVersion } from '../../../api/IssueManageApi';
 import IssueStore from '../../../store/project/IssueManage/IssueStore';
 import {
-  getLabels, getModules, getPrioritys, getProjectVersionByStatus, 
+  getLabels, getModules, getPrioritys, getProjectVersion, 
 } from '../../../api/agileApi';
 import { getUsers } from '../../../api/IamApi';
 import { FullEditor, WYSIWYGEditor } from '../../CommonComponent';
@@ -53,7 +53,7 @@ class CreateIssue extends Component {
   }
 
   loadVersions=() => {
-    getProjectVersionByStatus().then((res) => {
+    getProjectVersion().then((res) => {
       this.setState({
         originFixVersions: res,
         selectLoading: false,
