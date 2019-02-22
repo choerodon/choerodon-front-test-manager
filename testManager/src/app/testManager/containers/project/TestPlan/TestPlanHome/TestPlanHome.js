@@ -131,7 +131,7 @@ class TestPlanHome extends Component {
     confirm({
       width: 560,
       title: Choerodon.getMessage('确认删除吗?', 'Confirm delete'),
-      content: Choerodon.getMessage('当你点击删除后，该条数据将被永久删除，不可恢复!', 'When you click delete, after which the data will be permanently deleted and irreversible!'),
+      content: Choerodon.getMessage('当您点击删除后，该条执行将从此计划阶段中移除!', 'When you click delete, after which the data will be deleted !'),
       onOk: () => {
         TestPlanStore.rightEnterLoading();
         deleteExecute(executeId)
@@ -355,7 +355,8 @@ class TestPlanHome extends Component {
               style={{
                 marginRight: 10,
               }}
-              onClick={() => {
+              onClick={(e) => {
+                e.stopPropagation();
                 this.deleteExecute(record);
               }}
             />

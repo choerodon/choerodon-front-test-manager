@@ -39,12 +39,9 @@ class CreateStatus extends Component {
   }
 
   componentDidMount() {
-    const { getFieldValue } = this.props.form;
-    const { statusColor } = this.state;
-    const statusType = getFieldValue('statusType');    
-    this.props.onCheckStatusRepeat({ statusType, statusColor })(null, null, this.handleColorRepeat);
+    this.handleCheckColor();
   }
-  
+
   componentWillReceiveProps(nextProps) {
     const { resetFields } = this.props.form;
     if (this.props.visible === false && nextProps.visible === true) {
@@ -52,18 +49,30 @@ class CreateStatus extends Component {
     }
   }
 
-  handleColorChange=(color) => {
+  // 创建类型改变时检查
+  handleStatusTypeChange = () => {
+    // 等待form的值改变
+    setTimeout(() => {
+      this.handleCheckColor();
+    }, 0);
+  }
+
+  handleColorChange = (color) => {
     const {
       r, g, b, a,
     } = color.rgb;
     const statusColor = `rgba(${r},${g},${b},${a})`;
-    const { getFieldValue } = this.props.form;
-    const statusType = getFieldValue('statusType');    
-    this.props.onCheckStatusRepeat({ statusType, statusColor })(null, null, this.handleColorRepeat);
+    this.handleCheckColor(statusColor);
     this.setState({ statusColor });
   }
 
-  handleColorRepeat=(errorMessage) => {
+  handleCheckColor = (statusColor = this.state.statusColor) => {
+    const { getFieldValue } = this.props.form;
+    const statusType = getFieldValue('statusType'); 
+    this.props.onCheckStatusRepeat({ statusType, statusColor })(null, null, this.handleColorRepeat);
+  }
+
+  handleColorRepeat = (errorMessage) => {
     this.setState({
       colorRepeat: errorMessage,
     });
@@ -82,9 +91,9 @@ class CreateStatus extends Component {
     });
   }
 
-  handleCheckStatusRepeat = (...args) => { 
+  handleCheckStatusRepeat = (...args) => {
     const { getFieldsValue } = this.props.form;
-    const status = getFieldsValue(['statusType', 'statusName']);    
+    const status = getFieldsValue(['statusType', 'statusName']);
     this.props.onCheckStatusRepeat(status)(...args);
   }
 
@@ -119,7 +128,7 @@ class CreateStatus extends Component {
                     required: true, message: '请选择类型!',
                   }],
                 })(
-                  <Select label={<FormattedMessage id="type" />} style={{ width: 500 }}>
+                  <Select label={<FormattedMessage id="type" />} style={{ width: 500 }} onChange={this.handleStatusTypeChange}>
                     <Option value="CYCLE_CASE">执行状态</Option>
                     <Option value="CASE_STEP">步骤状态</Option>
                   </Select>,
@@ -169,12 +178,12 @@ class CreateStatus extends Component {
                   <CompactPicker
                     color={statusColor}
                     onChangeComplete={this.handleColorChange}
-                  />                  
-                </div>                               
+                  />
+                </div>
               </div>
               <div className="ant-form-explain" style={{ color: '#d50000', marginTop: 2 }}>
                 {colorRepeat}
-              </div> 
+              </div>
             </Form>
           </Content>
         </Sidebar>
