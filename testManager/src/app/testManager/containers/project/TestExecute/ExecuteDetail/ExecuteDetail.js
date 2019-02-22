@@ -377,6 +377,7 @@ class ExecuteDetail extends Component {
                   </div>
                 )}
               </div>
+              {!disabled && (
               <div style={{ fontSize: '14px', display: 'flex', alignItems: 'center' }}>
                 快速操作:
                 <span
@@ -413,6 +414,7 @@ class ExecuteDetail extends Component {
                   {options}
                 </Select>
               </div>
+              )}
 
               {/* <TestExecuteInfo disabled={disabled} /> */}
               <Card
