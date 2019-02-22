@@ -97,25 +97,25 @@ class EditIssueNarrow extends Component {
 
 
   componentDidMount() {
-    const {loading} = this.props;
+    const { loading } = this.props;
     if (this.props.onRef) {
       this.props.onRef(this);
     }
    
-    getUpdateProjectInfoPermission().then(res => {
+    getUpdateProjectInfoPermission().then((res) => {
       hasDeletePermission = res[0].approve;
     });
 
-      document.getElementById('scroll-area').addEventListener('scroll', (e) => {
-        if (sign) {
-          const currentNav = this.getCurrentNav(e);
-          if (this.state.currentNav !== currentNav && currentNav) {
-            this.setState({
-              currentNav,
-            });
-          }
+    document.getElementById('scroll-area').addEventListener('scroll', (e) => {
+      if (sign) {
+        const currentNav = this.getCurrentNav(e);
+        if (this.state.currentNav !== currentNav && currentNav) {
+          this.setState({
+            currentNav,
+          });
         }
-      });
+      }
+    });
   }
 
   /**
@@ -1154,9 +1154,9 @@ class EditIssueNarrow extends Component {
         </div>
     
         <div className="c7ntest-content">
-            <div className="c7ntest-content-top">
-              <div className="c7ntest-header-editIssue">
-                <div className="c7ntest-content-editIssue" style={{ overflowY: 'hidden' }}>
+          <div className="c7ntest-content-top">
+            <div className="c7ntest-header-editIssue">
+              <div className="c7ntest-content-editIssue" style={{ overflowY: 'hidden' }}>
                   <div
                     className="line-justify"
                     style={{
@@ -1213,11 +1213,11 @@ class EditIssueNarrow extends Component {
                     </div>
                   </div>
                 </div>
-              </div>
             </div>
-            <div className="c7ntest-content-bottom" id="scroll-area" style={{ position: 'relative' }}>
-              <section className="c7ntest-body-editIssue">
-                <div className="c7ntest-content-editIssue">
+          </div>
+          <div className="c7ntest-content-bottom" id="scroll-area" style={{ position: 'relative' }}>
+            <section className="c7ntest-body-editIssue">
+              <div className="c7ntest-content-editIssue">
                   <div className="c7ntest-details">
                     <div id="detail">
                       <div className="c7ntest-title-wrapper" style={{ marginTop: 0 }}>
@@ -1528,9 +1528,9 @@ class EditIssueNarrow extends Component {
                   </div>
   
                 </div>
-              </section>
-            </div>
+            </section>
           </div>
+        </div>
              
         {
           <FullEditor
