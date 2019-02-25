@@ -161,7 +161,10 @@ class StepTable extends Component {
 
               </Text>
               <Edit>
-                <Select autoFocus>
+                <Select
+                  autoFocus 
+                  getPopupContainer={() => document.getElementsByClassName('StepTable')[0]}
+                >
                   {options}
                 </Select>
               </Edit>
