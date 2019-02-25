@@ -22,8 +22,7 @@ class IssueTable extends Component {
     firstIndex: null,
     filteredColumns: ['issueNum', 'issueTypeDTO', 'summary', 'versionIssueRelDTOList', 'folderName', 'reporter', 'priorityId'],
   };
-
-
+  
   handleColumnFilterChange = ({ selectedKeys }) => {
     this.setState({
       filteredColumns: selectedKeys,
@@ -43,14 +42,14 @@ class IssueTable extends Component {
                 ref={provided.innerRef}
               >
                 {this.renderTbody(IssueStore.getIssues, columns)}
-                {provided.placeholder}
+                {/* {provided.placeholder} */}
               </tbody>
             )}
           </Droppable>
         </table>
       );
       return (
-        <DragDropContext onDragEnd={this.onDragEnd.bind(this)} onDragStart={this.onDragStart}>
+        <DragDropContext onDragEnd={this.onDragEnd} onDragStart={this.onDragStart}>
           {table}
         </DragDropContext>
       );
@@ -77,7 +76,9 @@ class IssueTable extends Component {
   }
 
   renderTbody(data, columns) {
-    const { disabled, expand, selectedIssue, onRow } = this.props;
+    const {
+      disabled, expand, selectedIssue, onRow, 
+    } = this.props;
     const Columns = columns.filter(column => this.shouldColumnShow(column));
     const tds = index => Columns.map((column) => {
       let renderedItem = null;
@@ -99,8 +100,10 @@ class IssueTable extends Component {
       if (disabled) {
         return tds(index);
       } else {
-        return (
-          <TableDraggleItem handleClickIssue={this.handleClickIssue.bind(this)} issue={issue} index={index} selectedIssue={selectedIssue} saveRef={(instance) => { this.instance = instance; }} onRow={onRow}>
+        return ( 
+          // 由于drag结束后要经过一段时间，由于有动画，所以大约33-400ms后才执行onDragEnd,
+          // 所以在这期间如果获取用例的接口速度很快，重新渲染table中的项，会无法执行onDragEnd,故加此key
+          <TableDraggleItem key={`${issue.issueId}-${issue.objectVersionNumber}`} handleClickIssue={this.handleClickIssue.bind(this)} issue={issue} index={index} selectedIssue={selectedIssue} saveRef={(instance) => { this.instance = instance; }} onRow={onRow}>
             {tds(index)}
           </TableDraggleItem>
         );
@@ -139,8 +142,7 @@ class IssueTable extends Component {
     );
   }
 
-  onDragEnd = (result) => {
-    // console.log('end', result);
+  onDragEnd = (result) => { 
     IssueStore.setTableDraging(false);
     document.removeEventListener('keydown', this.enterCopy);
     document.removeEventListener('keyup', this.leaveCopy);
@@ -229,94 +231,31 @@ class IssueTable extends Component {
     });
   }
 
-  renderDraggable = (issue, index, inner) => {
-    const { selectedIssue } = this.props;
-    const draggingTableItems = IssueStore.getDraggingTableItems;
-    return (
-      <Draggable key={issue.issueId} draggableId={issue.issueId} index={index} isDragDisabled={issue.typeCode === 'issue_auto_test'}>
-        {(provided, snapshotinner) => (
-          <tr
-            ref={provided.innerRef}
-            {...provided.draggableProps}
-            {...provided.dragHandleProps}
-            style={{
-              background: !snapshotinner.isDragging && issue.typeCode !== 'issue_auto_test' && _.find(draggingTableItems, { issueId: issue.issueId }) && 'rgb(235, 242, 249)',
-              position: 'relative',
-              ...provided.draggableProps.style,
-            }}
-            onClick={this.handleClickIssue.bind(this, issue, index)}
-            className={issue.issueId === selectedIssue.issueId ? 'c7ntest-border-visible c7ntest-table-item' : 'c7ntest-border c7ntest-table-item'}
-          >
-            {snapshotinner.isDragging
-              && (
-                <div style={{
-                  position: 'absolute',
-                  width: 20,
-                  height: 20,
-                  background: 'red',
-                  textAlign: 'center',
-                  color: 'white',
-                  borderRadius: '50%',
-                  top: 0,
-                  left: 0,
-                }}
-                >
-                  {draggingTableItems.length || 1}
-                </div>
-              )
-            }
-            {snapshotinner.isDragging
-              && (
-                <div className="IssueTable-drag-prompt">
-                  <div>
-                    {'复制或移动测试用例'}
-                  </div>
-                  <div> 按下ctrl/command复制</div>
-                  <div
-                    ref={(instance) => { this.instance = instance; }}
-                  >
-                    <div>
-                      {'当前状态：'}
-                      <span style={{ fontWeight: 500 }}>移动</span>
-                    </div>
-                  </div>
-                </div>
-              )
-            }
-            {inner}
-          </tr>
-        )
-        }
-      </Draggable>
-    );
-  }
 
-  renderTable = columns => {
-    return (
-      <div className="c7ntest-issuetable">
-        <Table
+  renderTable = columns => (
+    <div className="c7ntest-issuetable">
+      <Table
           // filterBar={false}
-          columns={columns}
-          dataSource={IssueStore.getIssues}
-          components={this.getComponents(columns)}
-          onChange={this.handleFilterChange}
-          onColumnFilterChange={this.handleColumnFilterChange}
-          pagination={false}
-          filters={IssueStore.barFilters || []}
-          filterBarPlaceholder={<FormattedMessage id="issue_filterTestIssue" />}
-          empty={(
-            <EmptyBlock
-              style={{ marginTop: 40 }}
-              border
-              pic={pic}
-              title={<FormattedMessage id="issue_noIssueTitle" />}
-              des={<FormattedMessage id="issue_noIssueDescription" />}
-            />
+        columns={columns}
+        dataSource={IssueStore.getIssues}
+        components={this.getComponents(columns)}
+        onChange={this.handleFilterChange}
+        onColumnFilterChange={this.handleColumnFilterChange}
+        pagination={false}
+        filters={IssueStore.barFilters || []}
+        filterBarPlaceholder={<FormattedMessage id="issue_filterTestIssue" />}
+        empty={(
+          <EmptyBlock
+            style={{ marginTop: 40 }}
+            border
+            pic={pic}
+            title={<FormattedMessage id="issue_noIssueTitle" />}
+            des={<FormattedMessage id="issue_noIssueDescription" />}
+          />
           )}
-        />
-      </div>
-    )
-  }
+      />
+    </div>
+  )
 
   handleFilterChange = (pagination, filters, sorter, barFilters) => {
     // 条件变化返回第一页
@@ -367,6 +306,7 @@ class IssueTable extends Component {
     // }  
     return columns.map(column => (this.shouldColumnShow(column) ? { ...column, hidden: false } : { ...column, hidden: true }));
   }
+
 
   render() {
     const prioritys = IssueStore.getPrioritys;

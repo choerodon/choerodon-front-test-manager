@@ -35,6 +35,7 @@ const propTypes = {
   onShowCreateClick: PropTypes.func.isRequired,
   onEditStatusClick: PropTypes.func.isRequired,
   onDeleteOk: PropTypes.func.isRequired,
+  onCheckStatusRepeat: PropTypes.func.isRequired,
   onCreateStatusCancel: PropTypes.func.isRequired,
   onEditStatusCancel: PropTypes.func.isRequired,
   onCreateStatusSubmit: PropTypes.func.isRequired,
@@ -45,6 +46,7 @@ const CustomStatusHome = ({
   createVisible,
   editVisible,
   statusList,
+  statusType,
   CurrentEditStatus,
   EditStatusLoading,
   CreateStatusLoading,
@@ -53,6 +55,7 @@ const CustomStatusHome = ({
   onShowCreateClick,
   onEditStatusClick,
   onDeleteOk,
+  onCheckStatusRepeat,
   onCreateStatusCancel,
   onEditStatusCancel,
   onCreateStatusSubmit,
@@ -65,7 +68,7 @@ const CustomStatusHome = ({
     });
   };
   const columns = [{
-    title: <FormattedMessage id="status_type" />,
+    title: <FormattedMessage id="status_name" />,
     dataIndex: 'statusName',
     key: 'statusName',
     filters: [],
@@ -120,13 +123,15 @@ const CustomStatusHome = ({
         visible={createVisible}
         loading={CreateStatusLoading}
         onCancel={onCreateStatusCancel}
-        onSubmit={onCreateStatusSubmit}
+        onCheckStatusRepeat={onCheckStatusRepeat}
+        onSubmit={onCreateStatusSubmit}        
       />
       <EditStatus
         visible={editVisible}
         loading={EditStatusLoading}
         initValue={CurrentEditStatus}
         onCancel={onEditStatusCancel}
+        onCheckStatusRepeat={onCheckStatusRepeat}
         onSubmit={onEditStatusSubmit}
       />
       <Page>
@@ -144,7 +149,7 @@ const CustomStatusHome = ({
             description={<FormattedMessage id="status_custom_home_description" />}
             link="http://choerodon.io/zh/docs/user-guide/test-management/setting/status/"
           >
-            <Tabs defaultActiveKey="CYCLE_CASE" onChange={onTabChange}>
+            <Tabs activeKey={statusType} onChange={onTabChange}>
               <TabPane tab={<FormattedMessage id="status_executeStatus" />} key="CYCLE_CASE">
                 <Table
                   rowKey="statusId"

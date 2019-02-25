@@ -1,19 +1,13 @@
-.c7ntest-dashboard-TestProgress {
-  .switchVersion{
-    position: absolute;
-     top: 25px;
-     right: 16px;
-   
-   .ant-dropdown-link{
-     font-size: 13px;
-     // color: #3F51B5;
-     // font-weight: 600;
-     line-height: 15px;
-   }
-   .ant-dropdown-link:hover{
-     color: #000;
-   }
-   .versionProgress-select {
+.switchVersion {
+  .ant-dropdown-link {
+    font-size: 13px; // color: #3F51B5;
+    // font-weight: 600;
+    line-height: 15px;
+  }
+  .ant-dropdown-link:hover {
+    color: #000;
+  }
+  .versionProgress-select {
     display: flex;
     align-items: center;
     font-size: 13px;
@@ -21,9 +15,4 @@
     cursor: pointer;
     color: #000;
   }
-  
- }
-
 }
-
-

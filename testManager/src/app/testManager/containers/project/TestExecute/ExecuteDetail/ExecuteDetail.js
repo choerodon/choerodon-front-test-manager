@@ -355,7 +355,7 @@ class ExecuteDetail extends Component {
         </Header>
 
         <Spin spinning={loading}>
-          <div style={{ display: 'flex', width: '100%', height: 'calc(100vh - 107px)' }}>
+          <div style={{ display: 'flex', width: '100%', height: '100%' }}>
             {/* 左边内容区域 */}
             <div style={{
               flex: 1, overflowX: 'hidden', overflowY: 'auto', padding: 20,
@@ -377,6 +377,7 @@ class ExecuteDetail extends Component {
                   </div>
                 )}
               </div>
+              {!disabled && (
               <div style={{ fontSize: '14px', display: 'flex', alignItems: 'center' }}>
                 快速操作:
                 <span
@@ -413,6 +414,7 @@ class ExecuteDetail extends Component {
                   {options}
                 </Select>
               </div>
+              )}
 
               {/* <TestExecuteInfo disabled={disabled} /> */}
               <Card

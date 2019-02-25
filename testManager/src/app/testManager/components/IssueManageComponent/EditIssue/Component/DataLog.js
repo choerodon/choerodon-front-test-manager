@@ -43,7 +43,7 @@ class DataLog extends Component {
     } = datalog;
     if (!oldValue && newValue) {
       // null -> xxx
-      if (['labels', 'Component', 'Fix Version', 'Epic Child', 'WorklogId', 'Epic Child', 'issue_test', 'issue_auto_test'].includes(field)) {
+      if (['labels', 'Component', 'Epic Child', 'WorklogId', 'Epic Child', 'issue_test', 'issue_auto_test'].includes(field)) {
         return '创建';
       }
       if (['Attachment'].includes(field)) {
@@ -244,7 +244,7 @@ class DataLog extends Component {
     } = datalog;
     if (!oldValue && newValue) {
       // null -> xxx
-      if (['Epic Link', 'Sprint', 'Story Points', 'timeestimate', 'summary', 'Epic Name', 'assignee', 'reporter'].includes(field)) {
+      if (['Epic Link', 'Sprint', 'Story Points', 'timeestimate', 'summary', 'Epic Name', 'assignee', 'reporter', 'Fix Version'].includes(field)) {
         return '为';
       }
       return '';
@@ -284,7 +284,7 @@ class DataLog extends Component {
     } = datalog;
     if (!oldValue && newValue) {
       // null -> xxx
-      if (['Epic Link', 'Sprint', 'Story Points', 'timeestimate', 'summary', 'Epic Name', 'assignee', 'reporter'].includes(field)) {
+      if (['Epic Link', 'Sprint', 'Story Points', 'timeestimate', 'summary', 'Epic Name', 'assignee', 'reporter', 'Fix Version'].includes(field)) {
         return ` 【${newString}】 `;
       }
       if (['description', 'WorklogId', 'Rank', 'Comment', 'timespent'].includes(field)) {

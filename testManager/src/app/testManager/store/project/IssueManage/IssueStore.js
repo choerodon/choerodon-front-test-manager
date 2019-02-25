@@ -181,7 +181,7 @@ class IssueStore {
         }
 
         Promise.all(funcArr).then(([versions, prioritys, issueStatusList, res]) => {
-          this.setVersions(versions);
+          this.setVersions(_.reverse(versions));
           this.setPrioritys(prioritys);
           this.setIssueStatusList(issueStatusList);
           if (versions && versions.length > 0) {
@@ -191,7 +191,7 @@ class IssueStore {
           this.setIssueForderNames(_.map(res.content, 'folderName'));
           if (Page === 0) {
             this.setIssueIds(res.allIdValues || []);
-            if(window.sessionStorage) {
+            if (window.sessionStorage) {
               sessionStorage.allIdValues = res.allIdValues || [];
             }
           }

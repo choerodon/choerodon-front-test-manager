@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import _ from 'lodash';
 import { Select } from 'choerodon-ui';
 import { getProjectVersion } from '../../../api/agileApi';
 
@@ -13,7 +14,7 @@ class SelectVersion extends Component {
   componentDidMount() {
     getProjectVersion().then((Data) => {
       this.setState({
-        List: Data,
+        List: _.reverse(Data),
         loading: false,
       });
     });

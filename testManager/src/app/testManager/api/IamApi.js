@@ -1,5 +1,7 @@
+import {stores} from 'choerodon-front-boot';
 import { getProjectId, request } from '../common/utils';
 
+const { AppState } = stores;
 
 /**
  *获取当前用户
@@ -32,4 +34,13 @@ export function getUsers(param) {
     return request.get(`/iam/v1/projects/${getProjectId()}/users?size=40&param=${param}`);
   }
   return request.get(`/iam/v1/projects/${getProjectId()}/users?size=40`);
+}
+
+export function getUpdateProjectInfoPermission() {
+  return request.post('/iam/v1/permissions/checkPermission', [{
+    code: 'agile-service.project-info.updateProjectInfo',
+    organizationId: AppState.currentMenuType.organizationId,
+    projectId: AppState.currentMenuType.id,
+    resourceType: 'project',
+  }])
 }

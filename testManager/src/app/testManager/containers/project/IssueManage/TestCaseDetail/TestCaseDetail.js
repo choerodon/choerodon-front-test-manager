@@ -56,7 +56,7 @@ class TestCaseDetail extends Component {
       loading: true,
       lasttestCaseId: null,
       nexttestCaseId: null,
-      isExpand: false,
+      isExpand: true,
       folderName: '',
     };
   }
@@ -219,10 +219,13 @@ class TestCaseDetail extends Component {
           </Header>
     
           <Spin spinning={loading}>
-            <div style={{ display: 'flex', height: 'calc(100vh - 107px)' }}>
+            <div style={{ display: 'flex', height: '100%' }}>
               <div style={{ overflowY: 'auto' }}>
                 {
-                  <div style={{ display: 'flex',  margin: '24px', fontSize: 20, height: '30px' }}>
+                  <div style={{
+                    display: 'flex', margin: '24px', fontSize: 20, height: '30px', 
+                  }}
+                  >
                     <span>{issueInfo && issueInfo.summary}</span>
                     <div 
                       style={{
@@ -300,8 +303,9 @@ class TestCaseDetail extends Component {
               </div>
                
               {
-                  isExpand && (
+                  isExpand && !loading && (
                     <EditIssue 
+                      loading={loading}
                       issueId={testCaseId}
                       folderName={folderName}
                       issueInfo={issueInfo} 

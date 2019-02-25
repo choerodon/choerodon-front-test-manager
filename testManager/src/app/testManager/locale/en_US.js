@@ -129,7 +129,7 @@ const enUS = {
   status_create: 'Create Status',
   status_executeStatus: 'Execute Status',
   status_steptatus: 'Step Status',
-  status_type: 'Type',
+  status_name: 'Status Name',
   status_comment: 'Comment',
   status_color: 'Color',
   // 自定义状态侧边栏 

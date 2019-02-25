@@ -7,6 +7,7 @@
  */
 
 import React, { Component } from 'react';
+import _ from 'lodash';
 import {
   getStatusList, createStatus, editStatus, deleteStatus,
 } from '../../../../api/TestStatusApi';
@@ -155,6 +156,28 @@ class CustomStatusHomeContainer extends Component {
   }
 
   /**
+   * 校验状态是否重复
+   *
+   * 
+   */
+  handleCheckStatusRepeat = status => (rule, value, callback) => {
+    const {
+      statusName, statusColor, statusType, statusId, 
+    } = status;
+    getStatusList(statusType).then((statusList) => {
+      if (_.find(statusList, o => o.statusName === statusName && o.statusId !== statusId)) {
+        callback('状态名称已存在');
+      } else if (_.find(statusList, o => o.statusColor === statusColor && o.statusId !== statusId)) {
+        callback('状态颜色已存在');
+      } else {
+        callback();
+      }
+    }).catch(() => {
+      callback();      
+    });
+  };
+
+  /**
    * 创建状态侧边点击确定
    *
    * 
@@ -165,6 +188,9 @@ class CustomStatusHomeContainer extends Component {
       if (res.failed) {
         Choerodon.prompt('状态或颜色不能相同');
       } else {
+        this.setState({
+          statusType: newStatus.statusType,
+        });
         this.ToggleCreateStatusVisible(false);
         this.loadStatusList();
       }
@@ -189,7 +215,7 @@ class CustomStatusHomeContainer extends Component {
         this.ToggleEditStatusVisible(false);
         this.loadStatusList();
       }
-      this.setState({ EditStatusLoading: false });   
+      this.setState({ EditStatusLoading: false });
     }).catch(() => {
       Choerodon.prompt('网络异常');
       this.setState({ EditStatusLoading: false });
@@ -205,6 +231,7 @@ class CustomStatusHomeContainer extends Component {
         onEditStatusClick={this.handleEditStatusClick}
         onDeleteOk={this.handleDeleteOk}
         onTabChange={this.handleTabChange}
+        onCheckStatusRepeat={this.handleCheckStatusRepeat}
         onCreateStatusCancel={this.handleCreateStatusCancel}
         onEditStatusCancel={this.handleEditStatusCancel}
         onCreateStatusSubmit={this.handleCreateStatusSubmit}
