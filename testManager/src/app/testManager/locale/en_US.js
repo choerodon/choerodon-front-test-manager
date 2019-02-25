@@ -361,7 +361,7 @@ const enUS = {
   createBug_field_assignee: 'assignee',
   createBug_field_epic: 'epic',
   createBug_field_sprint: 'sprint',
-  createBug_field_fixVersion: 'fix version',
+  createBug_field_version: 'version',
   createBug_field_component: 'component',
   createBug_field_label: 'label',
   createBug_field_annex: 'annex',

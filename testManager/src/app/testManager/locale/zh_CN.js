@@ -408,7 +408,7 @@ const zhCN = {
   createBug_field_assignee: '经办人',
   createBug_field_epic: '史诗',
   createBug_field_sprint: '冲刺',
-  createBug_field_fixVersion: '修复版本',
+  createBug_field_version: '修复版本',
   createBug_field_component: '模块',
   createBug_field_label: '标签',
   createBug_field_annex: '附件',
