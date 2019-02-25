@@ -383,12 +383,12 @@ class CreateBug extends Component {
                 )}
               </FormItem>
 
-              <FormItem label={<FormattedMessage id="createBug_field_fixVersion" />} style={{ width: 520 }}>
+              <FormItem label={<FormattedMessage id="createBug_field_version" />} style={{ width: 520 }}>
                 {getFieldDecorator('fixVersionIssueRel', {
                   rules: [{ transform: value => (value ? value.toString() : value) }],
                 })(
                   <Select
-                    label={<FormattedMessage id="createBug_field_fixVersion" />}
+                    label={<FormattedMessage id="createBug_field_version" />}
                     mode="tags"
                     loading={selectLoading}
                     getPopupContainer={triggerNode => triggerNode.parentNode}
