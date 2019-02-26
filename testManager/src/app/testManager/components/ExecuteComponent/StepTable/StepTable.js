@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import isEqual from 'react-fast-compare';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import {
   Table, Input, Icon, Select, Tooltip, Button,
 } from 'choerodon-ui';
@@ -16,15 +16,14 @@ import ExecuteDetailStore from '../../../store/project/TestExecute/ExecuteDetail
 const { TextArea } = Input;
 const Option = Select.Option;
 const { Text, Edit } = TextEditToggle;
-
-class StepTable extends Component {
-  // shouldComponentUpdate(nextProps) {
-  //   return !isEqual(this.props, nextProps);
-  // }
-
+const propTypes = {
+  disabled: PropTypes.bool,
+  dataSource: PropTypes.arrayOf(PropTypes.shape({})).isRequired,  
+  stepStatusList: PropTypes.arrayOf(PropTypes.shape({})).isRequired,  
+};
+class StepTable extends PureComponent {
   editCycleStep = (values) => {
     const data = { ...values };
-
     delete data.defects;
     delete data.caseAttachment;
     delete data.stepAttachment;
@@ -47,7 +46,7 @@ class StepTable extends Component {
   }
 
   quickPassOrFail = (stepData, text) => {
-    const stepStatusList = ExecuteDetailStore.getStepStatusList;
+    const { stepStatusList } = this.props;
     const data = { ...stepData };
     if (_.find(stepStatusList, { projectId: 0, statusName: text })) {
       data.stepStatus = _.find(stepStatusList, { projectId: 0, statusName: text }).statusId;
@@ -68,11 +67,7 @@ class StepTable extends Component {
 
   render() {
     const that = this;
-    const { disabled } = this.props;
-    const stepStatusList = ExecuteDetailStore.getStepStatusList;
-    const detailList = ExecuteDetailStore.getDetailList;
-
-
+    const { disabled, stepStatusList, dataSource } = this.props;
     const options = stepStatusList.map((status) => {
       const { statusName, statusId, statusColor } = status;
       return (
@@ -100,40 +95,34 @@ class StepTable extends Component {
       title: <FormattedMessage id="execute_testStep" />,
       dataIndex: 'testStep',
       key: 'testStep',
-      render: testStep => (
-        // <Tooltip title={testStep}>
+      render: testStep => (     
         <div
           className="c7ntest-text-wrap"
         >
           {testStep}
-        </div>
-        // </Tooltip>
+        </div>   
       ),
     }, {
       title: <FormattedMessage id="execute_testData" />,
       dataIndex: 'testData',
       key: 'testData',
-      render: testData => (
-        // <Tooltip title={testData}>
+      render: testData => (     
         <div
           className="c7ntest-text-wrap"
         >
           {testData}
-        </div>
-        // </Tooltip>
+        </div>        
       ),
     }, {
       title: <FormattedMessage id="execute_expectedOutcome" />,
       dataIndex: 'expectedResult',
       key: 'expectedResult',
-      render: expectedResult => (
-        // <Tooltip title={expectedResult}>
+      render: expectedResult => (        
         <div
           className="c7ntest-text-wrap"
         >
           {expectedResult}
-        </div>
-        // </Tooltip> 
+        </div>      
       ),
     },
     {
@@ -202,8 +191,7 @@ class StepTable extends Component {
       dataIndex: 'comment',
       key: 'comment',
       render(comment, record) {
-        return (
-          // <Tooltip title={<RichTextShow data={comment} />}>
+        return (        
           <TextEditToggle
             noButton
             disabled={disabled}
@@ -224,8 +212,7 @@ class StepTable extends Component {
             <Edit>
               <TextArea autosize autoFocus />
             </Edit>
-          </TextEditToggle>
-          // </Tooltip>
+          </TextEditToggle>        
         );
       },
     }, {
@@ -331,7 +318,7 @@ class StepTable extends Component {
         <Table
           rowKey="executeStepId"
           filterBar={false}
-          dataSource={detailList}
+          dataSource={dataSource}
           columns={disabled ? columns : [...columns, actionColumn]}
           pagination={false}
           scroll={{ x: 1300, y: 400 }}
@@ -341,5 +328,5 @@ class StepTable extends Component {
   }
 }
 
-
+StepTable.propTypes = propTypes;
 export default StepTable;

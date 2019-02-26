@@ -209,7 +209,8 @@ class ExecuteDetail extends Component {
       nextExecuteId, lastExecuteId, issueInfosDTO, executionStatus,
     } = cycleData;
     const { statusColor, statusName } = ExecuteDetailStore.getStatusById(executionStatus);
-
+    const stepStatusList = ExecuteDetailStore.getStepStatusList;
+    
     return (
       <Page className="c7ntest-ExecuteDetail">
         <Header title={(
@@ -293,7 +294,11 @@ class ExecuteDetail extends Component {
                 style={{ margin: '24px 0' }}
                 title={[<FormattedMessage id="execute_testDetail" />, <span style={{ marginLeft: 5 }}>{`（${detailList.length}）`}</span>]}
               >
-                <StepTable disabled={disabled} />
+                <StepTable
+                  disabled={disabled} 
+                  dataSource={detailList}
+                  stepStatusList={stepStatusList}
+                />
               </CardWrapper>
               <CardWrapper title={<FormattedMessage id="execute_executeHistory" />}>
                 <div style={{ padding: '0 20px' }}>

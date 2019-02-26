@@ -71,4 +71,5 @@ const QuickOperate = ({
     </div>
   );
 };
+QuickOperate.propTypes = propTypes;
 export default memo(QuickOperate);
