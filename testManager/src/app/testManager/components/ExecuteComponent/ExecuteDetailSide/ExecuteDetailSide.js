@@ -91,7 +91,7 @@ class ExecuteDetailSide extends Component {
 
 
   renderNavs = () => navs.map(nav => (
-    <Tooltip placement="right" title={nav.tooltip}>
+    <Tooltip placement="right" title={nav.tooltip} key={nav.code}>
       <li id="DETAILS-nav" className={`c7ntest-li ${this.state.currentNav === nav.code ? 'c7ntest-li-active' : ''}`}>
         <Icon
           type={`${nav.icon} c7ntest-icon-li`}

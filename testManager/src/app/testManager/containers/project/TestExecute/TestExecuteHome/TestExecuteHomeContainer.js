@@ -217,17 +217,17 @@ class TestExecuteHomeContainer extends Component {
   }
 
 
-  quickPass(execute, e) {
+  quickPass = (execute, e) => {
     e.stopPropagation();
     this.quickPassOrFail(execute, '通过');
   }
 
-  quickFail(execute, e) {
+  quickFail = (execute, e) => {
     e.stopPropagation();
     this.quickPassOrFail(execute, '失败');
   }
 
-  quickPassOrFail(execute, text) {
+  quickPassOrFail = (execute, text) => {
     const cycleData = { ...execute };
     if (_.find(this.state.statusList, { projectId: 0, statusName: text })) {
       cycleData.executionStatus = _.find(this.state.statusList, { projectId: 0, statusName: text }).statusId;
