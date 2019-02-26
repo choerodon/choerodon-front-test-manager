@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { findDOMNode } from 'react-dom';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { FormattedMessage } from 'react-intl';
@@ -26,8 +25,35 @@ const navs = [
   { code: 'bug', tooltip: '缺陷', icon: 'bug_report' },
 ];
 let sign = true;
+const Section = ({
+  id,
+  icon,
+  title,
+  action,
+  children,
+  style,
+}) => (
+  <section id={id}>
+    <div className="c7ntest-side-item-header">
+      <div className="c7ntest-side-item-header-left">
+        <Icon type={icon} />
+        <span>{title}</span>
+      </div>
+      <div className="c7ntest-side-item-header-line" />
+      <div className="c7ntest-side-item-header-right">
+        {action}
+      </div>
+    </div>
+    <div className="c7ntest-side-item-content" style={style}>
+      {children}
+    </div>
+  </section>
+);
+const defaultProps = {
+  issueInfosDTO: { issueTypeDTO: {} },
+};
 const propTypes = {
-  issueInfosDTO: PropTypes.shape({}).isRequired,
+  issueInfosDTO: PropTypes.shape({}),
   cycleData: PropTypes.shape({}).isRequired,
   fileList: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
   onFileRemove: PropTypes.func.isRequired,
@@ -91,8 +117,8 @@ class ExecuteDetailSide extends Component {
 
 
   renderNavs = () => navs.map(nav => (
-    <Tooltip placement="right" title={nav.tooltip}>
-      <li id="DETAILS-nav" className={`c7ntest-li ${this.state.currentNav === nav.code ? 'c7ntest-li-active' : ''}`}>
+    <Tooltip placement="right" title={nav.tooltip} key={nav.code}>
+      <li className={`c7ntest-li ${this.state.currentNav === nav.code ? 'c7ntest-li-active' : ''}`}>
         <Icon
           type={`${nav.icon} c7ntest-icon-li`}
           role="none"
@@ -230,173 +256,155 @@ class ExecuteDetailSide extends Component {
           </div>
           <div className="c7ntest-content-bottom" id="scroll-area" style={{ position: 'relative' }}>
             {/* 详情 */}
-            <section id="detail">
-              <div className="c7ntest-side-item-header">
-                <div className="c7ntest-side-item-header-left">
-                  <Icon type="error_outline" />
-                  <span>详情</span>
-                </div>
-                <div className="c7ntest-side-item-header-line" />
-                <div className="c7ntest-side-item-header-right" />
-              </div>
-              <div className="c7ntest-side-item-content">
-                {/* 状态 */}
-                <div className="c7ntest-item-one-line">
-                  <div className="c7ntest-item-one-line-left">状态：</div>
-                  <div className="c7ntest-item-one-line-right">
-                    <StatusTags
-                      style={{ height: 20, lineHeight: '20px', marginRight: 15 }}
-                      color={statusColor}
-                      name={statusName}
-                    />
-                  </div>
-                </div>
-                {/* 阶段名称 */}
-                <div className="c7ntest-item-one-line">
-                  <div className="c7ntest-item-one-line-left">阶段名称：</div>
-                  <div className="c7ntest-item-one-line-right">
-                    {cycleName}
-                  </div>
-                </div>
-                {/* 执行人 */}
-                <div className="c7ntest-item-one-line">
-                  <div className="c7ntest-item-one-line-left">执行人：</div>
-                  <div className="c7ntest-item-one-line-right">
-                    <User user={lastUpdateUser} />
-                  </div>
-                </div>
-                {/* 执行日期 */}
-                <div className="c7ntest-item-one-line">
-                  <div className="c7ntest-item-one-line-left">执行日期：</div>
-                  <div className="c7ntest-item-one-line-right">
-                    <DateTimeAgo date={lastUpdateDate} />
-                  </div>
-                </div>
-              </div>
-            </section>
-            {/* 描述 */}
-            <section id="des">
-              <div className="c7ntest-side-item-header">
-                <div className="c7ntest-side-item-header-left">
-                  <Icon type="subject" />
-                  <span>描述</span>
-                </div>
-                <div className="c7ntest-side-item-header-line" />
-                <div className="c7ntest-side-item-header-right">
-                  <Button className="leftBtn" type="primary" funcType="flat" icon="zoom_out_map" onClick={this.ShowFullEditor}>
-                    <FormattedMessage id="execute_edit_fullScreen" />
-                  </Button>
-                </div>
-              </div>
-              <div className="c7ntest-side-item-content" style={{ padding: '0 15px 0 0' }}>
-                {comment && !editing
-                  ? (
-                    <div
-                      role="none"
-                      style={{ padding: '15px 15px 15px 23px' }}
-                      onClick={this.enterEditing}
-                    >
-                      <RichTextShow data={delta2Html(comment)} />
-                    </div>
-                  )
-                  : (
-                    <WYSIWYGEditor
-                      bottomBar
-                      value={comment}
-                      style={{ height: 200, width: '100%' }}
-                      handleSave={this.handleCommentSave}
-                      handleDelete={this.handleCommentCancel}
-                    />
+            <Section
+              id="detail"
+              icon="error_outline"
+              title="详情"
+            >
+              {/* 状态 */}
+              <div className="c7ntest-item-one-line">
+                <div className="c7ntest-item-one-line-left">状态：</div>
+                <div className="c7ntest-item-one-line-right">
+                  {statusColor && (
+                  <StatusTags
+                    style={{ height: 20, lineHeight: '20px', marginRight: 15 }}
+                    color={statusColor}
+                    name={statusName}
+                  />
                   )}
-              </div>
-            </section>
-            {/* 附件 */}
-            <section id="attachment">
-              <div className="c7ntest-side-item-header">
-                <div className="c7ntest-side-item-header-left">
-                  <Icon type="attach_file" />
-                  <span>附件</span>
-                </div>
-                <div className="c7ntest-side-item-header-line" />
-                <div className="c7ntest-side-item-header-right">
-                  <UploadButton handleUpload={onUpload}>
-                    <Icon type="file_upload" />
-                    <FormattedMessage id="upload_attachment" />
-                  </UploadButton>
                 </div>
               </div>
-              <div className="c7ntest-side-item-content">
-                <Upload
-                  {...props}
-                  fileList={fileList}
-                  className="upload-button"
-                />
-              </div>
-            </section>
-            {/* 缺陷 */}
-            <section id="bug">
-              <div className="c7ntest-side-item-header">
-                <div className="c7ntest-side-item-header-left">
-                  <Icon type="bug_report" />
-                  <span>缺陷</span>
+              {/* 阶段名称 */}
+              <div className="c7ntest-item-one-line">
+                <div className="c7ntest-item-one-line-left">阶段名称：</div>
+                <div className="c7ntest-item-one-line-right">
+                  {cycleName}
                 </div>
-                <div className="c7ntest-side-item-header-line" />
-                <div className="c7ntest-side-item-header-right">
-                  <TextEditToggle
-                    className="c7ntest-button-defect-select"
-                    simpleMode
-                    saveRef={(bugsToggle) => { this.bugsToggle = bugsToggle; }}
-                    formKey="defects"
-                    onSubmit={this.addDefects}
-                    originData={defectIssueIds}
-                    onCancel={this.cancelEdit}
+              </div>
+              {/* 执行人 */}
+              <div className="c7ntest-item-one-line">
+                <div className="c7ntest-item-one-line-left">执行人：</div>
+                <div className="c7ntest-item-one-line-right">
+                  <User user={lastUpdateUser} />
+                </div>
+              </div>
+              {/* 执行日期 */}
+              <div className="c7ntest-item-one-line">
+                <div className="c7ntest-item-one-line-left">执行日期：</div>
+                <div className="c7ntest-item-one-line-right">
+                  <DateTimeAgo date={lastUpdateDate} />
+                </div>
+              </div>
+            </Section>           
+            {/* 描述 */}
+            <Section
+              id="des"
+              icon="subject"
+              title="描述"
+              style={{ padding: '0 15px 0 0' }}
+              action={(
+                <Button className="leftBtn" type="primary" funcType="flat" icon="zoom_out_map" onClick={this.ShowFullEditor}>
+                  <FormattedMessage id="execute_edit_fullScreen" />
+                </Button>
+              )}
+            >
+              {comment && !editing
+                ? (
+                  <div
+                    role="none"
+                    style={{ padding: '15px 15px 15px 23px' }}
+                    onClick={this.enterEditing}
                   >
-                    <Text>
-                      <Button className="leftBtn" type="primary" funcType="flat">
-                        <Icon type="playlist_add" style={{ marginRight: 2 }} />
-                        <span>缺陷</span>
-                      </Button>
-                    </Text>
-                    <Edit>
-                      <Select
-                        defaultOpen
-                        filter
-                        mode="multiple"
-                        filterOption={false}
-                        getPopupContainer={() => document.getElementById('scroll-area')}
-                        dropdownMatchSelectWidth={false}
-                        dropdownClassName="dropdown"
-                        footer={(
-                          <div
-                            style={{ color: '#3f51b5', cursor: 'pointer' }}
-                            role="none"
-                            onClick={() => {
-                              this.bugsToggle.handleSubmit();
-                              ExecuteDetailStore.setCreateBugShow(true);
-                              ExecuteDetailStore.setDefectType('CYCLE_CASE');
-                              ExecuteDetailStore.setCreateDectTypeId(ExecuteDetailStore.id);
-                            }}
-                          >
-                            <FormattedMessage id="issue_create_bug" />
-                          </div>
-                        )}
-                        style={{ width: 300 }}
-                        onDeselect={this.handleRemoveDefect}
-                        onFilterChange={(value) => { ExecuteDetailStore.loadIssueList(value); }}
-                      >
-                        {defectsOptions}
-                      </Select>
-                    </Edit>
-                  </TextEditToggle>
-                </div>
-              </div>
-              <div className="c7ntest-side-item-content">
-                <DefectList
-                  defects={defects}
-                  onRemoveDefect={onRemoveDefect}
-                />
-              </div>
-            </section>
+                    <RichTextShow data={delta2Html(comment)} />
+                  </div>
+                )
+                : (
+                  <WYSIWYGEditor
+                    bottomBar
+                    value={comment}
+                    style={{ height: 200, width: '100%' }}
+                    handleSave={this.handleCommentSave}
+                    handleDelete={this.handleCommentCancel}
+                  />
+                )}
+            </Section>
+            {/* 附件 */}
+            <Section
+              id="attachment"
+              icon="attach_file"
+              title="附件"            
+              action={(
+                <UploadButton handleUpload={onUpload}>
+                  <Icon type="file_upload" />
+                  <FormattedMessage id="upload_attachment" />
+                </UploadButton>
+              )}
+            >
+              <Upload
+                {...props}
+                fileList={fileList}
+                className="upload-button"
+              />
+            </Section>           
+            {/* 缺陷 */}
+            <Section
+              id="bug"
+              icon="bug_report"
+              title="缺陷"            
+              action={(
+                <TextEditToggle
+                  className="c7ntest-button-defect-select"
+                  simpleMode
+                  saveRef={(bugsToggle) => { this.bugsToggle = bugsToggle; }}
+                  formKey="defects"
+                  onSubmit={this.addDefects}
+                  originData={defectIssueIds}
+                  onCancel={this.cancelEdit}
+                >
+                  <Text>
+                    <Button className="leftBtn" type="primary" funcType="flat">
+                      <Icon type="playlist_add" style={{ marginRight: 2 }} />
+                      <span>缺陷</span>
+                    </Button>
+                  </Text>
+                  <Edit>
+                    <Select
+                      defaultOpen
+                      filter
+                      mode="multiple"
+                      filterOption={false}
+                      getPopupContainer={() => document.getElementById('scroll-area')}
+                      dropdownMatchSelectWidth={false}
+                      dropdownClassName="dropdown"
+                      footer={(
+                        <div
+                          style={{ color: '#3f51b5', cursor: 'pointer' }}
+                          role="none"
+                          onClick={() => {
+                            this.bugsToggle.handleSubmit();
+                            ExecuteDetailStore.setCreateBugShow(true);
+                            ExecuteDetailStore.setDefectType('CYCLE_CASE');
+                            ExecuteDetailStore.setCreateDectTypeId(ExecuteDetailStore.id);
+                          }}
+                        >
+                          <FormattedMessage id="issue_create_bug" />
+                        </div>
+                      )}
+                      style={{ width: 300 }}
+                      onDeselect={this.handleRemoveDefect}
+                      onFilterChange={(value) => { ExecuteDetailStore.loadIssueList(value); }}
+                    >
+                      {defectsOptions}
+                    </Select>
+                  </Edit>
+                </TextEditToggle>
+              )}
+            >
+              <DefectList
+                defects={defects}
+                onRemoveDefect={onRemoveDefect}
+              />
+            </Section>
           </div>
         </div>
       </div>
@@ -406,5 +414,5 @@ class ExecuteDetailSide extends Component {
 }
 
 ExecuteDetailSide.propTypes = propTypes;
-
+ExecuteDetailSide.defaultProps = defaultProps;
 export default ExecuteDetailSide;

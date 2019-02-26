@@ -217,17 +217,17 @@ class TestExecuteHomeContainer extends Component {
   }
 
 
-  quickPass(execute, e) {
+  quickPass = (execute, e) => {
     e.stopPropagation();
     this.quickPassOrFail(execute, '通过');
   }
 
-  quickFail(execute, e) {
+  quickFail = (execute, e) => {
     e.stopPropagation();
     this.quickPassOrFail(execute, '失败');
   }
 
-  quickPassOrFail(execute, text) {
+  quickPassOrFail = (execute, text) => {
     const cycleData = { ...execute };
     if (_.find(this.state.statusList, { projectId: 0, statusName: text })) {
       cycleData.executionStatus = _.find(this.state.statusList, { projectId: 0, statusName: text }).statusId;
@@ -292,8 +292,11 @@ class TestExecuteHomeContainer extends Component {
    * @memberof TestPlanHome
    */
   handleTableRowClick = (record) => {
+    const currentCycle = TestExecuteStore.getCurrentCycle;
+    const { cycleId, type } = currentCycle;
+    const isCycle = type === 'cycle';
     const { history } = this.props;
-    history.push(executeDetailLink(record.executeId));
+    history.push(executeDetailLink(record.executeId, isCycle ? cycleId : null));
   }
 
   handleExecuteTableChange = (pagination, filters, sorter, barFilters) => {

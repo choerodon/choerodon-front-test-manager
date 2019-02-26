@@ -267,8 +267,12 @@ export function cycleLink(cycleId) {
 
   return encodeURI(`/testManager/TestExecute?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}&cycleId=${cycleId}`);
 }
-export function executeDetailLink(executeId) {
-  return commonLink(`/TestExecute/execute/${executeId}`);
+export function executeDetailLink(executeId, cycleId) {
+  const menu = AppState.currentMenuType;
+  const {
+    type, id: projectId, name, organizationId,
+  } = menu;
+  return encodeURI(`/testManager/TestExecute/execute/${executeId}?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}${`&cycleId=${cycleId || 0}`}`);
 }
 export function executeDetailShowLink(executeId) {
   return commonLink(`/TestPlan/executeShow/${executeId}`);
@@ -281,7 +285,7 @@ export function testCaseDetailLink(testCaseId, folderName) {
   return encodeURI(`/testManager/IssueManage/testCase/${testCaseId}?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}&folderName=${folderName}`);
 }
 export function testCaseTableLink(params) {
-  return commonLink(`/IssueManage`);
+  return commonLink('/IssueManage');
 }
 /**
  * 颜色转rgba

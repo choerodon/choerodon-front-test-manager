@@ -11,6 +11,7 @@ import {
   SelectFocusLoad, StatusTags, SmartTooltip,
 } from '../../../../../../components/CommonComponent';
 import { getUsers } from '../../../../../../api/IamApi';
+import './TestExecuteTable.scss';
 
 class TestExecuteTable extends Component {
   shouldComponentUpdate(nextProps) {
@@ -77,7 +78,7 @@ class TestExecuteTable extends Component {
         dataIndex: 'summary',
         key: 'summary',
         filters: [],
-        flex: 2,
+        width: '30%',
         render(issueId, record) {
           const { issueInfosDTO } = record;
           return (
@@ -125,8 +126,7 @@ class TestExecuteTable extends Component {
       {
         title: <FormattedMessage id="cycle_executeBy" />,
         dataIndex: 'lastUpdateUser',
-        key: 'lastUpdateUser',
-        flex: 1,
+        key: 'lastUpdateUser',        
         render(lastUpdateUser) {
           return (
             <div
@@ -155,8 +155,7 @@ class TestExecuteTable extends Component {
       {
         title: <FormattedMessage id="cycle_assignedTo" />,
         dataIndex: 'assigneeUser',
-        key: 'assigneeUser',
-        flex: 1,
+        key: 'assigneeUser',       
         render(assigneeUser) {
           return (
             <div
@@ -171,7 +170,6 @@ class TestExecuteTable extends Component {
         dataIndex: 'priorityId',
         key: 'priorityId',
         filters: prioritys.map(priority => ({ text: priority.name, value: priority.id.toString() })),
-        flex: 1,
         render(issueId, record) {
           const { issueInfosDTO } = record;
           return (
@@ -182,8 +180,7 @@ class TestExecuteTable extends Component {
         title: <FormattedMessage id="status" />,
         dataIndex: 'executionStatus',
         key: 'executionStatus',
-        filters: statusList.map(status => ({ text: status.statusName, value: status.statusId.toString() })),
-        flex: 1,
+        filters: statusList.map(status => ({ text: status.statusName, value: status.statusId.toString() })),     
         render(executionStatus) {
           const statusColor = _.find(statusList, { statusId: executionStatus })
             ? _.find(statusList, { statusId: executionStatus }).statusColor : '';
@@ -237,7 +234,6 @@ class TestExecuteTable extends Component {
       title: <FormattedMessage id="cycle_stageName" />,
       dataIndex: 'cycleName',
       key: 'cycleName',
-      flex: 1,
       render(cycleName) {
         return (
           <div
@@ -252,7 +248,7 @@ class TestExecuteTable extends Component {
       columns.splice(4, 0, nameColumn);
     }
     return (
-      <div>
+      <div className="c7ntest-TestExecuteTable">
         <div style={{ display: 'flex', marginBottom: 20, alignItems: 'center' }}>
           <div style={{
             fontWeight: 600,

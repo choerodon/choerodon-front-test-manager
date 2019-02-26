@@ -1,7 +1,7 @@
 import { getProjectId, request } from '../common/utils';
 
-export function getCycle(id) {
-  return request.get(`/test/v1/projects/${getProjectId()}/cycle/case/query/one/${id}`);
+export function getCycle(id, cycleId) {
+  return request.get(`/test/v1/projects/${getProjectId()}/cycle/case/query/one/${id}?cycleId=${cycleId || 0}`);
 }
 
 export function editCycle(cycle) {
