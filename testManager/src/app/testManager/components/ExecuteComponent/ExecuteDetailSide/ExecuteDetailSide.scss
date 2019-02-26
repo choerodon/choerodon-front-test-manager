@@ -72,15 +72,14 @@
       .c7ntest-side-item-content {
         padding: 15px 15px 15px 23px;
       }
-      .ant-select-selection__rendered{
+      .ant-select-selection__rendered {
         // display: none;
         width: 300px;
         height: 20px;
         visibility: hidden;
       }
       .ant-select {
-        visibility: hidden;
-        // display: none;
+        visibility: hidden; // display: none;
       }
       .c7ntest-button-defect-select {
         .c7ntest-TextEditToggle-text {
@@ -97,10 +96,13 @@
   }
   .c7ntest-item-one-line {
     display: flex;
+    align-items: center;
     margin: 10px 0;
     &-left {
       width: 45%;
     }
-    &-right {}
+    &-right {
+      flex: 1;
+    }
   }
 }

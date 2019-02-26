@@ -26,8 +26,11 @@ const navs = [
   { code: 'bug', tooltip: '缺陷', icon: 'bug_report' },
 ];
 let sign = true;
+const defaultProps = {
+  issueInfosDTO: { issueTypeDTO: {} },
+};
 const propTypes = {
-  issueInfosDTO: PropTypes.shape({}).isRequired,
+  issueInfosDTO: PropTypes.shape({}),
   cycleData: PropTypes.shape({}).isRequired,
   fileList: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
   onFileRemove: PropTypes.func.isRequired,
@@ -406,5 +409,5 @@ class ExecuteDetailSide extends Component {
 }
 
 ExecuteDetailSide.propTypes = propTypes;
-
+ExecuteDetailSide.defaultProps = defaultProps;
 export default ExecuteDetailSide;

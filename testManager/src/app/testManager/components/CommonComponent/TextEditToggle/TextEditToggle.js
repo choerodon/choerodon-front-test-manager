@@ -35,7 +35,7 @@ class TextEditToggle extends Component {
     formKey: PropTypes.string,
     onSubmit: PropTypes.func,
     onCancel: PropTypes.func,
-    originData: PropTypes.object,
+    originData: PropTypes.any,
     children: PropTypes.node,
   };
 
@@ -238,8 +238,9 @@ class TextEditToggle extends Component {
   }
 
   render() {
+    const { style, className } = this.props;
     return (
-      <div {...this.props}>
+      <div style={style} className={className}>
         {this.renderChild()}
       </div>
     );
@@ -249,9 +250,15 @@ TextEditToggle.Text = Text;
 TextEditToggle.Edit = Edit;
 
 Text.propTypes = {
-  children: PropTypes.element.isRequired,
+  children: PropTypes.oneOfType([
+    PropTypes.element,
+    PropTypes.func,
+  ]).isRequired,
 };
 Edit.propTypes = {
-  children: PropTypes.element.isRequired,
+  children: PropTypes.oneOfType([
+    PropTypes.element,
+    PropTypes.func,
+  ]).isRequired,
 };
 export default Form.create({})(TextEditToggle);

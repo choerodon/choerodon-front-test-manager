@@ -269,9 +269,11 @@ class StepTable extends Component {
               defects.length > 0 ? (
                 <div>
                   {defects.map((defect, i) => (
-                    <div style={{
-                      fontSize: '13px',
-                    }}
+                    <div 
+                      key={defect.id}
+                      style={{
+                        fontSize: '13px',
+                      }}
                     >
                       {defect.issueInfosDTO && defect.issueInfosDTO.issueName}
                     </div>
@@ -322,6 +324,7 @@ class StepTable extends Component {
     return (
       <div className="StepTable">
         <Table
+          rowKey="executeStepId"
           filterBar={false}
           dataSource={detailList}
           columns={disabled ? columns : [...columns, actionColumn]}

@@ -292,8 +292,11 @@ class TestExecuteHomeContainer extends Component {
    * @memberof TestPlanHome
    */
   handleTableRowClick = (record) => {
+    const currentCycle = TestExecuteStore.getCurrentCycle;
+    const { cycleId, type } = currentCycle;
+    const isCycle = type === 'cycle';
     const { history } = this.props;
-    history.push(executeDetailLink(record.executeId));
+    history.push(executeDetailLink(record.executeId, isCycle ? cycleId : null));
   }
 
   handleExecuteTableChange = (pagination, filters, sorter, barFilters) => {

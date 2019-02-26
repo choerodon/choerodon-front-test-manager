@@ -4,6 +4,7 @@ import {
 } from 'mobx';
 import { store } from 'choerodon-front-boot';
 import _ from 'lodash';
+import { getParams } from '../../../common/utils';
 import {
   getCycle, getCycleDetails, getCycleHistiorys,
 } from '../../../api/ExecuteDetailApi';
@@ -79,11 +80,12 @@ class ExecuteDetailStore {
   }
 
   getInfo = (id = this.id) => {
+    const { cycleId } = getParams(window.location.href);
     this.enterloading();
     this.setId(id);
     const historyPagination = this.historyPagination;
     Promise.all([
-      getCycle(id),
+      getCycle(id, cycleId),
       getStatusList('CYCLE_CASE'),
       getCycleDetails(id),
       getStatusList('CASE_STEP'),

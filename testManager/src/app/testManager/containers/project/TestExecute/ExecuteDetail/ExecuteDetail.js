@@ -1,27 +1,27 @@
 import React, { Component } from 'react';
 import {
-  Table, Button, Icon, Card, Spin, Tooltip, Select,
+  Button, Icon, Card, Spin, Tooltip, 
 } from 'choerodon-ui';
 import { Page, Header } from 'choerodon-front-boot';
 import { observer } from 'mobx-react';
 import { withRouter } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
 import _ from 'lodash';
-import { RichTextShow, User, StatusTags } from '../../../../components/CommonComponent';
+import { StatusTags } from '../../../../components/CommonComponent';
 import {
-  delta2Html, delta2Text, executeDetailLink, executeDetailShowLink, beforeTextUpload,
+  executeDetailLink, executeDetailShowLink, beforeTextUpload, getParams,
 } from '../../../../common/utils';
 import {
-  addDefects, editCycle, removeDefect,
+  editCycle, removeDefect,
 } from '../../../../api/ExecuteDetailApi';
 import { uploadFile, deleteAttachment } from '../../../../api/FileApi';
 import './ExecuteDetail.scss';
 import {
-  StepTable, TestExecuteInfo, ExecuteDetailSide, CreateBug,
+  StepTable, ExecuteDetailSide, CreateBug, 
 } from '../../../../components/ExecuteComponent';
+import { QuickOperate, ExecuteHistoryTable } from './components';
 import ExecuteDetailStore from '../../../../store/project/TestExecute/ExecuteDetailStore';
 
-const { Option } = Select;
 function beforeUpload(file) {
   const isLt2M = file.size / 1024 / 1024 < 30;
   if (!isLt2M) {
@@ -39,20 +39,21 @@ const styles = {
     marginLeft: '5px',
   },
   cardBodyStyle: {
-    // maxHeight: '100%',
     padding: 12,
-    // overflow: 'hidden',
-  },
-  quickOperate: {
-    border: '1px solid #00BF96',
-    borderRadius: '2px',
-    marginLeft: 15,
-    padding: '1px 5px',
-    cursor: 'pointer',
-    fontSize: '12px',
   },
 };
-
+const CardWrapper = ({ children, title, style }) => (
+  <Card
+    title={null}
+    style={style}
+    bodyStyle={styles.cardBodyStyle}
+  >
+    <div style={{ ...styles.cardTitle, marginBottom: 10 }}>
+      <span style={styles.cardTitleText}>{title}</span>
+    </div>
+    {children}
+  </Card>
+);
 @observer
 class ExecuteDetail extends Component {
   componentDidMount() {
@@ -70,11 +71,12 @@ class ExecuteDetail extends Component {
     const { nextExecuteId, lastExecuteId } = cycleData;
     const { disabled, history } = this.props;
     const toExecuteId = mode === 'pre' ? lastExecuteId : nextExecuteId;
+    const { cycleId } = getParams(window.location.href);
     if (toExecuteId) {
       if (disabled) {
         history.replace(executeDetailShowLink(toExecuteId));
       } else {
-        history.replace(executeDetailLink(toExecuteId));
+        history.replace(executeDetailLink(toExecuteId, cycleId));
       }
       ExecuteDetailStore.clearPagination();
     }
@@ -88,11 +90,9 @@ class ExecuteDetail extends Component {
   handleFileRemove = (file) => {
     if (file.url) {
       ExecuteDetailStore.enterloading();
-      deleteAttachment(file.uid).then((data) => {
-        // window.console.log(data);
+      deleteAttachment(file.uid).then((data) => {     
         ExecuteDetailStore.getInfo();
       });
-      // 写服务端删除逻辑
     }
   }
 
@@ -173,7 +173,7 @@ class ExecuteDetail extends Component {
     }
   }
 
-  handleRemoveDefect=(issueId) => {
+  handleRemoveDefect = (issueId) => {
     ExecuteDetailStore.enterloading();
     removeDefect(issueId).then((res) => {
       ExecuteDetailStore.getInfo();
@@ -182,11 +182,11 @@ class ExecuteDetail extends Component {
     });
   }
 
-  handleHiddenCresteBug = () => {
+  handleHiddenCreateBug = () => {
     ExecuteDetailStore.setCreateBugShow(false);
   }
 
-  handleCreateBugShow=() => {
+  handleCreateBugShow = () => {
     ExecuteDetailStore.setCreateBugShow(true);
     ExecuteDetailStore.setDefectType('CYCLE_CASE');
     ExecuteDetailStore.setCreateDectTypeId(ExecuteDetailStore.id);
@@ -209,101 +209,6 @@ class ExecuteDetail extends Component {
       nextExecuteId, lastExecuteId, issueInfosDTO, executionStatus,
     } = cycleData;
     const { statusColor, statusName } = ExecuteDetailStore.getStatusById(executionStatus);
-    const options = statusList.map(status => (
-      <Option value={status.statusId} key={status.statusId}>
-        <StatusTags
-          color={status.statusColor}
-          name={status.statusName}
-        />
-        {/* <div style={{ ...styles.statusOption, ...{ background: status.statusColor } }}>
-          {status.statusName}
-        </div> */}
-      </Option>
-    ));
-    const columnsHistory = [{
-      title: <FormattedMessage id="execute_executive" />,
-      dataIndex: 'user',
-      key: 'user',
-      render(user) {
-        return (<User user={user} />);
-      },
-    }, {
-      title: <FormattedMessage id="execute_executeTime" />,
-      dataIndex: 'lastUpdateDate',
-      key: 'lastUpdateDate',
-      width: '25%',
-    }, {
-      title: '操作类型',
-      dataIndex: 'field',
-      key: 'field',
-    }, {
-      title: <FormattedMessage id="execute_history_oldValue" />,
-      dataIndex: 'oldValue',
-      key: 'oldValue',
-      render(oldValue, record) {
-        switch (record.field) {
-          case '注释': {
-            return (
-              <Tooltip title={<RichTextShow data={delta2Html(oldValue)} />}>
-                <div
-                  title={delta2Text(oldValue)}
-                  style={{
-                    width: 100,
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap',
-                  }}
-                >
-                  {delta2Text(oldValue)}
-                </div>
-              </Tooltip>
-            );
-          }
-          default: {
-            return (
-              <div
-                className="c7ntest-text-dot"
-              >
-                {oldValue}
-              </div>
-            );
-          }
-        }
-      },
-    }, {
-      title: <FormattedMessage id="execute_history_newValue" />,
-      dataIndex: 'newValue',
-      key: 'newValue',
-      render(newValue, record) {
-        switch (record.field) {
-          case '注释': {
-            return (
-              <Tooltip title={<RichTextShow data={delta2Html(newValue)} />}>
-                <div
-                  style={{
-                    width: 100,
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap',
-                  }}
-                >
-                  {delta2Text(newValue)}
-                </div>
-              </Tooltip>
-            );
-          }
-          default: {
-            return (
-              <div
-                className="c7ntest-text-dot"
-              >
-                {newValue}
-              </div>
-            );
-          }
-        }
-      },
-    }];
 
     return (
       <Page className="c7ntest-ExecuteDetail">
@@ -350,10 +255,8 @@ class ExecuteDetail extends Component {
           >
             <Icon type="autorenew icon" />
             <span><FormattedMessage id="refresh" /></span>
-
           </Button>
         </Header>
-
         <Spin spinning={loading}>
           <div style={{ display: 'flex', width: '100%', height: '100%' }}>
             {/* 左边内容区域 */}
@@ -377,93 +280,48 @@ class ExecuteDetail extends Component {
                   </div>
                 )}
               </div>
-              {!disabled && (
-              <div style={{ fontSize: '14px', display: 'flex', alignItems: 'center' }}>
-                快速操作:
-                <span
-                  style={{
-                    ...styles.quickOperate,
-                    color: '#00BF96',
-                    borderColor: '#00BF96',
-                  }}
-                  role="button"
-                  onClick={this.quickPass}
-                  className="c7ntest-quick-pass"
-                >
-                  通过
-                </span>
-                <span
-                  style={{
-                    ...styles.quickOperate,
-                    color: '#F44336',
-                    borderColor: '#F44336',
-                  }}
-                  role="button"
-                  onClick={this.quickFail}
-                  className="c7ntest-quick-fail"
-                >
-                  失败
-                </span>
-                <Select
-                  className="c7ntest-select"
-                  placeholder="其他状态"
-                  value={null}
-                  style={{ width: 80, marginLeft: 20 }}
-                  onChange={(id) => { this.handleSubmit({ executionStatus: id }); }}
-                >
-                  {options}
-                </Select>
-              </div>
-              )}
-
-              {/* <TestExecuteInfo disabled={disabled} /> */}
-              <Card
-                title={null}
-                style={{ marginBottom: 24, marginTop: 24 }}
-                bodyStyle={styles.cardBodyStyle}
+              {!disabled
+                && (
+                <QuickOperate 
+                  statusList={statusList}
+                  quickPass={this.quickPass}
+                  quickFail={this.quickFail}
+                  onSubmit={this.handleSubmit}
+                />
+                )}
+              <CardWrapper
+                style={{ margin: '24px 0' }}
+                title={[<FormattedMessage id="execute_testDetail" />, <span style={{ marginLeft: 5 }}>{`（${detailList.length}）`}</span>]}
               >
-                <div style={{ ...styles.cardTitle, marginBottom: 10 }}>
-                  <span style={styles.cardTitleText}><FormattedMessage id="execute_testDetail" /></span>
-                  <span style={{ marginLeft: 5 }}>{`（${detailList.length}）`}</span>
-                </div>
                 <StepTable disabled={disabled} />
-
-              </Card>
-              <Card
-                title={null}
-                bodyStyle={styles.cardBodyStyle}
-              >
-                <div style={{ ...styles.cardTitle, marginBottom: 10 }}>
-                  <span style={styles.cardTitleText}><FormattedMessage id="execute_executeHistory" /></span>
-                </div>
+              </CardWrapper>
+              <CardWrapper title={<FormattedMessage id="execute_executeHistory" />}>
                 <div style={{ padding: '0 20px' }}>
-                  <Table
-                    filterBar={false}
+                  <ExecuteHistoryTable
                     dataSource={historyList}
-                    columns={columnsHistory}
                     pagination={historyPagination}
                     onChange={ExecuteDetailStore.loadHistoryList}
                   />
                 </div>
-              </Card>
+              </CardWrapper>
             </div>
             {/* 右侧侧边栏 */}
             {visible && (
-            <ExecuteDetailSide
-              disabled={disabled}
-              ref={this.saveRef('ExecuteDetailSide')}
-              issueInfosDTO={issueInfosDTO}
-              cycleData={cycleData}
-              fileList={fileList}
-              onFileRemove={this.handleFileRemove}
-              status={{ statusColor, statusName }}
-              onClose={this.handleToggleExecuteDetailSide}
-              onUpload={this.handleUpload}
-              onSubmit={this.handleSubmit}
-              onCommentSave={this.handleCommentSave}
-              onRemoveDefect={this.handleRemoveDefect}
-              onCreateBugShow={this.handleCreateBugShow}
-            />
+              <ExecuteDetailSide
+                disabled={disabled}
+                ref={this.saveRef('ExecuteDetailSide')}
+                issueInfosDTO={issueInfosDTO}
+                cycleData={cycleData}
+                fileList={fileList}
+                onFileRemove={this.handleFileRemove}
+                status={{ statusColor, statusName }}
+                onClose={this.handleToggleExecuteDetailSide}
+                onUpload={this.handleUpload}
+                onSubmit={this.handleSubmit}
+                onCommentSave={this.handleCommentSave}
+                onRemoveDefect={this.handleRemoveDefect}
+                onCreateBugShow={this.handleCreateBugShow}
+              />
             )}
             {
               createBugShow && (
@@ -471,8 +329,8 @@ class ExecuteDetail extends Component {
                   visible={createBugShow}
                   defectType={defectType}
                   id={createDectTypeId}
-                  onCancel={this.handleHiddenCresteBug}
-                  onOk={this.handleHiddenCresteBug}
+                  onCancel={this.handleHiddenCreateBug}
+                  onOk={this.handleHiddenCreateBug}
                 />
               )
             }
