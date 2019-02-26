@@ -84,7 +84,7 @@ class StepTable extends Component {
       title: '步骤',
       dataIndex: 'order',
       key: 'order',
-      width: 60, 
+      width: 60,
       render: (order, record, index) => (
         <div
           className="c7ntest-text-wrap"
@@ -95,7 +95,7 @@ class StepTable extends Component {
     }, {
       title: <FormattedMessage id="execute_testStep" />,
       dataIndex: 'testStep',
-      key: 'testStep',         
+      key: 'testStep',
       render: testStep => (
         // <Tooltip title={testStep}>
         <div
@@ -131,11 +131,11 @@ class StepTable extends Component {
         </div>
         // </Tooltip> 
       ),
-    },    
+    },
     {
       title: <FormattedMessage id="execute_stepStatus" />,
       dataIndex: 'stepStatus',
-      key: 'stepStatus',   
+      key: 'stepStatus',
       render(stepStatus, record) {
         return (
           <div style={{ width: 85 }}>
@@ -162,7 +162,7 @@ class StepTable extends Component {
               </Text>
               <Edit>
                 <Select
-                  autoFocus 
+                  autoFocus
                   getPopupContainer={() => document.getElementsByClassName('StepTable')[0]}
                 >
                   {options}
@@ -238,7 +238,7 @@ class StepTable extends Component {
               attachmentLinkId: record.executeStepId,
               attachmentType: 'CYCLE_STEP',
             }}
-          />     
+          />
         );
       },
     },
@@ -266,7 +266,7 @@ class StepTable extends Component {
         >
           <Text>
             {
-              defects.length > 0 ? (              
+              defects.length > 0 ? (
                 <div>
                   {defects.map((defect, i) => (
                     <div style={{
@@ -276,7 +276,7 @@ class StepTable extends Component {
                       {defect.issueInfosDTO && defect.issueInfosDTO.issueName}
                     </div>
                   ))}
-                </div>               
+                </div>
               ) : (
                 <div
                   style={{
@@ -288,7 +288,7 @@ class StepTable extends Component {
             }
           </Text>
           <Edit>
-            <DefectSelect              
+            <DefectSelect
               getPopupContainer={() => document.getElementsByClassName('StepTable')[0]}
               defects={defects}
               setNeedAdd={(needAdd) => { that.needAdd = needAdd; }}
@@ -298,7 +298,9 @@ class StepTable extends Component {
           </Edit>
         </TextEditToggle>
       ),
-    }, {
+    },
+    ];
+    const actionColumn = {
       title: '',
       key: 'action',
       width: 90,
@@ -316,14 +318,13 @@ class StepTable extends Component {
           </div>
         )
       ),
-    },
-    ];
+    };
     return (
       <div className="StepTable">
         <Table
           filterBar={false}
           dataSource={detailList}
-          columns={columns}
+          columns={disabled ? columns : [...columns, actionColumn]}
           pagination={false}
           scroll={{ x: 1300, y: 400 }}
         />

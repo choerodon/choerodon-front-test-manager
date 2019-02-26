@@ -11,7 +11,7 @@ class RadioButton extends Component {
         <Radio.Group {...this.props} style={null}>
           {
             data.map(button => (
-              <Radio.Button value={button.value}>
+              <Radio.Button value={button.value} key={button.value}>
                 <FormattedMessage id={button.text} />
               </Radio.Button>
             ))

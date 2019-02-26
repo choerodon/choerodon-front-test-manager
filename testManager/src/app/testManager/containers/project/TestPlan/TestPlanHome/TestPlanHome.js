@@ -6,9 +6,8 @@ import { Page, Header, Content } from 'choerodon-front-boot';
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import {
-  Tooltip, Button, Icon, Spin, Modal,
+  Button, Icon, Spin, Modal,
 } from 'choerodon-ui';
-import { Link } from 'react-router-dom';
 import { editExecuteDetail, deleteExecute } from '../../../../api/cycleApi';
 import { getStatusList } from '../../../../api/TestStatusApi';
 import { getPrioritys } from '../../../../api/agileApi';
@@ -16,14 +15,12 @@ import {
   EventCalendar, CreateCycle, EditStage, EditCycle, ExportSide, TreeArea,
 } from '../../../../components/TestPlanComponent';
 import {
-  RichTextShow, SelectFocusLoad, StatusTags, DragTable, SmartTooltip, Injecter,
+  SelectFocusLoad, StatusTags, DragTable, SmartTooltip, Injecter,
 } from '../../../../components/CommonComponent';
 import { renderPriority } from '../../../../components/IssueManageComponent/IssueTable/tags';
 import { getUsers } from '../../../../api/IamApi';
 import TestPlanStore from '../../../../store/project/TestPlan/TestPlanStore';
-import {
-  delta2Html, delta2Text, issueLink, executeDetailShowLink,
-} from '../../../../common/utils';
+import { executeDetailShowLink } from '../../../../common/utils';
 import RunWhenProjectChange from '../../../../common/RunWhenProjectChange';
 import './TestPlanHome.scss';
 import noRight from '../../../../assets/testPlanEmpty.svg';
