@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { findDOMNode } from 'react-dom';
+import isEqual from 'react-fast-compare';
 import {
   Table, Input, Icon, Select, Tooltip, Button,
 } from 'choerodon-ui';
@@ -18,6 +18,10 @@ const Option = Select.Option;
 const { Text, Edit } = TextEditToggle;
 
 class StepTable extends Component {
+  // shouldComponentUpdate(nextProps) {
+  //   return !isEqual(this.props, nextProps);
+  // }
+
   editCycleStep = (values) => {
     const data = { ...values };
 
@@ -163,6 +167,7 @@ class StepTable extends Component {
               <Edit>
                 <Select
                   autoFocus
+                  defaultOpen
                   getPopupContainer={() => document.getElementsByClassName('StepTable')[0]}
                 >
                   {options}
