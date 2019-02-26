@@ -1,4 +1,3 @@
-export TreeTitle from './TreeTitle';
 export CreateCycle from './CreateCycle';
 export ShowCycleData from './ShowCycleData';
 export EditCycle from './EditCycle';

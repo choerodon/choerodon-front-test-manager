@@ -1,3 +1,3 @@
-import TestExecuteHome from './TestExecuteHome';
+import TestExecuteHomeContainer from './TestExecuteHomeContainer';
 
-export default TestExecuteHome;
+export default TestExecuteHomeContainer;
