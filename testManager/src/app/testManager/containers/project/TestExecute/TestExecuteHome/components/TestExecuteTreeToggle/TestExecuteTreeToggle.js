@@ -14,7 +14,7 @@ const prefix = <Icon type="filter_list" />;
 const propTypes = {
   leftVisible: PropTypes.bool.isRequired,
   filterCycle: PropTypes.func.isRequired,
-  onAssignedToChange: PropTypes.func.isRequired,
+  onTreeAssignedToChange: PropTypes.func.isRequired,
   treeSearchValue: PropTypes.string.isRequired,  
   autoExpandParent: PropTypes.bool.isRequired,
   statusList: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
