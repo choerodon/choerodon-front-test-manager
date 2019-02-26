@@ -11,7 +11,8 @@ import '../../../assets/main.scss';
 import { UploadButtonNow, IssueDescription } from '../CommonComponent';
 import { TextEditToggle, User } from '../../CommonComponent';
 import {
-  delta2Html, handleFileUpload, text2Delta, beforeTextUpload, formatDate, returnBeforeTextUpload, color2rgba, testCaseTableLink, commonLink,
+  delta2Html, handleFileUpload, text2Delta, beforeTextUpload, formatDate,
+  returnBeforeTextUpload, color2rgba, testCaseTableLink, commonLink, testCaseDetailLink,
 } from '../../../common/utils';
 import Timeago from '../../CommonComponent/DateTimeAgo/DateTimeAgo';
 import {
@@ -87,7 +88,6 @@ class EditIssueNarrow extends Component {
     editDescriptionShow: false,
     addingComment: false,
     currentNav: 'detail',
-    linkIssues: [],
     StatusList: [],
     priorityList: [],
     componentList: [],
@@ -395,11 +395,11 @@ class EditIssueNarrow extends Component {
           issueLoading: true,
         });
         cloneIssue(issueId, copyConditionDTO).then((res) => {
-          Choerodon.prompt('复制成功');
-          this.handleCopyIssue();
-          this.setState({
-            issueLoading: false,
-          });
+          // 跳转至复制后的页面
+          if (res.issueId) {
+            this.handleLinkToNewIssue(res.issueId);
+          }         
+          Choerodon.prompt('复制成功');        
         }).catch((err) => {
           this.setState({
             issueLoading: false,
@@ -420,6 +420,11 @@ class EditIssueNarrow extends Component {
   handleLinkToTestCase = () => {
     const { history } = this.props;
     history.push(testCaseTableLink());
+  }
+
+  handleLinkToNewIssue = (issueId) => {
+    const { history, folderName } = this.props;
+    history.push(testCaseDetailLink(issueId, folderName));
   }
 
   handleDeleteIssue = (issueId) => {

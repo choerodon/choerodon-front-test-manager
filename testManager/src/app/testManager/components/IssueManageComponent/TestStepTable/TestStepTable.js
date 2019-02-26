@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import {
-  Input, Icon, Modal, Tooltip, Button, Table,
+  Input, Icon, Modal, Tooltip, Button, 
 } from 'choerodon-ui';
-import { stores, axios } from 'choerodon-front-boot';
+import { stores } from 'choerodon-front-boot';
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import {
@@ -85,7 +85,6 @@ class TestStepTable extends Component {
       lastRank,
       nextRank,
     };
-    const projectId = AppState.currentMenuType.id;
     updateStep(testCaseStepDTO).then((res) => {
       // save success
       const Data = [...this.state.data];
@@ -138,7 +137,7 @@ class TestStepTable extends Component {
 
   handleClickCreate = () => {
     const { issueId, data } = this.props;
-    const { isEditing } = this.state
+    const { isEditing } = this.state;
     const lastRank = data.length
       ? data[data.length - 1].rank : null;
     const testCaseStepDTO = {
@@ -295,18 +294,18 @@ class TestStepTable extends Component {
         <span>{record.testData ? record.testData : '-'}</span>
       );
     } else {
-      const editingStepIndex = _.find(isEditing, item => item.stepId === record.stepId) ? _.find(isEditing, item => item.stepId === record.stepId)['index'] : -1;
-      if(editingStepIndex !== -1) {
-      return isEditing[editingStepIndex].isStepDataEditing ? (
-        <TextArea 
-          ref={(testData) => {
-            this[`testData${record.stepId}`] = testData;
-          }}
-          autosize
-          onBlur={e => this.handleBlurOrEnter(e, record, 'testData')}
-          defaultValue={record.stepIsCreating? createStep.testData : record.testData}
-          placeholder="测试数据"
-        />
+      const editingStepIndex = _.find(isEditing, item => item.stepId === record.stepId) ? _.find(isEditing, item => item.stepId === record.stepId).index : -1;
+      if (editingStepIndex !== -1) {
+        return isEditing[editingStepIndex].isStepDataEditing ? (
+          <TextArea 
+            ref={(testData) => {
+              this[`testData${record.stepId}`] = testData;
+            }}
+            autosize
+            onBlur={e => this.handleBlurOrEnter(e, record, 'testData')}
+            defaultValue={record.stepIsCreating ? createStep.testData : record.testData}
+            placeholder="测试数据"
+          />
         ) : (
           <span className="preWrapSpan" style={{ color: record.stepIsCreating && !createStep.testData ? '#bfbfbf' : '#000' }}>{record.stepIsCreating ? (createStep.testData ? createStep.testData : '测试数据') : (record.testData ? record.testData : '-')}</span>
         );
@@ -322,18 +321,18 @@ class TestStepTable extends Component {
         <span>{record.expectedResult}</span>
       );
     } else {
-      const editingStepIndex = _.find(isEditing, item => item.stepId === record.stepId) ? _.find(isEditing, item => item.stepId === record.stepId)['index'] : -1;
-      if(editingStepIndex !== -1) {
-      return isEditing[editingStepIndex].isStepExpectedResultEditing ? (
-        <TextArea 
-          ref={(expectedResult) => {
-            this[`expectedResult${record.stepId}`] = expectedResult;
-          }}
-          autosize
-          onBlur={e => this.handleBlurOrEnter(e, record, 'expectedResult')}
-          defaultValue={record.stepIsCreating? createStep.expectedResult : record.expectedResult}
-          placeholder="预期结果"
-        />
+      const editingStepIndex = _.find(isEditing, item => item.stepId === record.stepId) ? _.find(isEditing, item => item.stepId === record.stepId).index : -1;
+      if (editingStepIndex !== -1) {
+        return isEditing[editingStepIndex].isStepExpectedResultEditing ? (
+          <TextArea 
+            ref={(expectedResult) => {
+              this[`expectedResult${record.stepId}`] = expectedResult;
+            }}
+            autosize
+            onBlur={e => this.handleBlurOrEnter(e, record, 'expectedResult')}
+            defaultValue={record.stepIsCreating ? createStep.expectedResult : record.expectedResult}
+            placeholder="预期结果"
+          />
         ) : (
           <span className="preWrapSpan" style={{ color: record.stepIsCreating && !createStep.expectedResult ? '#bfbfbf' : '#000' }}>{record.stepIsCreating ? (createStep.expectedResult ? createStep.expectedResult : '预期结果') : record.expectedResult}</span>
         );
@@ -350,7 +349,7 @@ class TestStepTable extends Component {
       const { expectedResult, testStep } = record;
       if (expectedResult !== '' && testStep !== '' && lastValue !== e.target.value) {
         this.editStep({ ...record, [editField]: e.target.value });
-      } else if(expectedResult == '' || testStep == ''){
+      } else if (expectedResult == '' || testStep == '') {
         const editingStepIndex = _.find(isEditing, item => item.stepId === record.stepId).index;
         isEditing[editingStepIndex][`is${_.upperFirst(editField)}Editing`] = true;
         this.setState({
@@ -449,7 +448,7 @@ class TestStepTable extends Component {
         <div
           role="none"
           className="item-container"
-          style={{ cursor: disabled ? 'auto' : 'pointer'}}
+          style={{ cursor: disabled ? 'auto' : 'pointer' }}
           // onClick={e => this.handleFieldOnClick(e, record, 'testStep')}
           onClick={(e) => {
             if (!disabled) {
@@ -493,7 +492,7 @@ class TestStepTable extends Component {
         <div
           role="none"
           className="item-container"
-          style={{ cursor: disabled ? 'auto' : 'pointer'}}
+          style={{ cursor: disabled ? 'auto' : 'pointer' }}
           onClick={(e) => {
             if (!disabled) {
               const fieldClicked = e.target;
@@ -535,7 +534,7 @@ class TestStepTable extends Component {
         <div
           role="none"
           className="item-container"
-          style={{ cursor: disabled ? 'auto' : 'pointer'}}
+          style={{ cursor: disabled ? 'auto' : 'pointer' }}
           onClick={(e) => {
             if (!disabled) {
               const fieldClicked = e.target;
