@@ -12,16 +12,12 @@ import { getPrioritys } from '../../../../api/agileApi';
 import {
   EventCalendar, CreateCycle, EditStage, EditCycle, ExportSide, TreeArea,
 } from '../../../../components/TestPlanComponent';
-import {
-  SelectFocusLoad, StatusTags, DragTable, SmartTooltip, Injecter,
-} from '../../../../components/CommonComponent';
-
+import { Injecter, NoCycle } from '../../../../components/CommonComponent';
 import { TestPlanTable } from './components';
 import TestPlanStore from '../../../../store/project/TestPlan/TestPlanStore';
 import { executeDetailShowLink } from '../../../../common/utils';
 import RunWhenProjectChange from '../../../../common/RunWhenProjectChange';
 import './TestPlanHome.scss';
-import noRight from '../../../../assets/testPlanEmpty.svg';
 
 const { confirm } = Modal;
 @observer
@@ -215,18 +211,7 @@ class TestPlanHome extends Component {
                       />
                     )}
                   </div> 
-                ) : (
-                  <div style={{
-                    display: 'flex', alignItems: 'center', height: 250, margin: '88px auto', padding: '50px 75px', border: '1px dashed rgba(0,0,0,0.54)',
-                  }}
-                  >
-                    <img src={noRight} alt="" />
-                    <div style={{ marginLeft: 40 }}>
-                      <div style={{ fontSize: '14px', color: 'rgba(0,0,0,0.65)' }}>根据当前选定的测试循环没有查询到循环信息</div>
-                      <div style={{ fontSize: '20px', marginTop: 10 }}>您可以创建测试循环并且进行计划</div>
-                    </div>
-                  </div>
-                ))}
+                ) : <NoCycle />)}
               </Injecter>
             </div>
           </Spin>

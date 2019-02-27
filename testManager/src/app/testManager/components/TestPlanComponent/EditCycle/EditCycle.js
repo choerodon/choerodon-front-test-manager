@@ -28,7 +28,7 @@ class EditCycle extends Component {
       resetFields();
     }
   }
-
+  
   onCancel = () => {
     TestPlanStore.ExitEditCycle();
   }

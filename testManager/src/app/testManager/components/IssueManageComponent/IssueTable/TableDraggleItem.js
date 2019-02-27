@@ -10,7 +10,7 @@ class TableDraggleItem extends Component {
   render() {
     const draggingTableItems = IssueStore.getDraggingTableItems;
     const {
-      issue, index, selectedIssue, handleClickIssue, 
+      issue, index, handleClickIssue, 
     } = this.props;
 
     return (
@@ -25,8 +25,8 @@ class TableDraggleItem extends Component {
               position: 'relative',
               ...provided.draggableProps.style,
             }}
-            onClick={(e) => { this.props.handleClickIssue(issue, index, e); }}
-            className={issue.issueId === selectedIssue.issueId ? 'c7ntest-border-visible c7ntest-table-item' : 'c7ntest-border c7ntest-table-item'}
+            onClick={(e) => { handleClickIssue(issue, index, e); }}
+            className="c7ntest-border c7ntest-table-item"
           >
             {snapshotinner.isDragging
               && (
