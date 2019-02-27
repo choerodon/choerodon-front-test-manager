@@ -77,7 +77,7 @@ class IssueTable extends Component {
 
   renderTbody(data, columns) {
     const {
-      disabled, expand, selectedIssue, onRow, 
+      disabled, onRow, 
     } = this.props;
     const Columns = columns.filter(column => this.shouldColumnShow(column));
     const tds = index => Columns.map((column) => {
@@ -103,7 +103,7 @@ class IssueTable extends Component {
         return ( 
           // 由于drag结束后要经过一段时间，由于有动画，所以大约33-400ms后才执行onDragEnd,
           // 所以在这期间如果获取用例的接口速度很快，重新渲染table中的项，会无法执行onDragEnd,故加此key
-          <TableDraggleItem key={`${issue.issueId}-${issue.objectVersionNumber}`} handleClickIssue={this.handleClickIssue.bind(this)} issue={issue} index={index} selectedIssue={selectedIssue} saveRef={(instance) => { this.instance = instance; }} onRow={onRow}>
+          <TableDraggleItem key={`${issue.issueId}-${issue.objectVersionNumber}`} handleClickIssue={this.handleClickIssue.bind(this)} issue={issue} index={index} saveRef={(instance) => { this.instance = instance; }} onRow={onRow}>
             {tds(index)}
           </TableDraggleItem>
         );
@@ -193,7 +193,7 @@ class IssueTable extends Component {
   }
 
   handleClickIssue(issue, index, e) {
-    const { setSelectIssue, setExpand, onRow } = this.props;
+    const { onRow } = this.props;
     const { firstIndex } = this.state;
     // console.log(e.shiftKey, e.ctrlKey, issue, index, firstIndex);
     if (e.shiftKey || e.ctrlKey || e.metaKey) {
@@ -221,9 +221,7 @@ class IssueTable extends Component {
         IssueStore.setDraggingTableItems(old);
       }
     } else {
-      IssueStore.setDraggingTableItems([]);
-      setExpand(true);
-      setSelectIssue(issue);
+      IssueStore.setDraggingTableItems([]);  
       onRow(issue).onClick();
     }
     this.setState({

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { memo } from 'react';
 import './StatusTags.scss';
 
 const Color = {
@@ -6,25 +6,18 @@ const Color = {
   error: '#f44336',
 };
 
-class StatusTags extends Component {
-  shouldComponentUpdate(nextProps, nextState) {
-    return !(nextProps.name === this.props.name
-      && nextProps.color === this.props.color);
-  }
-
-  render() {
-    const { name, color, colorCode } = this.props;
-    return (
-      <div
-        className="c7ntest-status-tags"
-        style={{
-          background: color || Color[colorCode] || 'rgba(0, 0, 0, 0.28)',
-          ...this.props.style,
-        }}
-      >
-        <div>{ name || '' }</div>
-      </div>
-    );
-  }
-}
-export default StatusTags;
+const StatusTags = ({
+  style,
+  name, color, colorCode,
+}) => (
+  <div
+    className="c7ntest-status-tags"
+    style={{
+      background: color || Color[colorCode] || 'rgba(0, 0, 0, 0.28)',
+      ...style,
+    }}
+  >
+    <div>{ name || '' }</div>
+  </div>
+);
+export default memo(StatusTags);

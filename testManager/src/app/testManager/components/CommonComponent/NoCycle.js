@@ -1,5 +1,5 @@
 import React from 'react';
-import noRight from '../../../../../assets/testExecuteEmpty.svg';
+import noRight from '../../assets/testExecuteEmpty.svg';
 
 const NoCycle = () => (
   <div style={{

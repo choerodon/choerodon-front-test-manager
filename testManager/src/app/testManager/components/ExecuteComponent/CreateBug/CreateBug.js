@@ -15,7 +15,7 @@ import { getUsers } from '../../../api/IamApi';
 import { addBugForExecuteOrStep } from '../../../api/ExecuteDetailApi';
 import { WYSIWYGEditor, FullEditor } from '../../CommonComponent';
 import UserHead from '../../IssueManageComponent/UserHead';
-import TypeTag from '../../IssueManageComponent/AgileTypeTag';
+import TypeTag from '../../IssueManageComponent/TypeTag';
 import UploadButton from '../../IssueManageComponent/CommonComponent/UploadButton';
 import ExecuteDetailStore from '../../../store/project/TestExecute/ExecuteDetailStore';
 import './CreateBug.scss';
@@ -71,8 +71,8 @@ class CreateBug extends Component {
   }
 
   handleUserSelectChange = (value) => {
-    const {users} = this.state;
-    if(!users.length) {
+    const { users } = this.state;
+    if (!users.length) {
       this.props.form.setFieldsValue({
         assigneeId: undefined,
       });
@@ -240,8 +240,8 @@ class CreateBug extends Component {
                   <Option key={bugType.id} value={bugType.id}>
                     <div style={{ display: 'inline-flex', alignItems: 'center', padding: '2px' }}>
                       <TypeTag
-                        data={bugType}
-                        showName
+                        type={bugType}   
+                        showName                     
                       />
                     </div>
                   </Option>

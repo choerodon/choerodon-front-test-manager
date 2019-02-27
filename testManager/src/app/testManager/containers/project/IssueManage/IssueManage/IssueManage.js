@@ -1,36 +1,25 @@
 import React, { Component } from 'react';
-import { observer, inject } from 'mobx-react';
+import { observer } from 'mobx-react';
 import _ from 'lodash';
 import { Page, Header, Content } from 'choerodon-front-boot';
 import { Button, Icon } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 import FileSaver from 'file-saver';
 import IssueStore from '../../../../store/project/IssueManage/IssueStore';
-
 import { loadIssue, downloadTemplate } from '../../../../api/IssueManageApi';
 import { commonLink, getParams, testCaseDetailLink } from '../../../../common/utils';
 import RunWhenProjectChange from '../../../../common/RunWhenProjectChange';
-
 import CreateIssue from '../../../../components/IssueManageComponent/CreateIssue';
-import EditIssue from '../../../../components/IssueManageComponent/EditIssue';
 import IssueTree from '../../../../components/IssueManageComponent/IssueTree';
 import IssueTable from '../../../../components/IssueManageComponent/IssueTable';
 import ExportSide from '../../../../components/IssueManageComponent/ExportSide';
 import './IssueManage.scss';
 import IssueTreeStore from '../../../../store/project/IssueManage/IssueTreeStore';
 
-const EditIssueWidth = {
-  narrow: 440,
-  medium: '54%',
-  wide: '64%',
-};
-@inject('MenuStore')
 @observer
 export default class IssueManage extends Component {
-  state = {
-    expand: false,
+  state = { 
     createIssueShow: false,
-    selectedIssue: {},
   }
 
   componentDidMount() {
@@ -47,14 +36,7 @@ export default class IssueManage extends Component {
     const barFilters = paramName ? [paramName] : [];
     IssueStore.setBarFilters(barFilters);
     IssueStore.init();
-    IssueStore.loadIssues().then((res) => {
-      if (paramIssueId) {
-        this.setState({
-          selectedIssue: res.content.length ? res.content[0] : {},
-          expand: true,
-        });
-      }
-    });
+    IssueStore.loadIssues();
   }
 
   /**
@@ -86,35 +68,6 @@ export default class IssueManage extends Component {
     IssueStore.loadIssues();
   }
 
-  /**
-   * 当issue更新时,本地更新单个issue
-   * @param {*} issueId 
-   */
-  handleIssueUpdate(issueId = this.state.selectedIssue.issueId) {
-    loadIssue(issueId).then((res) => {
-      IssueStore.updateSingleIssue(res);
-    });
-  }
-
-  // handleSort({ key }) {
-  //   const currentSort = IssueStore.order;
-  //   const targetSort = {};
-  //   if (currentSort.orderField === key) {
-  //     targetSort.orderField = key;
-  //     if (currentSort.orderType !== 'desc') {
-  //       targetSort.orderType = 'desc';
-  //     } else {
-  //       targetSort.orderType = 'asc';
-  //     }
-  //   } else {
-  //     targetSort.orderField = key;
-  //     targetSort.orderType = 'desc';
-  //   }
-  //   IssueStore.setOrder(targetSort);
-  //   const { current, pageSize } = IssueStore.pagination;
-  //   IssueStore.loadIssues(current - 1, pageSize);
-  // }
-
 
   downloadTemplate = () => {
     downloadTemplate().then((excel) => {
@@ -124,18 +77,6 @@ export default class IssueManage extends Component {
     });
   }
 
-  getMode = () => {
-    // 左侧菜单状态 true 折叠 false未折叠
-    const MenuCollapsed = this.props.MenuStore.collapsed;
-    const treeShow = IssueStore.treeShow;
-    if (!treeShow) {
-      return 'wide';
-    } else if (treeShow && !MenuCollapsed) {
-      return 'narrow';
-    } else {
-      return 'medium';
-    }
-  }
 
   handleTableRowClick=(record) => {
     const { history } = this.props;
@@ -148,7 +89,7 @@ export default class IssueManage extends Component {
   }
 
   render() {
-    const { expand, createIssueShow, selectedIssue } = this.state;
+    const { createIssueShow } = this.state;
     const treeShow = IssueStore.treeShow;
     const currentCycle = IssueTreeStore.getCurrentCycle;
     return (
@@ -173,10 +114,7 @@ export default class IssueManage extends Component {
             下载模板
           </Button>
           <Button
-            onClick={() => {
-              if (this.EditIssue) {
-                this.EditIssue.reloadIssue(selectedIssue.issueId);
-              }
+            onClick={() => {              
               const { current, pageSize } = IssueStore.pagination;
               if (this.tree) {
                 this.tree.getTree();
@@ -220,25 +158,11 @@ export default class IssueManage extends Component {
               overflowX: 'hidden',
             }}
           >
-            <IssueTable
-              setExpand={(value) => {
-                this.setState({
-                  expand: value,
-                });
-              }}
-              setSelectIssue={(value) => {
-                this.setState({
-                  selectedIssue: value,
-                });
-              }}
-              selectedIssue={selectedIssue}
-              expand={expand}
-              treeShow={treeShow}
+            <IssueTable              
               onRow={record => ({
                 onClick: (event) => { this.handleTableRowClick(record); },                             
               })}
             />
-
           </div>
           <ExportSide ref={this.saveRef('ExportSide')} />
           {

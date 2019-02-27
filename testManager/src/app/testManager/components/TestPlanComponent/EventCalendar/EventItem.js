@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
+import isEqual from 'react-fast-compare';
 import { findDOMNode } from 'react-dom';
+import PropTypes from 'prop-types';
 import Moment from 'moment';
 import { extendMoment } from 'moment-range';
 import { Tooltip } from 'choerodon-ui';
@@ -55,32 +57,14 @@ function findScroller(n) {
   }
   return null;
 }
-// const easeInOutCubic = (t, b, c, d) => {
-//   const cc = c - b;
-//   t /= d / 2;
-//   if (t < 1) {
-//     return cc / 2 * t * t * t + b;
-//   } else {
-//     return cc / 2 * ((t -= 2) * t * t + 2) + b;
-//   }
-// };
-// const scrollToTop = (e) => {
-//   const scrollTop = this.getCurrentScrollTop();
-//   const startTime = Date.now();
-//   const scrollTimer = () => {
-//     const timestamp = Date.now();
-//     const time = timestamp - startTime;
-//     this.setScrollTop(easeInOutCubic(time, scrollTop, 0, 450));
-//     if (time < 450) {
-//     } else {
-//       this.setScrollTop(0);
-//     }
-//   };
-//   (this.props.onClick || noop)(e);
-// }
-
-
 const moment = extendMoment(Moment);
+const propTypes = {
+  range: PropTypes.any.isRequired,
+  itemRange: PropTypes.any.isRequired,
+  data: PropTypes.any.isRequired,
+  onClick: PropTypes.func.isRequired,
+  singleWidth: PropTypes.number.isRequired,
+};
 class EventItem extends Component {
   state = {
     type: null,
@@ -99,6 +83,9 @@ class EventItem extends Component {
     enter: false,
   };
 
+  shouldComponentUpdate(nextProps, nextState) {
+    return !isEqual(this.props, nextProps) || !isEqual(this.state, nextState);
+  }
 
   static getDerivedStateFromProps(props, state) {
     // 调整大小时以state为准
@@ -139,8 +126,8 @@ class EventItem extends Component {
     };
   }
 
-  prepareForScroll=() => {
-    const scroller = findScroller(findDOMNode(this));
+  prepareForScroll = () => {
+    const scroller = findScroller(findDOMNode(this));// eslint-disable-line
     const { left, width } = scroller.getBoundingClientRect();
     const scrollRightPosition = left + width;
     const scrollLeftPosition = left;
@@ -161,8 +148,8 @@ class EventItem extends Component {
     } = this.autoScroll;
     const initScrollLeft = scroller.scrollLeft;
     // 到最左或最右，停止滚动
-    const shouldStop = () => (mode === 'right' && ~~(scroller.scrollLeft + scroller.offsetWidth) === scroller.scrollWidth)
-    || (mode === 'left' && scroller.scrollLeft === 0);
+    const shouldStop = () => (mode === 'right' && ~~(scroller.scrollLeft + scroller.offsetWidth) === scroller.scrollWidth)// eslint-disable-line
+      || (mode === 'left' && scroller.scrollLeft === 0);
     if (shouldStop()) {
       cancelAnimationFrame(this.scrollTimer);
       return;
@@ -172,10 +159,10 @@ class EventItem extends Component {
     }
     const scrollFunc = () => {
       if (mode === 'right') {
-        scroller.scrollLeft += AUTOSCROLL_RATE; 
+        scroller.scrollLeft += AUTOSCROLL_RATE;
       } else {
         scroller.scrollLeft -= AUTOSCROLL_RATE;
-      }      
+      }
       const { scrollLeft } = this.initScrollPosition;
       this.initScrollPosition.scrollPos = scroller.scrollLeft - scrollLeft;
       // 因为鼠标并没有move，所以这里要手动触发，否则item的宽度不会变化
@@ -256,7 +243,7 @@ class EventItem extends Component {
     } else {
       flex += multiple;
       lastFlex -= multiple;
-    }  
+    }
     // 最小为一天
     if (flex > 0 && preFlex >= 0 && lastFlex >= 0) {
       this.setState({
@@ -449,8 +436,6 @@ class EventItem extends Component {
   }
 }
 
-EventItem.propTypes = {
-
-};
+EventItem.propTypes = propTypes;
 
 export default EventItem;

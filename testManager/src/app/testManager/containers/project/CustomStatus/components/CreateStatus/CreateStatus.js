@@ -15,7 +15,7 @@ import { Content } from 'choerodon-front-boot';
 import { FormattedMessage } from 'react-intl';
 import { CompactPicker } from 'react-color';
 import './CreateStatus.scss';
-import { getProjectName } from '../../../common/utils';
+import { getProjectName } from '../../../../../common/utils';
 
 const FormItem = Form.Item;
 const { Sidebar } = Modal;

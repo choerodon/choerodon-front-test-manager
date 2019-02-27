@@ -11,7 +11,8 @@ import {
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import { ShowCycleData } from '../../../../components/TestExecuteComponent';
-import { NoCycle, TestExecuteTreeToggle } from './components';
+import { NoCycle } from '../../../../components/CommonComponent';
+import { TestExecuteTreeToggle } from './components';
 import { TestExecuteTable } from './components';
 import './TestExecuteHome.scss';
 
@@ -108,16 +109,16 @@ const TestExecuteHome = ({
                   prioritys={prioritys}
                   statusList={statusList}
                   currentCycle={currentCycle}
-                  tableLoading={tableLoading}
+                  loading={tableLoading}
                   onExecuteByChange={onExecuteByChange}
                   onAssignedToChange={onAssignedToChange}
                   treeAssignedTo={treeAssignedTo}
-                  testList={testList}
+                  dataSource={testList}
                   quickPass={quickPass}
                   quickFail={quickFail}
                   onTableRowClick={onTableRowClick}
-                  onExecuteTableChange={onExecuteTableChange}
-                  executePagination={executePagination}
+                  onTableChange={onExecuteTableChange}
+                  pagination={executePagination}
                 />
               </div>
             ) : <NoCycle />}    
