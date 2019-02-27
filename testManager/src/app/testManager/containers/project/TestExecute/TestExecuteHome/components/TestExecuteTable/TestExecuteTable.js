@@ -13,6 +13,19 @@ import {
 import { getUsers } from '../../../../../../api/IamApi';
 import './TestExecuteTable.scss';
 
+const propTypes = {
+  loading: PropTypes.bool.isRequired,
+  prioritys: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
+  statusList: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
+  treeAssignedTo: PropTypes.number.isRequired,
+  pagination: PropTypes.shape({}).isRequired,
+  dataSource: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
+  onTableChange: PropTypes.func.isRequired,
+  onAssignedToChange: PropTypes.func.isRequired,
+  onTableRowClick: PropTypes.func.isRequired,
+  quickPass: PropTypes.func.isRequired,
+  quickFail: PropTypes.func.isRequired,
+};
 class TestExecuteTable extends Component {
   shouldComponentUpdate(nextProps) {
     return !isEqual(this.props, nextProps);
@@ -26,13 +39,13 @@ class TestExecuteTable extends Component {
       onExecuteByChange,
       onAssignedToChange,
       treeAssignedTo,
-      testList,
+      dataSource,
       quickPass,
       quickFail,
       onTableRowClick, 
-      onExecuteTableChange,
-      executePagination,
-      tableLoading,
+      onTableChange,
+      pagination,
+      loading,
     } = this.props;
     const {
       cycleId, title, type, cycleCaseList,
@@ -40,184 +53,82 @@ class TestExecuteTable extends Component {
     const prefix = <Icon type="filter_list" />;
     
 
-    const columns = [
-      //   {
-      //   title: <span>ID</span>,
-      //   dataIndex: 'issueNum',
-      //   key: 'issueNum',
-      //   flex: 1,
-      //   render(issueId, record) {
-      //     const { issueInfosDTO } = record;
-      //     return (
-      //       <div>
-      //         {issueInfosDTO && (
-      //         <Tooltip
-      //           title={(
-      //             <div>
-      //               <div>{issueInfosDTO.issueNum}</div>
-      //               {/* <div>{issueInfosDTO.summary}</div> */}
-      //             </div>
-      //           )}
-      //         >
-      //           <div
-      //             className="c7ntest-text-dot"
-      //             style={{
-      //               width: 100, color: '#3F51B5',
-      //             }}                
-      //           >
-      //             {issueInfosDTO.issueNum}
-      //           </div>
-      //         </Tooltip>
-      //         )}
-      //       </div>
-      //     );
-      //   },
-      // }, 
-      {
-        title: <span>用例名称</span>,
-        dataIndex: 'summary',
-        key: 'summary',
-        filters: [],
-        width: '30%',
-        render(issueId, record) {
-          const { issueInfosDTO } = record;
-          return (
-            issueInfosDTO && (
-              <SmartTooltip style={{ color: '#3F51B5' }}>
-                {issueInfosDTO.summary}
-              </SmartTooltip>
-            )
-          );
-        },
+    const columns = [{
+      title: <span>用例名称</span>,
+      dataIndex: 'summary',
+      key: 'summary',
+      filters: [],
+      width: '30%',
+      render(issueId, record) {
+        const { issueInfosDTO } = record;
+        return (
+          issueInfosDTO && (
+          <SmartTooltip style={{ color: '#3F51B5' }}>
+            {issueInfosDTO.summary}
+          </SmartTooltip>
+          )
+        );
       },
-      // {
-      //   title: <FormattedMessage id="bug" />,
-      //   dataIndex: 'defects',
-      //   key: 'defects',
-      //   flex: 1,
-      //   render: defects => (
-      //     <Tooltip
-      //       placement="topLeft"
-      //       title={(
-      //         <div>
-      //           {defects.map((defect, i) => (
-      //             defect.issueInfosDTO && (
-      //               <div>
-      //                 <Link
-      //                   style={{
-      //                     color: 'white',
-      //                   }}
-      //                   to={issueLink(defect.issueInfosDTO.issueId, defect.issueInfosDTO.typeCode, defect.issueInfosDTO.issueNum)}
-      //                   target="_blank"
-      //                 >
-      //                   {defect.issueInfosDTO.issueNum}
-      //                 </Link>
-      //                 <div>{defect.issueInfosDTO.summary}</div>
-      //               </div>
-      //             )
-      //           ))}
-      //         </div>
-      //       )}
-      //     >
-      //       {defects.map((defect, i) => defect.issueInfosDTO && defect.issueInfosDTO.issueNum).join(',')}
-      //     </Tooltip>
-      //   ),
-      // },
-      {
-        title: <FormattedMessage id="cycle_executeBy" />,
-        dataIndex: 'lastUpdateUser',
-        key: 'lastUpdateUser',        
-        render(lastUpdateUser) {
-          return (
-            <div
-              className="c7ntest-text-dot"
-            >
-              {lastUpdateUser && lastUpdateUser.realName}
-            </div>
-          );
-        },
+    }, {
+      title: <FormattedMessage id="cycle_executeBy" />,
+      dataIndex: 'lastUpdateUser',
+      key: 'lastUpdateUser',        
+      render(lastUpdateUser) {
+        return (
+          <div
+            className="c7ntest-text-dot"
+          >
+            {lastUpdateUser && lastUpdateUser.realName}
+          </div>
+        );
       },
-      //  {
-      //   title: <FormattedMessage id="cycle_executeTime" />,
-      //   dataIndex: 'lastUpdateDate',
-      //   key: 'lastUpdateDate',
-      //   flex: 1,
-      //   render(lastUpdateDate) {
-      //     return (
-      //       <div
-      //         className="c7ntest-text-dot"
-      //       >
-      //         {lastUpdateDate && moment(lastUpdateDate).format('YYYY-MM-DD')}
-      //       </div>
-      //     );
-      //   },
-      // },
-      {
-        title: <FormattedMessage id="cycle_assignedTo" />,
-        dataIndex: 'assigneeUser',
-        key: 'assigneeUser',       
-        render(assigneeUser) {
-          return (
-            <div
-              className="c7ntest-text-dot"
-            >
-              {assigneeUser && assigneeUser.realName}
-            </div>
-          );
-        },
-      }, {
-        title: <span>用例优先级</span>,
-        dataIndex: 'priorityId',
-        key: 'priorityId',
-        filters: prioritys.map(priority => ({ text: priority.name, value: priority.id.toString() })),
-        render(issueId, record) {
-          const { issueInfosDTO } = record;
-          return (
-            issueInfosDTO && renderPriority(issueInfosDTO.priorityDTO)
-          );
-        },
-      }, {
-        title: <FormattedMessage id="status" />,
-        dataIndex: 'executionStatus',
-        key: 'executionStatus',
-        filters: statusList.map(status => ({ text: status.statusName, value: status.statusId.toString() })),     
-        render(executionStatus) {
-          const statusColor = _.find(statusList, { statusId: executionStatus })
-            ? _.find(statusList, { statusId: executionStatus }).statusColor : '';
-          return (
-            _.find(statusList, { statusId: executionStatus }) && (
-              <StatusTags
-                color={statusColor}
-                name={_.find(statusList, { statusId: executionStatus }).statusName}
-              />
-            )
-          );
-        },
+    }, {
+      title: <FormattedMessage id="cycle_assignedTo" />,
+      dataIndex: 'assigneeUser',
+      key: 'assigneeUser',       
+      render(assigneeUser) {
+        return (
+          <div
+            className="c7ntest-text-dot"
+          >
+            {assigneeUser && assigneeUser.realName}
+          </div>
+        );
       },
-      // {
-      //   title: <span>执行描述</span>,
-      //   dataIndex: 'comment',
-      //   key: 'comment',
-      //   filters: [],
-      //   flex: 1,
-      //   render(comment) {
-      //     return (
-      //       <Tooltip title={<RichTextShow data={delta2Html(comment)} />}>
-      //         <div
-      //           className="c7ntest-text-dot"
-      //         >
-      //           {delta2Text(comment)}
-      //         </div>
-      //       </Tooltip>
-      //     );
-      //   },
-      // },
-      {
-        title: '',
-        key: 'action',
-        width: 90,
-        render: (text, record) => (
-          record.projectId !== 0
+    }, {
+      title: <span>用例优先级</span>,
+      dataIndex: 'priorityId',
+      key: 'priorityId',
+      filters: prioritys.map(priority => ({ text: priority.name, value: priority.id.toString() })),
+      render(issueId, record) {
+        const { issueInfosDTO } = record;
+        return (
+          issueInfosDTO && renderPriority(issueInfosDTO.priorityDTO)
+        );
+      },
+    }, {
+      title: <FormattedMessage id="status" />,
+      dataIndex: 'executionStatus',
+      key: 'executionStatus',
+      filters: statusList.map(status => ({ text: status.statusName, value: status.statusId.toString() })),     
+      render(executionStatus) {
+        const statusColor = _.find(statusList, { statusId: executionStatus })
+          ? _.find(statusList, { statusId: executionStatus }).statusColor : '';
+        return (
+          _.find(statusList, { statusId: executionStatus }) && (
+          <StatusTags
+            color={statusColor}
+            name={_.find(statusList, { statusId: executionStatus }).statusName}
+          />
+          )
+        );
+      },
+    }, {
+      title: '',
+      key: 'action',
+      width: 90,
+      render: (text, record) => (
+        record.projectId !== 0
           && (
             <div style={{ display: 'flex' }}>
               <Tooltip title={<FormattedMessage id="execute_quickPass" />}>
@@ -228,8 +139,8 @@ class TestExecuteTable extends Component {
               </Tooltip>
             </div>
           )
-        ),
-      }];
+      ),
+    }];
     const nameColumn = {
       title: <FormattedMessage id="cycle_stageName" />,
       dataIndex: 'cycleName',
@@ -276,10 +187,10 @@ class TestExecuteTable extends Component {
         </div>
         <Table
           rowKey={record => record.executeId}
-          pagination={executePagination}
-          loading={tableLoading}
-          onChange={onExecuteTableChange}
-          dataSource={testList}
+          pagination={pagination}
+          loading={loading}
+          onChange={onTableChange}
+          dataSource={dataSource}
           columns={columns}
           onRow={record => ({
             onClick: (event) => { onTableRowClick(record); },
@@ -290,8 +201,6 @@ class TestExecuteTable extends Component {
   }
 }
 
-TestExecuteTable.propTypes = {
-
-};
+TestExecuteTable.propTypes = propTypes;
 
 export default TestExecuteTable;

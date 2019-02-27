@@ -108,16 +108,16 @@ const TestExecuteHome = ({
                   prioritys={prioritys}
                   statusList={statusList}
                   currentCycle={currentCycle}
-                  tableLoading={tableLoading}
+                  loading={tableLoading}
                   onExecuteByChange={onExecuteByChange}
                   onAssignedToChange={onAssignedToChange}
                   treeAssignedTo={treeAssignedTo}
-                  testList={testList}
+                  dataSource={testList}
                   quickPass={quickPass}
                   quickFail={quickFail}
                   onTableRowClick={onTableRowClick}
-                  onExecuteTableChange={onExecuteTableChange}
-                  executePagination={executePagination}
+                  onTableChange={onExecuteTableChange}
+                  pagination={executePagination}
                 />
               </div>
             ) : <NoCycle />}    

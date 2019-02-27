@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
-import Moment from 'moment';
 import { observer } from 'mobx-react';
-import { extendMoment } from 'moment-range';
 import { Page, Header, Content } from 'choerodon-front-boot';
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
@@ -17,8 +15,8 @@ import {
 import {
   SelectFocusLoad, StatusTags, DragTable, SmartTooltip, Injecter,
 } from '../../../../components/CommonComponent';
-import { renderPriority } from '../../../../components/IssueManageComponent/IssueTable/tags';
-import { getUsers } from '../../../../api/IamApi';
+
+import { TestPlanTable } from './components';
 import TestPlanStore from '../../../../store/project/TestPlan/TestPlanStore';
 import { executeDetailShowLink } from '../../../../common/utils';
 import RunWhenProjectChange from '../../../../common/RunWhenProjectChange';
@@ -26,8 +24,6 @@ import './TestPlanHome.scss';
 import noRight from '../../../../assets/testPlanEmpty.svg';
 
 const { confirm } = Modal;
-const moment = extendMoment(Moment);
-
 @observer
 class TestPlanHome extends Component {
   state = {
@@ -123,7 +119,17 @@ class TestPlanHome extends Component {
     });
   }
 
-  deleteExecute = (record) => {
+  handleLastUpdatedByChange=(value) => {
+    TestPlanStore.setLastUpdatedBy(value);
+    TestPlanStore.loadCycle();
+  }
+
+  handleAssignedToChange=(value) => {
+    TestPlanStore.setAssignedTo(value);
+    TestPlanStore.loadCycle();
+  }
+
+  handleDeleteExecute = (record) => {
     const { executeId } = record;
     confirm({
       width: 560,
@@ -150,217 +156,6 @@ class TestPlanHome extends Component {
     const {
       testList, executePagination, loading, rightLoading,
     } = TestPlanStore;
-    const columns = [
-    //   {
-    //   title: <span>ID</span>,
-    //   dataIndex: 'issueNum',
-    //   key: 'issueNum',
-    //   flex: 1,
-    //   render(issueId, record) {
-    //     const { issueInfosDTO } = record;
-    //     return (
-    //       issueInfosDTO && (
-    //         <Tooltip
-    //           title={(
-    //             <div>
-    //               <div>{issueInfosDTO.issueNum}</div>
-    //               {/* <div>{issueInfosDTO.summary}</div> */}
-    //             </div>
-    //           )}
-    //         >
-    //           <div
-    //             className="c7ntest-text-dot"
-    //             style={{
-    //               width: 100, color: '#3F51B5',
-    //             }}               
-    //           >
-    //             {issueInfosDTO.issueNum}
-    //           </div>
-    //         </Tooltip>
-    //       )
-    //     );
-    //   },
-    // }, 
-      {
-        title: <span>用例名称</span>,
-        dataIndex: 'summary',
-        key: 'summary',
-        filters: [],
-        flex: 2,
-        render(issueId, record) {
-          const { issueInfosDTO } = record;
-          return (
-            issueInfosDTO && (
-            <SmartTooltip style={{ color: '#3F51B5' }}>
-              {issueInfosDTO.summary}
-            </SmartTooltip>
-            )
-          );
-        },
-      }, 
-      // {
-      //   title: <FormattedMessage id="bug" />,
-      //   dataIndex: 'defects',
-      //   key: 'defects',
-      //   flex: 1,
-      //   render: defects => (
-      //     <Tooltip
-      //       placement="topLeft"
-      //       title={(
-      //         <div>
-      //           {defects.map((defect, i) => (
-      //             defect.issueInfosDTO && (
-      //               <div>
-      //                 <Link
-      //                   style={{
-      //                     color: 'white',
-      //                   }}
-      //                   to={issueLink(defect.issueInfosDTO.issueId, defect.issueInfosDTO.typeCode, defect.issueInfosDTO.issueNum)}
-      //                   target="_blank"
-      //                 >
-      //                   {defect.issueInfosDTO.issueNum}
-      //                 </Link>
-      //                 <div>{defect.issueInfosDTO.summary}</div>
-      //               </div>
-      //             )
-      //           ))}
-      //         </div>
-      //       )}
-      //     >
-      //       {defects.map((defect, i) => defect.issueInfosDTO && defect.issueInfosDTO.issueNum).join(',')}
-      //     </Tooltip>
-      //   ),
-      // },
-      {
-        title: <FormattedMessage id="cycle_executeBy" />,
-        dataIndex: 'lastUpdateUser',
-        key: 'lastUpdateUser',
-        flex: 1,
-        render(lastUpdateUser) {
-          return (
-            <div
-              className="c7ntest-text-dot"
-            >
-              {lastUpdateUser && lastUpdateUser.realName}
-            </div>
-          );
-        },
-      },
-      //  {
-      //   title: <FormattedMessage id="cycle_executeTime" />,
-      //   dataIndex: 'lastUpdateDate',
-      //   key: 'lastUpdateDate',
-      //   flex: 1,
-      //   render(lastUpdateDate) {
-      //     return (
-      //       <div
-      //         className="c7ntest-text-dot"
-      //       >
-      //         {lastUpdateDate && moment(lastUpdateDate).format('YYYY-MM-DD')}
-      //       </div>
-      //     );
-      //   },
-      // },
-      {
-        title: <FormattedMessage id="cycle_assignedTo" />,
-        dataIndex: 'assigneeUser',
-        key: 'assigneeUser',
-        flex: 1,
-        render(assigneeUser) {
-          return (
-            <div
-              className="c7ntest-text-dot"
-            >
-              {assigneeUser && assigneeUser.realName}
-            </div>
-          );
-        },
-      }, {
-        title: <span>用例优先级</span>,
-        dataIndex: 'priorityId',
-        key: 'priorityId',
-        filters: prioritys.map(priority => ({ text: priority.name, value: priority.id.toString() })),
-        flex: 1,
-        render(issueId, record) {
-          const { issueInfosDTO } = record;
-          return (
-            issueInfosDTO && renderPriority(issueInfosDTO.priorityDTO)
-          );
-        },
-      }, {
-        title: <FormattedMessage id="status" />,
-        dataIndex: 'executionStatus',
-        key: 'executionStatus',
-        filters: statusList.map(status => ({ text: status.statusName, value: status.statusId.toString() })),
-        // onFilter: (value, record) => record.executionStatus === value,  
-        flex: 1,
-        render(executionStatus) {
-          const statusColor = _.find(statusList, { statusId: executionStatus })
-            ? _.find(statusList, { statusId: executionStatus }).statusColor : '';
-          return (
-            _.find(statusList, { statusId: executionStatus }) && (
-            <StatusTags
-              color={statusColor}
-              name={_.find(statusList, { statusId: executionStatus }).statusName}
-            />
-            )
-          );
-        },
-      }, 
-      // {
-      //   title: <span>执行描述</span>,
-      //   dataIndex: 'comment',
-      //   key: 'comment',
-      //   filters: [],
-      //   flex: 1,
-      //   render(comment) {
-      //     return (
-      //       <Tooltip title={<RichTextShow data={delta2Html(comment)} />}>
-      //         <div
-      //           className="c7ntest-text-dot"
-      //         >
-      //           {delta2Text(comment)}
-      //         </div>
-      //       </Tooltip>
-      //     );
-      //   },
-      // },
-      {
-        title: '',
-        key: 'action',
-        flex: 1,
-        render: (text, record) => (
-          record.projectId !== 0
-        && (
-          <div style={{ display: 'flex' }}>
-            {/* <Tooltip title="跳转至执行详情">
-              <Button
-                shape="circle"
-                funcType="flat"
-                icon="explicit2"
-                onClick={() => {
-                  const { history } = this.props;
-                  history.push(executeDetailShowLink(record.executeId));
-                }}
-              />
-            </Tooltip> */}
-            <div className="c7ntest-flex-space" />
-            <Button
-              shape="circle"
-              funcType="flat"
-              icon="delete_forever"
-              style={{
-                marginRight: 10,
-              }}
-              onClick={(e) => {
-                e.stopPropagation();
-                this.deleteExecute(record);
-              }}
-            />
-          </div>
-        )
-        ),
-      }];
 
     return (
       <Page className="c7ntest-TestPlan">
@@ -405,49 +200,19 @@ class TestPlanHome extends Component {
                   <div className="c7ntest-TestPlan-content-right">
                     <EventCalendar key={`${currentCycle.key}_${times.length}`} showMode={calendarShowMode} times={times} onItemClick={this.handleItemClick} />
                     {calendarShowMode === 'single' && (
-                      <div className="c7ntest-TestPlan-content-right-bottom">
-                        <div style={{ display: 'flex', marginBottom: 20, alignItems: 'center' }}>
-                          <div style={{
-                            fontWeight: 600,                    
-                            marginRight: 10,
-                            fontSize: '14px',
-                          }}
-                          >
-                            快速筛选:
-                          </div>
-                          <SelectFocusLoad
-                            className="c7ntest-select"
-                            placeholder={<FormattedMessage id="cycle_executeBy" />}
-                            request={getUsers}
-                            onChange={(value) => {
-                              TestPlanStore.setLastUpdatedBy(value);
-                              TestPlanStore.loadCycle();
-                            }}
-                          />                          
-                          <SelectFocusLoad
-                            style={{ marginLeft: 20, width: 200 }}
-                            className="c7ntest-select"
-                            placeholder={<FormattedMessage id="cycle_assignedTo" />}                              
-                            request={getUsers}
-                            onChange={(value) => {
-                              TestPlanStore.setAssignedTo(value);
-                              TestPlanStore.loadCycle();
-                            }}
-                          />                        
-                        </div>
-                        <DragTable
-                          pagination={executePagination}
-                          loading={rightLoading}
-                          onChange={this.handleExecuteTableChange}
-                          dataSource={testList}
-                          columns={columns}
-                          onDragEnd={this.onDragEnd}
-                          onRow={record => ({
-                            onClick: (event) => { this.handleTableRowClick(record); },                             
-                          })}
-                          dragKey="executeId"
-                        />
-                      </div>
+                      <TestPlanTable
+                        prioritys={prioritys}
+                        statusList={statusList}
+                        loading={rightLoading}
+                        pagination={executePagination}
+                        dataSource={testList}
+                        onLastUpdatedByChange={this.handleLastUpdatedByChange}
+                        onAssignedToChange={this.handleAssignedToChange}
+                        onDragEnd={this.onDragEnd}                        
+                        onTableChange={this.handleExecuteTableChange}
+                        onTableRowClick={this.handleTableRowClick}
+                        onDeleteExecute={this.handleDeleteExecute}
+                      />
                     )}
                   </div> 
                 ) : (
