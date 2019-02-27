@@ -279,7 +279,7 @@ class TestCaseDetail extends Component {
               </Card>
             </div>
             {
-              isExpand && !loading && (
+              isExpand && issueInfo && (
                 <EditIssue
                   loading={loading}
                   issueId={testCaseId}

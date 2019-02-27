@@ -1,10 +1,14 @@
 import React, { Component } from 'react';
 import { Tooltip } from 'choerodon-ui';
-import { findDOMNode } from 'react-dom';
+
 import moment from 'moment';
 import './CalendarBackItem.scss';
 
 class CalendarBackItem extends Component {  
+  shouldComponentUpdate(nextProps, nextState) {
+    return !this.props.date.isSame(nextProps.date);
+  }
+  
   render() {
     const { date } = this.props;
     return (

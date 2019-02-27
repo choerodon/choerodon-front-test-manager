@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
+import isEqual from 'react-fast-compare';
 import { findDOMNode } from 'react-dom';
 import Moment from 'moment';
 import { extendMoment } from 'moment-range';
 import { Button, Tooltip } from 'choerodon-ui';
 import _ from 'lodash';
-import { FormattedMessage } from 'react-intl';
 import { DatePicker } from 'choerodon-ui';
 import './EventCalendar.scss';
 import CalendarBackItem from './CalendarBackItem';
@@ -34,6 +34,9 @@ class EventCalendar extends Component {
     }; 
   }
 
+  shouldComponentUpdate(nextProps, nextState) {
+    return !isEqual(this.props, nextProps) || !isEqual(this.state, nextState);
+  }
 
   // componentWillReceiveProps(nextProps) {
   //   const { times } = nextProps;
@@ -62,7 +65,6 @@ class EventCalendar extends Component {
   //     return null;
   //   }
   // }
-
   componentDidMount() {
     // 设置事件区域宽度
     this.setRightWidth();
@@ -80,7 +82,7 @@ class EventCalendar extends Component {
     };
   }
 
-  componentDidUpdate(prevProps, prevState, snapshot) {
+  componentDidUpdate(prevProps, prevState, snapshot) {    
     this.calculateItemWidth();
     this.setRightWidth();
   }
@@ -111,7 +113,7 @@ class EventCalendar extends Component {
     const range = moment.range(baseDate, endDate);
     const dates = range.diff('days');
     const newSingleWidth = this.BackItems.clientWidth / (dates + 1) + 1;
-    if (newSingleWidth !== singleWidth) {
+    if (newSingleWidth !== singleWidth) {     
       this.setState({
         singleWidth: newSingleWidth,
       });

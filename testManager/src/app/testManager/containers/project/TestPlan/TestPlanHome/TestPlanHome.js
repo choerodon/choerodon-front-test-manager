@@ -400,7 +400,7 @@ class TestPlanHome extends Component {
               <Injecter store={TestPlanStore} item="isTreeVisible">
                 {isTreeVisible => <TreeArea isTreeVisible={isTreeVisible} setIsTreeVisible={TestPlanStore.setIsTreeVisible} />}
               </Injecter>
-              <Injecter store={TestPlanStore} item={['currentCycle', 'times', 'calendarShowMode', 'getTimesLength']}>
+              <Injecter store={TestPlanStore} item={['currentCycle', 'getTimes', 'calendarShowMode', 'getTimesLength']}>
                 {([currentCycle, times, calendarShowMode, getTimesLength]) => (currentCycle.key ? (
                   <div className="c7ntest-TestPlan-content-right">
                     <EventCalendar key={`${currentCycle.key}_${times.length}`} showMode={calendarShowMode} times={times} onItemClick={this.handleItemClick} />
