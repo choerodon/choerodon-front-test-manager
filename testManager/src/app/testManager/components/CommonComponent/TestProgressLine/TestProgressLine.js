@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { memo } from 'react';
+import isEqual from 'react-fast-compare';
 import { Popover } from 'choerodon-ui';
 import './TestProgressLine.scss';
 
@@ -48,4 +49,4 @@ const TestProgressLine = ({
       : renderLine()
   );
 };
-export default TestProgressLine;
+export default memo(TestProgressLine, isEqual);

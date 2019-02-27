@@ -29,7 +29,6 @@ import DataLogs from './Component/DataLogs';
 import LinkList from './Component/LinkList';
 import PriorityTag from '../PriorityTag';
 import StatusTag from '../StatusTag';
-import CopyIssue from '../CopyIssue';
 import TypeTag from '../TypeTag';
 import IssueTreeStore from '../../../store/project/IssueManage/IssueTreeStore';
 
@@ -367,10 +366,7 @@ class EditIssueNarrow extends Component {
   }
 
   handleCopyIssue() {
-    this.props.reloadIssue();
-    this.setState({
-      copyIssueShow: false,
-    });
+    this.props.reloadIssue();    
     if (this.props.onUpdate) {
       this.props.onUpdate();
     }
@@ -405,8 +401,7 @@ class EditIssueNarrow extends Component {
             issueLoading: false,
           });
           Choerodon.prompt('网络错误');
-        });
-        // this.setState({ copyIssueShow: true });
+        });       
         break;
       }
       case 'delete': {
@@ -1071,7 +1066,7 @@ class EditIssueNarrow extends Component {
   render() {
     const {
       issueLoading, FullEditorShow, createLinkTaskShow,
-      copyIssueShow, currentNav,
+      currentNav,
     } = this.state;
     const {
       loading, issueId, issueInfo, fileList, disabled, linkIssues, folderName,  
@@ -1559,21 +1554,7 @@ class EditIssueNarrow extends Component {
               onOk={this.handleCreateLinkIssue.bind(this)}
             />
           ) : null
-        }
-        {
-          copyIssueShow ? (
-            <CopyIssue
-              issueId={issueId}
-              issueNum={issueNum}
-              issue={issueInfo}
-              issueLink={linkIssues}
-              issueSummary={summary}
-              visible={copyIssueShow}
-              onCancel={() => this.setState({ copyIssueShow: false })}
-              onOk={this.handleCopyIssue.bind(this)}
-            />
-          ) : null
-        }
+        }        
       </div>
     );
   }
