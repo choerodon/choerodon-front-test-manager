@@ -63,7 +63,7 @@ class StepTable extends PureComponent {
     } else {
       Choerodon.prompt('未找到对应状态');
     }
-  }
+  };
 
   render() {
     const that = this;
