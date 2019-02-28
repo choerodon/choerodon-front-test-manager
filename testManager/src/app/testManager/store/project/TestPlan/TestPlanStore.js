@@ -4,6 +4,7 @@ import {
 import moment from 'moment';
 import { getCycleTree, getExecutesByCycleId } from '../../../api/cycleApi';
 import { getStatusList } from '../../../api/TestStatusApi';
+import { getPrioritys } from '../../../api/agileApi';
 import { BaseTreeProto } from '../prototype';
 /**
  * 非递归遍历树 将测试阶段按照时间排序
@@ -42,6 +43,8 @@ function traverseTree(node) {
 class TestPlanStore extends BaseTreeProto {
   @observable isTreeVisible = true;
 
+  @observable prioritys = [];
+
   @observable statusList = [];
 
   @observable times = [];
@@ -64,6 +67,8 @@ class TestPlanStore extends BaseTreeProto {
 
   @observable calendarShowMode = 'multi';
 
+  @observable CreateCycleVisible = false;
+
   @observable EditCycleVisible = false;
 
   @observable CurrentEditCycle = {};
@@ -84,6 +89,7 @@ class TestPlanStore extends BaseTreeProto {
 
   @action clearStore = () => {
     this.isTreeVisible = true;
+    this.prioritys = [];
     this.statusList = [];
     this.times = [];
     this.dataList = [];
@@ -97,6 +103,7 @@ class TestPlanStore extends BaseTreeProto {
     this.filters = {};
     this.rightLoading = false;
     this.calendarShowMode = 'multi';
+    this.CreateCycleVisible = false;
     this.EditCycleVisible = false;
     this.CurrentEditCycle = {};
     this.EditStageVisible = false;
@@ -122,10 +129,13 @@ class TestPlanStore extends BaseTreeProto {
 
   getTree = () => new Promise((resolve) => {
     this.enterLoading();
-    getStatusList('CYCLE_CASE').then((statusList) => {
-      this.setStatusList({ statusList });
-    });
-    getCycleTree().then((data) => {
+    Promise.all([
+      getPrioritys(),
+      getStatusList('CYCLE_CASE'),
+      getCycleTree(),
+    ]).then(([prioritys, statusList, data]) => {
+      this.setPrioritys(prioritys);
+      this.setStatusList(statusList);
       traverseTree({ title: '所有版本', key: '0', children: data.versions });
       this.setTreeData([{ title: '所有版本', key: '0', children: data.versions }]);
       // 默认选中一个项
@@ -134,7 +144,6 @@ class TestPlanStore extends BaseTreeProto {
         { title: '所有版本', key: '0', children: data.versions },
       ]);
       resolve();
-      // window.console.log(dataList);
     }).catch((err) => {
       console.log(err);
       Choerodon.prompt('网络错误');
@@ -142,15 +151,13 @@ class TestPlanStore extends BaseTreeProto {
       this.leaveLoading();
     });
     // 如果选中了项，就刷新table数据
-    const currentCycle = this.getCurrentCycle;
-    const selectedKeys = this.getSelectedKeys;
-
+    const currentCycle = this.getCurrentCycle;   
     if (currentCycle.versionId) {
       this.reloadCycle();
     }
   })
 
-  selectDefaultNode=(node) => {
+  selectDefaultNode = (node) => {
     if (!this.currentCycle.key) {
       this.setCurrentCycle(node);
       this.loadCycle(node.key);
@@ -270,9 +277,9 @@ class TestPlanStore extends BaseTreeProto {
       // } else
       // 两种情况，version或者cycle和文件夹，version没有type
       if (currentCycle.key === node.key) {
-        this.setCurrentCycle(node);       
+        this.setCurrentCycle(node);
         // debugger;
-        this.updateTimes([node]);        
+        this.updateTimes([node]);
       }
       this.dataList.push({ key, title });
       if (node.children) {
@@ -306,7 +313,7 @@ class TestPlanStore extends BaseTreeProto {
     this.times = times;
   }
 
-  updateTimes=(data) => {
+  updateTimes = (data) => {
     const times = [];
     this.generateTimes(data, times);
     this.setTimes(times);
@@ -366,6 +373,10 @@ class TestPlanStore extends BaseTreeProto {
     }
   }
 
+  @action setPrioritys(prioritys) {
+    this.prioritys = prioritys;
+  }
+
   @action setStatusList(statusList) {
     this.statusList = statusList;
   }
@@ -392,6 +403,10 @@ class TestPlanStore extends BaseTreeProto {
 
   @action setExecutePagination = (executePagination) => {
     this.executePagination = executePagination;
+  }
+
+  @action setCreateCycleVisible(CreateCycleVisible) {
+    this.CreateCycleVisible = CreateCycleVisible;
   }
 
   @action EditStage(CurrentEditStage) {
@@ -424,7 +439,7 @@ class TestPlanStore extends BaseTreeProto {
     return toJS(this.times);
   }
 
-  @computed get getTimesLength() {    
+  @computed get getTimesLength() {
     return this.times.length > 0;
   }
 

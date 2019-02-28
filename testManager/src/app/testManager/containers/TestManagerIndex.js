@@ -1,5 +1,6 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
+import DevTools from 'mobx-react-devtools';
 import { inject } from 'mobx-react';
 import { asyncLocaleProvider, asyncRouter, nomatch } from 'choerodon-front-boot';
 import 'moment/locale/zh-cn';
@@ -25,18 +26,22 @@ class TestManagerIndex extends React.Component {
     }
     const IntlProviderAsync = asyncLocaleProvider(langauge, () => import(`../locale/${langauge}`));
     return (
-      <IntlProviderAsync>
-        <Switch>
-          <Route path={`${match.url}/summary`} component={SummaryIndex} />
-          <Route path={`${match.url}/IssueManage`} component={IssueManageIndex} />
-          <Route path={`${match.url}/TestExecute`} component={TestExecuteIndex} />
-          <Route path={`${match.url}/TestPlan`} component={TestPlanIndex} />
-          <Route path={`${match.url}/report`} component={ReportIndex} />
-          <Route path={`${match.url}/status`} component={CustomStatusIndex} />
-          <Route path={`${match.url}/AutoTest`} component={AutoTestIndex} />
-          <Route path="*" component={nomatch} />
-        </Switch>
-      </IntlProviderAsync>
+      <div>
+        <IntlProviderAsync>
+          <Switch>
+            <Route path={`${match.url}/summary`} component={SummaryIndex} />
+            <Route path={`${match.url}/IssueManage`} component={IssueManageIndex} />
+            <Route path={`${match.url}/TestExecute`} component={TestExecuteIndex} />
+            <Route path={`${match.url}/TestPlan`} component={TestPlanIndex} />
+            <Route path={`${match.url}/report`} component={ReportIndex} />
+            <Route path={`${match.url}/status`} component={CustomStatusIndex} />
+            <Route path={`${match.url}/AutoTest`} component={AutoTestIndex} />
+            <Route path="*" component={nomatch} />
+          </Switch>        
+        </IntlProviderAsync>
+        <DevTools />
+      </div>
+      
     );
   }
 }

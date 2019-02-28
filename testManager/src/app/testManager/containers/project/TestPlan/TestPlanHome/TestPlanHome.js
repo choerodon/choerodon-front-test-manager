@@ -7,12 +7,10 @@ import {
   Button, Icon, Spin, Modal,
 } from 'choerodon-ui';
 import { editExecuteDetail, deleteExecute } from '../../../../api/cycleApi';
-import { getStatusList } from '../../../../api/TestStatusApi';
-import { getPrioritys } from '../../../../api/agileApi';
 import {
   EventCalendar, CreateCycle, EditStage, EditCycle, ExportSide, TreeArea,
 } from '../../../../components/TestPlanComponent';
-import { Injecter, NoCycle } from '../../../../components/CommonComponent';
+import { Injecter, NoCycle, Loading } from '../../../../components/CommonComponent';
 import { TestPlanTable } from './components';
 import TestPlanStore from '../../../../store/project/TestPlan/TestPlanStore';
 import { executeDetailShowLink } from '../../../../common/utils';
@@ -21,13 +19,7 @@ import './TestPlanHome.scss';
 
 const { confirm } = Modal;
 @observer
-class TestPlanHome extends Component {
-  state = {
-    CreateCycleVisible: false,
-    statusList: [],
-    prioritys: [],
-  }
-
+class TestPlanHome extends Component { 
   componentDidMount() {
     RunWhenProjectChange(TestPlanStore.clearStore);
     TestPlanStore.setFilters({});
@@ -40,11 +32,7 @@ class TestPlanHome extends Component {
     this[name] = ref;
   }
 
-  refresh = () => {
-    Promise.all([getStatusList('CYCLE_CASE'), getPrioritys()]).then(([statusList, prioritys]) => {
-      this.setState({ statusList, prioritys });
-    });
-
+  refresh = () => { 
     TestPlanStore.getTree();
   }
 
@@ -147,16 +135,14 @@ class TestPlanHome extends Component {
     });
   }
 
-  render() {
-    const { CreateCycleVisible, statusList, prioritys } = this.state;
+  render() {    
     const {
-      testList, executePagination, loading, rightLoading,
+      setCreateCycleVisible, 
     } = TestPlanStore;
-
     return (
       <Page className="c7ntest-TestPlan">
         <Header title={<FormattedMessage id="testPlan_name" />}>
-          <Button onClick={() => { this.setState({ CreateCycleVisible: true }); }}>
+          <Button onClick={() => { setCreateCycleVisible(true); }}>
             <Icon type="playlist_add icon" />
             <FormattedMessage id="cycle_create_title" />
           </Button>
@@ -174,47 +160,57 @@ class TestPlanHome extends Component {
           description={null}
           style={{ padding: 0, display: 'flex' }}
         >
-          <Spin spinning={loading}>
-            <div className="c7ntest-TestPlan-content">
-              <Injecter store={TestPlanStore} item="EditCycleVisible">
-                {visible => <EditCycle visible={visible} />}
-              </Injecter>
-              <Injecter store={TestPlanStore} item="EditStageVisible">
-                {visible => <EditStage visible={visible} />}
-              </Injecter>
-              <CreateCycle
-                visible={CreateCycleVisible}
-                onCancel={() => { this.setState({ CreateCycleVisible: false }); }}
-                onOk={() => { this.setState({ CreateCycleVisible: false }); this.refresh(); }}
-              />
-              <ExportSide ref={this.saveRef('ExportSide')} />
-              <Injecter store={TestPlanStore} item="isTreeVisible">
-                {isTreeVisible => <TreeArea isTreeVisible={isTreeVisible} setIsTreeVisible={TestPlanStore.setIsTreeVisible} />}
-              </Injecter>
-              <Injecter store={TestPlanStore} item={['currentCycle', 'getTimes', 'calendarShowMode', 'getTimesLength']}>
-                {([currentCycle, times, calendarShowMode, getTimesLength]) => (currentCycle.key ? (
-                  <div className="c7ntest-TestPlan-content-right">
-                    <EventCalendar key={`${currentCycle.key}_${times.length}`} showMode={calendarShowMode} times={times} onItemClick={this.handleItemClick} />
-                    {calendarShowMode === 'single' && (
-                      <TestPlanTable
-                        prioritys={prioritys}
-                        statusList={statusList}
-                        loading={rightLoading}
-                        pagination={executePagination}
-                        dataSource={testList}
-                        onLastUpdatedByChange={this.handleLastUpdatedByChange}
-                        onAssignedToChange={this.handleAssignedToChange}
-                        onDragEnd={this.onDragEnd}                        
-                        onTableChange={this.handleExecuteTableChange}
-                        onTableRowClick={this.handleTableRowClick}
-                        onDeleteExecute={this.handleDeleteExecute}
-                      />
-                    )}
-                  </div> 
-                ) : <NoCycle />)}
-              </Injecter>
-            </div>
-          </Spin>
+          <Injecter store={TestPlanStore} item="loading">
+            {loading => <Loading loading={loading} />}
+          </Injecter>          
+          <div className="c7ntest-TestPlan-content">
+            <Injecter store={TestPlanStore} item="EditCycleVisible">
+              {visible => <EditCycle visible={visible} />}
+            </Injecter>
+            <Injecter store={TestPlanStore} item="EditStageVisible">
+              {visible => <EditStage visible={visible} />}
+            </Injecter>
+            <Injecter store={TestPlanStore} item="CreateCycleVisible">
+              {visible => (
+                <CreateCycle
+                  visible={visible}
+                  onCancel={() => { setCreateCycleVisible(false); }}
+                  onOk={() => { setCreateCycleVisible(false); this.refresh(); }}
+                />
+              )}
+            </Injecter>              
+            <ExportSide ref={this.saveRef('ExportSide')} />
+            <Injecter store={TestPlanStore} item="isTreeVisible">
+              {isTreeVisible => <TreeArea isTreeVisible={isTreeVisible} setIsTreeVisible={TestPlanStore.setIsTreeVisible} />}
+            </Injecter>
+            <Injecter store={TestPlanStore} item={['currentCycle', 'getTimes', 'calendarShowMode', 'getTimesLength']}>
+              {([currentCycle, times, calendarShowMode, getTimesLength]) => (currentCycle.key ? (
+                <div className="c7ntest-TestPlan-content-right">
+                  <EventCalendar key={`${currentCycle.key}_${times.length}`} showMode={calendarShowMode} times={times} onItemClick={this.handleItemClick} />
+                  {calendarShowMode === 'single' && (
+                    <Injecter store={TestPlanStore} item={['statusList', 'prioritys', 'testList', 'executePagination', 'rightLoading']}>
+                      {([statusList, prioritys, testList, executePagination, rightLoading]) => (
+                        <TestPlanTable
+                          prioritys={prioritys}
+                          statusList={statusList}
+                          loading={rightLoading}
+                          pagination={executePagination}
+                          dataSource={testList}
+                          onLastUpdatedByChange={this.handleLastUpdatedByChange}
+                          onAssignedToChange={this.handleAssignedToChange}
+                          onDragEnd={this.onDragEnd}                        
+                          onTableChange={this.handleExecuteTableChange}
+                          onTableRowClick={this.handleTableRowClick}
+                          onDeleteExecute={this.handleDeleteExecute}
+                        />
+                      )}
+                    </Injecter>
+                  
+                  )}
+                </div> 
+              ) : <NoCycle />)}
+            </Injecter>
+          </div>
         </Content>
       </Page>
     );

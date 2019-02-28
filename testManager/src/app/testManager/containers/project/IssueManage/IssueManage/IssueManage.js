@@ -6,7 +6,7 @@ import { Button, Icon } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 import FileSaver from 'file-saver';
 import IssueStore from '../../../../store/project/IssueManage/IssueStore';
-import { loadIssue, downloadTemplate } from '../../../../api/IssueManageApi';
+import { downloadTemplate } from '../../../../api/IssueManageApi';
 import { commonLink, getParams, testCaseDetailLink } from '../../../../common/utils';
 import RunWhenProjectChange from '../../../../common/RunWhenProjectChange';
 import CreateIssue from '../../../../components/IssueManageComponent/CreateIssue';
