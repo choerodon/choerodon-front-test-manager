@@ -133,7 +133,9 @@ class ExecuteDetail extends Component {
     delete newData.nextRank;
 
     editCycle(newData).then((Data) => {
-      this.ExecuteDetailSide.HideFullEditor();
+      if (this.ExecuteDetailSide) {
+        this.ExecuteDetailSide.HideFullEditor();
+      }      
       ExecuteDetailStore.getInfo();
     }).catch((error) => {
       Choerodon.prompt('网络异常');
