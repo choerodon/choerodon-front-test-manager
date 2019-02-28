@@ -22,6 +22,18 @@ class IssueTable extends Component {
     firstIndex: null,
     filteredColumns: ['issueNum', 'issueTypeDTO', 'summary', 'versionIssueRelDTOList', 'folderName', 'reporter', 'priorityId'],
   };
+
+  shouldComponentUpdate() {
+    return false;
+  }
+
+  componentWillReact() {
+    console.log('wr');
+  }
+  
+  componentDidUpdate(prevProps, prevState) {
+    console.log('up');
+  }
   
   handleColumnFilterChange = ({ selectedKeys }) => {
     this.setState({

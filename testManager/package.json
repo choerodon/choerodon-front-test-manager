@@ -28,5 +28,8 @@
         "shallowequal": "^1.1.0",
         "timeago-react": "2.0.0",
         "yamljs": "^0.3.0"
+    },
+    "devDependencies": {
+        "mobx-react-devtools": "^6.0.3"
     }
 }
