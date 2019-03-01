@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { observer } from 'mobx-react';
 import _ from 'lodash';
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/base16-dark.css';
@@ -7,43 +8,23 @@ import {
 } from '../../../../api/AutoTestApi';
 import { commonLink, cycleLink } from '../../../../common/utils';
 import AutoTestList from './AutoTestList';
+import AutoListStore from '../../../../store/project/AutoTest/AutoListStore';
 
+const store = AutoListStore;
+@observer
 class AutoTestListContainer extends Component {
-  state = {
-    appList: [],
-    historyList: [],
-    envList: [],
-    currentApp: null,
-    loading: true,
-    selectLoading: false,
-    pagination: {
-      current: 1,
-      total: 0,
-      pageSize: 10,
-    },
-    filter: {},
-  }
-
   componentDidMount() {
     this.loadApps();
   }
 
-  componentWillUnmount() {
-    if (this.state.ws) {
-      this.closeSidebar();
-    }
-  }
-
   loadApps = (value = '') => {
-    const { currentApp } = this.state;
+    const { currentApp } = store;
     let searchParam = {};
     if (value !== '') {
       searchParam = { name: [value] };
     }
-
-    this.setState({
-      selectLoading: true,
-    });
+    store.Loading();
+    store.setSelectLoading(true);    
     Promise.all([
       getApps({
         page: 0,
@@ -60,49 +41,37 @@ class AutoTestListContainer extends Component {
       }
       if (!currentApp && !value && data.content.length > 0) {
         this.loadTestHistoryByApp({ appId: data.content[0].id });
-        this.setState({
-          envList: envs,
-          currentApp: data.content[0].id,
-          appList: data.content,
-          selectLoading: false,
-        });
+        store.setEnvList(envs);
+        store.setCurrentApp(data.content[0].id);
+        store.setAppList(data.content);
+        store.setSelectLoading(false);        
       } else {
-        this.setState({
-          envList: envs,
-          appList: data.content,
-          selectLoading: false,
-          loading: false,
-        });
+        store.setEnvList(envs);        
+        store.setAppList(data.content);
+        store.setSelectLoading(false);   
+        store.unLoading(); 
       }
     });
   }
-  
+
   handleAppChange = (appId) => {
     this.loadTestHistoryByApp({ appId });
-    this.setState({
-      currentApp: appId,
-    });
+    store.setCurrentApp(appId);    
   }
 
-  loadTestHistoryByApp = ({ appId = this.state.currentApp, pagination = this.state.pagination, filter = this.state.filter } = {}) => {
-    this.setState({
-      loading: true,
-      filter,
-    });
+  loadTestHistoryByApp = ({ appId = store.currentApp, pagination = store.pagination, filter = store.filter } = {}) => {
+    store.Loading();
+    store.setFilter(filter);    
     getTestHistoryByApp(appId, pagination, filter).then((history) => {
-      this.setState({      
-        historyList: history.content,
-        pagination: {
-          current: history.number + 1,
-          total: history.totalElements,
-          pageSize: history.size,
-        },
-      });
+      store.setHistoryList(history.content);
+      store.setPagination({
+        current: history.number + 1,
+        total: history.totalElements,
+        pageSize: history.size,
+      });      
     }).finally(() => {
-      this.setState({        
-        selectLoading: false,
-        loading: false,
-      });
+      store.unLoading();
+      store.setSelectLoading(false);     
     });
   }
 
@@ -111,16 +80,12 @@ class AutoTestListContainer extends Component {
   }
 
   handleRerunTest = (record) => {
-    this.setState({
-      loading: true,
-    });
+    store.Loading();
     const { id } = record;
     reRunTest({ historyId: id }).then((res) => {
       this.loadTestHistoryByApp();
     }).catch((err) => {
-      this.setState({
-        loading: false,
-      });
+      store.unLoading();
       Choerodon.prompt('网络出错');
     });
   }
@@ -133,7 +98,7 @@ class AutoTestListContainer extends Component {
     this.props.history.push(commonLink(`/AutoTest/report/${resultId}`));
   }
 
-  toTestExecute = (cycleId) => {    
+  toTestExecute = (cycleId) => {
     this.props.history.push(cycleLink(cycleId));
   }
 
@@ -144,19 +109,14 @@ class AutoTestListContainer extends Component {
     // console.log(key, record);
     switch (key) {
       case 'log': {
-        this.ContainerLog.open(record);
-        // this.showLog(record);
+        this.ContainerLog.open(record);       
         break;
       }
 
       case 'retry': {
         this.handleRerunTest(record);
         break;
-      }
-      // case 'cycle': {
-      //   this.toTestExecute(cycleId);
-      //   break;
-      // }
+      }     
       case 'report': {
         this.toReport(resultId);
         break;
@@ -170,9 +130,23 @@ class AutoTestListContainer extends Component {
   }
 
   render() {
+    const { 
+      loading, appList, 
+      selectLoading, 
+      currentApp, 
+      historyList,   
+      envList,
+      pagination,
+    } = store;
     return (
       <AutoTestList
-        {...this.state}
+        loading={loading}
+        appList={appList} 
+        selectLoading={selectLoading}
+        currentApp={currentApp}
+        historyList={historyList}   
+        envList={envList}
+        pagination={pagination}
         toCreateAutoTest={this.toCreateAutoTest}
         onRefreshClick={this.loadTestHistoryByApp}
         onItemClick={this.handleItemClick}
