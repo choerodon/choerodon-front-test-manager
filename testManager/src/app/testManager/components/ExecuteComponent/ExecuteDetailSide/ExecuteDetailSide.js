@@ -205,7 +205,7 @@ class ExecuteDetailSide extends Component {
     } = issueInfosDTO || { issueTypeDTO: {} };
     const { statusColor, statusName } = status;
     const {
-      lastUpdateDate, cycleName, lastUpdateUser, comment, defects,
+      lastUpdateDate, cycleName, lastUpdateUser, assigneeUser, comment, defects,
     } = cycleData;
     const props = {
       onRemove: onFileRemove,
@@ -288,6 +288,14 @@ class ExecuteDetailSide extends Component {
                   <User user={lastUpdateUser} />
                 </div>
               </div>
+              {/* 被指定人 */}
+              <div className="c7ntest-item-one-line">
+                <div className="c7ntest-item-one-line-left">被指定人：</div>
+                <div className="c7ntest-item-one-line-right">
+                  <User user={assigneeUser} />
+                </div>
+              </div>
+              
               {/* 执行日期 */}
               <div className="c7ntest-item-one-line">
                 <div className="c7ntest-item-one-line-left">执行日期：</div>

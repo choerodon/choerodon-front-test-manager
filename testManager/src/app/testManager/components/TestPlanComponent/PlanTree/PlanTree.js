@@ -29,9 +29,9 @@ class PlanTree extends Component {
     currentEditValue: {},    
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    console.log('treeup');
-  }
+  // componentDidUpdate(prevProps, prevState) {
+  //   console.log('treeup');
+  // }
   
   refresh = () => {
     TestPlanStore.getTree();

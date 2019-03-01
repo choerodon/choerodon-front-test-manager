@@ -37,13 +37,13 @@ class EventCalendar extends Component {
     return !isEqual(this.props, nextProps) || !isEqual(this.state, nextState);
   }
 
-  componentDidMount() {
-    console.log('didmount');    
-  }
+  // componentDidMount() {
+  //   console.log('didmount');    
+  // }
 
-  componentDidUpdate(prevProps, prevState, snapshot) {    
-    console.log('didupdate');    
-  }
+  // componentDidUpdate(prevProps, prevState, snapshot) {    
+  //   console.log('didupdate');    
+  // }
   
   calculateTime = () => {
     const { baseDate, endDate } = this.state;
@@ -152,7 +152,7 @@ class EventCalendar extends Component {
   }
 
   render() {
-    console.log('render');
+    // console.log('render');
     const { showMode, times } = this.props;  
     const { start, end } = this.calculateTime();
     const range = moment.range(start, end);
