@@ -29,6 +29,10 @@ class PlanTree extends Component {
     currentEditValue: {},    
   }
 
+  // componentDidUpdate(prevProps, prevState) {
+  //   console.log('treeup');
+  // }
+  
   refresh = () => {
     TestPlanStore.getTree();
   }
@@ -116,80 +120,35 @@ class PlanTree extends Component {
         type={expandedKeys.includes(item.key) ? 'folder_open2' : 'folder_open'}
       />
     );
-    // if (type === 'CLONE_FOLDER' || type === 'CLONE_CYCLE') {
-    //   return (
-    //     <TreeNode
-    //       title={(
-    //         <div onClick={e => e.stopPropagation()} role="none">
-    //           <Input
-    //             defaultValue={item.title}
-    //             autoFocus
-    //             onBlur={(e) => {
-    //               this.Clone(item, e, type);
-    //             }}
-    //           />
-    //         </div>
-    //       )}
-    //       icon={icon}
-    //       data={item}
-    //     />);
-    // } else 
-    if (type === 'ADD_FOLDER') {
-      return (
-        <TreeNode
-          title={(
-            <div onClick={e => e.stopPropagation()} role="none">
-              <Input
-                defaultValue={item.title}
-                autoFocus
-                onBlur={(e) => {
-                  this.addFolder(item, e, type);
-                }}
-              />
-            </div>
-          )}
-          icon={icon}
-          data={item}
-        />
-      );
-    } else if (children) {
-      const title = index > -1 ? (
-        <span>
-          {beforeStr}
-          <span style={{ color: '#f50' }}>{searchValue}</span>
-          {afterStr}
-        </span>
-      ) : <span>{item.title}</span>;
-      return (
-        <TreeNode
-          title={item.versionId
-            ? (
-              <PlanTreeTitle
-                statusList={this.state.statusList}
-                refresh={this.refresh}
-                callback={this.callback}
-                text={item.title}
-                key={key}
-                data={item}
-                title={title}
-                processBar={cycleCaseList}
-              />
-            ) : title}
-          key={key}
-          data={item}
-          showIcon
-          icon={icon}
-        >          
-          {this.renderTreeNodes(children)}
-        </TreeNode>
-      );
-    }
+    const title = index > -1 ? (
+      <span>
+        {beforeStr}
+        <span style={{ color: '#f50' }}>{searchValue}</span>
+        {afterStr}
+      </span>
+    ) : <span>{item.title}</span>;
     return (
       <TreeNode
-        icon={icon}
-        {...item}
+        title={item.versionId
+          ? (
+            <PlanTreeTitle
+              statusList={this.state.statusList}
+              refresh={this.refresh}
+              callback={this.callback}
+              text={item.title}
+              key={key}
+              data={item}
+              title={title}
+              processBar={cycleCaseList}
+            />
+          ) : title}
+        key={key}
         data={item}
-      />
+        showIcon
+        icon={icon}
+      >          
+        {this.renderTreeNodes(children)}
+      </TreeNode>
     );
   });
 
@@ -271,7 +230,7 @@ class PlanTree extends Component {
         </div>
         
         <div className="c7ntest-PlanTree-tree">          
-          <Tree          
+          <Tree
             selectedKeys={selectedKeys}
             expandedKeys={expandedKeys}
             showIcon
@@ -280,10 +239,8 @@ class PlanTree extends Component {
             autoExpandParent={autoExpandParent}
           >
             {this.renderTreeNodes(treeData)}
-          </Tree>
-          
-        </div>
-      
+          </Tree>          
+        </div>      
       </div>
     );
   }

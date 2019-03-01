@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import isEqual from 'react-fast-compare';
-import { findDOMNode } from 'react-dom';
 import Moment from 'moment';
 import { extendMoment } from 'moment-range';
 import { Button, Tooltip } from 'choerodon-ui';
@@ -9,7 +8,6 @@ import { DatePicker } from 'choerodon-ui';
 import './EventCalendar.scss';
 import CalendarBackItem from './CalendarBackItem';
 import EventItem from './EventItem';
-import { addResizeListener, removeResizeListener } from '../../../common/ResizeListener';
 
 const { RangePicker } = DatePicker;
 const moment = extendMoment(Moment);
@@ -34,92 +32,19 @@ class EventCalendar extends Component {
     }; 
   }
 
+
   shouldComponentUpdate(nextProps, nextState) {
     return !isEqual(this.props, nextProps) || !isEqual(this.state, nextState);
   }
 
-  // componentWillReceiveProps(nextProps) {
-  //   const { times } = nextProps;
-  //   const { mode } = this.state;
-  //   // console.log(times);
-  //   // 使事件始终可以显示在当前范围
-  //   if (times && times.length > 0) {
-  //     this.setState({
-  //       pos: 0,
-  //       currentDate: null,
-  //       baseDate: times[0].start ? moment(times[0].start).startOf(mode) : moment(),
-  //     });
-  //   }
+  // componentDidMount() {
+  //   console.log('didmount');    
   // }
-  // static getDerivedStateFromProps(props, state) {
-  //   const { times } = props;
-  //   const { mode, baseDate } = state;
-  //   // 使事件始终可以显示在当前范围
-  //   if (times && times.length > 0) {
-  //     return {
-  //       pos: 0,
-  //       currentDate: null,  
-  //       baseDate: times[0].start ? moment(times[0].start).startOf(mode) : moment(),
-  //     };      
-  //   } else {
-  //     return null;
-  //   }
+
+  // componentDidUpdate(prevProps, prevState, snapshot) {    
+  //   console.log('didupdate');    
   // }
-  componentDidMount() {
-    // 设置事件区域宽度
-    this.setRightWidth();
-    // 计算单个日期所占宽度
-    this.calculateItemWidth();
-    // 监听
-    addResizeListener(this.header, this.setRightWidth);    
-    addResizeListener(this.header, this.calculateItemWidth);
-  }
-
-  getSnapshotBeforeUpdate(prevProps, prevState) {
-    return {
-      scrollLeft: this.scroller.scrollLeft,
-      scrollTop: this.scroller.scrollTop,
-    };
-  }
-
-  componentDidUpdate(prevProps, prevState, snapshot) {    
-    this.calculateItemWidth();
-    this.setRightWidth();
-  }
-
-  componentWillUnmount() {
-    removeResizeListener(this.header, this.setRightWidth);
-    removeResizeListener(this.header, this.calculateItemWidth);
-  }
-
-  // 设置事件区域宽度
-  setRightWidth = () => {
-    const scrollBarWidth = this.scroller.offsetWidth - this.scroller.clientWidth;
-    this.fakeScrollBar.style.width = `${scrollBarWidth}px`;
-    const rightWidth = Math.ceil(this.HeaderItems.offsetWidth);
-    this.wrapper.style.width = `${rightWidth - scrollBarWidth}px`;
-    // this.HeaderItems.style.width = `${rightWidth}px`; // 防止tooltip引起的宽度变化
-    // 设置高度，防止滚动条跳动，虽然EventItem设置了key，但依然会重新挂载，不清楚原因
-    // 原因是不直接设置具体数据
-    this.events.style.height = `${this.events.offsetHeight}px`;
-  }
-
-  /**
-   *计算单个日期所占宽度
-   *
-   */
-  calculateItemWidth = () => { 
-    const { baseDate, endDate, singleWidth } = this.state;
-    const range = moment.range(baseDate, endDate);
-    const dates = range.diff('days');
-    const newSingleWidth = this.BackItems.clientWidth / (dates + 1) + 1;
-    if (newSingleWidth !== singleWidth) {     
-      this.setState({
-        singleWidth: newSingleWidth,
-      });
-    }
-  }
-
+  
   calculateTime = () => {
     const { baseDate, endDate } = this.state;
     const start = moment(baseDate).startOf('day');
@@ -170,21 +95,6 @@ class EventCalendar extends Component {
     document.removeEventListener('mouseup', this.handleMouseUp);
   }
 
-  // 滚动时保持日期固定在头部
-  handleScroll = (e) => {
-    // 设置头的位置，固定
-    const { scrollLeft } = e.target;
-    this.header.scrollLeft = scrollLeft;
-  }
-
-  // tooltip会引起header的滚动，在此将header和scroller同步滚动
-  handleHeaderScroll = (e) => {
-    const { scrollLeft } = e.target;
-    if (this.scroller.scrollLeft !== scrollLeft) {
-      this.scroller.scrollLeft = scrollLeft;
-    }
-  }
-
   /**
    * 当滚动条滚动时，更新左侧当前日期，以此为基准进行上一个月，下一个月切换
    *
@@ -228,7 +138,7 @@ class EventCalendar extends Component {
       const skipRange = moment.range(baseDate, targetDate);
       const days = skipRange.diff('days');
       // 目标位置dom       
-      const targetDOM = findDOMNode(this[`item_${days}`]);// eslint-disable-line react/no-find-dom-node
+      const targetDOM = document.getElementsByClassName('CalendarBackItem')[days]; // findDOMNode(this[`item_${days}`]);// eslint-disable-line react/no-find-dom-node
       if (targetDOM) {
         const left = targetDOM.offsetLeft;
         this.scroller.scrollLeft = left;
@@ -242,10 +152,8 @@ class EventCalendar extends Component {
   }
 
   render() {
-    const {
-      mode, width, singleWidth,
-    } = this.state;
-    const { showMode, times } = this.props;
+    // console.log('render');
+    const { showMode, times } = this.props;  
     const { start, end } = this.calculateTime();
     const range = moment.range(start, end);
     const timeArray = Array.from(range.by('day'));
@@ -264,7 +172,6 @@ class EventCalendar extends Component {
               format={dateFormat}
             />
           </div>
-
           <div className="c7ntest-EventCalendar-header-page">
             <Tooltip title="上个月">
               <Button type="circle" onClick={this.skipTo.bind(this, 'pre')} icon="keyboard_arrow_left" />
@@ -278,44 +185,30 @@ class EventCalendar extends Component {
             </Tooltip>
           </div>
         </div>
-        <div className="c7ntest-EventCalendar-content">
-          <div className="c7ntest-EventCalendar-fixed-header" ref={this.saveRef('header')} onScroll={this.handleHeaderScroll}>
-            <div style={{ position: 'relative', height: '100%', width: '100%' }}>
-              <div className="c7ntest-EventCalendar-HeaderItems" ref={this.saveRef('HeaderItems')}>
-                {
-                  timeArray.map((m, i) => <CalendarBackItem ref={this.saveRef(`item_${i}`)} date={m} />)
-                }
-                <div className="c7ntest-EventCalendar-fake-scrollBar" ref={this.saveRef('fakeScrollBar')} />
-              </div>
+        <div role="none" className="c7ntest-EventCalendar-content" ref={this.saveRef('scroller')} onMouseDown={this.handleMouseDown}>      
+          <div style={{
+            width: 'fit-content', height: 'fit-content', minWidth: '100%', minHeight: '100%', position: 'relative',
+          }}
+          >   
+            <div className="c7ntest-EventCalendar-fixed-header">            
+              { timeArray.map((m, i) => (<CalendarBackItem date={m} />)) }            
             </div>
-          </div>
-          <div
-            role="none"
-            className="c7ntest-EventCalendar-scroller"
-            ref={this.saveRef('scroller')}
-            onScroll={this.handleScroll}
-            onMouseDown={this.handleMouseDown}
-          >
-            <div style={{ position: 'relative', minHeight: '100%' }} ref={this.saveRef('wrapper')}>
-              <div className="c7ntest-EventCalendar-BackItems" ref={this.saveRef('BackItems')}>
+            <div className="c7ntest-EventCalendar-eventContainer">
+              <div className="c7ntest-EventCalendar-BackItems">
                 {
                   timeArray.map((m, i) => <div className="c7ntest-EventCalendar-BackItems-item" />)
                 }
               </div>
-              <div className="c7ntest-EventCalendar-eventContainer" ref={this.saveRef('events')}>
-                {times.map(event => (
-                  <EventItem
-                    key={event.key}
-                    onClick={this.props.onItemClick}
-                    itemRange={moment.range(event.start, event.end)}
-                    // totalRange={timeArray.length}
-                    data={event}
-                    range={range}
-                    singleWidth={singleWidth}
-                  />
-                ))}
-              </div>
-            </div>
+              {times.map(event => (
+                <EventItem
+                  key={event.key}
+                  onClick={this.props.onItemClick}
+                  itemRange={moment.range(event.start, event.end)}                  
+                  data={event}
+                  range={range}              
+                />
+              ))}
+            </div>          
           </div>
         </div>
       </div>

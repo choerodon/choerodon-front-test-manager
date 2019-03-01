@@ -13,7 +13,7 @@ class CalendarBackItem extends Component {
     const { date } = this.props;
     return (
       // 周末字体颜色不同
-      <div      
+      <div
         className="CalendarBackItem"
         style={{ color: moment(date).day() === 6 || moment(date).day() === 0 ? '#303F9F' : 'black' }}
       >
