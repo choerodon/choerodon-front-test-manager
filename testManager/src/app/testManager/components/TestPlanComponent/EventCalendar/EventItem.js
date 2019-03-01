@@ -63,7 +63,6 @@ const propTypes = {
   itemRange: PropTypes.any.isRequired,
   data: PropTypes.any.isRequired,
   onClick: PropTypes.func.isRequired,
-  singleWidth: PropTypes.number.isRequired,
 };
 class EventItem extends Component {
   state = {
@@ -83,10 +82,20 @@ class EventItem extends Component {
     enter: false,
   };
 
-  shouldComponentUpdate(nextProps, nextState) {
-    return !isEqual(this.props, nextProps) || !isEqual(this.state, nextState);
-  }
+  // shouldComponentUpdate(nextProps, nextState) {
+  //   return !isEqual(this.props, nextProps) || !isEqual(this.state, nextState);
+  // }
 
+  componentDidMount() {
+    this.singleWidth = findDOMNode(this.Item).clientWidth / this.state.flex;
+    // console.log(this.singleWidth, this.state.flex);
+  }
+  
+
+  // componentDidUpdate(prevProps, prevState) {
+  //   this.singleWidth = findDOMNode(this.Item).clientWidth / this.state.flex;
+  // }
+  
   static getDerivedStateFromProps(props, state) {
     // 调整大小时以state为准
     if (!state.done) {
@@ -180,7 +189,6 @@ class EventItem extends Component {
   // 停止自动滚动
   stopAutoScroll = () => {
     cancelAnimationFrame(this.scrollTimer);
-    // console.log('stop');
   }
 
   handleItemClick = () => {
@@ -203,6 +211,7 @@ class EventItem extends Component {
       <div style={{ flex: preFlex }} />,
       <div
         role="none"
+        ref={this.saveRef('Item')}
         onClick={this.handleItemClick}
         onMouseEnter={this.handleMouseEnter}
         onMouseLeave={this.handleMouseLeave}
@@ -303,7 +312,7 @@ class EventItem extends Component {
       // resize的变化量
       const { x, scrollPos } = this.initScrollPosition;
       const posX = clientX - this.initScrollPosition.x + scrollPos;
-      const { singleWidth } = this.props;
+      const { singleWidth } = this;
       // console.log(posX, singleWidth / 2);
       // 一个日历日期所占宽度
       if (Math.abs(posX) > (singleWidth / 2)) {

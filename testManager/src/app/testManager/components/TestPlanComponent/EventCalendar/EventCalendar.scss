@@ -1,7 +1,4 @@
 .c7ntest-EventCalendar {
-  // height: 100%;
-  // flex: 1;
-  // padding: 20px 20px 0;
   &-header {
     height: 26px;
     display: flex;
@@ -14,34 +11,10 @@
       margin-left: 10px;
     }
     &-page {
-      // margin-top: -1px;
       button:first-of-type {
         margin-left: 15px;
       }
-    }
-    // &-skip {
-    //   .ant-btn {
-    //     padding: 0 8px;
-    //     margin-right: 8px;
-    //   }
-    //   .ant-input-wrapper {
-    //     margin-bottom: 0;
-    //   }
-    //   .ant-input-content {
-    //     // padding-top: 2px;
-    //     margin-top: -2px;
-    //   }
-    //   .ant-input-underline {
-    //     display: none;
-    //   }
-    //   .ant-input-rendered {
-    //     width: 0 !important;
-    //     visibility: hidden;
-    //   }
-    //   .ant-calendar-picker-clear {
-    //     display: none;
-    //   }
-    // }
+    }    
   }
   &-scroller {
     // position: relative;
@@ -52,53 +25,45 @@
   &-content {
     height: calc(100% - 44px);
     position: relative; // width: fit-content;
+    overflow: auto;
   }
   &-fixed-header {
-    overflow: hidden;
+    // overflow: hidden;
     height: 54px;
-  }
-  &-HeaderItems {
-    // padding-right: 8px;
-    height: 100%;
-    min-width: 100%;
-    left: 0;
-    top: 100; // bottom: 0; // height: 100%; 
-    // width: 4000px; // 
-    position: absolute;
+    position: sticky;
+    z-index: 1;
     top: 0;
-    bottom: 0; // height: 100%; 
-    display: flex; // width: fit-content;
-    white-space: nowrap;
-    border-left: 1px solid rgba(0, 0, 0, 0.12);   
+    display: flex;
+    width: fit-content;
+    min-width: 100%;
+    border-left: 1px solid 	#E0E0E0;
   }
+ 
   &-BackItems {
     min-width: 100%; // width: 4000px;
     position: absolute;
-    left: 0;
-    top: 100; // bottom: 0; // height: 100%; 
-    height: 100%;
+    // left: 0;
+    // top: 100; // bottom: 0; // height: 100%; 
+    height: calc(100% - 59px);
     display: flex; // width: fit-content;
     white-space: nowrap;
-    border-left: 1px solid rgba(0, 0, 0, 0.12);
+    border-left: 1px solid 	#E0E0E0;
     border-right: none;
     border-top: none;
     &-item {
       min-width: 70px; // width: 64px;
       flex: 1;
       display: inline-block;
-      border-right: 1px solid rgba(0, 0, 0, 0.12); // box-shadow: 1px 0 0 rgba(0, 0, 0, 0.12);  
-      border-bottom: 1px solid rgba(0, 0, 0, 0.12); // box-shadow: 1px 0 0 rgba(0, 0, 0, 0.12);  
+      border-right: 1px solid 	#E0E0E0; // box-shadow: 1px 0 0 rgba(0, 0, 0, 0.12);  
+      border-bottom: 1px solid 	#E0E0E0; // box-shadow: 1px 0 0 rgba(0, 0, 0, 0.12);  
       height: 100%;
     }
   }
   &-eventContainer {
     // padding-top: 50px; // height: calc(100% - 65px); // overflow: auto;
     // overflow-x: hidden;
-    width: 100%;
-    position: relative; // top: 60px;
-  }
-  &-scroll-wrapper {
-    width: 100%;
-    position: absolute; //chrome在某些情况下width 100% 并不是100% 而是少了滚动条宽度，加上absolute解决
+    // width: 100%;
+    // position: relative; // top: 60px;
+    min-height: calc(100% - 59px)
   }
 }

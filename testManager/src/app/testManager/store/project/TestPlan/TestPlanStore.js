@@ -138,11 +138,11 @@ class TestPlanStore extends BaseTreeProto {
       this.setStatusList(statusList);
       traverseTree({ title: '所有版本', key: '0', children: data.versions });
       this.setTreeData([{ title: '所有版本', key: '0', children: data.versions }]);
-      // 默认选中一个项
-      this.selectDefaultNode({ title: '所有版本', key: '0', children: data.versions });
       this.generateList([
         { title: '所有版本', key: '0', children: data.versions },
       ]);
+      // 默认选中一个项
+      this.selectDefaultNode({ title: '所有版本', key: '0', children: data.versions });
       resolve();
     }).catch((err) => {
       console.log(err);
@@ -151,7 +151,7 @@ class TestPlanStore extends BaseTreeProto {
       this.leaveLoading();
     });
     // 如果选中了项，就刷新table数据
-    const currentCycle = this.getCurrentCycle;   
+    const currentCycle = this.getCurrentCycle;
     if (currentCycle.versionId) {
       this.reloadCycle();
     }
@@ -159,8 +159,8 @@ class TestPlanStore extends BaseTreeProto {
 
   selectDefaultNode = (node) => {
     if (!this.currentCycle.key) {
-      this.setCurrentCycle(node);
-      this.loadCycle(node.key);
+      // this.setCurrentCycle(node);
+      this.loadCycle(node.key, { node: { props: { data: node } } });
     }
   }
 
@@ -277,9 +277,9 @@ class TestPlanStore extends BaseTreeProto {
       // } else
       // 两种情况，version或者cycle和文件夹，version没有type
       if (currentCycle.key === node.key) {
-        this.setCurrentCycle(node);
         // debugger;
         this.updateTimes([node]);
+        this.setCurrentCycle(node);
       }
       this.dataList.push({ key, title });
       if (node.children) {
@@ -316,6 +316,7 @@ class TestPlanStore extends BaseTreeProto {
   updateTimes = (data) => {
     const times = [];
     this.generateTimes(data, times);
+    // console.log(times);
     this.setTimes(times);
   }
 
@@ -405,7 +406,7 @@ class TestPlanStore extends BaseTreeProto {
     this.executePagination = executePagination;
   }
 
-  @action setCreateCycleVisible(CreateCycleVisible) {
+  @action setCreateCycleVisible = (CreateCycleVisible) => {
     this.CreateCycleVisible = CreateCycleVisible;
   }
 
