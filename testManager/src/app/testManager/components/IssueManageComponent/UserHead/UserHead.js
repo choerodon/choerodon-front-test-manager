@@ -1,6 +1,5 @@
 import React, { memo } from 'react';
 import isEqual from 'react-fast-compare';
-import './UserHead.scss';
 
 function getFirst(str) {
   if (!str) {
@@ -67,6 +66,7 @@ const UserHead = ({
           marginRight: 5,
           textAlign: 'center',
           borderRadius: '50%',
+          flexShrink: 0,
         }}
       >
         {user.avatar ? (
