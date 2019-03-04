@@ -8,13 +8,15 @@ import {
 import _ from 'lodash';
 import { delta2Html, issueLink } from '../../../common/utils';
 import {
-  WYSIWYGEditor, Upload as UploadButton, StatusTags, DateTimeAgo, User, RichTextShow, FullEditor, TextEditToggle,
+  WYSIWYGEditor, Upload as UploadButton, StatusTags, DateTimeAgo, User, RichTextShow, FullEditor,
+  TextEditToggle,
 } from '../../CommonComponent';
 import { addDefects, removeDefect } from '../../../api/ExecuteDetailApi';
 import ExecuteDetailStore from '../../../store/project/TestExecute/ExecuteDetailStore';
 import TypeTag from '../../IssueManageComponent/TypeTag';
 import DefectList from './DefectList';
 import './ExecuteDetailSide.scss';
+import { observer } from 'mobx-react';
 
 const { Edit, Text } = TextEditToggle;
 const { Option } = Select;
@@ -64,6 +66,7 @@ const propTypes = {
   onRemoveDefect: PropTypes.func.isRequired,
   onCreateBugShow: PropTypes.func.isRequired,
 };
+@observer
 class ExecuteDetailSide extends Component {
   state = { currentNav: 'detail', FullEditorShow: false, editing: false }
 
@@ -195,10 +198,12 @@ class ExecuteDetailSide extends Component {
   render() {
     const {
       issueInfosDTO, cycleData, fileList, onFileRemove, status, onClose, onUpload,
-      onCommentSave, onRemoveDefect, onCreateBugShow,
+      onCommentSave, onRemoveDefect, onCreateBugShow, onSubmit,
     } = this.props;
     const issueList = ExecuteDetailStore.getIssueList;
     const defectIssueIds = ExecuteDetailStore.getDefectIssueIds;
+    const userList = ExecuteDetailStore.getUserList;
+    const selectLoading = ExecuteDetailStore.selectLoading;
     const { FullEditorShow, editing } = this.state;
     const {
       issueNum, summary, issueId, issueTypeDTO: { typeCode },
@@ -215,6 +220,11 @@ class ExecuteDetailSide extends Component {
         {issue.issueNum}
         {' '}
         {issue.summary}
+      </Option>
+    ));
+    const userOptions = userList.map(user => (
+      <Option key={user.id} value={user.id}>
+        <User user={user} />
       </Option>
     ));
     return (
@@ -266,11 +276,11 @@ class ExecuteDetailSide extends Component {
                 <div className="c7ntest-item-one-line-left">状态：</div>
                 <div className="c7ntest-item-one-line-right">
                   {statusColor && (
-                  <StatusTags
-                    style={{ height: 20, lineHeight: '20px', marginRight: 15 }}
-                    color={statusColor}
-                    name={statusName}
-                  />
+                    <StatusTags
+                      style={{ height: 20, lineHeight: '20px', marginRight: 15 }}
+                      color={statusColor}
+                      name={statusName}
+                    />
                   )}
                 </div>
               </div>
@@ -292,10 +302,34 @@ class ExecuteDetailSide extends Component {
               <div className="c7ntest-item-one-line">
                 <div className="c7ntest-item-one-line-left">被指定人：</div>
                 <div className="c7ntest-item-one-line-right">
-                  <User user={assigneeUser} />
+                  <TextEditToggle
+                    // disabled={disabled}
+                    formKey="assignedTo"
+                    onSubmit={(id) => { onSubmit({ assignedTo: id || 0 }); }}
+                    originData={assigneeUser ? _.find(userList, { id: assigneeUser.id }) ? assigneeUser.id : <User user={assigneeUser} /> : null}
+                    onCancel={this.cancelEdit}
+                  >
+                    <Text>
+                      {assigneeUser ? <User user={assigneeUser} />
+                        : '无'}
+                    </Text>
+                    <Edit>
+                      <Select
+                        filter
+                        allowClear
+                        autoFocus
+                        filterOption={false}
+                        onFilterChange={(value) => { ExecuteDetailStore.loadUserList(value); }}
+                        loading={selectLoading}
+                        style={{ width: 200 }}
+                      >
+                        {userOptions}
+                      </Select>
+                    </Edit>
+                  </TextEditToggle>
                 </div>
               </div>
-              
+
               {/* 执行日期 */}
               <div className="c7ntest-item-one-line">
                 <div className="c7ntest-item-one-line-left">执行日期：</div>
@@ -303,7 +337,7 @@ class ExecuteDetailSide extends Component {
                   <DateTimeAgo date={lastUpdateDate} />
                 </div>
               </div>
-            </Section>           
+            </Section>
             {/* 描述 */}
             <Section
               id="des"
@@ -340,7 +374,7 @@ class ExecuteDetailSide extends Component {
             <Section
               id="attachment"
               icon="attach_file"
-              title="附件"            
+              title="附件"
               action={(
                 <UploadButton handleUpload={onUpload}>
                   <Icon type="file_upload" />
@@ -353,12 +387,12 @@ class ExecuteDetailSide extends Component {
                 fileList={fileList}
                 className="upload-button"
               />
-            </Section>           
+            </Section>
             {/* 缺陷 */}
             <Section
               id="bug"
               icon="bug_report"
-              title="缺陷"            
+              title="缺陷"
               action={(
                 <TextEditToggle
                   className="c7ntest-button-defect-select"
