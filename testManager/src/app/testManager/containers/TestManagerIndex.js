@@ -17,7 +17,7 @@ const IssueManageIndex = asyncRouter(() => import('./project/IssueManage'));
 const AutoTestIndex = asyncRouter(() => import('./project/AutoTest'));
 @inject('AppState')
 class TestManagerIndex extends React.Component {
-  render() {
+  render() {   
     const { match, AppState } = this.props;
     const langauge = AppState.currentLanguage;
     // const langauge = 'en_US';
@@ -39,7 +39,7 @@ class TestManagerIndex extends React.Component {
             <Route path="*" component={nomatch} />
           </Switch>        
         </IntlProviderAsync>
-        <DevTools />
+        {process.env.NODE_ENV === 'development' && <DevTools />}
       </div>
       
     );

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { observer } from 'mobx-react';
 import {
   Menu, Dropdown, Button, Tooltip, Icon, Modal,
@@ -9,6 +9,7 @@ import './PlanTreeTitle.scss';
 import { deleteCycleOrFolder } from '../../../api/cycleApi';
 import { syncFolder, syncFoldersInCycle, syncFoldersInVersion } from '../../../api/IssueManageApi';
 import TestPlanStore from '../../../store/project/TestPlan/TestPlanStore';
+import { DragDropContext, Draggable } from 'react-beautiful-dnd';
 
 const { confirm } = Modal;
 @observer
@@ -35,7 +36,9 @@ class PlanTreeTitle extends Component {
 
   handleItemClick = ({ item, key, keyPath }) => {
     const { data, refresh } = this.props;
-    const { type, folderId, cycleId, title } = data;
+    const {
+      type, folderId, cycleId, title,
+    } = data;
     switch (key) {
       case 'add': {
         this.props.callback(data, 'ADD_FOLDER');
@@ -96,13 +99,7 @@ class PlanTreeTitle extends Component {
   render() {
     const getMenu = (type) => {
       let items = [];
-      if (type === 'temp') {
-        items.push(
-          <Menu.Item key="export">
-            {'导出循环'}
-          </Menu.Item>,
-        );
-      } else if (type === 'folder' || type === 'cycle') {
+      if (type === 'folder' || type === 'cycle') {
         if (type === 'cycle') {
           items.push(
             <Menu.Item key="add">
@@ -127,9 +124,6 @@ class PlanTreeTitle extends Component {
           <Menu.Item key="clone">
             {type === 'folder' ? <FormattedMessage id="cycle_cloneStage" /> : <FormattedMessage id="cycle_cloneCycle" />}
           </Menu.Item>,
-          // <Menu.Item key="export">
-          //   {type === 'folder' ? <FormattedMessage id="cycle_exportFolder" /> : <FormattedMessage id="cycle_exportCycle" />}
-          // </Menu.Item>,
           <Menu.Item key="sync">
             <FormattedMessage id="cycle_sync" />
           </Menu.Item>,
@@ -139,31 +133,57 @@ class PlanTreeTitle extends Component {
       return <Menu onClick={this.handleItemClick} style={{ margin: '10px 0 0 28px' }}>{items}</Menu>;
     };
 
-    const { title, data } = this.props;
-
-    return (
+    const {
+      title, data, icon, index, 
+    } = this.props;
+    const treeTitle = (
       <div className="c7ntest-plan-tree-title">
-        <SmartTooltip width={!data.type && '120px'} className="c7ntest-plan-tree-title-text">
-          {title}
-        </SmartTooltip>
+        {icon}
         {
-          <div role="none" className="c7ntest-plan-tree-title-actionButton" onClick={e => e.stopPropagation()}>
-            {data.type
-              ? (
-                <Dropdown overlay={getMenu(data.type)} trigger={['click']}>
-                  <Button shape="circle" icon="more_vert" />
-                </Dropdown>
-              )
-              : (
-                <Tooltip title={<FormattedMessage id="cycle_sync" />}>
-                  <Icon type="sync" className="c7ntest-add-folder" onClick={this.sync.bind(this, data)} />
-                </Tooltip>
-              )
-            }
-          </div>
+          data.versionId ? (
+            <Fragment>
+              <SmartTooltip width={!data.type && '120px'} className="c7ntest-plan-tree-title-text">
+                {title}
+              </SmartTooltip>
+              {
+                <div role="none" className="c7ntest-plan-tree-title-actionButton" onClick={e => e.stopPropagation()}>
+                  {data.type
+                    ? (
+                      <Dropdown overlay={getMenu(data.type)} trigger={['click']}>
+                        <Button shape="circle" icon="more_vert" />
+                      </Dropdown>
+                    )
+                    : (
+                      <Tooltip title={<FormattedMessage id="cycle_sync" />}>
+                        <Icon type="sync" className="c7ntest-add-folder" onClick={this.sync.bind(this, data)} />
+                      </Tooltip>
+                    )
+                  }
+                </div>
+              }
+            </Fragment>
+          ) : title
         }
+
       </div>
     );
+    // return data.type === 'folder'
+    //   ? (
+    //     <Draggable key={data.key} draggableId={data.cycleId} index={index} type={String(data.parentCycleId)}>
+    //       {(providedinner, snapshotinner) => (
+    //         <div
+    //           ref={providedinner.innerRef}
+    //           {...providedinner.draggableProps}
+    //           {...providedinner.dragHandleProps}
+    //         >
+    //           {treeTitle}
+    //         </div>
+    //       )
+
+    //       }
+    //     </Draggable>
+    //   ) : treeTitle;
+    return treeTitle;
   }
 }
 
