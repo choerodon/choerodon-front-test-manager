@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { findDOMNode } from 'react-dom';
+import { observer } from 'mobx-react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { FormattedMessage } from 'react-intl';
@@ -38,6 +39,7 @@ const propTypes = {
   onRemoveDefect: PropTypes.func.isRequired,
   onCreateBugShow: PropTypes.func.isRequired,
 };
+@observer
 class ExecuteDetailSide extends Component {
   state = { currentNav: 'detail', FullEditorShow: false, editing: false }
 
@@ -169,17 +171,19 @@ class ExecuteDetailSide extends Component {
   render() {
     const {
       issueInfosDTO, cycleData, fileList, onFileRemove, status, onClose, onUpload,
-      onCommentSave, onRemoveDefect, onCreateBugShow,
+      onCommentSave, onRemoveDefect, onCreateBugShow, disabled, onSubmit,
     } = this.props;
     const issueList = ExecuteDetailStore.getIssueList;
     const defectIssueIds = ExecuteDetailStore.getDefectIssueIds;
+    const selectLoading = ExecuteDetailStore.selectLoading;
+    const userList = ExecuteDetailStore.getUserList;
     const { FullEditorShow, editing } = this.state;
     const {
       issueNum, summary, issueId, issueTypeDTO: { typeCode },
     } = issueInfosDTO || { issueTypeDTO: {} };
     const { statusColor, statusName } = status;
     const {
-      lastUpdateDate, cycleName, lastUpdateUser, comment, defects,
+      lastUpdateDate, cycleName, lastUpdateUser, comment, defects, assigneeUser,
     } = cycleData;
     const props = {
       onRemove: onFileRemove,
@@ -189,6 +193,11 @@ class ExecuteDetailSide extends Component {
         {issue.issueNum}
         {' '}
         {issue.summary}
+      </Option>
+    ));
+    const userOptions = userList.map(user => (
+      <Option key={user.id} value={user.id}>
+        <User user={user} />
       </Option>
     ));
     return (
@@ -263,6 +272,37 @@ class ExecuteDetailSide extends Component {
                   <div className="c7ntest-item-one-line-left">执行人：</div>
                   <div className="c7ntest-item-one-line-right">
                     <User user={lastUpdateUser} />
+                  </div>
+                </div>
+                {/* 被指定人 */}
+                <div className="c7ntest-item-one-line">
+                  <div className="c7ntest-item-one-line-left">被指定人：</div>
+                  <div className="c7ntest-item-one-line-right">
+                    <TextEditToggle
+                      disabled={disabled}
+                      formKey="assignedTo"
+                      onSubmit={(id) => { onSubmit({ assignedTo: id || 0 }); }}
+                      originData={assigneeUser ? assigneeUser.id : null}
+                      onCancel={this.cancelEdit}
+                    >
+                      <Text>
+                        {assigneeUser ? <User user={assigneeUser} />
+                          : '无'}
+                      </Text>
+                      <Edit>
+                        <Select
+                          filter
+                          allowClear
+                          autoFocus
+                          filterOption={false}
+                          onFilterChange={(value) => { ExecuteDetailStore.loadUserList(value); }}
+                          loading={selectLoading}
+                          style={{ width: 200 }}
+                        >
+                          {userOptions}
+                        </Select>
+                      </Edit>
+                    </TextEditToggle>
                   </div>
                 </div>
                 {/* 执行日期 */}
