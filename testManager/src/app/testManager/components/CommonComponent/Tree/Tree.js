@@ -1,17 +1,31 @@
 import React, { Component } from 'react';
-import { Tree, Input, Icon } from 'choerodon-ui';
+import PropTypes from 'prop-types';
+import { Draggable, Droppable, DragDropContext } from 'react-beautiful-dnd';
+import TreeNode from './TreeNode';
 import './Tree.scss';
 
-const { TreeNode } = Tree;
-class MyTree extends Component {
+class Tree extends Component {
+  onDragEnd=() => {
+    console.log('end');
+  }
+
+  onDragStart=() => {
+    console.log('start');
+  }
+
   render() {
     return (
-      <Tree
-        className="c7ntest-tree"
-        {...this.props}
-      />
+      <DragDropContext onDragEnd={this.onDragEnd} onDragStart={this.onDragStart}>
+        <ul>
+          {this.props.children}
+        </ul>
+      </DragDropContext>
     );
   }
 }
-MyTree.TreeNode = TreeNode;
-export default MyTree;
+
+Tree.propTypes = {
+
+};
+Tree.TreeNode = TreeNode;
+export default Tree;

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Tree, Input, Icon } from 'choerodon-ui';
 import { observer } from 'mobx-react';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import _ from 'lodash';
 import './PlanTree.scss';
 import TestPlanStore from '../../../store/project/TestPlan/TestPlanStore';
@@ -20,26 +21,26 @@ class PlanTree extends Component {
     searchValue: '',
     CreateStageIn: {},
     CreateStageVisible: false,
-    currentCloneCycle: null, 
+    currentCloneCycle: null,
     CloneCycleVisible: false,
     currentCloneStage: null,
     CloneStageVisible: false,
     EditCycleVisible: false,
     AssignBatchShow: false,
-    currentEditValue: {},    
+    currentEditValue: {},
   }
 
   // componentDidUpdate(prevProps, prevState) {
   //   console.log('treeup');
   // }
-  
+
   refresh = () => {
     TestPlanStore.getTree();
   }
 
   addFolder = (item, e, type) => {
     const { value } = e.target;
-    TestPlanStore.enterLoading();    
+    TestPlanStore.enterLoading();
     addFolder({
       type: 'folder',
       cycleName: value,
@@ -67,7 +68,7 @@ class PlanTree extends Component {
         this.setState({
           currentCloneStage: item,
           CloneStageVisible: true,
-        });      
+        });
         break;
       }
       case 'ASSIGN_BATCH': {
@@ -77,7 +78,7 @@ class PlanTree extends Component {
         });
         break;
       }
-      case 'CLONE_CYCLE': {      
+      case 'CLONE_CYCLE': {
         this.setState({
           currentCloneCycle: item,
           CloneCycleVisible: true,
@@ -104,9 +105,9 @@ class PlanTree extends Component {
 
   getParentKey = (key, tree) => key.split('-').slice(0, -1).join('-')
 
-  renderTreeNodes = data => data.map((item) => {
+  renderTreeNodes = data => data.map((item, i) => {
     const {
-      children, key, cycleCaseList, type,
+      children, key, cycleCaseList, type, cycleId,
     } = item;
     // debugger;
     const { searchValue } = this.state;
@@ -116,7 +117,7 @@ class PlanTree extends Component {
     const afterStr = item.title.substr(index + searchValue.length);
     const icon = (
       <Icon
-        style={{ color: '#3F51B5' }}
+        style={{ color: '#3F51B5', marginRight: 5 }}
         type={expandedKeys.includes(item.key) ? 'folder_open2' : 'folder_open'}
       />
     );
@@ -127,26 +128,44 @@ class PlanTree extends Component {
         {afterStr}
       </span>
     ) : <span>{item.title}</span>;
+    const wrapper = type === 'cycle' ? c => (
+      <Droppable droppableId={cycleId} type={String(cycleId)}>
+        {(provided, snapshot) => (
+          <div
+            ref={provided.innerRef}
+            // style={{ backgroundColor: snapshot.isDraggingOver ? 'blue' : 'grey' }}
+            {...provided.droppableProps}
+          >           
+            {c}
+            {provided.placeholder}
+          </div>
+        )}
+      </Droppable>
+    ) : null;
+    // if (_this2.props.wrapper) {
+    //   $children = _this2.props.wrapper($children);
+    // }
     return (
-      <TreeNode
-        title={item.versionId
-          ? (
-            <PlanTreeTitle
-              statusList={this.state.statusList}
-              refresh={this.refresh}
-              callback={this.callback}
-              text={item.title}
-              key={key}
-              data={item}
-              title={title}
-              processBar={cycleCaseList}
-            />
-          ) : title}
+      <TreeNode       
+        title={(
+          <PlanTreeTitle
+            index={i}
+            statusList={this.state.statusList}
+            refresh={this.refresh}
+            callback={this.callback}
+            text={item.title}
+            key={key}
+            data={item}
+            title={title}
+            processBar={cycleCaseList}
+            icon={icon}
+          />
+        )}
+        wrapper={wrapper}      
         key={key}
         data={item}
-        showIcon
-        icon={icon}
-      >          
+        showIcon={false}
+      >
         {this.renderTreeNodes(children)}
       </TreeNode>
     );
@@ -176,11 +195,19 @@ class PlanTree extends Component {
     });
   }
 
+  onDragStart = (info) => {
+    console.log(info);   
+  }
+
+  onDragEnd = (info) => {
+    console.log(info);   
+  }
+
   render() {
     const { onClose } = this.props;
     const {
       autoExpandParent, CreateStageVisible, CreateStageIn, AssignBatchShow,
-      CloneCycleVisible, currentCloneCycle, CloneStageVisible, currentCloneStage, 
+      CloneCycleVisible, currentCloneCycle, CloneStageVisible, currentCloneStage,
       EditCycleVisible, currentEditValue,
     } = this.state;
     const treeData = TestPlanStore.getTreeData;
@@ -207,7 +234,7 @@ class PlanTree extends Component {
           onCancel={() => { this.setState({ CreateStageVisible: false }); }}
           onOk={() => { this.setState({ CreateStageVisible: false }); this.refresh(); }}
         />
-        <AssignBatch 
+        <AssignBatch
           visible={AssignBatchShow}
           currentEditValue={currentEditValue}
           onCancel={() => { this.setState({ AssignBatchShow: false }); }}
@@ -228,19 +255,24 @@ class PlanTree extends Component {
             <Icon type="navigate_before" />
           </div>
         </div>
-        
-        <div className="c7ntest-PlanTree-tree">          
-          <Tree
-            selectedKeys={selectedKeys}
-            expandedKeys={expandedKeys}
-            showIcon
-            onExpand={this.onExpand}
-            onSelect={TestPlanStore.loadCycle}
-            autoExpandParent={autoExpandParent}
-          >
-            {this.renderTreeNodes(treeData)}
-          </Tree>          
-        </div>      
+
+        <div className="c7ntest-PlanTree-tree">
+          <DragDropContext onDragEnd={this.onDragEnd} onDragStart={this.onDragStart}>
+            <Tree
+              // draggable
+              onDragEnter={this.onDragEnter}
+              onDrop={this.onDrop}
+              selectedKeys={selectedKeys}
+              expandedKeys={expandedKeys}
+              showIcon
+              onExpand={this.onExpand}
+              onSelect={TestPlanStore.loadCycle}
+              autoExpandParent={autoExpandParent}
+            >
+              {this.renderTreeNodes(treeData)}
+            </Tree>
+          </DragDropContext>
+        </div>
       </div>
     );
   }
