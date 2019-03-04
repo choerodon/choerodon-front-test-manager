@@ -7,46 +7,45 @@ import {
   Spin, Icon, Select, Divider, Tooltip,
 } from 'choerodon-ui';
 import moment from 'moment';
-import FileSaver from 'file-saver';
 import { FormattedMessage } from 'react-intl';
 import { importIssue } from '../../../../api/FileApi';
 import { commonLink, humanizeDuration, getProjectName } from '../../../../common/utils';
 import { SelectVersion } from '../../../../components/CommonComponent';
-import { getImportHistory, cancelImport, downloadTemplate } from '../../../../api/IssueManageApi';
+import { getImportHistory, cancelImport } from '../../../../api/IssueManageApi';
 import './ImportIssue.scss';
 
 const { AppState } = stores;
-const { confirm, Sidebar } = Modal;
-
+const { confirm } = Modal;
 class ImportIssue extends Component {
   state = {
     visible: false,
-    importVisible: false,
     uploading: false,
     progress: 0,
     importRecord: null,
     file: null,
     version: null,
-    step: 1,
-  };
+  }
+
+  componentDidMount() {
+    this.getImportHistory();
+  }
 
   getImportHistory = () => {
     getImportHistory().then((data) => {
       this.setState({
         importRecord: data,
-        step: data.status === 1 ? 3 : 1,
       });
     });
-  };
+  }
 
   handleClose = () => {
     this.setState({
       visible: false,
     });
-  };
+  }
 
   upload = () => {
-    const { file, version, importRecord } = this.state;
+    const { file, version } = this.state;
     if (!file || !version) {
       Choerodon.prompt('请选择文件和目标版本');
       return;
@@ -58,23 +57,18 @@ class ImportIssue extends Component {
     });
     importIssue(formData, version).then(() => {
       this.uploadInput.value = '';
-      this.changeStep(1);
       this.setState({
         file: null,
         uploading: false,
         visible: false,
-        importRecord: {
-          ...importRecord,
-          status: 1,
-        }
       });
-    }).catch((e) => {
+    }).catch(() => {
       this.setState({
         uploading: false,
       });
       Choerodon.prompt('网络错误');
     });
-  };
+  }
 
   humanizeDuration = (record) => {
     const { creationDate, lastUpdateDate } = record;
@@ -85,16 +79,20 @@ class ImportIssue extends Component {
     return creationDate && lastUpdateDate
       ? humanizeDuration(diff / 1000)
       : null;
-  };
+  }
 
   renderRecord = () => {
     const { importRecord } = this.state;
     if (!importRecord) {
-      return '';
+      return <div className="c7ntest-ImportIssue-record-normal-text">当前没有导入用例记录</div>;
     }
     const {
-      lastUpdateDate, successfulCount, failedCount, fileUrl,
+      lastUpdateDate, successfulCount, failedCount, fileUrl, status,
     } = importRecord;
+    // 如果用户已取消
+    // if (status === 4) {
+    //   return <div className="c7ntest-ImportIssue-record-normal-text">导入已取消</div>;
+    // }
     return (
       <div className="c7ntest-ImportIssue-record-normal-text">
         上次导入完成时间
@@ -124,13 +122,28 @@ class ImportIssue extends Component {
         )}
       </div>
     );
-  };
+  }
+
+  renderUploading = () => (
+    <div className="c7ntest-ImportIssue-progress-area">
+      <Progress width={80} strokeLinecap="square" type="circle" percent={25} strokeWidth={10} />
+      <div className="c7ntest-ImportIssue-progress-area-text">上传...</div>
+    </div>
+  )
+
+  renderImporting = () => (
+    <div className="c7ntest-ImportIssue-progress-area">
+      <Progress width={80} strokeLinecap="square" type="circle" percent={this.state.progress} strokeWidth={10} />
+      <div className="c7ntest-ImportIssue-progress-area-text">正在导入...</div>
+      <div className="c7ntest-ImportIssue-progress-area-prompt">（本次导入可能会耗时较长，您可以先返回进行其他操作）</div>
+    </div>
+  )
 
   handleOk = () => {
     this.setState({
       visible: false,
     });
-  };
+  }
 
   beforeUpload = (e) => {
     if (e.target.files[0]) {
@@ -138,9 +151,10 @@ class ImportIssue extends Component {
         file: e.target.files[0],
       });
     }
-  };
+  }
 
   handleMessage = (data) => {
+    // console.log(data);
     const { importRecord } = this.state;
     const { rate, id, status } = data;
     if (importRecord.status === 4 && id === importRecord.id && status !== 4) {
@@ -150,7 +164,7 @@ class ImportIssue extends Component {
       progress: rate.toFixed(1),
       importRecord: data,
     });
-  };
+  }
 
   handleCancelImport=() => {
     const { importRecord } = this.state;
@@ -161,154 +175,40 @@ class ImportIssue extends Component {
         // 取消之后重取一下数据
         if (importRecord.id) {
           cancelImport(importRecord.id).then((res) => {
-            // this.getImportHistory();
+            this.getImportHistory();
           });
         }        
       },
     });
-  };
-
-  open = () => {
-    this.setState({
-      importVisible: true,
-    });
-    this.getImportHistory();
-  };
-
-  handleImportClose = () => {
-    this.setState({
-      visible: false,
-      importVisible: false,
-      uploading: false,
-      progress: 0,
-      importRecord: null,
-      file: null,
-      version: null,
-      step: 1,
-    });
-  };
-
-  exportExcel = () => {
-    downloadTemplate().then((excel) => {
-      const blob = new Blob([excel], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-      const fileName = '导入模板.xlsx';
-      FileSaver.saveAs(blob, fileName);
-    });
-  };
-
-  importExcel = () => {
-    this.setState({
-      visible: true,
-    });
-  };
-
-  changeStep = (value) => {
-    const { step } = this.state;
-    this.setState({
-      step: step + value,
-    });
-  };
-
-  footer = () => {
-    const { step, importRecord } = this.state;
-    const { status } = importRecord || {};
-    if (step === 1) {
-      return [
-        <Button type="primary" funcType="raised" onClick={() => this.changeStep(1)}>下一步</Button>,
-        <Button funcType="raised" onClick={this.handleImportClose}>取消</Button>,
-      ];
-    } else if (step === 2) {
-      return [
-        <Button type="primary" funcType="raised" onClick={() => this.changeStep(-1)}>上一步</Button>,
-        <Button funcType="raised" onClick={this.handleImportClose}>取消</Button>,
-      ];
-    } else {
-      return [
-        <Button type="primary" funcType="raised" onClick={this.handleImportClose}>完成</Button>,
-        <Button funcType="raised" disabled={status !== 1} onClick={this.handleCancelImport}>取消上传</Button>,
-      ];
-    }
-  };
-
-  renderProgress = () => {
-    const { importRecord } = this.state;
-    const {
-      rate = 0,
-      status,
-    } = importRecord;
-    if (status === 1) {
-      return (
-        <div style={{ width: 512 }}>
-          <Progress
-            percent={(rate).toFixed(0)}
-            size="small"
-            status="active"
-          />
-        </div>
-      );
-    } else if (status === 2 || status === 4) {
-      return this.renderRecord();
-    } else {
-      return (
-        <div>
-          {'正在查询导入信息，请稍后'}
-        </div>
-      );
-    }
-  };
-
-  renderForm = () => {
-    const { step, uploading, importRecord } = this.state;
-    if (step === 1) {
-      return (
-        <React.Fragment>
-          <Button type="primary" funcType="flat" onClick={() => this.exportExcel()}>
-            <Icon type="get_app icon" />
-            <span>下载模板</span>
-          </Button>
-          {this.renderRecord()}
-        </React.Fragment>
-      );
-    } else if (step === 2) {
-      return (
-        <Button loading={uploading} type="primary" funcType="flat" onClick={() => this.importExcel()}>
-          <Icon type="archive icon" />
-          <span>导入用例</span>
-        </Button>
-      );
-    } else {
-      return (
-        <WSHandler
-          messageKey={`choerodon:msg:test-issue-import:${AppState.userInfo.id}`}
-          onMessage={this.handleMessage}
-        >
-          {this.renderProgress()}
-        </WSHandler>
-      );
-    }
-  };
+  }
 
   render() {
     const {
-      visible, uploading, file, version, importVisible,
+      visible, uploading, file, version, importRecord,
     } = this.state;
+    const { status } = importRecord || {};
+    const importing = status === 1;
     return (
-      <Sidebar
-        title="导入用例"
-        visible={importVisible}
-        footer={this.footer()}
-        onCancel={this.handleImportClose}
-        destroyOnClose
-      >
+      <Page className="c7ntest-Issue c7ntest-region">
+        <Header
+          title="导入用例"
+          backPath={commonLink('/IssueManage')}
+        >
+          <Button
+            onClick={this.getImportHistory}
+          >
+            <Icon type="autorenew icon" />
+            <FormattedMessage id="refresh" />
+          </Button>
+        </Header>
         <Content
-          style={{
-            padding: 1,
-          }}
+          // style={{
+          //   padding: '0 0 10px 0',
+          // }}
           title={<FormattedMessage id="upload_side_content_title" values={{ name: getProjectName() }} />}
           description={<FormattedMessage id="upload_side_content_description" />}
           link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management"
         >
-          {this.renderForm()}
           <Modal
             title="导入用例"
             visible={visible}
@@ -338,8 +238,28 @@ class ImportIssue extends Component {
               accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
             />
           </Modal>
+          <WSHandler
+            messageKey={`choerodon:msg:test-issue-import:${AppState.userInfo.id}`}
+            onMessage={this.handleMessage}
+          >
+            <div className="c7ntest-ImportIssue">
+              {!uploading && !importing && this.renderRecord()}
+              {importing && this.renderImporting()}
+            </div>
+          </WSHandler>
+
+          <Divider />
+          <Button type="primary" funcType="raised" onClick={() => { this.setState({ visible: true }); }} disabled={importing}>
+            <FormattedMessage id="upload" />
+          </Button>
+          {/* 取消导入 */}
+          {importing && (
+          <Button type="primary" funcType="raised" style={{ marginLeft: 20 }} onClick={this.handleCancelImport}>
+            <FormattedMessage id="cancel" />
+          </Button>
+          )}
         </Content>
-      </Sidebar>
+      </Page>
     );
   }
 }

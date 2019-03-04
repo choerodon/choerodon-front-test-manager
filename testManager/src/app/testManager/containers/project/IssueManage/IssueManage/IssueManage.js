@@ -4,15 +4,14 @@ import _ from 'lodash';
 import { Page, Header, Content } from 'choerodon-front-boot';
 import { Button, Icon } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
-import FileSaver from 'file-saver';
 import IssueStore from '../../../../store/project/IssueManage/IssueStore';
-import { downloadTemplate } from '../../../../api/IssueManageApi';
 import { commonLink, getParams, testCaseDetailLink } from '../../../../common/utils';
 import RunWhenProjectChange from '../../../../common/RunWhenProjectChange';
 import CreateIssue from '../../../../components/IssueManageComponent/CreateIssue';
 import IssueTree from '../../../../components/IssueManageComponent/IssueTree';
 import IssueTable from '../../../../components/IssueManageComponent/IssueTable';
 import ExportSide from '../../../../components/IssueManageComponent/ExportSide';
+import ImportSide from '../ImportIssue';
 import './IssueManage.scss';
 import IssueTreeStore from '../../../../store/project/IssueManage/IssueTreeStore';
 
@@ -20,7 +19,7 @@ import IssueTreeStore from '../../../../store/project/IssueManage/IssueTreeStore
 export default class IssueManage extends Component {
   state = { 
     createIssueShow: false,
-  }
+  };
 
   componentDidMount() {
     RunWhenProjectChange(IssueStore.clearStore);
@@ -69,15 +68,6 @@ export default class IssueManage extends Component {
   }
 
 
-  downloadTemplate = () => {
-    downloadTemplate().then((excel) => {
-      const blob = new Blob([excel], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-      const fileName = '导入模板.xlsx';
-      FileSaver.saveAs(blob, fileName);
-    });
-  }
-
-
   handleTableRowClick=(record) => {
     const { history } = this.props;
     history.push(testCaseDetailLink(record.issueId, record.folderName));
@@ -105,13 +95,9 @@ export default class IssueManage extends Component {
             <Icon type="export icon" />
             <FormattedMessage id="export" />
           </Button>
-          <Button className="leftBtn" onClick={() => { this.props.history.push(commonLink('/IssueManage/import')); }}>
+          <Button className="leftBtn" onClick={() => this.importSide.open()}>
             <Icon type="file_upload icon" />
             <FormattedMessage id="import" />
-          </Button>
-          <Button className="leftBtn" onClick={this.downloadTemplate}>
-            <Icon type="get_app icon" />
-            下载模板
           </Button>
           <Button
             onClick={() => {              
@@ -165,6 +151,7 @@ export default class IssueManage extends Component {
             />
           </div>
           <ExportSide ref={this.saveRef('ExportSide')} />
+          <ImportSide ref={this.saveRef('importSide')} />
           {
             createIssueShow && (
               <CreateIssue

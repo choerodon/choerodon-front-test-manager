@@ -357,7 +357,7 @@ const zhCN = {
   issue_tree_paste: '粘贴',
   // 侧边上传导入
   upload_side_content_title: '在项目“{name}”中导入用例',
-  upload_side_content_description: '您可以在此将文件中的用例信息导入到平台中去。注：您必须使用上传模板，点击“下载”下载模板。',
+  upload_side_content_description: '您可以在此将文件中的用例信息导入到平台中去。注：您必须使用上传模板，点击“下载模板”进行下载。',
   // 侧边导出
   export_side_content_title: '在项目“{name}”中导出用例',
   export_side_content_description: '您可以在此将项目的用例信息导出到文件中去。',
