@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import { observer } from 'mobx-react';
 import { FormattedMessage } from 'react-intl';
 import {
   Button, Tooltip, Icon, Upload, Select,
@@ -16,7 +17,7 @@ import ExecuteDetailStore from '../../../store/project/TestExecute/ExecuteDetail
 import TypeTag from '../../IssueManageComponent/TypeTag';
 import DefectList from './DefectList';
 import './ExecuteDetailSide.scss';
-import { observer } from 'mobx-react';
+
 
 const { Edit, Text } = TextEditToggle;
 const { Option } = Select;
@@ -198,7 +199,7 @@ class ExecuteDetailSide extends Component {
   render() {
     const {
       issueInfosDTO, cycleData, fileList, onFileRemove, status, onClose, onUpload,
-      onCommentSave, onRemoveDefect, onCreateBugShow, onSubmit,
+      onCommentSave, onRemoveDefect, onCreateBugShow, onSubmit, disabled,
     } = this.props;
     const issueList = ExecuteDetailStore.getIssueList;
     const defectIssueIds = ExecuteDetailStore.getDefectIssueIds;
@@ -303,7 +304,7 @@ class ExecuteDetailSide extends Component {
                 <div className="c7ntest-item-one-line-left">被指定人：</div>
                 <div className="c7ntest-item-one-line-right">
                   <TextEditToggle
-                    // disabled={disabled}
+                    disabled={!disabled}
                     formKey="assignedTo"
                     onSubmit={(id) => { onSubmit({ assignedTo: id || 0 }); }}
                     originData={assigneeUser ? _.find(userList, { id: assigneeUser.id }) ? assigneeUser.id : <User user={assigneeUser} /> : null}

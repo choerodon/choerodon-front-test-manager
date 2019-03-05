@@ -4,6 +4,10 @@ import { CompactPicker } from 'react-color';
 import PropTypes from 'prop-types';
 import './ColorPicker.scss';
 
+const propTypes = {
+  value: PropTypes.string,
+  onChange: PropTypes.func, 
+};
 class ColorPicker extends Component {
   constructor(props) {
     super(props);
@@ -15,11 +19,9 @@ class ColorPicker extends Component {
 
 
   static getDerivedStateFromProps(nextProps) {
-    // Should be a controlled component.
     if ('value' in nextProps) {
       return {
-        color: nextProps.value,
-        // ...(nextProps.value || {}),
+        color: nextProps.value,   
       };
     }
     return null;
@@ -37,30 +39,22 @@ class ColorPicker extends Component {
     const {
       r, g, b, a,
     } = Color.rgb;
-    const color = `rgba(${r},${g},${b},${a})`;
-    // this.handleCheckColor(color);
-    // this.setState({ color });    
+    const color = `rgba(${r},${g},${b},${a})`;    
     if (!('value' in this.props)) {
       this.setState({ color });
     }
     this.triggerChange(color);
   }
 
-  handleVisibleChange = (visible) => {
-    console.log(visible);
-    // if (!('value' in this.props)) {
-    this.setState({ visible });
-    // }
-    // this.triggerChange({ visible });
+  handleVisibleChange = (visible) => {       
+    this.setState({ visible });   
   }
 
-  hiddenPicker = () => {
-    console.log('hidden');
+  hiddenPicker = () => {    
     this.handleVisibleChange(false);
   }
 
-  triggerChange = (changedValue) => {
-    // Should provide an event to pass value to Form.
+  triggerChange = (changedValue) => {   
     const onChange = this.props.onChange;
     if (onChange) {
       onChange(changedValue);
@@ -70,13 +64,21 @@ class ColorPicker extends Component {
   render() {
     const { visible, color } = this.state;
     return (
-      <div role="none" className="c7ntest-CreateStatus-color-picker-container" onClick={e => e.stopPropagation()}>
+      <div
+        role="none"
+        className="c7ntest-CreateStatus-color-picker-container"
+        onClick={(e) => {
+          e.nativeEvent.stopImmediatePropagation();
+          e.stopPropagation(); 
+        }}
+      >
         <FormattedMessage id="color" />
         {'：'}
         <div
           className="c7ntest-CreateStatus-color-picker-show"
           role="none"
           onClick={(e) => {
+            e.nativeEvent.stopImmediatePropagation();
             e.stopPropagation();
             this.handleVisibleChange(true);
           }}
@@ -104,8 +106,6 @@ class ColorPicker extends Component {
   }
 }
 
-ColorPicker.propTypes = {
-
-};
+ColorPicker.propTypes = propTypes;
 
 export default ColorPicker;
