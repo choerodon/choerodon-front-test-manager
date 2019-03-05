@@ -279,10 +279,10 @@ class ExecuteDetailSide extends Component {
                   <div className="c7ntest-item-one-line-left">被指定人：</div>
                   <div className="c7ntest-item-one-line-right">
                     <TextEditToggle
-                      disabled={disabled}
+                      // disabled={disabled}
                       formKey="assignedTo"
                       onSubmit={(id) => { onSubmit({ assignedTo: id || 0 }); }}
-                      originData={assigneeUser ? assigneeUser.id : null}
+                      originData={assigneeUser ? _.find(userList, { id: assigneeUser.id }) ? assigneeUser.id : <User user={assigneeUser} /> : null}
                       onCancel={this.cancelEdit}
                     >
                       <Text>
