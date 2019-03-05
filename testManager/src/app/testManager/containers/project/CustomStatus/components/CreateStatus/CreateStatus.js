@@ -14,6 +14,7 @@ import {
 import { Content } from 'choerodon-front-boot';
 import { FormattedMessage } from 'react-intl';
 import { CompactPicker } from 'react-color';
+import { ColorPicker } from '../../../../../components/CommonComponent';
 import './CreateStatus.scss';
 import { getProjectName } from '../../../../../common/utils';
 
@@ -151,6 +152,17 @@ class CreateStatus extends Component {
                   <Input style={{ width: 500 }} maxLength={30} label={<FormattedMessage id="comment" />} />,
                 )}
               </FormItem>
+              {/* <FormItem>
+                {getFieldDecorator('testcolor', {
+                  rules: [{
+                    required: true, message: '请选择颜色',
+                  }, {
+                    // validator: this.handleCheckStatusRepeat,
+                  }],
+                })(
+                  <ColorPicker />,
+                )}
+              </FormItem>               */}
               <div role="none" className="c7ntest-CreateStatus-color-picker-container" onClick={e => e.stopPropagation()}>
                 <FormattedMessage id="color" />
                 {'：'}

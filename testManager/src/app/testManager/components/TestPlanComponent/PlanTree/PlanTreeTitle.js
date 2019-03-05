@@ -1,5 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import { observer } from 'mobx-react';
+import { Draggable } from 'react-beautiful-dnd';
 import {
   Menu, Dropdown, Button, Tooltip, Icon, Modal,
 } from 'choerodon-ui';
@@ -9,7 +10,6 @@ import './PlanTreeTitle.scss';
 import { deleteCycleOrFolder } from '../../../api/cycleApi';
 import { syncFolder, syncFoldersInCycle, syncFoldersInVersion } from '../../../api/IssueManageApi';
 import TestPlanStore from '../../../store/project/TestPlan/TestPlanStore';
-import { DragDropContext, Draggable } from 'react-beautiful-dnd';
 
 const { confirm } = Modal;
 @observer
@@ -167,23 +167,23 @@ class PlanTreeTitle extends Component {
 
       </div>
     );
-    // return data.type === 'folder'
-    //   ? (
-    //     <Draggable key={data.key} draggableId={data.cycleId} index={index} type={String(data.parentCycleId)}>
-    //       {(providedinner, snapshotinner) => (
-    //         <div
-    //           ref={providedinner.innerRef}
-    //           {...providedinner.draggableProps}
-    //           {...providedinner.dragHandleProps}
-    //         >
-    //           {treeTitle}
-    //         </div>
-    //       )
+    return data.type === 'folder'
+      ? (
+        <Draggable key={data.key} draggableId={data.cycleId} index={index} type={String(data.parentCycleId)}>
+          {(providedinner, snapshotinner) => (
+            <div
+              ref={providedinner.innerRef}
+              {...providedinner.draggableProps}
+              {...providedinner.dragHandleProps}
+            >
+              {treeTitle}
+            </div>
+          )
 
-    //       }
-    //     </Draggable>
-    //   ) : treeTitle;
-    return treeTitle;
+          }
+        </Draggable>
+      ) : treeTitle;
+    // return treeTitle;
   }
 }
 

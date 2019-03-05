@@ -72,16 +72,17 @@
       .c7ntest-side-item-content {
         padding: 15px 15px 15px 23px;
       }
-      .ant-select-selection__rendered {
-        // display: none;
-        width: 300px;
-        height: 20px;
-        visibility: hidden;
-      }
-      .ant-select {
-        visibility: hidden; // display: none;
-      }
+      
       .c7ntest-button-defect-select {
+        .ant-select-selection__rendered {
+          // display: none;
+          width: 300px;
+          height: 20px;
+          visibility: hidden;
+        }
+        .ant-select {
+          visibility: hidden; // display: none;
+        }
         .c7ntest-TextEditToggle-text {
           padding: 0;
         }

@@ -1,6 +1,5 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
-import DevTools from 'mobx-react-devtools';
 import { inject } from 'mobx-react';
 import { asyncLocaleProvider, asyncRouter, nomatch } from 'choerodon-front-boot';
 import 'moment/locale/zh-cn';
@@ -8,6 +7,11 @@ import 'moment/locale/en-nz';
 import moment from 'moment';
 import '../assets/index.scss';
 
+const isDev = process.env.NODE_ENV === 'development';
+let DevTools = () => null;
+if (isDev) {
+  DevTools = require('mobx-react-devtools').default;
+}
 const TestExecuteIndex = asyncRouter(() => import('./project/TestExecute'));
 const TestPlanIndex = asyncRouter(() => import('./project/TestPlan'));
 const CustomStatusIndex = asyncRouter(() => import('./project/CustomStatus'));
