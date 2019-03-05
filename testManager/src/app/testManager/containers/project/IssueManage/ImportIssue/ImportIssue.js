@@ -93,36 +93,26 @@ class ImportIssue extends Component {
       return '';
     }
     const {
-      lastUpdateDate, successfulCount, failedCount, fileUrl,
+      version='v0.1', failedCount, fileUrl,
     } = importRecord;
     return (
+      failedCount ?
       <div className="c7ntest-ImportIssue-record-normal-text">
-        上次导入完成时间
-        <span style={{ color: 'black' }}>
-          {moment(lastUpdateDate).format('YYYY-MM-DD hh:mm:ss')}
+        {'导入版本为 '}
+        <span>
+          {version}
         </span>
-        （耗时
-        <span style={{ color: 'black' }}>
-          {this.humanizeDuration(importRecord)}
-        </span>
-        ）
-        <br />
-        共导入
-        <span style={{ color: '#23B2B1' }}>
-          {successfulCount}
-        </span>
-        条数据成功，
+        {'，导入失败 '}
         <span style={{ color: '#F44336' }}>
           {failedCount}
         </span>
-        条数据失败
+        {' 条用例'}
         {fileUrl && (
           <a href={fileUrl}>
-            {' '}
-            点击下载失败详情
+            {' 点击下载失败详情'}
           </a>
         )}
-      </div>
+      </div> : ''
     );
   };
 
@@ -142,9 +132,12 @@ class ImportIssue extends Component {
 
   handleMessage = (data) => {
     const { importRecord } = this.state;
-    const { rate, id, status } = data;
+    const { rate, id, status, fileUrl } = data;
     if (importRecord.status === 4 && id === importRecord.id && status !== 4) {
       return;
+    }
+    if (fileUrl) {
+      window.location.href = fileUrl;
     }
     this.setState({
       progress: rate.toFixed(1),
@@ -239,7 +232,9 @@ class ImportIssue extends Component {
     if (status === 1) {
       return (
         <div style={{ width: 512 }}>
+          <span style={{ marginRight: 10 }}>正在导入</span>
           <Progress
+            style={{ width: 450 }}
             percent={(rate).toFixed(0)}
             size="small"
             status="active"
