@@ -1,40 +1,49 @@
 import React, { memo } from 'react';
 import isEqual from 'react-fast-compare';
 import { Icon } from 'choerodon-ui';
+import './TypeTag.scss';
 
+const initTypes = ['agile_epic', 'agile_story', 'agile_fault', 'agile_task', 'agile_subtask'];
 const TypeTag = ({
-  type,
-  showName,
+  type, style, showName,
 }) => {
   const {
     colour: typeColor, name: typeName, typeCode, icon,
   } = type || {}; 
   const backgroundColor = typeColor && typeColor.includes('#') ? typeColor : `#${typeColor}`;
   return (
-    <div style={{ display: 'flex' }}>
-      <div      
-        style={{
-          backgroundColor,
-          display: 'flex',
-          width: 20,
-          height: 20,
-          borderRadius: '4px',
-          color: '#fff',
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}
-      >
-        <Icon
-          style={{ fontSize: '14px' }}
-          type={icon}
-          color="#fff"
-        />
-      </div>
+    <div className="c7ntest-typeTag" style={style}>
+      {initTypes.indexOf(icon || '') !== -1
+        ? (
+          <Icon
+            style={{
+              fontSize: '26px',
+              color: typeColor || '#fab614',
+            }}
+            type={icon || 'help'}
+          />
+        )
+        : (
+          <div
+            className="icon-wapper"
+            style={{
+              backgroundColor: typeColor || '#fab614',
+              padding: '2px',
+              margin: '3px',
+            }}
+          >
+            <Icon
+              style={{ fontSize: '16px' }}
+              type={icon || 'help'}
+            />
+          </div>
+        )
+      }
       {
-          showName && (
-            <span style={{ marginLeft: 8 }}>{typeName}</span>
-          )
-        }
+        showName && (
+          <span className="name">{typeName || ''}</span>
+        )
+      }
     </div>
   );
 };

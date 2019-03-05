@@ -195,6 +195,7 @@ class CreateLinkTask extends Component {
                   filterOption={false}
                   onFilterChange={this.onFilterChange.bind(this)}
                   onChange={this.handleSelect.bind(this)}
+                  dropdownClassName="c7ntest-issueSelectDropDown"
                 >
                   {this.state.originIssues.map(issue => (
                     <Option
