@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
@@ -6,7 +7,7 @@ import { FormattedMessage } from 'react-intl';
 import {
   Button, Tooltip, Icon, Upload, Select,
 } from 'choerodon-ui';
-import _ from 'lodash';
+import { find } from 'lodash';
 import { delta2Html, issueLink } from '../../../common/utils';
 import {
   WYSIWYGEditor, Upload as UploadButton, StatusTags, DateTimeAgo, User, RichTextShow, FullEditor,
@@ -93,7 +94,7 @@ class ExecuteDetailSide extends Component {
   }
 
   getCurrentNav(e) {
-    return _.find(navs.map(nav => nav.code), i => this.isInLook(document.getElementById(i)));
+    return find(navs.map(nav => nav.code), i => this.isInLook(document.getElementById(i)));
   }
 
   isInLook(ele) {
@@ -188,8 +189,8 @@ class ExecuteDetailSide extends Component {
 
   handleRemoveDefect = (issueId) => {
     const cycleData = ExecuteDetailStore.getCycleData;
-    if (_.find(cycleData.defects, { issueId: Number(issueId) })) {
-      const defectId = _.find(cycleData.defects, { issueId: Number(issueId) }).id;
+    if (find(cycleData.defects, { issueId: Number(issueId) })) {
+      const defectId = find(cycleData.defects, { issueId: Number(issueId) }).id;
       removeDefect(defectId).then((res) => {
         ExecuteDetailStore.removeLocalDefect(defectId);
       });
@@ -307,7 +308,11 @@ class ExecuteDetailSide extends Component {
                     disabled={!disabled}
                     formKey="assignedTo"
                     onSubmit={(id) => { onSubmit({ assignedTo: id || 0 }); }}
-                    originData={assigneeUser ? _.find(userList, { id: assigneeUser.id }) ? assigneeUser.id : <User user={assigneeUser} /> : null}
+                    originData={assigneeUser
+                      ? find(userList, { id: assigneeUser.id })
+                        ? assigneeUser.id
+                        : <User user={assigneeUser} />
+                      : null}
                     onCancel={this.cancelEdit}
                   >
                     <Text>
