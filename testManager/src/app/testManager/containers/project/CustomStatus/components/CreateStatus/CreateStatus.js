@@ -13,7 +13,6 @@ import {
 } from 'choerodon-ui';
 import { Content } from 'choerodon-front-boot';
 import { FormattedMessage } from 'react-intl';
-import { CompactPicker } from 'react-color';
 import { ColorPicker } from '../../../../../components/CommonComponent';
 import './CreateStatus.scss';
 import { getProjectName } from '../../../../../common/utils';
@@ -33,20 +32,15 @@ const propTypes = {
   onSubmit: PropTypes.func.isRequired,
 };
 class CreateStatus extends Component {
-  state = {
-    pickShow: false,
-    statusColor: 'GRAY',
-    colorRepeat: null,
-  }
-
   componentDidMount() {
-    this.handleCheckColor();
+    this.validateColor();
   }
 
   componentWillReceiveProps(nextProps) {
     const { resetFields } = this.props.form;
     if (this.props.visible === false && nextProps.visible === true) {
       resetFields();
+      this.validateColor();
     }
   }
 
@@ -54,40 +48,25 @@ class CreateStatus extends Component {
   handleStatusTypeChange = () => {
     // 等待form的值改变
     setTimeout(() => {
-      this.handleCheckColor();
+      this.validateColor();
     }, 0);
   }
 
-  handleColorChange = (color) => {
-    const {
-      r, g, b, a,
-    } = color.rgb;
-    const statusColor = `rgba(${r},${g},${b},${a})`;
-    this.handleCheckColor(statusColor);
-    this.setState({ statusColor });
+  validateColor=() => {
+    this.props.form.validateFields(['statusColor'], { force: true });
   }
 
-  handleCheckColor = (statusColor = this.state.statusColor) => {
+  handleCheckColor = (rule, statusColor, callback) => {
     const { getFieldValue } = this.props.form;
-    const statusType = getFieldValue('statusType'); 
-    this.props.onCheckStatusRepeat({ statusType, statusColor })(null, null, this.handleColorRepeat);
+    const statusType = getFieldValue('statusType');    
+    this.props.onCheckStatusRepeat({ statusType, statusColor })(rule, statusColor, callback);    
   }
 
-  handleColorRepeat = (errorMessage) => {
-    this.setState({
-      colorRepeat: errorMessage,
-    });
-  }
-
-  handleOk = () => {
-    const { statusColor, colorRepeat } = this.state;
+  handleOk = () => {  
     const { onSubmit } = this.props;
     this.props.form.validateFieldsAndScroll((err, values) => {
-      if (!err && !colorRepeat) {
-        onSubmit({
-          ...values,
-          ...{ statusColor },
-        });
+      if (!err) {
+        onSubmit(values);
       }
     });
   }
@@ -102,10 +81,9 @@ class CreateStatus extends Component {
     const {
       visible, onCancel, loading,
     } = this.props;
-    const { getFieldDecorator, getFieldValue } = this.props.form;
-    const { pickShow, statusColor, colorRepeat } = this.state;
+    const { getFieldDecorator, getFieldValue } = this.props.form;    
     return (
-      <div onClick={() => { this.setState({ pickShow: false }); }} role="none">
+      <div>
         <Sidebar
           title={`创建“${getFieldValue('statusType') === 'CYCLE_CASE' ? '执行' : '步骤'}”状态`}
           visible={visible}
@@ -152,50 +130,18 @@ class CreateStatus extends Component {
                   <Input style={{ width: 500 }} maxLength={30} label={<FormattedMessage id="comment" />} />,
                 )}
               </FormItem>
-              {/* <FormItem>
-                {getFieldDecorator('testcolor', {
+              <FormItem>
+                {getFieldDecorator('statusColor', {
                   rules: [{
                     required: true, message: '请选择颜色',
                   }, {
-                    // validator: this.handleCheckStatusRepeat,
+                    validator: this.handleCheckColor,
                   }],
+                  initialValue: 'GRAY',
                 })(
                   <ColorPicker />,
                 )}
-              </FormItem>               */}
-              <div role="none" className="c7ntest-CreateStatus-color-picker-container" onClick={e => e.stopPropagation()}>
-                <FormattedMessage id="color" />
-                {'：'}
-                <div
-                  className="c7ntest-CreateStatus-color-picker-show"
-                  role="none"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    this.setState({ pickShow: true });
-                  }}
-                >
-                  <div style={{ background: statusColor }}>
-                    <div className="c7ntest-CreateStatus-color-picker-show-rec-con">
-                      <div className="c7ntest-CreateStatus-color-picker-show-rec" />
-                    </div>
-                  </div>
-                </div>
-                <div
-                  style={pickShow
-                    ? {
-                      display: 'block', position: 'absolute', bottom: 20, left: 60,
-                    }
-                    : { display: 'none' }}
-                >
-                  <CompactPicker
-                    color={statusColor}
-                    onChangeComplete={this.handleColorChange}
-                  />
-                </div>
-              </div>
-              <div className="ant-form-explain" style={{ color: '#d50000', marginTop: 2 }}>
-                {colorRepeat}
-              </div>
+              </FormItem>    
             </Form>
           </Content>
         </Sidebar>
