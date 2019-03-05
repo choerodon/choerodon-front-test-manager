@@ -4,6 +4,10 @@ import { CompactPicker } from 'react-color';
 import PropTypes from 'prop-types';
 import './ColorPicker.scss';
 
+const propTypes = {
+  value: PropTypes.string,
+  onChange: PropTypes.func, 
+};
 class ColorPicker extends Component {
   constructor(props) {
     super(props);
@@ -15,11 +19,9 @@ class ColorPicker extends Component {
 
 
   static getDerivedStateFromProps(nextProps) {
-    // Should be a controlled component.
     if ('value' in nextProps) {
       return {
-        color: nextProps.value,
-        // ...(nextProps.value || {}),
+        color: nextProps.value,   
       };
     }
     return null;
@@ -104,8 +106,6 @@ class ColorPicker extends Component {
   }
 }
 
-ColorPicker.propTypes = {
-
-};
+ColorPicker.propTypes = propTypes;
 
 export default ColorPicker;
