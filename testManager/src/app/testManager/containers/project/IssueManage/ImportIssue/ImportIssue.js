@@ -93,7 +93,7 @@ class ImportIssue extends Component {
       return '';
     }
     const {
-      version='v0.1', failedCount, fileUrl, successfulCount,
+      versionName, failedCount, fileUrl, successfulCount,
     } = importRecord;
     if (failedCount) {
       return (
@@ -119,7 +119,7 @@ class ImportIssue extends Component {
         <div className="c7ntest-ImportIssue-record-normal-text">
           {'导入版本为 '}
           <span>
-            {version}
+            {versionName || ''}
           </span>
           {'，导入成功 '}
           <span style={{ color: '#0000FF' }}>
@@ -238,7 +238,7 @@ class ImportIssue extends Component {
         <Button type="primary" funcType="raised" onClick={this.handleImportClose}>
           <FormattedMessage id="finish" />
         </Button>,
-        <Button funcType="raised" disabled={status !== 1} onClick={this.handleCancelImport}>
+        <Button funcType="raised" disabled={status && status !== 1} onClick={this.handleCancelImport}>
           <FormattedMessage id="issue_import_cancel" />
         </Button>,
       ];
