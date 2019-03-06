@@ -27,6 +27,7 @@ const zhCN = {
   edit: '修改',
   create: '创建',
   cancel: '取消',
+  finish: '完成',
   ok: '确定',
   close: '关闭',
   delete: '删除',
@@ -276,6 +277,9 @@ const zhCN = {
   issue_issueCreateAt: '创建于',
   issue_repository: '用例仓库',
   issue_folder: '文件夹',
+  issue_download_tpl: '下载模板',
+  issue_import: '导入用例',
+  issue_import_cancel: '取消上传',
   //测试用例详情
   testCase_detail: '用例详情',
   testCase_pre: '上一个用例',
