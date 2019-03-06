@@ -87,33 +87,48 @@ class ImportIssue extends Component {
       : null;
   };
 
-  renderRecord = () => {
+  renderRecord = (tag) => {
     const { importRecord } = this.state;
     if (!importRecord) {
       return '';
     }
     const {
-      version='v0.1', failedCount, fileUrl,
+      version='v0.1', failedCount, fileUrl, successfulCount,
     } = importRecord;
-    return (
-      failedCount ?
-      <div className="c7ntest-ImportIssue-record-normal-text">
-        {'导入版本为 '}
-        <span>
+    if (failedCount) {
+      return (
+        <div className="c7ntest-ImportIssue-record-normal-text">
+          {'导入版本为 '}
+          <span>
           {version}
         </span>
-        {'，导入失败 '}
-        <span style={{ color: '#F44336' }}>
+          {'，导入失败 '}
+          <span style={{ color: '#F44336' }}>
           {failedCount}
         </span>
-        {' 条用例'}
-        {fileUrl && (
-          <a href={fileUrl}>
-            {' 点击下载失败详情'}
-          </a>
-        )}
-      </div> : ''
-    );
+          {' 条用例'}
+          {fileUrl && (
+            <a href={fileUrl}>
+              {' 点击下载失败详情'}
+            </a>
+          )}
+        </div>
+      );
+    } else if (tag) {
+      return (
+        <div className="c7ntest-ImportIssue-record-normal-text">
+          {'导入版本为 '}
+          <span>
+            {version}
+          </span>
+          {'，导入成功 '}
+          <span style={{ color: '#0000FF' }}>
+            {successfulCount}
+          </span>
+          {' 条用例'}
+        </div>
+      );
+    }
   };
 
   handleOk = () => {
@@ -147,17 +162,12 @@ class ImportIssue extends Component {
 
   handleCancelImport=() => {
     const { importRecord } = this.state;
-    confirm({
-      title: '取消导入',
-      content: '取消导入不会删除已经导入的数据。',
-      onOk: () => {
-        // 取消之后重取一下数据
-        if (importRecord.id) {
-          cancelImport(importRecord.id).then((res) => {
-            // this.getImportHistory();
-          });
-        }        
-      },
+    cancelImport(importRecord.id).then((res) => {
+      if (res) {
+        this.setState({
+          importVisible: false,
+        });
+      }
     });
   };
 
@@ -207,18 +217,30 @@ class ImportIssue extends Component {
     const { status } = importRecord || {};
     if (step === 1) {
       return [
-        <Button type="primary" funcType="raised" onClick={() => this.changeStep(1)}>下一步</Button>,
-        <Button funcType="raised" onClick={this.handleImportClose}>取消</Button>,
+        <Button type="primary" funcType="raised" onClick={() => this.changeStep(1)}>
+          <FormattedMessage id="next" />
+        </Button>,
+        <Button funcType="raised" onClick={this.handleImportClose}>
+          <FormattedMessage id="cancel" />
+        </Button>,
       ];
     } else if (step === 2) {
       return [
-        <Button type="primary" funcType="raised" onClick={() => this.changeStep(-1)}>上一步</Button>,
-        <Button funcType="raised" onClick={this.handleImportClose}>取消</Button>,
+        <Button type="primary" funcType="raised" onClick={() => this.changeStep(-1)}>
+          <FormattedMessage id="previous" />
+        </Button>,
+        <Button funcType="raised" onClick={this.handleImportClose}>
+          <FormattedMessage id="cancel" />
+        </Button>,
       ];
     } else {
       return [
-        <Button type="primary" funcType="raised" onClick={this.handleImportClose}>完成</Button>,
-        <Button funcType="raised" disabled={status !== 1} onClick={this.handleCancelImport}>取消上传</Button>,
+        <Button type="primary" funcType="raised" onClick={this.handleImportClose}>
+          <FormattedMessage id="finish" />
+        </Button>,
+        <Button funcType="raised" disabled={status !== 1} onClick={this.handleCancelImport}>
+          <FormattedMessage id="issue_import_cancel" />
+        </Button>,
       ];
     }
   };
@@ -241,8 +263,8 @@ class ImportIssue extends Component {
           />
         </div>
       );
-    } else if (status === 2 || status === 4) {
-      return this.renderRecord();
+    } else if (status === 2) {
+      return this.renderRecord(true);
     } else {
       return (
         <div>
@@ -259,7 +281,7 @@ class ImportIssue extends Component {
         <React.Fragment>
           <Button type="primary" funcType="flat" onClick={() => this.exportExcel()}>
             <Icon type="get_app icon" />
-            <span>下载模板</span>
+            <FormattedMessage id="issue_download_tpl" />
           </Button>
           {this.renderRecord()}
         </React.Fragment>
@@ -268,7 +290,7 @@ class ImportIssue extends Component {
       return (
         <Button loading={uploading} type="primary" funcType="flat" onClick={() => this.importExcel()}>
           <Icon type="archive icon" />
-          <span>导入用例</span>
+          <FormattedMessage id="issue_import" />
         </Button>
       );
     } else {

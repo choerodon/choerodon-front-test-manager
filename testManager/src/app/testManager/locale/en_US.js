@@ -25,6 +25,7 @@ const enUS = {
   operate: 'Operate',
   cancel: 'Cancel',
   ok: 'Ok',
+  finish: 'Finish',
   delete: 'Delete',
   clone: 'Clone',
   copy: 'Copy',
@@ -161,12 +162,12 @@ const enUS = {
   report_select_questionId: 'test question ID',
   report_select_summary: 'summary',
 
-    // 测试进度报表
-    report_progress_versionLabel: 'version',
-    report_progress_cycleLabel: 'test cycle',
-    report_progress_table_title: 'data statistics',
-    report_progress_table_statusTd: 'test execution status',
-    report_progress_table_countTd: 'execution quantity',
+  // 测试进度报表
+  report_progress_versionLabel: 'version',
+  report_progress_cycleLabel: 'test cycle',
+  report_progress_table_title: 'data statistics',
+  report_progress_table_statusTd: 'test execution status',
+  report_progress_table_countTd: 'execution quantity',
 
   // 测试计划
   testPlan_name: 'test plan',
@@ -265,6 +266,9 @@ const enUS = {
   issue_issueCreateAt: 'Create on',
   issue_repository: 'issue repository',
   issue_folder: 'folder',
+  issue_download_tpl: 'Download template',
+  issue_import: 'Import',
+  issue_import_cancel: '取消上传',
   // 创建测试用例侧边栏
   issue_create_name: 'Create test issue',
   issue_create_title: 'Create test issue in project “{name}”',
