@@ -117,11 +117,7 @@ class ImportIssue extends Component {
     } else if (tag) {
       return (
         <div className="c7ntest-ImportIssue-record-normal-text">
-          {'导入版本为 '}
-          <span>
-            {versionName || ''}
-          </span>
-          {'，导入成功 '}
+          {'导入成功 '}
           <span style={{ color: '#0000FF' }}>
             {successfulCount}
           </span>
@@ -163,11 +159,9 @@ class ImportIssue extends Component {
   handleCancelImport=() => {
     const { importRecord } = this.state;
     cancelImport(importRecord.id).then((res) => {
-      if (res) {
-        this.setState({
-          importVisible: false,
-        });
-      }
+      this.setState({
+        importVisible: false,
+      });
     });
   };
 
