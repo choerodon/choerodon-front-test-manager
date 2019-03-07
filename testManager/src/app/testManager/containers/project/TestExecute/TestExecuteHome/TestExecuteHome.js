@@ -94,8 +94,7 @@ const TestExecuteHome = ({
               onTreeAssignedToChange={onTreeAssignedToChange}              
               treeAssignedTo={treeAssignedTo}              
               treeData={treeData}
-              treeSearchValue={treeSearchValue}
-              statusList={statusList}
+              treeSearchValue={treeSearchValue}             
               selectedKeys={selectedKeys}
               expandedKeys={expandedKeys}
               onTreeNodeExpand={onTreeNodeExpand}
@@ -104,7 +103,7 @@ const TestExecuteHome = ({
             />          
             {cycleId ? (
               <div className="c7ntest-TestExecuteHome-right">
-                <ShowCycleData data={currentCycle} statusList={statusList} />
+                <ShowCycleData data={currentCycle} />
                 <TestExecuteTable
                   prioritys={prioritys}
                   statusList={statusList}

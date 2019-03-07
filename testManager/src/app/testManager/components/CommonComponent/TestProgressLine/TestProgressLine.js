@@ -4,27 +4,24 @@ import { Popover } from 'choerodon-ui';
 import './TestProgressLine.scss';
 
 const TestProgressLine = ({
-  progress, statusList, style, ...restProps
+  progress, style, ...restProps
 }) => {
   let total = 0;
-  const ProcessBar = {};
-  const content = [];
-  for (let i = 0; i < statusList.length; i += 1) {
-    const status = statusList[i];
-    if (progress[status.statusColor]) {
-      ProcessBar[status.statusColor] = progress[status.statusColor];
-      content.push(
-        <div key={status.statusColor} style={{ display: 'flex', width: 100 }}>
-          <div>{status.statusName}</div>
-          <div className="c7ntest-flex-space" />
-          <div>{progress[status.statusColor]}</div>
-        </div>,
-      );
-    }
-  }
-  Object.keys(ProcessBar).forEach((key) => { total += ProcessBar[key]; });
-  const inner = Object.keys(ProcessBar).map((key, i) => {
-    const percentage = (ProcessBar[key] / total) * 100;
+  // const progress = {};
+  const content = Object.keys(progress).map((key) => {
+    const { statusName, counts } = progress[key];
+    return (
+      <div key={key} style={{ display: 'flex', width: 100 }}>
+        <div>{statusName}</div>
+        <div className="c7ntest-flex-space" />
+        <div>{counts}</div>
+      </div>
+    );
+  });
+
+  Object.keys(progress).forEach((key) => { total += progress[key].counts; });
+  const inner = Object.keys(progress).map((key, i) => {
+    const percentage = (progress[key].counts / total) * 100;
 
     return <span key={Math.random()} className="c7ntest-process-line-fill-item" style={{ backgroundColor: key, width: `${percentage}%` }} />;
   });
@@ -37,7 +34,7 @@ const TestProgressLine = ({
     </div>
   );
   return (
-    Object.keys(ProcessBar).length > 0
+    Object.keys(progress).length > 0
       ? (
         <Popover
           content={<div>{content}</div>}

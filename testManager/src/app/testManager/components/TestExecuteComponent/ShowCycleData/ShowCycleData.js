@@ -25,21 +25,22 @@ const CardItem = ({ label, content }) => (
 );
 const propTypes = {
   data: PropTypes.shape({}).isRequired,
-  statusList: PropTypes.arrayOf(PropTypes.shape({})),  
 };
 const ShowCycleData = ({
-  data, statusList,
+  data,
 }) => {
   const calculateNum = (cycleCaseList) => {
     let total = 0;
-    Object.keys(cycleCaseList).forEach((key) => { total += cycleCaseList[key]; });
     let notExecute = 0;
-    for (let i = 0; i < statusList.length; i += 1) {
-      const status = statusList[i];
-      if (cycleCaseList[status.statusColor] && status.statusName === '未执行' && status.projectId === 0) {
-        notExecute += cycleCaseList[status.statusColor];
+    Object.keys(cycleCaseList).forEach((key) => { 
+      const status = cycleCaseList[key];
+      const { statusName, projectId, counts } = status;
+      total += counts; 
+      if (statusName === '未执行' && projectId === 0) {
+        notExecute += counts;
       }
-    }
+    });    
+    
     return {
       execute: total - notExecute,
       total,
@@ -79,7 +80,7 @@ const ShowCycleData = ({
             : <FormattedMessage id="cycle_cycleName" />}
           <span>{`：${title}`}</span>
         </div>
-        <TestProgressLine style={{ margin: '0 20px' }} statusList={statusList} progress={cycleCaseList} />
+        <TestProgressLine style={{ margin: '0 20px' }} progress={cycleCaseList} />
         {`已测:${calculateNum(cycleCaseList).execute}/${calculateNum(cycleCaseList).total}`}
         <div style={{ flex: 1, visiblity: 'hidden' }} />
       </div>

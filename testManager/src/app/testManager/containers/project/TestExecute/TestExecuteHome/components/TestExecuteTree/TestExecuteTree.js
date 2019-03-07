@@ -10,7 +10,6 @@ const { TreeNode } = Tree;
 const propTypes = {
   treeSearchValue: PropTypes.string.isRequired,  
   autoExpandParent: PropTypes.bool.isRequired,
-  statusList: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
   treeData: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
   expandedKeys: PropTypes.arrayOf(PropTypes.string).isRequired,
   selectedKeys: PropTypes.arrayOf(PropTypes.string).isRequired,
@@ -22,7 +21,6 @@ const TestExecuteTree = ({
   treeSearchValue,
   selectedKeys,
   expandedKeys,
-  statusList,
   treeAssignedTo,
   onTreeNodeExpand,
   onTreeNodeSelect,
@@ -58,8 +56,7 @@ const TestExecuteTree = ({
         <TreeNode
           title={item.cycleId
             ? (
-              <TreeTitle
-                statusList={statusList}
+              <TreeTitle        
                 text={item.title}
                 key={key}
                 data={item}

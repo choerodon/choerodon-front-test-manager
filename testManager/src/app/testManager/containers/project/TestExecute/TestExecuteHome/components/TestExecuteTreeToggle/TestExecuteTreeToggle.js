@@ -17,7 +17,6 @@ const propTypes = {
   onTreeAssignedToChange: PropTypes.func.isRequired,
   treeSearchValue: PropTypes.string.isRequired,  
   autoExpandParent: PropTypes.bool.isRequired,
-  statusList: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
   treeData: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
   expandedKeys: PropTypes.arrayOf(PropTypes.string).isRequired,
   selectedKeys: PropTypes.arrayOf(PropTypes.string).isRequired,
