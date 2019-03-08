@@ -28,6 +28,8 @@ class ImportIssue extends Component {
     file: null,
     version: null,
     step: 1,
+    fileName: false,
+    versionName: false,
   };
 
   getImportHistory = () => {
@@ -88,40 +90,64 @@ class ImportIssue extends Component {
   };
 
   renderRecord = (tag) => {
-    const { importRecord } = this.state;
+    const { importRecord, fileName, versionName } = this.state;
     if (!importRecord) {
       return '';
     }
     const {
-      versionName, failedCount, fileUrl, successfulCount,
+      versionName: version, failedCount, fileUrl, successfulCount,
     } = importRecord;
     if (failedCount) {
       return (
         <div className="c7ntest-ImportIssue-record-normal-text">
-          {'导入版本为 '}
-          <span>
-          {version}
-        </span>
-          {'，导入失败 '}
-          <span style={{ color: '#F44336' }}>
-          {failedCount}
-        </span>
-          {' 条用例'}
-          {fileUrl && (
-            <a href={fileUrl}>
-              {' 点击下载失败详情'}
-            </a>
-          )}
+          {fileName
+            ? (
+              <span className="c7ntest-ImportIssue-fileName">
+                <Icon type="folder_open" className="c7ntest-ImportIssue-icon" />
+                <span>{fileName}</span>
+              </span>
+            )
+            : ''
+          }
+          <span className="c7ntest-ImportIssue-text">
+            {'导入到 '}
+            <span className="c7ntest-ImportIssue-version">{version || versionName}</span>
+            {' 版本失败 '}
+            <span style={{ color: '#F44336' }}>
+            {failedCount}
+          </span>
+            {' 条用例'}
+            {fileUrl
+              ? (
+                <a href={fileUrl}>
+                  {' 点击下载失败详情'}
+                </a>
+              ) : ''
+            }
+          </span>
         </div>
       );
     } else if (tag) {
       return (
         <div className="c7ntest-ImportIssue-record-normal-text">
-          {'导入成功 '}
-          <span style={{ color: '#0000FF' }}>
+          {fileName
+            ? (
+              <span className="c7ntest-ImportIssue-fileName">
+                <Icon type="folder_open" className="c7ntest-ImportIssue-icon" />
+                <span>{fileName}</span>
+              </span>
+            )
+            : ''
+          }
+          <span className="c7ntest-ImportIssue-text">
+            {'导入到 '}
+            <span className="c7ntest-ImportIssue-version">{version || versionName}</span>
+            {' 版本成功 '}
+            <span style={{ color: '#0000FF' }}>
             {successfulCount}
           </span>
-          {' 条用例'}
+            {' 条用例'}
+          </span>
         </div>
       );
     }
@@ -137,6 +163,7 @@ class ImportIssue extends Component {
     if (e.target.files[0]) {
       this.setState({
         file: e.target.files[0],
+        fileName: e.target.files[0].name,
       });
     }
   };
@@ -159,9 +186,7 @@ class ImportIssue extends Component {
   handleCancelImport=() => {
     const { importRecord } = this.state;
     cancelImport(importRecord.id).then((res) => {
-      this.setState({
-        importVisible: false,
-      });
+      this.handleImportClose();
     });
   };
 
@@ -182,6 +207,8 @@ class ImportIssue extends Component {
       file: null,
       version: null,
       step: 1,
+      versionName: false,
+      fileName: false,
     });
   };
 
@@ -240,7 +267,7 @@ class ImportIssue extends Component {
   };
 
   renderProgress = () => {
-    const { importRecord } = this.state;
+    const { importRecord, fileName } = this.state;
     const {
       rate = 0,
       status,
@@ -248,12 +275,22 @@ class ImportIssue extends Component {
     if (status === 1) {
       return (
         <div style={{ width: 512 }}>
-          <span style={{ marginRight: 10 }}>正在导入</span>
+          {fileName
+            ? (
+              <span className="c7ntest-ImportIssue-fileName">
+                <Icon type="folder_open" className="c7ntest-ImportIssue-icon" />
+                <span>{fileName}</span>
+              </span>
+            )
+            : ''
+          }
+          <span className="c7ntest-ImportIssue-text">正在导入</span>
           <Progress
-            style={{ width: 450 }}
+            className="c7ntest-ImportIssue-progress"
             percent={(rate).toFixed(0)}
             size="small"
             status="active"
+            showInfo={false}
           />
         </div>
       );
@@ -330,7 +367,13 @@ class ImportIssue extends Component {
             onCancel={this.handleClose}
           >
             <div className="c7ntest-center" style={{ marginBottom: 20 }}>
-              <SelectVersion value={version} onChange={(versionId) => { this.setState({ version: versionId }); }} style={{ width: 120 }} />
+              <SelectVersion
+                value={version}
+                onChange={(versionId, option) => {
+                  this.setState({ version: versionId, versionName: option.props.children });
+                }}
+                style={{ width: 120 }}
+              />
               <Input
                 style={{ width: 340, margin: '17px 0 0 18px' }}
                 value={file && file.name}
