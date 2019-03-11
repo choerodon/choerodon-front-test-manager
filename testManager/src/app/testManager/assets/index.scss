@@ -69,3 +69,10 @@
     top: 2px;
   }
 }
+
+.c7ntest-inline-flex-dropdown {
+  .ant-select-dropdown-menu-item {
+    // overflow: visible;
+    display: flex;
+  }
+}

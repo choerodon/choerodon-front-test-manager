@@ -318,7 +318,20 @@ export function humanizeDuration(ms, config = {}) {
 export const getProjectId = () => AppState.currentMenuType.id;
 export const getProjectName = () => AppState.currentMenuType.name;
 export const getOrganizationId = () => AppState.currentMenuType.organizationId;
-
+/**
+ * 生成指定长度的随机字符串
+ * @param len 字符串长度
+ * @returns {string}
+ */
+export function randomString(len = 32) {
+  let code = '';
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const maxPos = chars.length;
+  for (let i = 0; i < len; i += 1) {
+    code += chars.charAt(Math.floor(Math.random() * (maxPos + 1)));
+  }
+  return code;
+}
 // 全局拦截
 class Request {
   constructor() {

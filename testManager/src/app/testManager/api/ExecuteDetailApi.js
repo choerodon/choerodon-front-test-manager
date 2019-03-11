@@ -53,3 +53,9 @@ export function getCycleHistiorys(pagination, cycleCaseId) {
 export function addBugForExecuteOrStep(defectType, id, data) {
   return request.post(`test/v1/projects/${getProjectId()}/defect/createIssueAndDefect/${defectType}/${id}?applyType=agile`, data);
 }
+export function getIssueLinkTypes() {
+  return request.post(`/agile/v1/projects/${getProjectId()}/issue_link_types/query_all`, {
+    contents: [],
+    linkName: '',
+  });
+}
