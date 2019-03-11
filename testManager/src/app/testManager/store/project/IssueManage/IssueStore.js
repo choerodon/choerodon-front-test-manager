@@ -364,13 +364,13 @@ class IssueStore {
   }
 
   @computed get getFilter() {
-    const filter = this.filter;
-    const otherArgs = {
-      issueIds: this.paramIssueId ? [Number(this.paramIssueId)] : undefined,
-    };
+    const filter = this.filter;   
     return {
       ...filter,
-      otherArgs: this.barFilters ? otherArgs : undefined,
+      otherArgs: {
+        ...filter.otherArgs,
+        issueIds: this.paramIssueId ? [Number(this.paramIssueId)] : undefined,
+      },
     };
   }
 
