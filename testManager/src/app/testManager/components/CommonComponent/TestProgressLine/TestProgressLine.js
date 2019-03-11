@@ -4,29 +4,27 @@ import { Popover } from 'choerodon-ui';
 import './TestProgressLine.scss';
 
 const TestProgressLine = ({
-  progress, statusList, style, ...restProps
+  progress, style, ...restProps
 }) => {
   let total = 0;
-  const ProcessBar = {};
-  const content = [];
-  for (let i = 0; i < statusList.length; i += 1) {
-    const status = statusList[i];
-    if (progress[status.statusColor]) {
-      ProcessBar[status.statusColor] = progress[status.statusColor];
-      content.push(
-        <div key={status.statusColor} style={{ display: 'flex', width: 100 }}>
-          <div>{status.statusName}</div>
-          <div className="c7ntest-flex-space" />
-          <div>{progress[status.statusColor]}</div>
-        </div>,
-      );
-    }
-  }
-  Object.keys(ProcessBar).forEach((key) => { total += ProcessBar[key]; });
-  const inner = Object.keys(ProcessBar).map((key, i) => {
-    const percentage = (ProcessBar[key] / total) * 100;
+  // 对状态进行id排序
+  const keys = Object.keys(progress).sort((a, b) => progress[a].statusId - progress[b].statusId);
+  
+  const content = keys.map((key) => {
+    const { statusName, counts } = progress[key];
+    return (
+      <div key={key} style={{ display: 'flex', width: 100 }}>
+        <div>{statusName}</div>
+        <div className="c7ntest-flex-space" />
+        <div>{counts}</div>
+      </div>
+    );
+  });
+  keys.forEach((key) => { total += progress[key].counts; });
+  const inner = keys.map((key, i) => {
+    const percentage = (progress[key].counts / total) * 100;
 
-    return <span key={Math.random()} className="c7ntest-process-line-fill-item" style={{ backgroundColor: key, width: `${percentage}%` }} />;
+    return <span className="c7ntest-process-line-fill-item" style={{ backgroundColor: key, width: `${percentage}%` }} />;
   });
   const renderLine = () => (
     <div className="c7ntest-process-line" style={style}>
@@ -37,7 +35,7 @@ const TestProgressLine = ({
     </div>
   );
   return (
-    Object.keys(ProcessBar).length > 0
+    keys.length > 0
       ? (
         <Popover
           content={<div>{content}</div>}

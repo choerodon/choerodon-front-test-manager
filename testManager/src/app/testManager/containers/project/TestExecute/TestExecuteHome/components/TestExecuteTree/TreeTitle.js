@@ -8,13 +8,12 @@ const TreeTitle = ({
   title,
   progress,
   data,
-  statusList,
 }) => (
   <div className="c7ntest-tree-title">
     <SmartTooltip width={78}>
       {title}
     </SmartTooltip>
-    <TestProgressLine statusList={statusList} style={{ marginLeft: data.type === 'cycle' || data.type === 'temp' ? '18px' : 0 }} progress={progress} />
+    <TestProgressLine style={{ marginLeft: data.type === 'cycle' || data.type === 'temp' ? '18px' : 0 }} progress={progress} />
   </div>
 );
 

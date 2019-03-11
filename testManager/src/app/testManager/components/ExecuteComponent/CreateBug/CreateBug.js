@@ -2,17 +2,18 @@ import React, { Component } from 'react';
 import { stores, Content } from 'choerodon-front-boot';
 import _ from 'lodash';
 import {
-  Select, Form, Input, Button, Modal, Icon, 
+  Select, Form, Input, Button, Modal, Icon,
 } from 'choerodon-ui';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import {
-  handleFileUpload, beforeTextUpload, getProjectName,
+  handleFileUpload, beforeTextUpload, getProjectName, randomString,
 } from '../../../common/utils';
 import {
   getIssueTypes, getPrioritys, getEpics, getSprintsUnClosed, getProjectVersion, getModules, getLabels,
 } from '../../../api/agileApi';
 import { getUsers } from '../../../api/IamApi';
-import { addBugForExecuteOrStep } from '../../../api/ExecuteDetailApi';
+import { addBugForExecuteOrStep, getIssueLinkTypes } from '../../../api/ExecuteDetailApi';
+import { loadIssuesInLink } from '../../../api/IssueManageApi';
 import { WYSIWYGEditor, FullEditor } from '../../CommonComponent';
 import UserHead from '../../IssueManageComponent/UserHead';
 import TypeTag from '../../IssueManageComponent/TypeTag';
@@ -20,6 +21,7 @@ import UploadButton from '../../IssueManageComponent/CommonComponent/UploadButto
 import ExecuteDetailStore from '../../../store/project/TestExecute/ExecuteDetailStore';
 import './CreateBug.scss';
 
+let sign = false;
 const { AppState } = stores;
 const { Sidebar } = Modal;
 const { Option } = Select;
@@ -40,6 +42,10 @@ class CreateBug extends Component {
     versionList: [],
     components: [],
     labels: [],
+    issueLinkArr: [randomString(5)],
+    links: [],
+    issueLinkTypes: [],
+    issues: [],
     defaultPriority: false,
     bugType: undefined,
   }
@@ -48,7 +54,7 @@ class CreateBug extends Component {
     Promise.all([
       getIssueTypes('agile'), getPrioritys(), getUsers(), getEpics(), getSprintsUnClosed(), getProjectVersion(), getModules(), getLabels(),
     ]).then(([originIssueTypes, priorities, userData, epics, sprints, versionList, components, labels]) => {
-      this.setState({ 
+      this.setState({
         priorities,
         users: userData.content.filter(u => u.enabled),
         epics,
@@ -70,6 +76,32 @@ class CreateBug extends Component {
     });
   }
 
+  debounceFilterIssues = _.debounce((input) => {
+    this.setState({
+      selectLoading: true,
+    });
+    loadIssuesInLink(0, 20, undefined, input).then((res) => {
+      this.setState({
+        issues: res.content,
+        selectLoading: false,
+      });
+    });
+  }, 500);
+
+  getLinks() {
+    this.setState({
+      selectLoading: true,
+    });
+    getIssueLinkTypes().then((res) => {
+      this.setState({
+        selectLoading: false,
+        links: res.content,
+        issueLinkTypes: res.content,
+      });
+      this.transform(res.content);
+    });
+  }
+
   handleUserSelectChange = (value) => {
     const { users } = this.state;
     if (!users.length) {
@@ -83,6 +115,26 @@ class CreateBug extends Component {
     this.setState({ fileList: data });
   }
 
+  transform = (links) => {
+    // split active and passive
+    const active = links.map(link => ({
+      name: link.outWard,
+      linkTypeId: link.linkTypeId,
+    }));
+    const passive = [];
+    links.forEach((link) => {
+      if (link.inWard !== link.outWard) {
+        passive.push({
+          name: link.inWard,
+          linkTypeId: link.linkTypeId,
+        });
+      }
+    });
+    this.setState({
+      links: active.concat(passive),
+    });
+  };
+
   handleCreateIssue = () => {
     const { form } = this.props;
     const {
@@ -91,6 +143,8 @@ class CreateBug extends Component {
       versionList,
       delta,
       bugType,
+      issueLinkTypes,
+      issues,
     } = this.state;
 
     form.validateFields((err, values) => {
@@ -135,6 +189,29 @@ class CreateBug extends Component {
             });
           }
         });
+        const issueLinkCreateDTOList = [];
+        if (values.linkTypeId) {
+          Object.keys(values.linkTypeId).forEach((link, index) => {
+            if (values.linkTypeId[link] && values.linkIssues[link]) {
+              const currentLinkType = _.find(issueLinkTypes, { linkTypeId: values.linkTypeId[link].split('+')[0] * 1 });
+              values.linkIssues[link].forEach((issueId) => {               
+                if (currentLinkType.inWard === values.linkTypeId[link].split('+')[1]) {
+                  issueLinkCreateDTOList.push({
+                    linkTypeId: values.linkTypeId[link].split('+')[0] * 1,
+                    linkedIssueId: Number(issueId),
+                    in: false,
+                  });
+                } else {
+                  issueLinkCreateDTOList.push({
+                    linkTypeId: values.linkTypeId[link].split('+')[0] * 1,
+                    linkedIssueId: Number(issueId),
+                    in: true,
+                  });
+                }
+              });
+            }
+          });
+        }
         const issue = {
           issueTypeId: bugType.id,
           typeCode: bugType.typeCode,
@@ -151,6 +228,7 @@ class CreateBug extends Component {
           componentIssueRelDTOList,
           storyPoints: values.storyPoints,
           remainingTime: values.estimatedTime,
+          issueLinkCreateDTOList,
         };
         this.setState({ createLoading: true });
         const deltaOps = delta;
@@ -191,6 +269,23 @@ class CreateBug extends Component {
       });
   };
 
+  onIssueSelectFilterChange(input) {
+    if (!sign) {
+      this.setState({
+        selectLoading: true,
+      });
+      loadIssuesInLink(0, 20, undefined, input).then((res) => {
+        this.setState({
+          issues: res.content,
+          selectLoading: false,
+        });
+      });
+      sign = true;
+    } else {
+      this.debounceFilterIssues(input);
+    }
+  }
+
   render() {
     const {
       visible,
@@ -203,14 +298,14 @@ class CreateBug extends Component {
       priorities, defaultPriority, createLoading,
       fullEdit, delta, users,
       epics, sprints, versionList, components,
-      labels, fileList, selectLoading, bugType,
-    } = this.state;   
+      labels, fileList, selectLoading, bugType, issueLinkArr, issues, links,
+    } = this.state;
     const callback = (value) => {
       this.setState({
         delta: value,
         fullEdit: false,
       });
-    }; 
+    };
     return (
       <Sidebar
         className="c7n-createBug"
@@ -240,8 +335,8 @@ class CreateBug extends Component {
                   <Option key={bugType.id} value={bugType.id}>
                     <div style={{ display: 'inline-flex', alignItems: 'center', padding: '2px' }}>
                       <TypeTag
-                        type={bugType}   
-                        showName                     
+                        type={bugType}
+                        showName
                       />
                     </div>
                   </Option>
@@ -453,6 +548,115 @@ class CreateBug extends Component {
                   </Select>,
                 )}
               </FormItem>
+              {issueLinkArr && issueLinkArr.length > 0 && (
+                issueLinkArr.map((item, index, arr) => (
+                  <div
+                    key={item}
+                    style={{
+                      display: 'flex', width: 520, justifyContent: 'flex-start', alignItems: 'flex-end',
+                    }}
+                  >
+                    <FormItem label="关系" style={{ width: 110, marginRight: 20 }}>
+                      {getFieldDecorator(`linkTypeId[${item}]`, {
+                      })(
+                        <Select
+                          label="关系"
+                          loading={selectLoading}
+                          getPopupContainer={() => document.getElementsByClassName('ant-modal-body')[0]}
+                          tokenSeparators={[',']}
+                          onFocus={() => {
+                            this.getLinks();
+                          }}
+                        >
+                          {links.map(link => (
+                            <Option key={`${link.linkTypeId}+${link.name}`} value={`${link.linkTypeId}+${link.name}`}>
+                              {link.name}
+                            </Option>
+                          ))}
+                        </Select>,
+                      )}
+                    </FormItem>
+                    <FormItem label="问题" style={{ width: 290, marginRight: 20 }}>
+                      {getFieldDecorator(`linkIssues[${item}]`, {
+                      })(
+                        <Select
+                          label="问题"
+                          mode="multiple"
+                          loading={selectLoading}
+                          dropdownClassName="c7ntest-inline-flex-dropdown"
+                          optionLabelProp="showName"
+                          filter
+                          filterOption={false}
+                          onFilterChange={this.onIssueSelectFilterChange.bind(this)}
+                          getPopupContainer={() => document.getElementsByClassName('ant-modal-body')[0]}
+                        >
+                          {issues.map(issue => (
+                            <Option
+                              key={issue.issueId}
+                              value={issue.issueId}
+                              showName={issue.issueNum}
+                            >
+                              <div style={{
+                                display: 'inline-flex',
+                                overflow: 'hidden',
+                                flex: 1,
+                                alignItems: 'center',
+                                verticalAlign: 'bottom',
+                              }}
+                              >
+                                <TypeTag
+                                  type={issue.issueTypeDTO}
+                                />
+                                <span style={{
+                                  paddingLeft: 12, paddingRight: 12, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                                }}
+                                >
+                                  {issue.issueNum}
+                                </span>
+                                <div style={{ overflow: 'hidden', flex: 1 }}>
+                                  <p style={{
+                                    overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 0, maxWidth: 'unset',
+                                  }}
+                                  >
+                                    {issue.summary}
+                                  </p>
+                                </div>
+                              </div>
+                            </Option>
+                          ))}
+                        </Select>,
+                      )}
+                    </FormItem>
+                    <Button
+                      shape="circle"
+                      style={{ marginBottom: 10, marginRight: 10 }}
+                      onClick={() => {
+                        arr.splice(index + 1, 0, randomString(5));
+                        this.setState({
+                          issueLinkArr: arr,
+                        });
+                      }}
+                    >
+                      <Icon type="add icon" />
+                    </Button>
+                    {
+                      issueLinkArr.length > 1 ? (
+                        <Button
+                          shape="circle"
+                          style={{ marginBottom: 10 }}
+                          onClick={() => {
+                            arr.splice(index, 1);
+                            this.setState({
+                              issueLinkArr: arr,
+                            });
+                          }}
+                        >
+                          <Icon type="delete" />
+                        </Button>
+                      ) : null
+                    }
+                  </div>
+                )))}
             </Form>
 
             <div className="sign-upload" style={{ marginTop: 20 }}>

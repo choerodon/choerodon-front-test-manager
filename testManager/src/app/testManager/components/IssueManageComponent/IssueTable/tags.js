@@ -158,6 +158,7 @@ export function renderLabels(labels) {
     labels.map(label => (
       <div
         style={{
+          display: 'inline-block',
           color: '#000',
           borderRadius: '100px',
           fontSize: '13px',

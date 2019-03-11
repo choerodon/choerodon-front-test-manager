@@ -20,20 +20,20 @@ import pic from '../../../assets/testCaseEmpty.svg';
 class IssueTable extends Component {
   state = {
     firstIndex: null,
-    filteredColumns: ['issueNum', 'issueTypeDTO', 'summary', 'versionIssueRelDTOList', 'folderName', 'reporter', 'priorityId'],
+    filteredColumns: ['issueNum', 'issueTypeDTO', 'summary', 'labelIssueRelDTOList', 'versionIssueRelDTOList', 'folderName', 'reporter', 'priorityId'],
   };
 
-  shouldComponentUpdate() {
-    return false;
-  }
+  // shouldComponentUpdate() {
+  //   return false;
+  // }
 
-  componentWillReact() {
-    console.log('wr');
-  }
+  // componentWillReact() {
+  //   console.log('wr');
+  // }
   
-  componentDidUpdate(prevProps, prevState) {
-    console.log('up');
-  }
+  // componentDidUpdate(prevProps, prevState) {
+  //   console.log('up');
+  // }
   
   handleColumnFilterChange = ({ selectedKeys }) => {
     this.setState({
@@ -281,12 +281,16 @@ class IssueTable extends Component {
       IssueStore.setBarFilters(undefined);
     }
 
-    const { statusId, priorityId } = filters;
-    const { issueNum, summary } = filters;
+    const {
+      statusId, priorityId, issueNum, summary, labelIssueRelDTOList, 
+    } = filters;   
     const search = {
       advancedSearchArgs: {
         statusId: statusId || [],
         priorityId: priorityId || [],
+      },
+      otherArgs: {
+        label: labelIssueRelDTOList || [],
       },
       searchArgs: {
         issueNum: issueNum && issueNum.length ? issueNum[0] : barFilters[0],
@@ -306,20 +310,12 @@ class IssueTable extends Component {
     IssueStore.loadIssues(current - 1, size);
   }
 
-  manageVisible = (columns) => {
-    const { filteredColumns } = this.state;
-    // const initShowColumns = columns.filter(column => !column.hidden).map(column => column.dataIndex);
-    // if (filteredColumns.length !== initShowColumns.length) {
-    //   this.setState({
-    //     filteredColumns: initShowColumns,
-    //   });
-    // }  
-    return columns.map(column => (this.shouldColumnShow(column) ? { ...column, hidden: false } : { ...column, hidden: true }));
-  }
+  manageVisible = columns => columns.map(column => (this.shouldColumnShow(column) ? { ...column, hidden: false } : { ...column, hidden: true }))
 
 
   render() {
     const prioritys = IssueStore.getPrioritys;
+    const labels = IssueStore.getLabels;
     const issueStatusList = IssueStore.getIssueStatus;
     const columns = this.manageVisible([
       {
@@ -334,6 +330,14 @@ class IssueTable extends Component {
         dataIndex: 'issueTypeDTO',
         key: 'issueTypeDTO',
         render: (issueTypeDTO, record) => renderType(issueTypeDTO, true),
+      },
+      {
+        title: '标签',
+        dataIndex: 'labelIssueRelDTOList',
+        key: 'labelIssueRelDTOList',
+        filters: labels.map(label => ({ text: label.labelName, value: label.labelId.toString() })),
+        filterMultiple: true,
+        render: (labelIssueRelDTOList, record) => renderLabels(labelIssueRelDTOList),
       },
       {
         title: '概要',
