@@ -21,7 +21,7 @@ import UploadButton from '../../IssueManageComponent/CommonComponent/UploadButto
 import ExecuteDetailStore from '../../../store/project/TestExecute/ExecuteDetailStore';
 import './CreateBug.scss';
 
-let sign = false;
+const sign = false;
 const { AppState } = stores;
 const { Sidebar } = Modal;
 const { Option } = Select;
@@ -270,20 +270,20 @@ class CreateBug extends Component {
   };
 
   onIssueSelectFilterChange(input) {
-    if (!sign) {
+    // if (!sign) {
+    this.setState({
+      selectLoading: true,
+    });
+    loadIssuesInLink(0, 20, undefined, input).then((res) => {
       this.setState({
-        selectLoading: true,
+        issues: res.content,
+        selectLoading: false,
       });
-      loadIssuesInLink(0, 20, undefined, input).then((res) => {
-        this.setState({
-          issues: res.content,
-          selectLoading: false,
-        });
-      });
-      sign = true;
-    } else {
-      this.debounceFilterIssues(input);
-    }
+    });
+    //   sign = true;
+    // } else {
+    //   this.debounceFilterIssues(input);
+    // }
   }
 
   render() {
@@ -562,7 +562,7 @@ class CreateBug extends Component {
                         <Select
                           label="关系"
                           loading={selectLoading}
-                          getPopupContainer={() => document.getElementsByClassName('ant-modal-body')[0]}
+                          getPopupContainer={triggerNode => triggerNode.parentNode}
                           tokenSeparators={[',']}
                           onFocus={() => {
                             this.getLinks();
@@ -588,7 +588,7 @@ class CreateBug extends Component {
                           filter
                           filterOption={false}
                           onFilterChange={this.onIssueSelectFilterChange.bind(this)}
-                          getPopupContainer={() => document.getElementsByClassName('ant-modal-body')[0]}
+                          getPopupContainer={triggerNode => triggerNode.parentNode}
                         >
                           {issues.map(issue => (
                             <Option
