@@ -28,6 +28,7 @@ const ExecuteHistoryTable = ({
     dataIndex: 'lastUpdateDate',
     key: 'lastUpdateDate',
     width: '25%',
+    render: lastUpdateDate => <div className="c7ntest-text-dot">{lastUpdateDate}</div>,
   }, {
     title: '操作类型',
     dataIndex: 'field',

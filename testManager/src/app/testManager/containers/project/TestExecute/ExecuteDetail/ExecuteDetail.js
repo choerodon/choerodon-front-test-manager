@@ -264,9 +264,13 @@ class ExecuteDetail extends Component {
         <Spin spinning={loading}>
           <div style={{ display: 'flex', width: '100%', height: '100%' }}>
             {/* 左边内容区域 */}
-            <div style={{
-              flex: 1, overflowX: 'hidden', overflowY: 'auto', padding: 20,
-            }}
+            <div
+              style={{
+                flex: 1,
+                overflowX: 'hidden',
+                overflowY: 'auto',
+                padding: 20,          
+              }}
             >
               <div style={{ marginBottom: 24 }}>
                 {issueInfosDTO && (

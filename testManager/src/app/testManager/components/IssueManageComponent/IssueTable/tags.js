@@ -1,5 +1,5 @@
-import React from 'react';
-import { Tooltip } from 'choerodon-ui';
+import React, { Fragment } from 'react';
+import { Tooltip, Tag } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 import UserHead from '../UserHead';
 import PriorityTag from '../PriorityTag';
@@ -154,25 +154,27 @@ export function renderComponents(components) {
   );
 }
 export function renderLabels(labels) {
-  return (
-    labels.map(label => (
-      <div
-        style={{
-          display: 'inline-block',
-          color: '#000',
-          borderRadius: '100px',
-          fontSize: '13px',
-          lineHeight: '20px',
-          padding: '2px 12px',
-          background: 'rgba(0, 0, 0, 0.08)',
-          margin: '0 5px',
-          // marginBottom: 3,
-        }}
-      >
-        {label.labelName}
-      </div>
-    ))
-  );
+  if (labels.length > 0) {
+    return (
+      <Tooltip title={labels.map(label => label.labelName).join(',')}>
+        <Tag
+          color="blue"
+          style={{
+            maxWidth: 160,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+            verticalAlign: 'bottom',
+          }}
+        >
+          {labels[0].labelName}
+        </Tag>
+        {labels.length > 0 && <Tag color="blue">...</Tag>}
+      </Tooltip>
+    );
+  } else {
+    return null;
+  }
 }
 export function renderAssigned(assigneeId, assigneeName, imageUrl, hiddenText) {
   return (

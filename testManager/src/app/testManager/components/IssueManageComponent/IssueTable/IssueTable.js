@@ -20,7 +20,7 @@ import pic from '../../../assets/testCaseEmpty.svg';
 class IssueTable extends Component {
   state = {
     firstIndex: null,
-    filteredColumns: ['issueNum', 'issueTypeDTO', 'summary', 'labelIssueRelDTOList', 'versionIssueRelDTOList', 'folderName', 'reporter', 'priorityId'],
+    filteredColumns: ['issueNum', 'issueTypeDTO', 'summary', 'versionIssueRelDTOList', 'folderName', 'reporter', 'priorityId'],
   };
 
   // shouldComponentUpdate() {
@@ -330,15 +330,7 @@ class IssueTable extends Component {
         dataIndex: 'issueTypeDTO',
         key: 'issueTypeDTO',
         render: (issueTypeDTO, record) => renderType(issueTypeDTO, true),
-      },
-      {
-        title: '标签',
-        dataIndex: 'labelIssueRelDTOList',
-        key: 'labelIssueRelDTOList',
-        filters: labels.map(label => ({ text: label.labelName, value: label.labelId.toString() })),
-        filterMultiple: true,
-        render: (labelIssueRelDTOList, record) => renderLabels(labelIssueRelDTOList),
-      },
+      },      
       {
         title: '概要',
         dataIndex: 'summary',
@@ -391,6 +383,14 @@ class IssueTable extends Component {
         filters: issueStatusList.map(status => ({ text: status.name, value: status.id.toString() })),
         filterMultiple: true,
         render: (statusMapDTO, record) => renderStatus(record.statusMapDTO),
+      },
+      {
+        title: '标签',
+        dataIndex: 'labelIssueRelDTOList',
+        key: 'labelIssueRelDTOList',
+        filters: labels.map(label => ({ text: label.labelName, value: label.labelId.toString() })),
+        filterMultiple: true,
+        render: (labelIssueRelDTOList, record) => renderLabels(labelIssueRelDTOList),
       },
     ]);
     return (
