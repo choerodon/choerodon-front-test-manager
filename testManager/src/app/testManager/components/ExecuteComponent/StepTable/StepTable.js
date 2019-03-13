@@ -18,8 +18,8 @@ const Option = Select.Option;
 const { Text, Edit } = TextEditToggle;
 const propTypes = {
   disabled: PropTypes.bool,
-  dataSource: PropTypes.arrayOf(PropTypes.shape({})).isRequired,  
-  stepStatusList: PropTypes.arrayOf(PropTypes.shape({})).isRequired,  
+  dataSource: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
+  stepStatusList: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
 };
 class StepTable extends PureComponent {
   editCycleStep = (values) => {
@@ -95,34 +95,34 @@ class StepTable extends PureComponent {
       title: <FormattedMessage id="execute_testStep" />,
       dataIndex: 'testStep',
       key: 'testStep',
-      render: testStep => (     
+      render: testStep => (
         <div
           className="c7ntest-text-wrap"
         >
           {testStep}
-        </div>   
+        </div>
       ),
     }, {
       title: <FormattedMessage id="execute_testData" />,
       dataIndex: 'testData',
       key: 'testData',
-      render: testData => (     
+      render: testData => (
         <div
           className="c7ntest-text-wrap"
         >
           {testData}
-        </div>        
+        </div>
       ),
     }, {
       title: <FormattedMessage id="execute_expectedOutcome" />,
       dataIndex: 'expectedResult',
       key: 'expectedResult',
-      render: expectedResult => (        
+      render: expectedResult => (
         <div
           className="c7ntest-text-wrap"
         >
           {expectedResult}
-        </div>      
+        </div>
       ),
     },
     {
@@ -191,7 +191,7 @@ class StepTable extends PureComponent {
       dataIndex: 'comment',
       key: 'comment',
       render(comment, record) {
-        return (        
+        return (
           <TextEditToggle
             noButton
             disabled={disabled}
@@ -212,7 +212,7 @@ class StepTable extends PureComponent {
             <Edit>
               <TextArea autosize autoFocus />
             </Edit>
-          </TextEditToggle>        
+          </TextEditToggle>
         );
       },
     }, {
@@ -261,7 +261,7 @@ class StepTable extends PureComponent {
               defects.length > 0 ? (
                 <div>
                   {defects.map((defect, i) => (
-                    <div 
+                    <div
                       key={defect.id}
                       style={{
                         fontSize: '13px',
@@ -282,14 +282,20 @@ class StepTable extends PureComponent {
             }
           </Text>
           <Edit>
-            <DefectSelect
-              getPopupContainer={() => document.getElementsByClassName('StepTable')[0]}
-              defects={defects}
-              setNeedAdd={(needAdd) => { that.needAdd = needAdd; }}
-              executeStepId={record.executeStepId}
-              bugsToggleRef={this[`bugsToggle_${record.stepId}`]}
-            />
+            <div onScroll={(e) => {
+              e.stopPropagation();
+            }}
+            >
+              <DefectSelect
+                getPopupContainer={() => document.getElementsByClassName('StepTable')[0]}               
+                defects={defects}
+                setNeedAdd={(needAdd) => { that.needAdd = needAdd; }}
+                executeStepId={record.executeStepId}
+                bugsToggleRef={this[`bugsToggle_${record.stepId}`]}
+              />
+            </div>
           </Edit>
+
         </TextEditToggle>
       ),
     },
@@ -314,7 +320,9 @@ class StepTable extends PureComponent {
       ),
     };
     return (
-      <div className="StepTable">
+      <div
+        className="StepTable"
+      >
         <Table
           rowKey="executeStepId"
           filterBar={false}
