@@ -10,12 +10,12 @@ ENV PRO_COOKIE_SERVER choerodon.com.cn
 ENV PRO_HTTP http
 
 RUN echo "Asia/shanghai" > /etc/timezone;
-ADD dist /usr/share/nginx/html
-COPY testManager-structure/testManager-enterpoint.sh /usr/share/nginx/html
-COPY config.yml /usr/share/nginx/html
-COPY dashboard.yml /usr/share/nginx/html
-COPY structure/sql.py /usr/share/nginx/html
-COPY structure/dashboard.py /usr/share/nginx/html
+ADD testManager/dist /usr/share/nginx/html
+COPY testManager/testManager-structure/testManager-enterpoint.sh /usr/share/nginx/html
+COPY menu.yml /usr/share/nginx/html/menu.yml
+COPY dashboard.yml /usr/share/nginx/html/dashboard.yml
+COPY testManager/node_modules/choerodon-front-boot/structure/menu /usr/share/nginx/html/menu
+COPY testManager/node_modules/choerodon-front-boot/structure/dashboard /usr/share/nginx/html/dashboard
 RUN chmod 777 /usr/share/nginx/html/testManager-enterpoint.sh
 ENTRYPOINT ["/usr/share/nginx/html/testManager-enterpoint.sh"]
 CMD ["nginx", "-g", "daemon off;"]
