@@ -8,7 +8,7 @@ import TestPlanStore from '../../../store/project/TestPlan/TestPlanStore';
 import CloneCycle from '../CloneCycle';
 import CloneStage from '../CloneStage';
 import AssignBatch from '../AssignBatch';
-import { addFolder } from '../../../api/cycleApi';
+import { addFolder, editFolder } from '../../../api/cycleApi';
 import PlanTreeTitle from './PlanTreeTitle';
 import CreateStage from '../CreateStage';
 
@@ -135,7 +135,7 @@ class PlanTree extends Component {
             ref={provided.innerRef}
             // style={{ backgroundColor: snapshot.isDraggingOver ? 'blue' : 'grey' }}
             {...provided.droppableProps}
-          >           
+          >
             {c}
             {provided.placeholder}
           </div>
@@ -146,7 +146,7 @@ class PlanTree extends Component {
     //   $children = _this2.props.wrapper($children);
     // }
     return (
-      <TreeNode       
+      <TreeNode
         title={(
           <PlanTreeTitle
             index={i}
@@ -161,7 +161,7 @@ class PlanTree extends Component {
             icon={icon}
           />
         )}
-        wrapper={wrapper}      
+        wrapper={wrapper}
         key={key}
         data={item}
         showIcon={false}
@@ -196,11 +196,52 @@ class PlanTree extends Component {
   }
 
   onDragStart = (info) => {
-    console.log(info);   
+    console.log(info);
   }
 
   onDragEnd = (info) => {
-    console.log(info);   
+    console.log(info);
+    const { source, destination, draggableId } = info;
+    if (source.index === destination.index) {
+      return;
+    }
+    const parent = TestPlanStore.getParent(draggableId);
+    const { index } = destination;
+    const preStage = parent.children[index - 1];
+    const nextStage = parent.children[index];
+    const target = TestPlanStore.getItemByKey(draggableId);
+    let rank;
+    const laseRank = preStage ? preStage.rank : null;
+    const nextRank = nextStage ? nextStage.rank : null;
+    if (preStage) {
+      if (!preStage.rank) {
+        rank = preStage.cycleId;
+      } 
+    } else {    
+      rank = -1;
+    }
+    console.log(index, preStage, nextStage);
+    TestPlanStore.enterLoading();
+    editFolder({
+      ...target,
+      rank,
+      laseRank,
+      nextRank,
+    }).then((data) => {
+      if (data.failed) {
+        // Choerodon.prompt('名字重复');
+        TestPlanStore.leaveLoading();
+        TestPlanStore.removeAdding();
+      } else {
+        TestPlanStore.leaveLoading();
+        this.refresh();
+      }
+    }).catch(() => {
+      Choerodon.prompt('网络出错');
+      TestPlanStore.leaveLoading();
+      TestPlanStore.removeAdding();
+    });
+    // console.log(info, preStage.rank, nextStage.rank);
   }
 
   render() {

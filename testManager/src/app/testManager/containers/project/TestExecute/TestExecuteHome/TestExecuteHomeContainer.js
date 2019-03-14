@@ -81,7 +81,7 @@ class TestExecuteHomeContainer extends Component {
       this.setState({ statusList, prioritys });
     });
     getCycleTree(assignedTo).then((data) => {
-      traverseTree({ title: '所有版本', key: '0', children: data.versions });
+      // traverseTree({ title: '所有版本', key: '0', children: data.versions });
       TestExecuteStore.setTreeData([{ title: '所有版本', key: '0', children: data.versions }]);
       this.setState({
         loading: false,

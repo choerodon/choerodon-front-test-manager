@@ -136,7 +136,7 @@ class TestPlanStore extends BaseTreeProto {
     ]).then(([prioritys, statusList, data]) => {
       this.setPrioritys(prioritys);
       this.setStatusList(statusList);
-      traverseTree({ title: '所有版本', key: '0', children: data.versions });
+      // traverseTree({ title: '所有版本', key: '0', children: data.versions });
       this.setTreeData([{ title: '所有版本', key: '0', children: data.versions }]);
       this.generateList([
         { title: '所有版本', key: '0', children: data.versions },
