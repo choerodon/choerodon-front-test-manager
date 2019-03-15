@@ -39,7 +39,13 @@ function traverseTree(node) {
     }
   }
 }
+const reorder = (list, startIndex, endIndex) => {
+  const result = Array.from(list);
+  const [removed] = result.splice(startIndex, 1);
+  result.splice(endIndex, 0, removed);
 
+  return result;
+};
 class TestPlanStore extends BaseTreeProto {
   @observable isTreeVisible = true;
 
@@ -454,6 +460,10 @@ class TestPlanStore extends BaseTreeProto {
 
   @action setExportStageId(data) {
     this.exportStageId = data;
+  }
+
+  @action resortTree(parent, soureIndex, targetIndex) {
+    parent.children = reorder(parent.children, soureIndex, targetIndex);
   }
 }
 
