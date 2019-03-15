@@ -210,7 +210,7 @@ class PlanTree extends Component {
     const preStage = parent.children[index - 1];
     const nextStage = parent.children[index];
     const target = TestPlanStore.getItemByKey(draggableId);
-    let rank = target.rank;
+    let rank = null;
     const laseRank = preStage ? preStage.rank : null;
     const nextRank = nextStage ? nextStage.rank : null;
     if (preStage) {
