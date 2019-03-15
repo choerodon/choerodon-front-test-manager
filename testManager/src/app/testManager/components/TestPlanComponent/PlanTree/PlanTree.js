@@ -216,8 +216,8 @@ class PlanTree extends Component {
     if (preStage) {
       if (!preStage.rank) {
         rank = preStage.cycleId;
-      } 
-    } else {    
+      }
+    } else if (!target.rank) {
       rank = -1;
     }
     console.log(index, preStage, nextStage);
