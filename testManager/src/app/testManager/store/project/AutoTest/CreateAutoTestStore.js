@@ -80,8 +80,10 @@ class CreateAutoTestStore {
    */
   @action clearTestInfo = () => {
     this.currentStep = 1;
+    this.appList = [];
     this.app = {};
     this.appVersion = {};
+    this.appVersionList = [];
     this.version = {};
     this.appVersionPagination = {
       current: 1,
@@ -89,6 +91,7 @@ class CreateAutoTestStore {
       pageSize: 10,
     };
     this.env = {};
+    this.envList = [];
     this.configValue = null;
     this.newConfigValue = null;
   }
