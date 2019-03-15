@@ -390,3 +390,18 @@ class Request {
   }
 }
 export const request = new Request();
+export function getDragRank(sourceIndex, targetIndex, List) {
+  let lastRank; 
+  let nextRank;
+  if (sourceIndex < targetIndex) {
+    lastRank = List[targetIndex].rank;
+    nextRank = List[targetIndex + 1] ? List[targetIndex + 1].rank : null;
+  } else if (sourceIndex > targetIndex) {
+    lastRank = List[targetIndex - 1] ? List[targetIndex - 1].rank : null;
+    nextRank = List[targetIndex].rank;
+  }
+  return {
+    lastRank,
+    nextRank,
+  };
+}

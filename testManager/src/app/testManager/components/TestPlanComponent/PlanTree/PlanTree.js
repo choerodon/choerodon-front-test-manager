@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Tree, Input, Icon } from 'choerodon-ui';
 import { observer } from 'mobx-react';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import _ from 'lodash';
 import './PlanTree.scss';
 import TestPlanStore from '../../../store/project/TestPlan/TestPlanStore';
@@ -11,6 +11,7 @@ import AssignBatch from '../AssignBatch';
 import { addFolder, editFolder } from '../../../api/cycleApi';
 import PlanTreeTitle from './PlanTreeTitle';
 import CreateStage from '../CreateStage';
+import { getDragRank } from '../../../common/utils';
 
 const { TreeNode } = Tree;
 
@@ -196,23 +197,26 @@ class PlanTree extends Component {
   }
 
   onDragStart = (info) => {
-    console.log(info);
+    // console.log(info);
   }
 
-  onDragEnd = (info) => {
-    console.log(info);
-    const { source, destination, draggableId } = info;
-    if (source.index === destination.index) {
+  onDragEnd = (result) => {
+    if (!result.destination) {
+      return;
+    }
+    const { source, destination, draggableId } = result;
+    const sourceIndex = source.index;
+    const targetIndex = destination.index;
+    if (sourceIndex === targetIndex) {
       return;
     }
     const parent = TestPlanStore.getParent(draggableId);
     const { index } = destination;
     const preStage = parent.children[index - 1];
-    const nextStage = parent.children[index];
     const target = TestPlanStore.getItemByKey(draggableId);
     let rank = null;
-    const lastRank = preStage ? preStage.rank : null;
-    const nextRank = nextStage ? nextStage.rank : null;
+    const { lastRank, nextRank } = getDragRank(sourceIndex, targetIndex, parent.children);
+
     if (preStage) {
       if (!preStage.rank) {
         rank = preStage.cycleId;
@@ -220,7 +224,12 @@ class PlanTree extends Component {
     } else if (!target.rank) {
       rank = -1;
     }
-    console.log(index, preStage, nextStage);
+
+    TestPlanStore.resortTree(
+      parent,
+      result.source.index,
+      result.destination.index,
+    );
     TestPlanStore.enterLoading();
     editFolder({
       ...target,
