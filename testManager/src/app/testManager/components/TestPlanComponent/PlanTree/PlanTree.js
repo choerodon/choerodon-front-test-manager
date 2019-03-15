@@ -211,7 +211,7 @@ class PlanTree extends Component {
     const nextStage = parent.children[index];
     const target = TestPlanStore.getItemByKey(draggableId);
     let rank = null;
-    const laseRank = preStage ? preStage.rank : null;
+    const lastRank = preStage ? preStage.rank : null;
     const nextRank = nextStage ? nextStage.rank : null;
     if (preStage) {
       if (!preStage.rank) {
@@ -225,7 +225,7 @@ class PlanTree extends Component {
     editFolder({
       ...target,
       rank,
-      laseRank,
+      lastRank,
       nextRank,
     }).then((data) => {
       if (data.failed) {
