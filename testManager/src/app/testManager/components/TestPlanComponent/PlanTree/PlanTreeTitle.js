@@ -169,7 +169,7 @@ class PlanTreeTitle extends Component {
     );
     return data.type === 'folder'
       ? (
-        <Draggable key={data.key} draggableId={data.cycleId} index={index} type={String(data.parentCycleId)}>
+        <Draggable key={data.key} draggableId={data.key} index={index} type={String(data.parentCycleId)}>
           {(providedinner, snapshotinner) => (
             <div
               ref={providedinner.innerRef}
