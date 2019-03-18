@@ -7,7 +7,6 @@ import {
 } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 import './CreateIssue.scss';
-import '../../../assets/main.scss';
 import { UploadButton } from '../CommonComponent';
 import { handleFileUpload, beforeTextUpload } from '../../../common/utils';
 import { createIssue, getFoldersByVersion } from '../../../api/IssueManageApi';

@@ -13,9 +13,8 @@ const TestProgressLine = ({
   const content = keys.map((key) => {
     const { statusName, counts } = progress[key];
     return (
-      <div key={key} style={{ display: 'flex', width: 100 }}>
-        <div>{statusName}</div>
-        <div className="c7ntest-flex-space" />
+      <div key={key} className="c7ntest-between" style={{ width: 100 }}>
+        <div>{statusName}</div>        
         <div>{counts}</div>
       </div>
     );

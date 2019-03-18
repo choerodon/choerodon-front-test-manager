@@ -7,7 +7,6 @@ import {
   Select, Input, Button, Modal, Tooltip, Dropdown, Menu, Spin, Icon,
 } from 'choerodon-ui';
 import './EditIssue.scss';
-import '../../../assets/main.scss';
 import { UploadButtonNow, IssueDescription } from '../CommonComponent';
 import { TextEditToggle, User } from '../../CommonComponent';
 import {

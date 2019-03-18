@@ -27,8 +27,7 @@ class EventCalendar extends Component {
       baseDate, // 显示的开始时间
       endDate, // 显示的结束时间      
       mode: 'month',
-      width: 'auto',
-      singleWidth: 0, // 单个日期所占宽度
+      width: 'auto',      
     }; 
   }
 
@@ -37,13 +36,18 @@ class EventCalendar extends Component {
     return !isEqual(this.props, nextProps) || !isEqual(this.state, nextState);
   }
 
-  // componentDidMount() {
-  //   console.log('didmount');    
-  // }
+  componentDidMount() {
+    this.setSingleWidth();
+  }
 
-  // componentDidUpdate(prevProps, prevState, snapshot) {    
-  //   console.log('didupdate');    
-  // }
+  componentDidUpdate(prevProps, prevState) {
+    this.setSingleWidth();
+  }
+  
+
+  setSingleWidth=() => {
+    this.singleWidth = document.getElementsByClassName('CalendarBackItem')[0] ? document.getElementsByClassName('CalendarBackItem')[0].offsetWidth : 0;
+  }
   
   calculateTime = () => {
     const { baseDate, endDate } = this.state;
@@ -102,8 +106,8 @@ class EventCalendar extends Component {
    */
   setCurrentDate = () => {
     const { scrollLeft } = this.scroller;
-    const { singleWidth, baseDate } = this.state;
-    const leapDays = Math.floor(scrollLeft / singleWidth);
+    const { baseDate } = this.state;
+    const leapDays = Math.floor(scrollLeft / this.singleWidth);
     const currentDate = moment(baseDate).add(leapDays, 'days');
     this.currentDate = currentDate;
   }
@@ -187,14 +191,14 @@ class EventCalendar extends Component {
         </div>
         <div role="none" className="c7ntest-EventCalendar-content" ref={this.saveRef('scroller')} onMouseDown={this.handleMouseDown}>      
           <div style={{
-            width: 'fit-content', height: 'fit-content', minWidth: '100%', minHeight: '100%', position: 'relative',
+            display: 'table', minWidth: '100%', minHeight: '100%', position: 'relative',
           }}
           >   
             <div className="c7ntest-EventCalendar-fixed-header">            
               { timeArray.map((m, i) => (<CalendarBackItem date={m} />)) }            
             </div>
             <div className="c7ntest-EventCalendar-eventContainer">
-              <div className="c7ntest-EventCalendar-BackItems">
+              <div className="c7ntest-EventCalendar-BackItems" ref={this.saveRef('BackItems')}>
                 {
                   timeArray.map((m, i) => <div className="c7ntest-EventCalendar-BackItems-item" />)
                 }
