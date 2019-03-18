@@ -188,9 +188,8 @@ class TestTable extends Component {
       <Table
         rowClassName={(record, index) => (index === tests.length - 1 ? 'c7ntest-table-total' : '')}
         title={() => (
-          <div style={{ padding: '0 57px', display: 'flex', alignItems: 'center' }}>
+          <div className="c7ntest-between-center" style={{ padding: '0 57px' }}>
             {suite.name}
-            <div className="c7ntest-flex-space" />
             {SelectGroup}
           </div>
         )}

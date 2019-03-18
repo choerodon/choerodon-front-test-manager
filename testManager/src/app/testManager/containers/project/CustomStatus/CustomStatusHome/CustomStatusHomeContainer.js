@@ -37,7 +37,7 @@ class CustomStatusHomeContainer extends Component {
   }
 
   loadStatusList = (statusType = this.state.statusType) => {
-    this.setState({ loading: true });
+    this.setState({ loading: true });    
     getStatusList(statusType).then((statusList) => {
       this.setState({
         loading: false,

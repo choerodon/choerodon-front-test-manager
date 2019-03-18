@@ -13,7 +13,7 @@ import {
 import { Injecter, NoCycle, Loading } from '../../../../components/CommonComponent';
 import { TestPlanTable } from './components';
 import TestPlanStore from '../../../../store/project/TestPlan/TestPlanStore';
-import { executeDetailShowLink } from '../../../../common/utils';
+import { executeDetailShowLink, getDragRank } from '../../../../common/utils';
 import RunWhenProjectChange from '../../../../common/RunWhenProjectChange';
 import './TestPlanHome.scss';
 
@@ -56,7 +56,6 @@ class TestPlanHome extends Component {
   }
 
   handleExecuteTableChange = (pagination, filters, sorter, barFilters) => {
-    // window.console.log(pagination, filters, sorter);
     const Filters = { ...filters };
     if (barFilters && barFilters.length > 0) {
       Filters.summary = barFilters;
@@ -70,17 +69,8 @@ class TestPlanHome extends Component {
   }
 
   onDragEnd = (sourceIndex, targetIndex) => {
-    let lastRank = null;
-    let nextRank = null;
     const { testList } = TestPlanStore;
-    if (sourceIndex < targetIndex) {
-      lastRank = testList[targetIndex].rank;
-      nextRank = testList[targetIndex + 1] ? testList[targetIndex + 1].rank : null;
-    } else if (sourceIndex > targetIndex) {
-      lastRank = testList[targetIndex - 1] ? testList[targetIndex - 1].rank : null;
-      nextRank = testList[targetIndex].rank;
-    }
-    // window.console.log(sourceIndex, targetIndex, lastRank, nextRank);
+    const { lastRank, nextRank } = getDragRank(sourceIndex, targetIndex, testList);    
     const source = testList[sourceIndex];
     const temp = { ...source };
     delete temp.defects;
@@ -162,7 +152,7 @@ class TestPlanHome extends Component {
         >
           <Injecter store={TestPlanStore} item="loading">
             {loading => <Loading loading={loading} />}
-          </Injecter>          
+          </Injecter>
           <div className="c7ntest-TestPlan-content">
             <Injecter store={TestPlanStore} item="EditCycleVisible">
               {visible => <EditCycle visible={visible} />}

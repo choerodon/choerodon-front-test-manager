@@ -13,6 +13,15 @@
   cursor: pointer;
 }
 
+.c7ntest-between {
+  display: flex;
+  justify-content: space-between;
+  &-center{
+    @extend .c7ntest-between;
+    align-items: center;
+  }
+}
+
 .c7ntest-flex-space {
   flex: 1;
   visibility: hidden;
