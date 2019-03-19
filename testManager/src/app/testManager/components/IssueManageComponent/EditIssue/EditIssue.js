@@ -99,7 +99,7 @@ class EditIssueNarrow extends Component {
     if (this.props.onRef) {
       this.props.onRef(this);
     }
-   
+
     getUpdateProjectInfoPermission().then((res) => {
       hasDeletePermission = res[0].approve;
     });
@@ -203,7 +203,7 @@ class EditIssueNarrow extends Component {
       });
     });
   }, 500);
-  
+
   /**
    *多选提交前的准备，因为可以手动输入，所以会有原先不存在的值提交，后台会自动新建
    *
@@ -365,7 +365,7 @@ class EditIssueNarrow extends Component {
   }
 
   handleCopyIssue() {
-    this.props.reloadIssue();    
+    this.props.reloadIssue();
     if (this.props.onUpdate) {
       this.props.onUpdate();
     }
@@ -393,14 +393,14 @@ class EditIssueNarrow extends Component {
           // 跳转至复制后的页面
           if (res.issueId) {
             this.handleLinkToNewIssue(res.issueId);
-          }         
-          Choerodon.prompt('复制成功');        
+          }
+          Choerodon.prompt('复制成功');
         }).catch((err) => {
           this.setState({
             issueLoading: false,
           });
           Choerodon.prompt('网络错误');
-        });       
+        });
         break;
       }
       case 'delete': {
@@ -431,7 +431,7 @@ class EditIssueNarrow extends Component {
       title: `删除测试用例${issueNum}`,
       content: '这个测试用例将会被彻底删除。包括所有步骤和相关执行',
       onOk: () => deleteIssue(issueId)
-        .then((res) => {      
+        .then((res) => {
           history.push(commonLink('/IssueManage'));
           this.handleLinkToTestCase();
         }),
@@ -481,19 +481,19 @@ class EditIssueNarrow extends Component {
     const {
       createdBy,
       createrImageUrl, createrEmail,
-      createrName, creationDate, issueTypeDTO, 
+      createrName, creationDate, issueTypeDTO,
     } = issueInfo;
     const createLog = {
       email: createrEmail,
       field: issueTypeDTO.typeCode,
-      imageUrl: createrImageUrl,     
+      imageUrl: createrImageUrl,
       name: createrName,
       lastUpdateDate: creationDate,
-      lastUpdatedBy: createdBy, 
+      lastUpdatedBy: createdBy,
       newString: 'issueNum',
       newValue: 'issueNum',
     };
-    
+
     return (
       <DataLogs
         datalogs={[...datalogs, createLog]}
@@ -503,7 +503,7 @@ class EditIssueNarrow extends Component {
 
   renderLinkIssues() {
     const { linkIssues } = this.props;
-    const group = _.groupBy(linkIssues, 'ward');   
+    const group = _.groupBy(linkIssues, 'ward');
     return (
       <div className="c7ntest-tasks">
         {
@@ -941,7 +941,7 @@ class EditIssueNarrow extends Component {
     }
     return (
       <TextEditToggle
-        // disabled={disabled}
+        disabled={this.checkDisabledModifyOrDelete()}
         formKey="reporterId"
         onSubmit={(id, done) => { this.editIssue({ reporterId: id || 0 }, done); }}
         originData={showUser}
@@ -1062,13 +1062,19 @@ class EditIssueNarrow extends Component {
     );
   }
 
+  checkDisabledModifyOrDelete = () => {
+    const loginUserId = AppState.userInfo.id;
+    const { issueInfo } = this.props;
+    return loginUserId !== issueInfo.createdBy || !hasDeletePermission;
+  }
+
   render() {
     const {
       issueLoading, FullEditorShow, createLinkTaskShow,
       currentNav,
     } = this.state;
     const {
-      loading, issueId, issueInfo, fileList, disabled, linkIssues, folderName,  
+      loading, issueId, issueInfo, fileList, disabled, linkIssues, folderName,
     } = this.props;
     const {
       issueNum, summary, creationDate, lastUpdateDate, description,
@@ -1092,7 +1098,6 @@ class EditIssueNarrow extends Component {
     const fixVersionsFixed = _.filter(fixVersionsTotal, { statusCode: 'archived' }) || [];
     const fixVersions = _.filter(fixVersionsTotal, v => v.statusCode !== 'archived') || [];
     const menu = AppState.currentMenuType;
-    const loginUserId = AppState.userInfo.id;
     const {
       type, id: projectId, organizationId: orgId, name,
     } = menu;
@@ -1108,7 +1113,7 @@ class EditIssueNarrow extends Component {
         {
           <Menu.Item
             key="delete"
-            disabled={loginUserId !== issueInfo.createdBy && !hasDeletePermission}
+            disabled={this.checkDisabledModifyOrDelete()}
           >
             {'删除'}
           </Menu.Item>
@@ -1151,7 +1156,7 @@ class EditIssueNarrow extends Component {
 
           </ul>
         </div>
-    
+
         <div className="c7ntest-content">
           <div className="c7ntest-content-top">
             <div className="c7ntest-header-editIssue">
@@ -1184,7 +1189,7 @@ class EditIssueNarrow extends Component {
                   </div>
                 </div>
                 <div className="line-justify" style={{ marginBottom: 5, alignItems: 'center', marginTop: 10 }}>
-  
+
                   <TextEditToggle
                     disabled={disabled}
                     style={{ width: '100%' }}
@@ -1205,9 +1210,9 @@ class EditIssueNarrow extends Component {
                   </TextEditToggle>
                   <div style={{ flexShrink: 0, color: 'rgba(0, 0, 0, 0.65)' }}>
                     {!disabled && (
-                    <Dropdown overlay={getMenu()} trigger={['click']}>
-                      <Button icon="more_vert" />
-                    </Dropdown>
+                      <Dropdown overlay={getMenu()} trigger={['click']}>
+                        <Button icon="more_vert" />
+                      </Dropdown>
                     )}
                   </div>
                 </div>
@@ -1232,7 +1237,7 @@ class EditIssueNarrow extends Component {
                     <div className="c7ntest-content-wrapper" style={{ display: 'flex', flexDirection: 'column' }}>
                       {/* 状态 */}
                       <div style={{ flex: 1 }}>
-                        
+
                         <div>
                           <div className="line-start mt-10">
                             <div className="c7ntest-property-wrapper">
@@ -1244,7 +1249,7 @@ class EditIssueNarrow extends Component {
                               {this.renderSelectStatus()}
                             </div>
                           </div>
-                          
+
                           {/* 优先级 */}
                           <div className="line-start mt-10">
                             <div className="c7ntest-property-wrapper">
@@ -1254,7 +1259,7 @@ class EditIssueNarrow extends Component {
                               {this.renderSelectPriority()}
                             </div>
                           </div>
-  
+
                           {/* 版本名称 */}
                           <div className="line-start mt-10">
                             <div className="c7ntest-property-wrapper">
@@ -1266,21 +1271,21 @@ class EditIssueNarrow extends Component {
                             <div className="c7ntest-value-wrapper">
                               <div>
                                 {
-                                    !fixVersionsFixed.length && !fixVersions.length ? '无' : (
-                                      <div>
-                                        <div style={{ color: '#000' }}>
-                                          {_.map(fixVersionsFixed, 'name').join(' , ')}
-                                        </div>
-                                        <p style={{ wordBreak: 'break-word', marginBottom: 0 }}>
-                                          {_.map(fixVersions, 'name').join(' , ')}
-                                        </p>
+                                  !fixVersionsFixed.length && !fixVersions.length ? '无' : (
+                                    <div>
+                                      <div style={{ color: '#000' }}>
+                                        {_.map(fixVersionsFixed, 'name').join(' , ')}
                                       </div>
-                                    )
-                                  }
+                                      <p style={{ wordBreak: 'break-word', marginBottom: 0 }}>
+                                        {_.map(fixVersions, 'name').join(' , ')}
+                                      </p>
+                                    </div>
+                                  )
+                                }
                               </div>
                             </div>
                           </div>
-  
+
                           {/* 文件夹名称 */}
                           <div className="line-start mt-10">
                             <div className="c7ntest-property-wrapper">
@@ -1293,25 +1298,25 @@ class EditIssueNarrow extends Component {
                               {folderName}
                             </div>
                           </div>
-  
-                          
+
+
                         </div>
                         {/* 模块 */}
                         {
-                            typeCode !== 'sub_task' ? (
-                              <div className="line-start mt-10">
-                                <div className="c7ntest-property-wrapper">
-                                  <span className="c7ntest-property">
-                                    <FormattedMessage id="summary_component" />
-                                    {'：'}
-                                  </span>
-                                </div>
-                                <div className="c7ntest-value-wrapper">
-                                  {this.renderSelectModule()}
-                                </div>
+                          typeCode !== 'sub_task' ? (
+                            <div className="line-start mt-10">
+                              <div className="c7ntest-property-wrapper">
+                                <span className="c7ntest-property">
+                                  <FormattedMessage id="summary_component" />
+                                  {'：'}
+                                </span>
                               </div>
-                            ) : null
-                          }
+                              <div className="c7ntest-value-wrapper">
+                                {this.renderSelectModule()}
+                              </div>
+                            </div>
+                          ) : null
+                        }
                         {/* 标签 */}
                         <div className="line-start mt-10">
                           <div className="c7ntest-property-wrapper">
@@ -1324,7 +1329,7 @@ class EditIssueNarrow extends Component {
                             {this.renderSelectLabel()}
                           </div>
                         </div>
-                         
+
                         {/* 报告人 */}
                         <div className="line-start mt-10 assignee">
                           <div className="c7ntest-property-wrapper">
@@ -1335,20 +1340,22 @@ class EditIssueNarrow extends Component {
                           </div>
                           <div className="c7ntest-value-wrapper" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
                             {this.renderSelectPerson()}
-                            <span
-                              role="none"
-                              style={{
-                                color: '#3f51b5',
-                                cursor: 'pointer',
-                                marginTop: '-2px',
-                                display: 'inline-block',
-                              }}
-                              onClick={() => {
-                                this.editIssue({ reporterId: AppState.userInfo.id });
-                              }}
-                            >
-                              <FormattedMessage id="issue_edit_assignToMe" />
-                            </span>
+                            {!this.checkDisabledModifyOrDelete() && (
+                              <span
+                                role="none"
+                                style={{
+                                  color: '#3f51b5',
+                                  cursor: 'pointer',
+                                  marginTop: '-2px',
+                                  display: 'inline-block',
+                                }}
+                                onClick={() => {
+                                  this.editIssue({ reporterId: AppState.userInfo.id });
+                                }}
+                              >
+                                <FormattedMessage id="issue_edit_assignToMe" />
+                              </span>
+                            )}
                           </div>
                         </div>
                         <div className="line-start mt-10 assignee">
@@ -1387,7 +1394,7 @@ class EditIssueNarrow extends Component {
                             </span>
                           </div>
                         </div>
-  
+
                         <div className="line-start mt-10">
                           <div className="c7ntest-property-wrapper">
                             <span className="c7ntest-property">
@@ -1415,7 +1422,7 @@ class EditIssueNarrow extends Component {
                       </div>
                     </div>
                   </div>
-  
+
                   <div id="des">
                     <div className="c7ntest-title-wrapper">
                       <div className="c7ntest-title-left">
@@ -1446,9 +1453,9 @@ class EditIssueNarrow extends Component {
                     </div>
                     {this.renderDescription()}
                   </div>
-  
+
                 </div>
-                 
+
                 {/* 附件 */}
                 <div id="attachment">
                   <div className="c7ntest-title-wrapper">
@@ -1504,7 +1511,7 @@ class EditIssueNarrow extends Component {
                   </div>
                   {this.renderDataLogs()}
                 </div>
-  
+
                 {/* 关联用例 */}
                 <div id="link_task">
                   <div className="c7ntest-title-wrapper">
@@ -1525,12 +1532,12 @@ class EditIssueNarrow extends Component {
                   </div>
                   {this.renderLinkIssues()}
                 </div>
-  
+
               </div>
             </section>
           </div>
         </div>
-             
+
         {
           <FullEditor
             initValue={description}
@@ -1553,7 +1560,7 @@ class EditIssueNarrow extends Component {
               onOk={this.handleCreateLinkIssue.bind(this)}
             />
           ) : null
-        }        
+        }
       </div>
     );
   }
