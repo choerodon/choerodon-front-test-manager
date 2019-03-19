@@ -193,7 +193,9 @@ class TextEditToggle extends Component {
   renderChild = () => {
     const { editing, newData } = this.state;
     const { disabled, simpleMode, noButton } = this.props;
-    const { originData, formKey, rules } = this.props;
+    const {
+      originData, formKey, rules, fieldProps, 
+    } = this.props;
     const { getFieldDecorator } = this.props.form;
     // 拿到不同模式下对应的子元素
     const children = this.getEditOrTextChildren();
@@ -208,6 +210,7 @@ class TextEditToggle extends Component {
                   {getFieldDecorator(formKey, {
                     rules,
                     initialValue: originData,
+                    ...fieldProps,
                   })(
                     this.renderFormItemChild(this.wrapChildren(child.props.children)),
                   )}
