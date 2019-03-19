@@ -67,7 +67,7 @@ export default class TestProgress extends Component {
           },
           data: this.state.VersionProgress.map(item => ({
             name: item.name,
-            value: item.value,
+            value: item.value.counts,
             itemStyle: {                
               color: item.color,              
             },  
