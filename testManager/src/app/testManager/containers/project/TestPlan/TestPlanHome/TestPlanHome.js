@@ -178,7 +178,7 @@ class TestPlanHome extends Component {
                 <div className="c7ntest-TestPlan-content-right">
                   <EventCalendar key={`${currentCycle.key}_${times.length}`} showMode={calendarShowMode} times={times} onItemClick={this.handleItemClick} />
                   {calendarShowMode === 'single' && (
-                    <Injecter store={TestPlanStore} item={['statusList', 'prioritys', 'testList', 'executePagination', 'rightLoading']}>
+                    <Injecter store={TestPlanStore} item={['statusList', 'prioritys', 'getTestList', 'executePagination', 'rightLoading']}>
                       {([statusList, prioritys, testList, executePagination, rightLoading]) => (
                         <TestPlanTable
                           prioritys={prioritys}

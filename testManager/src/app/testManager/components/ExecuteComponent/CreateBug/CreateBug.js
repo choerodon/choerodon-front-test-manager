@@ -194,7 +194,7 @@ class CreateBug extends Component {
           Object.keys(values.linkTypeId).forEach((link, index) => {
             if (values.linkTypeId[link] && values.linkIssues[link]) {
               const currentLinkType = _.find(issueLinkTypes, { linkTypeId: values.linkTypeId[link].split('+')[0] * 1 });
-              values.linkIssues[link].forEach((issueId) => {               
+              values.linkIssues[link].forEach((issueId) => {
                 if (currentLinkType.inWard === values.linkTypeId[link].split('+')[1]) {
                   issueLinkCreateDTOList.push({
                     linkTypeId: values.linkTypeId[link].split('+')[0] * 1,

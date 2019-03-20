@@ -450,6 +450,10 @@ class TestPlanStore extends BaseTreeProto {
     return this.times.length > 0;
   }
 
+  @computed get getTestList() {
+    return toJS(this.testList);
+  }
+
   @action setExportVersionId(data) {
     this.exportVersionId = data;
   }

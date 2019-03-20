@@ -123,26 +123,46 @@ class IssueTree extends Component {
         {afterStr}
       </span>
     ) : <span>{item.title}</span>;
-    return (
-      <TreeNode
-        title={item.cycleId || item.versionId
-          ? (
-            <IssueTreeTitle
-              title={title}
-              data={item}
-              refresh={this.getTree}
-              callback={this.callback}
-            />
-          )
-          : title}
-        key={key}
-        data={item}
-        showIcon
-        icon={icon}
-      >
-        {this.renderTreeNodes(children)}
-      </TreeNode>
-    );
+    if (type === 'ADD_FOLDER') {
+      return (
+        <TreeNode
+          title={(
+            <div onClick={e => e.stopPropagation()} role="none">
+              <Input
+                defaultValue={item.title}
+                autoFocus
+                onBlur={(e) => {
+                  this.addFolder(item, e, type);
+                }}
+              />
+            </div>
+          )}
+          icon={icon}
+          data={item}
+        />
+      );
+    } else {
+      return (
+        <TreeNode
+          title={item.cycleId || item.versionId
+            ? (
+              <IssueTreeTitle
+                title={title}
+                data={item}
+                refresh={this.getTree}
+                callback={this.callback}
+              />
+            )
+            : title}
+          key={key}
+          data={item}
+          showIcon
+          icon={icon}
+        >
+          {this.renderTreeNodes(children)}
+        </TreeNode>
+      );
+    } 
   });
 
   /**
