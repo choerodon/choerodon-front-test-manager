@@ -5,6 +5,7 @@ import { FormattedMessage } from 'react-intl';
 import { Table, Tooltip } from 'choerodon-ui';
 import { delta2Html, delta2Text } from '../../../../../../common/utils';
 import { RichTextShow, User } from '../../../../../../components/CommonComponent';
+import './ExecuteHistoryTable.scss';
 
 const propTypes = {
   dataSource: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
@@ -103,6 +104,7 @@ const ExecuteHistoryTable = ({
   }];
   return (
     <Table
+      className="c7ntest-ExecuteHistoryTable"
       filterBar={false}
       dataSource={dataSource}
       columns={columns}
