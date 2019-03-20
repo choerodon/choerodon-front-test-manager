@@ -50,11 +50,11 @@ class WYSIWYGEditor extends Component {
     }
   };
 
-  componentWillReceiveProps(nextProps) {       
-    if (this.props.value !== nextProps.value) {
-      this.editor.setEditorContents(this.editor.getEditor(), nextProps.value);
-    }  
-  }
+  // componentWillReceiveProps(nextProps) {       
+  //   if (this.props.value !== nextProps.value) {
+  //     this.editor.setEditorContents(this.editor.getEditor(), nextProps.value);
+  //   }  
+  // }
 
   render() {
     const { placeholder, value } = this.props;

@@ -6,9 +6,9 @@ import PropTypes from 'prop-types';
 import { observer } from 'mobx-react';
 import './TextEditToggle.scss';
 // 防止提交前变回原值
-const Text = props => (typeof (props.children) === 'function' ? props.children(props.newData || props.originData) : props.children);
+const Text = ({ children, newData, originData }) => (typeof (children) === 'function' ? children(newData || originData) : children);
 
-const Edit = props => props.children;
+const Edit = ({ children }) => children;
 const FormItem = Form.Item;
 function contains(root, n) {
   let node = n;
@@ -76,7 +76,7 @@ class TextEditToggle extends Component {
     }
     this.PortalMouseDown = false;
   }
-  
+
   handlePortalMouseDown = () => {
     this.PortalMouseDown = true;
   }
@@ -201,7 +201,7 @@ class TextEditToggle extends Component {
       <div
         role="none"
         className="c7ntest-TextEditToggle-edit"
-        onMouseDown={this.handlePortalMouseDown}
+        onMouseDown={this.handlePortalMouseDown} // Portal的事件会冒泡回父组件
       >
         { // 采用form模式就进行form包装,否则
           formKey ? (

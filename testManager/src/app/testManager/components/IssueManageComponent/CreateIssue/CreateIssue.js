@@ -171,23 +171,6 @@ class CreateIssue extends Component {
           Choerodon.prompt('版本错误');
           return null;
         }
-
-        // return;
-        // const fixVersionIssueRelDTOList = _.map(values.fixVersionIssueRel, (version) => {
-        //   const target = _.find(exitFixVersions, { name: version });
-        //   if (target) {
-        //     return {
-        //       ...target,
-        //       relationType: 'fix',
-        //     };
-        //   } else {
-        //     return ({
-        //       name: version,
-        //       relationType: 'fix',
-        //       projectId: AppState.currentMenuType.id,
-        //     });
-        //   }
-        // });
         const testType = IssueStore.getTestType;     
         const extra = {
           typeCode: 'issue_test',
@@ -207,7 +190,7 @@ class CreateIssue extends Component {
         this.setState({ createLoading: true });
         const deltaOps = this.state.delta;
         if (deltaOps) {
-          beforeTextUpload(deltaOps, extra, this.handleSave.bind(this, values.folderId));
+          beforeTextUpload(deltaOps, extra, this.handleSave.bind(this, extra, values.folderId));
         } else {
           extra.description = '';
           this.handleSave(extra, values.folderId);
