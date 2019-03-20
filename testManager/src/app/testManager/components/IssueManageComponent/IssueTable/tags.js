@@ -169,7 +169,7 @@ export function renderLabels(labels) {
         >
           {labels[0].labelName}
         </Tag>
-        {labels.length > 0 && <Tag color="blue">...</Tag>}
+        {labels.length > 1 && <Tag color="blue">...</Tag>}
       </Tooltip>
     );
   } else {

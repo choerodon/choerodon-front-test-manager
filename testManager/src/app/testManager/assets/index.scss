@@ -4,6 +4,10 @@
   text-overflow: ellipsis;
 }
 
+ul {
+  padding: 0;
+}
+
 .c7ntest-center {
   display: flex;
   align-items: center;
@@ -16,7 +20,7 @@
 .c7ntest-between {
   display: flex;
   justify-content: space-between;
-  &-center{
+  &-center {
     @extend .c7ntest-between;
     align-items: center;
   }
