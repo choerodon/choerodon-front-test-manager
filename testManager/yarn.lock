@@ -1955,10 +1955,10 @@ chardet@^0.7.0:
   resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/chardet/-/chardet-0.7.0.tgz#90094849f0937f2eedc2425d0d28a9e5f0cbad9e"
   integrity sha1-kAlISfCTfy7twkJdDSip5fDLrZ4=
 
-choerodon-front-boot@0.10.4:
+choerodon-front-boot@^0.10.4:
   version "0.10.4"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/choerodon-front-boot/-/choerodon-front-boot-0.10.4.tgz#3069f76e543bf22a0372bcd06d67c147b12e8690"
-  integrity sha512-MgsuwR94t1dtGnp5hNTRb6RjeBjgO+dN5evYAZf8yKlabLdfmyqMiy9wQIckBEh2e0TtCIHhkIGXLHOE7Ujfvg==
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/choerodon-front-boot/-/choerodon-front-boot-0.10.4.tgz#eb38822dfd47b27e1a38cab63adf01d582ad408e"
+  integrity sha512-yxEGHL6JpGldO1SYUNMrngXkWvxAEEJhgvlBaoK90NFjFIC/EEE9i/Rnn92ti6fXd6JxYiiqw/Dv5njrS/cClg==
   dependencies:
     add-asset-html-webpack-plugin "^2.1.2"
     autoprefixer "^6.7.7"
