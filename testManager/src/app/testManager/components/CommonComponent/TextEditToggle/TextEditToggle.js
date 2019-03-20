@@ -68,17 +68,17 @@ class TextEditToggle extends Component {
 
   handleDocumentClick = (event) => {
     const target = event.target;
-    const root = findDOMNode(this);
+    const root = findDOMNode(this); 
     // 如果点击不在当前元素内，就调用submit提交数据
-    if (!this.DropdownMouseDown && !contains(root, target)) {
+    if (!this.PortalMouseDown && !contains(root, target)) {
       // console.log(target);
       this.handleSubmit();
     }
-    this.DropdownMouseDown = false;
+    this.PortalMouseDown = false;
   }
-
-  handleDropdownMouseDown = () => {
-    this.DropdownMouseDown = true;
+  
+  handlePortalMouseDown = () => {
+    this.PortalMouseDown = true;
   }
 
   handleDone = () => {
@@ -169,14 +169,11 @@ class TextEditToggle extends Component {
     // console.log(childrenArray);
     return childrenArray.map((child) => {
       if (!child.props.getPopupContainer) {
-        return React.cloneElement(child, {
-          onDropdownMouseDown: this.handleDropdownMouseDown,
+        return React.cloneElement(child, {        
           getPopupContainer: () => findDOMNode(this),
         });
       } else {
-        return React.cloneElement(child, {
-          onDropdownMouseDown: this.handleDropdownMouseDown,
-        });
+        return child;
       }
     });
   }
@@ -201,7 +198,11 @@ class TextEditToggle extends Component {
     const children = this.getEditOrTextChildren();
     // 根据不同模式对子元素进行包装
     return editing ? (
-      <div className="c7ntest-TextEditToggle-edit">
+      <div
+        role="none"
+        className="c7ntest-TextEditToggle-edit"
+        onMouseDown={this.handlePortalMouseDown}
+      >
         { // 采用form模式就进行form包装,否则
           formKey ? (
             <Form layout="vertical">
