@@ -66,7 +66,7 @@ class ReportStory extends Component {
       getStatusList('CYCLE_CASE'),
       getIssueTypes(),
       getIssueTypes('agile'),
-      getIssueStatus(),
+      getIssueStatus('agile'),
     ])
       .then(([reportData, statusList, issueTypes, agileTypeList, issueStatusList]) => {
         if (reportData.totalElements !== undefined) {
