@@ -3,7 +3,6 @@ import React, { Component } from 'react';
 import { Form, Icon } from 'choerodon-ui';
 import { findDOMNode } from 'react-dom';
 import PropTypes from 'prop-types';
-import { observer } from 'mobx-react';
 import './TextEditToggle.scss';
 // 防止提交前变回原值
 const Text = ({ children, newData, originData }) => (typeof (children) === 'function' ? children(newData || originData) : children);
@@ -21,7 +20,7 @@ function contains(root, n) {
 
   return false;
 }
-@observer
+
 class TextEditToggle extends Component {
   static defaultProps = {
 

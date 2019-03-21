@@ -14,7 +14,7 @@ import { getReportsFromDefect, getReportsFromDefectByIssueIds } from '../../../.
 import { getStatusList } from '../../../../api/TestStatusApi';
 import { getIssueTypes, getIssueStatus } from '../../../../api/agileApi';
 import {
-  issueLink, cycleLink, executeDetailShowLink, getProjectName,
+  issueLink, cycleLink, executeDetailLink, getProjectName,
 } from '../../../../common/utils';
 import './ReportTest.scss';
 
@@ -62,7 +62,7 @@ class ReportTest extends Component {
       this.getReportsFromDefect(),
       getIssueTypes(),
       getIssueTypes('agile'),
-      getIssueStatus(),
+      getIssueStatus('agile'),
     ]).then(([
       statusList,
       stepStatusList,
@@ -301,16 +301,16 @@ class ReportTest extends Component {
                 </Tooltip>
               </div>
               <div
-                className="c7ntest-collapse-text-icon"
+                className="c7ntest-collapse-text-icon c7ntest-text-dot"
                 style={{ color: statusColor, borderColor: statusColor }}
               >
                 {statusName}
               </div>
               <Link
                 style={{ lineHeight: '13px' }}
-                to={executeDetailShowLink(execute.executeId)}
+                to={executeDetailLink(execute.executeId)}
               >
-                <Icon type="explicit2" style={{ marginLeft: 10, color: 'black' }} />
+                <Icon type="explicit" style={{ marginLeft: 10, color: 'black' }} />
               </Link>
               {
                 i >= testCycleCaseES.length
