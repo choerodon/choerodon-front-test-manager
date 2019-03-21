@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 
 import React, { Component } from 'react';
 import {
@@ -14,7 +15,7 @@ import { getReportsFromStory } from '../../../../api/reportApi';
 import { getIssueTypes, getIssueStatus } from '../../../../api/agileApi';
 import { getStatusList } from '../../../../api/TestStatusApi';
 import {
-  issueLink, cycleLink, executeDetailShowLink, getProjectName,
+  issueLink, cycleLink, executeDetailLink, getProjectName,
 } from '../../../../common/utils';
 import './ReportStory.scss';
 
@@ -66,7 +67,7 @@ class ReportStory extends Component {
       getStatusList('CYCLE_CASE'),
       getIssueTypes(),
       getIssueTypes('agile'),
-      getIssueStatus(),
+      getIssueStatus('agile'),
     ])
       .then(([reportData, statusList, issueTypes, agileTypeList, issueStatusList]) => {
         if (reportData.totalElements !== undefined) {
@@ -306,6 +307,7 @@ class ReportStory extends Component {
                         <div className="c7ntest-report-summary">{issue.summary}</div>
                       </div>
                     )}
+                  // eslint-disable-next-line react/no-array-index-key
                   key={`${issue.issueId}-${i}`}
                 />
               ))
@@ -361,7 +363,7 @@ class ReportStory extends Component {
                     </div>
                     <Link
                       style={{ lineHeight: '13px' }}
-                      to={executeDetailShowLink(execute.executeId)}
+                      to={executeDetailLink(execute.executeId)}
                     >
                       <Icon type="explicit2" style={{ marginLeft: 10, color: 'black' }} />
                     </Link>
