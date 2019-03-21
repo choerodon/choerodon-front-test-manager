@@ -467,6 +467,7 @@ class TestPlanStore extends BaseTreeProto {
   }
 
   @action resortTree(parent, soureIndex, targetIndex) {
+    // eslint-disable-next-line no-param-reassign
     parent.children = reorder(parent.children, soureIndex, targetIndex);
   }
 }

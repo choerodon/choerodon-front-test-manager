@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import _ from 'lodash';
 import { observer } from 'mobx-react';
 import { Spin, Table, Pagination } from 'choerodon-ui';
-import { Draggable, Droppable, DragDropContext } from 'react-beautiful-dnd';
+import { Droppable, DragDropContext } from 'react-beautiful-dnd';
 import { FormattedMessage } from 'react-intl';
 import EmptyBlock from '../EmptyBlock';
 import CreateIssueTiny from '../CreateIssueTiny';
@@ -23,17 +23,6 @@ class IssueTable extends Component {
     filteredColumns: ['issueNum', 'issueTypeDTO', 'summary', 'versionIssueRelDTOList', 'folderName', 'reporter', 'priorityId'],
   };
 
-  // shouldComponentUpdate() {
-  //   return false;
-  // }
-
-  // componentWillReact() {
-  //   console.log('wr');
-  // }
-  
-  // componentDidUpdate(prevProps, prevState) {
-  //   console.log('up');
-  // }
   
   handleColumnFilterChange = ({ selectedKeys }) => {
     this.setState({
@@ -180,13 +169,12 @@ class IssueTable extends Component {
     if (e.keyCode === 17 || e.keyCode === 93 || e.keyCode === 91 || e.keyCode === 224) {
       const templateCopy = document.getElementById('template_copy').cloneNode(true);
       templateCopy.style.display = 'block';
-      // IssueStore.setCopy(true);
+      
       if (this.instance.firstElementChild) {
         this.instance.replaceChild(templateCopy, this.instance.firstElementChild);
       } else {
         this.instance.appendChild(templateCopy);
-      }
-      // this.instance.innerText = '复制';
+      }     
     }
   }
 
@@ -195,8 +183,7 @@ class IssueTable extends Component {
     e.stopImmediatePropagation();
     const templateMove = document.getElementById('template_move').cloneNode(true);
     templateMove.style.display = 'block';
-    // IssueStore.setCopy(true);
-
+ 
     if (this.instance.firstElementChild) {
       this.instance.replaceChild(templateMove, this.instance.firstElementChild);
     } else {
