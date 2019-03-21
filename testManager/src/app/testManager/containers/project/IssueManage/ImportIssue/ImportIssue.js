@@ -110,12 +110,18 @@ class ImportIssue extends Component {
             : ''
           }
           <span className="c7ntest-ImportIssue-text">
-            {'导入到 '}
-            <span className="c7ntest-ImportIssue-version">{version || versionName}</span>
-            {' 版本失败 '}
+            {!version && !versionName
+              ? <React.Fragment>{'导入'}</React.Fragment>
+              : <React.Fragment>
+                {'导入到 '}
+                <span className="c7ntest-ImportIssue-version">{version || versionName}</span>
+                {' 版本'}
+              </React.Fragment>
+            }
+            {'失败 '}
             <span style={{ color: '#F44336' }}>
-            {failedCount}
-          </span>
+              {failedCount}
+            </span>
             {' 条用例'}
             {fileUrl
               ? (

@@ -13,32 +13,39 @@ const TypeTag = ({
   const backgroundColor = typeColor && typeColor.includes('#') ? typeColor : `#${typeColor}`;
   return (
     <div className="c7ntest-typeTag" style={style}>
-      {initTypes.indexOf(icon || '') !== -1
-        ? (
-          <Icon
-            style={{
-              fontSize: '26px',
-              color: typeColor || '#fab614',
-            }}
-            type={icon || 'help'}
-          />
-        )
-        : (
-          <div
-            className="icon-wapper"
-            style={{
-              backgroundColor: typeColor || '#fab614',
-              padding: '2px',
-              margin: '3px',
-            }}
-          >
-            <Icon
-              style={{ fontSize: '16px' }}
-              type={icon || 'help'}
-            />
-          </div>
-        )
-      }
+      <Icon
+        style={{
+          fontSize: '26px',
+          color: typeColor || '#fab614',
+        }}
+        type={icon || 'help'}
+      />
+      {/*{initTypes.indexOf(icon || '') !== -1*/}
+        {/*? (*/}
+          {/*<Icon*/}
+            {/*style={{*/}
+              {/*fontSize: '26px',*/}
+              {/*color: typeColor || '#fab614',*/}
+            {/*}}*/}
+            {/*type={icon || 'help'}*/}
+          {/*/>*/}
+        {/*)*/}
+        {/*: (*/}
+          {/*<div*/}
+            {/*className="icon-wapper"*/}
+            {/*style={{*/}
+              {/*backgroundColor: typeColor || '#fab614',*/}
+              {/*padding: '2px',*/}
+              {/*margin: '3px',*/}
+            {/*}}*/}
+          {/*>*/}
+            {/*<Icon*/}
+              {/*style={{ fontSize: '16px' }}*/}
+              {/*type={icon || 'help'}*/}
+            {/*/>*/}
+          {/*</div>*/}
+        {/*)*/}
+      {/*}*/}
       {
         showName && (
           <span className="name">{typeName || ''}</span>
