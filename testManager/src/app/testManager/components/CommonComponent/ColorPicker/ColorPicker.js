@@ -54,7 +54,7 @@ class ColorPicker extends Component {
     this.handleVisibleChange(false);
   }
 
-  triggerChange = (changedValue) => {   
+  triggerChange = (changedValue) => {
     const onChange = this.props.onChange;
     if (onChange) {
       onChange(changedValue);
