@@ -411,14 +411,12 @@ class TestExecuteInfo extends Component {
             <div role="none" style={styles.cardTitle} onClick={(e) => { e.stopPropagation(); }}>
               {/* <Icon type="expand_more" /> */}
               <span style={styles.cardTitleText}><FormattedMessage id="execute_description" /></span>
-              <div style={{ flex: 1, visibility: 'hidden' }} />
-              {/* {!disabled && ( */}
+              <div style={{ flex: 1, visibility: 'hidden' }} />       
               <Button className="c7ntest-upload-button" onClick={() => { this.setState({ edit: true }); }}>
                 <Icon type="zoom_out_map" />
                 {' '}
                 <FormattedMessage id="execute_edit_fullScreen" />
               </Button>
-              {/* )} */}
               <FullEditor
                 initValue={comment}
                 visible={this.state.edit}
@@ -439,35 +437,17 @@ class TestExecuteInfo extends Component {
             style={{ width: '100%', height: 'calc(40% - 20px)', marginTop: 20 }}
           >
             <div style={styles.cardTitle}>
-              <div>
-                {/* <Icon type="expand_more" /> */}
+              <div>             
                 <span style={styles.cardTitleText}><FormattedMessage id="attachment" /></span>
               </div>
-              <div style={{ flex: 1, visibility: 'hidden' }} />
-              {/* {!disabled && ( */}
+              <div style={{ flex: 1, visibility: 'hidden' }} />     
               <UploadButton 
                 handleUpload={this.handleUpload}
               >
                 <Icon type="file_upload" />
                 {' '}
                 <FormattedMessage id="upload_attachment" />
-
               </UploadButton>
-              {/* <Button className="c7ntest-upload-button" onClick={() => this.uploadInput.click()}>
-                <Icon type="file_upload" />
-                {' '}
-                <FormattedMessage id="upload_attachment" />
-                <input
-                  ref={
-                    (uploadInput) => { if (uploadInput) { this.uploadInput = uploadInput; } }
-                  }
-                  type="file"
-                  multiple
-                  onChange={this.handleUpload}
-                  style={{ display: 'none' }}
-                />
-              </Button> */}
-              {/* )} */}
             </div>
             <div style={{ marginTop: -10 }}>
               <Upload
