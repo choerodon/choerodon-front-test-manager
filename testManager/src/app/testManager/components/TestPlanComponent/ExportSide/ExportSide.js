@@ -162,7 +162,7 @@ class ExportSide extends Component {
     const {
       visible, exportList, loading, versionList, cycleList, stageList,
     } = this.state;
-    const { exportVersionId, exportCycleId, exportStageId  } = TestPlanStore;
+    const { exportVersionId, exportCycleId, exportStageId } = TestPlanStore;
     const columns = [{
       title: '导出来源',
       dataIndex: 'sourceType',

@@ -185,12 +185,6 @@ class EditIssueNarrow extends Component {
     }
   }
 
-  /**
-   * Attachment
-   */
-  setFileList = (data) => {
-    this.setState({ fileList: data });
-  }
 
   debounceFilterIssues = _.debounce((input) => {
     this.setState({
