@@ -15,13 +15,11 @@ class WYSIWYGEditor extends Component {
   modules = {
     toolbar: [
       ['bold', 'italic', 'underline', 'strike', 'blockquote'],
-      [{ list: 'ordered' }, { list: 'bullet' }],
-      ['link', 'image'],
-      // ['clean'],
+      [{ list: 'ordered' }, { list: 'bullet' }, 'image', 'link', { color: [] }],
     ],
     imageDrop: true,
   };
-
+  
   formats = [
     'bold',
     'italic',
@@ -32,6 +30,7 @@ class WYSIWYGEditor extends Component {
     'bullet',
     'link',
     'image',
+    'color',
   ];
 
   defaultStyle = {
@@ -83,7 +82,12 @@ class WYSIWYGEditor extends Component {
         {
           this.props.bottomBar && (
             <div style={{
-              padding: '0 8px', border: '1px solid #ccc', borderTop: 'none', display: 'flex', justifyContent: 'flex-end',
+              padding: '0 8px',
+              border: '1px solid #ccc',
+              borderTop: 'none',
+              display: 'flex',
+              justifyContent: 'flex-end',
+              height: 35,
             }}
             >
               <Button

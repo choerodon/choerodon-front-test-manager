@@ -11,7 +11,7 @@ import TestPlanStore from '../../../store/project/TestPlan/TestPlanStore';
 
 const FormItem = Form.Item;
 const { Sidebar } = Modal;
-
+const { RangePicker } = DatePicker;
 @observer
 class EditStage extends Component {
   state = {
@@ -30,7 +30,8 @@ class EditStage extends Component {
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
         this.setState({ loading: true });
-        const { fromDate, toDate } = values;       
+        const { range } = values;
+        const [fromDate, toDate] = range;
         const initialValue = TestPlanStore.CurrentEditStage;
         editFolder({
           ...values,
@@ -53,7 +54,7 @@ class EditStage extends Component {
         }).catch(() => {
           Choerodon.prompt('网络异常');
           this.setState({ loading: false });
-        });        
+        });
       }
     });
   }
@@ -64,36 +65,36 @@ class EditStage extends Component {
 
   disabledStartDate = (startValue) => {
     const { parentTime } = TestPlanStore.CurrentEditStage;
-    const { start, end } = parentTime;    
+    const { start, end } = parentTime;
     const { getFieldValue } = this.props.form;
     const endValue = getFieldValue('toDate');
     if (!startValue || !endValue) {
-      return startValue < moment(start).startOf('day') 
-    || startValue > moment(end).endOf('day');
+      return startValue < moment(start).startOf('day')
+        || startValue > moment(end).endOf('day');
     }
-    return startValue.valueOf() > endValue.valueOf() 
-    || startValue < moment(start).startOf('day') 
-    || startValue > moment(end).endOf('day');
+    return startValue.valueOf() > endValue.valueOf()
+      || startValue < moment(start).startOf('day')
+      || startValue > moment(end).endOf('day');
   }
 
   disabledEndDate = (endValue) => {
     const { parentTime } = TestPlanStore.CurrentEditStage;
-    const { start, end } = parentTime;    
+    const { start, end } = parentTime;
     const { getFieldValue } = this.props.form;
-    const startValue = getFieldValue('fromDate'); 
+    const startValue = getFieldValue('fromDate');
     if (!endValue || !startValue) {
-      return endValue < moment(start).startOf('day') 
-      || endValue > moment(end).endOf('day');
+      return endValue < moment(start).startOf('day')
+        || endValue > moment(end).endOf('day');
     }
     return endValue.valueOf() <= startValue.valueOf()
-    || endValue < moment(start).startOf('day') 
-    || endValue > moment(end).endOf('day');
+      || endValue < moment(start).startOf('day')
+      || endValue > moment(end).endOf('day');
   }
 
 
   render() {
     const { visible } = this.props;
-    const {       
+    const {
       title, description, fromDate, toDate, folderVersionName, folderName,
     } = TestPlanStore.CurrentEditStage;
     const { getFieldDecorator } = this.props.form;
@@ -161,32 +162,17 @@ class EditStage extends Component {
                   )}
                 </FormItem>
                 <FormItem>
-                  {getFieldDecorator('fromDate', {
-                    initialValue: fromDate && moment(fromDate),
+                  {getFieldDecorator('range', {
                     rules: [{
-                      required: true, message: '请选择日期!',
+                      type: 'array',
+                      required: true,
+                      message: '请选择日期!',
                     }],
+                    initialValue: fromDate && toDate ? [moment(fromDate), moment(toDate)] : undefined,
                   })(
-                    <DatePicker
+                    <RangePicker
                       format="YYYY-MM-DD"
-                      disabledDate={this.disabledStartDate}
                       style={{ width: 500 }}
-                      label={<FormattedMessage id="cycle_startTime" />}                      
-                    />,
-                  )}
-                </FormItem>
-                <FormItem>
-                  {getFieldDecorator('toDate', {
-                    initialValue: toDate && moment(toDate),
-                    rules: [{
-                      required: true, message: '请选择日期!',
-                    }],
-                  })(
-                    <DatePicker
-                      disabledDate={this.disabledEndDate}
-                      label={<FormattedMessage id="cycle_endTime" />}
-                      format="YYYY-MM-DD"
-                      style={{ width: 500 }}                      
                     />,
                   )}
                 </FormItem>
