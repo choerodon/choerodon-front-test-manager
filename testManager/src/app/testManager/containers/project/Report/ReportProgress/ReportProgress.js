@@ -138,7 +138,7 @@ class ReportProgress extends Component {
           },
           data: this.state.versionProgress.map(item => ({
             name: item.name,
-            value: item.value.counts,
+            value: item.counts,
             itemStyle: {
               color: item.color,
             },
