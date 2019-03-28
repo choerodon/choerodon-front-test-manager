@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-  Form, Input, Select, Modal, Spin, DatePicker, 
+  Form, Input, Select, Modal, Spin, DatePicker,
 } from 'choerodon-ui';
 import { Content } from 'choerodon-front-boot';
 import { FormattedMessage } from 'react-intl';
@@ -12,6 +12,7 @@ import TestPlanStore from '../../../store/project/TestPlan/TestPlanStore';
 const { Option } = Select;
 const FormItem = Form.Item;
 const { Sidebar } = Modal;
+const { RangePicker } = DatePicker;
 class CreateCycle extends Component {
   state = {
     versions: [],
@@ -33,9 +34,10 @@ class CreateCycle extends Component {
   onOk = () => {
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
-        this.setState({ loading: true });
+        const { range } = values;
+        const [fromDate, toDate] = range;
         // window.console.log('Received values of form: ', values);
-        const { fromDate, toDate } = values;
+        this.setState({ loading: true });
         addCycle({
           ...values,
           ...{
@@ -68,29 +70,11 @@ class CreateCycle extends Component {
         selectLoading: false,
       });
     });
-  }
-
-  disabledStartDate = (startValue) => { 
-    const { getFieldValue } = this.props.form;
-    const endValue = getFieldValue('toDate');
-    if (!startValue || !endValue) {
-      return false;
-    }
-    return startValue.valueOf() > endValue.valueOf();   
-  }
-
-  disabledEndDate = (endValue) => {
-    const { getFieldValue } = this.props.form;
-    const startValue = getFieldValue('fromDate'); 
-    if (!endValue || !startValue) {
-      return false;
-    }
-    return endValue.valueOf() <= startValue.valueOf();
-  }
+  } 
 
   render() {
     const {
-      visible, onOk, onCancel, type, 
+      visible, onOk, onCancel, type,
     } = this.props;
     const { getFieldDecorator } = this.props.form;
     const { versions, loading, selectLoading } = this.state;
@@ -140,53 +124,37 @@ class CreateCycle extends Component {
                       required: true, message: '请输入名称!',
                     }],
                   })(
-                    <Input style={{ width: 500 }} maxLength={30} label={<FormattedMessage id="name" />} />,                  
+                    <Input style={{ width: 500 }} maxLength={30} label={<FormattedMessage id="name" />} />,
                   )}
                 </FormItem>
                 <FormItem>
-                  {getFieldDecorator('description', {                  
+                  {getFieldDecorator('description', {
                   })(
-                    <Input style={{ width: 500 }} maxLength={30} label={<FormattedMessage id="comment" />} />,                  
+                    <Input style={{ width: 500 }} maxLength={30} label={<FormattedMessage id="comment" />} />,
                   )}
                 </FormItem>
                 <FormItem>
-                  {getFieldDecorator('build', {          
+                  {getFieldDecorator('build', {
                   })(
-                    <Input style={{ width: 500 }} maxLength={30} label={<FormattedMessage id="cycle_build" />} />,                  
+                    <Input style={{ width: 500 }} maxLength={30} label={<FormattedMessage id="cycle_build" />} />,
                   )}
                 </FormItem>
                 <FormItem>
-                  {getFieldDecorator('environment', {                
+                  {getFieldDecorator('environment', {
                   })(
-                    <Input style={{ width: 500 }} maxLength={30} label={<FormattedMessage id="cycle_environment" />} />,                  
+                    <Input style={{ width: 500 }} maxLength={30} label={<FormattedMessage id="cycle_environment" />} />,
                   )}
                 </FormItem>
                 <FormItem>
-                  {getFieldDecorator('fromDate', {
+                  {getFieldDecorator('range', {
                     rules: [{
                       required: true, message: '请选择日期!',
                     }],
                   })(
-                    <DatePicker
-                      format="YYYY-MM-DD"
-                      disabledDate={this.disabledStartDate}
-                      style={{ width: 500 }}
-                      label={<FormattedMessage id="cycle_startTime" />}
-                    />,                    
-                  )}
-                </FormItem>
-                <FormItem>
-                  {getFieldDecorator('toDate', {
-                    rules: [{
-                      required: true, message: '请选择日期!',
-                    }],
-                  })(
-                    <DatePicker
-                      disabledDate={this.disabledEndDate}
-                      label={<FormattedMessage id="cycle_endTime" />}
+                    <RangePicker                                   
                       format="YYYY-MM-DD"
                       style={{ width: 500 }}
-                    />,                    
+                    />,
                   )}
                 </FormItem>
               </Form>

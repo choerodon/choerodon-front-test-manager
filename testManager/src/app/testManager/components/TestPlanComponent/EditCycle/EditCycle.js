@@ -13,7 +13,7 @@ const { Option } = Select;
 const { AppState } = stores;
 const FormItem = Form.Item;
 const { Sidebar } = Modal;
-
+const { RangePicker } = DatePicker;
 @observer
 class EditCycle extends Component {
   state = {
@@ -38,7 +38,8 @@ class EditCycle extends Component {
       if (!err) {
         this.setState({ loading: true });
         // window.console.log('Received values of form: ', values);
-        const { fromDate, toDate } = values;
+        const { range } = values;
+        const [fromDate, toDate] = range;
         const initialValue = TestPlanStore.CurrentEditCycle;
         editFolder({
           ...values,
@@ -77,31 +78,6 @@ class EditCycle extends Component {
     });
   }
 
-  disabledStartDate = (startValue) => {
-    const { getFieldValue } = this.props.form;
-    const endValue = getFieldValue('toDate');
-    const children = TestPlanStore.CurrentEditCycle.children || [];
-    // 子元素最小的时间
-    const starts = children.map(child => moment(child.fromDate));
-    if (children.length > 0) {
-      return (endValue ? startValue > endValue : false) || startValue > moment.min(starts);
-    } else {
-      return (endValue ? startValue > endValue : false);
-    }
-  }
-
-  disabledEndDate = (endValue) => {
-    const { getFieldValue } = this.props.form;
-    const startValue = getFieldValue('fromDate');
-    const children = TestPlanStore.CurrentEditCycle.children || [];
-    // 子元素最小的时间
-    const ends = children.map(child => moment(child.toDate));    
-    if (children.length > 0) {
-      return (startValue ? endValue <= startValue : false) || endValue < moment(moment.max(ends)).startOf('day');
-    } else {
-      return (startValue ? endValue <= startValue : false);
-    }
-  }
 
   render() {
     const visible = this.props.visible;
@@ -166,32 +142,16 @@ class EditCycle extends Component {
                   )}
                 </FormItem>
                 <FormItem>
-                  {getFieldDecorator('fromDate', {
-                    initialValue: fromDate && moment(fromDate),
+                  {getFieldDecorator('range', {
                     rules: [{
-                      required: true, message: '请选择日期!',
+                      required: true,
+                      message: '请选择日期!',                      
                     }],
+                    initialValue: fromDate && toDate ? [moment(fromDate), moment(toDate)] : undefined,
                   })(
-                    <DatePicker
-                      disabledDate={this.disabledStartDate}
+                    <RangePicker                                   
                       format="YYYY-MM-DD"
                       style={{ width: 500 }}
-                      label="开始日期"
-                    />,
-                  )}
-                </FormItem>
-                <FormItem>
-                  {getFieldDecorator('toDate', {
-                    initialValue: toDate && moment(toDate),
-                    rules: [{
-                      required: true, message: '请选择日期!',
-                    }],
-                  })(
-                    <DatePicker
-                      disabledDate={this.disabledEndDate}
-                      format="YYYY-MM-DD"
-                      style={{ width: 500 }}
-                      label="结束日期"
                     />,
                   )}
                 </FormItem>
