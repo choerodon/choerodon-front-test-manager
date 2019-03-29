@@ -108,19 +108,22 @@ class ReportStory extends Component {
   handleFilterChange = (pagination, filters, sorter, barFilters) => {
     const { statusId, priorityCode, typeId } = filters;
     const {
-      issueNum, summary, assignee, sprint, version, component, epic, content,
+      issueNum, summary, assignee, sprint, version, component, epic, 
     } = filters;
-    // console.log(barFilters);
+    console.log(barFilters);
     const search = {
-      content: barFilters[0] ? barFilters[0] : content ? content[0] : '',
+      contents: barFilters[0] ? barFilters[0] : '',
       advancedSearchArgs: {
         statusId: statusId || [],
         // priorityCode: priorityCode || [],
         issueTypeId: typeId || [],
       },
-      otherArgs: {
+      searchArgs: {
         issueNum: issueNum ? issueNum[0] : '',
         summary: summary ? summary[0] : '',
+      },
+      otherArgs: {
+        
         // assignee: assignee ? assignee[0] : '',
         // sprint: sprint ? sprint[0] : '',
         // version: version ? version[0] : '',
@@ -158,24 +161,24 @@ class ReportStory extends Component {
       //   key: 'assignee',
       //   filters: [],
       // },
-      // {
-      //   title: '编号',
-      //   dataIndex: 'issueNum',
-      //   key: 'issueNum',
-      //   filters: [],
-      // },
-      // {
-      //   title: '概要',
-      //   dataIndex: 'summary',
-      //   key: 'summary',
-      //   filters: [],
-      // },
       {
-        title: '内容',
-        dataIndex: 'content',
-        key: 'content',
+        title: '编号',
+        dataIndex: 'issueNum',
+        key: 'issueNum',
         filters: [],
       },
+      {
+        title: '概要',
+        dataIndex: 'summary',
+        key: 'summary',
+        filters: [],
+      },
+      // {
+      //   title: '内容',
+      //   dataIndex: 'content',
+      //   key: 'content',
+      //   filters: [],
+      // },
       // {
       //   title: '优先级',
       //   dataIndex: 'priorityCode',
