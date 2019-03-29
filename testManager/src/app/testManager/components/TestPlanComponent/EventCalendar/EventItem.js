@@ -17,6 +17,11 @@ const types = {
   folder: '测试阶段',
 };
 const canResizes = ['cycle', 'folder'];
+const CURSORS = {
+  left: 'col-resize',
+  right: 'col-resize',
+  move: 'move',
+};
 const styles = {
   topversion: {
     borderTop: '4px solid #3F51B5',
@@ -65,6 +70,8 @@ const propTypes = {
   data: PropTypes.any.isRequired,
   onClick: PropTypes.func.isRequired,
 };
+let MouseDownTime = 0;
+let MouseUpTime = 0;
 class EventItem extends Component {
   state = {
     type: null,
@@ -88,13 +95,13 @@ class EventItem extends Component {
   // }
 
   componentDidMount() {
-    this.singleWidth = findDOMNode(this.Item).clientWidth / this.state.flex;
+    this.singleWidth = document.getElementsByClassName('CalendarBackItem')[0] ? document.getElementsByClassName('CalendarBackItem')[0].offsetWidth : 0;
     // console.log(this.singleWidth, this.state.flex);
   }
   
 
   componentDidUpdate(prevProps, prevState) {
-    this.singleWidth = findDOMNode(this.Item).clientWidth / this.state.flex;
+    this.singleWidth = document.getElementsByClassName('CalendarBackItem')[0] ? document.getElementsByClassName('CalendarBackItem')[0].offsetWidth : 0;
   }
   
   static getDerivedStateFromProps(props, state) {
@@ -211,9 +218,7 @@ class EventItem extends Component {
     return [
       <div style={{ flex: preFlex }} />,
       <div
-        role="none"
-        ref={this.saveRef('Item')}
-        // onClick={this.handleItemClick}
+        role="none"        
         onMouseEnter={this.handleMouseEnter}
         onMouseLeave={this.handleMouseLeave}
         className="c7ntest-EventItem-event"
@@ -228,7 +233,7 @@ class EventItem extends Component {
         {(enter || resizing) && <div className="c7ntest-EventItem-event-tip-left" style={{ background: styles[type].tipBackground }} />}
         {(enter || resizing) && <div className="c7ntest-EventItem-event-tip-right" style={{ background: styles[type].tipBackground }} />}
         <Tooltip getPopupContainer={triggerNode => triggerNode.parentNode} title={tipTitle} placement="topLeft">
-          <div className="c7ntest-EventItem-event-title c7ntest-text-dot" onMouseDown={this.handleMouseDown.bind(this, 'move')} role="none">
+          <div className="c7ntest-EventItem-event-title c7ntest-text-dot" onMouseDown={canResize ? this.handleMouseDown.bind(this, 'move') : null} role="none">
             {title}
           </div>
         </Tooltip>
@@ -280,6 +285,7 @@ class EventItem extends Component {
   handleMouseDown = (mode, e) => {
     e.stopPropagation();
     e.preventDefault();
+    MouseDownTime = new Date().getTime();
     // 为自动滚动做准备
     this.prepareForScroll();
     // console.log(this[mode].getBoundingClientRect().left, e.clientX);
@@ -375,6 +381,11 @@ class EventItem extends Component {
       });
       this.updateCycle();
     }
+    MouseUpTime = new Date().getTime();
+    // 间隔短，触发click事件
+    if ((MouseUpTime - MouseDownTime) < 200) {
+      this.handleItemClick();
+    }
   }
 
   handleMouseEnter = () => {
@@ -447,7 +458,7 @@ class EventItem extends Component {
             bottom: 0,
             right: 0,
             zIndex: 9999,
-            cursor: 'col-resize',
+            cursor: CURSORS[mode],
           }}
           />
         )}
