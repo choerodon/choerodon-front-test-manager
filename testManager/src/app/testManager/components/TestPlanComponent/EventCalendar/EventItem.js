@@ -1,3 +1,4 @@
+/* eslint-disable react/no-find-dom-node */
 import React, { Component } from 'react';
 import isEqual from 'react-fast-compare';
 import { findDOMNode } from 'react-dom';
@@ -15,7 +16,7 @@ const types = {
   cycle: '测试循环',
   folder: '测试阶段',
 };
-const canReasizes = ['cycle', 'folder'];
+const canResizes = ['cycle', 'folder'];
 const styles = {
   topversion: {
     borderTop: '4px solid #3F51B5',
@@ -92,9 +93,9 @@ class EventItem extends Component {
   }
   
 
-  // componentDidUpdate(prevProps, prevState) {
-  //   this.singleWidth = findDOMNode(this.Item).clientWidth / this.state.flex;
-  // }
+  componentDidUpdate(prevProps, prevState) {
+    this.singleWidth = findDOMNode(this.Item).clientWidth / this.state.flex;
+  }
   
   static getDerivedStateFromProps(props, state) {
     // 调整大小时以state为准
@@ -206,13 +207,13 @@ class EventItem extends Component {
       type, title, preFlex, flex, lastFlex, enter, resizing,
     } = this.state;
     const tipTitle = `${types[type]}：${title}`;
-    const canReasize = canReasizes.includes(type);
+    const canResize = canResizes.includes(type);
     return [
       <div style={{ flex: preFlex }} />,
       <div
         role="none"
         ref={this.saveRef('Item')}
-        onClick={this.handleItemClick}
+        // onClick={this.handleItemClick}
         onMouseEnter={this.handleMouseEnter}
         onMouseLeave={this.handleMouseLeave}
         className="c7ntest-EventItem-event"
@@ -222,12 +223,12 @@ class EventItem extends Component {
           ...styles[type],
         }}
       >
-        {canReasize && <div className="c7ntest-EventItem-event-resizer-left" style={{ left: preFlex === 0 ? 0 : -10 }} onMouseDown={this.handleMouseDown.bind(this, 'left')} ref={this.saveRef('left')} role="none" />}
-        {canReasize && <div className="c7ntest-EventItem-event-resizer-right" style={{ right: lastFlex === 0 ? 0 : -10 }} onMouseDown={this.handleMouseDown.bind(this, 'right')} ref={this.saveRef('right')} role="none" />}
+        {canResize && <div className="c7ntest-EventItem-event-resizer-left" style={{ left: preFlex === 0 ? 0 : -10 }} onMouseDown={this.handleMouseDown.bind(this, 'left')} role="none" />}
+        {canResize && <div className="c7ntest-EventItem-event-resizer-right" style={{ right: lastFlex === 0 ? 0 : -10 }} onMouseDown={this.handleMouseDown.bind(this, 'right')} role="none" />}
         {(enter || resizing) && <div className="c7ntest-EventItem-event-tip-left" style={{ background: styles[type].tipBackground }} />}
         {(enter || resizing) && <div className="c7ntest-EventItem-event-tip-right" style={{ background: styles[type].tipBackground }} />}
         <Tooltip getPopupContainer={triggerNode => triggerNode.parentNode} title={tipTitle} placement="topLeft">
-          <div className="c7ntest-EventItem-event-title c7ntest-text-dot">
+          <div className="c7ntest-EventItem-event-title c7ntest-text-dot" onMouseDown={this.handleMouseDown.bind(this, 'move')} role="none">
             {title}
           </div>
         </Tooltip>
@@ -246,13 +247,25 @@ class EventItem extends Component {
     let {
       preFlex, flex, lastFlex,
     } = this.state.initFlex;
-    if (mode === 'left') {
-      preFlex += multiple;
-      flex -= multiple;
-    } else {
-      flex += multiple;
-      lastFlex -= multiple;
+    switch (mode) {
+      case 'left': {
+        preFlex += multiple;
+        flex -= multiple;
+        break;
+      }
+      case 'right': {
+        flex += multiple;
+        lastFlex -= multiple;
+        break;
+      }
+      case 'move': {
+        preFlex += multiple;
+        lastFlex -= multiple;
+        break;
+      }
+      default: break;
     }
+
     // 最小为一天
     if (flex > 0 && preFlex >= 0 && lastFlex >= 0) {
       this.setState({
@@ -366,8 +379,8 @@ class EventItem extends Component {
 
   handleMouseEnter = () => {
     const { type } = this.state;
-    const canReasize = canReasizes.includes(type);
-    if (canReasize) {
+    const canResize = canResizes.includes(type);
+    if (canResize) {
       this.setState({
         enter: true,
       });
@@ -376,8 +389,8 @@ class EventItem extends Component {
 
   handleMouseLeave = () => {
     const { type } = this.state;
-    const canReasize = canReasizes.includes(type);
-    if (canReasize) {
+    const canResize = canResizes.includes(type);
+    if (canResize) {
       this.setState({
         enter: false,
       });
@@ -393,11 +406,10 @@ class EventItem extends Component {
     const { preFlex, lastFlex, mode } = this.state;
     const { range, itemRange, data } = this.props;
     const { start, end } = range;
-    // console.log(start, end, preFlex, lastFlex);    
-    const fromDate = mode === 'left' ? moment(start).add(preFlex, 'days') : moment(data.fromDate);
-    const toDate = mode === 'right' ? moment(end).subtract(lastFlex, 'days') : moment(data.toDate);
-    // console.log(fromDate.format('LL'), toDate.format('LL'), mode);
-    // console.log(this.props.data);
+    
+    const fromDate = moment(start).add(preFlex, 'days');
+    const toDate = moment(end).subtract(lastFlex, 'days');
+    
     const updateData = {
       cycleId: data.cycleId,
       parentCycleId: data.parentCycleId,

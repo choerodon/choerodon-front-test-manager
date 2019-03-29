@@ -279,10 +279,8 @@ class IssueTable extends Component {
       otherArgs: {
         label: labelIssueRelDTOList || [],
         issueNum: issueNum && issueNum.length ? issueNum[0] : barFilters[0],
-      },
-      searchArgs: {        
         summary: summary && summary.length ? summary[0] : '',
-      },
+      },     
     };
     IssueStore.setFilter(search);
     const { current, pageSize } = IssueStore.pagination;
