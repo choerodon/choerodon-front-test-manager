@@ -180,6 +180,7 @@ class ReportTest extends Component {
       issueNum, summary, assignee, sprint, version, component, epic,
     } = filters;
     const search = {
+      contents: barFilters[0] ? barFilters[0] : '',
       advancedSearchArgs: {
         statusId: statusId || [],
         // priorityCode: priorityCode || [],
