@@ -255,7 +255,7 @@ class ExecuteDetailSide extends Component {
             <div className="c7ntest-between-center">
               <div style={{ fontSize: '16px', fontWeight: 500 }}>
                 相关用例:
-                <Link style={{ color: '#3F51B5', marginLeft: 5 }} className="c7ntest-text-dot" to={issueLink(issueId, typeCode, issueNum)}>{issueNum}</Link>
+                <Link style={{ color: '#3F51B5', marginLeft: 5 }} className="c7ntest-text-dot" to={issueLink(issueId, typeCode, issueNum)} target="_blank">{issueNum}</Link>
               </div>  
               <Button className="leftBtn" funcType="flat" icon="last_page" onClick={onClose}>
                 <span>隐藏详情</span>
