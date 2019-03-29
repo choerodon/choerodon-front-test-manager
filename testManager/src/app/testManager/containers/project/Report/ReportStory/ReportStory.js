@@ -112,7 +112,7 @@ class ReportStory extends Component {
     } = filters;
     console.log(barFilters);
     const search = {
-      contents: barFilters[0] ? barFilters[0] : '',
+      contents: barFilters,
       advancedSearchArgs: {
         statusId: statusId || [],
         // priorityCode: priorityCode || [],
