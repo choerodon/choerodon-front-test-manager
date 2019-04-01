@@ -170,17 +170,19 @@ class TestExecuteTable extends Component {
           快速筛选:
           </div>
           <SelectFocusLoad
+            allowClear
             className="c7ntest-select"
             placeholder={<FormattedMessage id="cycle_executeBy" />}
-            request={getUsers}
+            type="user"
             onChange={onExecuteByChange}
           />
           {treeAssignedTo === 0 && (
           <SelectFocusLoad
+            allowClear
             style={{ marginLeft: 20, width: 200 }}
             className="c7ntest-select"
             placeholder={<FormattedMessage id="cycle_assignedTo" />}
-            request={getUsers}
+            type="user"
             onChange={onAssignedToChange}
           />
           )}

@@ -45,7 +45,7 @@ class AssignBatch extends PureComponent {
         <SelectFocusLoad
           style={{ width: '100%' }}
           label="指派人"
-          request={getUsers}
+          type="user"
           onChange={(value) => {
             this.setState({
               assign: value,

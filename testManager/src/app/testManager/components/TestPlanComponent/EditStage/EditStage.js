@@ -7,6 +7,7 @@ import moment from 'moment';
 import { Content } from 'choerodon-front-boot';
 import { FormattedMessage } from 'react-intl';
 import { editFolder } from '../../../api/cycleApi';
+import { SelectFolder, SelectFocusLoad } from '../../CommonComponent';
 import TestPlanStore from '../../../store/project/TestPlan/TestPlanStore';
 
 const FormItem = Form.Item;
@@ -29,6 +30,8 @@ class EditStage extends Component {
   onOk = () => {
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
+        const { folderVersionName, folderName } = TestPlanStore.CurrentEditStage;
+        const originFolder = `${folderVersionName}-${folderName}`;        
         this.setState({ loading: true });
         const { range } = values;
         const [fromDate, toDate] = range;
@@ -36,7 +39,7 @@ class EditStage extends Component {
         editFolder({
           ...values,
           ...{
-            folderId: initialValue.folderId,
+            folderId: values.folderId === originFolder ? undefined : values.folderId,
             cycleId: initialValue.cycleId,
             objectVersionNumber: initialValue.objectVersionNumber,
             type: 'folder',
@@ -63,39 +66,11 @@ class EditStage extends Component {
     TestPlanStore.ExitEditStage();
   }
 
-  disabledStartDate = (startValue) => {
-    const { parentTime } = TestPlanStore.CurrentEditStage;
-    const { start, end } = parentTime;
-    const { getFieldValue } = this.props.form;
-    const endValue = getFieldValue('toDate');
-    if (!startValue || !endValue) {
-      return startValue < moment(start).startOf('day')
-        || startValue > moment(end).endOf('day');
-    }
-    return startValue.valueOf() > endValue.valueOf()
-      || startValue < moment(start).startOf('day')
-      || startValue > moment(end).endOf('day');
-  }
-
-  disabledEndDate = (endValue) => {
-    const { parentTime } = TestPlanStore.CurrentEditStage;
-    const { start, end } = parentTime;
-    const { getFieldValue } = this.props.form;
-    const startValue = getFieldValue('fromDate');
-    if (!endValue || !startValue) {
-      return endValue < moment(start).startOf('day')
-        || endValue > moment(end).endOf('day');
-    }
-    return endValue.valueOf() <= startValue.valueOf()
-      || endValue < moment(start).startOf('day')
-      || endValue > moment(end).endOf('day');
-  }
-
 
   render() {
     const { visible } = this.props;
     const {
-      title, description, fromDate, toDate, folderVersionName, folderName,
+      title, description, fromDate, toDate, folderVersionName, folderName, versionId,
     } = TestPlanStore.CurrentEditStage;
     const { getFieldDecorator } = this.props.form;
     const { loading, selectLoading } = this.state;
@@ -152,10 +127,9 @@ class EditStage extends Component {
                       required: true, message: '请选择文件夹!',
                     }],
                   })(
-                    <Select
-                      disabled
-                      loading={selectLoading}
-                      onFocus={this.loadFolders}
+                    <SelectFocusLoad                
+                      type="folder"
+                      versionId={versionId}
                       style={{ width: 500, margin: '0 0 10px 0' }}
                       label={<FormattedMessage id="testPlan_linkFolder" />}
                     />,
