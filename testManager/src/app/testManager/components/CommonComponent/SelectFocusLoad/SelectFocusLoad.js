@@ -1,95 +1,80 @@
 import React, { Component } from 'react';
 import { Select } from 'choerodon-ui';
+import PropTypes from 'prop-types';
+import Types from './Types';
 
-const Option = Select.Option;
-const styles = {
-  cardTitle: {
-    fontWeight: 500,
-    display: 'flex',
-  },
-  cardTitleText: {
-    lineHeight: '20px',
-    marginLeft: '5px',
-  },
-  cardBodyStyle: {
-    // maxHeight: '100%',
-    padding: 12,
-    overflow: 'hidden',
-  },
-  cardContent: {
-
-  },
-  carsContentItemPrefix: {
-    width: 105,
-    color: 'rgba(0,0,0,0.65)',
-    fontSize: 13,
-  },
-  cardContentItem: {
-    display: 'flex',
-    marginLeft: 24,
-    marginTop: 10,
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    whiteSpace: 'nowrap',
-    fontSize: 13,
-    lineHeight: '20px',
-    color: 'rgba(0, 0, 0, 0.65)',
-  },
-  statusOption: {
-    width: 60,
-    textAlign: 'center',
-    borderRadius: '100px',
-    display: 'inline-block',
-    color: 'white',
-  },
-  userOption: {
-    background: '#c5cbe8',
-    color: '#6473c3',
-    width: '20px',
-    height: '20px',
-    textAlign: 'center',
-    lineHeight: '20px',
-    borderRadius: '50%',
-    marginRight: '8px',
-  },
+const propTypes = {
+  type: PropTypes.string.isRequired,
 };
 class SelectFocusLoad extends Component {
   state = {
     loading: false,
     List: [],
   }
+
+  componentDidMount() {
+    this.avoidShowError();   
+    this.loadData(); 
+  }
   
+  componentDidUpdate(prevProps, prevState) {
+    // eslint-disable-next-line react/destructuring-assignment
+    if (prevProps.value !== this.props.value) {
+      this.avoidShowError();
+    }
+  }
+
+  // 防止取值不在option列表中，比如user
+  avoidShowError=() => {
+    const { type } = this.props;  
+    const Type = Types[type];
+    if (Type.avoidShowError) {
+      const { List } = this.state;
+      Type.avoidShowError(this.props, List).then((newList) => {
+        if (newList) {
+          this.setState({
+            List: newList,
+          });
+        }
+      });
+    }
+  }
+
+  loadData=() => {
+    const {
+      type, afterLoad, loadWhenMount, 
+    } = this.props;  
+    const Type = Types[type];
+    const {
+      request, propArg,   
+    } = Type;
+    if (loadWhenMount) {
+      this.setState({
+        loading: true,
+      });
+      request(propArg ? this.props[propArg] : undefined).then((Data) => {
+        this.setState({
+          List: Data,
+          loading: false,
+        });
+        if (afterLoad) {
+          afterLoad(Data);
+        }
+      });
+    }
+  }
+
   render() {
-    const { onChange, request } = this.props;
     const { loading, List } = this.state;
-    const Options = List.map(item => (
-      <Option key={item.id} value={item.id}>
-        <div style={{ display: 'inline-flex', alignItems: 'center', padding: '2px' }}>          
-          {item.imageUrl
-            ? (
-              <img
-                src={item.imageUrl}
-                alt=""
-                style={{
-                  width: 19, height: 19, borderRadius: '50%', marginRight: '8px', 
-                }}
-              />
-            )
-            : (
-              <div style={styles.userOption}>
-                {item.realName.slice(0, 1)}
-              </div>
-            )
-          }
-          <span>{`${item.loginName} ${item.realName}`}</span>
-        </div>
-      </Option>
-    ));
+    const { type } = this.props;  
+    const Type = Types[type];
+    const {
+      render, request, props, propArg, 
+    } = Type;
+    const Options = List.map(render);
     return (
       <Select
-        filter
-        allowClear
-      // autoFocus
+        filter       
         filterOption={false}
         loading={loading}   
         style={{ width: 200 }}
@@ -97,13 +82,14 @@ class SelectFocusLoad extends Component {
           this.setState({
             loading: true,
           });
-          request(value).then((Data) => {
+          request(value, propArg ? this.props[propArg] : undefined).then((Data) => {
             this.setState({
-              List: Data.content,
+              List: Data,
               loading: false,
             });
           });
         }}
+        {...props}
         {...this.props}
       >
         {Options}
@@ -112,8 +98,5 @@ class SelectFocusLoad extends Component {
   }
 }
 
-SelectFocusLoad.propTypes = {
-
-};
-
+SelectFocusLoad.propTypes = propTypes;
 export default SelectFocusLoad;
