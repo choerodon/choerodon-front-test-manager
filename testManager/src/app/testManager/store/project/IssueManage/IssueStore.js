@@ -367,6 +367,7 @@ class IssueStore {
     const filter = this.filter;   
     return {
       ...filter,
+      contents: this.barFilters,
       otherArgs: {
         ...filter.otherArgs,
         issueIds: this.paramIssueId ? [Number(this.paramIssueId)] : undefined,

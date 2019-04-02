@@ -142,18 +142,21 @@ class EditCycle extends Component {
                   )}
                 </FormItem>
                 <FormItem>
-                  {getFieldDecorator('range', {
-                    rules: [{
-                      required: true,
-                      message: '请选择日期!',                      
-                    }],
-                    initialValue: fromDate && toDate ? [moment(fromDate), moment(toDate)] : undefined,
-                  })(
-                    <RangePicker                                   
-                      format="YYYY-MM-DD"
-                      style={{ width: 500 }}
-                    />,
-                  )}
+                  <span className="ant-input-wrapper ant-input-has-value ant-input-has-label">
+                    <div className="ant-input-label"><span>持续时间</span></div> 
+                    {getFieldDecorator('range', {
+                      rules: [{
+                        required: true,
+                        message: '请选择日期!',                      
+                      }],
+                      initialValue: fromDate && toDate ? [moment(fromDate), moment(toDate)] : undefined,
+                    })(
+                      <RangePicker                                   
+                        format="YYYY-MM-DD"
+                        style={{ width: 500 }}
+                      />,
+                    )}
+                  </span>
                 </FormItem>
               </Form>
             </Spin>
