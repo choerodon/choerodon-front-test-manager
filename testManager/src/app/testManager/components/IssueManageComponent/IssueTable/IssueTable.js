@@ -271,14 +271,14 @@ class IssueTable extends Component {
     const {
       statusId, priorityId, issueNum, summary, labelIssueRelDTOList, 
     } = filters;   
-    const search = {
+    const search = {      
       advancedSearchArgs: {
         statusId: statusId || [],
         priorityId: priorityId || [],
       },
       otherArgs: {
         label: labelIssueRelDTOList || [],
-        issueNum: issueNum && issueNum.length ? issueNum[0] : barFilters[0],
+        issueNum: issueNum && issueNum.length ? issueNum[0] : '',
         summary: summary && summary.length ? summary[0] : '',
       },     
     };
