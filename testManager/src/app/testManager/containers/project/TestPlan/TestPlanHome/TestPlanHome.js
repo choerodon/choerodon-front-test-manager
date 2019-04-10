@@ -11,7 +11,7 @@ import {
   EventCalendar, CreateCycle, EditStage, EditCycle, ExportSide, TreeArea,
 } from '../../../../components/TestPlanComponent';
 import { Injecter, NoCycle, Loading } from '../../../../components/CommonComponent';
-import { TestPlanTable } from './components';
+import { TestPlanTable, BatchClone } from './components';
 import TestPlanStore from '../../../../store/project/TestPlan/TestPlanStore';
 import { executeDetailShowLink, getDragRank } from '../../../../common/utils';
 import RunWhenProjectChange from '../../../../common/RunWhenProjectChange';
@@ -140,6 +140,10 @@ class TestPlanHome extends Component {
             <Icon type="export icon" />
             <FormattedMessage id="export" />
           </Button>
+          <Button className="leftBtn" onClick={() => this.BatchClone.open()}>
+            <Icon type="export icon" />
+            批量克隆
+          </Button>
           <Button onClick={this.refresh}>
             <Icon type="autorenew icon" />
             <FormattedMessage id="refresh" />
@@ -170,6 +174,7 @@ class TestPlanHome extends Component {
               )}
             </Injecter>              
             <ExportSide ref={this.saveRef('ExportSide')} />
+            <BatchClone ref={this.saveRef('BatchClone')} />
             <Injecter store={TestPlanStore} item="isTreeVisible">
               {isTreeVisible => <TreeArea isTreeVisible={isTreeVisible} setIsTreeVisible={TestPlanStore.setIsTreeVisible} />}
             </Injecter>
