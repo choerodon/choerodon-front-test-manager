@@ -75,7 +75,6 @@ const STATUS = {
   doing: '#4d90fe',
   done: '#00bfa5',
 };
-let hasDeletePermission = true;
 class EditIssueNarrow extends Component {
   state = {
     // 子组件显示控制
@@ -91,6 +90,7 @@ class EditIssueNarrow extends Component {
     componentList: [],
     labelList: [],
     userList: [],
+    hasDeletePermission: false,
   }
 
 
@@ -101,7 +101,9 @@ class EditIssueNarrow extends Component {
     }
 
     getUpdateProjectInfoPermission().then((res) => {
-      hasDeletePermission = res[0].approve;
+      this.setState({
+        hasDeletePermission: res[0].approve,
+      });  
     });
 
     document.getElementById('scroll-area').addEventListener('scroll', (e) => {
@@ -1059,7 +1061,8 @@ class EditIssueNarrow extends Component {
   checkDisabledModifyOrDelete = () => {
     const loginUserId = AppState.userInfo.id;
     const { issueInfo } = this.props;
-    return loginUserId !== issueInfo.createdBy || !hasDeletePermission;
+    const { hasDeletePermission } = this.state;    
+    return !(loginUserId === issueInfo.createdBy || hasDeletePermission);
   }
 
   render() {
