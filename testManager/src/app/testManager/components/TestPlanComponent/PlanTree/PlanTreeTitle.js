@@ -61,6 +61,7 @@ class PlanTreeTitle extends Component {
           title: `确定要删除${type === 'cycle' ? '循环' : '阶段'}“${title}”？`,
           content: `${type === 'cycle' ? '循环' : '阶段'}“${title}”内所有执行将被删除`,
           onOk() {
+            TestPlanStore.enterLoading();
             deleteCycleOrFolder(cycleId).then((res) => {
               if (res.failed) {
                 Choerodon.prompt('删除失败');

@@ -4,6 +4,9 @@ import { getProjectId, request } from '../common/utils';
 export function getCycleTree(assignedTo) {
   return request.get(`/test/v1/projects/${getProjectId()}/cycle/query${assignedTo ? `?assignedTo=${assignedTo}` : ''}`);
 }
+export function getCycleTreeByVersionId(versionId) {
+  return request.get(`/test/v1/projects/${getProjectId()}/cycle/batch/clone/query/${versionId}`);
+}
 export function getExecutesByCycleId(pagination, cycleId, filters, type) {
   const { size, page } = pagination;
   const Filters = {
@@ -55,6 +58,12 @@ export function clone(cycleId, data, type) {
     return request.post(`/test/v1/projects/${getProjectId()}/cycle/clone/cycle/${cycleId}`, data);
   }
   return request.post(`/test/v1/projects/${getProjectId()}/cycle/clone/folder/${cycleId}`, data);
+}
+export function batchClone(targetVersionId, data) {  
+  return request.post(`/test/v1/projects/${getProjectId()}/cycle/batch/clone/${targetVersionId}`, data);
+}
+export function getLastCloneData() {  
+  return request.get(`/test/v1/projects/${getProjectId()}/cycle/batch/clone/latest`);
 }
 
 export function addFolder(data) {

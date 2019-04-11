@@ -4,6 +4,7 @@ import { find } from 'lodash';
 import User from '../User';
 import { getUsers, getUser } from '../../../api/IamApi';
 import { getFoldersByVersion } from '../../../api/IssueManageApi';
+import { getProjectVersion } from '../../../api/agileApi';
 
 const { Option } = Select;
 
@@ -35,6 +36,14 @@ export default {
         resolve(null);
       }
     }),
+  },
+  version: {
+    request: getProjectVersion,
+    render: (version, { optionDisabled }) => (
+      <Option value={version.versionId} key={version.versionId} disabled={optionDisabled && optionDisabled(version)}>
+        {version.name}
+      </Option>
+    ),
   },
   folder: {
     propArg: 'versionId',

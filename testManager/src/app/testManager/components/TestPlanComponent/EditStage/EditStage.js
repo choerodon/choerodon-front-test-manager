@@ -30,7 +30,7 @@ class EditStage extends Component {
   onOk = () => {
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
-        const { folderVersionName, folderName } = TestPlanStore.CurrentEditStage;
+        const { folderVersionName, folderName, folderId } = TestPlanStore.CurrentEditStage;
         const originFolder = `${folderVersionName}-${folderName}`;        
         this.setState({ loading: true });
         const { range } = values;
@@ -39,7 +39,7 @@ class EditStage extends Component {
         editFolder({
           ...values,
           ...{
-            folderId: values.folderId === originFolder ? undefined : values.folderId,
+            folderId: [originFolder, folderId].includes(values.folderId) ? undefined : values.folderId,
             cycleId: initialValue.cycleId,
             objectVersionNumber: initialValue.objectVersionNumber,
             type: 'folder',

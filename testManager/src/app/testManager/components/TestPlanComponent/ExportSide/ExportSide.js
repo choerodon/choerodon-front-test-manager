@@ -76,22 +76,31 @@ class ExportSide extends Component {
     });
 
     if (exportVersionId) {
-      getCyclesByVersionId(exportVersionId).then((cycleList) => {
-        this.setState({
-          cycleList,
-        });
-      });
+      this.loadCycles();
     }
 
     if (exportCycleId) {
-      getFoldersByCycleId(exportCycleId).then((stageList) => {
-        this.setState({
-          stageList,
-        });
-      });
+      this.loadStages();
     }
   }
-    
+
+  loadCycles=() => {
+    const { exportVersionId } = TestPlanStore;
+    getCyclesByVersionId(exportVersionId).then((cycleList) => {
+      this.setState({
+        cycleList,
+      });
+    });
+  }
+ 
+  loadStages=() => {
+    const { exportCycleId } = TestPlanStore;
+    getFoldersByCycleId(exportCycleId).then((stageList) => {
+      this.setState({
+        stageList,
+      });
+    });
+  } 
 
   handleOk = () => {
     this.setState({
@@ -101,11 +110,13 @@ class ExportSide extends Component {
 
   handleVersionChange = (exportVersionId) => {
     TestPlanStore.setExportVersionId(exportVersionId);
+    TestPlanStore.setExportCycleId(null);
     TestPlanStore.setExportStageId(null);
   }
 
   handleCycleChange = (exportCycleId) => {
     TestPlanStore.setExportCycleId(exportCycleId);
+    TestPlanStore.setExportStageId(null);
   }
 
   handleStageChange = (exportStageId) => {
@@ -260,6 +271,7 @@ class ExportSide extends Component {
                 value={cycleList && cycleList.length > 0 && exportCycleId} 
                 onChange={this.handleCycleChange}
                 allowClear={!!exportCycleId}
+                onFocus={this.loadCycles}
               >
                 {
                  cycleList && cycleList.length > 0 && (
@@ -275,6 +287,7 @@ class ExportSide extends Component {
                 disabled={!exportCycleId} 
                 value={stageList && stageList.length > 0 && exportStageId} 
                 onChange={this.handleStageChange}
+                onFocus={this.loadStages}
                 allowClear={!!exportStageId}
               >
                 {

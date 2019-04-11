@@ -71,7 +71,7 @@ class SelectFocusLoad extends Component {
     const {
       render, request, props, propArg, 
     } = Type;
-    const Options = List.map(render);
+    const Options = List.map(item => render(item, this.props));
     return (
       <Select
         filter       
