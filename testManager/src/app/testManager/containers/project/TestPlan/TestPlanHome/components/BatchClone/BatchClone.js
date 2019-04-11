@@ -5,7 +5,7 @@ import {
   Modal, Progress, Table, Button, Icon, Tooltip, Select,
 } from 'choerodon-ui';
 import { pull, pullAll, intersection } from 'lodash';
-import { getCycleTreeByVersionId } from '../../../../../../api/cycleApi';
+import { getCycleTreeByVersionId, getLastCloneData, batchClone } from '../../../../../../api/cycleApi';
 import { SelectFocusLoad } from '../../../../../../components/CommonComponent';
 
 const { AppState } = stores;
@@ -40,23 +40,39 @@ const { Option } = Select;
 class BatchClone extends Component {
   state = {
     visible: false,
-    selectedRowKeys: [],
+    selectCycleKeys: [],
+    selectFolderKeys: [],
     data: [],
+    targetVersionId: null,
+    rate: 0,
+    cloning: false,
+    lastCloneData: { successfulCount: 0 },
   }
 
-  open=() => {
+
+  open = () => {
+    this.loadLastCloneData();
     this.setState({
       visible: true,
     });
   }
 
-  close=() => {
+  close = () => {
     this.setState({
       visible: false,
     });
   }
 
-  loadCycleTreeByVersionId=(versionId) => {
+  loadLastCloneData = () => {
+    getLastCloneData().then((res) => {
+      this.setState({
+        lastCloneData: res,
+        cloning: false,
+      });
+    });
+  }
+
+  loadCycleTreeByVersionId = (versionId) => {
     getCycleTreeByVersionId(versionId).then((res) => {
       this.setState({
         data: res.cycle,
@@ -65,17 +81,23 @@ class BatchClone extends Component {
   }
 
   handleSourceVersionChange = (versionId) => {
+    this.setState({
+      selectCycleKeys: [],
+      selectFolderKeys: [],
+    });
     this.loadCycleTreeByVersionId(versionId);
   }
 
-  handleTargetVersionChange = () => {
-
+  handleTargetVersionChange = (targetVersionId) => {
+    this.setState({
+      targetVersionId,
+    });
   }
 
   handleRowSelect = (record, selected, selectedRows, nativeEvent) => {
     const { data } = this.state;
     let selectFolderKeys = selectedRows.filter(row => row.type === 'folder').map(row => row.cycleId);
-    const selectCycleKeys = selectedRows.filter(row => row.type === 'cycle').map(row => row.cycleId);    
+    const selectCycleKeys = selectedRows.filter(row => row.type === 'cycle').map(row => row.cycleId);
     const { type } = record;
     // 循环
     if (type === 'cycle') {
@@ -85,7 +107,7 @@ class BatchClone extends Component {
         selectFolderKeys = [...selectFolderKeys, ...folderKeys];
         selectCycleKeys.push(record.cycleId);
       } else {
-        pull(selectCycleKeys, record.cycleId);        
+        pull(selectCycleKeys, record.cycleId);
         // 取消子元素
         pullAll(selectFolderKeys, folderKeys);
       }
@@ -103,28 +125,78 @@ class BatchClone extends Component {
         // 取消时，如果同级只剩自己，则取消父的选择
         if (intersection(selectFolderKeys, folderKeys).length === 0) {
           pull(selectCycleKeys, parentCycleId);
-        }        
+        }
       }
     }
     // console.log(selectedRowKeys);
-    
+
     this.setState({
-      selectedRowKeys: [...new Set([...selectFolderKeys, ...selectCycleKeys])],
+      selectCycleKeys: [...new Set(selectCycleKeys)],
+      selectFolderKeys: [...new Set(selectFolderKeys)],
     });
   }
 
+  handleSelectAll = (selected, selectedRows, changeRows) => {
+    console.log(selectedRows);
+    const selectFolderKeys = selectedRows.filter(row => row.type === 'folder').map(row => row.cycleId);
+    const selectCycleKeys = selectedRows.filter(row => row.type === 'cycle').map(row => row.cycleId);
+    this.setState({
+      selectCycleKeys,
+      selectFolderKeys,
+    });
+  }
+
+  handleOk = () => {
+    const {
+      selectCycleKeys, selectFolderKeys, data, targetVersionId,
+    } = this.state;
+    if (!targetVersionId) {
+      return;
+    }
+    const cloneDTO = [];
+    selectCycleKeys.forEach((cycleKey) => {
+      const cycle = { cycleId: cycleKey, folderIds: [] };
+      const targetCycle = data.find(item => item.cycleId === cycleKey);
+      targetCycle.children.forEach((folder) => {
+        if (selectFolderKeys.includes(folder.cycleId)) {
+          cycle.folderIds.push(folder.cycleId);
+        }
+      });
+      cloneDTO.push(cycle);
+    });
+    console.log(cloneDTO);
+    batchClone(targetVersionId, cloneDTO).then((res) => {
+
+    });
+  }
+
+  handleMessage = (data) => {
+    console.log(data);
+    this.setState({
+      rate: data.rate,
+      cloning: true,
+    });
+    if (data.rate === 1) {
+      this.loadLastCloneData();
+    }
+  }
+
   render() {
-    const { data, visible } = this.state;
+    const {
+      data, visible, targetVersionId, lastCloneData, cloning, rate,
+    } = this.state;
     const columns = [{
       title: '名称',
       render: record => record.cycleName,
     }];
-    const { selectedRowKeys } = this.state;
+    const { selectFolderKeys, selectCycleKeys } = this.state;
+    const selectedRowKeys = [...new Set([...selectFolderKeys, ...selectCycleKeys])];
     return (
       <Sidebar
         title="批量克隆"
         visible={visible}
         onCancel={this.close}
+        onOk={this.handleOk}
       >
         <Content
           style={{
@@ -132,7 +204,7 @@ class BatchClone extends Component {
           }}
         >
           <div className="c7ntest-BatchClone">
-            <div style={{ marginBottom: 24 }}>
+            <div style={{ marginBottom: 24, display: 'flex', alignItems: 'center' }}>
               <SelectFocusLoad
                 label="版本"
                 filter={false}
@@ -149,9 +221,27 @@ class BatchClone extends Component {
                 style={{ marginLeft: 20, width: 160 }}
                 onChange={this.handleTargetVersionChange}
               />
+              <div style={{ marginLeft: 20, marginTop: 20 }}>
+                {cloning ? (
+                  <div style={{
+                    width: 180,
+                    display: 'flex',
+                    alignItems: 'center',
+                    whiteSpace: 'nowrap',
+                  }}
+                  >
+                    <span style={{ marginRight: 10 }}>
+                      正在克隆
+                    </span>
+                    <Tooltip title={`进度：${rate * 100}%`}>
+                      <Progress percent={rate * 100} showInfo={false} />
+                    </Tooltip>
+                  </div>
+                ) : `克隆成功 ${lastCloneData.successfulCount} 阶段`}
+              </div>
             </div>
             <WSHandler
-              messageKey={`choerodon:msg:test-cycle-export:${AppState.userInfo.id}`}
+              messageKey={`choerodon:msg:test-cycle-batch-clone:${AppState.userInfo.id}`}
               onMessage={this.handleMessage}
             >
               <Table
@@ -161,6 +251,7 @@ class BatchClone extends Component {
                 columns={columns}
                 rowSelection={{
                   selectedRowKeys,
+                  onSelectAll: this.handleSelectAll,
                   onSelect: this.handleRowSelect,
                 }}
                 dataSource={data}
