@@ -43,9 +43,11 @@ class BatchClone extends Component {
     selectCycleKeys: [],
     selectFolderKeys: [],
     data: [],
+    sourceVersionId: null,
     targetVersionId: null,
     rate: 0,
     cloning: false,
+    tableLoading: false,
     lastCloneData: { successfulCount: 0 },
   }
 
@@ -76,6 +78,7 @@ class BatchClone extends Component {
     getCycleTreeByVersionId(versionId).then((res) => {
       this.setState({
         data: res.cycle,
+        tableLoading: false,
       });
     });
   }
@@ -84,6 +87,8 @@ class BatchClone extends Component {
     this.setState({
       selectCycleKeys: [],
       selectFolderKeys: [],
+      tableLoading: true,
+      sourceVersionId: versionId,
     });
     this.loadCycleTreeByVersionId(versionId);
   }
@@ -151,6 +156,7 @@ class BatchClone extends Component {
       selectCycleKeys, selectFolderKeys, data, targetVersionId,
     } = this.state;
     if (!targetVersionId) {
+      Choerodon.prompt('请选择目标版本');
       return;
     }
     const cloneDTO = [];
@@ -165,9 +171,15 @@ class BatchClone extends Component {
       cloneDTO.push(cycle);
     });
     console.log(cloneDTO);
-    batchClone(targetVersionId, cloneDTO).then((res) => {
-
-    });
+    if (cloneDTO.length > 0) {
+      batchClone(targetVersionId, cloneDTO).then((res) => {
+        if (res.failed) {
+          Choerodon.prompt('目标版本含有同名循环或阶段');
+        }
+      });
+    } else {
+      Choerodon.prompt('请选择循环或阶段');
+    }
   }
 
   handleMessage = (data) => {
@@ -183,8 +195,9 @@ class BatchClone extends Component {
 
   render() {
     const {
-      data, visible, targetVersionId, lastCloneData, cloning, rate,
+      data, visible, targetVersionId, sourceVersionId, lastCloneData, cloning, rate, tableLoading,
     } = this.state;
+    const progress = (rate * 100).toFixed(2);
     const columns = [{
       title: '名称',
       render: record => record.cycleName,
@@ -197,6 +210,7 @@ class BatchClone extends Component {
         visible={visible}
         onCancel={this.close}
         onOk={this.handleOk}
+        disableOk={!targetVersionId || cloning}       
       >
         <Content
           style={{
@@ -217,6 +231,7 @@ class BatchClone extends Component {
                 label="克隆到"
                 filter={false}
                 loadWhenMount
+                optionDisabled={version => version.versionId === sourceVersionId}
                 type="version"
                 style={{ marginLeft: 20, width: 160 }}
                 onChange={this.handleTargetVersionChange}
@@ -233,8 +248,8 @@ class BatchClone extends Component {
                     <span style={{ marginRight: 10 }}>
                       正在克隆
                     </span>
-                    <Tooltip title={`进度：${rate * 100}%`}>
-                      <Progress percent={rate * 100} showInfo={false} />
+                    <Tooltip title={`进度：${progress}%`}>
+                      <Progress percent={progress} showInfo={false} />
                     </Tooltip>
                   </div>
                 ) : `克隆成功 ${lastCloneData.successfulCount} 阶段`}
@@ -247,6 +262,7 @@ class BatchClone extends Component {
               <Table
                 filterBar={false}
                 pagination={false}
+                loading={tableLoading}
                 rowKey="cycleId"
                 columns={columns}
                 rowSelection={{

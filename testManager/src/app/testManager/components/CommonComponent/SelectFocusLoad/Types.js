@@ -39,8 +39,8 @@ export default {
   },
   version: {
     request: getProjectVersion,
-    render: version => (
-      <Option value={version.versionId} key={version.versionId}>
+    render: (version, { optionDisabled }) => (
+      <Option value={version.versionId} key={version.versionId} disabled={optionDisabled && optionDisabled(version)}>
         {version.name}
       </Option>
     ),
