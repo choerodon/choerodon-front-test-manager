@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { Content, stores, WSHandler } from 'choerodon-front-boot';
 import {
@@ -45,7 +45,9 @@ class BatchClone extends Component {
     data: [],
     sourceVersionId: null,
     targetVersionId: null,
-    rate: 0,
+    cloningData: {
+      rate: 0,
+    },
     cloning: false,
     tableLoading: false,
     lastCloneData: { successfulCount: 0 },
@@ -128,6 +130,7 @@ class BatchClone extends Component {
         }
       } else {
         // 取消时，如果同级只剩自己，则取消父的选择
+        // eslint-disable-next-line no-lonely-if
         if (intersection(selectFolderKeys, folderKeys).length === 0) {
           pull(selectCycleKeys, parentCycleId);
         }
@@ -170,12 +173,13 @@ class BatchClone extends Component {
       });
       cloneDTO.push(cycle);
     });
-    console.log(cloneDTO);
     if (cloneDTO.length > 0) {
       batchClone(targetVersionId, cloneDTO).then((res) => {
         if (res.failed) {
           Choerodon.prompt('目标版本含有同名循环或阶段');
         }
+      }).catch((err) => {
+        // if (err.message === '')
       });
     } else {
       Choerodon.prompt('请选择循环或阶段');
@@ -185,7 +189,7 @@ class BatchClone extends Component {
   handleMessage = (data) => {
     console.log(data);
     this.setState({
-      rate: data.rate,
+      cloningData: data,
       cloning: true,
     });
     if (data.rate === 1) {
@@ -195,8 +199,9 @@ class BatchClone extends Component {
 
   render() {
     const {
-      data, visible, targetVersionId, sourceVersionId, lastCloneData, cloning, rate, tableLoading,
+      data, visible, targetVersionId, sourceVersionId, lastCloneData, cloning, cloningData, tableLoading,
     } = this.state;
+    const { rate, status } = cloningData;
     const progress = (rate * 100).toFixed(2);
     const columns = [{
       title: '名称',
@@ -206,11 +211,12 @@ class BatchClone extends Component {
     const selectedRowKeys = [...new Set([...selectFolderKeys, ...selectCycleKeys])];
     return (
       <Sidebar
+        destroyOnClose
         title="批量克隆"
         visible={visible}
         onCancel={this.close}
         onOk={this.handleOk}
-        disableOk={!targetVersionId || cloning}       
+        disableOk={!targetVersionId || cloning}
       >
         <Content
           style={{
@@ -245,14 +251,23 @@ class BatchClone extends Component {
                     whiteSpace: 'nowrap',
                   }}
                   >
-                    <span style={{ marginRight: 10 }}>
-                      正在克隆
-                    </span>
-                    <Tooltip title={`进度：${progress}%`}>
-                      <Progress percent={progress} showInfo={false} />
-                    </Tooltip>
+                    {status === 3
+                      ? (
+                        <span style={{ marginRight: 10 }}>
+                          克隆失败
+                        </span>
+                      ) : (
+                        <Fragment>
+                          <span style={{ marginRight: 10 }}>
+                            正在克隆
+                          </span>
+                          <Tooltip title={`进度：${progress}%`}>
+                            <Progress percent={progress} showInfo={false} />
+                          </Tooltip>
+                        </Fragment>
+                      )}
                   </div>
-                ) : `克隆成功 ${lastCloneData.successfulCount} 阶段`}
+                ) : `克隆成功 ${lastCloneData.successfulCount || 0} 阶段`}
               </div>
             </div>
             <WSHandler

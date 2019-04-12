@@ -84,8 +84,12 @@ class CloneStage extends Component {
           } else {
             this.props.onOk();
           }
-        }).catch(() => {
-          Choerodon.prompt('网络出错');
+        }).catch((error) => {    
+          if (/error\.clone\.cycle\.date\.not\.be\.null/.test(error.response.data.message)) {
+            Choerodon.prompt('阶段持续时间不可为空');
+          } else {
+            Choerodon.prompt('网络出错');
+          }
           this.setState({
             loading: false,
           });
