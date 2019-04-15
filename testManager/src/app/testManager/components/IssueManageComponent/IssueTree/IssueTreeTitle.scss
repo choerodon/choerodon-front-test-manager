@@ -1,16 +1,22 @@
+
 .c7ntest-issue-tree-title {
   display: flex;
   align-items: center;
   min-width: 132px;
+  outline: none;
+
   &-text {
     width: 100px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    
   }
+
   &-actionButton {
     height: 28px;
     margin-top: -2px;
+
     .c7ntest-add-folder {
       transition: none;
       margin-left: 30px;

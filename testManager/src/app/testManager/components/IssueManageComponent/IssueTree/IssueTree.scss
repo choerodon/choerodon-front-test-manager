@@ -46,7 +46,13 @@
   }
   .ant-tree-title {
     display: inline-block;
-    float: right;
+    float: right; 
+  }
+  .ant-tree-title *{
+    outline: none;
+  }
+  .ant-tree-title:focus {
+    outline: none;
   }
   .ant-tree-switcher {
     margin-top: 3px;
