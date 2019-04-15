@@ -65,6 +65,10 @@ class TextEditToggle extends Component {
     return null;
   }
 
+  componentWillUnmount() {
+    document.removeEventListener('mousedown', this.handleDocumentClick);
+  }
+  
   handleDocumentClick = (event) => {
     const target = event.target;
     const root = findDOMNode(this); 
@@ -87,11 +91,11 @@ class TextEditToggle extends Component {
   }
 
   // 提交编辑
-  handleSubmit = () => {
-    document.removeEventListener('mousedown', this.handleDocumentClick);
+  handleSubmit = () => {    
     try {
       this.props.form.validateFields((err, values) => {
         if (!err) {
+          document.removeEventListener('mousedown', this.handleDocumentClick);
           if (this.props.formKey) {
             const newData = values[this.props.formKey];
             if (this.props.onSubmit && newData !== this.props.originData) {

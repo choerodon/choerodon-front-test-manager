@@ -4,11 +4,7 @@
     min-width: 0; //火狐浏览器下flex的overflow会失效，解决
     flex: 1;
     height: 100%;
-    display: flex; // position: absolute;
-    // top: 0;
-    // right: 0;
-    // left: 0;
-    // bottom: 0;
+    display: flex;
     padding-top: 12px;
     &-right {
       padding: 20px 20px 0;

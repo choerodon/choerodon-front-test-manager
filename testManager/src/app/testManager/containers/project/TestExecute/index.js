@@ -1,3 +1,3 @@
-import CycleIndex from './CycleIndex';
+import TestExecuteIndex from './TestExecuteIndex';
 
-export default CycleIndex;
+export default TestExecuteIndex;

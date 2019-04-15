@@ -1,16 +1,20 @@
-
 .c7ntest-issue-tree-title {
   display: flex;
   align-items: center;
   min-width: 132px;
   outline: none;
 
+  &:hover {
+    .c7ntest-add-folder {
+      visibility: visible;
+    }
+  }
+
   &-text {
     width: 100px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    
   }
 
   &-actionButton {
@@ -24,20 +28,14 @@
       visibility: hidden;
     }
   }
-}
 
-.c7ntest-issue-tree-title:hover {
-  .c7ntest-add-folder {
-    visibility: visible;
+  .IssueTree-drag-prompt {
+    position: absolute;
+    margin-top: 3px;
+    top: 0;
+    left: 100%;
+    background: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, .12);
+    padding: 10px;
   }
-}
-
-.IssueTree-drag-prompt {
-  position: absolute;
-  margin-top: 3px;
-  top: 0;
-  left: 100%;
-  background: white;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, .12);
-  padding: 10px;
 }
