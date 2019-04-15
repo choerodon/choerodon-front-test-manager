@@ -33,6 +33,9 @@ class BatchClone extends Component {
     this.setState({
       data: [],
       visible: true,
+      cloningData: {
+        rate: 0,
+      },
     });
   }
 
