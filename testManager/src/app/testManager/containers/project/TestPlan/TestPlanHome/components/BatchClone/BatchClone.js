@@ -2,7 +2,7 @@ import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { Content, stores, WSHandler } from 'choerodon-front-boot';
 import {
-  Modal, Progress, Table, Button, Icon, Tooltip, Select,
+  Modal, Progress, Table, Button, Icon, Tooltip, Spin,
 } from 'choerodon-ui';
 import { pull, pullAll, intersection } from 'lodash';
 import { getCycleTreeByVersionId, getLastCloneData, batchClone } from '../../../../../../api/cycleApi';
@@ -10,33 +10,7 @@ import { SelectFocusLoad } from '../../../../../../components/CommonComponent';
 
 const { AppState } = stores;
 const { Sidebar } = Modal;
-const { Option } = Select;
-// const data = [{
-//   cycleId: 1,
-//   type: 'cycle',
-//   cycleName: 'test',
-//   children: [{
-//     cycleId: 3,
-//     parentCycleId: 1,
-//     type: 'folder',
-//     cycleName: 'folder',
-//   }, {
-//     cycleId: 5,
-//     parentCycleId: 1,
-//     type: 'folder',
-//     cycleName: 'folder2',
-//   }],
-// }, {
-//   cycleId: 2,
-//   type: 'cycle',
-//   cycleName: 'test2',
-//   children: [{
-//     cycleId: 4,
-//     parentCycleId: 2,
-//     type: 'folder',
-//     cycleName: 'folder',
-//   }],
-// }];
+
 class BatchClone extends Component {
   state = {
     visible: false,
@@ -57,6 +31,7 @@ class BatchClone extends Component {
   open = () => {
     this.loadLastCloneData();
     this.setState({
+      data: [],
       visible: true,
     });
   }
@@ -145,7 +120,6 @@ class BatchClone extends Component {
   }
 
   handleSelectAll = (selected, selectedRows, changeRows) => {
-    console.log(selectedRows);
     const selectFolderKeys = selectedRows.filter(row => row.type === 'folder').map(row => row.cycleId);
     const selectCycleKeys = selectedRows.filter(row => row.type === 'cycle').map(row => row.cycleId);
     this.setState({
@@ -174,12 +148,20 @@ class BatchClone extends Component {
       cloneDTO.push(cycle);
     });
     if (cloneDTO.length > 0) {
+      this.setState({
+        cloningData: {
+          rate: 0,
+        },
+        cloning: true,
+      });
       batchClone(targetVersionId, cloneDTO).then((res) => {
         if (res.failed) {
           Choerodon.prompt('目标版本含有同名循环或阶段');
         }
-      }).catch((err) => {
-        // if (err.message === '')
+      }).finally(() => {
+        this.setState({
+          cloning: false,
+        });
       });
     } else {
       Choerodon.prompt('请选择循环或阶段');
@@ -188,11 +170,15 @@ class BatchClone extends Component {
 
   handleMessage = (data) => {
     console.log(data);
+    const { failedCount, rate, status } = data;
+    if (status === 3) {
+      Choerodon.prompt('循环或阶段时间范围不可为空');
+    }
     this.setState({
       cloningData: data,
-      cloning: true,
+      cloning: !status === 3,
     });
-    if (data.rate === 1) {
+    if (rate === 1) {
       this.loadLastCloneData();
     }
   }
@@ -216,13 +202,26 @@ class BatchClone extends Component {
         visible={visible}
         onCancel={this.close}
         onOk={this.handleOk}
-        disableOk={!targetVersionId || cloning}
+        confirmLoading={cloning}
+        footer={[
+          <Button
+            type="primary"
+            funcType="raised"
+            onClick={this.handleOk}
+            disabled={cloning || !targetVersionId || !selectedRowKeys.length > 0}
+          >
+            确定            
+          </Button>,
+          <Button style={{ color: '#3F51B5' }} funcType="raised" onClick={this.close}>
+            关闭
+          </Button>]}
       >
         <Content
           style={{
             padding: '0 0 10px 0',
           }}
         >
+
           <div className="c7ntest-BatchClone">
             <div style={{ marginBottom: 24, display: 'flex', alignItems: 'center' }}>
               <SelectFocusLoad
@@ -250,44 +249,47 @@ class BatchClone extends Component {
                     alignItems: 'center',
                     whiteSpace: 'nowrap',
                   }}
-                  >
+                  >                            
+                    <span style={{ marginRight: 10 }}>
+                      正在克隆
+                    </span>
+                    <Tooltip title={`进度：${progress}%`}>
+                      <Progress percent={progress} showInfo={false} />
+                    </Tooltip>
+                  </div>
+                ) : (
+                  <Fragment>
                     {status === 3
                       ? (
                         <span style={{ marginRight: 10 }}>
-                          克隆失败
+                        克隆失败
                         </span>
-                      ) : (
-                        <Fragment>
-                          <span style={{ marginRight: 10 }}>
-                            正在克隆
-                          </span>
-                          <Tooltip title={`进度：${progress}%`}>
-                            <Progress percent={progress} showInfo={false} />
-                          </Tooltip>
-                        </Fragment>
-                      )}
-                  </div>
-                ) : `克隆成功 ${lastCloneData.successfulCount || 0} 阶段`}
+                      ) : `克隆成功 ${lastCloneData.successfulCount || 0} 阶段`}
+                  </Fragment>
+                )}
               </div>
             </div>
-            <WSHandler
-              messageKey={`choerodon:msg:test-cycle-batch-clone:${AppState.userInfo.id}`}
-              onMessage={this.handleMessage}
-            >
-              <Table
-                filterBar={false}
-                pagination={false}
-                loading={tableLoading}
-                rowKey="cycleId"
-                columns={columns}
-                rowSelection={{
-                  selectedRowKeys,
-                  onSelectAll: this.handleSelectAll,
-                  onSelect: this.handleRowSelect,
-                }}
-                dataSource={data}
-              />
-            </WSHandler>
+            <Spin spinning={cloning}>
+              <WSHandler
+                messageKey={`choerodon:msg:test-cycle-batch-clone:${AppState.userInfo.id}`}
+                onMessage={this.handleMessage}
+              >
+                <Table
+                  filterBar={false}
+                  pagination={false}
+                  loading={tableLoading}
+                  rowKey="cycleId"
+                  columns={columns}
+                  rowSelection={{
+                    selectedRowKeys,
+                    onSelectAll: this.handleSelectAll,
+                    onSelect: this.handleRowSelect,
+                    disabled: true,
+                  }}
+                  dataSource={data}
+                />
+              </WSHandler>
+            </Spin>
           </div>
         </Content>
       </Sidebar>
