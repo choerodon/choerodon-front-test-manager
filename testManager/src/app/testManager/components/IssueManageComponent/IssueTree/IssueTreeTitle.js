@@ -364,7 +364,7 @@ class IssueTreeTitle extends Component {
                     >
                       <div
                         style={{
-                          position: 'relative',
+                          position: 'relative',                          
                           // background: snapshotinner.isDragging && 'white',
                         }}
                       >
