@@ -7,6 +7,7 @@ import {
 import { pull, pullAll, intersection } from 'lodash';
 import { getCycleTreeByVersionId, getLastCloneData, batchClone } from '../../../../../../api/cycleApi';
 import { SelectFocusLoad } from '../../../../../../components/CommonComponent';
+import TestPlanStore from '../../../../../../store/project/TestPlan/TestPlanStore';
 
 const { AppState } = stores;
 const { Sidebar } = Modal;
@@ -29,7 +30,7 @@ class BatchClone extends Component {
 
 
   open = () => {
-    this.loadLastCloneData();
+    // this.loadLastCloneData();
     this.setState({
       data: [],
       visible: true,
@@ -160,8 +161,11 @@ class BatchClone extends Component {
       batchClone(targetVersionId, cloneDTO).then((res) => {
         if (res.failed) {
           Choerodon.prompt('目标版本含有同名循环或阶段');
+          this.setState({
+            cloning: false,
+          });
         }
-      }).finally(() => {
+      }).catch(() => {
         this.setState({
           cloning: false,
         });
@@ -179,11 +183,24 @@ class BatchClone extends Component {
     }
     this.setState({
       cloningData: data,
-      cloning: !status === 3,
+      cloning: status !== 3,
     });
-    if (rate === 1) {
-      this.loadLastCloneData();
+    if (rate === 1 && this.state.visible) {
+      this.handleDone();
     }
+  }
+
+  handleClose=() => {
+    this.setState({
+      cloning: false,
+      visible: false,
+    });
+  }
+
+  handleDone=() => {   
+    setTimeout(() => {
+      TestPlanStore.getTree();
+    }, 300);
   }
 
   render() {
@@ -206,7 +223,15 @@ class BatchClone extends Component {
         onCancel={this.close}
         onOk={this.handleOk}
         confirmLoading={cloning}
-        footer={[
+        footer={cloning ? (
+          <Button
+            type="primary"
+            funcType="raised"
+            onClick={this.handleClose}
+          >
+          完成            
+          </Button>
+        ) : [
           <Button
             type="primary"
             funcType="raised"
@@ -224,7 +249,6 @@ class BatchClone extends Component {
             padding: '0 0 10px 0',
           }}
         >
-
           <div className="c7ntest-BatchClone">
             <div style={{ marginBottom: 24, display: 'flex', alignItems: 'center' }}>
               <SelectFocusLoad
@@ -243,56 +267,36 @@ class BatchClone extends Component {
                 type="version"
                 style={{ marginLeft: 20, width: 160 }}
                 onChange={this.handleTargetVersionChange}
-              />
-              <div style={{ marginLeft: 20, marginTop: 20 }}>
-                {cloning ? (
-                  <div style={{
-                    width: 180,
-                    display: 'flex',
-                    alignItems: 'center',
-                    whiteSpace: 'nowrap',
-                  }}
-                  >                            
-                    <span style={{ marginRight: 10 }}>
-                      正在克隆
-                    </span>
+              />         
+            </div>   
+            <WSHandler
+              messageKey={`choerodon:msg:test-cycle-batch-clone:${AppState.userInfo.id}`}
+              onMessage={this.handleMessage}
+            >
+              {
+                cloning ? (
+                  <div style={{ textAlign: 'center' }}>
                     <Tooltip title={`进度：${progress}%`}>
-                      <Progress percent={progress} showInfo={false} />
+                      <Progress type="circle" status="active" percent={progress} />
                     </Tooltip>
-                  </div>
+                  </div>                  
                 ) : (
-                  <Fragment>
-                    {status === 3
-                      ? (
-                        <span style={{ marginRight: 10 }}>
-                        克隆失败
-                        </span>
-                      ) : `克隆成功 ${lastCloneData.successfulCount || 0} 阶段`}
-                  </Fragment>
-                )}
-              </div>
-            </div>
-            <Spin spinning={cloning}>
-              <WSHandler
-                messageKey={`choerodon:msg:test-cycle-batch-clone:${AppState.userInfo.id}`}
-                onMessage={this.handleMessage}
-              >
-                <Table
-                  filterBar={false}
-                  pagination={false}
-                  loading={tableLoading}
-                  rowKey="cycleId"
-                  columns={columns}
-                  rowSelection={{
-                    selectedRowKeys,
-                    onSelectAll: this.handleSelectAll,
-                    onSelect: this.handleRowSelect,
-                    disabled: true,
-                  }}
-                  dataSource={data}
-                />
-              </WSHandler>
-            </Spin>
+                  <Table
+                    filterBar={false}
+                    pagination={false}                    
+                    rowKey="cycleId"
+                    columns={columns}
+                    rowSelection={{
+                      selectedRowKeys,
+                      onSelectAll: this.handleSelectAll,
+                      onSelect: this.handleRowSelect,
+                      disabled: true,
+                    }}
+                    dataSource={data}
+                  />
+                )
+              }                
+            </WSHandler>    
           </div>
         </Content>
       </Sidebar>
