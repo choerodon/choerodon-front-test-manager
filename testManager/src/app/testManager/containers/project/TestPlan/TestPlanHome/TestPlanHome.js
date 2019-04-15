@@ -132,20 +132,16 @@ class TestPlanHome extends Component {
     return (
       <Page className="c7ntest-TestPlan">
         <Header title={<FormattedMessage id="testPlan_name" />}>
-          <Button onClick={() => { setCreateCycleVisible(true); }}>
-            <Icon type="playlist_add icon" />
+          <Button icon="playlist_add" onClick={() => { setCreateCycleVisible(true); }}>            
             <FormattedMessage id="cycle_create_title" />
           </Button>
-          <Button className="leftBtn" onClick={() => this.ExportSide.open()}>
-            <Icon type="export icon" />
+          <Button icon="export" onClick={() => this.ExportSide.open()}>           
             <FormattedMessage id="export" />
           </Button>
-          <Button className="leftBtn" onClick={() => this.BatchClone.open()}>
-            <Icon type="export icon" />
+          <Button icon="baseline-file_copy" onClick={() => this.BatchClone.open()}>            
             批量克隆
           </Button>
-          <Button onClick={this.refresh}>
-            <Icon type="autorenew icon" />
+          <Button icon="autorenew" onClick={this.refresh}>           
             <FormattedMessage id="refresh" />
           </Button>
         </Header>
