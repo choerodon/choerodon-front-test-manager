@@ -170,6 +170,15 @@ class TestPlanStore extends BaseTreeProto {
     }
   }
 
+  selectDefaultVersion = (versionId) => {
+    const targetVersion = this.dataList.find((item => item.versionId === versionId && item.key.split('-').length === 3)); 
+    if (targetVersion) {
+      this.setCurrentCycle(targetVersion);
+      this.setExpandedKeys([...this.expandedKeys, targetVersion.key]);
+      this.setSelectedKeys([targetVersion.key]);
+    }
+  }
+
   reloadCycle = () => {
     const data = this.getCurrentCycle;
     const { executePagination, filters } = this;
@@ -274,7 +283,7 @@ class TestPlanStore extends BaseTreeProto {
   generateList = (data) => {
     for (let i = 0; i < data.length; i += 1) {
       const node = data[i];
-      const { key, title } = node;
+      const { key, title, versionId } = node;
       // 找出url上的cycleId
       // const { cycleId } = getParams(window.location.href);
       const currentCycle = this.getCurrentCycle;
@@ -287,7 +296,7 @@ class TestPlanStore extends BaseTreeProto {
         this.updateTimes([node]);
         this.setCurrentCycle(node);
       }
-      this.dataList.push({ key, title });
+      this.dataList.push({ key, title, versionId });
       if (node.children) {
         this.generateList(node.children, node.key);
       }
