@@ -198,7 +198,9 @@ class BatchClone extends Component {
   }
 
   handleDone=() => {   
+    const { targetVersionId } = this.state;
     setTimeout(() => {
+      TestPlanStore.selectDefaultVersion(targetVersionId);
       TestPlanStore.getTree();
     }, 300);
   }
@@ -252,6 +254,7 @@ class BatchClone extends Component {
           <div className="c7ntest-BatchClone">
             <div style={{ marginBottom: 24, display: 'flex', alignItems: 'center' }}>
               <SelectFocusLoad
+                disabled={cloning}
                 label="版本"
                 filter={false}
                 loadWhenMount
@@ -260,6 +263,7 @@ class BatchClone extends Component {
                 onChange={this.handleSourceVersionChange}
               />
               <SelectFocusLoad
+                disabled={cloning}
                 label="克隆到"
                 filter={false}
                 loadWhenMount

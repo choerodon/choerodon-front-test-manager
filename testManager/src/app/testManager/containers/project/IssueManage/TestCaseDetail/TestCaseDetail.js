@@ -280,23 +280,25 @@ class TestCaseDetail extends Component {
             </div>
             {
               isExpand && issueInfo && (
-                <EditIssue
-                  loading={loading}
-                  issueId={testCaseId}
-                  folderName={folderName}
-                  issueInfo={issueInfo}
-                  fileList={fileList}
-                  linkIssues={linkIssues}
-                  datalogs={datalogs}
-                  disabled={disabled}
-                  reloadIssue={this.reloadIssue.bind(this, testCaseId)}
-                  onClose={() => {
-                    this.setState({
-                      isExpand: false,
-                    });
-                  }}
-                  mode="wide"
-                />
+                <div style={{ marginLeft: 20, height: '100%' }}>
+                  <EditIssue
+                    loading={loading}
+                    issueId={testCaseId}
+                    folderName={folderName}
+                    issueInfo={issueInfo}
+                    fileList={fileList}
+                    linkIssues={linkIssues}
+                    datalogs={datalogs}
+                    disabled={disabled}
+                    reloadIssue={this.reloadIssue.bind(this, testCaseId)}
+                    onClose={() => {
+                      this.setState({
+                        isExpand: false,
+                      });
+                    }}
+                    mode="wide"
+                  />
+                </div>
               )
             }
           </div>

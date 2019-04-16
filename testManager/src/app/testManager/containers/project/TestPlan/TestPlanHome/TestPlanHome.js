@@ -175,7 +175,7 @@ class TestPlanHome extends Component {
               {isTreeVisible => <TreeArea isTreeVisible={isTreeVisible} setIsTreeVisible={TestPlanStore.setIsTreeVisible} />}
             </Injecter>
             <Injecter store={TestPlanStore} item={['currentCycle', 'getTimes', 'calendarShowMode', 'getTimesLength']}>
-              {([currentCycle, times, calendarShowMode, getTimesLength]) => (currentCycle.key ? (
+              {([currentCycle, times, calendarShowMode, getTimesLength]) => (currentCycle.key && getTimesLength ? (
                 <div className="c7ntest-TestPlan-content-right">
                   <EventCalendar key={`${currentCycle.key}_${times.length}`} showMode={calendarShowMode} times={times} onItemClick={this.handleItemClick} />
                   {calendarShowMode === 'single' && (
