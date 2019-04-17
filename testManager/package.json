@@ -20,7 +20,7 @@
         "mobx-react-devtools": "^6.0.3",
         "moment-range": "^4.0.1",
         "quill-delta-to-html": "^0.8.4",
-        "react-beautiful-dnd": "^8.0.3",
+        "react-beautiful-dnd": "^9.0.2",
         "react-codemirror": "^1.0.0",
         "react-color": "^2.14.1",
         "react-fast-compare": "^2.0.4",
