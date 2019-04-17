@@ -20,39 +20,7 @@ const { AppState } = stores;
 
 
 const dataList = [];
-/**
- * 非递归遍历树 将测试阶段按照时间排序
- *
- * @param {*} node
- * @returns
- */
-function traverseTree(node) {
-  if (!node) {
-    return;
-  }
-  const stack = [];
-  stack.push(node);
-  let tmpNode;
-  while (stack.length > 0) {
-    tmpNode = stack.pop();
-    const { type, key } = tmpNode;
-    if (key.split('-').length === 3 || type === 'cycle') {
-      tmpNode.children = tmpNode.children.sort((a, b) => {
-        if (moment(a.fromDate).isAfter(moment(b.fromDate))) {
-          return 1;
-        } else {
-          return -1;
-        }
-      }).map((child, i) => ({ ...child, key: `${key}-${i}` }));
-    }
-    if (tmpNode.children && tmpNode.children.length > 0) {
-      let i = tmpNode.children.length - 1;
-      for (i = tmpNode.children.length - 1; i >= 0; i -= 1) {
-        stack.push(tmpNode.children[i]);
-      }
-    }
-  }
-}
+
 function getParentKey(key) { return key.split('-').slice(0, -1).join('-'); }
 @observer
 class TestExecuteHomeContainer extends Component {
@@ -238,13 +206,13 @@ class TestExecuteHomeContainer extends Component {
       delete cycleData.nextRank;
       cycleData.assignedTo = cycleData.assignedTo || 0;
       this.setState({
-        loading: true,
+        tableLoading: true,
       });
       editCycle(cycleData).then((Data) => {
-        this.loadTreeAndExecute();
+        this.reloadExecutes();
       }).catch((error) => {
         this.setState({
-          loading: false,
+          tableLoading: false,
         });
         Choerodon.prompt('网络错误');
       });

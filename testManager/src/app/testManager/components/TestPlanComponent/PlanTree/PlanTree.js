@@ -253,6 +253,14 @@ class PlanTree extends Component {
     // console.log(info, preStage.rank, nextStage.rank);
   }
 
+  handleAssignDone=(cycleId) => { 
+    const currentCycle = TestPlanStore.getCurrentCycle;
+    if (currentCycle && currentCycle.cycleId === cycleId) {
+      TestPlanStore.reloadCycle(); 
+    }
+    this.setState({ AssignBatchShow: false }); 
+  }
+
   render() {
     const { onClose } = this.props;
     const {
@@ -288,7 +296,7 @@ class PlanTree extends Component {
           visible={AssignBatchShow}
           currentEditValue={currentEditValue}
           onCancel={() => { this.setState({ AssignBatchShow: false }); }}
-          onOk={() => { this.setState({ AssignBatchShow: false }); this.refresh(); }}
+          onOk={this.handleAssignDone}
         />
         <div className="c7ntest-PlanTree-treeTop">
           <Input
