@@ -205,14 +205,15 @@ class TestExecuteHomeContainer extends Component {
       delete cycleData.lastRank;
       delete cycleData.nextRank;
       cycleData.assignedTo = cycleData.assignedTo || 0;
+      // 加载所有数据，因为进度条需要更新
       this.setState({
-        tableLoading: true,
+        loading: true,
       });
       editCycle(cycleData).then((Data) => {
-        this.reloadExecutes();
+        this.loadTreeAndExecute();
       }).catch((error) => {
         this.setState({
-          tableLoading: false,
+          loading: false,
         });
         Choerodon.prompt('网络错误');
       });
