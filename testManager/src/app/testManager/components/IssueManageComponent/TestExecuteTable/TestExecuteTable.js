@@ -8,7 +8,7 @@ import { stores, axios } from 'choerodon-front-boot';
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import TimeAgo from 'timeago-react';
-import { cycleLink, issueLink, executeDetailShowLink } from '../../../common/utils';
+import { TestExecuteLink, issueLink, executeDetailShowLink } from '../../../common/utils';
 import './TestExecuteTable.scss';
 import { editCycle } from '../../../api/ExecuteDetailApi';
 import { StatusTags } from '../../CommonComponent';
@@ -138,7 +138,7 @@ class TestExecuteTable extends Component {
       render: (cycleName, item) => (
         <div className="c7ntest-text-dot">
           <Tooltip title={cycleName} placement="topLeft">
-            <Link className="c7ntest-showId" to={cycleLink(item.cycleId)} target="_blank">
+            <Link className="c7ntest-showId" to={TestExecuteLink(item.cycleId)} target="_blank">
               {cycleName || ''}
             </Link>
           </Tooltip>
@@ -151,7 +151,7 @@ class TestExecuteTable extends Component {
       render: (folderName, item) => (
         <div className="c7ntest-text-dot">
           <Tooltip title={item.folderName} placement="topLeft">
-            <Link className="c7ntest-showId" to={cycleLink(item.cycleId)} target="_blank">
+            <Link className="c7ntest-showId" to={TestExecuteLink(item.cycleId)} target="_blank">
               {item.folderName || ''}
             </Link>
           </Tooltip>

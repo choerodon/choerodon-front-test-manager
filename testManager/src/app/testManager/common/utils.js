@@ -259,13 +259,21 @@ export function createIssueLink() {
   } = menu;
   return encodeURI(`/agile/issue?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}`);
 }
-export function cycleLink(cycleId) {
+export function TestExecuteLink(cycleId) {
   const menu = AppState.currentMenuType;
   const {
     type, id: projectId, name, organizationId,
   } = menu;
 
-  return encodeURI(`/testManager/TestExecute?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}&cycleId=${cycleId}`);
+  return encodeURI(`/testManager/TestExecute?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}${`${cycleId ? `${cycleId}` : ''}`}`);
+}
+export function TestPlanLink(cycleId) {
+  const menu = AppState.currentMenuType;
+  const {
+    type, id: projectId, name, organizationId,
+  } = menu;
+
+  return encodeURI(`/testManager/TestPlan?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}${`${cycleId ? `${cycleId}` : ''}`}`);
 }
 export function executeDetailLink(executeId, cycleId) {
   const menu = AppState.currentMenuType;

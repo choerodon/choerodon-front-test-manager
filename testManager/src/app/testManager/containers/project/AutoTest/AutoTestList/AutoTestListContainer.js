@@ -6,7 +6,7 @@ import 'codemirror/theme/base16-dark.css';
 import {
   getApps, getTestHistoryByApp, reRunTest, getAllEnvs,
 } from '../../../../api/AutoTestApi';
-import { commonLink, cycleLink } from '../../../../common/utils';
+import { commonLink, TestExecuteLink } from '../../../../common/utils';
 import AutoTestList from './AutoTestList';
 import AutoListStore from '../../../../store/project/AutoTest/AutoListStore';
 
@@ -99,7 +99,7 @@ class AutoTestListContainer extends Component {
   }
 
   toTestExecute = (cycleId) => {
-    this.props.history.push(cycleLink(cycleId));
+    this.props.history.push(TestExecuteLink(cycleId));
   }
 
   handleItemClick = (record, { item, key, keyPath }) => {

@@ -15,7 +15,7 @@ import { getReportsFromStory } from '../../../../api/reportApi';
 import { getIssueTypes, getIssueStatus } from '../../../../api/agileApi';
 import { getStatusList } from '../../../../api/TestStatusApi';
 import {
-  issueLink, cycleLink, executeDetailLink, getProjectName,
+  issueLink, TestExecuteLink, executeDetailLink, getProjectName,
 } from '../../../../common/utils';
 import './ReportStory.scss';
 
@@ -352,7 +352,7 @@ class ReportStory extends Component {
                       }}
                     >
                       <Tooltip title={`${execute.cycleName}${execute.folderName ? `/${execute.folderName}` : ''}`}>
-                        <Link className="c7ntest-showId" to={cycleLink(execute.cycleId)} target="_blank">
+                        <Link className="c7ntest-showId" to={TestExecuteLink(execute.cycleId)} target="_blank">
                           {execute.cycleName}
                           {execute.folderName ? `/${execute.folderName}` : ''}
                         </Link>
