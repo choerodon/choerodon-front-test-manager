@@ -8,6 +8,7 @@ const User = ({
     style={{
       display: 'inline-flex',
       alignItems: 'center',
+      padding: 2,
     }}
   >
     <div
@@ -30,13 +31,10 @@ const User = ({
           <img
             src={user.imageUrl}
             alt=""
-            style={{ width: '100%' }}
+            style={{ width: '100%', height: '100%' }}
           />
         ) : (
-          <span style={{
-            width: 18, height: 18, lineHeight: '18px', textAlign: 'center', color: '#6473c3',
-          }}
-          >
+          <span>
             {user.realName[0]}
           </span>
         )
