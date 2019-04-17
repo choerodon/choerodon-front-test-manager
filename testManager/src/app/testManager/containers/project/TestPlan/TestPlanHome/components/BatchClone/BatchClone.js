@@ -258,12 +258,13 @@ class BatchClone extends Component {
                 label="版本"
                 filter={false}
                 loadWhenMount
+                optionDisabled={version => version.versionId === targetVersionId}
                 type="version"
                 style={{ width: 160 }}
                 onChange={this.handleSourceVersionChange}
               />
               <SelectFocusLoad
-                disabled={cloning}
+                disabled={cloning || !sourceVersionId}
                 label="克隆到"
                 filter={false}
                 loadWhenMount
