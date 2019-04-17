@@ -1,5 +1,4 @@
 import React, { memo } from 'react';
-import isEqual from 'react-fast-compare';
 import PropTypes from 'prop-types';
 import { FormattedMessage } from 'react-intl';
 import { Button } from 'choerodon-ui';
@@ -179,4 +178,4 @@ const TestPlanTable = ({
   );
 };
 TestPlanTable.propTypes = propTypes;
-export default memo(TestPlanTable, isEqual);
+export default memo(TestPlanTable);
