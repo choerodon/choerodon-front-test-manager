@@ -10,6 +10,13 @@ export function getProjectVersion() {
   return request.get(`agile/v1/projects/${getProjectId()}/product_version/versions`);
 }
 /**
+ * 根据冲刺状态获取冲刺，["started", "sprint_planning", "closed"]
+ * @param {*} arr
+ */
+export function getSprints(arr = []) {
+  return request.post(`/agile/v1/projects/${getProjectId()}/sprint/names`, arr);
+}
+/**
  *获取当前项目的指定类型的版本
  *
  * @export
