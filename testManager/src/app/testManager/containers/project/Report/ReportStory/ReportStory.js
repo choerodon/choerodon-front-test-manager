@@ -12,9 +12,7 @@ import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import { ReporterSwitcher } from '../../../../components/ReportComponent';
 import { getReportsFromStory } from '../../../../api/reportApi';
-import {
-  getIssueTypes, getIssueStatus, getProjectVersion, getSprints, 
-} from '../../../../api/agileApi';
+import { getIssueTypes, getIssueStatus } from '../../../../api/agileApi';
 import { getStatusList } from '../../../../api/TestStatusApi';
 import {
   issueLink, TestExecuteLink, executeDetailLink, getProjectName,
@@ -36,8 +34,6 @@ class ReportStory extends Component {
     statusList: [],
     issueTypes: [],
     issueStatusList: [],
-    versionList: [],
-    sprintList: [],
     pagination: {
       current: 1,
       total: 0,
@@ -72,18 +68,14 @@ class ReportStory extends Component {
       getIssueTypes(),
       getIssueTypes('agile'),
       getIssueStatus('agile'),
-      getProjectVersion(),
-      getSprints(),
     ])
-      .then(([reportData, statusList, issueTypes, agileTypeList, issueStatusList, versionList, sprintList]) => {
+      .then(([reportData, statusList, issueTypes, agileTypeList, issueStatusList]) => {
         if (reportData.totalElements !== undefined) {
           this.setState({
             loading: false,
             statusList,
             issueTypes: issueTypes.concat(agileTypeList),
             issueStatusList,
-            versionList,
-            sprintList,
             openId: {},
             reportList: reportData.content,
             pagination: {
@@ -117,7 +109,8 @@ class ReportStory extends Component {
     const { statusId, priorityCode, typeId } = filters;
     const {
       issueNum, summary, assignee, sprint, version, component, epic, 
-    } = filters;  
+    } = filters;
+    console.log(barFilters);
     const search = {
       contents: barFilters,
       advancedSearchArgs: {
@@ -132,8 +125,8 @@ class ReportStory extends Component {
       otherArgs: {
         
         // assignee: assignee ? assignee[0] : '',
-        sprint: sprint || [],
-        version: version || [],
+        // sprint: sprint ? sprint[0] : '',
+        // version: version ? version[0] : '',
         // component: component ? component[0] : '',
         // epic: epic ? epic[0] : '',
       },
@@ -150,7 +143,6 @@ class ReportStory extends Component {
     const {
       reportList, loading, pagination,
       statusList, openId, issueTypes, issueStatusList,
-      versionList, sprintList,
     } = this.state;
     const urlParams = AppState.currentMenuType;
     const { organizationId } = AppState.currentMenuType;
@@ -162,20 +154,6 @@ class ReportStory extends Component {
         key: 'typeId',
         filters: issueTypes.map(type => ({ text: type.name, value: type.id.toString() })),
         filterMultiple: true,
-      },
-      {
-        title: '版本',
-        dataIndex: 'version',
-        key: 'version',
-        filters: versionList.map(version => ({ text: version.name, value: version.versionId.toString() })),
-        filterMultiple: true,        
-      },
-      {
-        title: '冲刺',
-        dataIndex: 'sprint',
-        key: 'sprint',
-        filters: sprintList.map(sprint => ({ text: sprint.sprintName, value: sprint.sprintId.toString() })),
-        filterMultiple: true,        
       },
       // {
       //   title: '经办人',
