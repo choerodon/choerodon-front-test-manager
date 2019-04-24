@@ -4,6 +4,7 @@ import { observer } from 'mobx-react';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import _ from 'lodash';
 import './PlanTree.scss';
+import { NoVersion } from '../../CommonComponent';
 import TestPlanStore from '../../../store/project/TestPlan/TestPlanStore';
 import CloneCycle from '../CloneCycle';
 import CloneStage from '../CloneStage';
@@ -253,12 +254,12 @@ class PlanTree extends Component {
     // console.log(info, preStage.rank, nextStage.rank);
   }
 
-  handleAssignDone=(cycleId) => { 
+  handleAssignDone = (cycleId) => {
     const currentCycle = TestPlanStore.getCurrentCycle;
     if (currentCycle && currentCycle.cycleId === cycleId) {
-      TestPlanStore.reloadCycle(); 
+      TestPlanStore.reloadCycle();
     }
-    this.setState({ AssignBatchShow: false }); 
+    this.setState({ AssignBatchShow: false });
   }
 
   render() {
@@ -272,6 +273,7 @@ class PlanTree extends Component {
     const expandedKeys = TestPlanStore.getExpandedKeys;
     const selectedKeys = TestPlanStore.getSelectedKeys;
     const currentCycle = TestPlanStore.getCurrentCycle;
+    const noVersion = treeData.length === 0 || treeData[0].children.length === 0;
     return (
       <div className="c7ntest-PlanTree">
         <CloneCycle
@@ -315,21 +317,23 @@ class PlanTree extends Component {
         </div>
 
         <div className="c7ntest-PlanTree-tree">
-          <DragDropContext onDragEnd={this.onDragEnd} onDragStart={this.onDragStart}>
-            <Tree
-              // draggable
-              onDragEnter={this.onDragEnter}
-              onDrop={this.onDrop}
-              selectedKeys={selectedKeys}
-              expandedKeys={expandedKeys}
-              showIcon
-              onExpand={this.onExpand}
-              onSelect={TestPlanStore.loadCycle}
-              autoExpandParent={autoExpandParent}
-            >
-              {this.renderTreeNodes(treeData)}
-            </Tree>
-          </DragDropContext>
+          {noVersion ? <NoVersion /> : (
+            <DragDropContext onDragEnd={this.onDragEnd} onDragStart={this.onDragStart}>
+              <Tree
+                // draggable
+                onDragEnter={this.onDragEnter}
+                onDrop={this.onDrop}
+                selectedKeys={selectedKeys}
+                expandedKeys={expandedKeys}
+                showIcon
+                onExpand={this.onExpand}
+                onSelect={TestPlanStore.loadCycle}
+                autoExpandParent={autoExpandParent}
+              >
+                {this.renderTreeNodes(treeData)}
+              </Tree>
+            </DragDropContext>
+          )}
         </div>
       </div>
     );

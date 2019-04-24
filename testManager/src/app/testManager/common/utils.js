@@ -259,6 +259,13 @@ export function createIssueLink() {
   } = menu;
   return encodeURI(`/agile/issue?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}`);
 }
+export function agileVersionLink() {
+  const menu = AppState.currentMenuType;
+  const {
+    type, id: projectId, name, organizationId,
+  } = menu;
+  return encodeURI(`/agile/release?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}`);
+}
 export function TestExecuteLink(cycleId) {
   const menu = AppState.currentMenuType;
   const {

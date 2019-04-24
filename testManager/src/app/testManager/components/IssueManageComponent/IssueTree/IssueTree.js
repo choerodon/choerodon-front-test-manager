@@ -12,6 +12,7 @@ import {
 } from '../../../api/IssueManageApi';
 import IssueTreeTitle from './IssueTreeTitle';
 import IssueStore from '../../../store/project/IssueManage/IssueStore';
+import { NoVersion } from '../../CommonComponent';
 
 const { TreeNode } = Tree;
 @observer
@@ -327,6 +328,7 @@ class IssueTree extends Component {
     const { autoExpandParent } = this.state;
     const loading = IssueTreeStore.loading;
     const treeData = IssueTreeStore.getTreeData;
+    const noVersion = treeData.length === 0 || treeData[0].children.length === 0;
     const expandedKeys = IssueTreeStore.getExpandedKeys;
     const selectedKeys = IssueTreeStore.getSelectedKeys;    
     return (
@@ -353,19 +355,21 @@ class IssueTree extends Component {
           className="c7ntest-IssueTree-tree"
         >
           <Spin spinning={loading}>
-            <DragDropContext onDragEnd={this.onDragEnd} onDragStart={this.onDragStart}>
-              <Tree
-                multiple
-                selectedKeys={selectedKeys}
-                expandedKeys={expandedKeys}
-                showIcon
-                onExpand={this.onExpand}
-                onSelect={this.getIssuesByFolder}
-                autoExpandParent={autoExpandParent}
-              >
-                {this.renderTreeNodes(treeData)}
-              </Tree>
-            </DragDropContext>
+            {noVersion ? <NoVersion /> : (
+              <DragDropContext onDragEnd={this.onDragEnd} onDragStart={this.onDragStart}>
+                <Tree
+                  multiple
+                  selectedKeys={selectedKeys}
+                  expandedKeys={expandedKeys}
+                  showIcon
+                  onExpand={this.onExpand}
+                  onSelect={this.getIssuesByFolder}
+                  autoExpandParent={autoExpandParent}
+                >
+                  {this.renderTreeNodes(treeData)}
+                </Tree>
+              </DragDropContext>
+            )}
           </Spin>
         </div>
       </div>
