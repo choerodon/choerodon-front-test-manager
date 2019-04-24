@@ -10,6 +10,7 @@ import {
 } from 'choerodon-ui';
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
+import { Tags } from '../../../../components/CommonComponent';
 import { ReporterSwitcher } from '../../../../components/ReportComponent';
 import { getReportsFromStory } from '../../../../api/reportApi';
 import { getIssueTypes, getIssueStatus } from '../../../../api/agileApi';
@@ -240,7 +241,7 @@ class ReportStory extends Component {
       render(issue, record) {
         const { defectInfo, defectCount } = record;
         const {
-          statusMapDTO, issueStatusName, issueName, issueId, typeCode, summary,
+          statusMapDTO, issueStatusName, issueName, issueId, typeCode, summary, sprintDTOList, versionIssueRelDTOList,
         } = defectInfo;
         const { name: statusName, colour: statusColor, type: statusCode } = statusMapDTO || {};
         return (
@@ -262,7 +263,12 @@ class ReportStory extends Component {
                   {statusName}
                 </span>
               </div>
-
+              <div style={{ marginLeft: 10 }}>
+                <Tags data={sprintDTOList} nameField="sprintName" />
+              </div>
+              <div>
+                <Tags data={versionIssueRelDTOList} nameField="name" />
+              </div>
             </div>
             <div>
               <FormattedMessage id="report_defectCount" />
@@ -277,6 +283,7 @@ class ReportStory extends Component {
       title: <FormattedMessage id="test" />,
       dataIndex: 'test',
       key: 'test',
+      width: 200,
       render(test, record) {
         const { issueStatus, linkedTestIssues, defectInfo } = record;
         const { issueId } = defectInfo;
