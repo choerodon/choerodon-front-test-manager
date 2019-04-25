@@ -30,7 +30,10 @@ ul {
   flex: 1;
   visibility: hidden;
 }
-
+.c7ntest-text-wrap {
+  white-space: pre-wrap;
+  word-break: break-all;
+}
 .page-head-title {
   width: auto;
   padding-right: 50px;
