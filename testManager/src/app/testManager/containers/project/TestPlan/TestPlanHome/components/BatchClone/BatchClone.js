@@ -37,6 +37,10 @@ class BatchClone extends Component {
       cloningData: {
         rate: 0,
       },
+      sourceVersionId: null,
+      targetVersionId: null,
+      selectCycleKeys: [],
+      selectFolderKeys: [],
     });
   }
 
@@ -261,7 +265,7 @@ class BatchClone extends Component {
                 optionDisabled={version => version.versionId === targetVersionId}
                 type="version"
                 style={{ width: 160 }}
-                onChange={this.handleSourceVersionChange}
+                onChange={this.handleSourceVersionChange}        
               />
               <SelectFocusLoad
                 disabled={cloning || !sourceVersionId}
@@ -271,7 +275,7 @@ class BatchClone extends Component {
                 optionDisabled={version => version.versionId === sourceVersionId}
                 type="version"
                 style={{ marginLeft: 20, width: 160 }}
-                onChange={this.handleTargetVersionChange}
+                onChange={this.handleTargetVersionChange}                
               />         
             </div>   
             <WSHandler
