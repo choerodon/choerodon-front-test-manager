@@ -4,6 +4,7 @@ import { Icon, Tree } from 'choerodon-ui';
 import PropTypes from 'prop-types';
 import { observer } from 'mobx-react';
 import TreeTitle from './TreeTitle';
+import { NoVersion } from '../../../../../../components/CommonComponent';
 import './TestExecuteTree.scss';
 
 const { TreeNode } = Tree;
@@ -27,6 +28,7 @@ const TestExecuteTree = ({
   autoExpandParent,
   treeData,
 }) => {
+  const noVersion = treeData.length === 0 || treeData[0].children.length === 0;
   const renderTreeNodes = data => data.map((item) => {
     const {
       children, key, cycleCaseList, type,
@@ -83,17 +85,19 @@ const TestExecuteTree = ({
   });
 
   return (
-    <Tree
-      className="c7ntest-TestExecuteTree"
-      selectedKeys={selectedKeys}
-      expandedKeys={expandedKeys}
-      showIcon
-      onExpand={onTreeNodeExpand}
-      onSelect={onTreeNodeSelect}
-      autoExpandParent={autoExpandParent}
-    >
-      {renderTreeNodes(treeData)}
-    </Tree>
+    noVersion ? <NoVersion /> : (
+      <Tree
+        className="c7ntest-TestExecuteTree"
+        selectedKeys={selectedKeys}
+        expandedKeys={expandedKeys}
+        showIcon
+        onExpand={onTreeNodeExpand}
+        onSelect={onTreeNodeSelect}
+        autoExpandParent={autoExpandParent}
+      >
+        {renderTreeNodes(treeData)}
+      </Tree>
+    )
   );
 };
 

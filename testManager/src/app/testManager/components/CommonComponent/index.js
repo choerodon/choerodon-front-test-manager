@@ -20,5 +20,7 @@ export { default as Injecter } from './Injecter';
 export { default as TestProgressLine } from './TestProgressLine';
 export { default as DateTimeAgo } from './DateTimeAgo';
 export { default as NoCycle } from './NoCycle';
+export { default as NoVersion } from './NoVersion';
 export { default as Loading } from './Loading';
 export { default as ColorPicker } from './ColorPicker';
+export { default as Tags } from './Tags';
