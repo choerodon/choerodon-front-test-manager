@@ -14,7 +14,7 @@ import { getReportsFromDefect, getReportsFromDefectByIssueIds } from '../../../.
 import { getStatusList } from '../../../../api/TestStatusApi';
 import { getIssueTypes, getIssueStatus } from '../../../../api/agileApi';
 import {
-  issueLink, cycleLink, executeDetailLink, getProjectName,
+  issueLink, TestExecuteLink, executeDetailLink, getProjectName,
 } from '../../../../common/utils';
 import './ReportTest.scss';
 
@@ -295,7 +295,7 @@ class ReportTest extends Component {
             <div className="c7ntest-cycle-show-container">
               <div>
                 <Tooltip title={`${execute.cycleName}${execute.folderName ? `/${execute.folderName}` : ''}`}>
-                  <Link className="c7ntest-showId" style={{ display: 'inline-block' }} to={cycleLink(execute.cycleId)} target="_blank">
+                  <Link className="c7ntest-showId" style={{ display: 'inline-block' }} to={TestExecuteLink(execute.cycleId)} target="_blank">
                     {execute.cycleName}
                     {execute.folderName ? `/${execute.folderName}` : ''}
                   </Link>

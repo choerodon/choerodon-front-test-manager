@@ -5,7 +5,7 @@ import {
 } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 import _ from 'lodash';
-import { testCaseDetailLink, getParams } from '../../../../common/utils';
+import { testCaseDetailLink, getParams, testCaseTableLink } from '../../../../common/utils';
 import {
   loadDatalogs, loadLinkIssues, loadIssue, getIssueSteps, getIssueExecutes,
 } from '../../../../api/IssueManageApi';
@@ -147,24 +147,9 @@ class TestCaseDetail extends Component {
 
     return (
       <Page className="c7ntest-testCaseDetail">
-        <Header title={(
-          <div className="c7ntest-center">
-            <Tooltip
-              title={Choerodon.getMessage('返回', 'return')}
-              placement="bottom"
-            >
-              <Button
-                type="primary"
-                onClick={() => { this.props.history.goBack(); }}
-                className="back-btn small-tooltip"
-                shape="circle"
-                size="large"
-                icon="arrow_back"
-              />
-            </Tooltip>
-            <span><FormattedMessage id="testCase_detail" /></span>
-          </div>
-        )}
+        <Header
+          title={<FormattedMessage id="testCase_detail" />}
+          backPath={testCaseTableLink()}
         >
           <Button
             disabled={lasttestCaseId === null}

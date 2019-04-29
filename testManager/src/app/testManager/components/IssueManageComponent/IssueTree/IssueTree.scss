@@ -20,23 +20,28 @@
     display: flex;
     align-items: center;
     border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+
     .ant-input-wrapper {
       .ant-input-underline {
         display: none;
       }
+
       .ant-input-content {
         margin-bottom: 0;
       }
     }
   }
+
   &-tree {
     height: calc(100% - 44px);
     overflow-x: hidden;
     overflow-y: auto;
   }
+
   .ant-tree li .ant-tree-node-content-wrapper.ant-tree-node-selected {
     background: rgba(0, 0, 0, 0.04);
   }
+
   .ant-tree-icon__customize {
     i.icon {
       float: left;
@@ -44,32 +49,49 @@
       margin-right: 5px;
     }
   }
+
   .ant-tree-title {
     display: inline-block;
-    float: right; 
+    float: right;
   }
-  .ant-tree-title *{
+
+  .ant-tree-title * {
     outline: none;
   }
+
   .ant-tree-title:focus {
     outline: none;
   }
+
   .ant-tree-switcher {
     margin-top: 3px;
   }
+
   .icon-folder_open,
   .icon-folder_open2 {
     // margin-top: -3px;
   }
+
   .ant-tree-child-tree li {
     // display: flex;
     // align-items: center;
   }
+
   .ant-tree li .ant-tree-node-content-wrapper {
     width: calc(100% - 22px);
     display: inline-flex;
     align-items: center;
     height: 30px;
     line-height: 30px;
+  }
+
+  .IssueTree-drag-prompt {
+    position: absolute;
+    margin-top: 3px;
+    top: 0;
+    left: 100%;
+    background: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, .12);
+    padding: 10px;
   }
 }

@@ -17,7 +17,7 @@ import {
   PODSTATUS, TESTRESULT, PodStatus, TestResult,
 } from './AutoTestTags';
 import { ContainerLog } from './components';
-import { getProjectName, humanizeDuration, cycleLink } from '../../../../common/utils';
+import { getProjectName, humanizeDuration, TestExecuteLink } from '../../../../common/utils';
 import './AutoTestList.scss';
 
 const { Option } = Select;
@@ -51,14 +51,14 @@ const AutoTestList = ({
           {
           record.cycleDTOS.map(cycle => (
             <MenuItem>
-              <Link to={cycleLink(cycle.cycleId)} target="_blank">{cycle.cycleName}</Link>
+              <Link to={TestExecuteLink(cycle.cycleId)} target="_blank">{cycle.cycleName}</Link>
             </MenuItem>
           ))
         }   
         </SubMenu>
       ) : (
         <MenuItem key="cycle" disabled={!record.cycleIds}>
-          {record.cycleIds ? <Link to={cycleLink(record.cycleIds)} target="_blank">测试循环</Link> : '测试循环'}        
+          {record.cycleIds ? <Link to={TestExecuteLink(record.cycleIds)} target="_blank">测试循环</Link> : '测试循环'}        
         </MenuItem>
       )}      
       <MenuItem key="report" disabled={!record.resultId}>

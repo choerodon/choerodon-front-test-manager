@@ -1,7 +1,6 @@
 import React, { PureComponent } from 'react';
 import { Modal } from 'choerodon-ui';
 import { SelectFocusLoad } from '../../CommonComponent';
-import { getUsers } from '../../../api/IamApi';
 import { assignBatch } from '../../../api/cycleApi';
 
 class AssignBatch extends PureComponent {
@@ -20,7 +19,7 @@ class AssignBatch extends PureComponent {
       });
       // console.log(currentEditValue);
       assignBatch(assign, cycleId).then((res) => {
-        this.props.onOk();
+        this.props.onOk(cycleId);
       }).catch((err) => {
         Choerodon.prompt('网络出错');
       }).finally(() => {

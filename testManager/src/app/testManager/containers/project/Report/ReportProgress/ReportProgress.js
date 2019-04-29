@@ -192,7 +192,7 @@ class ReportProgress extends Component {
                         <div className="c7ntest-table-name">{item.name}</div>
                       </Tooltip>
                     </td>
-                    <td style={{ width: '62px', paddingRight: 15, paddingBottom: 8 }}>{item.value.counts}</td>
+                    <td style={{ width: '62px', paddingRight: 15, paddingBottom: 8 }}>{item.counts}</td>
                   </tr>
                 ))
               }

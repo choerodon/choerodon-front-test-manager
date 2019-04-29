@@ -8,7 +8,7 @@ const Loading = ({
 }) => (     
   <Spin spinning={loading} wrapperClassName="c7ntest-Loading">
     <div style={{ width: '100%', height: '100%' }} />
-  </Spin>      
+  </Spin>   
 );
 
 Loading.propTypes = {

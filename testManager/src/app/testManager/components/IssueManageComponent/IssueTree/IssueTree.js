@@ -102,7 +102,7 @@ class IssueTree extends Component {
     });
   }
 
-  renderTreeNodes = data => data.map((item) => {
+  renderTreeNodes = data => data.map((item, i) => {
     const { children, type } = item;
     const key = type === 'temp' ? `${item.key}temp` : item.key;
     const { searchValue } = this.state;
@@ -147,6 +147,7 @@ class IssueTree extends Component {
           title={item.cycleId || item.versionId
             ? (
               <IssueTreeTitle
+                index={i}
                 title={title}
                 data={item}
                 refresh={this.getTree}

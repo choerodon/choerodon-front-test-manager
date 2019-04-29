@@ -239,7 +239,7 @@ class IssueTreeTitle extends Component {
     const {
       editing, enter, mode,
     } = this.state;
-    const { data, title } = this.props;
+    const { data, title, index } = this.props;
     // const { title } = data;
     let type = null;
     if (data.type === 'temp') {
@@ -347,7 +347,7 @@ class IssueTreeTitle extends Component {
                   IssueStore.tableDraging ? this.moveIssues.bind(this, data.cycleId, data.versionId) : null,
               }}
             >
-              <Draggable key={data.key} draggableId={JSON.stringify({ cycleId: data.cycleId, versionId: data.versionId, objectVersionNumber: data.objectVersionNumber })}>
+              <Draggable index={index} key={data.key} draggableId={JSON.stringify({ cycleId: data.cycleId, versionId: data.versionId, objectVersionNumber: data.objectVersionNumber })}>
                 {(providedinner, snapshotinner) => {
                   if (snapshotinner.isDragging) {
                     document.addEventListener('keydown', this.enterCopy);

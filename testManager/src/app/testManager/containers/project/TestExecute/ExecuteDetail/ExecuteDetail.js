@@ -9,7 +9,7 @@ import { FormattedMessage } from 'react-intl';
 import _ from 'lodash';
 import { StatusTags } from '../../../../components/CommonComponent';
 import {
-  executeDetailLink, executeDetailShowLink, beforeTextUpload, getParams,
+  executeDetailLink, executeDetailShowLink, beforeTextUpload, getParams,  TestExecuteLink, TestPlanLink, 
 } from '../../../../common/utils';
 import {
   editCycle, removeDefect,
@@ -216,24 +216,9 @@ class ExecuteDetail extends Component {
     
     return (
       <Page className="c7ntest-ExecuteDetail">
-        <Header title={(
-          <div className="c7ntest-center">
-            <Tooltip
-              title={Choerodon.getMessage('返回', 'return')}
-              placement="bottom"
-            >
-              <Button
-                type="primary"
-                onClick={() => { this.props.history.goBack(); }}
-                className="back-btn small-tooltip"
-                shape="circle"
-                size="large"
-                icon="arrow_back"
-              />
-            </Tooltip>
-            <span><FormattedMessage id="execute_detail" /></span>
-          </div>
-        )}
+        <Header
+          title={<FormattedMessage id="execute_detail" />}
+          backPath={disabled?TestPlanLink(): TestExecuteLink()}
         >
           <Button
             disabled={lastExecuteId === null}

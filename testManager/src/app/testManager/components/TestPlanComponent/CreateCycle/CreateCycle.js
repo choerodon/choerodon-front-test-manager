@@ -149,9 +149,9 @@ class CreateCycle extends Component {
                   <span className="ant-input-wrapper ant-input-has-value ant-input-has-label">
                     <div className="ant-input-label"><span>持续时间</span></div>                  
                     {getFieldDecorator('range', {
-                      // rules: [{
-                      //   required: true, message: '请选择日期!',
-                      // }],
+                      rules: [{
+                        required: true, message: '请选择日期!',
+                      }],
                     })(
                       <RangePicker                                   
                         format="YYYY-MM-DD"
