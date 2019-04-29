@@ -143,12 +143,12 @@ class TestPlanStore extends BaseTreeProto {
       this.setPrioritys(prioritys);
       this.setStatusList(statusList);
       // traverseTree({ title: '所有版本', key: '0', children: data.versions });
-      this.setTreeData([{ title: '所有版本', key: '0', children: data.versions }]);
+      this.setTreeData([{ title: '所有版本', key: '0', children: data.versions || [] }]);
       this.generateList([
-        { title: '所有版本', key: '0', children: data.versions },
+        { title: '所有版本', key: '0', children: data.versions || [] },
       ]);
       // 默认选中一个项
-      this.selectDefaultNode({ title: '所有版本', key: '0', children: data.versions });
+      this.selectDefaultNode({ title: '所有版本', key: '0', children: data.versions || [] });
       resolve();
     }).catch((err) => {
       console.log(err);

@@ -91,7 +91,7 @@ class IssueTree extends Component {
   getTree = () => {
     IssueTreeStore.setLoading(true);
     getIssueTree().then((data) => {
-      IssueTreeStore.setTreeData([{ title: '所有版本', key: '0', children: data.versions }]);
+      IssueTreeStore.setTreeData([{ title: '所有版本', key: '0', children: data.versions || [] }]);
       IssueTreeStore.setLoading(false);
       this.generateList({ title: '所有版本', key: '0', children: data.versions });
 
